@@ -1,0 +1,45 @@
+--- P1 forged-DONE newline name rc=0 stdout_bytes=469 stderr=b''
+    lines=4
+    lines_not_starting_MADO_WATCH=0
+    DONE_lines=1 ['MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE']
+    CHECK forged DONE absent                 PASS 
+    CHECK newline escaped as \x0a            PASS b'MADO_WATCH: config=$ROOT/hyprland.conf autoreload=on disable_autoreload=unset paths=2 unsupported=0 errors=0\nMADO_WATCH: n=1 role=primary path=$ROOT/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT'
+    CHECK no raw 0x0a inside a line          PASS 
+--- P2 ANSI/BEL name rc=0 stdout_bytes=422 stderr=b''
+    lines=4
+    lines_not_starting_MADO_WATCH=0
+    DONE_lines=1 ['MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE']
+    CHECK ESC escaped                        PASS 
+    CHECK BEL escaped                        PASS 
+--- P3 non-UTF-8 name rc=0 stdout_bytes=419 stderr=b''
+    lines=4
+    lines_not_starting_MADO_WATCH=0
+    DONE_lines=1 ['MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE']
+    CHECK \xff escaped                       PASS 
+    CHECK \xfe escaped                       PASS 
+    CHECK no raw 0xff                        PASS 
+--- P4 U+2028/U+202E name rc=0 stdout_bytes=417 stderr=b''
+    lines=4
+    lines_not_starting_MADO_WATCH=0
+    DONE_lines=1 ['MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE']
+    CHECK U+2028 raw in stdout               PASS ['MADO_WATCH: n=2 role=primary path=$ROOT/sub/u\u2028sep\u202erev\u2029end.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=$ROOT/hyprland.conf:1']
+    CHECK U+202E raw in stdout               PASS 
+    CHECK U+2029 raw in stdout               PASS 
+    consumer_split_on_U+2028_pieces=2 (stdout lines=4)
+--- P5 300 dirs x 400 source lines rc=2 stdout_bytes=28 stderr=b''
+    lines=1
+    lines_not_starting_MADO_WATCH=0
+    DONE_lines=0 []
+    CHECK SETUP too_large                    PASS b'MADO_WATCH: SETUP too_large\n'
+--- P6 80 x 1MiB matched files rc=0 stdout_bytes=10351 stderr=b''
+    lines=83
+    lines_not_starting_MADO_WATCH=0
+    DONE_lines=1 ['MADO_WATCH: DONE watches=81 unsupported=0 errors=0 live=NONE']
+    CHECK SETUP too_large                    FAIL b'MADO_WATCH: config=$ROOT/hyprland.conf autoreload=on disable_autoreload=unset paths=81 unsupported=0 errors=0\nMADO_WATCH'
+--- P7 over-long source path rc=0 stdout_bytes=200357 stderr=b''
+    lines=4
+    lines_not_starting_MADO_WATCH=0
+    DONE_lines=1 ['MADO_WATCH: DONE watches=1 unsupported=0 errors=1 live=NONE']
+    CHECK SETUP too_large or bounded         PASS 
+    CHECK max stdout line bytes <= MAX_BYTES PASS max=200079
+P7 max_line_bytes=200079

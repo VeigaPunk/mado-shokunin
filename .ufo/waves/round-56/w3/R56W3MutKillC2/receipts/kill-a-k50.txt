@@ -1,0 +1,43 @@
+# kill transcript: a-k50
+# tool under test: the pristine lane-tip tools/mado-watchplan.py
+# layout: the frozen harness' staged layout (bwrap, empty cwd, tree only)
+# expected.rc = 0
+
+--- pristine (the honest tool) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=NONE
+rc=0  reproduces expected.out/expected.rc: yes
+
+--- mutant AM50 (sha256 14d77956462d1e4cd76283e151a463e1201296786af9531c3e8f59dfaab75f5f) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=missing mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=NONE
+rc=0  verdict: KILLED
+
+--- mutant AM89 (sha256 707ee665efc03a3cc612da77c04779f94c8b56f3860c26a695a0176ec87dd5d0) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=missing mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=NONE
+rc=0  verdict: KILLED
+
+--- mutant AM90 (sha256 cc06fe6019c36378538d00075857261cdfa8794f8a9e179deaada82dceddefd8) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=canonical path=$ROOT/tree/missing.conf type=file mask=IN_CLOSE_WRITE via=main
+MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE
+rc=0  verdict: KILLED
+
+--- mutant Bm18 (sha256 cc06fe6019c36378538d00075857261cdfa8794f8a9e179deaada82dceddefd8) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=canonical path=$ROOT/tree/missing.conf type=file mask=IN_CLOSE_WRITE via=main
+MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE
+rc=0  verdict: KILLED
+
+--- mutant Bm21 (sha256 14d77956462d1e4cd76283e151a463e1201296786af9531c3e8f59dfaab75f5f) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=missing mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=NONE
+rc=0  verdict: KILLED
+

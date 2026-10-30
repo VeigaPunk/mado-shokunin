@@ -1,0 +1,64 @@
+# R56W3ScoutNewSrc1 — raw independent-fetch evidence
+# seat: R56W3ScoutNewSrc1 (scout, w3 attempt-2)
+# fetch time (UTC): 2026-10-30T05:36:15Z (final confirmation)
+# tool: curl 8.23.0 ; python3 3.14.8 ; no tool installed or upgraded by this seat
+# scratch: /fast/scratch/hyaku/mado-r56/R56W3ScoutNewSrc1/
+
+$ cd /fast/scratch/hyaku/mado-r56/R56W3ScoutNewSrc1
+$ curl -sS -L --max-time 60 -A "Mozilla/5.0 (research; round-56 independent verification)" -o inotify_add_watch.2.html "https://man7.org/linux/man-pages/man2/inotify_add_watch.2.html"
+exit=0
+$ sha256sum inotify_add_watch.2.html
+98fe7feb381fa2687e8a3962e6d78a49cb1ad07c543f93449dcb42d6712c3d6d  inotify_add_watch.2.html
+$ wc -l -c inotify_add_watch.2.html
+  258 11345 inotify_add_watch.2.html
+
+# byte-stability: two further fetches with a different UA
+$ for i in 1 2; do curl ... -o fetch2_$i.html "https://man7.org/linux/man-pages/man2/inotify_add_watch.2.html"; sha256sum fetch2_$i.html; done
+98fe7feb381fa2687e8a3962e6d78a49cb1ad07c543f93449dcb42d6712c3d6d  fetch2_1.html
+98fe7feb381fa2687e8a3962e6d78a49cb1ad07c543f93449dcb42d6712c3d6d  fetch2_2.html
+# 3/3 identical -> the page's bytes are stable, so the sha256 is a durable anchor
+
+# byte-identity with the lane pin
+$ cmp inotify_add_watch.2.html /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/fetch/man7-inotify_add_watch.2.html && echo IDENTICAL
+IDENTICAL
+
+# S397 page (fetched independently for cross-check)
+$ curl -sS -L --max-time 60 -o fdinfo_fetch.html "https://man7.org/linux/man-pages/man5/proc_pid_fdinfo.5.html"
+$ sha256sum fdinfo_fetch.html
+f9e12387bf013d7c016f0015de5801932022a2fe6786d53e1cc84c385952d8a1  fdinfo_fetch.html
+$ wc -l -c fdinfo_fetch.html
+  366 14694 fdinfo_fetch.html
+$ cmp fdinfo_fetch.html /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/fetch/man7-proc_pid_fdinfo.5.html && echo IDENTICAL
+IDENTICAL
+
+# --- release named by the page (inotify_add_watch.2.html) ---
+$ grep -n "man-pages-6\|footline" inotify_add_watch.2.html
+155:       This page was obtained from the tarball man-pages-6.19.tar.gz
+165:<span class="footline">Linux man-pages 6.19            2026-02-08           <i>inotify_add_watch</i>(2)</span>
+# release = man-pages 6.19 ; the page's own revision date is 2026-02-08 (NOT 2026-02-14)
+# upstream mirror listing (release date of the 6.19 tarball):
+$ curl -sS "https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/"
+man-pages-6.19.tar.xz   25-Aug-2026 17:43   2M
+man-pages-6.18.tar.xz   22-Apr-2026 19:25   2M
+man-pages-6.20.tar.xz   21-Oct-2026 13:08   2M
+
+# --- (a) unique-watch-descriptor-per-inode rule ---
+$ grep -n "unique watch" inotify_add_watch.2.html
+88:       A successful call to <b>inotify_add_watch</b>() returns a unique watch
+$ awk 'NR>=88 && NR<=92 {print NR": "$0}' inotify_add_watch.2.html
+88:       A successful call to <b>inotify_add_watch</b>() returns a unique watch
+89:       descriptor for this inotify instance, for the filesystem object
+90:       (inode) that corresponds to <i>path</i>.  If the filesystem object was
+91:       not previously being watched by this inotify instance, then the
+92:       watch descriptor is newly allocated.  If the filesystem object was
+
+# --- (b) existing-watch-returned-for-a-different-link rule ---
+$ awk 'NR>=92 && NR<=94 {print NR": "$0}' inotify_add_watch.2.html
+92:       watch descriptor is newly allocated.  If the filesystem object was
+93:       already being watched (perhaps via a different link to the same
+94:       object), then the descriptor for the existing watch is returned.
+
+# --- (c) read-permission requirement ---
+$ grep -n "read permission\|EACCES" inotify_add_watch.2.html
+82:       caller must have read permission for this file.  The <i>fd</i> argument
+108:       <b>EACCES </b>Read access to the given file is not permitted.

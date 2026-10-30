@@ -1,0 +1,18 @@
+# kill transcript: b-k18
+# tool under test: the pristine lane-tip tools/mado-watchplan.py
+# layout: the frozen harness' staged layout (bwrap, empty cwd, tree only)
+# expected.rc = 0
+
+--- pristine (the honest tool) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=off disable_autoreload=1 paths=262143 unsupported=131072 errors=0
+MADO_WATCH: DONE watches=0 unsupported=131072 errors=0 live=NONE
+rc=0  reproduces expected.out/expected.rc: yes
+
+--- mutant Bm109 (sha256 60c1118c4a38e3f84ff15f282f73a2d7cb7bb6d62fcb46b2a7ee112458631067) ---
+MADO_WATCH: SETUP too_large
+rc=2  verdict: KILLED
+
+--- mutant Bm64 (sha256 1a93b37f397257688b3a3960fd7db7c8967eca8efa9e2269ea2c338e86bc5318) ---
+MADO_WATCH: SETUP too_large
+rc=2  verdict: KILLED
+

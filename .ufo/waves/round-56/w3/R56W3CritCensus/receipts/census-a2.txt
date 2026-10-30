@@ -1,0 +1,665 @@
+================================================================
+R56W3CritCensus — receipts/census-a2.txt
+Lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+Scored tree: 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 (lane tip)
+corpus/SOURCES.md blob sha256: a9cd682198fba4d6cf52bfee3be667d942a740f65ab8dfa98f7f6b0780e75631
+Maintained census: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+  (fleet commit f47ad6ba; `git status --porcelain` on it is EMPTY = committed state)
+gawk: GNU Awk 5.4.1 | date -u: 2026-10-30
+================================================================
+
+###############################################################
+# HALF 1 — ALL frozen manual census commands (CORPUS.md Census,
+#          column-zero forms) over corpus/SOURCES.md at the tip
+###############################################################
+
+--- Extraction (read-only git; the lane's working tree was never touched):
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin archive 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 | tar -x -C <scratch>/tree
+extracted tree root: /fast/scratch/hyaku/mado-r56/R56W3CritCensus/tree
+
+--- Verbatim output of every frozen command (script /fast/scratch/hyaku/mado-r56/R56W3CritCensus/census-frozen.sh
+    reproduces the CORPUS.md 'Census' block verbatim):
+
+### cwd: /fast/scratch/hyaku/mado-r56/R56W3CritCensus/tree
+
+### CMD1 rows (spacing-tolerant)
+332
+
+### CMD2 malformed rows — 11 columns means NF=13; must print 0
+0
+
+### CMD3 tier histogram
+A=320 B=5 C=7 
+
+### CMD4 status histogram
+mined=311 queued=10 rejected=11 
+
+### CMD5 duplicate ids — must print nothing
+### CMD5 end
+
+### CMD6 enum violations and tier inflation — must print nothing
+### CMD6 end
+
+### CMD7 mined rows whose used-by paths do not exist — must print nothing
+### CMD7 end
+
+--- Cross-check: the SAME commands run from the LANE ROOT over the lane's own
+    working-tree corpus/SOURCES.md (byte-identical to the tip blob):
+$ cd /home/vgpnk/Projects/shokunin/mado-shokunin && <frozen CMD7>
+(no output above = no mined-dangling path)
+
+--- NON-VACUITY of the null results above:
+CMD7 checks every used-by path of every MINED row (status=mined, NF==13).
+Paths checked at the tip: 411
+  (base revision 13f0acbe: 357
+  = 357 base + 41 attempt-1 fill-added + 13 new rows S383-S395 = 411  [reconciles exactly]
+Mined rows at the tip: 311 (every one has a non-empty used-by cell: 0 mined rows carry '—')
+Mined rows with a BLANK used-by cell at the tip: 0
+Used-by paths that are a DIRECTORY rather than a file: 0
+
+--- MAINTAINED census (same registry, census mode) for comparison:
+file	rows	332
+file	tier.A	320
+file	tier.B	5
+file	tier.C	7
+file	status.mined	311
+file	status.queued	10
+file	status.rejected	11
+FLEET	rows	332
+FLEET	tier.A	320
+FLEET	tier.B	5
+FLEET	tier.C	7
+FLEET	tier.invalid	0
+FLEET	status.queued	10
+FLEET	status.mined	311
+FLEET	status.rejected	11
+FLEET	status.invalid	0
+FLEET	missing	0
+exit=0
+
+--- MAINTAINED validate over the tip registry (control: must be clean):
+file	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+file	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+file	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+file	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+file	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+file	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+file	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+file	W01	S277 tierC mined used-by=corpus/knowledge/request-socket-live-bound-r8.md, corpus/knowledge/request-limits-upstream-r31.md
+file	W04	S303 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+file	W04	S307 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+file	W04	S317 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+file	W04	S318 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/values/ConfigValues.cpp across scopes
+file	W04	S320 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+file	W04	S321 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+file	W04	S324 duplicate url raw.githubusercontent.com/hyprwm/hyprlang/v0.6.8/src/config.cpp across scopes
+file	W04	S326 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/xdg-terminal-exec across scopes
+file	W04	S327 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/README.md across scopes
+file	W04	S332 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/rule/matchEngine/RegexMatchEngine.cpp across scopes
+file	W04	S353 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+file	W04	S354 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/input/InputManager.cpp across scopes
+file	W04	S364 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+file	W04	S366 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+file	W04	S368 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+file	W04	S370 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/DispatcherTranslator.cpp across scopes
+file	W04	S371 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigActions.cpp across scopes
+file	W04	S373 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+file	W04	S380 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+file	W04	S381 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/core/Seat.cpp across scopes
+file	W04	S382 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+file	W04	S384 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/values/ConfigValues.cpp across scopes
+file	W04	S387 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+file	W04	S388 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+file	W04	S389 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+file	W04	S392 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/inotify/ConfigWatcher.cpp across scopes
+file	W04	S393 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+file	W04	S394 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+file	W04	S395 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+file	ok	/fast/scratch/hyaku/mado-r56/R56W3CritCensus/tree/corpus/SOURCES.md
+exit=0
+
+--- Base-vs-tip delta of the maintained validate codes:
+base 13f0acbe:       1 	W01	      28 	W04	 
+tip  0f3a5436:       1 	W01	      36 	W04	 
+(the only delta is 8 more W04 warnings, from the 13 new rows repeating held URLs;
+ the L1 receipt .ufo/waves/round-56/receipts/census-before-a2.txt shows the identical W01+W04 set)
+
+--- Maintained census selftest (the tool's own red-before suite):
+killed	H1-no-table-cell-execution
+killed	gawk-failure-is-error-not-ok
+selftest ok
+exit=0
+
+###############################################################
+# HALF 2 — six mutant registries through the maintained census
+###############################################################
+
+Mutants are built over a FULL lane-tip layout (top-level entries symlinked to
+the tip tree, corpus/knowledge + corpus/lessons + corpus/README.md symlinked,
+only corpus/SOURCES.md replaced) so the ONLY difference from the clean registry
+is the mutation itself. Command: sources-census.sh validate --file <mut>/corpus/SOURCES.md
+
+================================================================
+MUTANT: malformed-11col
+================================================================
+--- mutation:
+    S001: the SCOPE cell (cell 5) is DELETED -> 10 data columns, NF=12
+--- MAINTAINED validate:
+exit=1
+    E/W codes emitted: E01 W01 W04 
+    the E-class finding lines (W-class noise omitted; the W01/W04 set is
+    identical to the clean registry's in every case):
+      file	E01	S001 fields=10
+--- FROZEN manual census over the same mutant (the same seven commands):
+    
+    ### CMD1 rows (spacing-tolerant)
+    332
+    
+    ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+    1
+    
+    ### CMD3 tier histogram
+    A=320 B=5 C=7 
+    
+    ### CMD4 status histogram
+    mined=310 2026-10-19=1 queued=10 rejected=11 
+    
+    ### CMD5 duplicate ids — must print nothing
+    ### CMD5 end
+    
+    ### CMD6 enum violations and tier inflation — must print nothing
+    ### CMD6 end
+    
+    ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+    ### CMD7 end
+
+================================================================
+MUTANT: duplicate-id
+================================================================
+--- mutation:
+    a SECOND row with id S001 is inserted (distinct source + scope) -> 333 rows
+--- MAINTAINED validate:
+exit=1
+    E/W codes emitted: E03 W01 W04 
+    the E-class finding lines (W-class noise omitted; the W01/W04 set is
+    identical to the clean registry's in every case):
+      file	E03	S001 duplicate id
+--- FROZEN manual census over the same mutant (the same seven commands):
+    
+    ### CMD1 rows (spacing-tolerant)
+    333
+    
+    ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+    0
+    
+    ### CMD3 tier histogram
+    A=321 B=5 C=7 
+    
+    ### CMD4 status histogram
+    mined=312 queued=10 rejected=11 
+    
+    ### CMD5 duplicate ids — must print nothing
+    S001
+    ### CMD5 end
+    
+    ### CMD6 enum violations and tier inflation — must print nothing
+    ### CMD6 end
+    
+    ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+    ### CMD7 end
+
+================================================================
+MUTANT: bad-status
+================================================================
+--- mutation:
+    S002: status cell 'mined' -> 'watch' (not in queued|mined|rejected)
+--- MAINTAINED validate:
+exit=1
+    E/W codes emitted: E07 W01 W04 
+    the E-class finding lines (W-class noise omitted; the W01/W04 set is
+    identical to the clean registry's in every case):
+      file	E07	S002 status=watch
+--- FROZEN manual census over the same mutant (the same seven commands):
+    
+    ### CMD1 rows (spacing-tolerant)
+    332
+    
+    ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+    0
+    
+    ### CMD3 tier histogram
+    A=320 B=5 C=7 
+    
+    ### CMD4 status histogram
+    mined=310 watch=1 queued=10 rejected=11 
+    
+    ### CMD5 duplicate ids — must print nothing
+    ### CMD5 end
+    
+    ### CMD6 enum violations and tier inflation — must print nothing
+    status S002 watch
+    ### CMD6 end
+    
+    ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+    ### CMD7 end
+
+================================================================
+MUTANT: tierA-community
+================================================================
+--- mutation:
+    S003: kind cell 'spec' -> 'community', tier left 'A'
+--- MAINTAINED validate:
+exit=1
+    E/W codes emitted: E10 W01 W04 
+    the E-class finding lines (W-class noise omitted; the W01/W04 set is
+    identical to the clean registry's in every case):
+      file	E10	S003 community-at-A
+--- FROZEN manual census over the same mutant (the same seven commands):
+    
+    ### CMD1 rows (spacing-tolerant)
+    332
+    
+    ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+    0
+    
+    ### CMD3 tier histogram
+    A=320 B=5 C=7 
+    
+    ### CMD4 status histogram
+    mined=311 queued=10 rejected=11 
+    
+    ### CMD5 duplicate ids — must print nothing
+    ### CMD5 end
+    
+    ### CMD6 enum violations and tier inflation — must print nothing
+    tier-inflation S003
+    ### CMD6 end
+    
+    ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+    ### CMD7 end
+
+================================================================
+MUTANT: mined-dangling-usedby
+================================================================
+--- mutation:
+    S004 (status=mined): used-by 'corpus/lessons/round-12.md' -> 'corpus/lessons/no-such-round-99.md'
+--- MAINTAINED validate:
+exit=1
+    E/W codes emitted: E11 W01 W04 
+    the E-class finding lines (W-class noise omitted; the W01/W04 set is
+    identical to the clean registry's in every case):
+      file	E11	S004 missing used-by corpus/lessons/no-such-round-99.md
+--- FROZEN manual census over the same mutant (the same seven commands):
+    
+    ### CMD1 rows (spacing-tolerant)
+    332
+    
+    ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+    0
+    
+    ### CMD3 tier histogram
+    A=320 B=5 C=7 
+    
+    ### CMD4 status histogram
+    mined=311 queued=10 rejected=11 
+    
+    ### CMD5 duplicate ids — must print nothing
+    ### CMD5 end
+    
+    ### CMD6 enum violations and tier inflation — must print nothing
+    ### CMD6 end
+    
+    ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+    missing: corpus/lessons/no-such-round-99.md
+    ### CMD7 end
+
+================================================================
+MUTANT: escaped-pipe
+================================================================
+--- mutation:
+    S005: the TEACHES cell contains an escaped pipe 'teaches with an escaped pipe \| inside one cell'
+--- MAINTAINED validate:
+exit=1
+    E/W codes emitted: E01 W01 W04 
+    the E-class finding lines (W-class noise omitted; the W01/W04 set is
+    identical to the clean registry's in every case):
+      file	E01	S005 fields=12
+--- FROZEN manual census over the same mutant (the same seven commands):
+    
+    ### CMD1 rows (spacing-tolerant)
+    332
+    
+    ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+    1
+    
+    ### CMD3 tier histogram
+    A=320 B=5 C=7 
+    
+    ### CMD4 status histogram
+    mined=310 insideonecell=1 queued=10 rejected=11 
+    
+    ### CMD5 duplicate ids — must print nothing
+    ### CMD5 end
+    
+    ### CMD6 enum violations and tier inflation — must print nothing
+    ### CMD6 end
+    
+    ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+    ### CMD7 end
+
+================================================================
+EXTRA PROBES (beyond the six named mutants) — the strongest
+counterexamples I could build against the census's discrimination.
+================================================================
+--- PROBE: semicolon-usedby
+    maintained validate exit=1  codes: E11 W01 W04 
+      file	E11	S001 missing used-by corpus/lessons/round-12.md; corpus/lessons/no-such-round-97.md
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=311 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      missing: corpus/lessons/no-such-round-97.md
+      ### CMD7 end
+
+--- PROBE: short-id
+    maintained validate exit=1  codes: E01 E02 W01 W04 
+      file	E01	S12 fields=10
+      file	E02	S12
+    frozen manual census decisive lines:
+      
+      331
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=319 B=5 C=7 
+      
+      mined=310 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: empty-usedby-cell
+    maintained validate exit=0  codes: W01 W04 
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=311 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: usedby-directory
+    maintained validate exit=0  codes: W01 W04 
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=311 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: queued-usedby
+    maintained validate exit=0  codes: W01 W04 
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=311 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: scope-teaches-swap
+    maintained validate exit=0  codes: W01 W04 
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=311 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: compensating-nf13
+    maintained validate exit=1  codes: E07 W01 W04 
+      file	E07	S002 status=PART-B
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=310 PART-B=1 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      status S002 PART-B
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: escaped-pipe-in-source-cell
+    maintained validate exit=1  codes: E01 W01 W04 
+      file	E01	S001 fields=12
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      1
+      
+      A=319 B=5 C=7 own-work=1 
+      
+      mined=310 whatsurvivesalaneisthe(claim,command)pair;citesthesynthesisre-derivationprotocolastheworkedpatternround-12calibratesagainst=1 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: escaped-pipe-nf13-compensated
+    maintained validate exit=1  codes: E07 W01 W04 
+      file	E07	S005 status=inside the teaches cell
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=310 insidetheteachescell=1 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      status S005 insidetheteachescell
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: escaped-pipe-fully-compensated
+    maintained validate exit=1  codes: E05 W01 W04 
+      file	E05	S006 kind=docs \
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=311 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      kind S006 docs\
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: escaped-pipe-fully-compensated-v2
+    maintained validate exit=1  codes: E08 W01 W04 
+      file	E08	S006 opened=2026-10-19 \
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=311 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: escaped-pipe-anchor-teaches-compensated
+    maintained validate exit=0  codes: W01 W04 
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=311 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      ### CMD7 end
+
+--- PROBE: fill-corrupted-path
+    maintained validate exit=1  codes: E11 W01 W04 
+      file	E11	S090 missing used-by corpus/knowledge/walker-deep.mdX
+    frozen manual census decisive lines:
+      
+      332
+      
+      ### CMD2 malformed rows — 11 columns means NF=13; must print 0
+      0
+      
+      A=320 B=5 C=7 
+      
+      mined=311 queued=10 rejected=11 
+      
+      ### CMD5 duplicate ids — must print nothing
+      ### CMD5 end
+      
+      ### CMD6 enum violations and tier inflation — must print nothing
+      ### CMD6 end
+      
+      ### CMD7 mined rows whose used-by paths do not exist — must print nothing
+      missing: corpus/knowledge/walker-deep.mdX
+      ### CMD7 end
+
+================================================================
+C3 COUNTER re-verification at the tip (read-only, --work in scratch)
+================================================================
+$ python3 -I quality/counters/c3-r56-used-by.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work <scratch>
+MADO_USED_BY: rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1 entries=71 rows=332 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+exit=0
+
+================================================================
+THE 41 ATTEMPT-1 FILL-ADDED (row, entry) PAIRS, verified independently
+================================================================
+fill-added (row, entry) pairs: 41
+of those, defective (missing path, or entry does not cite the row): 0

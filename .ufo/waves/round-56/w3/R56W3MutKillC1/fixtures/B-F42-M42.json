@@ -1,0 +1,55 @@
+{
+ "fixture": {
+  "ns": "B",
+  "fixture": "F42",
+  "attacks": "S383 anchor '33-,' dangling hyphen",
+  "expect": "seat B expectation: scope:K04.. (list ends at 33)",
+  "repo_sha": "364999f7cda120a43227ff47937eb362da9e532c",
+  "patch": "B-F42.patch",
+  "pristine_expectation_holds": null,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=364999f7cda120a43227ff47937eb362da9e532c rows=30/30 hosts=3/3 sources=30/30 scope=21/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,scope:K11,scope:K12",
+   "err": "",
+   "legs": [
+    "scope:K04",
+    "scope:K05",
+    "scope:K06",
+    "scope:K07",
+    "scope:K08",
+    "scope:K09",
+    "scope:K10",
+    "scope:K11",
+    "scope:K12"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M42",
+  "label": "scope_covers: hi parse guard off-by-one",
+  "rc": 1,
+  "out": "",
+  "err": "6/R56W3MutKillC1/mutants/B-F42-M42.py\", line 483, in scope_ok\n    return scope_covers(cells[5], basename_of(pin), line, len(pl) if pl is not None else None)\n  File \"/fast/scratch/hyaku/mado-r56/R56W3MutKillC1/mutants/B-F42-M42.py\", line 288, in scope_covers\n    hi = int(anchor[k + 1:m]) if m - k - 1 < 19 else None\n         ~~~^^^^^^^^^^^^^^^^^\nValueError: invalid literal for int() with base 10: ''",
+  "legs": null,
+  "killed": true,
+  "direction": "CRASH (rc=1, no counter line on stdout)",
+  "legs_lost": [
+   "scope:K04",
+   "scope:K05",
+   "scope:K06",
+   "scope:K07",
+   "scope:K08",
+   "scope:K09",
+   "scope:K10",
+   "scope:K11",
+   "scope:K12"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

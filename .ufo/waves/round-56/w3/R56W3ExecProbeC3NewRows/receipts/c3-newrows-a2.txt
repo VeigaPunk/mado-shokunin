@@ -1,0 +1,20 @@
+C3 NEW-ROW PROBE (R56W3ExecProbeC3NewRows)
+Base tree: 0f3a54361a9824484d0801679ceb1fd8ac7c32e1, read via git archive; test repositories in /fast/scratch/hyaku/mado-r56/R56W3ExecProbeC3NewRows/{a,b}. Frozen lost-baseline object fetched from lane into each scratch repository: 13f0acbe3a15da2d9c08357a576d91dcadc85273. Both registries contain a census-valid 11-cell queued row S396; only its used-by cell differs.
+
+Case A (used-by = —):
+$ python3 -I quality/counters/c3-r56-used-by.py --repo /fast/scratch/hyaku/mado-r56/R56W3ExecProbeC3NewRows/a --rev 513e168f8861c96205c92b86a483427a00499627 --work /fast/scratch/hyaku/mado-r56/R56W3ExecProbeC3NewRows/wa
+MADO_USED_BY: rev=513e168f8861c96205c92b86a483427a00499627 entries=71 rows=333 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/mado-r56/R56W3ExecProbeC3NewRows/a/corpus/SOURCES.md
+file\tok\t/fast/scratch/hyaku/mado-r56/R56W3ExecProbeC3NewRows/a/corpus/SOURCES.md
+rc=0
+
+Case B (used-by = corpus/lessons/round-56.md):
+$ python3 -I quality/counters/c3-r56-used-by.py --repo /fast/scratch/hyaku/mado-r56/R56W3ExecProbeC3NewRows/b --rev 593ecce9efca2979d6f95b8d83b952881e292e6f --work /fast/scratch/hyaku/mado-r56/R56W3ExecProbeC3NewRows/wb
+MADO_USED_BY: rev=593ecce9efca2979d6f95b8d83b952881e292e6f entries=71 rows=333 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/mado-r56/R56W3ExecProbeC3NewRows/b/corpus/SOURCES.md
+file\tok\t/fast/scratch/hyaku/mado-r56/R56W3ExecProbeC3NewRows/b/corpus/SOURCES.md
+rc=0
+
+Interpretation: A is as predicted. B contradicts the required expected extra=1 / TARGET_MISSED. The row is inside ## Registry and census-valid in both cases; the input path in B is exactly the requested non-entry path. Thus the counter does not flag this used-by value as an extra. Census emitted numerous pre-existing W01/W04 warning rows before its decisive file-ok line; both commands exited 0. Full census output was retained in tool transcript, with only its verdict line copied here. Scratch tree removed before yield.

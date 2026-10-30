@@ -1,0 +1,33 @@
+# kill transcript: b-k06
+# tool under test: the pristine lane-tip tools/mado-watchplan.py
+# layout: the frozen harness' staged layout (bwrap, empty cwd, tree only)
+# expected.rc = 0
+
+--- pristine (the honest tool) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=dir mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW|IN_CREATE|IN_DELETE|IN_MOVED_TO|IN_MOVED_FROM via=main
+MADO_WATCH: n=2 role=canonical path=$ROOT/tree/realdir type=file mask=IN_CLOSE_WRITE via=main
+MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE
+rc=0  reproduces expected.out/expected.rc: yes
+
+--- mutant AM54 (sha256 fb58e07d93fbe1c6cbf53535df6a8c14de17c5aa0bb963fbea7db9107f96b4ca) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=dir mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=canonical path=$ROOT/tree/realdir type=file mask=IN_CLOSE_WRITE via=main
+MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE
+rc=0  verdict: KILLED
+
+--- mutant AM93 (sha256 686fdfc27dfe66275eda7878bae307e4946d3f05dea32dfbed74d3fc525bb439) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=dir mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=canonical path=$ROOT/tree/realdir type=file mask=IN_CLOSE_WRITE via=main
+MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE
+rc=0  verdict: KILLED
+
+--- mutant Bm25 (sha256 17346d7af8caf72c1694200a5e437f0830af2d8fb9f4d3fde9bedee61eb7c4b5) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=canonical path=$ROOT/tree/realdir type=file mask=IN_CLOSE_WRITE via=main
+MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE
+rc=0  verdict: KILLED
+

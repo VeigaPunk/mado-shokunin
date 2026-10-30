@@ -2628,3 +2628,38 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
 - Measured at `8a7b734627b0` (`.ufo/waves/round-56/receipts/at-final.txt`): C1 `rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 TARGET_MET`, harness 12/12; C2 `fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 TARGET_MET`; C3 `entries=71 rows=332 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 TARGET_MET`, harness 9/9; selftest 460/460; index 71/71; census exit 0, 319 -> 332 rows; tool ledger 97/97.
 - What the numbers do not prove: C1 `TARGET_MET` is quote identity, registry binding, anchor scope and lexical grounding; a lexical rewrite that negates every proposition still reaches `content=33/33` (`w2/R56W2CritC1Forge.md`). C2's hold-out is spent (revealed before wave 2); an embedded 26-fixture lookup passes under bwrap, and the harness now refuses to run without bwrap (`w2/R56W2CritC2Cheat.md`). C3's 24 exemptions are two readers' judgment; `lost` covers 65 pairs (E12). Observation worth keeping: the running compositor's `/proc/<pid>/fdinfo` inotify table held 40 watches whose inodes and order equal the tool's prediction (`w2/R56W2RevProcFdinfo/comparison.md`); one host, one moment, no reload observed.
 - Mined M56-1..M56-10 in `corpus/lessons/round-56.md` (M56-1 anchor does not cover the quoted line: criterion 107 text landed in `corpus/QUALITY.md`, able to fail on the round-55 K14/K17). Considerthese `2026-10-28.md` proposal 2 picked (`w1/R56ScoutConsiderthese.md`). Assimilation: none. Learning trends: expansion improved (a sourced chain on ground the corpus held 0 citations of, a capability), quality improved with a trade disclosed (nine over-stated propositions found and fixed; the counters stay content-blind), discernment unchanged (no non-author admit/reject sample at filing).
+
+## Round 56, attempt 2 (2026-10-30 re-dispatch) — wave w3 settles the round the wrap-up stopped
+
+- The run-11 operator wrap-up (2026-10-28 23:35) stopped attempt 1's wave 2 (33/35 reported;
+  `R56W2MutC3Counter`, `R56W2MutC2Harness` killed; no `w2-results.json`); claims released
+  without closure; the orchestrator re-dispatched round 56 on 2026-10-30 (watchdog launch
+  `pgid=1984547`). Frozen claims (v2, `323a69c9`) ran unchanged.
+- Attempt-2 self-verification at the inherited tip `0f3a5436` (`receipts/attempt2-l1.txt`):
+  C1 `TARGET_MET rows=30/30 … content=33/33 new_rows=8/8` + controls 12/12; C2 `TARGET_MET
+  fixtures=18/18 holdout=8/8 controls=4/4` (bwrap); C3 `TARGET_MET entries=71 rows=332
+  missing=0 … exempt=24` + controls 9/9; census `mado ok` exit 0, 332 rows
+  (`receipts/census-before-a2.txt`); selftest 460/460; index 71/71; ledger 97/97.
+- Wave w3 (one v2 wave, 64 seats, band 64-128, attack share 28/64 = 43.75%): all 64 seats
+  settled; 58 seat reports; six seats settled without reports (disclosed; no replacements —
+  orchestrator recovery boundary). Re-issued the two stopped wave-2 mutation seats
+  (`R56W3MutC2Harness` completed: 41/46 killed, 5 survivors documented; `R56W3MutC3Counter`
+  mid-work, unverified). Re-fetched S383-S395 independently: 13/13 MATCH. Fresh
+  sentence-to-pin audits: 2 UNSUPPORTED clauses, 17 single-line OVERREACH rows, 4 prose
+  findings — 14 rows + 4 prose + 1 how-to line corrected before landing (entry edits above;
+  counter `num`-leg bounded the rewrites, M56-12).
+- Landed this attempt: registry rows S396-S397 (mined, lesson-cited; census 332 → 334, exit
+  0 both ends); `quality/check-anchor-cover.py` (criterion-107 checker; green 39/39, red
+  r55 32/25/7, 7/7 mutants, 23/23 vector agreement; ledger row added, population 98/98);
+  kill-fixture suites (C1 51/51 distinguished, C2 24 killers, C3 kill-level table); C2
+  harness re-verification; freeze-order re-proof + D4 blind-spot receipt; /proc second
+  sample (40/40) + three-sample ALL_MATCH; tag-pin chain (v0.56.2 → efb50993, unsigned);
+  C3 allowlist third reading (23 name-only + S044 reliance-leaning); census
+  discrimination battery (6/6 mutants flagged, fills re-derived 0-defective, 4 new gaps
+  named); considerthese proposal 2 receipt at the tip (`files=29471 findings=274`).
+- Integrated tree re-measured (scratch preview `4c640a9a`, then the lane commit): all three
+  frozen gates TARGET_MET + controls green; index 71/71; ledger 98/98; census 334 exit 0;
+  CHECK107 rows=39 covered=39 miss=0.
+- Mined M56-11..M56-15 in `corpus/lessons/round-56.md` (attempt-2 section); appended the
+  owed round-55 census correction (routed round-55 defect 1). Open L0: rounds 28, 29 and 34
+  (three lines) remain outstanding — named in the report (M56-13).

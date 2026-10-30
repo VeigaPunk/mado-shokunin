@@ -1,0 +1,60 @@
+# R56W3ScribeRegistryA2 — C1/C3 counter runs on the draft and on half-landed mutations
+# All runs on scratch clones; scratch commit identities are recorded in rows-draft.md.
+# Lane untouched; scratch clones asserted toplevel==clone before each commit.
+
+## D0 — draft as drafted (scratch rev 0cb102f010e63c77d291686c48be445404bb9a24)
+$ c3-r56-used-by.py --repo <clone> --rev 0cb102f0 --work <scratch>
+MADO_USED_BY: rev=0cb102f010e63c77d291686c48be445404bb9a24 entries=71 rows=334 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+$ c1-r56-autoreload-entry.py --repo <clone> --rev 0cb102f0 --work <scratch>
+MADO_AUTORELOAD_ENTRY: rev=0cb102f010e63c77d291686c48be445404bb9a24 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+rc=0
+$ check-r56-controls.py --claim c3 --repo <clone> --rev 0cb102f0 --work <scratch>
+MADO_R56_CONTROLS: claim=c3 good=ok controls=9/9 verdict=OK
+rc=0
+$ check-index.py / check-tool-ledger.py
+MADO_INDEX: rev=0cb102f0… indexed=71/71 missing=0 dangling=0 duplicates=0 coverage=10.0000/10 rc=0
+LEDGER: population=97 ledger_rows=97 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rc=0
+
+## D2 — entry source: line cites S396+S397, used-by stays — (scratch rev 0c1fff499513a28b6a9ae0214ffe476dc556ccc8)
+$ c3 counter
+MADO_USED_BY: rev=0c1fff499513a28b6a9ae0214ffe476dc556ccc8 entries=71 rows=334 missing=2 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MISSED missed=missing
+rc=1
+$ c1 counter
+MADO_AUTORELOAD_ENTRY: … verdict=TARGET_MET missed=none
+rc=0
+
+## D3 — entry cites + used-by names the entry (scratch rev b989678824ed9328f3f4bcc3f4689c4462e8e358)
+$ c3 counter
+MADO_USED_BY: rev=b989678824ed9328f3f4bcc3f4689c4462e8e358 entries=71 rows=334 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+$ c1 counter
+MADO_AUTORELOAD_ENTRY: … verdict=TARGET_MET missed=none
+rc=0
+
+## D5 — draft + K03 cites S396 + entry source line cites S396 (scratch rev 3a2c71fa2a30fe1e3f06f47c3195049f20ab0f5f)
+$ c1 counter
+MADO_AUTORELOAD_ENTRY: rev=3a2c71fa… rows=30/30 hosts=3/3 sources=29/30 scope=29/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=source_cell:K03,scope:K03
+rc=1
+$ c3 counter
+MADO_USED_BY: rev=3a2c71fa… entries=71 rows=334 missing=1 extra=0 dangling=0 … verdict=TARGET_MISSED missed=missing
+rc=1
+
+## D6 — used-by names the entry, no entry citation (scratch rev c07338e7ea3a0c59d90b226216868aa8a0f01524)
+$ c3 counter
+MADO_USED_BY: rev=c07338e7ea3a0c59d90b226216868aa8a0f01524 entries=71 rows=334 missing=0 extra=2 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MISSED missed=extra
+rc=1
+$ census validate on that tree (full-tree extraction)
+rc=0, finding set identical to baseline (no S396/S397 findings; queued rows are exempt from E11)
+
+## D7 — only the lesson cites S396+S397 (scratch rev 04c063dce20fda3c932e13a3137936c5f3dbf143)
+$ c3 counter
+MADO_USED_BY: rev=04c063dce20fda3c932e13a3137936c5f3dbf143 entries=71 rows=334 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+
+## D8 — used-by names a lesson path (scratch rev dd22a045b7dc74cc0d5a207e73069e147069da50)
+$ c3 counter
+MADO_USED_BY: rev=dd22a045b7dc74cc0d5a207e73069e147069da50 entries=71 rows=334 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+$ census validate on that tree (full-tree extraction)
+rc=0, finding set identical to baseline

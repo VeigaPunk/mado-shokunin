@@ -1,0 +1,64 @@
+{
+ "fixture": "A-F21",
+ "wave2_report": "R56W2MutC1CounterA",
+ "wave2_fixture_id": "F21",
+ "survivor_mutant": "M16",
+ "survivor_mutation": "quote: pin line bound widened (n > len(pl) -> n > len(pl)+1)",
+ "attacks": "witness (verdict-equivalent): a frozen row line one past the pin's split length",
+ "registered_expectation": "pristine reports quote:K03,tables_sha",
+ "pristine_expectation_holds": true,
+ "pristine": {
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=4175e26687e6ad1e8bbe6818647f8c239bd4a5d6 rows=29/30 hosts=3/3 sources=30/30 scope=29/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=tables_sha,row:K03,quote:K03,scope:K03",
+  "legs": [
+   "tables_sha",
+   "row:K03",
+   "quote:K03",
+   "scope:K03"
+  ]
+ },
+ "mutant_on_fixture": {
+  "rc": 1,
+  "out": "",
+  "legs": null,
+  "stderr_tail": "\", line 633, in run_counter\n    counts, missed = evaluate(repo)\n                     ~~~~~~~~^^^^^^\n  File \"/fast/scratch/hyaku/mado-r56/R56W3MutKillC1/mutants/A-F21-M16.py\", line 533, in evaluate\n    pl = pin_line(pin, line)\n  File \"/fast/scratch/hyaku/mado-r56/R56W3MutKillC1/mutants/A-F21-M16.py\", line 442, in pin_line\n    return pl[n - 1]\n           ~~^^^^^^^\nIndexError: list index out of range"
+ },
+ "mutant_on_good_tree": {
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "err": "",
+  "legs": []
+ },
+ "kill": {
+  "killed": true,
+  "direction": "CRASH (rc=1, no counter line on stdout)",
+  "legs_lost": [
+   "quote:K03",
+   "row:K03",
+   "scope:K03",
+   "tables_sha"
+  ],
+  "legs_added": []
+ },
+ "carrier": "CONTROL-1",
+ "carrier_reason": "the pristine reports ['quote:K03', 'row:K03', 'scope:K03', 'tables_sha'] and the mutant does not -> the frozen _need(quote:K03) assertion kills it | pristine=caught mutant=counter printed no line (rc=1)",
+ "final_route": "CONTROL-1",
+ "final_route_reason": "the pristine reports ['quote:K03', 'row:K03', 'scope:K03', 'tables_sha'] and the mutant does not -> the frozen _need(quote:K03) assertion kills it | pristine=caught mutant=counter printed no line (rc=1)",
+ "final_route_proved": true,
+ "required_leg": "tables_sha",
+ "legs_pristine_only": [
+  "quote:K03",
+  "row:K03",
+  "scope:K03",
+  "tables_sha"
+ ],
+ "legs_mutant_only": [],
+ "harness_proof": {
+  "harness_rc": 1,
+  "harness_out": "MADO_R56_CONTROLS: claim=c1 good=ok controls=43/44 verdict=FAIL",
+  "failed_control_line": "A-ctl-F21 A-F21: FAIL - counter stdout has 0 non-empty lines, need exactly 1",
+  "killed_by_harness": true
+ },
+ "patch": "A-F21.patch",
+ "fixture_repo_sha": "4175e26687e6ad1e8bbe6818647f8c239bd4a5d6"
+}

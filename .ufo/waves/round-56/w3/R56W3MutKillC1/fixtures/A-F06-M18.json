@@ -1,0 +1,44 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F06",
+  "attacks": "host: a bare quote cell on an H row must fail host:",
+  "expect": "pristine reports host:H01,quote:H01",
+  "repo_sha": "2c8619c4b2cd52e619a2c9c0e3b10e375ecb015e",
+  "patch": "A-F06.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=2c8619c4b2cd52e619a2c9c0e3b10e375ecb015e rows=30/30 hosts=2/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:H01,quote:H01,host:H01",
+   "err": "",
+   "legs": [
+    "row:H01",
+    "quote:H01",
+    "host:H01"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M18",
+  "label": "host: empty-carried-quote check dropped",
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=2c8619c4b2cd52e619a2c9c0e3b10e375ecb015e rows=30/30 hosts=2/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:H01,quote:H01",
+  "err": "",
+  "legs": [
+   "row:H01",
+   "quote:H01"
+  ],
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "host:H01"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

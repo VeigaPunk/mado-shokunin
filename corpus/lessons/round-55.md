@@ -49,3 +49,7 @@ Start census command `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh va
 - **M55-12 — tool overclaim** · R55W2RevToolSource: "models source-level semantics" false for out-of-range, `-0`, `{ # c`, `source =`, continuation · fix landed: docstring "approximation" + divergence list; behaviour unchanged (frozen contract). Also R55W2RevC1Code D1 (subdirectory repo) fixed in the C1 counter; other D2-D9 routed.
 - Frozen-text honesty: the w2 audits found entry overreach (clamp vs floor, E03, E07, a single seat-push route, join-section P5/P9) — all corrected in the entry before this commit; S379/S380 scope wording corrected by supersession rows S381/S382.
 - Census end: `mado ok`, exit 0, 319 rows (`receipts/at-final.txt`). Considerthese 2026-10-26 proposal 4 mined above.
+
+### Correction — Round 55 registry census (2026-10-30)
+
+The `## Gate` census paragraph above is stale: its `Rows 314 → 317` and `317 rows` counts predate the addition of registry rows S381 and S382, which entered after this lesson was written. The correct ending registry count is 319 rows. Count command (at the Round 55 post-S381/S382 registry revision): `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 187003d0:corpus/SOURCES.md | grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'` → `319`.

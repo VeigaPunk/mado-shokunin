@@ -1,0 +1,45 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F21",
+  "attacks": "witness (verdict-equivalent): a frozen row line one past the pin's split length",
+  "expect": "pristine reports quote:K03,tables_sha",
+  "repo_sha": "4175e26687e6ad1e8bbe6818647f8c239bd4a5d6",
+  "patch": "A-F21.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=4175e26687e6ad1e8bbe6818647f8c239bd4a5d6 rows=29/30 hosts=3/3 sources=30/30 scope=29/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=tables_sha,row:K03,quote:K03,scope:K03",
+   "err": "",
+   "legs": [
+    "tables_sha",
+    "row:K03",
+    "quote:K03",
+    "scope:K03"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M16",
+  "label": "quote: pin line bound widened (n > len(pl) -> n > len(pl)+1)",
+  "rc": 1,
+  "out": "",
+  "err": "\", line 633, in run_counter\n    counts, missed = evaluate(repo)\n                     ~~~~~~~~^^^^^^\n  File \"/fast/scratch/hyaku/mado-r56/R56W3MutKillC1/mutants/A-F21-M16.py\", line 533, in evaluate\n    pl = pin_line(pin, line)\n  File \"/fast/scratch/hyaku/mado-r56/R56W3MutKillC1/mutants/A-F21-M16.py\", line 442, in pin_line\n    return pl[n - 1]\n           ~~^^^^^^^\nIndexError: list index out of range",
+  "legs": null,
+  "killed": true,
+  "direction": "CRASH (rc=1, no counter line on stdout)",
+  "legs_lost": [
+   "quote:K03",
+   "row:K03",
+   "scope:K03",
+   "tables_sha"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

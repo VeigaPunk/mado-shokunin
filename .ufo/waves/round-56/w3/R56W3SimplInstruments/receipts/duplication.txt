@@ -1,0 +1,21 @@
+=== functions defined in more than one harness ===
+  git                    in c1,c2,c3  lines={'r56_ctl_c1.py': 5, 'r56_ctl_c2.py': 6, 'r56_ctl_c3.py': 7}  identical_ast_shape=no
+  judge_control          in c1,c3  lines={'r56_ctl_c1.py': 11, 'r56_ctl_c3.py': 14}  identical_ast_shape=no
+  judge_good             in c1,c3  lines={'r56_ctl_c1.py': 14, 'r56_ctl_c3.py': 10}  identical_ast_shape=no
+  parse                  in c1,c2  lines={'r56_ctl_c1.py': 11, 'r56_ctl_c2.py': 18}  identical_ast_shape=no
+  run                    in c1,c2,c3  lines={'r56_ctl_c1.py': 6, 'r56_ctl_c2.py': 10, 'r56_ctl_c3.py': 12}  identical_ast_shape=no
+  run_counter            in c1,c3  lines={'r56_ctl_c1.py': 32, 'r56_ctl_c3.py': 11}  identical_ast_shape=no
+
+=== per-file totals ===
+  r56_ctl_c1.py    total=633 stmts_lines=457 functions=36
+  r56_ctl_c2.py    total=323 stmts_lines=247 functions=12
+  r56_ctl_c3.py    total=618 stmts_lines=450 functions=36
+
+=== shared helper clusters (by name) ===
+  git plumbing         git->c1,c2,c3; git_env->c3; _env->c1; scrubbed_env->c2
+  blob/blob_at         blob_at->c3; ls_entry->c2
+  counter child run    run_counter->c1,c3; run_program->c2; staged_run->c2
+  counter line parse   parse_line->c3
+  judge good/control   judge_good->c1,c3; judge_control->c1,c3; note_diverge->c3
+  arg parse            parse->c1,c2; parse_args->c3
+  run entry            run->c1,c2,c3; execute->c3; harness->c2

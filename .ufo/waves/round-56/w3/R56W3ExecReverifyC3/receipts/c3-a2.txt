@@ -1,0 +1,29 @@
+C3 A2 receipts — R56W3ExecReverifyC3
+
+Successful tip run (scratch clone of lane; read-only source)
+$ git clone --shared -q /home/vgpnk/Projects/shokunin/mado-shokunin /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/repo
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/repo/quality/counters/c3-r56-used-by.py --repo /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/repo --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/work-after
+MADO_USED_BY: rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1 entries=71 rows=332 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/repo/quality/check-r56-controls.py --claim c3 --repo /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/repo --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/work-after
+MADO_R56_CONTROLS: claim=c3 good=ok controls=9/9 verdict=OK
+rc=0
+
+Before-state requested at BASE 13f0acbe3a15da2d9c08357a576d91dcadc85273. This commit predates frozen-tables-v2.json, so the frozen v2 counter and harness cannot execute against it; both return setup rc=2. The exact baseline line is preserved in the committed receipts/c3-base-v2.txt:
+entries=70 rows=319 missing=41 pairs=381 exempt=24 stale=0 conflict=0
+
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/repo/quality/counters/c3-r56-used-by.py --repo /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/repo --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/work-before
+c3-r56-used-by.py: setup error: frozen-tables-v2.json is not a regular blob at --rev
+rc=2
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/repo/quality/check-r56-controls.py --claim c3 --repo /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/repo --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/work-before
+SETUP: .ufo/waves/round-56/frozen-tables-v2.json is not a regular blob at 13f0acbe3a15da2d9c08357a576d91dcadc85273
+rc=2
+
+Initial required archive attempt (archive output is a source tree, not a git object database; both commands accordingly returned setup rc=2):
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin archive 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 | tar -x -C /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/tree
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/tree/quality/counters/c3-r56-used-by.py --repo /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/tree --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/work-after
+c3-r56-used-by.py: setup error: rev does not resolve to a commit at repo
+rc=2
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/tree/quality/check-r56-controls.py --claim c3 --repo /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/tree --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/work-after
+SETUP: --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 is not a commit in /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC3/tree
+rc=2

@@ -1,0 +1,821 @@
+[
+ [
+  "m01",
+  "absolute_path",
+  "    if raw[0] == \"~\":",
+  "    if raw[0] == \"~\" and raw[1:2] == \"/\":",
+  "tilde only expands when a slash follows"
+ ],
+ [
+  "m02",
+  "absolute_path",
+  "            return parent + raw[2:]",
+  "            return parent + raw[3:]",
+  "off-by-one in the ../ branch"
+ ],
+ [
+  "m03",
+  "absolute_path",
+  "        if raw.startswith(\"./\"):",
+  "        if raw.startswith(\".//\"):",
+  "./ branch never taken"
+ ],
+ [
+  "m04",
+  "absolute_path",
+  "        return curdir + \"/\" + raw",
+  "        return curdir + raw",
+  "bare/dot path loses its separator"
+ ],
+ [
+  "m05",
+  "absolute_path",
+  "            pos = curdir.rfind(\"/\")",
+  "            pos = curdir.rfind(\"/\") + 1",
+  "off-by-one on the parent directory bound"
+ ],
+ [
+  "m06",
+  "absolute_path",
+  "        return home + raw[1:]",
+  "        return home + raw[1:] if home is not None else raw",
+  "tilde with home=None falls through"
+ ],
+ [
+  "m07",
+  "glob",
+  "        found = glob.glob(pattern)",
+  "        found = glob.glob(pattern, recursive=True)",
+  "recursive glob enables ** semantics"
+ ],
+ [
+  "m08",
+  "glob",
+  "        return sorted(found, key=bytewise)",
+  "        return sorted(found)",
+  "bytewise order replaced by code-point order"
+ ],
+ [
+  "m09",
+  "glob",
+  "    except (OSError, ValueError, RecursionError, re.error):",
+  "    except (OSError, ValueError):",
+  "re.error/RecursionError no longer swallowed"
+ ],
+ [
+  "m10",
+  "glob",
+  "            self.event_error(via, raw, \"nomatch\")",
+  "            self.event_error(via, raw, \"no-match\")",
+  "nomatch reason renamed"
+ ],
+ [
+  "m11",
+  "glob",
+  "        matches = expand(absolute_path(raw, cur, self.home))",
+  "        matches = expand(raw)",
+  "glob pattern not made absolute"
+ ],
+ [
+  "m12",
+  "stat",
+  "                self.event_error(via, raw, \"inaccessible\")",
+  "                self.event_error(via, raw, \"nomatch\")",
+  "inaccessible downgraded to nomatch"
+ ],
+ [
+  "m13",
+  "stat",
+  "                mode = os.stat(target).st_mode",
+  "                mode = os.lstat(target).st_mode",
+  "stat replaced by lstat (symlink not followed)"
+ ],
+ [
+  "m14",
+  "stat",
+  "                self.event_error(via, raw, \"inaccessible\")\n                return",
+  "                self.event_error(via, raw, \"inaccessible\")\n                continue",
+  "the rest of the line's matches is no longer skipped"
+ ],
+ [
+  "m15",
+  "stat",
+  "            except (OSError, ValueError):\n                self.event_error(via, raw, \"inaccessible\")",
+  "            except OSError:\n                self.event_error(via, raw, \"inaccessible\")",
+  "ValueError no longer caught"
+ ],
+ [
+  "m16",
+  "canonical",
+  "            if os.path.islink(path):",
+  "            if False:",
+  "canonical watch never emitted"
+ ],
+ [
+  "m17",
+  "canonical",
+  "                out.append((\"canonical\", canonical, \"file\", MASK_CANON, via))",
+  "                out.append((\"canonical\", canonical, \"file\", MASK_FILE, via))",
+  "canonical watch carries the primary mask"
+ ],
+ [
+  "m18",
+  "canonical",
+  "                    canonical = os.path.realpath(path, strict=True)",
+  "                    canonical = os.path.realpath(path)",
+  "realpath no longer strict"
+ ],
+ [
+  "m19",
+  "canonical",
+  "                except (OSError, ValueError, RuntimeError):",
+  "                except (OSError, ValueError):",
+  "RuntimeError no longer caught"
+ ],
+ [
+  "m20",
+  "canonical",
+  "                out.append((\"canonical\", canonical, \"file\", MASK_CANON, via))",
+  "                out.append((\"canonical\", canonical, \"file\", MASK_CANON, \"main\"))",
+  "canonical watch loses its via"
+ ],
+ [
+  "m21",
+  "typing",
+  "            elif os.path.lexists(path):",
+  "            elif os.path.exists(path):",
+  "lexists replaced by exists (dangling symlink becomes missing)"
+ ],
+ [
+  "m22",
+  "typing",
+  "                kind, mask = \"missing\", MASK_FILE",
+  "                kind, mask = \"missing\", MASK_DIR",
+  "missing watch carries the directory mask"
+ ],
+ [
+  "m23",
+  "typing",
+  "                kind, mask = \"missing\", MASK_FILE",
+  "                kind, mask = \"file\", MASK_FILE",
+  "missing watch typed as file"
+ ],
+ [
+  "m24",
+  "typing",
+  "                kind, mask = \"dir\", MASK_DIR",
+  "                kind, mask = \"dir\", MASK_FILE",
+  "directory watch carries the file mask"
+ ],
+ [
+  "m25",
+  "typing",
+  "            if os.path.isdir(path):",
+  "            if os.path.isdir(path) and not os.path.islink(path):",
+  "symlink to a directory typed as file"
+ ],
+ [
+  "m26",
+  "duplicates",
+  "        len(plan.entries), plan.unsupported, plan.errors)]",
+  "        len(set(p for p, _ in plan.entries)), plan.unsupported, plan.errors)]",
+  "paths= counts distinct paths"
+ ],
+ [
+  "m27",
+  "duplicates",
+  "        len(plan.entries), plan.unsupported, plan.errors)]",
+  "        len(plan.entries) + 1, plan.unsupported, plan.errors)]",
+  "paths= count off by one"
+ ],
+ [
+  "m28",
+  "duplicates",
+  "        for path, via in self.entries:",
+  "        for path, via in self.entries[:-1]:",
+  "last entry dropped"
+ ],
+ [
+  "m29",
+  "duplicates",
+  "            out.append((\"primary\", path, kind, mask, via))",
+  "            out.append((\"primary\", path, kind, mask, \"main\"))",
+  "primary watch loses its via"
+ ],
+ [
+  "m30",
+  "display-root",
+  "            given = root[:-1] if root.endswith(\"/\") else root",
+  "            given = root",
+  "trailing slash of display-root kept"
+ ],
+ [
+  "m31",
+  "display-root",
+  "            self.prefixes.append(given)",
+  "            pass",
+  "the given text of display-root is not a prefix"
+ ],
+ [
+  "m32",
+  "display-root",
+  "                self.prefixes.append(os.path.realpath(root))",
+  "                self.prefixes.append(root)",
+  "display-root realpath not used as prefix"
+ ],
+ [
+  "m33",
+  "display-root",
+  "            if path == prefix or path.startswith(prefix + \"/\"):",
+  "            if path.startswith(prefix):",
+  "prefix match without a path-separator boundary"
+ ],
+ [
+  "m34",
+  "display-root",
+  "            return \"$ROOT\" + path[len(prefix):]",
+  "            return \"$ROOT\" + path[len(prefix) + 1:]",
+  "$ROOT suffix drops a character"
+ ],
+ [
+  "m35",
+  "display-root",
+  "            return \"$ROOT\" + path[len(prefix):]",
+  "            return \"$ROOT/\" + path[len(prefix):]",
+  "$ROOT gains a separator"
+ ],
+ [
+  "m36",
+  "display-root",
+  "            given = root[:-1] if root.endswith(\"/\") else root",
+  "            given = root[:-1]",
+  "display-root always loses its last character"
+ ],
+ [
+  "m37",
+  "getoption",
+  "    gdata = read_getoption(opts[\"--getoption\"]) if \"--getoption\" in opts else None",
+  "    gdata = read_getoption(opts[\"--getoption\"]) if \"--getoption\" in opts else b\"\"",
+  "no --getoption behaves like an empty dump"
+ ],
+ [
+  "m38",
+  "getoption",
+  "        if isinstance(option, str) and type(value) is int:",
+  "        if isinstance(option, str) and isinstance(value, int):",
+  "bool accepted as an int value"
+ ],
+ [
+  "m39",
+  "getoption",
+  "        if not isinstance(obj, dict):",
+  "        if not isinstance(obj, (dict, list)):",
+  "JSON arrays accepted as records"
+ ],
+ [
+  "m40",
+  "getoption",
+  "        except (ValueError, RecursionError):",
+  "        except ValueError:",
+  "RecursionError no longer caught"
+ ],
+ [
+  "m41",
+  "getoption",
+  "        obj = json.loads(line, parse_constant=_no_constant)",
+  "        obj = json.loads(line)",
+  "NaN/Infinity accepted"
+ ],
+ [
+  "m42",
+  "getoption",
+  "        if not line:\n            continue",
+  "        if not line:\n            break",
+  "a blank line ends the dump scan"
+ ],
+ [
+  "m43",
+  "getoption",
+  "    return live.get(OPTION)",
+  "    return live.get(OPTION, 0)",
+  "an absent option reads as 0"
+ ],
+ [
+  "m44",
+  "getoption",
+  "        verdict = \"UNKNOWN\" if live is None else (\"AGREE\" if live == config_flag else \"DIFFER\")",
+  "        verdict = \"UNKNOWN\" if live is None else (\"AGREE\" if live != config_flag else \"DIFFER\")",
+  "AGREE and DIFFER swapped"
+ ],
+ [
+  "m45",
+  "getoption",
+  "        config_flag = 1 if off else 0",
+  "        config_flag = 0 if off else 1",
+  "config flag inverted"
+ ],
+ [
+  "m46",
+  "getoption",
+  "    off = value is not None and bool(value.strip(\"0\"))",
+  "    off = value is not None",
+  "any set value counts as off"
+ ],
+ [
+  "m47",
+  "getoption",
+  "        if self.value is not None and self.value.strip(\"0\"):",
+  "        if self.value is not None:",
+  "a zero value empties the watch list"
+ ],
+ [
+  "m48",
+  "getoption",
+  "            ok, number_text = config_int(rhs.split(\"#\", 1)[0].strip(WS))",
+  "            ok, number_text = config_int(rhs)",
+  "comment not cut from an option value"
+ ],
+ [
+  "m49",
+  "getoption",
+  "            if \"$\" in line or \"{\" in line or \"\\\\\" in line or \"##\" in rhs:",
+  "            if \"$\" in line or \"{\" in line or \"##\" in rhs:",
+  "backslash no longer unsupported"
+ ],
+ [
+  "m50",
+  "grammar",
+  "                if stack:\n                    self.unsupported += 1",
+  "                if False:\n                    self.unsupported += 1",
+  "source inside a category no longer unsupported"
+ ],
+ [
+  "m51",
+  "grammar",
+  "            if lhs == \"source\":",
+  "            if lhs.startswith(\"source\"):",
+  "a key merely starting with source is a source"
+ ],
+ [
+  "m52",
+  "grammar",
+  "            key = \":\".join(stack) + \":\" + lhs if stack else lhs",
+  "            key = lhs",
+  "category stack ignored in the key"
+ ],
+ [
+  "m53",
+  "grammar",
+  "                    if stack:\n                        stack.pop()",
+  "                    if stack or True:\n                        stack.pop()",
+  "pop without an emptiness guard"
+ ],
+ [
+  "m54",
+  "grammar",
+  "                    stack.append(line[:-1].strip(WS))",
+  "                    stack.append(line)",
+  "category name keeps its brace"
+ ],
+ [
+  "m55",
+  "grammar",
+  "            if not line or line[0] == \"#\":",
+  "            if not line:",
+  "comment lines are parsed"
+ ],
+ [
+  "m56",
+  "grammar",
+  "            line = raw_line.strip(WS)",
+  "            line = raw_line.strip()",
+  "strip uses the wider default set"
+ ],
+ [
+  "m57",
+  "grammar",
+  "        for number, raw_line in enumerate(data.decode(\"utf-8\", errors=\"replace\").split(\"\\n\"), 1):",
+  "        for number, raw_line in enumerate(data.decode(\"utf-8\", errors=\"replace\").split(\"\\n\"), 0):",
+  "line numbers start at 0"
+ ],
+ [
+  "m58",
+  "grammar",
+  "                self.source(rhs.split(\"#\", 1)[0].strip(WS), path, number, depth)",
+  "                self.source(rhs.split(\"#\", 1)[0], path, number, depth)",
+  "source path not stripped"
+ ],
+ [
+  "m59",
+  "limits",
+  "                if depth + 1 > MAX_DEPTH:",
+  "                if depth + 1 >= MAX_DEPTH:",
+  "depth cap off by one"
+ ],
+ [
+  "m60",
+  "limits",
+  "MAX_DEPTH = 16",
+  "MAX_DEPTH = 15",
+  "depth cap lowered"
+ ],
+ [
+  "m61",
+  "limits",
+  "MAX_BYTES = 1048576",
+  "MAX_BYTES = 1048575",
+  "size limit lowered"
+ ],
+ [
+  "m62",
+  "limits",
+  "        data = fh.read(MAX_BYTES + 1)",
+  "        data = fh.read(MAX_BYTES)",
+  "one byte too few is read to detect oversize"
+ ],
+ [
+  "m63",
+  "limits",
+  "    if len(data) > MAX_BYTES:",
+  "    if len(data) >= MAX_BYTES:",
+  "size comparison off by one"
+ ],
+ [
+  "m64",
+  "limits",
+  "MAX_ENTRIES = 262144",
+  "MAX_ENTRIES = 1024",
+  "entry cap lowered"
+ ],
+ [
+  "m65",
+  "limits",
+  "        if len(self.entries) >= MAX_ENTRIES:",
+  "        if len(self.entries) > MAX_ENTRIES:",
+  "entry cap comparison off by one"
+ ],
+ [
+  "m66",
+  "usage",
+  "    if len(argv) % 2:",
+  "    if len(argv) % 2 == 0:",
+  "argument parity inverted"
+ ],
+ [
+  "m67",
+  "usage",
+  "        if flag not in (\"--config\", \"--home\", \"--display-root\", \"--getoption\") or flag in opts:",
+  "        if flag not in (\"--config\", \"--home\", \"--display-root\", \"--getoption\") and flag in opts:",
+  "a repeated flag is accepted"
+ ],
+ [
+  "m68",
+  "usage",
+  "        if not value.startswith(\"/\"):",
+  "        if not value.startswith(\"/\") and False:",
+  "a relative argument value is accepted"
+ ],
+ [
+  "m69",
+  "usage",
+  "    if \"--config\" not in opts:",
+  "    if \"--config\" in opts:",
+  "config requirement inverted"
+ ],
+ [
+  "m70",
+  "absolute_path",
+  "    if raw[0] == \"/\":",
+  "    if raw[0] != \"/\":",
+  "absolute-path test inverted"
+ ],
+ [
+  "m71",
+  "absolute_path",
+  "        if raw.startswith(\"../\"):",
+  "        if raw.startswith(\"..\"):",
+  "../ prefix widened to any two dots"
+ ],
+ [
+  "m72",
+  "absolute_path",
+  "        if raw.startswith(\"./\"):",
+  "        if raw.startswith(\".\"):",
+  "./ prefix widened to any dot"
+ ],
+ [
+  "m73",
+  "absolute_path",
+  "    pos = cur.rfind(\"/\")",
+  "    pos = cur.rfind(\"/\") - 1",
+  "directory bound off by one"
+ ],
+ [
+  "m74",
+  "absolute_path",
+  "        return home + raw[1:]",
+  "        return home + raw[1:].lstrip(\"/\")",
+  "tilde home joined without a separator"
+ ],
+ [
+  "m75",
+  "absolute_path",
+  "    curdir = cur[:pos] if pos >= 0 else cur",
+  "    curdir = cur[:pos] if pos > 0 else cur",
+  "directory bound off by one"
+ ],
+ [
+  "m76",
+  "absolute_path",
+  "            parent = curdir[:pos] if pos >= 0 else curdir",
+  "            parent = curdir[:pos] if pos > 0 else curdir",
+  "parent bound off by one"
+ ],
+ [
+  "m77",
+  "glob",
+  "        found = glob.glob(pattern)",
+  "        found = glob.glob(pattern, recursive=False)",
+  "explicitly non-recursive glob"
+ ],
+ [
+  "m78",
+  "glob",
+  "        return sorted(found, key=bytewise)",
+  "        return sorted(found, key=bytewise, reverse=True)",
+  "bytewise order reversed"
+ ],
+ [
+  "m79",
+  "glob",
+  "        found = glob.glob(pattern)",
+  "        found = glob.glob(pattern, include_hidden=True)",
+  "hidden files included in the glob"
+ ],
+ [
+  "m80",
+  "stat",
+  "            if stat.S_ISREG(mode):",
+  "            if not stat.S_ISREG(mode):",
+  "regular-file test inverted"
+ ],
+ [
+  "m81",
+  "stat",
+  "            elif stat.S_ISDIR(mode):",
+  "            elif not stat.S_ISDIR(mode):",
+  "directory test inverted"
+ ],
+ [
+  "m82",
+  "stat",
+  "            target = absolute_path(match, cur, self.home) if match else match",
+  "            target = match",
+  "match not made absolute"
+ ],
+ [
+  "m83",
+  "stat",
+  "        if len(raw) < 2:",
+  "        if len(raw) < 1:",
+  "bogus threshold lowered"
+ ],
+ [
+  "m84",
+  "stat",
+  "        if len(raw) < 2:",
+  "        if len(raw) < 3:",
+  "bogus threshold raised"
+ ],
+ [
+  "m85",
+  "canonical",
+  "                out.append((\"canonical\", canonical, \"file\", MASK_CANON, via))",
+  "                out.append((\"canonical\", canonical, \"file\", MASK_CANON, path))",
+  "canonical via replaced by the path"
+ ],
+ [
+  "m86",
+  "canonical",
+  "            if os.path.islink(path):",
+  "            if not os.path.islink(path):",
+  "symlink test inverted"
+ ],
+ [
+  "m87",
+  "canonical",
+  "            out.append((\"primary\", path, kind, mask, via))",
+  "            out.append((\"primary\", path, kind, mask, canonical))",
+  "primary watch via replaced by a canonical name"
+ ],
+ [
+  "m88",
+  "typing",
+  "            if os.path.isdir(path):",
+  "            if os.path.isfile(path):",
+  "directory test replaced by file test"
+ ],
+ [
+  "m89",
+  "typing",
+  "            elif os.path.lexists(path):",
+  "            elif os.path.islink(path):",
+  "existence test replaced by a symlink test"
+ ],
+ [
+  "m90",
+  "typing",
+  "                kind, mask = \"dir\", MASK_DIR",
+  "                kind, mask = \"missing\", MASK_DIR",
+  "directory watch typed as missing"
+ ],
+ [
+  "m91",
+  "duplicates",
+  "        for path, via in self.entries:",
+  "        for path, via in reversed(self.entries):",
+  "entry order reversed"
+ ],
+ [
+  "m92",
+  "duplicates",
+  "        for path, via in self.entries:",
+  "        for path, via in self.entries[1:]:",
+  "first entry dropped"
+ ],
+ [
+  "m93",
+  "duplicates",
+  "        self.entries.append((path, via))",
+  "        self.entries.append((via, path))",
+  "entry tuple order swapped"
+ ],
+ [
+  "m94",
+  "display-root",
+  "            if path == prefix or path.startswith(prefix + \"/\"):",
+  "            if path.startswith(prefix + \"/\"):",
+  "the prefix itself no longer matches"
+ ],
+ [
+  "m95",
+  "display-root",
+  "            given = root[:-1] if root.endswith(\"/\") else root",
+  "            given = root[1:]",
+  "display-root loses its first character"
+ ],
+ [
+  "m96",
+  "display-root",
+  "                self.prefixes.append(os.path.realpath(root))",
+  "                self.prefixes.append(os.path.realpath(root) + \"/\")",
+  "realpath prefix gains a separator"
+ ],
+ [
+  "m97",
+  "getoption",
+  "    live = live_value(gdata) if gdata is not None else None",
+  "    live = live_value(gdata) if gdata else None",
+  "an empty dump is treated as no dump"
+ ],
+ [
+  "m98",
+  "getoption",
+  "    if gdata is not None:",
+  "    if gdata:",
+  "the LIVE line is emitted for an empty dump"
+ ],
+ [
+  "m99",
+  "getoption",
+  "        option, value = obj.get(\"option\"), obj.get(\"int\")",
+  "        option, value = obj.get(\"option\"), obj.get(\"value\")",
+  "the dump's key is renamed"
+ ],
+ [
+  "m100",
+  "getoption",
+  "        live[option] = value",
+  "        live.setdefault(option, value)",
+  "the first record of an option wins"
+ ],
+ [
+  "m101",
+  "getoption",
+  "        if isinstance(option, str) and type(value) is int:",
+  "        if not isinstance(option, str) or type(value) is int:",
+  "the record filter inverted"
+ ],
+ [
+  "m102",
+  "getoption",
+  "    off = value is not None and bool(value.strip(\"0\"))",
+  "    off = value is not None and bool(value.strip(\"0\").strip(\" \"))",
+  "a space-padded zero is not off"
+ ],
+ [
+  "m103",
+  "grammar",
+  "            if lhs.startswith(\"$\"):",
+  "            if not lhs.startswith(\"$\"):",
+  "the variable rule inverted"
+ ],
+ [
+  "m104",
+  "grammar",
+  "            lhs, rhs = lhs.strip(WS), rhs.strip(WS)",
+  "            lhs, rhs = lhs.strip(WS), rhs",
+  "the right-hand side is not stripped"
+ ],
+ [
+  "m105",
+  "grammar",
+  "            lhs, _, rhs = line.partition(\"=\")",
+  "            lhs, _, rhs = line.rpartition(\"=\")",
+  "the last '=' splits instead of the first"
+ ],
+ [
+  "m106",
+  "grammar",
+  "            if key != OPTION:",
+  "            if key == OPTION:",
+  "the option-key test inverted"
+ ],
+ [
+  "m107",
+  "grammar",
+  "            if ok:",
+  "            if not ok:",
+  "the value-accept test inverted"
+ ],
+ [
+  "m108",
+  "grammar",
+  "            if \"$\" in line or \"{\" in line or \"\\\\\" in line or \"##\" in rhs:",
+  "            if \"$\" in rhs or \"{\" in rhs or \"\\\\\" in rhs or \"##\" in rhs:",
+  "the unsupported-value test moved from the line to the RHS"
+ ],
+ [
+  "m109",
+  "limits",
+  "        if len(self.entries) >= MAX_ENTRIES:",
+  "        if len(self.entries) >= MAX_ENTRIES // 2:",
+  "entry cap halved"
+ ],
+ [
+  "m110",
+  "limits",
+  "                if depth + 1 > MAX_DEPTH:",
+  "                if depth + 1 > MAX_DEPTH + 1:",
+  "depth cap raised"
+ ],
+ [
+  "m111",
+  "limits",
+  "MAX_BYTES = 1048576",
+  "MAX_BYTES = 2097152",
+  "size limit doubled"
+ ],
+ [
+  "m112",
+  "limits",
+  "    if len(data) > MAX_BYTES:",
+  "    if len(data) > 0:",
+  "the size limit is never applied"
+ ],
+ [
+  "m113",
+  "usage",
+  "    if len(argv) % 2:",
+  "    if len(argv) % 2 != 2:",
+  "the argument count test changed"
+ ],
+ [
+  "m114",
+  "usage",
+  "        opts[flag] = value",
+  "        opts[flag] = value.strip()",
+  "the argument value is stripped"
+ ],
+ [
+  "m115",
+  "watchlist",
+  "        out = []\n        if self.value is not None and self.value.strip(\"0\"):",
+  "        out = []\n        if self.value is not None and self.value.strip(\"1\"):",
+  "a value of 1 does not empty the watch list"
+ ],
+ [
+  "m116",
+  "watchlist",
+  "        if self.value is not None and self.value.strip(\"0\"):",
+  "        if self.value is not None and self.value.strip(\"0\") != \"\":",
+  "the watch-list gate always fires"
+ ],
+ [
+  "m117",
+  "watchlist",
+  "            out.append((\"primary\", path, kind, mask, via))",
+  "            out.append((\"primary\", os.path.realpath(path), kind, mask, via))",
+  "the primary watch prints the realpath"
+ ]
+]

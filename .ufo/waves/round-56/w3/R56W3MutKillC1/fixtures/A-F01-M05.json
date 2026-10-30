@@ -1,0 +1,39 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F01",
+  "attacks": "row: '|' inside a cell (no spaces) must be rejected",
+  "expect": "pristine reports row:K01",
+  "repo_sha": "07e3067392fa9d0beae85fc47bc752be936f717e",
+  "patch": "A-F01.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=07e3067392fa9d0beae85fc47bc752be936f717e rows=29/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K01",
+   "err": "",
+   "legs": [
+    "row:K01"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M05",
+  "label": "row: '|' inside a cell check dropped",
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=07e3067392fa9d0beae85fc47bc752be936f717e rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "err": "",
+  "legs": [],
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "row:K01"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

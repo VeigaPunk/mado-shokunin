@@ -1,0 +1,93 @@
+# gate-draft evidence — seat R56W3ScribeGateA2 — 2026-10-30T05:48:42Z
+
+## 1. independent fetch (scratch), sha256, sizes, line counts
+$ mkdir -p /fast/scratch/hyaku/mado-r56/R56W3ScribeGateA2 && cd $_
+$ curl -sS --fail --max-time 60 -o inotify_add_watch.2.html https://man7.org/linux/man-pages/man2/inotify_add_watch.2.html
+$ curl -sS --fail --max-time 60 -o proc_pid_fdinfo.5.html https://man7.org/linux/man-pages/man5/proc_pid_fdinfo.5.html
+$ sha256sum inotify_add_watch.2.html proc_pid_fdinfo.5.html
+98fe7feb381fa2687e8a3962e6d78a49cb1ad07c543f93449dcb42d6712c3d6d  inotify_add_watch.2.html
+f9e12387bf013d7c016f0015de5801932022a2fe6786d53e1cc84c385952d8a1  proc_pid_fdinfo.5.html
+$ wc -c -l inotify_add_watch.2.html proc_pid_fdinfo.5.html
+  258 11345 inotify_add_watch.2.html
+  366 14694 proc_pid_fdinfo.5.html
+  624 26039 total
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/fetch/man7-{inotify_add_watch.2,proc_pid_fdinfo.5}.html
+98fe7feb381fa2687e8a3962e6d78a49cb1ad07c543f93449dcb42d6712c3d6d  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/fetch/man7-inotify_add_watch.2.html
+f9e12387bf013d7c016f0015de5801932022a2fe6786d53e1cc84c385952d8a1  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/fetch/man7-proc_pid_fdinfo.5.html
+
+## 2. quote verification (byte-exactness, word counts, single-line containment)
+$ python3 -I verify-quotes.py   (output below)
+name                   line     words   bytes_exact in_line
+S396-gate              93       11      True      True
+S396-ctx89             89       9       True      True
+S396-ctx91             91       10      True      True
+S396-ctx94             94       10      True      True
+S396-L1-88             88       9       True      True
+S396-L1-88-demarkup    88       9       False     False
+S397-gate              160      9       True      True
+S397-ctx161            161      11      True      True
+S397-ctx157            157      9       True      True
+
+=== proposed Gate quotes (primary, byte-exact, single line) ===
+S396  inotify_add_watch.2.html:93  -> 'already being watched (perhaps via a different link to the same' words= 11
+S397  proc_pid_fdinfo.5.html:160  -> 'Each of the lines beginning with "inotify" displays information' words= 9
+
+## 3. footline dates and rendering dates of the two pages
+$ python3 -I (regex over the fetched bytes)
+<span class="footline">Linux man-pages 6.19            2026-02-08           <i>inotify_add_watch</i>(2)</span>
+<span class="footline">Linux man-pages 6.19            2026-07-18             <i>proc_pid_fdinfo</i>(5)</span>
+inotify_add_watch.2.html:HTML rendering created 2026-09-09
+proc_pid_fdinfo.5.html:HTML rendering created 2026-09-09
+inotify_add_watch.2.html:obtained from the tarball man-pages-6.19.tar.gz
+proc_pid_fdinfo.5.html:obtained from the tarball man-pages-6.19.tar.gz
+-- S390 inotify(7) footline (the date the L1 draft copied):
+<span class="footline">Linux man-pages 6.19            2026-02-14                     <i>inotify</i>(7)</span>
+
+## 4. registry coverage checks (tip tree, read-only)
+$ grep -c fdinfo /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+0
+$ grep -c "/proc" .../corpus/SOURCES.md
+0
+$ grep -c man7.org .../corpus/SOURCES.md
+1
+$ grep -oE "^\| S[0-9]{3} " .../corpus/SOURCES.md | tail -1
+| S395 
+$ grep -cE "^\| S[0-9]{3} " .../corpus/SOURCES.md
+332
+
+## 5. pin tracking status at the working tree (lane, read-only)
+$ git -C <lane> ls-files --error-unmatch .ufo/waves/round-56/fetch/man7-inotify_add_watch.2.html
+error: pathspec '.ufo/waves/round-56/fetch/man7-inotify_add_watch.2.html' did not match any file(s) known to git
+Did you forget to 'git add'?
+$ git -C <lane> ls-files --error-unmatch .ufo/waves/round-56/fetch/man7-proc_pid_fdinfo.5.html
+error: pathspec '.ufo/waves/round-56/fetch/man7-proc_pid_fdinfo.5.html' did not match any file(s) known to git
+Did you forget to 'git add'?
+$ git -C <lane> status --porcelain (fetch/attempt2 lines)
+?? .ufo/waves/round-56/attempt2/
+?? .ufo/waves/round-56/fetch/man7-inotify_add_watch.2.html
+?? .ufo/waves/round-56/fetch/man7-proc_pid_fdinfo.5.html
+
+## 6. C3 measured on a scratch clone with the two rows appended (mined + lesson used-by)
+$ git clone --shared <lane> clone ; cd clone ; assert rev-parse --show-toplevel == $PWD
+toplevel: /fast/scratch/hyaku/mado-r56/R56W3ScribeGateA2/clone
+$ <append S396/S397 rows, mined, used-by corpus/lessons/round-56.md, before "## Paths"> ; git -c user.name=ctl -c user.email=ctl@ctl commit -qam test
+test commit: cd0c017219a9482b3dc2fbdcf92c3d16a22d1b9f
+$ python3 -I quality/counters/c3-r56-used-by.py --repo <clone> --rev <commit> --work <work>
+output: MADO_USED_BY: rev=cd0c017219a9482b3dc2fbdcf92c3d16a22d1b9f entries=71 rows=334 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none  (exit 0)
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo <clone> --rev <commit> --work <work>
+output: MADO_AUTORELOAD_ENTRY: rev=cd0c017219a9482b3dc2fbdcf92c3d16a22d1b9f rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none  (exit 0)
+
+## 7. census before/after on the same scratch tree
+$ bash scripts/sources-census.sh validate <clone>   (rows appended)
+38
+$ <revert corpus/SOURCES.md to tip> ; bash scripts/sources-census.sh validate <clone>
+38
+$ diff census-before.txt census-after.txt
+(identical: no new census finding)
+exit codes: validate 0 in both runs
+
+## 8. used-by parser regex at the frozen tip
+$ git show 0f3a5436:quality/counters/c3-r56-used-by.py | grep -n USED_BY
+51:USED_BY = re.compile(rb"corpus/knowledge/[A-Za-z0-9_.-]+\.md")
+$ python3 -I parse_registry probe with lesson path in cell 11
+usedby['S396'] = set()  (lesson path not collected -> cannot be counted as extra)

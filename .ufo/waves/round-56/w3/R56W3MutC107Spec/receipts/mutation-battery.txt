@@ -1,0 +1,281 @@
+criterion-107 acceptance-vector mutation battery
+oracle (pristine master): /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/w3/R56W3MutC107Spec/vectors/reference-check-107.py
+oracle sha256 (pristine): 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+vectors: 23
+detector: run the oracle on each fixture repo at its commit; require rc == expected rc, every strict token present, every forbidden token absent
+
+BASELINE (pristine master): 23/23 vectors pass
+
+M01-boundary-any-prefix — occurrence counting ignores the character before NAME:
+  patch: 'if prev is None or prev not in WORD:' -> 'if True:'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : f77ffd5f61fafcc8cf79631e44057c12c4ac231b5cda713d486889b5f557dfba
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V06: rc=0 want=1 missing=['locators=none', 'verdict=MISS', 'covered=0', 'miss=1', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S907 line=35 name=ConfigWatcher.cpp locators=33-40 eof=unchecked verdict=OK
+      CHECK107: rows=1 covered=1 miss=0 verdict=OK
+      
+  survived vectors: V01,V02,V03,V04,V05,V07,V08,V09,V10,V11,V12,V13,V14,V15,V16,V17,V18,V19,V20,V21,V22,V23
+
+M02-boundary-hyphen-slash — hyphen/slash before NAME: treated as an identifier char
+  patch: 'if prev is None or prev not in WORD:' -> 'if prev is None or (prev not in WORD and prev not in "-/"):'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : c2a8f5f7ac86cd54c29adb21003f2c3bafa606f8a55b6ce2075870fd7f390881
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V07: rc=1 want=0 missing=['locators=33-40', 'verdict=OK', 'locators=33-40', 'verdict=OK', 'covered=2', 'miss=0', 'verdict=OK'] forbidden_present=['verdict=FAIL']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S908 line=35 name=ConfigWatcher.cpp locators=none eof=unchecked verdict=MISS
+      ANCHOR_COVER: row=K02 sid=S909 line=35 name=ConfigWatcher.cpp locators=none eof=unchecked verdict=MISS
+      CHECK107: rows=2 covered=0 miss=2 verdict=FAIL
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V08,V09,V10,V11,V12,V13,V14,V15,V16,V17,V18,V19,V20,V21,V22,V23
+
+M03-reversed-range-covers — reversed range M<N treated as covering
+  patch: 'covered_here = any(\n                hi >= n and n <= line_no <= hi for n, hi in flat\n            )' -> 'covered_here = any(\n                n <= line_no <= max(n, hi) for n, hi in flat\n            )'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : 677422ca33666b0dc055b2cc7562ba728354eedc7c5c7946072b8a200a0214fc
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V08: rc=0 want=1 missing=['verdict=MISS', 'covered=0', 'miss=1', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S910 line=50 name=ConfigWatcher.cpp locators=50-40 eof=unchecked verdict=OK
+      CHECK107: rows=1 covered=1 miss=0 verdict=OK
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V09,V10,V11,V12,V13,V14,V15,V16,V17,V18,V19,V20,V21,V22,V23
+
+M04-eof-not-checked — length bound (past-eof) not applied
+  patch: 'past = any(max(n, hi) > pieces for n, hi in flat)' -> 'past = False'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : d2fbc1a72dd37ac79d515c002ad251b367ff831ae1c7c0f41c8edd4d22e5341e
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V10: rc=0 want=1 missing=['verdict=MISS', 'reason=past-eof', 'covered=0', 'miss=1', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S912 line=500 name=ConfigWatcher.cpp locators=500 eof=checked verdict=OK
+      CHECK107: rows=1 covered=1 miss=0 verdict=OK
+      
+  killed by V11: rc=0 want=1 missing=['verdict=MISS', 'verdict=MISS', 'reason=past-eof', 'covered=0', 'miss=2', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S913 line=10 name=ConfigWatcher.cpp locators=10,20,500 eof=checked verdict=OK
+      ANCHOR_COVER: row=K02 sid=S913 line=20 name=ConfigWatcher.cpp locators=10,20,500 eof=checked verdict=OK
+      CHECK107: rows=2 covered=2 miss=0 verdict=OK
+      
+  killed by V22: rc=0 want=1 missing=['verdict=MISS', 'reason=past-eof', 'covered=0', 'miss=1', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S924 line=200 name=ConfigWatcher.cpp locators=200,201 eof=checked verdict=OK
+      CHECK107: rows=1 covered=1 miss=0 verdict=OK
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V08,V09,V12,V13,V14,V15,V16,V17,V18,V19,V20,V21,V23
+
+M05-eof-covering-locator-only — length bound applied only to the locator that covers the row
+  patch: 'past = any(max(n, hi) > pieces for n, hi in flat)' -> 'past = any(\n                    max(n, hi) > pieces\n                    for n, hi in flat\n                    if n <= line_no <= hi\n                )'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : 41c5e041b0787b9f8bb65f3c8a636a29936b6f541498af3c22e8a562ef127dcc
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V11: rc=0 want=1 missing=['verdict=MISS', 'verdict=MISS', 'reason=past-eof', 'covered=0', 'miss=2', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S913 line=10 name=ConfigWatcher.cpp locators=10,20,500 eof=checked verdict=OK
+      ANCHOR_COVER: row=K02 sid=S913 line=20 name=ConfigWatcher.cpp locators=10,20,500 eof=checked verdict=OK
+      CHECK107: rows=2 covered=2 miss=0 verdict=OK
+      
+  killed by V22: rc=0 want=1 missing=['verdict=MISS', 'reason=past-eof', 'covered=0', 'miss=1', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S924 line=200 name=ConfigWatcher.cpp locators=200,201 eof=checked verdict=OK
+      CHECK107: rows=1 covered=1 miss=0 verdict=OK
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V08,V09,V10,V12,V13,V14,V15,V16,V17,V18,V19,V20,V21,V23
+
+M06-comma-space-not-allowed — the one optional space after a comma is not allowed
+  patch: 'if j < len(text) and text[j] == " ":\n                j += 1' -> ''
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : 374fffd077947c980d59c67f6e84f3c001390c5a3cebbbb3824d158edd158324
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V13: rc=1 want=0 missing=['covered=2', 'miss=0'] forbidden_present=['verdict=FAIL']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S915 line=46 name=ConfigWatcher.cpp locators=33,46 eof=unchecked verdict=OK
+      ANCHOR_COVER: row=K02 sid=S916 line=46 name=ConfigWatcher.cpp locators=33 eof=unchecked verdict=MISS
+      CHECK107: rows=2 covered=1 miss=1 verdict=FAIL
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V08,V09,V10,V11,V12,V14,V15,V16,V17,V18,V19,V20,V21,V22,V23
+
+M07-malformed-range-allowed — a range in the entry's pin cell is accepted as a pin
+  patch: 'PIN_CELL_RE = re.compile(r"^([^:\\s]+):(\\d+)$")' -> 'PIN_CELL_RE = re.compile(r"^([^:\\s]+):(\\d+(?:-\\d+)?)$")'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : bb8669f0ea14425ba7fccc6c7f77ed4ee10628cf3fc735630a451c1094333349
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V02: rc=1 want=1 missing=['row=K01', 'sid=S902', 'verdict=MISS', 'row=K02', 'sid=S902', 'verdict=MISS', 'row=K03', 'sid=S902', 'verdict=MISS', 'reason=malformed-pin', 'rows=3', 'covered=0', 'miss=3', 'verdict=FAIL'] forbidden_present=[]
+    mutant stdout:
+      
+  survived vectors: V01,V03,V04,V05,V06,V07,V08,V09,V10,V11,V12,V13,V14,V15,V16,V17,V18,V19,V20,V21,V22,V23
+
+M08-dup-id-ignored — duplicate registry ids accepted (first row used)
+  patch: 'if len(rws) > 1:' -> 'if False:'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : ca7a0489cc88c3b2d2b47c29784cfa8f3e65580b13f27ab1da9708cb2d1223e4
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V04: rc=0 want=1 missing=['verdict=MISS', 'reason=dup-id', 'covered=0', 'miss=1', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S904 line=35 name=ConfigWatcher.cpp locators=33-40 eof=unchecked verdict=OK
+      CHECK107: rows=1 covered=1 miss=0 verdict=OK
+      
+  survived vectors: V01,V02,V03,V05,V06,V07,V08,V09,V10,V11,V12,V13,V14,V15,V16,V17,V18,V19,V20,V21,V22,V23
+
+M09-no-registry-row-ignored — a missing registry row is not a violation
+  patch: 'if len(rws) == 0:' -> 'if False:'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : 84cda3289bfc163a3bf25c131a488e48aad567897bc07efc63e7896bf278e031
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V03: rc=1 want=1 missing=['row=K01', 'sid=S903', 'line=35', 'verdict=MISS', 'reason=no-registry-row', 'rows=1', 'covered=0', 'miss=1', 'verdict=FAIL'] forbidden_present=[]
+    mutant stdout:
+      
+  survived vectors: V01,V02,V04,V05,V06,V07,V08,V09,V10,V11,V12,V13,V14,V15,V16,V17,V18,V19,V20,V21,V22,V23
+
+M10-noname-ignored — NAME containing # or ? is accepted
+  patch: 'if name is None or "#" in name or "?" in name:' -> 'if name is None:'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : a2359b555b06d1974a03b4ae333fa9cbf1b2d2cd51e972b7354241ced364d7c3
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V05: rc=1 want=1 missing=['reason=no-name'] forbidden_present=[]
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S905 line=35 name=ConfigWatcher.cpp?rev=1 locators=none eof=unchecked verdict=MISS
+      ANCHOR_COVER: row=K02 sid=S906 line=35 name=ConfigWatcher.cpp#L10 locators=none eof=unchecked verdict=MISS
+      CHECK107: rows=2 covered=0 miss=2 verdict=FAIL
+      
+  survived vectors: V01,V02,V03,V04,V06,V07,V08,V09,V10,V11,V12,V13,V14,V15,V16,V17,V18,V19,V20,V21,V22,V23
+
+M11-trailing-punct-kept — trailing `).,;` not stripped from the last path component
+  patch: 'while name and name[-1] in TRAILING:' -> 'while False:'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : 5825360b894517e7514659793c32f94182f0e90e9bed6c8642e5e0025db14745
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V20: rc=1 want=0 missing=['name=ConfigWatcher.cpp', 'locators=33-40', 'verdict=OK', 'covered=1', 'miss=0', 'verdict=OK'] forbidden_present=['verdict=FAIL']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S922 line=35 name=ConfigWatcher.cpp). locators=none eof=unchecked verdict=MISS
+      CHECK107: rows=1 covered=0 miss=1 verdict=FAIL
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V08,V09,V10,V11,V12,V13,V14,V15,V16,V17,V18,V19,V21,V22,V23
+
+M12-id-exactly-three-digits — registry ids with four digits are out of scope
+  patch: 'SID_RE = re.compile(r"^S\\d{3,}$")' -> 'SID_RE = re.compile(r"^S\\d{3}$")'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : ec7aedf47f2cfb5a72fe3f9614e5c2aa9392a5983eec3fadb3f2a633fbcea8ae
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V19: rc=1 want=0 missing=['row=K01', 'sid=S0921', 'line=35', 'name=ConfigWatcher.cpp', 'locators=33-40', 'eof=unchecked', 'verdict=OK', 'rows=1', 'covered=1', 'verdict=OK'] forbidden_present=['verdict=FAIL']
+    mutant stdout:
+      CHECK107: rows=0 covered=0 miss=0 verdict=FAIL
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V08,V09,V10,V11,V12,V13,V14,V15,V16,V17,V18,V20,V21,V22,V23
+
+M13-fenced-code-in-scope — table rows inside fenced code are counted
+  patch: 'if s.startswith("```") or s.startswith("~~~"):\n            in_fence = True\n            continue' -> 'if False:\n            pass'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : 33aec1f1d2026cea0f531505938f5fdf4bd4c18aa5ca53e8098af39d88558bc7
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V16: rc=0 want=0 missing=['rows=1', 'covered=1'] forbidden_present=[]
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S919 line=35 name=ConfigWatcher.cpp locators=33-40 eof=unchecked verdict=OK
+      ANCHOR_COVER: row=K02 sid=S919 line=35 name=ConfigWatcher.cpp locators=33-40 eof=unchecked verdict=OK
+      CHECK107: rows=2 covered=2 miss=0 verdict=OK
+      
+  killed by V17: rc=0 want=1 missing=['rows=0', 'covered=0', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S920 line=35 name=ConfigWatcher.cpp locators=33-40 eof=unchecked verdict=OK
+      CHECK107: rows=1 covered=1 miss=0 verdict=OK
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V08,V09,V10,V11,V12,V13,V14,V15,V18,V19,V20,V21,V22,V23
+
+M14-empty-entry-green — an entry with no evidence rows reads OK
+  patch: "verdict={'OK' if miss == 0 and rows > 0 else 'FAIL'}" -> "verdict={'OK' if miss == 0 else 'FAIL'}"
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : e582583263cbf6baa456b712e143018089b24077d0df93a786e3b6037c67586b
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V17: rc=1 want=1 missing=['verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      CHECK107: rows=0 covered=0 miss=0 verdict=OK
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V08,V09,V10,V11,V12,V13,V14,V15,V16,V18,V19,V20,V21,V22,V23
+
+M15-cover-exclusive-bounds — cover uses strict N < L < M instead of N <= L <= M
+  patch: 'covered_here = any(\n                hi >= n and n <= line_no <= hi for n, hi in flat\n            )' -> 'covered_here = any(\n                n < line_no < hi for n, hi in flat\n            )'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : 2c454113bef70cfaecb3b348e2173b6f2ade6134677b56c4a115d6946c929e6a
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V13: rc=1 want=0 missing=['verdict=OK', 'verdict=OK', 'covered=2', 'miss=0', 'verdict=OK'] forbidden_present=['verdict=FAIL']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S915 line=46 name=ConfigWatcher.cpp locators=33,46 eof=unchecked verdict=MISS
+      ANCHOR_COVER: row=K02 sid=S916 line=46 name=ConfigWatcher.cpp locators=33,46 eof=unchecked verdict=MISS
+      CHECK107: rows=2 covered=0 miss=2 verdict=FAIL
+      
+  killed by V14: rc=1 want=0 missing=['verdict=OK', 'covered=1', 'miss=0', 'verdict=OK'] forbidden_present=['verdict=FAIL']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S917 line=35 name=ConfigWatcher.cpp locators=35 eof=unchecked verdict=MISS
+      CHECK107: rows=1 covered=0 miss=1 verdict=FAIL
+      
+  killed by V15: rc=1 want=0 missing=['verdict=OK', 'covered=1', 'miss=0', 'verdict=OK'] forbidden_present=['verdict=FAIL']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S918 line=35 name=ConfigWatcher.cpp locators=30-35 eof=unchecked verdict=MISS
+      CHECK107: rows=1 covered=0 miss=1 verdict=FAIL
+      
+  killed by V21: rc=1 want=0 missing=['verdict=OK', 'covered=1', 'miss=0', 'verdict=OK'] forbidden_present=['verdict=FAIL']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S923 line=200 name=ConfigWatcher.cpp locators=200 eof=checked verdict=MISS
+      CHECK107: rows=1 covered=0 miss=1 verdict=FAIL
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V08,V09,V10,V11,V12,V16,V17,V18,V19,V20,V22,V23
+
+M16-first-locator-only — only the first locator of the occurrence is considered
+  patch: 'flat = [it for occ in occurrences for it in occ]' -> 'flat = [it for occ in occurrences for it in occ[:1]]'
+  sha256 copy before patch : 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e
+  sha256 copy after patch  : cb865eefe4b5d649ff0332441d60d535d681e5b2ebbbb48ce3efad2e37960c7e
+  sha256 copy after restore: 350d9182ff3a9b8db5e20b9e53d033af381c972e3d45e10281815187f1a7db2e (== pristine master: True)
+  verdict: KILLED
+  killed by V11: rc=1 want=1 missing=['locators=10,20,500', 'locators=10,20,500', 'reason=past-eof', 'covered=0', 'miss=2'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S913 line=10 name=ConfigWatcher.cpp locators=10 eof=checked verdict=OK
+      ANCHOR_COVER: row=K02 sid=S913 line=20 name=ConfigWatcher.cpp locators=10 eof=checked verdict=MISS
+      CHECK107: rows=2 covered=1 miss=1 verdict=FAIL
+      
+  killed by V13: rc=1 want=0 missing=['verdict=OK', 'verdict=OK', 'covered=2', 'miss=0', 'verdict=OK'] forbidden_present=['verdict=FAIL']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S915 line=46 name=ConfigWatcher.cpp locators=33 eof=unchecked verdict=MISS
+      ANCHOR_COVER: row=K02 sid=S916 line=46 name=ConfigWatcher.cpp locators=33 eof=unchecked verdict=MISS
+      CHECK107: rows=2 covered=0 miss=2 verdict=FAIL
+      
+  killed by V22: rc=0 want=1 missing=['locators=200,201', 'verdict=MISS', 'reason=past-eof', 'covered=0', 'miss=1', 'verdict=FAIL'] forbidden_present=['verdict=OK']
+    mutant stdout:
+      ANCHOR_COVER: row=K01 sid=S924 line=200 name=ConfigWatcher.cpp locators=200 eof=checked verdict=OK
+      CHECK107: rows=1 covered=1 miss=0 verdict=OK
+      
+  survived vectors: V01,V02,V03,V04,V05,V06,V07,V08,V09,V10,V12,V14,V15,V16,V17,V18,V19,V20,V21,V23
+
+SUMMARY
+  M01-boundary-any-prefix: KILLED killed_by=V06
+  M02-boundary-hyphen-slash: KILLED killed_by=V07
+  M03-reversed-range-covers: KILLED killed_by=V08
+  M04-eof-not-checked: KILLED killed_by=V10,V11,V22
+  M05-eof-covering-locator-only: KILLED killed_by=V11,V22
+  M06-comma-space-not-allowed: KILLED killed_by=V13
+  M07-malformed-range-allowed: KILLED killed_by=V02
+  M08-dup-id-ignored: KILLED killed_by=V04
+  M09-no-registry-row-ignored: KILLED killed_by=V03
+  M10-noname-ignored: KILLED killed_by=V05
+  M11-trailing-punct-kept: KILLED killed_by=V20
+  M12-id-exactly-three-digits: KILLED killed_by=V19
+  M13-fenced-code-in-scope: KILLED killed_by=V16,V17
+  M14-empty-entry-green: KILLED killed_by=V17
+  M15-cover-exclusive-bounds: KILLED killed_by=V13,V14,V15,V21
+  M16-first-locator-only: KILLED killed_by=V11,V13,V22

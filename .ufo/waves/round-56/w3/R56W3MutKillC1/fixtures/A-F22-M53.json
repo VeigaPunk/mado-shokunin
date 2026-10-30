@@ -1,0 +1,42 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F22",
+  "attacks": "witness (verdict-equivalent): a new_row_ids list of nine ids",
+  "expect": "pristine reports new_rows,tables_sha",
+  "repo_sha": "ad860075a3ba06a0e1c57644f43b0bca2e9d4521",
+  "patch": "A-F22.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=ad860075a3ba06a0e1c57644f43b0bca2e9d4521 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=tables_sha,new_rows",
+   "err": "",
+   "legs": [
+    "tables_sha",
+    "new_rows"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M53",
+  "label": "new_rows: frozen id-count check dropped",
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=ad860075a3ba06a0e1c57644f43b0bca2e9d4521 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=tables_sha",
+  "err": "",
+  "legs": [
+   "tables_sha"
+  ],
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "new_rows"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

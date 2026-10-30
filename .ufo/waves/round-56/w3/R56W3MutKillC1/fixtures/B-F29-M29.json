@@ -1,0 +1,50 @@
+{
+ "fixture": {
+  "ns": "B",
+  "fixture": "F29",
+  "attacks": "trailing space after the K05 row",
+  "expect": "seat B expectation: row:K05 only",
+  "repo_sha": "8681ffb97031c664ca42fcd9098f8dfb288189d8",
+  "patch": "B-F29.patch",
+  "pristine_expectation_holds": null,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=8681ffb97031c664ca42fcd9098f8dfb288189d8 rows=29/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K05",
+   "err": "",
+   "legs": [
+    "row:K05"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M29",
+  "label": "lenient_row: line not stripped",
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=8681ffb97031c664ca42fcd9098f8dfb288189d8 rows=29/30 hosts=3/3 sources=29/30 scope=29/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K05,source_cell:K05,scope:K05,tok:K05,num:K05,echo:K05",
+  "err": "",
+  "legs": [
+   "row:K05",
+   "source_cell:K05",
+   "scope:K05",
+   "tok:K05",
+   "num:K05",
+   "echo:K05"
+  ],
+  "killed": true,
+  "direction": "LEG_ADDED (mutant too strict: it reports a leg the pristine does not)",
+  "legs_lost": [],
+  "legs_added": [
+   "echo:K05",
+   "num:K05",
+   "scope:K05",
+   "source_cell:K05",
+   "tok:K05"
+  ],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

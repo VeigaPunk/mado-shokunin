@@ -1,0 +1,39 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F12",
+  "attacks": "num: integers of another pin must not be allowed",
+  "expect": "pristine reports num:K07",
+  "repo_sha": "a50d8383c34beec4823941e7f9658b28c82400c8",
+  "patch": "A-F12.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=a50d8383c34beec4823941e7f9658b28c82400c8 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=num:K07",
+   "err": "",
+   "legs": [
+    "num:K07"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M38",
+  "label": "num: allowed integers taken from every pin (same-pin filter dropped)",
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=a50d8383c34beec4823941e7f9658b28c82400c8 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "err": "",
+  "legs": [],
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "num:K07"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

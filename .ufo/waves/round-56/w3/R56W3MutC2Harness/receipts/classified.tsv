@@ -1,0 +1,47 @@
+id	family	verdict	probes	note
+B01	sandbox	SURVIVED		--unshare-all is dropped
+B02	sandbox	KILLED-ORACLE	P1_base,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note	/usr is not bound into the jail
+B03	sandbox	KILLED-ORACLE	P1_base,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note	the /w tmpfs is dropped
+B04	sandbox	SURVIVED		the jail cwd is not /w
+B05	sandbox	SURVIVED		the /lib symlink is dropped
+B06	sandbox	KILLED-ORACLE	P1_base,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note	/dev is not provided
+B07	sandbox	KILLED-ORACLE	P1_base,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note	the staged tree is not bound
+B08	sandbox	KILLED-ORACLE	P1_base,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note	the tool copy is not bound
+B09	sandbox	SURVIVED		--die-with-parent is dropped
+B10	sandbox	KILLED-ORACLE	P2_nobwrap_refusal,P3_nobwrap_degraded	the fail-closed refusal raises IndexError instead
+B11	sandbox	KILLED-ORACLE	P3_nobwrap_degraded	the sandbox token is always reported as bwrap
+D01	denom	KILLED-ORACLE	P1_base,P3_nobwrap_degraded	the committed denominator is 17
+D02	denom	KILLED-ORACLE	P1_base,P3_nobwrap_degraded	the hold-out denominator is 7
+D03	denom	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17	the control denominator is 3
+D04	denom	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	one committed fixture is not scored
+D05	denom	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note	one hold-out fixture is not scored
+D06	denom	KILLED-EXTENDED	P7b_const_ctl_answers_two	the const-host control may answer 2 of 26
+D07	denom	KILLED-EXTENDED	P7a_empty_ctl_answers	the empty/sibling-reader controls may answer 1 of 26
+D08	denom	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the lookup-committed control may answer 17 of 18 committed
+D09	denom	KILLED-EXTENDED	P7c_lookup_ctl_answers_17	the lookup-committed control may answer 17 of 18 committed
+D10	denom	KILLED-EXTENDED	P8_tamper_holdout_note	the hold-out commitment is not part of the verdict
+D11	denom	KILLED-EXTENDED	P6_tamper_fixture_note	the fixture commitment is not part of the verdict
+D12	denom	KILLED-EXTENDED	P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17	the control count is not part of the verdict
+E01	expect	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the rc comparison is inverted
+E02	expect	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the stdout comparison is inverted
+E03	expect	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the two comparisons are ORed
+E04	expect	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the None guard is inverted
+E05	expect	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the pass counter is incremented twice
+E06	expect	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the expected exit status is read as 0
+E07	expect	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P9_wrongrc_tool	the commitment record drops its newline
+E08	expect	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P9_wrongrc_tool	the commitment records are sorted by kind, not by path
+E09	expect	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P9_wrongrc_tool	symlinks are not committed as link text (fixed anchor)
+E10	expect	KILLED-EXTENDED	P9_wrongrc_tool	the exit status is not compared
+S01	staging	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note	{FX} points at the export fixture dir (answer key beside the tree) instead of the stage
+S02	staging	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the fixture id is dropped from the stage path
+S03	staging	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P4_cheat_tool,P5_broken_tool,P9_wrongrc_tool	symlinks are dereferenced when the tree is staged
+S04	staging	KILLED-DIAGNOSTIC	P2_nobwrap_refusal	the staging cwd is shared by every fixture
+S05	staging	SURVIVED		the staging cwd is created idempotently (control for S04)
+S06	staging	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note	the staged tree is copied under another name
+S07	staging	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note	the whole fixture dir (expected.out included) is copied into the stage
+S08	staging	KILLED-DIAGNOSTIC	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the stage parent is not removed (E10 leftover)
+S09	staging	KILLED-DIAGNOSTIC	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the staging cwd is not removed (E10 leftover)
+S10	staging	KILLED-ORACLE	P1_base,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool,P2_nobwrap_refusal	every fixture shares one stage dir
+X01	dispatch	KILLED-ORACLE	P1_base,P2_nobwrap_refusal,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	--claim c2 runs the C1 harness
+X02	dispatch	KILLED-ORACLE	P1_base,P2_nobwrap_refusal,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the harness module is not importable
+X03	dispatch	KILLED-ORACLE	P1_base,P2_nobwrap_refusal,P3_nobwrap_degraded,P4_cheat_tool,P5_broken_tool,P6_tamper_fixture_note,P7a_empty_ctl_answers,P7b_const_ctl_answers_two,P7c_lookup_ctl_answers_17,P8_tamper_holdout_note,P9_wrongrc_tool	the claim check is inverted

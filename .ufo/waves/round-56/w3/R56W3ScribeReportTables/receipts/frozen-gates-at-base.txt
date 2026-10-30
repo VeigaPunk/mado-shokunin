@@ -1,0 +1,19 @@
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+MADO_AUTORELOAD_ENTRY: rev=13f0acbe3a15da2d9c08357a576d91dcadc85273 rows=0/30 hosts=0/3 sources=0/30 scope=0/30 content=0/33 new_rows=0/8 verdict=TARGET_MISSED missed=tables_sha,entry_absent,index
+rc=1
+
+$ python3 -I quality/check-r56-controls.py --claim c1 --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+MADO_R56_CONTROLS setup error: .ufo/waves/round-56/frozen-tables-v2.json absent at 13f0acbe3a15da2d9c08357a576d91dcadc85273
+rc=2
+
+$ python3 -I quality/check-r56-controls.py --claim c2 --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+r56_ctl_c2: setup error: frozen-tables.json is not a regular blob at rev
+rc=2
+
+$ python3 -I quality/counters/c3-r56-used-by.py --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+c3-r56-used-by.py: setup error: frozen-tables-v2.json is not a regular blob at --rev
+rc=2
+
+$ python3 -I quality/check-r56-controls.py --claim c3 --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+SETUP: .ufo/waves/round-56/frozen-tables-v2.json is not a regular blob at 13f0acbe3a15da2d9c08357a576d91dcadc85273
+rc=2

@@ -1,0 +1,55 @@
+{
+ "fixture": "A-F12",
+ "wave2_report": "R56W2MutC1CounterA",
+ "wave2_fixture_id": "F12",
+ "survivor_mutant": "M38",
+ "survivor_mutation": "num: allowed integers taken from every pin (same-pin filter dropped)",
+ "attacks": "num: integers of another pin must not be allowed",
+ "registered_expectation": "pristine reports num:K07",
+ "pristine_expectation_holds": true,
+ "pristine": {
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=a50d8383c34beec4823941e7f9658b28c82400c8 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=num:K07",
+  "legs": [
+   "num:K07"
+  ]
+ },
+ "mutant_on_fixture": {
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=a50d8383c34beec4823941e7f9658b28c82400c8 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "legs": [],
+  "stderr_tail": ""
+ },
+ "mutant_on_good_tree": {
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "err": "",
+  "legs": []
+ },
+ "kill": {
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "num:K07"
+  ],
+  "legs_added": []
+ },
+ "carrier": "CONTROL-1",
+ "carrier_reason": "the pristine reports ['num:K07'] and the mutant does not -> the frozen _need(num:K07) assertion kills it | pristine=caught mutant=verdict=TARGET_MET (mutant admitted)",
+ "final_route": "CONTROL-1",
+ "final_route_reason": "the pristine reports ['num:K07'] and the mutant does not -> the frozen _need(num:K07) assertion kills it | pristine=caught mutant=verdict=TARGET_MET (mutant admitted)",
+ "final_route_proved": true,
+ "required_leg": "num:K07",
+ "legs_pristine_only": [
+  "num:K07"
+ ],
+ "legs_mutant_only": [],
+ "harness_proof": {
+  "harness_rc": 1,
+  "harness_out": "MADO_R56_CONTROLS: claim=c1 good=ok controls=43/44 verdict=FAIL",
+  "failed_control_line": "A-ctl-F12 A-F12: FAIL - verdict=TARGET_MET (mutant admitted)",
+  "killed_by_harness": true
+ },
+ "patch": "A-F12.patch",
+ "fixture_repo_sha": "a50d8383c34beec4823941e7f9658b28c82400c8"
+}

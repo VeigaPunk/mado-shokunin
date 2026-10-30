@@ -1,0 +1,20 @@
+Wave-evidence integrity receipt — rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+
+Commands/checks and results:
+1. `git show <rev>:.ufo/waves/round-56/w1-results.json`; parsed JSON: 43 seats. For every result name N, `git cat-file -e <rev>:.ufo/waves/round-56/w1/N.md`: all 43 exist. (The declared result objects do not carry file sizes; cat-file existence was confirmed.) RC=0 for every report lookup.
+2. `git show <rev>:.ufo/waves/round-56/w2/swarm-registry.json`; parsed registry: 35 members. Report path check against every member: 33 exist; R56W2MutC3Counter.md and R56W2MutC2Harness.md absent (cat-file rc=128 for both). `.ufo/waves/round-56/w2-results.json` absent (cat-file rc=128).
+3. Dead-seat table (registry reports as last evidence when present; stopped seats have no report, so no report evidence exists):
+| seat | wave | status | last evidence |
+| R56W2RevAuditA | w2 | settled | R56W2RevAuditA.md |
+| R56W2RevAuditB | w2 | settled | R56W2RevAuditB.md |
+| R56W2RevAuditC | w2 | settled | R56W2RevAuditC.md |
+| R56W2RevAuditD | w2 | settled | R56W2RevAuditD.md |
+| R56W2RevAuditE | w2 | settled | R56W2RevAuditE.md |
+| R56W2RevAuditF | w2 | settled | R56W2RevAuditF.md |
+| R56W2RevProsePath | w2 | settled | R56W2RevProsePath.md |
+| R56W2MutC3Counter | w2 | stopped | none; report absent at rev |
+| R56W2MutC2Harness | w2 | stopped | none; report absent at rev |
+
+4. Tracked-tree check via `git ls-tree -r <rev> .ufo/waves/round-56/w2`: no >1 MiB c3-fill-all/SOURCES.md copy found (the listed SOURCES.md variants are each <293 KB). Attempt-1 non-UTF-8 fixture cannot be asserted absent using guessed Unicode path: lookup of a guessed `Ā.conf` path unexpectedly succeeded (rc=0), while actual tree listing exposed a non-UTF-8 quoted path in R56W2MutC2ToolB fixtures. Thus the claimed deleted m08 fixture is NOT confirmed absent; this may be a false path match, not the requested fixture identity. Status command at inspection time listed untracked lane paths (see report), none were edited by this seat.
+
+Individual dead report checks: R56W2MutC3Counter rc=128; R56W2MutC2Harness rc=128. Results file rc=128. Non-UTF8 guessed-path check rc=0. SOURCES size grep returned entries only 288,467–292,183 bytes, no >1MiB match.

@@ -1,0 +1,161 @@
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/w1/R56ScoutInotifyLab/raw-output.txt
+[captured as prior-lab.txt]
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/w2/R56W2RevProsePath.md
+[captured as prior-prose-audit.md]
+
+
+# Hyprland-EventLoopManager.cpp
+70: static int configWatcherWrite(int fd, uint32_t mask, void* data) {
+71:     Config::watcher()->onInotifyEvent();
+72:     return 0;
+73: }
+124: void CEventLoopManager::enterLoop() {
+125:     m_wayland.eventSource = wl_event_loop_add_fd(m_wayland.loop, m_timers.timerfd.get(), WL_EVENT_READABLE, timerWrite, nullptr);
+126: 
+127:     if (const auto& FD = Config::watcher()->getInotifyFD(); FD.isValid())
+128:         m_configWatcherInotifySource = wl_event_loop_add_fd(m_wayland.loop, FD.get(), WL_EVENT_READABLE, configWatcherWrite, nullptr);
+129: 
+130:     syncPollFDs();
+131:     m_listeners.pollFDsChanged = g_pCompositor->m_aqBackend->events.pollFDsChanged.listen([this] { syncPollFDs(); });
+132: 
+133:     // if we have a session, dispatch it to get the pending input devices
+134:     if (g_pCompositor->m_aqBackend->hasSession())
+135:         g_pCompositor->m_aqBackend->session->dispatchPendingEventsAsync();
+136: 
+137:     wl_display_run(m_wayland.display);
+138: 
+139:     Log::logger->log(Log::DEBUG, "Kicked off the event loop! :(");
+140: }
+
+# Hyprland-PropRefresher.cpp
+29: void CPropRefresher::scheduleRefresh(PropRefreshBits prop) {
+30: 
+31:     m_propsTripped |= prop;
+32: 
+33:     if (!m_scheduled && g_pEventLoopManager) {
+34:         m_scheduledRefreshSeq = g_pEventLoopManager->doLater([this, weak = WP<CPropRefresher>{refresher()}] {
+35:             if (!weak)
+36:                 return;
+37:             refreshProp(true);
+38:         });
+39: 
+40:         m_scheduled = true;
+41:     }
+42: }
+148:     if (m_propsTripped & REFRESH_CONFIG_WATCHER)
+149:         Config::watcher()->update();
+150: 
+151:     if (m_propsTripped & REFRESH_GRADIENTS_GROUPBAR)
+152:         refreshGroupBarGradients();
+153: 
+154:     m_scheduled           = false;
+155:     m_scheduledRefreshSeq = 0;
+156:     m_propsTripped        = 0;
+157: 
+158:     Event::bus()->m_events.config.props_refreshed.emit(execdAsScheduled);
+159: }
+
+# Hyprland-ConfigWatcher.cpp
+32: void CConfigWatcher::update() {
+33:     static const auto PDISABLEAUTORELOAD = CConfigValue<Config::INTEGER>("misc:disable_autoreload");
+34:     setWatchList(*PDISABLEAUTORELOAD ? std::vector<std::string>{} : Config::mgr()->getConfigPaths());
+35: }
+45:     for (auto& watch : m_watches) {
+46:         inotify_rm_watch(m_inotifyFd.get(), watch.wd);
+47:     }
+48: 
+49:     m_watches.clear();
+50: 
+51:     // add new paths
+52:     for (const auto& path : paths) {
+53:         std::error_code ecDir;
+54:         const bool      isDirectory   = std::filesystem::is_directory(path, ecDir);
+55:         const uint32_t  fileMask      = IN_CLOSE_WRITE | IN_DONT_FOLLOW;
+56:         const uint32_t  directoryMask = fileMask | IN_CREATE | IN_DELETE | IN_MOVED_TO | IN_MOVED_FROM;
+57:         const uint32_t  mask          = isDirectory ? directoryMask : fileMask;
+58: 
+59:         m_watches.emplace_back(SInotifyWatch{
+60:             .wd   = inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask),
+61:             .file = path,
+62:         });
+63: 
+64:         std::error_code ec, ec2;
+65:         const auto      CANONICAL  = std::filesystem::canonical(path, ec);
+66:         const auto      IS_SYMLINK = std::filesystem::is_symlink(path, ec2);
+67:         if (!ec && !ec2 && IS_SYMLINK) {
+68:             m_watches.emplace_back(SInotifyWatch{
+69:                 .wd   = inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(), IN_CLOSE_WRITE),
+70:                 .file = path,
+71:             });
+72:         }
+73:     }
+80: void CConfigWatcher::onInotifyEvent() {
+81:     constexpr size_t                                     BUFFER_SIZE = sizeof(inotify_event) + NAME_MAX + 1;
+82:     alignas(inotify_event) std::array<char, BUFFER_SIZE> buffer      = {};
+83:     const ssize_t                                        bytesRead   = read(m_inotifyFd.get(), buffer.data(), buffer.size());
+84:     if (bytesRead <= 0)
+85:         return;
+86: 
+87:     for (size_t offset = 0; offset < sc<size_t>(bytesRead);) {
+88:         const auto* ev = rc<const inotify_event*>(buffer.data() + offset);
+89: 
+90:         if (offset + sizeof(inotify_event) > sc<size_t>(bytesRead)) {
+91:             Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated header");
+92:             break;
+93:         }
+94: 
+95:         if (offset + sizeof(inotify_event) + ev->len > sc<size_t>(bytesRead)) {
+96:             Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated name field");
+97:             break;
+98:         }
+99: 
+100:         const auto WD = std::ranges::find_if(m_watches, [wd = ev->wd](const auto& e) { return e.wd == wd; });
+101: 
+102:         if (WD == m_watches.end())
+103:             Log::logger->log(Log::ERR, "CConfigWatcher: got an event for wd {} which we don't have?!", ev->wd);
+104:         else
+105:             m_watchCallback(SConfigWatchEvent{
+106:                 .file = WD->file,
+107:             });
+108: 
+109:         offset += sizeof(inotify_event) + ev->len;
+110:     }
+111: }
+
+# Hyprland-legacy-ConfigManager.cpp
+1077: void CConfigManager::init() {
+1078: 
+1079:     Config::watcher()->setOnChange([this](const CConfigWatcher::SConfigWatchEvent& e) {
+1080:         Log::logger->log(Log::DEBUG, "CConfigManager: file {} modified, reloading", e.file);
+1081:         reload();
+1082:     });
+1083: 
+1084:     reload();
+1085: 
+1086:     m_isFirstLaunch = false;
+1087: }
+1816:     if (auto r = glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get()); r != 0) {
+1817:         std::string err = std::format("source= globbing error: {}", r == GLOB_NOMATCH ? "found no match" : r == GLOB_ABORTED ? "read error" : "out of memory");
+1818:         Log::logger->log(Log::ERR, "{}", err);
+1819:         return err;
+1820:     }
+1821: 
+1822:     std::string errorsFromParsing;
+1823: 
+1824:     for (size_t i = 0; i < glob_buf->gl_pathc; i++) {
+1825:         auto            value = absolutePath(glob_buf->gl_pathv[i], m_configCurrentPath);
+1826: 
+1827:         std::error_code ec;
+1828:         auto            file_status = std::filesystem::status(value, ec);
+1829: 
+1830:         if (ec) {
+1831:             Log::logger->log(Log::ERR, "source= file from glob result is inaccessible ({}): {}", ec.message(), value);
+1832:             return "source= file " + value + " is inaccessible!";
+1833:         }
+1834: 
+1835:         if (std::filesystem::is_regular_file(file_status)) {
+1836:             m_configPaths.emplace_back(value);
+STATIC_LITERAL_SCAN ConfigWatcher.cpp:80-111 'ev->mask' -> []
+STATIC_LITERAL_SCAN ConfigWatcher.cpp:80-111 'IN_Q_OVERFLOW' -> []
+STATIC_LITERAL_SCAN ConfigWatcher.cpp:80-111 'ev->name' -> []

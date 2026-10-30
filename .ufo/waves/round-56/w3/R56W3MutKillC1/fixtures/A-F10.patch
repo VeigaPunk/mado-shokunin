@@ -1,0 +1,13 @@
+diff --git a/corpus/knowledge/hyprland-config-autoreload-r56.md b/corpus/knowledge/hyprland-config-autoreload-r56.md
+index 3eca8fa..5731f88 100644
+--- a/corpus/knowledge/hyprland-config-autoreload-r56.md
++++ b/corpus/knowledge/hyprland-config-autoreload-r56.md
+@@ -98,7 +98,7 @@ Frozen anchors (K01-K30, one row per frozen quote; proposition is the bounded re
+ | K21 | handleSource appends each regular-file match to m_configPaths with emplace_back on this line, before that file is parsed; one call can add several entries, and a directory, a non-regular file or a failed glob adds none. | S387 | Hyprland-legacy-ConfigManager.cpp:1836 | `m_configPaths.emplace_back(value);` |
+ | K22 | This condition tests file_status with std::filesystem::is_regular_file, the regular-file branch of handleSource. | S387 | Hyprland-legacy-ConfigManager.cpp:1835 | `if (std::filesystem::is_regular_file(file_status)) {` |
+ | K23 | The warning logged on this line says the source= match value is skipped because it is a directory. | S387 | Hyprland-legacy-ConfigManager.cpp:1844 | `"source= skipping directory {}", value);` |
+-| K24 | The glob call takes absolutePath of rawpath resolved against m_configCurrentPath and the GLOB_TILDE flag. | S387 | Hyprland-legacy-ConfigManager.cpp:1816 | `glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get())` |
++| K24 | The glob step expands the watched path on this line of the pinned source. | S387 | Hyprland-legacy-ConfigManager.cpp:1816 | `glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get())` |
+ | K25 | The static ENVHOME pointer takes its value from getenv of the HOME variable on this line. | S388 | Hyprland-MiscFunctions.cpp:65 | `static const char* const ENVHOME = getenv("HOME");` |
+ | K26 | currentDir is the currentPath text cut with substr at its last slash found by find_last_of on this line. | S388 | Hyprland-MiscFunctions.cpp:68 | `auto currentDir = currentPath.substr(0, currentPath.find_last_of('/'));` |
+ | K27 | The keyword dispatch guard tests whether COMMAND contains the misc:disable_autoreload text; when it does, the next line calls Config::watcher()->update(). The quoted line does not show that body. | S389 | Hyprland-HyprCtl.cpp:1223 | `if (COMMAND.contains("misc:disable_autoreload"))` |

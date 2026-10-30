@@ -1,0 +1,29 @@
+Source: exported tools/mado-watchplan.py at 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 into /fast/scratch/hyaku/mado-r56/R56W3ExecFixDivA/mado-watchplan.py. Documented subset is tools/mado-watchplan.py docstring lines 29-35 (model/grammar); exact cited lines below. For each fixture, run command was:
+python3 -I /fast/scratch/hyaku/mado-r56/R56W3ExecFixDivA/mado-watchplan.py --config <fixture>/tree/hyprland.conf --display-root <fixture>
+Then stdout was compared byte-for-byte with expected.out using cmp -s; exit status compared with expected.rc. All four produced rc=0, cmp=0, expected_rc=0 (diff=none).
+
+1. variable-source — docstring line 33: “An LHS starting $ is ignored.” Line 38-40: a source path is resolved and expanded; missing match is ERROR nomatch. Run output:
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=0 paths=1 unsupported=0 errors=1
+MADO_WATCH: ERROR via=$ROOT/tree/hyprland.conf:2 source=$FRAGMENT reason=nomatch
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=1 live=NONE
+cmp=0 rc=0 expected_rc=0.
+
+2. expression-value — docstring line 34-35: for misc:disable_autoreload, a line holding “{” is unsupported; non-int values are unsupported. Run output:
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=1 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=1 errors=0 live=NONE
+cmp=0 rc=0 expected_rc=0.
+
+3. device-block — docstring lines 30-35: generic category stack rules; only key misc:disable_autoreload matters, while source inside a category is unsupported. Device-block entries are therefore not interpreted as options by this model. Run output:
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=0 paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=NONE
+cmp=0 rc=0 expected_rc=0.
+
+4. external-absolute-source — docstring lines 37-41: source paths are made absolute against containing file then globbed; no home confinement is specified. Run output:
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=2 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=primary path=/etc/hostname type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=$ROOT/tree/hyprland.conf:1
+MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE
+cmp=0 rc=0 expected_rc=0.

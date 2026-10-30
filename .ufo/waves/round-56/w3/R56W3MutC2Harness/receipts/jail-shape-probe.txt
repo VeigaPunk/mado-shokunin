@@ -1,0 +1,17 @@
+# jail-shape probe under the exact bwrap argv shapes of the surviving sandbox mutants
+# probe: print cwd, cwd listing, / listing, /proc presence, interfaces, pid/ppid, /lib presence
+
+== pristine (--unshare-all --die-with-parent ... --tmpfs /w --chdir /w)
+{'cwd': '/w', 'cwd_list': ['p.py'], 'root_list': ['bin', 'dev', 'lib', 'lib64', 'usr', 'w'], 'proc_exists': False, 'pids_sample': None, 'ifaces': ['lo'], 'pid': 2, 'ppid': 1, 'uname': 'plazir27', 'lib_exists': True, 'lib64_exists': True}
+
+== B01 (no --unshare-all): host network namespace shared
+{'cwd': '/w', 'cwd_list': ['p.py'], 'root_list': ['bin', 'dev', 'lib', 'lib64', 'usr', 'w'], 'proc_exists': False, 'pids_sample': None, 'ifaces': ['lo', 'enp7s0', 'br-b815a6eba614', 'docker0', 'br-4e7a72f4b2ff', 'br-a11b1eb730f0'], 'pid': 26335, 'ppid': 26330, 'uname': 'plazir27', 'lib_exists': True, 'lib64_exists': True}
+
+== B04 (no --chdir /w): jail cwd is the root, not the empty tmpfs
+{'cwd': '/', 'cwd_list': ['bin', 'dev', 'lib', 'lib64', 'usr', 'w'], 'root_list': ['bin', 'dev', 'lib', 'lib64', 'usr', 'w'], 'proc_exists': False, 'pids_sample': None, 'ifaces': ['lo'], 'pid': 2, 'ppid': 1, 'uname': 'plazir27', 'lib_exists': True, 'lib64_exists': True}
+
+== B05 (no usr/lib -> /lib symlink): /lib absent (fidelity; python still runs via /lib64)
+{'cwd': '/w', 'cwd_list': ['p.py'], 'root_list': ['bin', 'dev', 'lib64', 'usr', 'w'], 'proc_exists': False, 'pids_sample': None, 'ifaces': ['lo'], 'pid': 2, 'ppid': 1, 'uname': 'plazir27', 'lib_exists': False, 'lib64_exists': True}
+
+== B09 (no --die-with-parent): no in-jail observable (pid/ppid identical to pristine)
+{'cwd': '/w', 'cwd_list': ['p.py'], 'root_list': ['bin', 'dev', 'lib', 'lib64', 'usr', 'w'], 'proc_exists': False, 'pids_sample': None, 'ifaces': ['lo'], 'pid': 2, 'ppid': 1, 'uname': 'plazir27', 'lib_exists': True, 'lib64_exists': True}

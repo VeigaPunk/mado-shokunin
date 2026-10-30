@@ -1,0 +1,39 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F10",
+  "attacks": "tok: a 4-character shared identifier is an identifier token (regex {3,})",
+  "expect": "pristine reports no leg and not tok:K24",
+  "repo_sha": "e1d1d0cb0a4cbf010d44bb52977bdf6d1ef59c36",
+  "patch": "A-F10.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=e1d1d0cb0a4cbf010d44bb52977bdf6d1ef59c36 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ },
+ "mutant": {
+  "mutant": "M34",
+  "label": "tok: identifier length bound narrowed (3 -> 4)",
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=e1d1d0cb0a4cbf010d44bb52977bdf6d1ef59c36 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=tok:K24",
+  "err": "",
+  "legs": [
+   "tok:K24"
+  ],
+  "killed": true,
+  "direction": "LEG_ADDED (mutant too strict: it reports a leg the pristine does not)",
+  "legs_lost": [],
+  "legs_added": [
+   "tok:K24"
+  ],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

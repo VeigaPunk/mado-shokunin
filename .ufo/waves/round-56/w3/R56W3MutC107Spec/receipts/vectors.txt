@@ -1,0 +1,209 @@
+criterion-107 acceptance vectors, built from corpus/QUALITY.md @ 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 lines 592-607 (spec alone; no checker implementation read)
+vectors: 23
+
+V01  clause=good row (OK)
+      expected-verdict: OK (rows=1 covered=1 miss=0) rc=0
+      deciding spec sentence: Scope: every evidence row whose third cell is a registry id S + 3 or more digits; (5) Cover: some locator of some counted occurrence has N <= L <= M.
+      fixture commit: deb2727752401b3e57b77c185c5191e971259c34
+      expected stdout: vectors/expected/V01.stdout
+      strict tokens: vectors/expected/V01.strict
+      forbidden tokens: vectors/expected/V01.forbid
+      ambiguous output fields: none
+
+V02  clause=malformed pin (fourth cell not <file>:<N>)
+      expected-verdict: FAIL (rows=3 covered=0 miss=3) rc=1 reason=malformed-pin
+      deciding spec sentence: Scope: a row of that shape whose fourth cell is not exactly <file>:<N> (one decimal number; no range, no list, no second file) is a violation reason=malformed-pin. It is never skipped.
+      fixture commit: 97103226e435fb147ee600cc856eb7dc8890afcd
+      expected stdout: vectors/expected/V02.stdout
+      strict tokens: vectors/expected/V02.strict
+      forbidden tokens: vectors/expected/V02.forbid
+      ambiguous output fields: line,name,locators,eof
+
+V03  clause=no-registry-row
+      expected-verdict: FAIL (rows=1 covered=0 miss=1) rc=1 reason=no-registry-row
+      deciding spec sentence: (1) Uniqueness. R must be the only row with that id. Zero rows reads reason=no-registry-row.
+      fixture commit: b2792b7e95d504f8ab7bfb6b712d969f257da991
+      expected stdout: vectors/expected/V03.stdout
+      strict tokens: vectors/expected/V03.strict
+      forbidden tokens: vectors/expected/V03.forbid
+      ambiguous output fields: name,locators,eof
+
+V04  clause=dup-id
+      expected-verdict: FAIL (rows=1 covered=0 miss=1) rc=1 reason=dup-id
+      deciding spec sentence: (1) Uniqueness. ... two or more read reason=dup-id, whatever their content.
+      fixture commit: 882ef73b2d1ea7328e9c5f1c54023a3e6069c4a6
+      expected stdout: vectors/expected/V04.stdout
+      strict tokens: vectors/expected/V04.strict
+      forbidden tokens: vectors/expected/V04.forbid
+      ambiguous output fields: name,locators,eof
+
+V05  clause=no-name (source token with #/?)
+      expected-verdict: FAIL (rows=2 covered=0 miss=2) rc=1 reason=no-name
+      deciding spec sentence: (2) NAME. The last path component of the last http(s):// token in R's source cell (cell 2), with trailing `).,;` removed. If NAME contains # or ?, the row reads reason=no-name and must be read by hand.
+      fixture commit: 508c2244466e682475fd9c884ff2218ebd4541d2
+      expected stdout: vectors/expected/V05.stdout
+      strict tokens: vectors/expected/V05.strict
+      forbidden tokens: vectors/expected/V05.forbid
+      ambiguous output fields: name,locators,eof
+
+V06  clause=identifier-prefix name (Old<X>.cpp must NOT count as <X>.cpp:)
+      expected-verdict: FAIL (rows=1 covered=0 miss=1) rc=1
+      deciding spec sentence: (3) Bounded occurrence. An occurrence of NAME: in R's anchor cell (cell 6) counts only when the character before it is absent or is not in [A-Za-z0-9_]. ... OldConfigWatcher.cpp: does not contain an occurrence of ConfigWatcher.cpp:.
+      fixture commit: e4e45a8c93a2130d645fc5ffc4cc70962a32c2ae
+      expected stdout: vectors/expected/V06.stdout
+      strict tokens: vectors/expected/V06.strict
+      forbidden tokens: vectors/expected/V06.forbid
+      ambiguous output fields: none
+
+V07  clause=hyphen-prefix name (-<X>.cpp: MUST count) + slash prefix
+      expected-verdict: OK (rows=2 covered=2 miss=0) rc=0
+      deciding spec sentence: (3) Bounded occurrence. ... A hyphen or a slash before it is allowed.
+      fixture commit: 458e127e3c5e3a1c8b987e6a285675a726815d47
+      expected stdout: vectors/expected/V07.stdout
+      strict tokens: vectors/expected/V07.strict
+      forbidden tokens: vectors/expected/V07.forbid
+      ambiguous output fields: none
+
+V08  clause=reversed range (M<N covers nothing)
+      expected-verdict: FAIL (rows=1 covered=0 miss=1) rc=1
+      deciding spec sentence: (4) Locator list. ... A locator with M less than N denotes no line and covers nothing.
+      fixture commit: 0e19a0ddc1c1d5ad640e74d7dd2fcafe35e2ded5
+      expected stdout: vectors/expected/V08.stdout
+      strict tokens: vectors/expected/V08.strict
+      forbidden tokens: vectors/expected/V08.forbid
+      ambiguous output fields: locators
+
+V09  clause=narrow range below the quoted line (cover fails)
+      expected-verdict: FAIL (rows=1 covered=0 miss=1) rc=1
+      deciding spec sentence: (5) Cover. Some locator of some counted occurrence has N <= L <= M, where L is the quoted line.
+      fixture commit: 302575da73b25b6288d4bd9480282067a60e83fb
+      expected stdout: vectors/expected/V09.stdout
+      strict tokens: vectors/expected/V09.strict
+      forbidden tokens: vectors/expected/V09.forbid
+      ambiguous output fields: none
+
+V10  clause=past-eof (locator past the pin blob's lines)
+      expected-verdict: FAIL (rows=1 covered=0 miss=1) rc=1 reason=past-eof
+      deciding spec sentence: (6) Length. ... every locator of the counted occurrence must have max(N, M) <= the blob's line count (the number of \n-separated pieces). A locator past the end of the file reads reason=past-eof for every row of that pin.
+      fixture commit: 64ae578ce03837a47c63f0ea33f1d95ac489dc66
+      expected stdout: vectors/expected/V10.stdout
+      strict tokens: vectors/expected/V10.strict
+      forbidden tokens: vectors/expected/V10.forbid
+      ambiguous output fields: none
+
+V11  clause=past-eof for every row of that pin
+      expected-verdict: FAIL (rows=2 covered=0 miss=2) rc=1 reason=past-eof
+      deciding spec sentence: (6) Length. ... A locator past the end of the file reads reason=past-eof for every row of that pin.
+      fixture commit: 062b57fedaec81ace842e2f06f8c8e76a3be088c
+      expected stdout: vectors/expected/V11.stdout
+      strict tokens: vectors/expected/V11.strict
+      forbidden tokens: vectors/expected/V11.forbid
+      ambiguous output fields: none
+
+V12  clause=eof=unchecked (anchor without `pin <path>`)
+      expected-verdict: OK (rows=1 covered=1 miss=0) rc=0
+      deciding spec sentence: (6) Length. If the anchor cell names its pin as `pin <path>`, the blob at that path at the checked revision is read ... An anchor with no named pin reads eof=unchecked in the output.
+      fixture commit: 1bbcb000cab671ddafc4246e511e306c9e9e09aa
+      expected stdout: vectors/expected/V12.stdout
+      strict tokens: vectors/expected/V12.strict
+      forbidden tokens: vectors/expected/V12.forbid
+      ambiguous output fields: verdict,covered,miss,verdict
+
+V13  clause=comma-locator spacing (zero and one space)
+      expected-verdict: OK (rows=2 covered=2 miss=0) rc=0
+      deciding spec sentence: (4) Locator list. Right after NAME: comes a comma-separated list of locators. ... One optional space may follow a comma. The list continues only while the next item starts with a digit.
+      fixture commit: e1a7a259b93574c2dd09c1e4c3bde4e931c1e76a
+      expected stdout: vectors/expected/V13.stdout
+      strict tokens: vectors/expected/V13.strict
+      forbidden tokens: vectors/expected/V13.forbid
+      ambiguous output fields: locators
+
+V14  clause=boundary N=L covers
+      expected-verdict: OK (rows=1 covered=1 miss=0) rc=0
+      deciding spec sentence: (5) Cover. ... A single N means N = L.
+      fixture commit: c3f764da3ef896dd6a1a2ddadde73fdb951742ac
+      expected stdout: vectors/expected/V14.stdout
+      strict tokens: vectors/expected/V14.strict
+      forbidden tokens: vectors/expected/V14.forbid
+      ambiguous output fields: none
+
+V15  clause=boundary M=L covers
+      expected-verdict: OK (rows=1 covered=1 miss=0) rc=0
+      deciding spec sentence: (5) Cover. Some locator of some counted occurrence has N <= L <= M.
+      fixture commit: cfd3f4fb8af829c4b48b6c55337cb5d0bc352b6a
+      expected stdout: vectors/expected/V15.stdout
+      strict tokens: vectors/expected/V15.strict
+      forbidden tokens: vectors/expected/V15.forbid
+      ambiguous output fields: none
+
+V16  clause=scope: fenced code and HTML comments are out of scope
+      expected-verdict: OK (rows=1 covered=1 miss=0) rc=0
+      deciding spec sentence: Scope. Every evidence row of a knowledge entry, any row class: a table row, outside fenced code and HTML comments, whose third cell is a registry id S followed by three or more digits.
+      fixture commit: 0e46792e7563a2a63ab4800cc16cca8953c6294c
+      expected stdout: vectors/expected/V16.stdout
+      strict tokens: vectors/expected/V16.strict
+      forbidden tokens: vectors/expected/V16.forbid
+      ambiguous output fields: none
+
+V17  clause=scope: no in-scope evidence row
+      expected-verdict: FAIL (rows=0 covered=0 miss=0) rc=1
+      deciding spec sentence: Declared limits: An entry with no evidence rows reads rows=0 verdict=FAIL, so an empty entry is not vacuously green.
+      fixture commit: fd20c84790c4faa73a1d4464172c2b97935691a7
+      expected stdout: vectors/expected/V17.stdout
+      strict tokens: vectors/expected/V17.strict
+      forbidden tokens: vectors/expected/V17.forbid
+      ambiguous output fields: none
+
+V18  clause=scope: third cell that is not S+3 digits is out of scope
+      expected-verdict: OK (rows=1 covered=1 miss=0) rc=0
+      deciding spec sentence: Scope. ... whose third cell is a registry id S followed by three or more digits.
+      fixture commit: 6252e834b9de92a82f4867152c3cc9a943874684
+      expected stdout: vectors/expected/V18.stdout
+      strict tokens: vectors/expected/V18.strict
+      forbidden tokens: vectors/expected/V18.forbid
+      ambiguous output fields: none
+
+V19  clause=scope: S + four digits is in scope
+      expected-verdict: OK (rows=1 covered=1 miss=0) rc=0
+      deciding spec sentence: Scope. ... whose third cell is a registry id S followed by three or more digits.
+      fixture commit: 37ed5bcd21e4e16ea9cc437796342313feff3d19
+      expected stdout: vectors/expected/V19.stdout
+      strict tokens: vectors/expected/V19.strict
+      forbidden tokens: vectors/expected/V19.forbid
+      ambiguous output fields: none
+
+V20  clause=NAME strips trailing `).,;` from the last path component
+      expected-verdict: OK (rows=1 covered=1 miss=0) rc=0
+      deciding spec sentence: (2) NAME. The last path component of the last http(s):// token in R's source cell (cell 2), with trailing `).,;` removed.
+      fixture commit: 29f2b54dfc309750e2423871a8dadf9b2c10ae2e
+      expected stdout: vectors/expected/V20.stdout
+      strict tokens: vectors/expected/V20.strict
+      forbidden tokens: vectors/expected/V20.forbid
+      ambiguous output fields: none
+
+V21  clause=EOF boundary: locator == the pin blob's line count is inside
+      expected-verdict: OK (rows=1 covered=1 miss=0) rc=0
+      deciding spec sentence: (6) Length. ... every locator of the counted occurrence must have max(N, M) <= the blob's line count (the number of \n-separated pieces).
+      fixture commit: 6126f18edfe179b0615a1b2c53aae040ae40a54c
+      expected stdout: vectors/expected/V21.stdout
+      strict tokens: vectors/expected/V21.strict
+      forbidden tokens: vectors/expected/V21.forbid
+      ambiguous output fields: none
+
+V22  clause=EOF boundary: locator == line count + 1 is past-eof
+      expected-verdict: FAIL (rows=1 covered=0 miss=1) rc=1 reason=past-eof
+      deciding spec sentence: (6) Length. ... A locator past the end of the file reads reason=past-eof for every row of that pin.
+      fixture commit: 1bb0c5f5829778e47bf970183481b608ff5051a5
+      expected stdout: vectors/expected/V22.stdout
+      strict tokens: vectors/expected/V22.strict
+      forbidden tokens: vectors/expected/V22.forbid
+      ambiguous output fields: none
+
+V23  clause=anchor names a different file (no occurrence of NAME: at all)
+      expected-verdict: FAIL (rows=1 covered=0 miss=1) rc=1
+      deciding spec sentence: (3) Bounded occurrence. An occurrence of NAME: in R's anchor cell (cell 6) counts only when the character before it is absent or is not in [A-Za-z0-9_].
+      fixture commit: 50f334f31bc67635a2d2782d554f5b358618a4d6
+      expected stdout: vectors/expected/V23.stdout
+      strict tokens: vectors/expected/V23.strict
+      forbidden tokens: vectors/expected/V23.forbid
+      ambiguous output fields: none

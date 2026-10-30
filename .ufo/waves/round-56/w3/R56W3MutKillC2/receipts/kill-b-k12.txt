@@ -1,0 +1,18 @@
+# kill transcript: b-k12
+# tool under test: the pristine lane-tip tools/mado-watchplan.py
+# layout: the frozen harness' staged layout (bwrap, empty cwd, tree only)
+# expected.rc = 0
+
+--- pristine (the honest tool) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=NONE
+rc=0  reproduces expected.out/expected.rc: yes
+
+--- mutant Bm51 (sha256 1bf666885bcdab2be395ec9e2e10c70d022dde99400cf0990e6080f2fc5729d5) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=2 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=primary path=$ROOT/tree/a.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=$ROOT/tree/hyprland.conf:1
+MADO_WATCH: DONE watches=2 unsupported=0 errors=0 live=NONE
+rc=0  verdict: KILLED
+

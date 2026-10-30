@@ -1,0 +1,39 @@
+Round 56 w3 attempt 2 — C2 reverification
+
+COMMAND: git -C /home/vgpnk/Projects/shokunin/mado-shokunin archive 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 | tar -x -C /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2
+RC=0 (archive extracted)
+
+COMMAND (requested, archive directory without git metadata): python3 -I quality/check-r56-controls.py --claim c2 --repo /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2 --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2/work
+r56_ctl_c2: setup error: git rev-parse --verify failed: fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+RC=2
+
+To unblock the harness, initialized a git repository in the same archive directory, verified its top-level was exactly that directory, added the extracted snapshot and committed with ctl identity. This is an archive-backed snapshot, not the requested original rev.
+COMMAND: git -C /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2 init -q; verify top-level; git add -A; git -c user.name=ctl -c user.email=ctl@ctl commit -qm archive-snapshot
+Observed: fixture top=/fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2; local commit=369a086f1db22bbcedd5e31fbe57bde909c1970e
+
+COMMAND: python3 -I quality/check-r56-controls.py --claim c2 --repo /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2 --rev 369a086f1db22bbcedd5e31fbe57bde909c1970e --work /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2/work
+r56_ctl_c2: sandbox=bwrap fixture_commit=ok control_scores={'const-host': (1, 0), 'empty': (0, 0), 'sibling-reader': (0, 0), 'lookup-committed': (18, 0)}
+MADO_R56_C2: rev=369a086f1db22bbcedd5e31fbe57bde909c1970e fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 verdict=TARGET_MET
+RC=0
+
+COMMAND: (cd /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2 && python3 -I tools/mado-watchplan.py --selftest)
+MADO_WATCH_SELFTEST: 86/86 assertions passed
+RC=0
+
+COMMAND: hyprctl getoption misc:disable_autoreload -j
+{"option": "misc:disable_autoreload", "int": 0, "set": false }
+RC=0
+Captured JSON: ../R56W3ExecReverifyC2/getoption.json
+
+COMMAND: hyprctl version -j
+{"branch":"v0.56.2","commit":"efb50993780079460b0cbed1363e2166a2de1d9f","version":"0.56.2","dirty":false,"commit_message":"[gha] Nix: update inputs","commit_date":"Wed Aug 5 14:13:21 2026","tag":"v0.56.2","commits":"7661","buildAquamarine":"0.15.1","buildHyprlang":"0.6.8","buildHyprutils":"0.14.2","buildHyprcursor":"0.1.13","buildHyprgraphics":"0.5.1","systemAquamarine":"0.15.1","systemHyprlang":"0.6.8","systemHyprutils":"0.14.2","systemHyprcursor":"0.1.13","systemHyprgraphics":"0.5.1","abiHash":"efb50993780079460b0cbed1363e2166a2de1d9f_aq_0.15_hu_0.14_hg_0.5_hc_0.1_hlg_0.6","flags":[]}
+RC=0
+
+COMMAND: (cd /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2 && python3 -I tools/mado-watchplan.py --config /home/vgpnk/.config/hypr/hyprland.conf --getoption /fast/scratch/hyaku/mado-r56/R56W3ExecReverifyC2/getoption.json --home /home/vgpnk)
+MADO_WATCH: config=/home/vgpnk/.config/hypr/hyprland.conf autoreload=on disable_autoreload=unset paths=40 unsupported=0 errors=0
+MADO_WATCH_LIVE: option=misc:disable_autoreload config=0 live=0 verdict=AGREE
+MADO_WATCH: DONE watches=40 unsupported=0 errors=0 live=AGREE
+RC=0
+
+Scratch tree removed after evidence capture. No hyprctl mutating commands run.

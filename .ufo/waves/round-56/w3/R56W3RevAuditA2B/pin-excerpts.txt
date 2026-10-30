@@ -1,0 +1,282 @@
+Revision: 0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+
+FILE corpus/knowledge/hyprland-config-autoreload-r56.md
+20: 1. **Declaration.** `misc:disable_autoreload` is a Bool with default false and refresh flag `Supplementary::REFRESH_CONFIG_WATCHER` (`Hyprland-ConfigValues.cpp:492`; K01, K02).
+21: 2. **Watch list.** `CConfigWatcher::update()` reads the cached value (`Hyprland-ConfigWatcher.cpp:33`; K03). A non-zero value passes an empty vector to `setWatchList`; otherwise it passes `Config::mgr()->getConfigPaths()` (line 34; K04). `getConfigPaths` returns `m_configPaths` (`Hyprland-legacy-ConfigManager.cpp:2133-2134`).
+22: 3. **Masks.** `setWatchList` removes every old watch (lines 45-47; K05), clears the list (49), then for each entry: `is_directory` (54; K06) feeds the selection at line 57 (`isDirectory ? directoryMask : fileMask`) between the directory mask (56; K08, the file mask plus IN_CREATE, IN_DELETE, IN_MOVED_TO, IN_MOVED_FROM) and the file mask (55; K07, IN_CLOSE_WRITE | IN_DONT_FOLLOW). The watch is added at line 60 (K09). If the entry `is_symlink` (66) and `canonical` succeeded (65, 67; K10), a second watch on the canonical target with mask IN_CLOSE_WRITE is added (69; K11). That second watch carries the link path in its `file` field.
+23: 4. **Event loop.** `CEventLoopManager::enterLoop` registers the inotify descriptor as a readable Wayland source (`Hyprland-EventLoopManager.cpp:127-128`; K13). The callback `configWatcherWrite` calls `onInotifyEvent` (lines 70-71; K14). `CConfigWatcher::onInotifyEvent` (`Hyprland-ConfigWatcher.cpp:80-111`) reads the events, finds each watch by `wd` (line 100), and calls the stored callback with that watch's `file` (lines 102-107; K12, E03). The event `name` field is never read, so the reported path is the watch's stored path, not the name the kernel reports.
+24: 5. **Callback.** `CConfigManager::init` installs the change callback (`Hyprland-legacy-ConfigManager.cpp:1079-1082`; K17). It logs (K18) and calls `reload()`.
+25: 6. **Reload.** `reload()` (`legacy:726-751`) calls `resetHLConfig()` (line 731), parses (743), and calls `postConfigReload` (750). `postConfigReload` schedules a refresh with `REFRESH_ALL` (line 1070; K19).
+26: 7. **Refresh.** The prop refresher calls `Config::watcher()->update()` only when the `REFRESH_CONFIG_WATCHER` bit is set (`Hyprland-PropRefresher.cpp:148-149`; K15, K16). `REFRESH_CONFIG_WATCHER` is bit 8 (`Hyprland-PropRefresher.hpp:18`; E08) and `REFRESH_ALL` is the maximum of the 16-bit underlying type (`Hyprland-PropRefresher.hpp:21`; E09), so it contains that bit (arithmetic on the two declarations); `scheduleRefresh` ORs its argument into `m_propsTripped` (`Hyprland-PropRefresher.cpp:31`) and queues the refresh with `doLater` (34). The watch list is therefore rebuilt after every `reload()` from the then-current `m_configPaths` (inference from these lines; no reload was observed).
+27: 8. **Other entry points.** A keyword that names `misc:disable_autoreload` calls `update()` at once (`Hyprland-HyprCtl.cpp:1223-1224`; K27). `hyprctl reload` reaches `Config::mgr()->reload()` (line 1276; K28).
+28: 9. **inotify semantics.** IN_CLOSE_WRITE is the event for a file opened for writing that was then closed (`man7-inotify.7.html:185-186`; K29). IN_DONT_FOLLOW says the pathname is not dereferenced when it is a symbolic link (lines 261-262; K30). Read together with step 3 they say what the two watches on a symlink entry cover: the link watch is on the link itself (IN_DONT_FOLLOW), the second watch is on the target; the wave-1 lab saw the link watch silent for a write through the link and the target watch fire (`w1/R56ScoutInotifyLab.md`). Why Hyprland added the second watch is its authors' design intent and is not in any pin.
+40: 3. Matches are processed in the order glob returned them (line 1824). Each becomes `value = absolutePath(match, cur)` (1825; K21 is the append that follows). `std::filesystem::status(value, ec)` follows symlinks (1828). If it fails, which for a glob result happens only for a dangling symlink (glibc returns dangling links as matches; observed by the wave-2 prose audit, `w2/R56W2RevProsePath.md` P13), the function returns "inaccessible" at once (1830-1833). A missing literal target never gets here: it ends at the no-match return of step 2. The rest of that line's matches are not processed, and the failed entry is not added.
+41: 4. Regular file (1835; K22): `m_configPaths.emplace_back(value)` (1836) runs before the file is parsed. `m_configCurrentPath` is set to `value` (1838; E06), `parseFile(value)` runs (1839), and the previous `cur` is restored (1840). The recursion has no depth check in these lines.
+42: 5. Directory (1843-1845; K23): warning, skipped, not added and so not watched. Any other status, such as a fifo, socket or device, is also a warning and a skip (1846-1848).
+43: 
+44: Consequences. Each point is read from the lines above; the points marked inference are not shown directly.
+45: - Order is depth-first and pre-order. The main path comes first. For each `source` line in file order, the matched file is appended, then its own nested entries follow, then the next `source` line is processed. Within one line the glob order decides.
+46: - No deduplication. `emplace_back` at 1836 has no membership test, so a file reached twice is listed twice. `setWatchList` records one `m_watches` entry per list entry (52-73), so the same file appears twice in `m_watches`; the kernel keeps one watch per inode, the second add returns the same descriptor and modifies the watch (inotify(7) lines 90-92 and 296-302; the wave-2 prose audit saw wd 1 returned three times), and the duplicate `inotify_rm_watch` of the next rebuild fails unchecked (K05).
+47: - A missing `source` target never enters the list. The nomatch return at 1816-1820 comes before the append at 1836. Only `m_configPaths` entries are watched, and no parent directory is ever watched, so a target created after the parse is not seen by the watcher (inference).
+48: - A symlink to a regular file enters the list under the link path. `status` follows the link (1828) but `value` is not resolved. Its watches are the link watch and the canonical watch (step 3).
+49: - A symlink to a directory is a directory match and is skipped (1843-1845).
+50: - The main config path is added even when the file is missing (779). Its watch is then built by the same loop; the result of `inotify_add_watch` is not checked (line 60; E02).
+51: - Cycles: no visited set and no depth limit appear in lines 1802-1855. A file that sources itself would recurse without a bound, and each level also appends one list entry (1836), so the growth is stack and heap; which gives out first is not in the pins (inference from the absent guard; not exercised).
+52: 
+53: Path resolution: `absolutePath` (`Hyprland-MiscFunctions.cpp:61-83`). `cur` is the file being parsed.
+54: - `~`: the first byte is replaced by the value of `HOME` (lines 64-66; K25, E01). So `~/x` becomes `$HOME/x`, and `~user/x` becomes `$HOME` followed directly by `user/x`: there is no user lookup and no slash is inserted. The `GLOB_TILDE` flag (line 1816) never sees a leading tilde, because `absolutePath` has already replaced it. If `HOME` is unset, `getenv` returns null and the string construction at line 66 violates the `std::string` precondition; libstdc++ throws `std::logic_error` (observed in the wave-2 prose audit, R06), and `handleSource` has no catch in 1802-1855. What Hyprland's own build does is not in the pins.
+70: Glob semantics: `glob(3)` is called without `GLOB_NOSORT`, so the matches are sorted by the libc's `strcoll`-style order: bytewise under the C locale and locale-dependent otherwise (glibc, observed by the wave-2 prose audit, G02). Whether Hyprland calls `setlocale` and which libc it links are not in the pins. The watch-plan model sorts bytewise; that is a declared divergence, not a fact of this entry. For glibc a `*` pattern does not return a leading-dot name and a `.*` pattern returns `.`, `..` and the dot-file (observed, G05); the model's python glob omits `.` and `..`.
+83: | K06 | This line calls std::filesystem::is_directory on path and passes the error code ecDir to it. | S383 | Hyprland-ConfigWatcher.cpp:54 | `std::filesystem::is_directory(path, ecDir);` |
+84: | K07 | The fileMask variable is assigned the IN_CLOSE_WRITE inotify event bit in this declaration; the same source line also ORs in IN_DONT_FOLLOW, which the quoted prefix does not show. | S383 | Hyprland-ConfigWatcher.cpp:55 | `fileMask      = IN_CLOSE_WRITE` |
+85: | K08 | The directoryMask variable is initialised from fileMask on this line and, on the same source line, ORs in IN_CREATE, IN_DELETE, IN_MOVED_TO and IN_MOVED_FROM, which the quoted prefix does not show. | S383 | Hyprland-ConfigWatcher.cpp:56 | `directoryMask = fileMask` |
+86: | K09 | This call registers path.c_str() with the mask variable on the m_inotifyFd inotify instance. | S383 | Hyprland-ConfigWatcher.cpp:60 | `inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask)` |
+87: | K10 | This condition requires both error codes to be clear and IS_SYMLINK to hold before the canonical watch is added. | S383 | Hyprland-ConfigWatcher.cpp:67 | `if (!ec && !ec2 && IS_SYMLINK) {` |
+88: | K11 | The second watch is added on CANONICAL.c_str() with IN_CLOSE_WRITE as the only mask argument. | S383 | Hyprland-ConfigWatcher.cpp:69 | `inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(), IN_CLOSE_WRITE),` |
+89: | K12 | For a matched watch, the event handler calls m_watchCallback with a newly built SConfigWatchEvent on this line. | S383 | Hyprland-ConfigWatcher.cpp:105 | `m_watchCallback(SConfigWatchEvent{` |
+134: - Host observation (wave 2, read-only `/proc`, not a row): on 2026-10-28 the running Hyprland (pid 1622, started 2026-10-26) held one inotify instance (two descriptors, one open file description) with 40 watches, whose inode numbers and registration order equal the 40 primary watches that `tools/mado-watchplan.py` predicts for `~/.config/hypr/hyprland.conf` (`w2/R56W2RevProcFdinfo/comparison.md`, `fdinfo-capture.txt`). The kernel shows mask 0x8 (IN_CLOSE_WRITE) on each; IN_DONT_FOLLOW is an add flag and does not appear there, so that half of the mask is not confirmed by observation. None of the 40 paths is a symlink or missing, so the canonical-watch and missing-path branches were not exercised. One host, one tree, one moment.
+135: - Pins are the frozen single-line quotes plus the surrounding functions read from the pin files. Declarations outside the pins are not shown by them: the `m_configPaths` declaration, `ConfigWatcher.hpp`, `getMainConfigPath`, `Supplementary::Jeremy` and the config-manager selection (upstream files at the same commit, fetched by the wave-2 prose audit F4/F5, state that the Lua manager is chosen only for a main path ending in `.lua` and that `m_configPaths` is a `std::vector<std::string>`; they are not pinned this round), hyprlang's `parseFile` and `source` pre-processing and comment stripping (the round-46 hyprlang pin holds them; whether the running build links that version is not pinned), and the Lua config provider. The chain assumes the legacy (hyprlang) config manager, as K27/E04 require.
+136: - Failure paths: if `inotify_init1` fails, the constructor logs and returns (`Hyprland-ConfigWatcher.cpp:21-26`), and the event loop does not register a descriptor (`Hyprland-EventLoopManager.cpp:127`). A failed `inotify_add_watch` is not checked (line 60; E02). `onInotifyEvent` has no `IN_Q_OVERFLOW` branch.
+137: - Reload per event: `onInotifyEvent` calls the callback once per event (lines 87-110) and never reads the event mask, so every event kind, including the kernel's IN_IGNORED, reaches `reload()`. No coalescing appears, so one save that produces several events could call `reload()` several times; the wave-1 lab saw one event per save for an in-place, truncating or touching write on kernel 7.2.11 (`w1/R56ScoutInotifyLab.md`), which is the kernel plane only.
+138: - Inode-based watches: inotify(7) says file monitoring follows the inode (`man7-inotify.7.html:225-228`). Two cases from the wave-1 lab with Hyprland's exact masks (kernel 7.2.11, `w1/R56ScoutInotifyLab/raw-output.txt`; not Hyprland itself): an editor that replaces the file by renaming a temporary file over it makes the kernel remove the file watch and deliver IN_IGNORED (K05 shows `setWatchList` would then try to remove it again, unchecked); a file moved away keeps its watch on the moved inode, which still fires on a later write to that inode. Because the callback reads no mask (step 4), the first case reaches `reload()`; what that reload does to the path list is steps 6-7 (a path that no longer matches leaves the list at the no-match return) and is inference, not observed in Hyprland.
+
+FILE .ufo/waves/round-56/fetch/Hyprland-ConfigWatcher.cpp
+21: CConfigWatcher::CConfigWatcher() : m_inotifyFd(inotify_init1(IN_NONBLOCK | IN_CLOEXEC)) {
+22:     if (!m_inotifyFd.isValid()) {
+23:         Log::logger->log(Log::ERR, "CConfigWatcher couldn't open an inotify node. Config will not be automatically reloaded");
+24:         return;
+25:     }
+26: }
+32: void CConfigWatcher::update() {
+33:     static const auto PDISABLEAUTORELOAD = CConfigValue<Config::INTEGER>("misc:disable_autoreload");
+34:     setWatchList(*PDISABLEAUTORELOAD ? std::vector<std::string>{} : Config::mgr()->getConfigPaths());
+35: }
+36: 
+37: void CConfigWatcher::setWatchList(const std::vector<std::string>& paths) {
+38: 
+39:     // we clear all watches first, because whichever fired is now invalid
+40:     // or that is at least what it seems to be.
+41:     // since we don't know which fired,
+42:     // plus it doesn't matter that much, these ops are done rarely and fast anyways.
+43: 
+44:     // cleanup old paths
+45:     for (auto& watch : m_watches) {
+46:         inotify_rm_watch(m_inotifyFd.get(), watch.wd);
+47:     }
+48: 
+49:     m_watches.clear();
+50: 
+51:     // add new paths
+52:     for (const auto& path : paths) {
+53:         std::error_code ecDir;
+54:         const bool      isDirectory   = std::filesystem::is_directory(path, ecDir);
+55:         const uint32_t  fileMask      = IN_CLOSE_WRITE | IN_DONT_FOLLOW;
+56:         const uint32_t  directoryMask = fileMask | IN_CREATE | IN_DELETE | IN_MOVED_TO | IN_MOVED_FROM;
+57:         const uint32_t  mask          = isDirectory ? directoryMask : fileMask;
+58: 
+59:         m_watches.emplace_back(SInotifyWatch{
+60:             .wd   = inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask),
+61:             .file = path,
+62:         });
+63: 
+64:         std::error_code ec, ec2;
+65:         const auto      CANONICAL  = std::filesystem::canonical(path, ec);
+66:         const auto      IS_SYMLINK = std::filesystem::is_symlink(path, ec2);
+67:         if (!ec && !ec2 && IS_SYMLINK) {
+68:             m_watches.emplace_back(SInotifyWatch{
+69:                 .wd   = inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(), IN_CLOSE_WRITE),
+70:                 .file = path,
+71:             });
+72:         }
+73:     }
+74: }
+75: 
+76: void CConfigWatcher::setOnChange(const std::function<void(const SConfigWatchEvent&)>& fn) {
+77:     m_watchCallback = fn;
+78: }
+79: 
+80: void CConfigWatcher::onInotifyEvent() {
+81:     constexpr size_t                                     BUFFER_SIZE = sizeof(inotify_event) + NAME_MAX + 1;
+82:     alignas(inotify_event) std::array<char, BUFFER_SIZE> buffer      = {};
+83:     const ssize_t                                        bytesRead   = read(m_inotifyFd.get(), buffer.data(), buffer.size());
+84:     if (bytesRead <= 0)
+85:         return;
+86: 
+87:     for (size_t offset = 0; offset < sc<size_t>(bytesRead);) {
+88:         const auto* ev = rc<const inotify_event*>(buffer.data() + offset);
+89: 
+90:         if (offset + sizeof(inotify_event) > sc<size_t>(bytesRead)) {
+91:             Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated header");
+92:             break;
+93:         }
+94: 
+95:         if (offset + sizeof(inotify_event) + ev->len > sc<size_t>(bytesRead)) {
+96:             Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated name field");
+97:             break;
+98:         }
+99: 
+100:         const auto WD = std::ranges::find_if(m_watches, [wd = ev->wd](const auto& e) { return e.wd == wd; });
+101: 
+102:         if (WD == m_watches.end())
+103:             Log::logger->log(Log::ERR, "CConfigWatcher: got an event for wd {} which we don't have?!", ev->wd);
+104:         else
+105:             m_watchCallback(SConfigWatchEvent{
+106:                 .file = WD->file,
+107:             });
+108: 
+109:         offset += sizeof(inotify_event) + ev->len;
+110:     }
+111: }
+
+FILE .ufo/waves/round-56/fetch/Hyprland-legacy-ConfigManager.cpp
+1077: void CConfigManager::init() {
+1078: 
+1079:     Config::watcher()->setOnChange([this](const CConfigWatcher::SConfigWatchEvent& e) {
+1080:         Log::logger->log(Log::DEBUG, "CConfigManager: file {} modified, reloading", e.file);
+1081:         reload();
+1082:     });
+1083: 
+1084:     reload();
+1802: std::optional<std::string> CConfigManager::handleSource(const std::string& command, const std::string& rawpath) {
+1803:     if (rawpath.length() < 2) {
+1804:         Log::logger->log(Log::ERR, "source= path garbage");
+1805:         return "source= path " + rawpath + " bogus!";
+1806:     }
+1807: 
+1808:     std::unique_ptr<glob_t, void (*)(glob_t*)> glob_buf{sc<glob_t*>(calloc(1, sizeof(glob_t))), // allocate and zero-initialize NOLINT(cppcoreguidelines-no-malloc)
+1809:                                                         [](glob_t* g) {
+1810:                                                             if (g) {
+1811:                                                                 globfree(g); // free internal resources allocated by glob()
+1812:                                                                 free(g);     // free the memory for the glob_t structure NOLINT(cppcoreguidelines-no-malloc)
+1813:                                                             }
+1814:                                                         }};
+1815: 
+1816:     if (auto r = glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get()); r != 0) {
+1817:         std::string err = std::format("source= globbing error: {}", r == GLOB_NOMATCH ? "found no match" : r == GLOB_ABORTED ? "read error" : "out of memory");
+1818:         Log::logger->log(Log::ERR, "{}", err);
+1819:         return err;
+1820:     }
+1821: 
+1822:     std::string errorsFromParsing;
+1823: 
+1824:     for (size_t i = 0; i < glob_buf->gl_pathc; i++) {
+1825:         auto            value = absolutePath(glob_buf->gl_pathv[i], m_configCurrentPath);
+1826: 
+1827:         std::error_code ec;
+1828:         auto            file_status = std::filesystem::status(value, ec);
+1829: 
+1830:         if (ec) {
+1831:             Log::logger->log(Log::ERR, "source= file from glob result is inaccessible ({}): {}", ec.message(), value);
+1832:             return "source= file " + value + " is inaccessible!";
+1833:         }
+1834: 
+1835:         if (std::filesystem::is_regular_file(file_status)) {
+1836:             m_configPaths.emplace_back(value);
+1837:             auto configCurrentPathBackup = m_configCurrentPath;
+1838:             m_configCurrentPath          = value;
+1839:             const auto THISRESULT        = m_config->parseFile(value.c_str());
+1840:             m_configCurrentPath          = configCurrentPathBackup;
+1841:             if (THISRESULT.error && errorsFromParsing.empty())
+1842:                 errorsFromParsing += THISRESULT.getError();
+1843:         } else if (std::filesystem::is_directory(file_status)) {
+1844:             Log::logger->log(Log::WARN, "source= skipping directory {}", value);
+1845:             continue;
+1846:         } else {
+1847:             Log::logger->log(Log::WARN, "source= skipping non-regular-file {}", value);
+1848:             continue;
+1849:         }
+1850:     }
+1851: 
+1852:     if (errorsFromParsing.empty())
+1853:         return {};
+1854:     return errorsFromParsing;
+1855: }
+
+FILE .ufo/waves/round-56/fetch/Hyprland-MiscFunctions.cpp
+61: std::string absolutePath(const std::string& rawpath, const std::string& currentPath) {
+62:     auto value = rawpath;
+63: 
+64:     if (value[0] == '~') {
+65:         static const char* const ENVHOME = getenv("HOME");
+66:         value.replace(0, 1, std::string(ENVHOME));
+67:     } else if (value[0] != '/') {
+68:         auto currentDir = currentPath.substr(0, currentPath.find_last_of('/'));
+69: 
+70:         if (value[0] == '.') {
+71:             if (value[1] == '.' && value[2] == '/') {
+72:                 auto parentDir = currentDir.substr(0, currentDir.find_last_of('/'));
+73:                 value.replace(0, 2 + currentPath.empty(), parentDir);
+74:             } else if (value[1] == '/')
+75:                 value.replace(0, 1 + currentPath.empty(), currentDir);
+76:             else
+77:                 value = currentDir + '/' + value;
+78:         } else
+79:             value = currentDir + '/' + value;
+80:     }
+81: 
+82:     return value;
+83: }
+
+FILE .ufo/waves/round-56/fetch/man7-inotify.7.html
+85:        •  <a href="../man2/inotify_add_watch.2.html">inotify_add_watch(2)</a> manipulates the "watch list" associated
+86:           with an inotify instance.  Each item ("watch") in the watch
+87:           list specifies the pathname of a file or directory, along with
+88:           some set of events that the kernel should monitor for the file
+89:           referred to by that pathname.  <a href="../man2/inotify_add_watch.2.html">inotify_add_watch(2)</a> either
+90:           creates a new watch item, or modifies an existing watch.  Each
+91:           watch has a unique "watch descriptor", an integer returned by
+92:           <a href="../man2/inotify_add_watch.2.html">inotify_add_watch(2)</a> when the watch is created.
+185:            <b>IN_CLOSE_WRITE </b>(+)
+186:                   File opened for writing was closed.
+225:        Inotify monitoring is inode-based: when monitoring a file (but not
+226:        when monitoring the directory containing a file), an event can be
+227:        generated for activity on any link to the file (in the same or a
+228:        different directory).
+258:        The following further bits can be specified in <i>mask</i> when calling
+259:        <a href="../man2/inotify_add_watch.2.html">inotify_add_watch(2)</a>:
+260: 
+261:            <b>IN_DONT_FOLLOW </b>(since Linux 2.6.15)
+262:                   Don't dereference <i>pathname</i> if it is a symbolic link.
+276:            <b>IN_MASK_ADD</b>
+277:                   If a watch instance already exists for the filesystem
+278:                   object corresponding to <i>pathname</i>, add (OR) the events
+279:                   in <i>mask</i> to the watch mask (instead of replacing the
+280:                   mask); the error <b>EINVAL </b>results if <b>IN_MASK_CREATE </b>is
+281:                   also specified.
+282: 
+283:            <b>IN_ONESHOT</b>
+284:                   Monitor the filesystem object corresponding to <i>pathname</i>
+285:                   for one event, then remove from watch list.
+286: 
+287:            <b>IN_ONLYDIR </b>(since Linux 2.6.15)
+288:                   Watch <i>pathname</i> only if it is a directory; the error
+289:                   <b>ENOTDIR </b>results if <i>pathname</i> is not a directory.  Using
+290:                   this flag provides an application with a race-free way
+291:                   of ensuring that the monitored object is a directory.
+292: 
+293:            <b>IN_MASK_CREATE </b>(since Linux 4.18)
+294:                   Watch <i>pathname</i> only if it does not already have a watch
+295:                   associated with it; the error <b>EEXIST </b>results if
+296:                   <i>pathname</i> is already being watched.
+297: 
+298:                   Using this flag provides an application with a way of
+299:                   ensuring that new watches do not modify existing ones.
+300:                   This is useful because multiple paths may refer to the
+301:                   same inode, and multiple calls to <a href="../man2/inotify_add_watch.2.html">inotify_add_watch(2)</a>
+302:                   without this flag may clobber existing watch masks.
+304:        The following bits may be set in the <i>mask</i> field returned by
+305:        <a href="../man2/read.2.html">read(2)</a>:
+306: 
+307:            <b>IN_IGNORED</b>
+308:                   Watch was removed explicitly (<a href="../man2/inotify_rm_watch.2.html">inotify_rm_watch(2)</a>) or
+309:                   automatically (file was deleted, or filesystem was
+310:                   unmounted).  See also BUGS.
+311: 
+312:            <b>IN_ISDIR</b>
+313:                   Subject of this event is a directory.
+314: 
+315:            <b>IN_Q_OVERFLOW</b>
+316:                   Event queue overflowed (<i>wd</i> is -1 for this event).
+317: 
+318:            <b>IN_UNMOUNT</b>
+319:                   Filesystem containing watched object was unmounted.  In
+320:                   addition, an <b>IN_IGNORED </b>event will subsequently be

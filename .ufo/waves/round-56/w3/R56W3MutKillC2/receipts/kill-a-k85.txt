@@ -1,0 +1,12 @@
+# kill transcript: a-k85
+# tool under test: the pristine lane-tip tools/mado-watchplan.py
+# layout: the frozen harness' staged layout (bwrap, empty cwd, tree only)
+# expected.rc = 0
+
+--- pristine (the honest tool) ---
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=1
+MADO_WATCH: ERROR via=$ROOT/tree/hyprland.conf:1 source=../out/*.conf reason=nomatch
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=1 live=NONE
+rc=0  reproduces expected.out/expected.rc: yes
+

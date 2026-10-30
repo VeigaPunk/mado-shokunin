@@ -1,0 +1,70 @@
+{
+ "fixture": "A-F04",
+ "wave2_report": "R56W2MutC1CounterA",
+ "wave2_fixture_id": "F04",
+ "survivor_mutant": "M12",
+ "survivor_mutation": "row: duplicated row tolerated by row_data",
+ "attacks": "row: a duplicated row must not contribute its cells to the collateral legs",
+ "registered_expectation": "pristine reports row:K08,source_cell:K08,tok:K08,echo:K08",
+ "pristine_expectation_holds": true,
+ "pristine": {
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=a644189215c3b6a8b3fb48f41afb95e22f067a3b rows=29/30 hosts=3/3 sources=29/30 scope=29/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K08,source_cell:K08,scope:K08,tok:K08,num:K08,echo:K08",
+  "legs": [
+   "row:K08",
+   "source_cell:K08",
+   "scope:K08",
+   "tok:K08",
+   "num:K08",
+   "echo:K08"
+  ]
+ },
+ "mutant_on_fixture": {
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=a644189215c3b6a8b3fb48f41afb95e22f067a3b rows=29/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K08",
+  "legs": [
+   "row:K08"
+  ],
+  "stderr_tail": ""
+ },
+ "mutant_on_good_tree": {
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "err": "",
+  "legs": []
+ },
+ "kill": {
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "echo:K08",
+   "num:K08",
+   "scope:K08",
+   "source_cell:K08",
+   "tok:K08"
+  ],
+  "legs_added": []
+ },
+ "carrier": "CONTROL-1",
+ "carrier_reason": "the pristine reports ['echo:K08', 'num:K08', 'scope:K08', 'source_cell:K08'] and the mutant does not -> the frozen _need(echo:K08) assertion kills it | pristine=caught mutant=required leg echo:K08 not in missed=row:K08",
+ "final_route": "CONTROL-1",
+ "final_route_reason": "the pristine reports ['echo:K08', 'num:K08', 'scope:K08', 'source_cell:K08'] and the mutant does not -> the frozen _need(echo:K08) assertion kills it | pristine=caught mutant=required leg echo:K08 not in missed=row:K08",
+ "final_route_proved": true,
+ "required_leg": "source_cell:K08",
+ "legs_pristine_only": [
+  "echo:K08",
+  "num:K08",
+  "scope:K08",
+  "source_cell:K08",
+  "tok:K08"
+ ],
+ "legs_mutant_only": [],
+ "harness_proof": {
+  "harness_rc": 1,
+  "harness_out": "MADO_R56_CONTROLS: claim=c1 good=ok controls=43/44 verdict=FAIL",
+  "failed_control_line": "A-ctl-F04 A-F04: FAIL - required leg echo:K08 not in missed=row:K08",
+  "killed_by_harness": true
+ },
+ "patch": "A-F04.patch",
+ "fixture_repo_sha": "a644189215c3b6a8b3fb48f41afb95e22f067a3b"
+}

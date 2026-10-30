@@ -1,0 +1,39 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F15",
+  "attacks": "prov: source/verified/recheck must lie in the first 15 lines",
+  "expect": "pristine reports prov",
+  "repo_sha": "fcf80e61cb0154e76e2cb068ca180323908e063c",
+  "patch": "A-F15.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=fcf80e61cb0154e76e2cb068ca180323908e063c rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=prov",
+   "err": "",
+   "legs": [
+    "prov"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M44",
+  "label": "prov: window widened (first 15 lines -> first 30)",
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=fcf80e61cb0154e76e2cb068ca180323908e063c rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "err": "",
+  "legs": [],
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "prov"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

@@ -1,0 +1,26 @@
+# L1 attempt-2 self-verification, 2026-10-30. Scratch archive of tip 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 at scratch commit d9b469e1b6d18e6f3dcb0bcface40c32de27c8fc (trees equal: lane dad2fc7e44c577eb2cc1619c66764491df1018c6 vs scratch dad2fc7e44c577eb2cc1619c66764491df1018c6).
+$ c1 counter
+MADO_AUTORELOAD_ENTRY: rev=d9b469e1b6d18e6f3dcb0bcface40c32de27c8fc rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+rc=0
+$ c1 controls
+  note: collateral legs beyond the registered ones: scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,scope:K11,...(+1 more)
+MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK
+rc=0
+$ c3 counter
+c3-r56-used-by.py: setup error: base revision objects are absent: fail closed
+rc=2
+$ c3 controls
+SETUP: frozen base revision 13f0acbe3a15da2d9c08357a576d91dcadc85273 is not readable in /fast/scratch/hyaku/mado-r56/L1/l1-verify (control 1 cannot run)
+rc=0
+$ c2 controls (bwrap)
+r56_ctl_c2: sandbox=bwrap fixture_commit=ok control_scores={'const-host': (1, 0), 'empty': (0, 0), 'sibling-reader': (0, 0), 'lookup-committed': (18, 0)}
+MADO_R56_C2: rev=d9b469e1b6d18e6f3dcb0bcface40c32de27c8fc fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 verdict=TARGET_MET
+rc=0
+# (c3 re-run after fetching the base commit into the scratch repo; scratch rev d9b469e1b6d18e6f3dcb0bcface40c32de27c8fc)
+$ c3 counter (with base readable)
+MADO_USED_BY: rev=d9b469e1b6d18e6f3dcb0bcface40c32de27c8fc entries=71 rows=332 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+$ c3 controls (with base readable)
+control 9 stale-allow: PASS -- missed=stale [appended ' x' to the first citing line of S005 in corpus/knowledge/output-colour-boundaries-r14.md; harness stale=-]
+MADO_R56_CONTROLS: claim=c3 good=ok controls=9/9 verdict=OK
+rc=0

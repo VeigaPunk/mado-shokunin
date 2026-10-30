@@ -1,0 +1,43 @@
+| wd | n | path | inode (live 2026-10-30 ~05:06Z) | inode w2 2026-10-28 | inode sibling 2026-10-30 05:04Z | lstat now | match |
+|---|---|---|---|---|---|---|---|
+| 1 | 1 | ~/.config/hypr/hyprland.conf | 21221 | 21221 | 21221 | 21221 | yes |
+| 2 | 2 | ~/.local/share/omarchy/default/hypr/autostart.conf | 822 | 822 | 822 | 822 | yes |
+| 3 | 3 | ~/.local/share/omarchy/default/hypr/bindings/media.conf | 825 | 825 | 825 | 825 | yes |
+| 4 | 4 | ~/.local/share/omarchy/default/hypr/bindings/clipboard.conf | 824 | 824 | 824 | 824 | yes |
+| 5 | 5 | ~/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf | 826 | 826 | 826 | 826 | yes |
+| 6 | 6 | ~/.local/share/omarchy/default/hypr/bindings/utilities.conf | 828 | 828 | 828 | 828 | yes |
+| 7 | 7 | ~/.local/share/omarchy/default/hypr/envs.conf | 830 | 830 | 830 | 830 | yes |
+| 8 | 8 | ~/.config/omarchy/current/theme/gum.env.conf | 27329 | 27329 | 27329 | 27329 | yes |
+| 9 | 9 | ~/.local/share/omarchy/default/hypr/looknfeel.conf | 832 | 832 | 832 | 832 | yes |
+| 10 | 10 | ~/.local/share/omarchy/default/hypr/input.conf | 831 | 831 | 831 | 831 | yes |
+| 11 | 11 | ~/.local/share/omarchy/default/hypr/windows.conf | 838 | 838 | 838 | 838 | yes |
+| 12 | 12 | ~/.local/share/omarchy/default/hypr/apps.conf | 821 | 821 | 821 | 821 | yes |
+| 13 | 13 | ~/.local/share/omarchy/default/hypr/apps/1password.conf | 802 | 802 | 802 | 802 | yes |
+| 14 | 14 | ~/.local/share/omarchy/default/hypr/apps/bitwarden.conf | 803 | 803 | 803 | 803 | yes |
+| 15 | 15 | ~/.local/share/omarchy/default/hypr/apps/browser.conf | 804 | 804 | 804 | 804 | yes |
+| 16 | 16 | ~/.local/share/omarchy/default/hypr/apps/hyprshot.conf | 807 | 807 | 807 | 807 | yes |
+| 17 | 17 | ~/.local/share/omarchy/default/hypr/apps/jetbrains.conf | 808 | 808 | 808 | 808 | yes |
+| 18 | 18 | ~/.local/share/omarchy/default/hypr/apps/localsend.conf | 809 | 809 | 809 | 809 | yes |
+| 19 | 19 | ~/.local/share/omarchy/default/hypr/apps/pip.conf | 811 | 811 | 811 | 811 | yes |
+| 20 | 20 | ~/.local/share/omarchy/default/hypr/apps/qemu.conf | 812 | 812 | 812 | 812 | yes |
+| 21 | 21 | ~/.local/share/omarchy/default/hypr/apps/retroarch.conf | 813 | 813 | 813 | 813 | yes |
+| 22 | 22 | ~/.local/share/omarchy/default/hypr/apps/steam.conf | 814 | 814 | 814 | 814 | yes |
+| 23 | 23 | ~/.local/share/omarchy/default/hypr/apps/geforce.conf | 806 | 806 | 806 | 806 | yes |
+| 24 | 24 | ~/.local/share/omarchy/default/hypr/apps/moonlight.conf | 810 | 810 | 810 | 810 | yes |
+| 25 | 25 | ~/.local/share/omarchy/default/hypr/apps/system.conf | 815 | 815 | 815 | 815 | yes |
+| 26 | 26 | ~/.local/share/omarchy/default/hypr/apps/telegram.conf | 816 | 816 | 816 | 816 | yes |
+| 27 | 27 | ~/.local/share/omarchy/default/hypr/apps/typora.conf | 818 | 818 | 818 | 818 | yes |
+| 28 | 28 | ~/.local/share/omarchy/default/hypr/apps/terminals.conf | 817 | 817 | 817 | 817 | yes |
+| 29 | 29 | ~/.local/share/omarchy/default/hypr/apps/walker.conf | 819 | 819 | 819 | 819 | yes |
+| 30 | 30 | ~/.local/share/omarchy/default/hypr/apps/webcam-overlay.conf | 820 | 820 | 820 | 820 | yes |
+| 31 | 31 | ~/.config/omarchy/current/theme/hyprland.conf | 27331 | 27331 | 27331 | 27331 | yes |
+| 32 | 32 | ~/.config/hypr/monitors.conf | 21226 | 21226 | 21226 | 21226 | yes |
+| 33 | 33 | ~/.config/hypr/input.conf | 21330 | 21330 | 21330 | 21330 | yes |
+| 34 | 34 | ~/.config/hypr/bindings.conf | 21219 | 21219 | 21219 | 21219 | yes |
+| 35 | 35 | ~/.config/hypr/looknfeel.conf | 21225 | 21225 | 21225 | 21225 | yes |
+| 36 | 36 | ~/.config/hypr/autostart.conf | 21218 | 21218 | 21218 | 21218 | yes |
+| 37 | 37 | ~/.local/state/omarchy/toggles/hypr/flags.conf | 27226 | 27226 | 27226 | 27226 | yes |
+| 38 | 38 | ~/.local/state/omarchy/toggles/hypr/window-no-gaps.conf | 28604 | 28604 | 28604 | 28604 | yes |
+| 39 | 39 | ~/.config/hypr/ai-usage.conf | 76185 | 76185 | 76185 | 76185 | yes |
+| 40 | 40 | ~/.config/hypr/gkeep.conf | 26324557 | 26324557 | 26324557 | 26324557 | yes |
+ALL_MATCH True sib_rows 40 w2_rows 40

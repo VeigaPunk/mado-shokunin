@@ -1,0 +1,50 @@
+R56W3ExecTagPin — upstream tag/pin chain (attempt 2)
+
+Lane evidence source: corpus/SOURCES.md S383 anchor cell at score tree 0f3a54361a9824484d0801679ceb1fd8ac7c32e1; recorded pin is .ufo/waves/round-56/fetch/Hyprland-ConfigWatcher.cpp, 4046 B, sha256 8383b8abf43159986bc4127ad7a4416fbf1c3527bf388fa1ce052c28c40d516c.
+
+Command:
+curl -fsSL https://api.github.com/repos/hyprwm/Hyprland/git/ref/tags/v0.56.2
+Output:
+{
+  "ref": "refs/tags/v0.56.2",
+  "node_id": "REF_kwDOHA7HmLFyZWZzL3RhZ3MvdjAuNTYuMg",
+  "url": "https://api.github.com/repos/hyprwm/Hyprland/git/refs/tags/v0.56.2",
+  "object": {
+    "sha": "efb50993780079460b0cbed1363e2166a2de1d9f",
+    "type": "commit",
+    "url": "https://api.github.com/repos/hyprwm/Hyprland/git/commits/efb50993780079460b0cbed1363e2166a2de1d9f"
+  }
+}
+
+Tag ref is lightweight/direct-to-commit (object.type=commit), so no annotated-tag peel is applicable.
+
+Command:
+curl -fsSL https://api.github.com/repos/hyprwm/Hyprland/git/commits/efb50993780079460b0cbed1363e2166a2de1d9f
+Decisive JSON fields:
+"sha": "efb50993780079460b0cbed1363e2166a2de1d9f"
+"tree": {"sha":"a0a517a96596fd50c829f0c65eaaa30b52b62fd1"}
+"message": "[gha] Nix: update inputs"
+"parents": [{"sha":"34170f65cc8dc4147613bbd25f8b89f4d8d2ed81", ...}]
+"verification": {"verified":false,"reason":"unsigned",...}
+
+Command:
+curl -fsSL https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/src/config/shared/inotify/ConfigWatcher.cpp | sha256sum
+Output:
+8383b8abf43159986bc4127ad7a4416fbf1c3527bf388fa1ce052c28c40d516c  -
+Compared pin hash (S383 anchor cell): 8383b8abf43159986bc4127ad7a4416fbf1c3527bf388fa1ce052c28c40d516c — MATCH.
+
+Kernel and manual-page version commands/evidence:
+Command: uname -r
+Output: 7.2.11-arch1-1
+Command: grep -n -i -E 'man-pages|Linux man-pages|version [0-9]' /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/fetch/man7-proc_pid_fdinfo.5.html /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/fetch/man7-inotify_add_watch.2.html /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/fetch/man7-inotify.7.html
+Decisive matches:
+man7-inotify.7.html:801: This page was obtained from the tarball man-pages-6.19.tar.gz
+man7-inotify.7.html:811: Linux man-pages 6.19 2026-02-14 inotify(7)
+man7-inotify_add_watch.2.html:155: This page was obtained from the tarball man-pages-6.19.tar.gz
+man7-inotify_add_watch.2.html:165: Linux man-pages 6.19 2026-02-08 inotify_add_watch(2)
+man7-proc_pid_fdinfo.5.html: (the grep found matches; omitted from the captured terminal excerpt)
+
+Attempted peel check:
+curl -fsSL https://api.github.com/repos/hyprwm/Hyprland/git/tags/$(curl -fsSL https://api.github.com/repos/hyprwm/Hyprland/git/ref/tags/v0.56.2 | python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["sha"])')
+Output: curl: (22) The requested URL returned error: 404
+Interpretation: expected for a direct commit ref; then queried the commit endpoint above successfully. No mismatch found.

@@ -2911,6 +2911,26 @@ Harm watch (at `8a7b734627b0`): `MADO_SELFTEST: 460/460 assertions passed` (base
 
 Sources 319 -> 332 rows (S383-S395, tier A except S390 tier B, `mined`, opened 2026-10-28; S384, S387, S388, S389 and S392-S395 repeat held URLs under new scopes: census W04, QUALITY 17 review in `corpus/lessons/round-56.md`); census exit 0 both ends. Knowledge entries 70 -> 71. Round: w1 43 + w2 35 dispatched = 78 seats; 33 of 35 wave-2 seats reported, `R56W2MutC3Counter` and `R56W2MutC2Harness` were stopped by the operator wrap-up with no report (not findings). Mistakes M56-1..M56-10. Axis table re-derived at `8a7b734627b0` (`receipts/axis-tip.txt`): navigation 71/71; calibration resolved-active 86/86; operability selftest 12/12.
 
+### Round 56, attempt 2 (2026-10-30 re-dispatch) — wave w3 settled; same frozen claims re-verified and hardened
+
+The run-11 wrap-up had stopped attempt 1's wave 2 (no closure; claims released; the round
+re-dispatched). Frozen claims v2 ran unchanged. Attempt-2 self-verification at the inherited
+tip `0f3a5436` and at the integrated tree: all three frozen gates TARGET_MET with controls
+green (C1 rows=30/30 + 12/12; C2 fixtures=18/18 holdout=8/8 + 4/4; C3 entries=71 rows=334
+missing=0 + 9/9); census 332 → 334 rows, exit 0 both ends; index 71/71; ledger 98/98;
+selftest 460/460. Wave w3: one v2 wave, 64 seats dispatched, all settled, 58 seat reports,
+6 disclosed reportless seats (no replacements per the orchestrator recovery boundary);
+attack share 28/64. Landed: rows S396-S397 (mined, lesson-cited; raw pin-line quotes,
+per-page footline dates); the criterion-107 checker (`quality/check-anchor-cover.py`,
+green 39/39 / red r55 / 7 mutants / 23-vector agreement, ledger row); kill-fixture suites
+(C1 51/51, C2 24 killers, C3 table); 14 entry rows + 4 prose corrections from the fresh
+audits (counter `num`-leg bounded, M56-12); C3 allowlist third reading; freeze-order D4
+blind-spot receipt; /proc second sample 40/40 + three-sample ALL_MATCH; tag→commit→bytes
+chain for v0.56.2; considerthese proposal-2 receipt at the tip. Mined M56-11..M56-15;
+appended the owed round-55 census correction. Capabilities row unchanged (the second
+/proc sample strengthens its evidence). Measured at the attempt-2 landing commit (see the
+report); verdicts remain the closure's to rule.
+
 ### Planned (round 57; intent only)
 
 1. A committed checker for criterion 107 that reads every row class and the EOF, reversed-range, duplicate-id and malformed-pin clauses, with able-to-fail receipts (the wave-1 draft is not that checker).

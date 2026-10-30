@@ -1,0 +1,14 @@
+diff --git a/corpus/knowledge/hyprland-config-autoreload-r56.md b/corpus/knowledge/hyprland-config-autoreload-r56.md
+index 3eca8fa..3feca82 100644
+--- a/corpus/knowledge/hyprland-config-autoreload-r56.md
++++ b/corpus/knowledge/hyprland-config-autoreload-r56.md
+@@ -79,7 +79,9 @@ Frozen anchors (K01-K30, one row per frozen quote; proposition is the bounded re
+ | K02 | The declaration sets its refresh field to the flag Supplementary::REFRESH_CONFIG_WATCHER on this line. | S384 | Hyprland-ConfigValues.cpp:492 | `{.refresh = Supplementary::REFRESH_CONFIG_WATCHER}` |
+ | K03 | The update function caches the misc:disable_autoreload option as a CConfigValue of the INTEGER type on this line. | S383 | Hyprland-ConfigWatcher.cpp:33 | `CConfigValue<Config::INTEGER>("misc:disable_autoreload");` |
+ | K04 | When the cached PDISABLEAUTORELOAD value is non-zero, setWatchList is given an empty vector; otherwise it is given the getConfigPaths() result. | S383 | Hyprland-ConfigWatcher.cpp:34 | `setWatchList(*PDISABLEAUTORELOAD ? std::vector<std::string>{} : Config::mgr()->getConfigPaths());` |
++```
+ | K05 | This loop calls inotify_rm_watch once per watch-list entry with that entry's wd and does not check the return value, so a wd listed twice is removed twice and the second call fails (inference from the inotify man page). | S383 | Hyprland-ConfigWatcher.cpp:46 | `inotify_rm_watch(m_inotifyFd.get(), watch.wd);` |
++    ```
+ | K06 | This line calls std::filesystem::is_directory on path and passes the error code ecDir to it. | S383 | Hyprland-ConfigWatcher.cpp:54 | `std::filesystem::is_directory(path, ecDir);` |
+ | K07 | The fileMask variable is assigned the IN_CLOSE_WRITE inotify event bit in this declaration; the same source line also ORs in IN_DONT_FOLLOW, which the quoted prefix does not show. | S383 | Hyprland-ConfigWatcher.cpp:55 | `fileMask      = IN_CLOSE_WRITE` |
+ | K08 | The directoryMask variable is initialised from fileMask on this line and, on the same source line, ORs in IN_CREATE, IN_DELETE, IN_MOVED_TO and IN_MOVED_FROM, which the quoted prefix does not show. | S383 | Hyprland-ConfigWatcher.cpp:56 | `directoryMask = fileMask` |

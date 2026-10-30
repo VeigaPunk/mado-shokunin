@@ -1,0 +1,12 @@
+Base revision: 13f0acbe3a15da2d9c08357a576d91dcadc85273
+
+Archive: `git -C /home/vgpnk/Projects/shokunin/mado-shokunin archive 13f0acbe3a15da2d9c08357a576d91dcadc85273 | tar -x -C /fast/scratch/hyaku/mado-r56/R56W3ExecBaseBefore`
+Output: no stdout; archive_rc=0.
+
+1. `git -C /home/vgpnk/Projects/shokunin/mado-shokunin ls-tree --name-only 13f0acbe3a15da2d9c08357a576d91dcadc85273:corpus/knowledge | wc -l` → `70`; pipeline rc=0.
+2. `cd /fast/scratch/hyaku/mado-r56/R56W3ExecBaseBefore && grep -c '^| S[0-9][0-9][0-9] |' corpus/SOURCES.md` → `319`; rc=0.
+3. `git -C /home/vgpnk/Projects/shokunin/mado-shokunin grep -liE 'disable_autoreload|ConfigWatcher|IN_CLOSE_WRITE|inotify_add_watch' 13f0acbe3a15da2d9c08357a576d91dcadc85273 -- corpus/knowledge | wc -l` → `0`; pipeline rc=0.
+4. `test ! -e /fast/scratch/hyaku/mado-r56/R56W3ExecBaseBefore/tools/mado-watchplan.py` → no stdout; rc=0 (absent).
+5. Attempted `bash tools/mado-verify.sh --check-index` in archived base → `usage error: unknown argument '--check-index'`, usage lists `--no-live`, `--live`, `--root DIR`, `--selftest`, `--help`; rc=2. This check could not be run using that command; no 70/70 result observed.
+6. `cd /fast/scratch/hyaku/mado-r56/R56W3ExecBaseBefore && bash tools/mado-verify.sh --selftest` → `MADO_SELFTEST: 460/460 assertions passed`; rc=0.
+7. `test -f /fast/scratch/hyaku/mado-r56/R56W3ExecBaseBefore/quality/counters/c3-r56-used-by.py` → no stdout; rc=1 (absent). Frozen before receipt read from `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/receipts/c3-base-v2.txt`: `entries=70 rows=319 missing=41 pairs=381 exempt=24 stale=0 conflict=0`.

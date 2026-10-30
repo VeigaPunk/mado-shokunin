@@ -1,0 +1,39 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F18",
+  "attacks": "index: a README line not starting with the prefix must not count",
+  "expect": "pristine reports no leg and not index",
+  "repo_sha": "6b401fb2acfaadbcf873dfa41bd9e67c93eaea25",
+  "patch": "A-F18.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=6b401fb2acfaadbcf873dfa41bd9e67c93eaea25 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ },
+ "mutant": {
+  "mutant": "M50",
+  "label": "index: README match widened (startswith -> contains)",
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=6b401fb2acfaadbcf873dfa41bd9e67c93eaea25 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=index",
+  "err": "",
+  "legs": [
+   "index"
+  ],
+  "killed": true,
+  "direction": "LEG_ADDED (mutant too strict: it reports a leg the pristine does not)",
+  "legs_lost": [],
+  "legs_added": [
+   "index"
+  ],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

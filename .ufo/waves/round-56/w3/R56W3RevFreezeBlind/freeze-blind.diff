@@ -1,0 +1,23 @@
+--- a/quality/check-freeze-order.py
++++ b/quality/check-freeze-order.py
+@@ -8,8 +8,9 @@
+ index or ref.  Nothing is written except by --selftest, which builds scratch repos under --work.
+ 
+ FREEZE set: the files that exist at REV among
+-  .ufo/waves/round-N/{claims-frozen.md,registration.md,frozen-tables.json}
+-(claims-frozen.md and registration.md are required).
++  .ufo/waves/round-N/{claims-frozen.md,registration.md,frozen-tables.json,
++  claims-frozen-v2.md,registration-v2.md,frozen-tables-v2.json}
++(claims-frozen.md and registration.md are required; the -v2 files are in the set when they exist at REV.)
+ FREEZE commit: the earliest commit on the first-parent chain from REV at which every file of
+ the FREEZE set exists with the same blob id as at REV.  If a freeze file's blob at REV differs
+ from the blob at its first appearance on that chain -> freeze_edited:<file>.
+@@ -34,7 +35,7 @@
+ from datetime import datetime, timezone
+ 
+ REQUIRED = ("claims-frozen.md", "registration.md")
+-OPTIONAL = ("frozen-tables.json",)
++OPTIONAL = ("frozen-tables.json", "claims-frozen-v2.md", "registration-v2.md", "frozen-tables-v2.json")
+ 
+ 
+ class Setup(Exception):

@@ -1,0 +1,102 @@
+# Seat R56W3ScribeReportTables — frozen gates re-run by this seat, 2026-10-30 (UTC)
+# lane tip 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 (scratch clone --shared, read-only)
+# base 13f0acbe3a15da2d9c08357a576d91dcadc85273
+
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+MADO_AUTORELOAD_ENTRY: rev=13f0acbe3a15da2d9c08357a576d91dcadc85273 rows=0/30 hosts=0/3 sources=0/30 scope=0/30 content=0/33 new_rows=0/8 verdict=TARGET_MISSED missed=tables_sha,entry_absent,index
+rc=1
+
+$ python3 -I quality/check-r56-controls.py --claim c1 --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+MADO_R56_CONTROLS setup error: .ufo/waves/round-56/frozen-tables-v2.json absent at 13f0acbe3a15da2d9c08357a576d91dcadc85273
+rc=2
+
+$ python3 -I quality/check-r56-controls.py --claim c2 --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+r56_ctl_c2: setup error: frozen-tables.json is not a regular blob at rev
+rc=2
+
+$ python3 -I quality/counters/c3-r56-used-by.py --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+c3-r56-used-by.py: setup error: frozen-tables-v2.json is not a regular blob at --rev
+rc=2
+
+$ python3 -I quality/check-r56-controls.py --claim c3 --repo . --rev 13f0acbe3a15da2d9c08357a576d91dcadc85273 --work <scratch>
+SETUP: .ufo/waves/round-56/frozen-tables-v2.json is not a regular blob at 13f0acbe3a15da2d9c08357a576d91dcadc85273
+rc=2
+
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo . --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work <scratch>
+MADO_AUTORELOAD_ENTRY: rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+rc=0
+
+$ python3 -I quality/check-r56-controls.py --claim c1 --repo . --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work <scratch>
+MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK
+good: ok
+C1-CTL-01 entry-absent: ok (required entry_absent) - counter missed=entry_absent
+C1-CTL-02 junk-placeholders: ok (required tok:<id> + content<33) - counter missed=tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K07,tok:K08,...(+24 more)
+C1-CTL-03 false-number: ok (required num:K04) - counter missed=num:K04
+C1-CTL-04 cross-pin-source: ok (required source_cell:K10) - counter missed=source_cell:K10,scope:K10
+  note: collateral legs beyond the registered ones: scope:K10
+C1-CTL-05 scope-swap: ok (required scope:K10) - counter missed=prov,source_cell:K10,scope:K10
+  note: collateral legs beyond the registered ones: prov
+C1-CTL-06 provenance-dangling: ok (required prov) - counter missed=prov
+C1-CTL-07 dropped-row: ok (required row:K17) - counter missed=row:K17,source_cell:K17,scope:K17,tok:K17,num:K17,echo:K17
+  note: collateral legs beyond the registered ones: source_cell:K17,scope:K17,tok:K17,num:K17,echo:K17
+C1-CTL-08 edited-quote: ok (required row:K05) - counter missed=row:K05,quote:K05
+C1-CTL-09 pin-byte: ok (required pin_hash) - counter missed=pin_hash
+C1-CTL-10 new-row-missing: ok (required new_rows) - counter missed=prov,source_cell:K29,source_cell:K30,scope:K29,scope:K30,new_rows
+  note: collateral legs beyond the registered ones: prov,scope:K29,scope:K30
+C1-CTL-11 quote-echo: ok (required echo:<id>) - counter missed=echo:K01,echo:K02,echo:K03,echo:K04,echo:K05,echo:K06,echo:K07,echo:K09,...(+21 more)
+  note: collateral legs beyond the registered ones: echo:K01,echo:K02,echo:K03,echo:K04,echo:K05,echo:K06,echo:K07,echo:K09,...(+21 more)
+C1-CTL-12 anchor-past-eof: ok (required scope:K03) - counter missed=scope:K03,scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,...(+2 more)
+  note: collateral legs beyond the registered ones: scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,scope:K11,...(+1 more)
+rc=0
+
+$ python3 -I quality/check-r56-controls.py --claim c2 --repo . --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work <scratch>
+MADO_R56_C2: rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1 fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 verdict=TARGET_MET
+r56_ctl_c2: sandbox=bwrap fixture_commit=ok control_scores={'const-host': (1, 0), 'empty': (0, 0), 'sibling-reader': (0, 0), 'lookup-committed': (18, 0)}
+rc=0
+
+$ python3 -I quality/counters/c3-r56-used-by.py --repo . --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work <scratch>
+MADO_USED_BY: rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1 entries=71 rows=332 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+
+$ python3 -I quality/check-r56-controls.py --claim c3 --repo . --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work <scratch>
+MADO_R56_CONTROLS: claim=c3 good=ok controls=9/9 verdict=OK
+harness metrics of the good tree: {'entries': 71, 'rows': 332, 'missing': 24, 'extra': 0, 'dangling': 0}
+  note[good]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+good: ok (ok)
+  note[missing]: counter and harness numbers diverge (not scored): missing counter=41 harness=65
+control 1 base-registry: PASS -- missed=missing,dangling [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=65]
+control 2 fill-all: PASS -- missed=extra,conflict [used-by of all 332 rows := all 71 entry paths; harness extra=23178]
+  note[missing]: counter and harness numbers diverge (not scored): missing counter=1 harness=25
+control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=25]
+  note[dangling]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 4 dangling-source: PASS -- missed=dangling [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+  note[extra]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 5 ghost-path: PASS -- missed=extra [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+  note[extra]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 6 fenced-cite: PASS -- missed=extra [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+  note[allow_sha]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 7 allow-everything: PASS -- missed=conflict,allow_sha,exempt [allowlist := every (S, entry) pair with its correct line-sha; harness allow_sha=-]
+  note[lost]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 8 delete-citation: PASS -- missed=extra,lost [replaced the only S015 token of corpus/knowledge/walker-route-r18.md by S---; harness lost=-]
+  note[stale]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 9 stale-allow: PASS -- missed=stale [appended ' x' to the first citing line of S005 in corpus/knowledge/output-colour-boundaries-r14.md; harness stale=-]
+rc=0
+
+$ python3 -I quality/check-index.py --repo . --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+MADO_INDEX: rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1 indexed=71/71 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+
+$ python3 -I quality/check-index-rows.py --repo . --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+MADO_INDEX_ROWS: rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1 rows=71 errors=0 warns=3
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+rc=0
+
+$ python3 -I quality/check-tool-ledger.py --repo . --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+LEDGER: population=97 ledger_rows=97 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+rc=0
+
+$ bash tools/mado-verify.sh --selftest (git archive export)
+MADO_SELFTEST: 460/460 assertions passed
+rc=0

@@ -1,0 +1,39 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F19",
+  "attacks": "pin_hash: host pin blobs are frozen and must hash-check",
+  "expect": "pristine reports pin_hash",
+  "repo_sha": "8f85d6d6f3f9c3d60c5dcd910afb49d74a09e201",
+  "patch": "A-F19.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=8f85d6d6f3f9c3d60c5dcd910afb49d74a09e201 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=pin_hash",
+   "err": "",
+   "legs": [
+    "pin_hash"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M57",
+  "label": "pin_hash: host pin blobs not checked",
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=8f85d6d6f3f9c3d60c5dcd910afb49d74a09e201 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "err": "",
+  "legs": [],
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "pin_hash"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

@@ -1,0 +1,13 @@
+#!/bin/sh
+# A bwrap that CONFLICTS NOTHING: strips the bwrap-specific options and execs the trailing
+# command with NO isolation at all. Option arities: --ro-bind/--symlink take 2 args,
+# --dev/--tmpfs/--chdir take 1.
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --ro-bind|--symlink) shift 3 ;;
+    --dev|--tmpfs|--chdir) shift 2 ;;
+    --unshare-all|--die-with-parent) shift ;;
+    *) break ;;
+  esac
+done
+exec "$@"

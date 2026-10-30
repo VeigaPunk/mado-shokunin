@@ -1,0 +1,42 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F05",
+  "attacks": "quote: a bare (unbackticked) quote cell must fail the quote leg",
+  "expect": "pristine reports row:K01,quote:K01",
+  "repo_sha": "71d64059b34dd820be23338ed33ca70dddeb8e67",
+  "patch": "A-F05.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=71d64059b34dd820be23338ed33ca70dddeb8e67 rows=29/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K01,quote:K01",
+   "err": "",
+   "legs": [
+    "row:K01",
+    "quote:K01"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M14",
+  "label": "quote: backtick delimiters not required in the quote cell",
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=71d64059b34dd820be23338ed33ca70dddeb8e67 rows=29/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K01",
+  "err": "",
+  "legs": [
+   "row:K01"
+  ],
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "quote:K01"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

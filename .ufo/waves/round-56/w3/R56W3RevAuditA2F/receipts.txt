@@ -1,0 +1,53 @@
+Canonical revision: 0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+
+$ env TMPDIR=/fast/scratch/hyaku/mado-r56/R56W3RevAuditA2F python3 -I /fast/scratch/hyaku/mado-r56/R56W3RevAuditA2F/probe.py
+cwd=/fast/scratch/hyaku/mado-r56/R56W3RevAuditA2F
+exit=0
+ glob GLOB_TILDE missing.conf: rc=3 matches=0
+ glob GLOB_TILDE loop.conf: rc=0 matches=1
+   match=loop.conf; lstat=symlink:True
+   status follows symlink: errno=40 ELOOP
+ live source-prefix count: 18
+ live source line numbers: 4,5,6,7,8,9,10,11,12,13,16,17,18,19,20,23,29,32
+ live line 13: source = ~/.config/omarchy/current/theme/hyprland.conf
+ nested envs line 3: source = ~/.config/omarchy/current/theme/gum.env.conf
+
+$ hyprctl getoption misc:disable_autoreload -j
+exit=0
+{"option": "misc:disable_autoreload", "int": 0, "set": false }
+
+$ hyprctl version -j
+exit=0; decisive fields (full JSON inspected):
+line 2: "branch": "v0.56.2",
+line 3: "commit": "efb50993780079460b0cbed1363e2166a2de1d9f",
+line 4: "version": "0.56.2",
+line 5: "dirty": false,
+line 11: "buildHyprlang": "0.6.8",
+
+$ stat -c '%F %n' /home/vgpnk/.config/hypr/hyprland.conf /home/vgpnk/.config/omarchy/current/theme/gum.env.conf
+exit=0
+regular file /home/vgpnk/.config/hypr/hyprland.conf
+regular file /home/vgpnk/.config/omarchy/current/theme/gum.env.conf
+
+Tool grep(pattern='^source', path='/home/vgpnk/.config/hypr/hyprland.conf') returned 18 matching lines, at the same line numbers as the probe. Shell grep -c was NOT run: specialized-search tool policy required its replacement. The equivalent prefix count was independently computed above.
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/w1/R56ScoutInotifyLab/raw-output.txt
+exit=0; decisive sections:
+=== [a4] regular file + FILE_MASK: atomic save (temp file in same dir, rename over target) ===
+  after atomic save:
+    [file-watch] IN_IGNORED
+  after follow-up write: NONE
+=== [a5] regular file + FILE_MASK: touch (utimensat) ===
+  after touch: NONE
+=== [c6] directory + DIR_MASK: touch of an existing file in the dir ===
+  after touch: NONE
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/w2/R56W2RevProsePath/RECEIPTS.txt
+exit=0; decisive observations:
+locale C/C.utf8: bytewise glob order; en_US: locale collation
+all locales dot-star: returns ., .., .hid.conf
+null-string-ctor-probe: threw: basic_string: construction from null is not valid
+add f.txt primary twice: wd=1 both times
+second inotify_rm_watch(wd=1): -1 errno 22 (EINVAL)
+
+LSP: read xd://lsp returned 'No such tool: xd://lsp'; status/references/definition/diagnostics unavailable. Text/function inspection is not semantic server proof.

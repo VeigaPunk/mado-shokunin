@@ -1,0 +1,360 @@
+# R56W3SentNewFiles — receipts/sentinel-a2.txt
+# Seat: security scan of the round's surfaces at 0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+# Every check below was run in this seat's scratch (/fast/scratch/hyaku/mado-r56/R56W3SentNewFiles),
+# against the lane tree exported with `git archive 0f3a5436...` (never the working tree).
+# Tool version under test: tools/mado-watchplan.py sha256 3ccf070841b3c0134a05f612a35e553364f318a9d36843455f4207df118f22b7
+# (== the blob at 0f3a5436, git rev-parse 0f3a5436:tools/mado-watchplan.py = 089c2a69).
+
+================================================================================
+CHECK S1 — SECRET SHAPES: the lane's three fixed patterns
+================================================================================
+Patterns taken verbatim from tools/mado-tripwire.py:301-305 (SECRET_PATTERNS):
+  F1_url_userinfo  r"(?<=://)[^/\s:@]+:[^/\s@]+(?=@)"
+  F2_aws_akia     r"AKIA[0-9A-Z]{16}"
+  F3_long_token   r"[A-Za-z0-9_\-]{32,}"
+
+Command:
+  python3 -I scan_secrets.py <entry.md> <tool.py> <w3 dir> <attempt2 dir>
+Surfaces (absolute):
+  /fast/scratch/hyaku/mado-r56/R56W3SentNewFiles/corpus/knowledge/hyprland-config-autoreload-r56.md
+  /fast/scratch/hyaku/mado-r56/R56W3SentNewFiles/tools/mado-watchplan.py
+  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/w3
+  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-56/attempt2
+
+Output (final run, 2026-10-30T05:34Z, 462 files):
+  SCAN: files=462 files_with_hits=129
+  TOTALS: F3_long_token_32=9683 G4_hex_value=2981
+  (F1_url_userinfo: 0 hits.  F2_aws_akia: 0 hits.)
+
+VERDICT: PASS for F1 and F2 — no URL userinfo and no AWS access-key shape
+anywhere in the four surfaces (the command that found nothing is above; the
+TOTALS line carries no F1/F2 key).
+
+F3 (32+ char token) fired 9683 times, so it was triaged rather than counted.
+Triage (probes/triage2.py, probes/classify_hex2.py) resolved every distinct
+value into exactly four classes, no fifth:
+  lane-object    = a git object id of the lane repo at some revision
+  blob-digest    = sha256/sha1 of a tracked blob at the scored revision
+  labelled-digest= 64-hex whose own context says sha256/sha1/md5/blake
+  upstream-commit= a 40-hex public upstream project commit (hyprland-wiki
+                   d5f07c60..., wayland-protocols, xdg-terminal-exec, alacritty,
+                   omarchy) or the Hyprland build pin efb50993780079460b0cbed1363e2166a2de1d9f
+  other          = 40-hex ids of the sibling seats' own scratch clones
+                   (a795213a..., d7038500..., 369a086f..., 513e168f...) and
+                   inotify f_handle hex strings from /proc/<pid>/fdinfo
+Output (probes/classify_hex2.py, receipts/hex-classification.out):
+  UNIQUE hex tokens by class:
+    blob-digest=1288
+    labelled-digest=76
+    lane-object=19
+    other-40hex=96
+    other-64hex=10
+    other-hexlen=1
+  (other-64hex: 10 values = upstream tarball sha256s quoted in corpus rows,
+   two draft-file digests from attempt2/s396-s397-draft.md, one HTTP etag.
+   other-hexlen: the 32-hex inotify f_handle string in sample.json.)
+Attempt-2 draft digests were verified against the bytes on disk:
+  sha256 of .ufo/waves/round-56/fetch/man7-inotify_add_watch.2.html
+      = 98fe7feb381fa2687e8a3962e6d78a49cb1ad07c543f93449dcb42d6712c3d6d  (11,345 B)  == draft
+  sha256 of .ufo/waves/round-56/fetch/man7-proc_pid_fdinfo.5.html
+      = f9e12387bf013d7c016f0015de5801932022a2fe6786d53e1cc84c385952d8a1  (14,694 B)  == draft
+Frozen-table digests re-verified at the tip (unchanged, no drift):
+  frozen-tables-v2.json sha256 = 9511151ac2f72097310780357b4a3018e799691cca11905bf75a7e5f6bd795e2  (== declared)
+  c3-name-only.tsv      sha256 = 70653e095839dc82f248d77fa5a0117134406a8b9e23778d2d79bf7072c948ee  (== declared)
+
+VERDICT: PASS. No credential material of any fixed shape in the four surfaces.
+Zero findings were left unexplained; every long token is a digest, a git id,
+an upstream commit id, or a kernel hex handle.
+
+================================================================================
+CHECK S2 — SECRET SHAPES: generic scan (op://, AKIA, private key, hex in value position)
+================================================================================
+Extra patterns (probes/scan_secrets.py):
+  G1 op:// URI, G2 AKIA any length, G3 BEGIN [RSA|EC|OPENSSH|DSA]? PRIVATE KEY,
+  G4 (=|:|=>|value|token|secret|key|password|passwd|pwd) followed by a 32+ hex value,
+  G5 github_pat_/gh[pousr]_ token, G6 xox[abposr]- Slack token, G7 JWT, G8 PEM certificate.
+
+Output:
+  TOTALS: F3_long_token_32=9683 G4_hex_value=2981
+  -> G1 = 0, G2 = 0, G3 = 0, G5 = 0, G6 = 0, G7 = 0, G8 = 0 hits.
+  (The command that found nothing is the same scan; only F3 and G4 have keys
+   in its TOTALS line.)
+G4's 2981 hits are the value-position digests already classified above
+(sha256=..., sha256sum expectations, "commit": "<40 hex>").
+
+Credential-shaped ASSIGNMENT scan (probes/cred-assign.out, key = value form
+with a non-placeholder value):
+  CRED-ASSIGN .ufo/waves/round-56/w3/R56W3MutC2Harness/driver.py:310 key=token value_len=11
+  CRED-ASSIGN .ufo/waves/round-56/w3/R56W3SentNewFiles/probes/triage2.py:2 key=pass value_len=5
+  credential-shaped assignments with non-placeholder values: 2
+Both inspected: driver.py:310 is `token = ""` later filled with the harness's
+own `sandbox=bwrap|none` marker; triage2.py:2 is the word "pass" in a docstring.
+
+VERDICT: PASS. No credential material; no private key, no op:// URI, no
+bearer/authorization header, no GitHub/Slack/JWT token in the four surfaces.
+
+================================================================================
+CHECK S3 — SESSION MATERIAL: the lane's own privacy gate over the wave deliverables
+================================================================================
+The gate is quality/check-session-material.py (the lane's own instrument, read
+from the scored revision). The w3 tree was staged as a scratch git repo at the
+LANE paths (.ufo/waves/round-56/w3, .ufo/waves/round-56/attempt2) so the scope
+rules apply as they will in the real lane.
+
+Command:
+  python3 -I quality/check-session-material.py --repo <staged w3 repo> --rev HEAD --scope ufo
+Output:
+  FINDING file=.ufo/waves/round-56/w3/R56W3RevLiveBoundary/receipts/boundary-a2.txt rule=R5_SERIAL_PROSE count=8 detail=tokens=8 shapes=9x3+Ax5+9x4
+  SESSION_MATERIAL_RULES: R5_SERIAL_PROSE=1
+  SESSION_MATERIAL: files=147 findings=1 rev=5f12a518...
+  (with --no-waivers: identical, one finding — R5 is never waivable.)
+Same gate over the whole lane tip (scope all, default waivers):
+  SESSION_MATERIAL: files=29471 findings=274 ; exit=1
+  SESSION_MATERIAL_WAIVED: findings=49 files=47
+  with --no-waivers: findings=323 ; R5_SERIAL_PROSE=52
+The single w3 finding is the host's real LG ULTRAWIDE monitor EDID serial
+(digits 7, caps 5, len 12; the token itself is not reproduced here). It is
+copied verbatim 8 times into boundary-a2.txt from corpus/knowledge/
+hyprctl-verification-layer.md, which the same gate already flags at the tip:
+  FINDING file=corpus/knowledge/hyprctl-verification-layer.md rule=R5_SERIAL_PROSE count=1
+The gate's own rule text (quality/check-session-material.py:158) says a real
+serial "can never be waived — only removed or redacted".
+
+VERDICT: FINDING (weakens, privacy). The wave-3 deliverable re-publishes a real
+host monitor serial that the lane's own gate forbids. Pre-existing condition:
+the same serial is already committed in the corpus at the tip and is already
+flagged there (52 R5 findings at the tip, 49 of which are elsewhere in .ufo/).
+The w3 file adds 8 fresh occurrences of it.
+
+================================================================================
+CHECK S4 — SESSION MATERIAL: host identity the gate does not cover
+================================================================================
+The gate's R8_ACCOUNT_COLUMN rule only matches `ls -l` data rows. Host identity
+carried in other shapes is therefore invisible to it. Measured in the w3 tree:
+
+  .ufo/waves/round-56/w3/R56W3RevWatchTable/receipts/journal-pid1622.txt
+  .ufo/waves/round-56/w3/R56W3RevWatchTable/receipts/journal-hypr-filtered.txt
+    52 + 41 lines of the host's own systemd journal, each carrying the account
+    name and the live Hyprland instance signature
+    efb50993780079460b0cbed1363e2166a2de1d9f_1793027319_436109330
+    (the pin, a start-time and the compositor's PID)
+  R56W3RevProcFdinfo/sample.json: summary.identity = the compositor's ps row
+    ("  1622  1000 Mon Oct 26 12:08:38 2026  3-13:55:21 Hyprland") plus 40
+    watched paths with their inode and device numbers
+  R56W3RevProcFdinfo/sample.json: kernel inotify f_handle hex strings
+  No window titles, no client dumps, no instance signature of another host.
+
+Pre-existence at the tip (so this is a lane-wide pattern, not a w3 novelty):
+  git grep -l "1793027319_436109330" 0f3a5436  -> 7 tracked files
+  git grep -l "plazir27"              0f3a5436  -> 232 tracked files
+
+VERDICT: FINDING (weakens, privacy / low). New wave-3 evidence carries host
+account name, live instance signature with PID, and device/inode numbers in
+shapes the gate's rules do not reach. No credential is exposed and nothing the
+lane has not already published at the tip.
+
+================================================================================
+CHECK S5 — OUTPUT INJECTION: the escape table at 0f3a5436 (re-derive w2 F2)
+================================================================================
+Code under test (tools/mado-watchplan.py:81-92 at the tip):
+  def esc(text):  # "control bytes, DEL and undecodable bytes become \xNN"
+      o = ord(ch)
+      if o < 32 or o == 127:        -> "\\x%02x"
+      elif 0xDC80 <= o <= 0xDCFF:   -> "\\x%02x"   (surrogate-escaped bytes)
+      else:                        -> ch          (UNCHANGED)
+Every printed path goes through esc() (Plan.show, tools/mado-watchplan.py:204-207)
+and every echoed source text goes through esc() (event_error, :222); the via=
+field is escaped at creation (:281); config= uses show() (:361); the watch
+lines use show() for path= and the pre-escaped via= (:366). Coverage is
+complete — the residual is the character CLASS, not a missing call site.
+
+S5a  hostile input #1 named by w2 (F2): a config line / file name that would
+     inject a MADO_ line.
+  Command (probes/probe_injection.py P1-P3, receipts/probe-injection.out):
+    name = "bad\nMADO_WATCH: DONE watches=0 unsupported=0 errors=0 live=NONE\nx.conf"
+    source = <root>/sub/*.conf
+  Output at the tip:
+    --- P1 forged-DONE newline name rc=0 stdout_bytes=469
+        lines=4  lines_not_starting_MADO_WATCH=0  DONE_lines=1
+        CHECK forged DONE absent                 PASS
+        CHECK newline escaped as \x0a            PASS
+        CHECK no raw 0x0a inside a line          PASS
+    --- P2 ANSI/BEL name rc=0
+        CHECK ESC escaped PASS   CHECK BEL escaped PASS
+    --- P3 non-UTF-8 name rc=0
+        CHECK \xff escaped PASS  CHECK \xfe escaped PASS  CHECK no raw 0xff PASS
+  VERDICT: PASS for the w2-named hostile input. The newline forgery is closed;
+  ESC, BEL and non-UTF-8 bytes are escaped.
+
+S5b  hostile input #2 named by w2: an over-long path.
+  Command (probes/probe_injection.py P7, receipts/probe-injection.out):
+    config line: source = /nonexistent/ + "z"*200000
+  Output at the tip:
+    --- P7 over-long source path rc=0 stdout_bytes=200357
+        CHECK SETUP too_large or bounded         PASS
+        CHECK max stdout line bytes <= MAX_BYTES PASS  max=200079
+    (and the 1 MiB worst case: config 1,000,016 B -> stdout 1,000,350 B,
+     max_line 1,000,072 — the echo is bounded by the config's own size, which
+     MAX_BYTES caps at 1 MiB; the source-text echo cannot exceed the read
+     budget: a 1 MiB file sourced 100 times -> SETUP too_large, see S6.)
+  VERDICT: PASS — bounded (bounded by MAX_BYTES per file and MAX_TOTAL_BYTES
+  in aggregate), not truncated mid-record. A 200 KB path is echoed whole.
+
+S5c  RESIDUAL of S5a, found by me (probes/probe_injection.py P4 + the
+     refined forge probe, receipts/unicode-residual.out, receipts/nel-forge.out):
+     esc() leaves three characters unescaped that Python's str.splitlines()
+     treats as record separators: U+2028 (LINE SEPARATOR), U+2029 (PARAGRAPH
+     SEPARATOR) and U+0085 (NEL). It also leaves the C1 control range
+     U+0080..U+009F (including U+009B, CSI) and the bidi controls U+202E.
+  Commands and outputs:
+    python3 -I probe_injection.py (P4):
+      U+2028 (LINE SEPARATOR) rc=0 splitlines_pieces=5 bad_pieces=1
+         BADPIECE 'sep.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=$ROOT/hyprland.conf:1'
+      consumer_split_on_U+2028_pieces=2 (stdout lines=4)
+    python3 -I probe_injection.py (unicode probe):
+      U+0085 (NEL)  rc=0 splitlines_pieces=5 bad_pieces=1
+         BADPIECE 'nel.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=$ROOT/hyprland.conf:1'
+      U+202E (RLO)  rc=0 splitlines_pieces=4 bad_pieces=0 (raw in stdout)
+      U+001C (FS)   rc=0 splitlines_pieces=4 bad_pieces=0  (escaped: <32)
+      U+000B (VT)   rc=0 splitlines_pieces=4 bad_pieces=0  (escaped: <32)
+    refined forge probe (receipts/forged-done-refined.out), config line:
+      source = /nope/a<U+0085>MADO_WATCH: DONE watches=0 unsupported=0 errors=0 live=NONE<U+0085>X
+      -> rc=0 physical_lines=4 splitlines_pieces=6 DONE-looking(splitlines)=2
+         DONE 'MADO_WATCH: DONE watches=0 unsupported=0 errors=0 live=NONE'
+         DONE 'MADO_WATCH: DONE watches=1 unsupported=0 errors=1 live=NONE'
+      and with U+2028 instead of U+0085: identical, DONE-looking(splitlines)=2.
+      same shape through a FILE NAME (receipts/nel-forge.out):
+         DONE-looking=2, one of them the forged 'MADO_WATCH: DONE watches=0 ...'.
+    Byte-level view (the harness's view): raw stdout contains 0x0a only as the
+    record separator, and every physical line starts with MADO_WATCH
+    (lines_not_starting_MADO_WATCH=0 in every probe). The forgery only
+    materialises for a consumer that decodes the bytes as text and splits on
+    str.splitlines() (or any Unicode-aware line splitter).
+  The committed C2 fixtures cannot detect this: no committed fixture name
+  contains a control byte or a non-ASCII byte
+  (find .ufo/waves/round-56/fixtures/c2 -printf '%p\n' | LC_ALL=C grep -P
+   "[^\x00-\x7f]" -> no match), so the harness compares bytes and is unaffected.
+  VERDICT: FAIL (unescaped injection) — blocking for the output-injection
+  guard. The w2-named input (ASCII newline) is closed, but a MADO_-prefixed
+  record can still be forged into the tool's stdout through a config line or a
+  file name carrying U+2028/U+2029/U+0085, and it is read back as a genuine
+  MADO_WATCH: DONE record by any text-mode, splitlines()-based consumer.
+  Smallest remediation: widen esc() to cover the Unicode line/paragraph
+  separators and the C1 range (e.g. escape every ch for which
+  str.isprintable() is False, or add 0x85, 0x2028, 0x2029, and 0x80..0x9F),
+  and add a selftest assertion that no printed record splits under
+  str.splitlines().
+
+================================================================================
+CHECK S6 — BUDGET FIXES (re-derive w2 F3 and F4)
+================================================================================
+w2 F3 (unbounded event and watch output) and F4 (no aggregate read budget).
+Fixes present at the tip (tools/mado-watchplan.py): MAX_EVENTS = 100000,
+MAX_TOTAL_BYTES = 64 MiB, both enforced, and both named in the docstring's
+divergence list item (8).
+
+S6a  event storm (w2 F3 half 1) — 300 dirs x 400 source lines:
+      --- P5 300 dirs x 400 source lines rc=2 stdout_bytes=28
+          CHECK SETUP too_large PASS
+          out: 'MADO_WATCH: SETUP too_large'
+      peak_child_RSS=24.5 MB (w2 measured 411.9 MB stdout / 1442 MB RSS)
+      VERDICT: PASS — capped.
+
+S6b  aggregate read budget (w2 F4) — 80 matched 1 MiB regular files:
+      P6b: rc=2 stdout_bytes=28 out=b'MADO_WATCH: SETUP too_large'
+      (a 60 MiB total stays under the cap and completes: rc=0)
+      source-text echo re-read repeatedly (probes: echo-budget.out):
+      1 MiB file sourced 100 times -> rc=2 SETUP too_large, stdout 0.0 MB
+      VERDICT: PASS — capped; the echo of source text is bounded by the same
+      read budget.
+
+S6c  RESIDUAL of S6a (w2 F3 half 2): the WATCH lines are not counted against
+     any budget. MAX_EVENTS bounds event lines; the number of watch lines is
+     bounded only by MAX_ENTRIES (262144), and each watch line's length is
+     unbounded (a glob match under a deep directory yields a long path).
+     Measured (receipts/watchline-amplification.out, receipts/bigcap-measure.out,
+     receipts/nearcap-exact.out):
+       50,001 entries, 3.7 KB paths: stdout 187.5 MB, peak RSS 735 MB, 8.4 s
+       243,001 entries, 3.7 KB paths: stdout 911.5 MB, peak RSS 3512 MB, 35.1 s,
+         tail 'MADO_WATCH: DONE watches=243001 ...'
+       252,901 entries (config 1,043,072 B, just under MAX_BYTES): stdout
+         948.7 MB, peak RSS 3655 MB, 59.0 s, rc=0
+       -> at MAX_ENTRIES the same shape gives ~983 MB of stdout.
+     Amplification: a 185 KB config produced 187.5 MB of stdout (1011x).
+     VERDICT: FAIL (weakens) — the event half of w2 F3 is closed, the watch
+     half is not. A ~1 MB config still drives ~1 GB of stdout and ~3.6 GB of
+     peak RSS from one tool invocation.
+
+S6d  the tool's own selftest at the tip:
+      python3 -I tools/mado-watchplan.py --selftest
+      MADO_WATCH_SELFTEST: 86/86 assertions passed   (rc 0)
+
+================================================================================
+CHECK S7 — the C2 harness at the tip (independent replay + the real harness)
+================================================================================
+S7a  byte-exact replay of all 26 fixtures against the tip tool, staging
+     mirrored on quality/r56_ctl_c2.py's `score(..., staged=True)` (the
+     fixture's tree/ is copied to <stage>/tree and {FX} -> <stage>):
+       python3 -I replay_c2_fixtures.py
+       committed fixtures at 0f3a5436: match=18 mismatch=0
+       holdout fixtures at 0f3a5436: match=8 mismatch=0
+       TOTAL committed=18/18 holdout=8/8
+     VERDICT: PASS — the escaping/budget fixes changed no frozen output.
+
+S7b  the lane's own harness at the tip (read-only clone under scratch):
+       python3 -I laneclone/quality/check-r56-controls.py --claim c2 \
+         --repo <clone> --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work <scratch>
+       r56_ctl_c2: sandbox=bwrap fixture_commit=ok control_scores={'const-host': (1, 0), 'empty': (0, 0), 'sibling-reader': (0, 0), 'lookup-committed': (18, 0)}
+       MADO_R56_C2: rev=0f3a5436... fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 verdict=TARGET_MET   (rc 0)
+     VERDICT: PASS.
+
+S7c  cross-check of w2 F1's fix (the harness now fails closed without bwrap),
+     run on a COPY of the harness in scratch (the lane file was not touched):
+       copy patched: _BWRAP = None
+       -> r56_ctl_c2: setup error: bwrap is not installed: the staged layout
+          alone does not hide the answer key; pass --no-sandbox to run anyway
+          rc=2
+     VERDICT: PASS (the w2 blocking F1 is closed on a host without bwrap).
+
+S7d  the other two counters at the tip (context, not this seat's item):
+       python3 -I laneclone/quality/counters/c1-r56-autoreload-entry.py --repo <clone> --rev 0f3a5436... --work <scratch>
+       MADO_AUTORELOAD_ENTRY: rev=0f3a5436... rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+       python3 -I laneclone/quality/counters/c3-r56-used-by.py --repo <clone> --rev 0f3a5436... --work <scratch>
+       MADO_USED_BY: rev=0f3a5436... entries=71 rows=332 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+
+================================================================================
+CHECK S8 — F8 residual: text outside the display root echoed
+================================================================================
+Command (receipts/f8-residual.out): a file OUTSIDE --display-root, reached by
+a source= line, whose own source= RHS is echoed in an ERROR line:
+  MADO_WATCH: ERROR via=/fast/.../mado-r56-sent-f8-out/outside.conf:1 source=TOKEN-XYZ-outside-root reason=nomatch
+  token echoed: True
+  (the escaped form: the RHS is printed through esc(), so control bytes are
+   escaped, but the text itself is printed)
+VERDICT: FINDING (low, unchanged from w2 F8). The tool prints the RHS of a
+`source =` line of a file it reached, including files outside the display
+root. No credential is printed (only the RHS of a `source =` line), but it is
+an echo of text outside the declared root.
+
+================================================================================
+SUMMARY OF VERDICTS
+================================================================================
+  S1  fixed three patterns                  PASS (F1=0, F2=0; F3 triaged to 4 benign classes)
+  S2  generic secret shapes                 PASS (op://, AKIA, PRIVATE KEY, GH, Slack, JWT, PEM all 0)
+  S3  lane session-material gate on w3      FINDING (weakens, privacy): R5_SERIAL_PROSE x8, a real monitor serial
+  S4  host identity outside gate coverage   FINDING (weakens, privacy/low): account name + live instance signature + PID in journal receipts
+  S5a w2-named injection input (newline)    PASS
+  S5b w2-named over-long path               PASS (bounded, not truncated)
+  S5c residual injection (U+2028/U+2029/U+0085)  FAIL — UNESCAPED INJECTION (blocking for the escape table)
+  S6a event budget                          PASS
+  S6b read budget                           PASS
+  S6c watch-line output not budgeted        FAIL (weakens): ~1 GB stdout / ~3.6 GB RSS from a ~1 MB config
+  S6d tool selftest                         PASS (86/86)
+  S7a fixture replay 18/18 + 8/8            PASS
+  S7b lane C2 harness                       PASS (TARGET_MET, controls 4/4, sandbox=bwrap)
+  S7c harness fails closed w/o bwrap        PASS
+  S8  F8 echo outside display root          FINDING (low, pre-existing)
+
+Tools installed or updated: NONE. No pacman, uv, npm or cargo transaction was
+attempted; the pacman host-wide pause was respected. Everything ran on the
+python3 already present (/usr/bin/python3, 3.14.8) with `python3 -I`.

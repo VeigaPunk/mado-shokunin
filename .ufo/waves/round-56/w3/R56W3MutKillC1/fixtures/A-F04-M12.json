@@ -1,0 +1,50 @@
+{
+ "fixture": {
+  "ns": "A",
+  "fixture": "F04",
+  "attacks": "row: a duplicated row must not contribute its cells to the collateral legs",
+  "expect": "pristine reports row:K08,source_cell:K08,tok:K08,echo:K08",
+  "repo_sha": "a644189215c3b6a8b3fb48f41afb95e22f067a3b",
+  "patch": "A-F04.patch",
+  "pristine_expectation_holds": true,
+  "pristine": {
+   "rc": 1,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=a644189215c3b6a8b3fb48f41afb95e22f067a3b rows=29/30 hosts=3/3 sources=29/30 scope=29/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K08,source_cell:K08,scope:K08,tok:K08,num:K08,echo:K08",
+   "err": "",
+   "legs": [
+    "row:K08",
+    "source_cell:K08",
+    "scope:K08",
+    "tok:K08",
+    "num:K08",
+    "echo:K08"
+   ]
+  }
+ },
+ "mutant": {
+  "mutant": "M12",
+  "label": "row: duplicated row tolerated by row_data",
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=a644189215c3b6a8b3fb48f41afb95e22f067a3b rows=29/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K08",
+  "err": "",
+  "legs": [
+   "row:K08"
+  ],
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "echo:K08",
+   "num:K08",
+   "scope:K08",
+   "source_cell:K08",
+   "tok:K08"
+  ],
+  "legs_added": [],
+  "good_tree": {
+   "rc": 0,
+   "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+   "err": "",
+   "legs": []
+  }
+ }
+}

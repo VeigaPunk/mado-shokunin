@@ -1,0 +1,13 @@
+diff --git a/corpus/knowledge/hyprland-config-autoreload-r56.md b/corpus/knowledge/hyprland-config-autoreload-r56.md
+index 3eca8fa..6cf3886 100644
+--- a/corpus/knowledge/hyprland-config-autoreload-r56.md
++++ b/corpus/knowledge/hyprland-config-autoreload-r56.md
+@@ -81,7 +81,7 @@ Frozen anchors (K01-K30, one row per frozen quote; proposition is the bounded re
+ | K04 | When the cached PDISABLEAUTORELOAD value is non-zero, setWatchList is given an empty vector; otherwise it is given the getConfigPaths() result. | S383 | Hyprland-ConfigWatcher.cpp:34 | `setWatchList(*PDISABLEAUTORELOAD ? std::vector<std::string>{} : Config::mgr()->getConfigPaths());` |
+ | K05 | This loop calls inotify_rm_watch once per watch-list entry with that entry's wd and does not check the return value, so a wd listed twice is removed twice and the second call fails (inference from the inotify man page). | S383 | Hyprland-ConfigWatcher.cpp:46 | `inotify_rm_watch(m_inotifyFd.get(), watch.wd);` |
+ | K06 | This line calls std::filesystem::is_directory on path and passes the error code ecDir to it. | S383 | Hyprland-ConfigWatcher.cpp:54 | `std::filesystem::is_directory(path, ecDir);` |
+-| K07 | The fileMask variable is assigned the IN_CLOSE_WRITE inotify event bit in this declaration; the same source line also ORs in IN_DONT_FOLLOW, which the quoted prefix does not show. | S383 | Hyprland-ConfigWatcher.cpp:55 | `fileMask      = IN_CLOSE_WRITE` |
++| K07 | The fileMask variable is assigned the IN_CLOSE_WRITE inotify event bit in this declaration; the same source line also ORs in IN_DONT_FOLLOW, which the quoted prefix does not show. Compare the value 492 here. | S383 | Hyprland-ConfigWatcher.cpp:55 | `fileMask      = IN_CLOSE_WRITE` |
+ | K08 | The directoryMask variable is initialised from fileMask on this line and, on the same source line, ORs in IN_CREATE, IN_DELETE, IN_MOVED_TO and IN_MOVED_FROM, which the quoted prefix does not show. | S383 | Hyprland-ConfigWatcher.cpp:56 | `directoryMask = fileMask` |
+ | K09 | This call registers path.c_str() with the mask variable on the m_inotifyFd inotify instance. | S383 | Hyprland-ConfigWatcher.cpp:60 | `inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask)` |
+ | K10 | This condition requires both error codes to be clear and IS_SYMLINK to hold before the canonical watch is added. | S383 | Hyprland-ConfigWatcher.cpp:67 | `if (!ec && !ec2 && IS_SYMLINK) {` |

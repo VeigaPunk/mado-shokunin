@@ -1,0 +1,70 @@
+{
+ "fixture": "B-F13",
+ "wave2_report": "R56W2MutC1CounterB",
+ "wave2_fixture_id": "F13",
+ "survivor_mutant": "M13",
+ "survivor_mutation": "live_lines: comment open skip off-by-one",
+ "attacks": "<!--> opener before K05, --> after it",
+ "registered_expectation": "seat B expectation: row:K05 (K05 hidden in comment)",
+ "pristine_expectation_holds": null,
+ "pristine": {
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=d83af08000f5d20e244df50a2ce93329f3b50138 rows=29/30 hosts=3/3 sources=29/30 scope=29/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K05,source_cell:K05,scope:K05,tok:K05,num:K05,echo:K05",
+  "legs": [
+   "row:K05",
+   "source_cell:K05",
+   "scope:K05",
+   "tok:K05",
+   "num:K05",
+   "echo:K05"
+  ]
+ },
+ "mutant_on_fixture": {
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=d83af08000f5d20e244df50a2ce93329f3b50138 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "legs": [],
+  "stderr_tail": ""
+ },
+ "mutant_on_good_tree": {
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "err": "",
+  "legs": []
+ },
+ "kill": {
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "echo:K05",
+   "num:K05",
+   "row:K05",
+   "scope:K05",
+   "source_cell:K05",
+   "tok:K05"
+  ],
+  "legs_added": []
+ },
+ "carrier": "CONTROL-1",
+ "carrier_reason": "the pristine reports ['echo:K05', 'num:K05', 'row:K05', 'scope:K05'] and the mutant does not -> the frozen _need(echo:K05) assertion kills it | pristine=caught mutant=verdict=TARGET_MET (mutant admitted)",
+ "final_route": "CONTROL-1",
+ "final_route_reason": "the pristine reports ['echo:K05', 'num:K05', 'row:K05', 'scope:K05'] and the mutant does not -> the frozen _need(echo:K05) assertion kills it | pristine=caught mutant=verdict=TARGET_MET (mutant admitted)",
+ "final_route_proved": true,
+ "required_leg": "row:K05",
+ "legs_pristine_only": [
+  "echo:K05",
+  "num:K05",
+  "row:K05",
+  "scope:K05",
+  "source_cell:K05",
+  "tok:K05"
+ ],
+ "legs_mutant_only": [],
+ "harness_proof": {
+  "harness_rc": 1,
+  "harness_out": "MADO_R56_CONTROLS: claim=c1 good=ok controls=43/44 verdict=FAIL",
+  "failed_control_line": "B-ctl-F13 B-F13: FAIL - verdict=TARGET_MET (mutant admitted)",
+  "killed_by_harness": true
+ },
+ "patch": "B-F13.patch",
+ "fixture_repo_sha": "d83af08000f5d20e244df50a2ce93329f3b50138"
+}

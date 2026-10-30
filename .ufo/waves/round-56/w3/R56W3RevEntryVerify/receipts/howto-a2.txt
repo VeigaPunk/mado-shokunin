@@ -1,0 +1,336 @@
+R56W3RevEntryVerify — How-to-verify command receipt
+Axes: command reproducibility; revision/pin identity; expectation fidelity; read-only safety.
+Revision: 0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+Executed each non-comment command from the entry block; REV changed to the assigned tip as its comment explicitly allows; --work changed to seat-owned scratch as the assignment requires.
+Every subprocess cwd was seat-owned scratch; TMPDIR explicitly set there. No host config or compositor mutation.
+Table includes the two shell assignments; 12 MATCH, 2 MISMATCH (both live host commands).
+Working-tree counter bytes matched the exact revision blob; a separately extracted revision counter was also run.
+No harness invocation appears in this block, despite its “counter and harness” comment. No harness was added to the requested checks.
+
+| # | expectation | result | exit |
+|---|---|---|---|
+| 1 | Set LANE to the documented absolute lane path (no output). | MATCH | 0 |
+| 2 | Select current-tree revision as the comment permits (no output). | MATCH | 0 |
+| 3 | SHA256 9511151ac2f72097310780357b4a3018e799691cca11905bf75a7e5f6bd795e2. | MATCH | 0 |
+| 4 | List revision-pinned fetch files (at most 20). | MATCH | 0 |
+| 5 | Every selected frozen ConfigWatcher quote appears. | MATCH | 0 |
+| 6 | Every selected frozen ConfigManager quote appears. | MATCH | 0 |
+| 7 | Selected HOME/currentDir quotes and surrounding tilde logic appear. | MATCH | 0 |
+| 8 | Complete handleSource body at pinned lines 1802–1855. | MATCH | 0 |
+| 9 | Complete absolutePath body at pinned lines 61–83. | MATCH | 0 |
+| 10 | Read live disable_autoreload JSON; H01 capture reports int=0 (historical, not a guaranteed live value). | MISMATCH | 1 |
+| 11 | Read live version commit line; H03 capture records efb50993780079460b0cbed1363e2166a2de1d9f (historical). | MISMATCH | 0 |
+| 12 | Read host config type; prose describes a regular config file. | MATCH | 0 |
+| 13 | 18 source lines, as host prose states. | MATCH | 0 |
+| 14 | C1 TARGET_MET, rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8. | MATCH | 0 |
+
+Exact commands and outputs (stdout untrimmed; no credential material):
+
+[1] MATCH
+$ LANE=/home/vgpnk/Projects/shokunin/mado-shokunin
+Expected: Set LANE to the documented absolute lane path (no output).
+Exit: 0
+stdout:
+<empty>
+stderr:
+<empty>
+
+[2] MATCH
+$ REV=0f3a54361a9824484d0801679ceb1fd8ac7c32e1
+Expected: Select current-tree revision as the comment permits (no output).
+Exit: 0
+stdout:
+<empty>
+stderr:
+<empty>
+
+[3] MATCH
+$ git -C "$LANE" show "$REV:.ufo/waves/round-56/frozen-tables-v2.json" | sha256sum    # expect 9511151ac2f72097310780357b4a3018e799691cca11905bf75a7e5f6bd795e2
+Expected: SHA256 9511151ac2f72097310780357b4a3018e799691cca11905bf75a7e5f6bd795e2.
+Exit: 0
+stdout:
+9511151ac2f72097310780357b4a3018e799691cca11905bf75a7e5f6bd795e2  -
+stderr:
+<empty>
+
+[4] MATCH
+$ git -C "$LANE" ls-tree -r --name-only "$REV" -- .ufo/waves/round-56/fetch/ | head -20
+Expected: List revision-pinned fetch files (at most 20).
+Exit: 0
+stdout:
+.ufo/waves/round-56/fetch/Hyprland-ConfigValues.cpp
+.ufo/waves/round-56/fetch/Hyprland-ConfigWatcher.cpp
+.ufo/waves/round-56/fetch/Hyprland-EventLoopManager.cpp
+.ufo/waves/round-56/fetch/Hyprland-HyprCtl.cpp
+.ufo/waves/round-56/fetch/Hyprland-MiscFunctions.cpp
+.ufo/waves/round-56/fetch/Hyprland-PropRefresher.cpp
+.ufo/waves/round-56/fetch/Hyprland-PropRefresher.hpp
+.ufo/waves/round-56/fetch/Hyprland-legacy-ConfigManager.cpp
+.ufo/waves/round-56/fetch/host-getoption.json
+.ufo/waves/round-56/fetch/host-sources.txt
+.ufo/waves/round-56/fetch/host-version.json
+.ufo/waves/round-56/fetch/host-watched-lstat.txt
+.ufo/waves/round-56/fetch/man7-inotify.7.html
+stderr:
+<empty>
+
+[5] MATCH
+$ git -C "$LANE" show "$REV:.ufo/waves/round-56/fetch/Hyprland-ConfigWatcher.cpp" | sed -n '33,34p;54,56p;60p;67p;69p;105p'
+Expected: Every selected frozen ConfigWatcher quote appears.
+Exit: 0
+stdout:
+    static const auto PDISABLEAUTORELOAD = CConfigValue<Config::INTEGER>("misc:disable_autoreload");
+    setWatchList(*PDISABLEAUTORELOAD ? std::vector<std::string>{} : Config::mgr()->getConfigPaths());
+        const bool      isDirectory   = std::filesystem::is_directory(path, ecDir);
+        const uint32_t  fileMask      = IN_CLOSE_WRITE | IN_DONT_FOLLOW;
+        const uint32_t  directoryMask = fileMask | IN_CREATE | IN_DELETE | IN_MOVED_TO | IN_MOVED_FROM;
+            .wd   = inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask),
+        if (!ec && !ec2 && IS_SYMLINK) {
+                .wd   = inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(), IN_CLOSE_WRITE),
+            m_watchCallback(SConfigWatchEvent{
+stderr:
+<empty>
+Frozen-quote checks: [('K03', True), ('K04', True), ('K06', True), ('K07', True), ('K08', True), ('K09', True), ('K10', True), ('K11', True), ('K12', True)]
+
+[6] MATCH
+$ git -C "$LANE" show "$REV:.ufo/waves/round-56/fetch/Hyprland-legacy-ConfigManager.cpp" | sed -n '776p;1816p;1835,1836p;1844p;1838p'
+Expected: Every selected frozen ConfigManager quote appears.
+Exit: 0
+stdout:
+    m_configPaths.clear();
+    if (auto r = glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get()); r != 0) {
+        if (std::filesystem::is_regular_file(file_status)) {
+            m_configPaths.emplace_back(value);
+            m_configCurrentPath          = value;
+            Log::logger->log(Log::WARN, "source= skipping directory {}", value);
+stderr:
+<empty>
+Frozen-quote checks: [('K20', True), ('K21', True), ('K22', True), ('K23', True), ('K24', True)]
+
+[7] MATCH
+$ git -C "$LANE" show "$REV:.ufo/waves/round-56/fetch/Hyprland-MiscFunctions.cpp" | sed -n '64,66p;68p'
+Expected: Selected HOME/currentDir quotes and surrounding tilde logic appear.
+Exit: 0
+stdout:
+    if (value[0] == '~') {
+        static const char* const ENVHOME = getenv("HOME");
+        value.replace(0, 1, std::string(ENVHOME));
+        auto currentDir = currentPath.substr(0, currentPath.find_last_of('/'));
+stderr:
+<empty>
+Frozen-quote checks: [('K25', True), ('K26', True)]
+
+[8] MATCH
+$ git -C "$LANE" show "$REV:.ufo/waves/round-56/fetch/Hyprland-legacy-ConfigManager.cpp" | sed -n '1802,1855p'
+Expected: Complete handleSource body at pinned lines 1802–1855.
+Exit: 0
+stdout:
+std::optional<std::string> CConfigManager::handleSource(const std::string& command, const std::string& rawpath) {
+    if (rawpath.length() < 2) {
+        Log::logger->log(Log::ERR, "source= path garbage");
+        return "source= path " + rawpath + " bogus!";
+    }
+
+    std::unique_ptr<glob_t, void (*)(glob_t*)> glob_buf{sc<glob_t*>(calloc(1, sizeof(glob_t))), // allocate and zero-initialize NOLINT(cppcoreguidelines-no-malloc)
+                                                        [](glob_t* g) {
+                                                            if (g) {
+                                                                globfree(g); // free internal resources allocated by glob()
+                                                                free(g);     // free the memory for the glob_t structure NOLINT(cppcoreguidelines-no-malloc)
+                                                            }
+                                                        }};
+
+    if (auto r = glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get()); r != 0) {
+        std::string err = std::format("source= globbing error: {}", r == GLOB_NOMATCH ? "found no match" : r == GLOB_ABORTED ? "read error" : "out of memory");
+        Log::logger->log(Log::ERR, "{}", err);
+        return err;
+    }
+
+    std::string errorsFromParsing;
+
+    for (size_t i = 0; i < glob_buf->gl_pathc; i++) {
+        auto            value = absolutePath(glob_buf->gl_pathv[i], m_configCurrentPath);
+
+        std::error_code ec;
+        auto            file_status = std::filesystem::status(value, ec);
+
+        if (ec) {
+            Log::logger->log(Log::ERR, "source= file from glob result is inaccessible ({}): {}", ec.message(), value);
+            return "source= file " + value + " is inaccessible!";
+        }
+
+        if (std::filesystem::is_regular_file(file_status)) {
+            m_configPaths.emplace_back(value);
+            auto configCurrentPathBackup = m_configCurrentPath;
+            m_configCurrentPath          = value;
+            const auto THISRESULT        = m_config->parseFile(value.c_str());
+            m_configCurrentPath          = configCurrentPathBackup;
+            if (THISRESULT.error && errorsFromParsing.empty())
+                errorsFromParsing += THISRESULT.getError();
+        } else if (std::filesystem::is_directory(file_status)) {
+            Log::logger->log(Log::WARN, "source= skipping directory {}", value);
+            continue;
+        } else {
+            Log::logger->log(Log::WARN, "source= skipping non-regular-file {}", value);
+            continue;
+        }
+    }
+
+    if (errorsFromParsing.empty())
+        return {};
+    return errorsFromParsing;
+}
+stderr:
+<empty>
+
+[9] MATCH
+$ git -C "$LANE" show "$REV:.ufo/waves/round-56/fetch/Hyprland-MiscFunctions.cpp" | sed -n '61,83p'
+Expected: Complete absolutePath body at pinned lines 61–83.
+Exit: 0
+stdout:
+std::string absolutePath(const std::string& rawpath, const std::string& currentPath) {
+    auto value = rawpath;
+
+    if (value[0] == '~') {
+        static const char* const ENVHOME = getenv("HOME");
+        value.replace(0, 1, std::string(ENVHOME));
+    } else if (value[0] != '/') {
+        auto currentDir = currentPath.substr(0, currentPath.find_last_of('/'));
+
+        if (value[0] == '.') {
+            if (value[1] == '.' && value[2] == '/') {
+                auto parentDir = currentDir.substr(0, currentDir.find_last_of('/'));
+                value.replace(0, 2 + currentPath.empty(), parentDir);
+            } else if (value[1] == '/')
+                value.replace(0, 1 + currentPath.empty(), currentDir);
+            else
+                value = currentDir + '/' + value;
+        } else
+            value = currentDir + '/' + value;
+    }
+
+    return value;
+}
+stderr:
+<empty>
+
+[10] MISMATCH
+$ hyprctl getoption misc:disable_autoreload -j
+Expected: Read live disable_autoreload JSON; H01 capture reports int=0 (historical, not a guaranteed live value).
+Exit: 1
+stdout:
+HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)
+stderr:
+<empty>
+
+[11] MISMATCH
+$ hyprctl version -j | sed -n '3p'
+Expected: Read live version commit line; H03 capture records efb50993780079460b0cbed1363e2166a2de1d9f (historical).
+Exit: 0
+stdout:
+<empty>
+stderr:
+<empty>
+
+[12] MATCH
+$ stat -c '%F %n' ~/.config/hypr/hyprland.conf
+Expected: Read host config type; prose describes a regular config file.
+Exit: 0
+stdout:
+regular file /home/vgpnk/.config/hypr/hyprland.conf
+stderr:
+<empty>
+
+[13] MATCH
+$ grep -c '^source' ~/.config/hypr/hyprland.conf
+Expected: 18 source lines, as host prose states.
+Exit: 0
+stdout:
+18
+stderr:
+<empty>
+
+[14] MATCH
+$ python3 -I "$LANE/quality/counters/c1-r56-autoreload-entry.py" --repo "$LANE" --rev "$REV" --work /fast/scratch/hyaku/mado-r56/R56W3RevEntryVerify/counter-work   # a scratch directory you remove afterwards
+Expected: C1 TARGET_MET, rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8.
+Exit: 0
+stdout:
+MADO_AUTORELOAD_ENTRY: rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+stderr:
+<empty>
+
+Supplement: exact-revision executable
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W3RevEntryVerify/c1-r56-autoreload-entry.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 0f3a54361a9824484d0801679ceb1fd8ac7c32e1 --work /fast/scratch/hyaku/mado-r56/R56W3RevEntryVerify/snapshot-work
+Exit: 0
+MADO_AUTORELOAD_ENTRY: rev=0f3a54361a9824484d0801679ceb1fd8ac7c32e1 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+stderr: <empty>
+Counter SHA256: 2b2ef41b3329edde1b30a88ab13f9430b3522d052186b4eb00ebb154a0301fea
+Working-tree executable byte-identical to revision blob: True
+
+Supplement: diagnose version pipeline status
+$ hyprctl version -j | sed -n '3p'; printf 'PIPESTATUS=%s\n' "${PIPESTATUS[*]}"
+PIPESTATUS=1 0
+This is a real hyprctl failure (1) hidden by sed success (0). No claim is made about the unavailable live value.
+
+Supplement: all 12 frozen C1 source/host pin SHA256 checks
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/Hyprland-ConfigValues.cpp | sha256sum
+Expected: a76f05079454e1f6d4402144e1673cc1cb890d285fbeb947d5afdb004ad97754
+Exit: 0; MATCH
+a76f05079454e1f6d4402144e1673cc1cb890d285fbeb947d5afdb004ad97754  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/Hyprland-ConfigWatcher.cpp | sha256sum
+Expected: 8383b8abf43159986bc4127ad7a4416fbf1c3527bf388fa1ce052c28c40d516c
+Exit: 0; MATCH
+8383b8abf43159986bc4127ad7a4416fbf1c3527bf388fa1ce052c28c40d516c  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/Hyprland-EventLoopManager.cpp | sha256sum
+Expected: 104ff43a4c02fcc88e8711cade68becd3a1fe099e970e4b1306774c85dd76f7c
+Exit: 0; MATCH
+104ff43a4c02fcc88e8711cade68becd3a1fe099e970e4b1306774c85dd76f7c  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/Hyprland-HyprCtl.cpp | sha256sum
+Expected: 798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa
+Exit: 0; MATCH
+798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/Hyprland-MiscFunctions.cpp | sha256sum
+Expected: 065418241a3b40e21273bca1fd29036221942554cddb61e08422d86f0a13c1d9
+Exit: 0; MATCH
+065418241a3b40e21273bca1fd29036221942554cddb61e08422d86f0a13c1d9  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/Hyprland-PropRefresher.cpp | sha256sum
+Expected: 65f01a1a50ef05ecb1630f8fd30bbbac91029b29f6b4b6bc3f353d0bb4b2817b
+Exit: 0; MATCH
+65f01a1a50ef05ecb1630f8fd30bbbac91029b29f6b4b6bc3f353d0bb4b2817b  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/Hyprland-legacy-ConfigManager.cpp | sha256sum
+Expected: 9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b
+Exit: 0; MATCH
+9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/man7-inotify.7.html | sha256sum
+Expected: 79f5ab18e2fc423631cf4949ef82ca1384844353ea11a4dba42e1a77e8fdd8fd
+Exit: 0; MATCH
+79f5ab18e2fc423631cf4949ef82ca1384844353ea11a4dba42e1a77e8fdd8fd  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/host-getoption.json | sha256sum
+Expected: 7aa0fbf9c03ba51e84479462ceb480cc3b93e1073819c3ed06aa2417c8cffe98
+Exit: 0; MATCH
+7aa0fbf9c03ba51e84479462ceb480cc3b93e1073819c3ed06aa2417c8cffe98  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/host-sources.txt | sha256sum
+Expected: 738b5945a2ab030ecba30369e234de8d22672ec765cfc78429a83990dd8da4bc
+Exit: 0; MATCH
+738b5945a2ab030ecba30369e234de8d22672ec765cfc78429a83990dd8da4bc  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/host-version.json | sha256sum
+Expected: 124716ed07fbf9773fd553197eaae8a769ecee6d460374532ae3fc981716b5d8
+Exit: 0; MATCH
+124716ed07fbf9773fd553197eaae8a769ecee6d460374532ae3fc981716b5d8  -
+stderr: <empty>
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 0f3a54361a9824484d0801679ceb1fd8ac7c32e1:.ufo/waves/round-56/fetch/host-watched-lstat.txt | sha256sum
+Expected: 23623a923fa44986db2dc4b2ee5bafc5a0a0df242f344af8e104dbb1c33ec0df
+Exit: 0; MATCH
+23623a923fa44986db2dc4b2ee5bafc5a0a0df242f344af8e104dbb1c33ec0df  -
+stderr: <empty>
+
+Verification gaps: inherited HYPRLAND_INSTANCE_SIGNATURE absent; live getoption/version unverified. No allowed compositor mutation attempted. LSP unavailable: read xd://lsp returned “No such tool”; no semantic-server evidence asserted. No installation performed.

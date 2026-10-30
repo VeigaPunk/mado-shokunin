@@ -96,3 +96,198 @@ entailment for C1 (a lexical rewrite of all 33 propositions keeps `content=33/33
 ## Census
 
 Start: `.ufo/waves/round-56/receipts/census-before.txt` → `mado ok`, 319 rows, exit 0. End: `receipts/at-final.txt` (`mado ok`, exit 0, 332 rows).
+
+## Attempt 2 (2026-10-30 re-dispatch) — wave w3 settled
+
+The run-11 operator wrap-up (2026-10-28 23:35) stopped attempt 1's wave 2 mid-flight; the
+claims were released without a closure (`wrapup-release lane=mado round=56 :: honest-stop
+(operator wrap-up run 11); no closure; next stays 56` in
+`~/.local/state/shokunin-hyaku/events.log:2893`) and the orchestrator re-dispatched round 56
+on 2026-10-30. The frozen claims (v2) ran unchanged. Attempt-2 self-verification at the
+inherited tip `0f3a5436`: all three frozen gates green
+(`.ufo/waves/round-56/receipts/attempt2-l1.txt`), census `mado ok` exit 0 at 332 rows
+(`receipts/census-before-a2.txt`).
+
+Wave w3 (one v2 wave, band 64-128): 64 seats dispatched, all 64 settled
+(`w3-results.json`); 58 seat reports on disk under `.ufo/waves/round-56/w3/`; six seats
+settled without a report file (`R56W3ExecSessionMaterial` aborted before any gate run;
+`R56W3MutC3Counter`, `R56W3MutBwrapChannels`, `R56W3CritC2Cheat`, `R56W3CritC1Grammar`,
+`R56W3CritHarnessC1` mid-work) — their preserved artifacts stay in `w3/`, their items are
+marked unverified in the round report, and no seat was replaced (orchestrator recovery
+boundary). Seat-role mix and the dead-seat table are in the report.
+
+## Gate (attempt 2)
+
+### Admitted
+
+- **Rows S396, S397** (mined; `used-by` = this lesson, which cites them below). URLs, access
+  date 2026-10-30, and located quotes (raw pin lines; ≤25 words):
+
+  | row | URL | located quote |
+  |---|---|---|
+  | S396 | `https://man7.org/linux/man-pages/man2/inotify_add_watch.2.html` | `already being watched (perhaps via a different link to the same` (pin line 93; line 94 completes: `object), then the descriptor for the existing watch is returned.`) |
+  | S397 | `https://man7.org/linux/man-pages/man5/proc_pid_fdinfo.5.html` | `Each of the lines beginning with "inotify" displays information` (pin line 160; field definitions at lines 164, 166, 168-169, 171-172) |
+
+  Pins: `.ufo/waves/round-56/fetch/man7-inotify_add_watch.2.html` (11,345 B, 258 lines,
+  sha256 `98fe7feb381fa2687e8a3962e6d78a49cb1ad07c543f93449dcb42d6712c3d6d`, page footline
+  2026-02-08) and `.ufo/waves/round-56/fetch/man7-proc_pid_fdinfo.5.html` (14,694 B, 366
+  lines, sha256 `f9e12387bf013d7c016f0015de5801932022a2fe6786d53e1cc84c385952d8a1`, footline
+  2026-07-18), both Linux man-pages 6.19. Three independent fetches (L1 + `R56W3RevLessonGate`
+  + `R56W3ScribeRegistryA2`) agree byte-for-byte. `R56W3RevLessonGate` audited the draft and
+  ruled ADMIT-WITH-EDITS; the edits are applied (below). `R56W3ScoutNewSrc1`/`ScoutNewSrc2`
+  re-opened both sources independently and agree on substance.
+
+### Re-applied drafts (rejected as drafted, landed corrected)
+
+- The draft state `queued` + `used-by —` for both rows: rejected — this lesson cites the
+  rows, so the CORPUS-true state is `mined` with this file in `used-by`
+  (`R56W3RevLessonGate`; the frozen C3 counter's `USED_BY` regex sees only
+  `corpus/knowledge/*.md`, so lesson paths are invisible to it — proven by
+  `w3/R56W3ExecProbeC3NewRows/receipts/c3-newrows-a2.txt` case B and the L1's own probe at
+  scratch revs `6c7cc56d`/`b271ee45`; a disclosed measurement boundary, not an obstacle).
+- The draft Gate quotes (de-tagged HTML, not byte-substrings of the pins — `R56W3ScoutNewSrc1`
+  D2): replaced with the raw pin lines above.
+- The draft anchor dates (both rows carried S390's `2026-02-14`): re-dated from each page's
+  own footline (`2026-02-08`, `2026-07-18`) — `R56W3ScoutNewSrc1` D1.
+- S396's unqualified one-watch claim: qualified with "within one inotify instance" and the
+  anchor widened to `88-94` (`R56W3RevLessonGate`).
+
+### Registry changes old→new
+
+- Rows `332 → 334` (`grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md`):
+  new ids S396, S397, inserted inside `## Registry` immediately after S395. No existing row's
+  cell changed; no `status`/`recheck` change. (The census's E12 `row outside Registry section`
+  caught the probe draft's end-of-file placement before landing.)
+
+### Census
+
+Start (attempt 2): `.ufo/waves/round-56/receipts/census-before-a2.txt` → `mado ok`, 332 rows,
+exit 0. End: `mado ok`, exit 0, 334 rows (same command).
+
+### Wave-3 findings applied to the entry (old→new, 14 rows + 4 prose + 1 how-to line)
+
+Fresh sentence-to-pin audits at the tip (`w3/R56W3RevAuditA2{A..F}.md`) found 0 UNSUPPORTED
+contradictions of the pins beyond two literally-false clauses (E01, E02) and seventeen
+single-line OVERREACH rows; the fourteen with concrete corrections were applied (K05, K27,
+E07, E08, E09 keep their explicit disclosures and stand). Quote, pin and anchor cells are
+byte-unchanged; the frozen counter's `content` leg (one shared identifier token) and `num`
+leg (every numeral in a proposition must be the row's own line, a same-pin K-row line, or in
+the quote) bounded the rewrites — audit-proposed line-number citations that the `num` leg
+rejects were re-grounded without numerals (M56-12). Prose: step 7 now states the
+`m_scheduled`/event-loop guard and refresh coalescing (A2D F4); handleSource step 3 no
+longer claims dangling symlinks as the only status-failure cause (F2); the reload-per-event
+Limits bullet now states the wd-match condition, the IN_Q_OVERFLOW/unmatched-logged case,
+and the lab receipt's actual touch result — no event for touch-only utimensat (F3, F1); the
+rename-over bullet carries the same wd-match condition. The How-to-verify block gained the
+exact C1 harness command its comment already promised (`R56W3RevEntryVerify`). The corrected
+entry re-verifies: `MADO_AUTORELOAD_ENTRY … content=33/33 … TARGET_MET`, C1 controls 12/12,
+CHECK107 `rows=39 covered=39 miss=0` (checker below).
+
+### Instruments landed this attempt
+
+- `quality/check-anchor-cover.py` (criterion 107's committed checker; `R56W3ExecCrit107Build`,
+  107-spec receipts incl. red on the round-55 entry `rows=32 covered=25 miss=7` and 7/7
+  registry mutants) — 23/23 agreement with `R56W3MutC107Spec`'s independently spec-derived
+  vectors (regenerated fixtures, receipt in that seat's `vectors/` run). Ledger row added.
+- Kill-fixture suites for the C1 counter (`w3/R56W3MutKillC1`: 51/51 mutant/fixture pairs
+  distinguished, zero survivors), the C2 tool (`w3/R56W3MutKillC2`: 24 verified killers
+  materialised as fixture trees; two >1 MiB tree files and one non-UTF-8 fixture name stay
+  out of the commit, disclosed), and the C3 harness/counter (`w3/R56W3MutKillC3`,
+  kill-level table + 11 counter diffs). The re-issued `R56W3MutC2Harness` killed 41/46
+  harness mutants (31 oracle + 7 extended + 3 diagnostic, 5 survivors documented).
+- `R56W3ExecHoldoutReseal`'s per-run-sealed C2 harness prototype (round-57 candidate, not a
+  frozen artifact) and `R56W3RevFreezeBlind`'s check-freeze-order v2-aware patch draft
+  (round-57 candidate, red/green receipts) — both as wave evidence only.
+
+### Live and record verification this attempt
+
+- Second `/proc` sample: `R56W3RevProcFdinfo` (40/40, raw evidence retained) and
+  `R56W3RevWatchTable` (three samples `ALL_MATCH True`; no reload since session start,
+  conditional on the source-level chain; journal window read-only).
+- Tag pin: `R56W3ExecTagPin` — GitHub tag `v0.56.2` → commit `efb50993…` (type commit,
+  unsigned), tag-served `ConfigWatcher.cpp` byte-equal to the S383 pin.
+- Freeze order: `R56W3ExecFreezeOrder` — w1/w2 verdicts OK at freeze `3423ae28`; the D4
+  v2-blindness reproduced with a receipt; `R56W3RevFreezeBlind` names the exact lines.
+- Census discrimination after the attempt-1 fills: `R56W3CritCensus` — all six named mutants
+  flagged, the 41 fills independently re-derived 0-defective, four additional census gaps
+  named (weakens-not-blocking, routed).
+- C3 allowlist third reading: `R56W3CritC3Allowlist` — 23 name-only, 1 reliance-leaning
+  (S044), evidence for the closure's ruling; frozen list untouched.
+- considerthese 2026-10-28 proposal 2: `receipts/session-material-a2.txt` (L1's own run;
+  the seat aborted) — `SESSION_MATERIAL: files=29471 findings=274` at the attempt-2 tip
+  tree (attempt 1: files=27658 findings=244 at `2aa347b1`; the receipt's rev line is
+  binding, correcting the :93 pointer below). Assimilation: none re-confirmed
+  (`w3/R56W3ScoutAdjacency`).
+
+## Mistakes
+
+- **M56-11 — a registry edit split the S395 row mid-row.** Class `landing`. Evidence: the
+  L1's first `## Registry` insertion matched a row prefix and inserted a newline inside the
+  S395 row (caught and repaired in the same session, before any commit or gate run; the
+  landed census reads 334 rows, `mado ok`). Captured-by: the census row-count and the C3
+  counter would have failed on commit (the row would have vanished from the registry and
+  S052-style dangling pairs would fire). Fix: landed only after the repaired file passed
+  the census and the C3 counter; registry edits must be whole-row replacements verified by
+  the census before staging.
+- **M56-12 — audit-proposed corrections carried numerals the frozen counter rejects.**
+  Class `reference-drift`. Evidence: applying the wave-3 audit corrections verbatim made the
+  C1 counter print `content=32/33 … missed=num:K21` and the C1 controls FAIL on the preview
+  tree (scratch rev `fcc19788`; `num` leg allows only the row's own line, same-pin K-row
+  lines, or numerals present in the quote). Captured-by: the counter itself (working as
+  designed). Fix: propositions re-grounded without the foreign numerals; substance kept;
+  preview re-measured green (scratch rev `4c640a9a`) before landing.
+- **M56-13 — attempt 1's report said "Open L0 questions: none" while four mado L0 lines
+  remain outstanding.** Class `overclaim`. Evidence: rounds 28 (line 134), 29 (135) and 34
+  (149-151) lines in `/home/vgpnk/Projects/shokunin/.ufo/l0-questions.md`
+  (`w3/R56W3ScoutGoalState/receipts/state-a2.md`). Captured-by: none (no gate reads the L0
+  file). Fix: the attempt-2 report names them explicitly; routed: a report-time grep of the
+  L0 file for the lane's open lines.
+- **M56-14 — six wave-3 seats settled without report files.** Class `landing`. Evidence:
+  `w3-results.json` lists 64 settled seats; 58 `w3/<Seat>.md` files exist; the six named
+  above have partial artifacts or transcripts only. Captured-by: the L1's missing-report
+  sweep over results vs disk (the wave's own WAVE-DONE counts settlement, not reports).
+  Fix: disclosed in the report with each seat's last output; affected items marked
+  unverified; no seats replaced (orchestrator recovery boundary); the L1 re-ran the one
+  cheap item (the session-material count) itself.
+- **M56-15 — the attempt-1 lesson said the considerthese count was taken "at the landed
+  tip" while its receipt binds `2aa347b1`.** Class `attribution`. Evidence:
+  `corpus/lessons/round-56.md:93` versus `w1/R56ScoutConsiderthese.md`
+  (`w3/R56ScoutAdjacency/receipts/adjacency-a2.md`). Captured-by: none (no criterion binds
+  a lesson pointer to its receipt's revision). Fix: this section's fresh receipt states its
+  revision explicitly (`receipts/session-material-a2.txt`); the attempt-1 wording stands as
+  history, corrected here by reference.
+
+## Outside spot-check (pending the non-author closure)
+
+Ready for it: admit S396 (raw line-93 quote) and S397 (raw line-160 quote); check the 14
+row/prose corrections against `w3/R56W3RevAuditA2{A..F}.md`; adjudicate the four disputed
+C3 allowlist pairs with `R56W3CritC3Allowlist`'s third reading; reject the `queued`/de-tagged
+draft states (this Gate's re-applied list). The six reportless seats and their unverified
+items are named in the report; the L1's own receipts are the lane's, not a non-author's.
+- **M56-16 — a non-UTF-8 fixture filename in a committed directory blocked every lane push.**
+  Class `landing`. Evidence: `R56W3MutKillC2` materialised a fixture named with a single `0x80`
+  byte (`w3/R56W3MutKillC2/fixtures/b-k03/tree/conf.d/` + `\x80.conf`, 6 B, sha256
+  `cb78bd8a17f7b751fe0d4663366dcbc257204033ef7ddd64b1f2969573b5b2e2`); the helper's first
+  commit landed locally (`cfc63604`) but jj's working-copy snapshot aborted on the name and
+  every `jj-lane.sh push` exited "push rejected (not a stale lease; no retry)" — the same
+  class as attempt 1's deleted leftover, now shown to be push-blocking, not merely
+  commit-skipping. Captured-by: the helper's skip warning (it skipped the path from the
+  commit but the on-disk name still poisoned the snapshot). Fix: bytes preserved as
+  `hostile-name-preserved.conf.txt` beside the original location, original removed, push
+  retried green; the fixture's kill evidence (expected.out, kill table) is unaffected.
+  Routed: the wave spec's fixture instructions should forbid non-UTF-8 fixture names in
+  wave deliverable trees.
+- **M56-17 — the env-channel probe captured real host credentials into a committed receipt.**
+  Class `landing` (secret material in the lane). Evidence:
+  `w3/R56W3MutBwrapChannels/receipts/probe-jail.out:189` held a live 1Password service-account
+  token and an `OPENAI_CODEX_TOKEN` value — the seat implemented item (3) "environment
+  variable probes" by dumping the real environment; the helper commit `cfc63604` (local,
+  unpushed) carries the blob and GitHub push protection rejects every push (GH013, full text
+  in the state dir's `jj-*mado-shokunin.err`). Captured-by: none that fired — the wave
+  context banned credential material and the sentinel's three fixed patterns do not cover
+  arbitrary environment values; the seat's report was one of the six never filed, so its
+  own disclosure never happened. Fix: both values redacted in the working tree with
+  sha256-prefixed markers (whole-wave rescan clean); the two secret-bearing local commits
+  await an operator `jj abandon` (L0 filed, orchestrator messaged); routed criterion for
+  round 57: wave items that probe env channels must assert the channel's existence without
+  printing values, and a seat-side secret sweep over its own deliverables before yielding.

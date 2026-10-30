@@ -1,0 +1,62 @@
+{
+ "fixture": "A-F03",
+ "wave2_report": "R56W2MutC1CounterA",
+ "wave2_fixture_id": "F03",
+ "survivor_mutant": "M09",
+ "survivor_mutation": "row: src-cell ASCII check dropped",
+ "attacks": "row: non-ASCII digit in the source id must be rejected",
+ "registered_expectation": "pristine reports row:K01",
+ "pristine_expectation_holds": true,
+ "pristine": {
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=7616a7d84a5abc04cc3d59b9afafc9d4fa205422 rows=29/30 hosts=3/3 sources=29/30 scope=29/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=prov,row:K01,source_cell:K01,scope:K01",
+  "legs": [
+   "prov",
+   "row:K01",
+   "source_cell:K01",
+   "scope:K01"
+  ]
+ },
+ "mutant_on_fixture": {
+  "rc": 1,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=7616a7d84a5abc04cc3d59b9afafc9d4fa205422 rows=30/30 hosts=3/3 sources=29/30 scope=29/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=prov,source_cell:K01,scope:K01",
+  "legs": [
+   "prov",
+   "source_cell:K01",
+   "scope:K01"
+  ],
+  "stderr_tail": ""
+ },
+ "mutant_on_good_tree": {
+  "rc": 0,
+  "out": "MADO_AUTORELOAD_ENTRY: rev=0ff94937c4e4660eccd1f85ff4463c687087cf06 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none",
+  "err": "",
+  "legs": []
+ },
+ "kill": {
+  "killed": true,
+  "direction": "LEG_LOST (mutant too permissive: it drops a leg the pristine reports)",
+  "legs_lost": [
+   "row:K01"
+  ],
+  "legs_added": []
+ },
+ "carrier": "CONTROL-1",
+ "carrier_reason": "the pristine reports ['row:K01'] and the mutant does not -> the frozen _need(row:K01) assertion kills it | pristine=caught mutant=required leg row:K01 not in missed=prov,source_cel",
+ "final_route": "CONTROL-1",
+ "final_route_reason": "the pristine reports ['row:K01'] and the mutant does not -> the frozen _need(row:K01) assertion kills it | pristine=caught mutant=required leg row:K01 not in missed=prov,source_cel",
+ "final_route_proved": true,
+ "required_leg": "row:K01",
+ "legs_pristine_only": [
+  "row:K01"
+ ],
+ "legs_mutant_only": [],
+ "harness_proof": {
+  "harness_rc": 1,
+  "harness_out": "MADO_R56_CONTROLS: claim=c1 good=ok controls=43/44 verdict=FAIL",
+  "failed_control_line": "A-ctl-F03 A-F03: FAIL - required leg row:K01 not in missed=prov,source_cell:K01,scope:K01",
+  "killed_by_harness": true
+ },
+ "patch": "A-F03.patch",
+ "fixture_repo_sha": "7616a7d84a5abc04cc3d59b9afafc9d4fa205422"
+}
