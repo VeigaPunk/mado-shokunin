@@ -3360,3 +3360,16 @@ the receipts-tip range is **35 files +1830/−1** (the printed figures equal
 full six-item correction block with re-derivation commands is
 `corpus/lessons/round-62.md` § Corrections (round 63), and the round-63
 report restates the erratum.
+
+The harm-watch bullet above says "used-by counter missing=0 `TARGET_MET`
+at the landing" — incomplete as to what the landing's run actually was,
+corrected here append-only before closure: at the landing `c9a70974` the
+used-by counter failed in setup (row S430's teaches cell carried two
+unescaped pipes → 13 cells, not 11); the M59-4 proactive rule itself held
+(no missing used-by cells — all eleven S-rows carried their citing paths
+at insertion). Repaired in-round as the used-by contract's own consistency
+move, keyed on the row id: `TARGET_MET entries=78 rows=371 missing=0
+extra=0` at the repair `cdacf215`. The red-green is recorded in
+`landing-counters-r63.txt` (named sections) and lesson Addendum; the
+`cdacf215` commit message discloses the repair. The M59-4 half of the
+harm-watch sentence stands as written.

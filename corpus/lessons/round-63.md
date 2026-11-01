@@ -232,3 +232,22 @@ named sections).
    query, S424's flag table) to test whether the sentinel is
    virtual-mode-path-specific — the flip condition D05 names; and a
    second-host or driver-side reading only if the operator scopes one.
+
+## Addendum (used-by setup gate fired red at the landing; repaired in-round, before closure)
+
+The landing counters receipt records a red state this round's harm-watch
+sentences did not predict: at the landing `c9a70974` the used-by counter
+failed in setup — registry row S430's `teaches` cell carried two unescaped
+pipe characters (`targetMode|sourceMode|desktopImageInfo`), breaking the
+registry's 11-cell row shape (the counter read 13 cells and refused).
+Class: the report-table number-drift class one level down again — a cell
+written from the entry's prose (where `|` is table syntax) instead of from
+the registry's row grammar; caught by the counter's own setup gate, before
+any verdict ran. Repaired as the round's own consistency move, keyed on
+the row id (`| S430 |` asserted on the edited line): the pipe set replaced
+with slashes, proposition text otherwise untouched. The final counters
+receipt records the red run at `c9a70974` and the green run at the repair
+`cdacf215` (`missing=0 extra=0 … TARGET_MET`, `entries=78 rows=371`); the
+M59-4 proactivity rule held — every named row's used-by cell was already
+correct, and the M59-4 row-id rule held on the repair (no extra, no
+mis-aimed neighbor this time).

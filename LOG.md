@@ -3014,3 +3014,16 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   M63-3: an enum's values remembered in the wrong order, caught by the
   open-before-write sweep before any code or row was written — enumerated
   values come from the opened page).
+
+- Amendment to this round's harm-watch bullet above, recorded here per the
+  append-only rule before closure: the sentence "used-by counter at the
+  landing expected missing=0 `TARGET_MET`" was written as a prediction,
+  and the landing's actual used-by run was red — not on a missing cell
+  (the M59-4 proactive rule held: all eleven S-rows carried their citing
+  paths at insertion) but on the counter's setup gate: S430's `teaches`
+  cell carried two unescaped pipes and read as 13 cells. Repaired in-round
+  (cell re-keyed on the row id, pipe set replaced with slashes,
+  proposition text otherwise untouched); the counters receipt records the
+  red run at `c9a70974` and the green run at the repair `cdacf215`
+  (`entries=78 rows=371 … TARGET_MET`). Full record: lesson Addendum and
+  `landing-counters-r63.txt`.
