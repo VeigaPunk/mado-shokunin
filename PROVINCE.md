@@ -160,3 +160,21 @@ Each row: the PROVINCE-declared surface group, its state **on this host**, the o
 | Tool | Reads | Writes | Owner and adjacent lanes |
 |---|---|---|---|
 | `tools/mado-win-desk.py` | live mode: the JSON stdout of exactly one spawned read-only PowerShell child (`--powershell`, default `powershell.exe`, resolved on PATH) running a fixed embedded script whose only inputs are `Win32_OperatingSystem` (CIM read), `System.Windows.Forms.Screen` (in-process assembly), the registry values `HKCU\Control Panel\Desktop\WindowMetrics!AppliedDPI` and `HKCU\Control Panel\Desktop!LogPixels` (read twice via `Get-ItemProperty` and `Microsoft.Win32.Registry.GetValue`), `dwmapi!DwmIsCompositionEnabled`, `Get-Process` and `GetForegroundWindow`; `--from-file`: one caller-named JSON snapshot (4 MiB cap); `--selftest`: nothing (in-memory only) | nothing — stdout only (one `MADO_WINDESK:`/`MADO_WINDESK_SELFTEST:` line plus one JSON object line); it never prints window titles, clipboard, environment values or file contents, and never echoes raw child output | mado, round 57 (read-only observation of the Windows desktop plane: point-in-time, no setting is read through any privileged API, no mutation, no rendered-output claim); operator applies any change; kagi keeps secret-shaped values (titles are excluded from the output by design) |
+
+**Round-60 refinement (append-only; one read-only tool; no new write surface):** `tools/mado-win-dpi.py`
+observes the Windows DPI-virtualization layer read-only. Live mode spawns exactly one PowerShell child
+(`--powershell`, default `powershell.exe`) running a fixed embedded script whose only inputs are user32
+getters — `GetThreadDpiAwarenessContext` and `GetAwarenessFromDpiAwarenessContext` (the calling thread's
+own awareness), `GetSystemMetrics(SM_CXSCREEN/SM_CYSCREEN)` beside `GetSystemMetricsForDpi(…, 96)`,
+`GetWindowDpiAwarenessContext` per main window of the `Get-Process` census (histogram counts only),
+`GetForegroundWindow` and `GetDpiForWindow` (point-in-time) — parses its stdout as JSON, and re-prints
+whitelisted fields only; `--from-file` re-derives a verdict from a captured snapshot (4 MiB cap);
+`--selftest` (10 assertions) spawns nothing. It collects no window titles, no process names and no window
+handles into its output, never echoes raw child output, writes no file, opens no socket and mutates
+nothing: no `Set*` verb exists in it, and setting thread DPI awareness stays operator-owned (SKILL §
+Round 57 rule 4 carried). The awareness getter identifies the caller branch; the metrics join alone
+cannot (vacuous at effective 96 — `corpus/knowledge/windows-dpi-awareness-metrics-r60.md` J13).
+
+| Tool | Reads | Writes | Owner and adjacent lanes |
+|---|---|---|---|
+| `tools/mado-win-dpi.py` | live mode: the JSON stdout of exactly one spawned read-only PowerShell child (`--powershell`, default `powershell.exe`, resolved on PATH) running a fixed embedded script whose only inputs are the user32 getters `GetThreadDpiAwarenessContext`, `GetAwarenessFromDpiAwarenessContext`, `GetWindowDpiAwarenessContext`, `GetForegroundWindow`, `GetDpiForWindow`, `GetSystemMetrics` and `GetSystemMetricsForDpi`, plus the `Get-Process` main-window census (handles filtered, never emitted); `--from-file`: one caller-named JSON snapshot (4 MiB cap); `--selftest`: nothing (in-memory; ephemeral fixtures in a private temp dir it removes) | nothing — stdout only (one `MADO_WINDPI:`/`MADO_WINDPI_SELFTEST:` line plus one JSON object line); it never prints window titles, process names, window handles, clipboard, environment values or file contents, and never echoes raw child output | mado, round 60 (read-only observation of the DPI-virtualization layer: point-in-time census/foreground, no privileged API, no mutation, no rendered-output claim); operator applies any change; kagi keeps secret-shaped values (titles and names are not collected at all) |

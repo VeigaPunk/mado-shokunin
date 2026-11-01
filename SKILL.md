@@ -2503,3 +2503,53 @@ S405 + re-used S399/S400, D01 closed); receipts `.ufo/waves/round-59/receipts/`
 (casefold red/green pair, both selftests, CLI refusals, fail-closed home
 refusal, ledger production run, gate identity, DWM service probe ×2); lesson
 `corpus/lessons/round-59.md` (M59-1..M59-3).
+
+## Round 60 — the DPI-awareness join, the durable DPI observer, the r59 record corrections (append-only, dated 2026-10-31)
+
+1. **The caller's DPI-awareness branch is measured ground, and the r58 entry's
+   caller-branch `[UNK]` closes for the launch shape.**
+   `corpus/knowledge/windows-dpi-awareness-metrics-r60.md` (rows S406-S411,
+   opened 2026-10-31, opened before any row was written) measures the
+   documented getter chain (`GetThreadDpiAwarenessContext` →
+   `GetAwarenessFromDpiAwarenessContext`): the lane's `powershell.exe` child
+   launch shape is `DPI_AWARENESS_UNAWARE` (0); `GetSystemMetrics` returns
+   1920x1080 and equals `GetSystemMetricsForDpi(…, 96)`; the 6-window
+   main-window histogram is all `PER_MONITOR_AWARE`; the foreground window
+   reads dpi 96 with window awareness 2 (S404's table). The vacuous shape is
+   named, not smoothed: at effective 96 the metrics join cannot identify the
+   caller's branch — the getter does (J13). The r58 probe's own process
+   context stays a point-in-time `[UNK]` (same-shape pin, disclosed); the r58
+   entry's bytes are untouched.
+2. **The DPI observer is a durable lane tool.** `tools/mado-win-dpi.py`
+   (`VERSION r60-v1`): one read-only PowerShell child; whitelist + sanity
+   layers that treat GetSystemMetrics's documented 0-failure return as
+   CHECK FAILED, never a measurement; histogram sums are self-checked;
+   `--selftest` 10/10; live `MADO_WINDPI: CLEAN (awareness=unaware
+   metrics=1920x1080 dpi96=1920x1080 windows=6 fg_dpi=96)` twice,
+   byte-identical; `--from-file` re-derives from committed snapshot bytes;
+   malformed input → `ERROR` exit 2, raw bytes never echoed; crosscheck 5/5
+   stable fields against the independent probe. It collects no titles, no
+   process names, no handles; no `Set*` verb exists in it — setting thread
+   DPI awareness stays operator-owned. Tool ledger population 99 → 100.
+3. **Cite the mined-mistake count and the per-file diff shape you measured,
+   not the one you remember.** The r59 carry-in corrections surfaced two
+   same-class record defects beyond the routed two: the SCORECARD round-59 C1
+   row's parenthetical read "(+4/−0, +5/−0)" where the measured per-file
+   insertions are +17/−0 (r57 entry: trio +4 + errata +13) and +5/−0 (r58
+   entry) — the r59 verifier measured this, and the SCORECARD now carries the
+   correction append-only (`### Corrections (round 60)`); and the r59 lesson
+   holds FOUR mined mistakes (M59-1..M59-4 — M59-4 the used-by counter's
+   catch), while the LOG tail bullet and this file's § Round 59 ground line
+   said "M59-1..M59-3". Both naming defects are corrected append-only (LOG §
+   Round 60 correction bullet; the correction is recorded here because this
+   section, not the r59 section, is the round-60 append). The rule: an
+   append-only record is corrected by a dated block that carries the
+   re-derivation command, never by editing the defective line.
+
+Ground: `corpus/knowledge/windows-dpi-awareness-metrics-r60.md` (sourced
+entry, S406-S411 + re-used S404, r58 J05/J07 closure); receipts
+`.ufo/waves/round-60/receipts/` (dpi-awareness-probe.ps1 + run1/run2
+byte-identical, windpi-selftest 10/10, windpi-live-run1/run2 byte-identical,
+windpi-snapshot.json + windpi-fromfile, windpi-error-path rc=2,
+windpi-crosscheck 5/5, harmwatch-selftests 55/55 + 63/63, before-state,
+counters, census-after); lesson `corpus/lessons/round-60.md`.

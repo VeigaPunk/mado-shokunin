@@ -2700,3 +2700,70 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
 - C3 **coverage** (sourced): `corpus/knowledge/windows-dwm-service-model-r59.md` closes the r57 entry's finding D01 (the refreshed DWM overview's Vista/7-era service sentence vs S400's always-enabled note). Sourced model row S405 (Microsoft Learn Compatibility Cookbook, opened 2026-10-31 in full; ms.date 2018-07-11, git_commit 40f2250e0d45a6cdf02bd22408933c9ee4c10d78): Windows-8+ DWM is an always-on core OS component, every Windows-7-era disabling path removed. Host joins (probe committed read-only, two byte-identical runs): `SERVICES 0`; `sc query UxSms` rc 1060; dwm.exe one process point-in-time, `tasklist /svc` services N/A; `DwmIsCompositionEnabled` hr=0 TRUE. 4 H rows + 6 K rows + 4 joins; D01 closed flip-met with the named residue (no Win11-labeled model sentence in the bounded sweep). Used-by cells of S399/S400 extended with the r59 entry + lesson (the exact consistency the used-by contract wants); search-log § Round 59 appended. Registry 341 → 342; knowledge files 73 → 74; index rows 73 → 74.
 - Harm watch: census exit 0 both ends (`mado ok`; round-start run quoted in the report — not tee'd, disclosed; end receipt committed); navigation counter at the landing revision expected 74/74 exit 0; ledger population 99/99 (`LEDGER: … TARGET_MET` at base, re-run at landing); used-by counter at base → `missing=2 … TARGET_MISSED` — a pre-existing r58-era defect (the r57 entry's round-58 errata block names S402-S404 without their used-by cells; mined M59-4), repaired this round: the two cells extended with `corpus/knowledge/windows-desktop-plane-r57.md`, counter at the landing → `missing=0 … TARGET_MET` (receipts `usedby-before/after-r59.txt`); `tools/mado-verify.sh` bytes untouched (blob identity re-measured in the C1 receipt); no existing knowledge entry body or registry proposition cell rewritten (used-by cell extensions on S399/S400/S402/S404 are the used-by contract's own consistency moves; everything else appends, insertions, or new files).
 - L2 disclosure: unchanged since r57 — no AgentSwarm dispatch surface on this host; L1-only round. Sources: 341 → 342 rows (S405, tier A, `mined`, opened 2026-10-31 in full; S399/S400 re-opened; one bounded sweep, no rejected-row event — the one surfaced candidate was opened and included, and the sweep reports the Win11-labeled-sentence miss honestly). Considerthese mined: none adoptable (nine files re-screened; nothing new since the r58 mining). Assimilation: none — shokuknow unreachable. Mined M59-1..M59-3 in `corpus/lessons/round-59.md`.
+
+## Round 60 (2026-10-31, hyaku run 12) — the DPI-awareness join, the durable DPI observer, the r59 record corrections
+
+- Carry-in addressed first, per the r59 non-author closure routing (three items): (1) the SCORECARD
+  round-59 C1 row's parenthetical number-shape drift — the row's counting command is a per-file
+  `git diff --stat` but its parenthetical read "(+4/−0, +5/−0)" while the measured per-file insertions
+  at the landing are +17/−0 (`corpus/knowledge/windows-desktop-plane-r57.md`: trio +4 + errata +13) and
+  +5/−0 (`corpus/knowledge/windows-permonitor-dpi-r58.md`: trio) — corrected append-only as a SCORECARD
+  `### Corrections (round 60)` block carrying the re-derivation command (`git diff-tree -r --numstat
+  6f2e4115 25294ab3 -- <two entries>`; the load-bearing property the r59 verifier confirmed — insertions
+  only, no existing line modified — was and stays true). (2) The LOG round-59 tail bullet said "Mined
+  M59-1..M59-3" while the r59 lesson holds four mined mistakes (M59-1..M59-4); the same-class defect in
+  SKILL.md § Round 59's ground line ("(M59-1..M59-3)") was found by this round's sweep and corrected in
+  the same move — both corrected append-only (this bullet; SKILL § Round 60 rule 3), original bytes
+  untouched. (3) The three open L0 questions (omarchy freshness-rubric disposal; gate-selftest host gap;
+  calibration resolved-active re-derivability) routed around, never treated as answered; a fourth L0
+  line files the screen-capture-scope question the r59 route named as the rendered-pixel precondition.
+- C1 **calibration** (carry-in corrections): the corrections above. No claim predicate, score, or
+  existing row text changed; the SCORECARD/LOG/SKILL gains are appends (the r57/r58/r59 sections and
+  both defect lines keep their original bytes). Counting: `grep -c '^### Corrections (round 60)'
+  SCORECARD.md` → 0 → 1; `grep -c '^## Round 60' LOG.md` → 0 → 1; `grep -c '^## Round 60' SKILL.md`
+  → 0 → 1; preservation by diff shape: `git diff <base>..<landing> --numstat -- SCORECARD.md LOG.md
+  SKILL.md` → 0 deleted lines in each (the corrections live in new appends; checked at commit time —
+  worktree-vs-index diff output is host garbage, the M59-3 rule). Receipt `before-state-r60.txt`
+  (all base values).
+- C2 **coverage** (sourced): `corpus/knowledge/windows-dpi-awareness-metrics-r60.md` closes the r58
+  entry's named caller-branch residues in the same launch shape. Sourced rows S406-S411 (Microsoft Learn
+  winuser/windef, opened 2026-10-31 in full BEFORE any row was written; ms.date 2018-12-05, git_commit
+  fa53641576e3603fa7b66d3a4ad969d3ce49d6f3 for five pages, 9267262487657894a8af112d7165006fed5035a7 for
+  the DPI_AWARENESS enumeration; every located quote verbatim) + re-used S404 for the J14 join. Host
+  facts (probe committed read-only, two byte-identical runs rc=0): the `powershell.exe` child launch
+  shape measures `DPI_AWARENESS_UNAWARE` (0) — H13; `GetSystemMetrics(SM_CXSCREEN/SM_CYSCREEN)` =
+  1920x1080 equals `GetSystemMetricsForDpi(…, 96)` — H14 (agreement, vacuous at effective 96, named in
+  J13: the getter identifies the branch, never the metrics join); main-window histogram 6 windows all
+  `PER_MONITOR_AWARE` — H15 (point-in-time, no titles/names/handles collected); foreground dpi 96 with
+  window awareness 2 — H16 (read against S404's return table; the r58 probe's own process context stays
+  `[UNK]`, same-shape pin disclosed in J14; the r58 entry bytes untouched). 4 H + 7 K + 4 J rows. Index
+  row added; knowledge files 74 → 75; registry 342 → 348; S404 used-by cell extended (the contract's
+  consistency move, logged in the lesson).
+- C3 **operability** (capability): `tools/mado-win-dpi.py` (`VERSION r60-v1`) — the durable form of the
+  probe. Selftest **10/10** exit 0 (named assertions: whitelist drop, thread-awareness INVALID,
+  GetSystemMetrics's documented 0-failure return treated as CHECK FAILED never a measurement, metrics
+  disagreement at non-96 CLEAN not failed, histogram-sum self-check, from-file roundtrip, malformed
+  ERROR with bytes never echoed, static no-titles/no-names/no-handles/no-Set* assertions); live
+  `MADO_WINDPI: CLEAN (awareness=unaware metrics=1920x1080 dpi96=1920x1080 windows=6 fg_dpi=96)` twice,
+  byte-identical rc=0; `--from-file` re-derives from the committed snapshot (rc=0); malformed snapshot →
+  `MADO_WINDPI: ERROR (stage=parse …)` rc=2, raw bytes never echoed; crosscheck **5/5** stable fields
+  AGREE against the independently executed probe. Tool ledger population 99 → 100 (ledger row +
+  PROVINCE round-60 refinement landed in the same round). Harm watch: both checker selftests stay green
+  at current bytes (`LEDGER_SELFTEST: 55/55`, `MADO_WAVE_DONE_SELFTEST: 63/63`, rc 0; receipt
+  `harmwatch-selftests-r60.txt`); `tools/mado-verify.sh` bytes untouched this round.
+- Harm watch / disclosure: census exit 0 both ends (`mado ok`; start run quoted in the report, end
+  receipt `census-after-r60.txt`); navigation counter at the landing revision expected 75/75 exit 0;
+  used-by counter at the landing expected missing=0 `TARGET_MET` (the M59-4 rule applied proactively:
+  every row this round's appends name — S404, S406-S411 — carries the citing paths in its used-by cell
+  in the same landing); no existing knowledge entry body or registry proposition cell changed (the S404
+  used-by extension is the used-by contract's own in-place cell move, logged old→new in the lesson;
+  everything else appends, insertions, or new files).
+- L2 disclosure: unchanged since r57 — no AgentSwarm dispatch surface on this host; L1-only round.
+  Sources: 342 → 348 rows (S406-S411, tier A, `mined`, opened 2026-10-31 in full; S404 re-opened for
+  the J14 join at its held URL; one bounded sweep, no rejected-row event — the sweep was bounded to the
+  six documented getters the probe invokes). Considerthese mined: none adoptable (nine files
+  re-screened; nothing new since the r58 mining). Assimilation: none — shokuknow unreachable. Mined
+  M60-1..M60-3 in `corpus/lessons/round-60.md`. Correction to this log's round-59 tail bullet, recorded
+  here per the append-only rule: that bullet's "Mined M59-1..M59-3" is wrong — the r59 lesson holds
+  M59-1..M59-4 (the r59 verifier spot-check § 6 item 2 named it; the same-class SKILL § Round 59 ground
+  line was found by this round's sweep).

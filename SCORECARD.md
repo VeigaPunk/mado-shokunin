@@ -3055,3 +3055,85 @@ their used-by cells; mined M59-4), repaired this round; landing `missing=0 … T
    read-only in lane scope.
 3. A Win11-labeled DWM model sentence, if one surfaces, strengthens the D01 pin
    (residue named in the r59 entry).
+
+### Corrections (round 60)
+
+The r59 verifier spot-check (§ 6 item 1) routed a number-shape drift in the
+round-59 C1 row above, corrected here append-only (the r59 section's bytes are
+untouched; the load-bearing property it recorded — insertions only, no
+existing line modified — was verified true then and stays true):
+
+- The C1 row's counting-command cell ends "→ insertions only (+4/−0, +5/−0)".
+  The parenthetical is wrong as a per-file diff shape. The measured per-file
+  insertions at the r59 landing are **+17/−0** (`corpus/knowledge/windows-desktop-plane-r57.md`:
+  provenance trio +4 lines + the `## Errata (round 59)` append +13) and
+  **+5/−0** (`corpus/knowledge/windows-permonitor-dpi-r58.md`: provenance
+  trio). Re-derivation: `git diff-tree -r --numstat 6f2e4115 25294ab3 --
+  corpus/knowledge/windows-desktop-plane-r57.md
+  corpus/knowledge/windows-permonitor-dpi-r58.md` → `17 0` and `5 0`. The
+  "(+4/−0 …)" figure describes the trio alone on the r57 entry; the r58
+  entry's trio is 5 lines, so the same figure was never per-file correct for
+  that row.
+- Same-class defects found by the round-60 sweep beyond the routed one, both
+  corrected append-only (LOG § Round 60 correction bullet; SKILL § Round 60
+  rule 3): the LOG round-59 tail bullet and the SKILL § Round 59 ground line
+  say "M59-1..M59-3" while `corpus/lessons/round-59.md` holds **four** mined
+  mistakes (`grep -c '^- \*\*M59-' corpus/lessons/round-59.md` → 4; M59-4 is
+  the used-by counter's own catch). The defect lines keep their original
+  bytes; the corrections carry the re-derivation commands.
+
+## Round 60 — the DPI-awareness join, the durable DPI observer, the r59 record corrections (2026-10-31, hyaku run 12)
+
+Axis posture: saturation 9.0 / window N=3, last capability r58, so the
+stagnation nudge does not apply (gap 1 < 3 at round start). At base every
+published scored sub-axis sat at its finite maximum — measured at base:
+navigation 74/74 = 10.0000 and SOURCES 342 rows (receipt `before-state-r60.txt`);
+carried from the published tables: freshness "surface-state audit currency"
+8/8 = 10.0000, calibration resolved-active 86/86 (last re-derived r56-era; the
+aggregator's underlying counters still emit no contract lines on this host),
+the omarchy-host rubrics dormant with receipts (freshness 9.6552; operability
+gate selftest 360/100 rc=2) — all three disposals are the open L0 questions,
+routed around again this round, never treated as answered. So no axis is
+distinctly lowest: the same posture as rounds 56, 58 and 59, and the round
+works the open ground the r59 closure routed in (the carry-in corrections, C1)
+plus real axis moves on sourced coverage (C2) and operability (C3, a
+capability acquisition). L1-only round again (no dispatch surface on this
+host; disclosed since r57, L0 open). Claims were declared before the formal
+receipt runs; no predicate changed after scoring. Base
+`d1e64880b375529de185f49e124dd6cc42c58e75`; measured at the landing commit
+(see the report).
+
+| Claim / axis | Before → after | Counting command (runs on THIS host) | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the r59 carry-in corrections: the SCORECARD C1 parenthetical number-shape drift corrected with the measured per-file numbers; the r59 mined-mistake naming defects (LOG tail bullet + the SKILL § 59 ground line, same class) corrected — all append-only | base `d1e64880`: the C1 parenthetical reads "(+4/−0, +5/−0)" against measured per-file +17/−0 and +5/−0; LOG says "M59-1..M59-3"; SKILL § 59 ground says "(M59-1..M59-3)" — the lesson holds 4 → landing: SCORECARD `### Corrections (round 60)` block with the re-derivation command and the measured numbers; the LOG § Round 60 correction bullet; SKILL § Round 60 rule 3 — the three defect lines keep their original bytes (append-only), each correction carries its re-derivation command | anchored block counts: `git show d1e64880:SCORECARD.md \| grep -c '^### Corrections (round 60)'` → **0**, at landing → **1**; `git show d1e64880:LOG.md \| grep -c '^## Round 60'` → **0**, at landing → **1**; `git show d1e64880:SKILL.md \| grep -c '^## Round 60'` → **0**, at landing → **1**; defect lines preserved unchanged by diff shape: `git diff <base>..<landing> --numstat -- SCORECARD.md LOG.md SKILL.md` → **0 deleted lines in each** (insertions only — the corrections live in new blocks, never in rewritten lines; checked at commit time in the report); measured numbers re-derived: `git diff-tree -r --numstat 6f2e4115 25294ab3 -- <the two entries>` → `17 0` / `5 0`; lesson mistake count `grep -c '^- \*\*M59-' corpus/lessons/round-59.md` → **4** (receipt `before-state-r60.txt`) | **TARGET_MET** (the records now carry the measured numbers beside the preserved defect lines, each with a re-derivation command; append-only discipline held — no existing line modified) |
+| C2 **coverage** (sourced) — the r58 entry's caller-branch residues closed in the same launch shape: caller awareness measured, the metrics join read beside the DPI-explicit query | base: knowledge files 74, index rows 74 (74/74 reachable), registry rows 342; the r58 entry's J05 caller `[UNK]` and J07 branch ambiguity open → landing: `corpus/knowledge/windows-dpi-awareness-metrics-r60.md` (4 host rows H13-H16 with re-derivation commands — caller `DPI_AWARENESS_UNAWARE` (0), metrics 1920x1080 equal to ForDpi-96 with the vacuous shape named in J13, histogram 6 × PER_MONITOR_AWARE, foreground dpi 96 / awareness 2; 7 dated `[INF-docs]` rows K21-K27; 4 joins J13-J16; § 4 closes J05 for the launch shape with the r58 process context staying `[UNK]`), indexed; registry gains S406-S411 (Microsoft Learn winuser/windef, tier A, opened 2026-10-31 in full before any row was written; S404 re-used for J14) | `ls corpus/knowledge/*.md \| wc -l` → **75** (base 74); `grep -cE '^\| `knowledge/[^`]+\.md`' corpus/README.md` → **75** (base 74); `grep -cE '^[[:space:]]*\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md` → **348** (base 342); entry row count `grep -cE '^\| [HJK][0-9]{2} ' corpus/knowledge/windows-dpi-awareness-metrics-r60.md` → **15** (4 H + 7 K + 4 J); probe re-run `powershell.exe -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File .ufo/waves/round-60/receipts/dpi-awareness-probe.ps1` → rc=0, `thread.awareness=0`, `metrics.cxscreen=1920`, runs byte-identical; navigation counter (SCORECARD § Counting command, fleet round 1) at the landing revision with `python` in place of `python3` → `indexed=75/75 … coverage=10.0000/10`, exit 0 | **TARGET_MET** (entry indexed and reachable; sources opened and quoted this round; the claim rests on S406-S411 + re-used S404) |
+| C3 **operability** (capability acquisition) — `tools/mado-win-dpi.py`, the durable read-only DPI-virtualization observer | base: tool absent (`git ls-tree <base> tools/ \| grep -c win-dpi` → 0; ledger population 99) → landing: selftest **10/10** exit 0 (named assertions incl. the documented 0-failure return treated as CHECK FAILED, histogram-sum self-check, whitelist drop, static no-titles/no-names/no-handles/no-Set* pins); live `MADO_WINDPI: CLEAN (awareness=unaware metrics=1920x1080 dpi96=1920x1080 windows=6 fg_dpi=96)` exit 0, two byte-identical runs; `--from-file` re-derives the verdict from the committed snapshot; malformed snapshot → `MADO_WINDPI: ERROR` exit 2, raw bytes never echoed; crosscheck **5/5** stable fields AGREE against the independently executed probe; ledger population 99 → **100** | `git ls-tree d1e64880 --name-only tools/ \| grep -c win-dpi` → **0**; `python tools/mado-win-dpi.py --selftest` → `MADO_WINDPI_SELFTEST: 10/10 assertions passed`, exit 0 (receipt `windpi-selftest.txt`); `python tools/mado-win-dpi.py` → `MADO_WINDPI: CLEAN …` exit 0 ×2 byte-identical (receipts `windpi-live-run1/2.txt`); `python tools/mado-win-dpi.py --from-file .ufo/waves/round-60/receipts/windpi-snapshot.json` → rc=0 (receipt `windpi-fromfile.txt`); malformed snapshot → `MADO_WINDPI: ERROR (stage=parse …)` rc=2 (receipt `windpi-error-path.txt`); crosscheck 5/5 (receipt `windpi-crosscheck.txt`); `python quality/check-tool-ledger.py --repo . --rev <landing>` → `population=100 ledger_rows=100 … verdict=TARGET_MET` | **TARGET_MET** (capability runs, output verifies, row enters the table below the same round) |
+
+### Capabilities (round 60)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Windows DPI-virtualization observer (`tools/mado-win-dpi.py`) | observe the caller's DPI-awareness branch (documented getter chain), the system-metrics join beside the DPI-explicit query, a main-window awareness histogram and the foreground window's DPI/awareness — read-only, one fixed PowerShell child; re-derives from snapshots (`--from-file`); treats the documented 0-failure return as CHECK FAILED; never collects titles, names or handles | `MADO_WINDPI_SELFTEST: 10/10`; `MADO_WINDPI: CLEAN (awareness=unaware metrics=1920x1080 dpi96=1920x1080 windows=6 fg_dpi=96)` ×2 byte-identical; crosscheck 5/5 (receipts in `.ufo/waves/round-60/receipts/`); C3 line above | 60 |
+
+Harm watch (at landing): census exit 0 both ends (`mado ok`; start run quoted
+in the report — not tee'd, disclosed; end receipt `census-after-r60.txt`);
+index 75/75 (navigation counter exit 0); ledger population 100/100; used-by
+counter missing=0 `TARGET_MET` at the landing (the M59-4 rule applied
+proactively — every row the round's appends name carries the citing paths in
+the same landing); `tools/mado-verify.sh` bytes untouched this round; both
+fail-closed checkers' selftests stay green at current bytes (55/55, 63/63 —
+receipt `harmwatch-selftests-r60.txt`); no existing knowledge entry body or
+registry proposition cell changed (the S404 used-by extension is the used-by
+contract's own in-place cell move, logged old→new in the lesson; everything
+else appends, insertions, or new files). Verdicts are the closure's to rule.
+
+### Planned (round 61; intent only)
+
+1. The three L0 rubric rulings (omarchy freshness disposal; gate-selftest host
+   gap; calibration resolved-active re-derivability) — whichever way they
+   land, the SCORECARD tables follow the ruling, not before.
+2. The rendered-pixel observation, if the screen-capture-scope L0 question
+   (filed this round) is ruled: a statistics-only, no-persist capture probe is
+   the candidate shape; without a ruling the limit stays named, not worked.
+3. A Win11-labeled DWM model sentence, if one surfaces, still strengthens the
+   D01 pin (the r59 residue stands).
