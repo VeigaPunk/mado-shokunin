@@ -206,3 +206,28 @@ verifiable — only the names were wrong):
   `landing-counters-r60.txt` and `usedby-before-r60.txt`, and none of the
   three named files. The evidence standard requires pointers to resolve at
   closure; the pointers now resolve to the file that holds the runs.
+
+## Corrections (round 62)
+
+The r61 verifier spot-check (§ 7 item 2, "no action required") named a
+section-name imprecision inside this lesson's own `## Corrections (round 61)`
+block, dispositioned here append-only for precision (the pointer it gave
+resolves as a prefix, so the r61 correction worked; the name was inexact):
+
+- The block says the landing runs live in `landing-counters-r60.txt`'s
+  section "`-- navigation counter --`". The file's actual section header is
+  **`-- navigation counter (SCORECARD fence, python for python3) --`** — the
+  short form is a prefix, not the header. The other two names
+  (`-- used-by counter --`, `-- tool ledger production --`) are exact.
+- Re-derivation: `git show 4c5435d8bb3dd108f1dba4998de73c514609d885:.ufo/waves/round-60/receipts/landing-counters-r60.txt | grep -n '^--'`
+  → `2:-- navigation counter (SCORECARD fence, python for python3) --`,
+  `5:-- used-by counter --`, `8:-- tool ledger production --`. The same
+  short form also appears in LOG.md's round-61 carry-in bullet; the LOG
+  round-62 correction bullet names that second site (LOG bytes stay
+  append-only — the defect lines keep their original bytes).
+- Round 61's claim that "this round's own landing counters adopt the
+  named-sections file shape by construction, so the defect class cannot
+  recur here" holds for the file shape and stands; the imprecision was in
+  naming a section header from memory instead of from the file — the same
+  read-against-the-bytes rule the selftest assertions follow (M61-1), now
+  recorded as M62-2's class in `corpus/lessons/round-62.md`.

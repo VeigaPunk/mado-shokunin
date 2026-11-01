@@ -173,3 +173,31 @@ used-by/ledger runs inside it.
    probe.
 3. A Win11-labeled DWM model sentence, if one surfaces, still strengthens the
    D01 pin; the taskbar-band owner joins only behind a Shell-plane ruling.
+
+## Corrections (round 62)
+
+The r61 verifier spot-check (§ 7 item 1) routed a number drift in the
+round-61 report's "Landed changes" table, corrected here append-only (the
+defect lives in the fleet-root report file, which the lane does not edit;
+this block names the superseded table rows, and the round-62 report restates
+the erratum). The table's per-file counts for three record files are wrong
+while the totals are right:
+
+- The rows for `LOG.md` ("+52"), `PROVINCE.md` ("+13") and `SKILL.md`
+  ("+50") are superseded by the measured per-file insertions **LOG.md +64/−0,
+  PROVINCE.md +19/−0, SKILL.md +55/−0**. The table's totals ("28 files,
+  +1416/−0 — zero deleted lines") re-derive exactly, so the three wrong
+  per-file figures undercount their files by 12/6/5 lines while the sum of
+  all 28 rows stays correct.
+- Re-derivation: `git diff-tree -r --numstat cccda4da ad4e8403 -- LOG.md
+  PROVINCE.md SKILL.md` → `64 0` / `19 0` / `55 0`; the totals:
+  `git diff-tree -r --numstat cccda4da ad4e8403 | awk '{a+=$1; d+=$2; n++}
+  END {print n" files "a" added "d" deleted"}'` → `28 files 1416 added 0
+  deleted`. Also re-derived at round-62 round start into the committed
+  receipt `.ufo/waves/round-62/before-state-r62.txt` (same commands, base
+  `4c5435d8`).
+- This is the number-shape drift class round 60 corrected in SCORECARD/LOG/
+  SKILL and round 61 corrected in the r59 lesson — recurring in a report
+  table beside a correction of the same class in the same round's C1. The
+  class rule (an asserted number carries its counting command, QUALITY 10)
+  is recorded as M62-1's class in `corpus/lessons/round-62.md`.

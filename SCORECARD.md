@@ -3198,3 +3198,68 @@ insertions, or new files). Verdicts are the closure's to rule.
 3. The taskbar-band owner join (H19's `[UNK]`) only behind a Shell-plane
    operator ruling; a Win11-labeled DWM model sentence, if one surfaces,
    still strengthens the D01 pin.
+
+## Round 62 — the DWM client-attribute plane, the durable DWM observer, the r61 carry-in corrections (2026-11-01, hyaku run 12)
+
+Axis posture: saturation 9.0 / window N=3, last capability r61, so the
+stagnation nudge does not apply (gap 1 < 3 at round start). At base every
+published scored sub-axis sat at its finite maximum — measured at base:
+navigation 76/76 = 10.0000 and SOURCES 354 rows (receipt
+`before-state-r62.txt`, measured before any edit); carried from the
+published tables: freshness "surface-state audit currency" 8/8 = 10.0000,
+calibration resolved-active 86/86 (last re-derived r56-era; the aggregator's
+underlying counters still emit no contract lines on this host), the
+omarchy-host rubrics dormant with receipts (freshness 9.6552; operability
+gate selftest 360/100 rc=2) — all four disposals are the open L0 questions
+(r57/r58/r59/r60), routed around again this round, never treated as
+answered. So no axis is distinctly lowest: the same posture as rounds 56
+and 58-61, and the round works the open ground the r61 closure routed in
+(the carry-in corrections, C1) plus real axis moves on sourced coverage
+(C2) and operability (C3, a capability acquisition). L1-only round again
+(no dispatch surface on this host; disclosed since r57, L0 open). Claims
+were declared before the formal receipt runs (declaration file
+`.ufo/waves/round-62/claims-declaration-r62.md`, with a disclosed amendment
+narrowing the C3 receipt shape and fixing the selftest count 10→11 before
+the formal runs); no predicate changed after scoring. Base
+`4c5435d8bb3dd108f1dba4998de73c514609d885`; measured at the landing commit
+(see the report).
+
+| Claim / axis | Before → after | Counting command (runs on THIS host) | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the r61 carry-in corrections: the round-61 report's Landed-changes per-file number drift (LOG +52→+64, PROVINCE +13→+19, SKILL +50→+55; totals correct) dispositioned by a correction block naming the superseded table rows, and the same-correction family's section-name nit (the exact header is `-- navigation counter (SCORECARD fence, python for python3) --`) corrected — all append-only | base `4c5435d8`: the measured per-file insertions are LOG +64/−0, PROVINCE +19/−0, SKILL +55/−0 (the report said +52/+13/+50; totals 28 files +1416/−0 correct), no lesson carries a `## Corrections (round 62)` block, and the receipt file's section 2 header is the parenthetical form the r61 correction short-named → landing: `## Corrections (round 62)` in `corpus/lessons/round-61.md` naming the superseded table rows beside the numstat re-derivation (the fleet-root report file is not lane-edited; the round-62 report restates the erratum), and `## Corrections (round 62)` in `corpus/lessons/round-60.md` naming the exact header; the LOG round-62 correction bullet names the short form's second site (LOG's own round-61 bullet) — the defect lines keep their original bytes (append-only) | numstat re-derivation (also in `before-state-r62.txt`, measured at round start): `git diff-tree -r --numstat cccda4da ad4e8403 -- LOG.md PROVINCE.md SKILL.md` → **64 0** / **19 0** / **55 0**; totals `git diff-tree -r --numstat cccda4da ad4e8403 \| awk '{a+=$1; d+=$2; n++} END {print n" files "a" added "d" deleted"}'` → **28 files 1416 added 0 deleted**; header re-derivation: `git show 4c5435d8:.ufo/waves/round-60/receipts/landing-counters-r60.txt \| grep -n '^--'` → line 2 the parenthetical form; anchored block counts: `grep -c '^## Corrections (round 62)' corpus/lessons/round-61.md` → **0**, at landing → **1**; same grep on `corpus/lessons/round-60.md` → **0 → 1**; preservation: `git show <base>:<lesson> \| diff - <(head -n <base-lines> <lesson>)` → **empty, ORIGINAL_PRESERVED** for both (r60 208 lines, r61 175 lines at base) | **TARGET_MET** (both routed defects dispositioned beside preserved defect lines, each with a re-derivation command; the drift class now has a carried rule — a table number without its numstat is the defect, whatever surface it sits on) |
+| C2 **coverage** (sourced) — the DWM client-attribute plane: composition state beside the census, the cloaked-window census, the frame-bounds join, the composition-timing disposition (D04) | base: knowledge files 76, index rows 76 (76/76 reachable), registry rows 354; no committed entry reads the dwmapi getter surface (r57/r59 observe DWM from the outside) → landing: `corpus/knowledge/windows-dwm-attributes-r62.md` (4 host rows H21-H24 with re-derivation commands — composition TRUE; cloaked census 14 of 161-170 top-level with reasons 7 app + 7 shell + 0 inherited in every committed execution, attr_failed 0, counts only; frame-bounds join 7 px inset left/right/bottom, 0 top, every execution; the timing getter's undocumented `0x88980090` failure in BOTH documented call shapes, cbSize 320, deterministic — D04, cause `[UNK]`), 6 dated `[INF-docs]` rows K38-K43, 4 joins J21-J24 (J23 separates the two documented rect/frame causes: the resize-border cause observed, the DPI-virtualization cause vacuous at effective 96 — the r60 J13 shape), indexed; registry gains S418-S423 (Microsoft Learn dwmapi/winuser, tier A, opened 2026-11-01 in full before any row was written; no reused rows; one URL-correction event inside the sweep — the underscore slug — mined M62-2) | `ls corpus/knowledge/*.md \| wc -l` → **77** (base 76); `grep -cE '^\| `knowledge/[^`]+\.md`' corpus/README.md` → **77** (base 76); `grep -cE '^[[:space:]]*\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md` → **360** (base 354); entry row count `grep -cE '^\| [HJK][0-9]{2} ' corpus/knowledge/windows-dwm-attributes-r62.md` → **14** (4 H + 6 K + 4 J; the finding D04 is a Findings bullet); probe re-run `powershell.exe -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File .ufo/waves/round-62/receipts/dwm-attributes-probe.ps1` → rc=0, `composition_enabled=true`, cloak `7/7/0`, runs byte-identical except the census counters; navigation counter (SCORECARD § Counting command, fleet round 1) at the landing revision with `python` in place of `python3` → `indexed=77/77 … coverage=10.0000/10`, exit 0 | **TARGET_MET** (entry indexed and reachable; sources opened and quoted this round; the claim rests on S418-S423) |
+| C3 **operability** (capability acquisition) — `tools/mado-win-dwm.py`, the durable read-only DWM client-attribute observer | base: tool absent (`git ls-tree <base> --name-only tools/ \| grep -c win-dwm` → 0; ledger population 101) → landing: selftest **11/11** exit 0 (after three red assertion-authoring runs — M62-mined in the lesson: a generic `"wmi"` ban colliding with the legitimate `DwmIsCompositionEnabled` P/Invoke, and two static count assertions written against remembered shapes; each read against the implementation, every fixed assertion carries its site list; named assertions incl. reason-sum, attr_failed never imputed, the documented 0-failure return classes as CHECK FAILED, whitelist drop, from-file roundtrip, malformed ERROR with bytes never echoed, static getter-only pins); live `MADO_WINDWM: CLEAN (composition=on reasons=app+shell timing=unavailable(hr=0x88980090))` exit 0 ×2, **verdict lines byte-identical**, JSON differing only in the named churn field (`windows.top_level` 168→170, receipt `windwm-live-churn-diff.txt`); `--from-file` re-derives the verdict from the committed snapshot; malformed snapshot → `MADO_WINDWM: ERROR` exit 2, raw bytes never echoed; crosscheck **5/5** stable fields AGREE against the independently executed probe (+ census structure, no equality claim on churn-prone counters); no Set*/Move*/Change* verb exists in the tool; ledger population 101 → **102** | `git ls-tree 4c5435d8 --name-only tools/ \| grep -c win-dwm` → **0**; `python tools/mado-win-dwm.py --selftest` → `MADO_WINDWM_SELFTEST: 11/11 assertions passed`, exit 0 (receipt `windwm-selftest.txt`; three red runs 8/11, 10/11, 10/11 before it — the red side disclosed in the lesson); `python tools/mado-win-dwm.py` → `MADO_WINDWM: CLEAN …` exit 0 ×2, verdict lines identical (receipts `windwm-live-run1/2.txt` + `windwm-live-churn-diff.txt`); `python tools/mado-win-dwm.py --from-file .ufo/waves/round-62/receipts/windwm-snapshot.json` → rc=0 (receipt `windwm-fromfile.txt`); malformed snapshot → `MADO_WINDWM: ERROR (stage=parse …)` rc=2 (receipt `windwm-error-path.txt`); `python .ufo/waves/round-62/receipts/dwm-crosscheck.py .` → 5/5 (receipt `windwm-crosscheck.txt`); `python quality/check-tool-ledger.py --repo . --rev <landing>` → `population=102 ledger_rows=102 … verdict=TARGET_MET` | **TARGET_MET** (capability runs, output verifies, row enters the table below the same round) |
+
+### Capabilities (round 62)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Windows DWM client-attribute observer (`tools/mado-win-dwm.py`) | observe the composition state (`DwmIsCompositionEnabled`), the compositor-side cloaking census (`EnumWindows` × `DwmGetWindowAttribute(DWMWA_CLOAKED)`: counts and the three documented reason buckets, never per-window rows), the frame-bounds pair on the probe's own console window (`GetWindowRect` beside `DWMWA_EXTENDED_FRAME_BOUNDS` — the documented resize-border/DPI-virtualization pair), and the composition-timing disposition (`DwmGetCompositionTimingInfo` in both documented call shapes, recorded never asserted — the host's undocumented failure is finding D04) — read-only, one fixed PowerShell child; verdict line built from structure (census churn named per field); re-derives from snapshots (`--from-file`); treats documented 0-failure return classes and a nonzero `attr_failed` as CHECK FAILED; never collects titles, names, handles or a per-window tabulation; no Set*/Move*/Change* verb | `MADO_WINDWM_SELFTEST: 11/11`; `MADO_WINDWM: CLEAN (composition=on reasons=app+shell timing=unavailable(hr=0x88980090))` ×2 verdict-identical; crosscheck 5/5 (receipts in `.ufo/waves/round-62/receipts/`); C3 line above | 62 |
+
+Harm watch (at landing): census exit 0 both ends (`mado ok`; start tee'd to
+`census-start-r62.txt`, the r61 committed-receipt shape kept; end receipt
+`census-after-r62.txt`); index 77/77 (navigation counter exit 0); ledger
+population 102/102; used-by counter missing=0 `TARGET_MET` at the landing
+(the M59-4 rule applied proactively — every row the round's appends name
+carries the citing paths in its used-by cell in the same landing);
+`tools/mado-verify.sh` bytes untouched this round (sha256 prefix
+`050efc720599345a` re-measured — the r59 lesson's recorded identity); both
+fail-closed checkers' selftests stay green at current bytes (55/55, 63/63 —
+receipt `harmwatch-selftests-r62.txt`); no existing knowledge entry body or
+registry proposition cell changed (the six S-rows are new rows with their
+used-by cells written at insertion; everything else appends, insertions, or
+new files). Verdicts are the closure's to rule.
+
+### Planned (round 63; intent only)
+
+1. The four L0 rulings (omarchy freshness disposal; gate-selftest host gap;
+   calibration resolved-active re-derivability; screen-capture scope) —
+   whichever way they land, the SCORECARD tables follow the ruling, not
+   before.
+2. The rendered-pixel observation, if the screen-capture-scope L0 question
+   is ruled: a statistics-only, no-persist capture probe is the candidate
+   shape; without a ruling the limit stays named, not worked.
+3. D04's residue — a second documented-getter surface that reads the
+   compositor's refresh (if one exists in the documented vocabulary) would
+   land the rateRefresh→64 Hz join D04 left open; a Win11-labeled DWM model
+   sentence, if one surfaces, still strengthens the D01 pin.

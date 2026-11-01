@@ -2831,3 +2831,76 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   `corpus/lessons/round-61.md` (M61-1: the M60-1 class recurring three times in one selftest tally — assertion
   bugs, never tool bugs, each read against the implementation before either was edited; M61-2: a struct-header
   locator guess 404'd inside the sweep, caught by open-before-write).
+
+## Round 62 (2026-11-01, hyaku run 12) — the DWM client-attribute plane, the durable DWM observer, the r61 carry-in corrections
+
+- Carry-in addressed first, per the r61 non-author closure routing (two routed defects + the standing L0 set):
+  (1) report-table number drift — the round-61 report's "Landed changes" table rows for `LOG.md` ("+52"),
+  `PROVINCE.md` ("+13") and `SKILL.md` ("+50") are wrong per file while the totals ("28 files, +1416/−0")
+  are right; measured per-file insertions **+64/−0, +19/−0, +55/−0** (re-derivation `git diff-tree -r
+  --numstat cccda4da ad4e8403 -- LOG.md PROVINCE.md SKILL.md` → `64 0` / `19 0` / `55 0`; totals
+  `28 files 1416 added 0 deleted`) — corrected append-only as `## Corrections (round 62)` in
+  `corpus/lessons/round-61.md` naming the superseded table rows, restated as the erratum in the round-62
+  report (the fleet-root report file itself is not lane-edited). (2) Same-correction family nit — the r61
+  correction block names the receipt section `-- navigation counter --`; the actual header at base is
+  `-- navigation counter (SCORECARD fence, python for python3) --` (re-derivation `git show
+  4c5435d8:…landing-counters-r60.txt | grep -n '^--'` → line 2), and LOG's own round-61 carry-in bullet
+  above carries the same short form — corrected append-only as `## Corrections (round 62)` in
+  `corpus/lessons/round-60.md` plus this bullet naming both sites; defect lines keep their original bytes
+  (preservation: `git show <base>:<lesson> | diff - <(head -n N)` — r60 lesson 208 lines, r61 lesson 175
+  lines at base, both ORIGINAL_PRESERVED). (3) The four open L0 questions (omarchy freshness-rubric
+  disposal; gate-selftest host gap; calibration resolved-active re-derivability; screen-capture scope)
+  routed around, never treated as answered; no new L0 line this round — nothing new needed an operator
+  decision (the D04 timing failure is recorded as a host finding, not an operator question).
+- C1 **calibration** (carry-in corrections): the corrections above. Counting: `grep -c
+  '^## Corrections (round 62)' corpus/lessons/round-61.md` → 0 → 1; same grep on
+  `corpus/lessons/round-60.md` → 0 → 1; the numstat re-derivation is in the r61 lesson's block and in
+  `before-state-r62.txt` (measured at round start, before any edit); preservation ORIGINAL_PRESERVED as
+  above. Base values: `before-state-r62.txt` (navigation 76/76, SOURCES 354, ledger 101, entry and tool
+  absent at base).
+- C2 **coverage** (sourced): `corpus/knowledge/windows-dwm-attributes-r62.md` lands the DWM
+  client-attribute plane — the layer between the held layers (r57/r59 composition + service model from
+  the outside, r58/r60 DPI, r61 topology): H21 composition TRUE beside r59's pin; H22 the cloaked-window
+  census (14 cloaked of 161-170 top-level in five committed executions, reasons 7 app + 7 shell + 0
+  inherited in every execution, attr_failed 0; counts only — never handles/titles, never a per-window
+  tabulation, J22's cross-layer `[UNK]` named); H23 the frame-bounds join (GetWindowRect beside
+  DWMWA_EXTENDED_FRAME_BOUNDS on the probe's own console window: 7 px inset left/right/bottom, 0 top, in
+  every execution — J23 separates the two documented causes: the resize-border cause observed, the
+  DPI-virtualization cause vacuous at effective 96, the r60 J13 shape); H24/D04 the timing getter fails
+  with undocumented `0x88980090` in BOTH documented call shapes (NULL required shape; non-NULL
+  E_INVALIDARG promise), cbSize 320 per the documented 39-member layout, deterministic — the
+  rateRefresh→r61's-64-Hz join never lands and stays `[INF-docs]`. 6 dated `[INF-docs]` rows K38-K43
+  (S418-S423, opened 2026-11-01 in full BEFORE any row was written; one URL-correction event inside the
+  sweep — the underscore slug — mined M62-2). Index row added; knowledge files 76 → 77; registry
+  354 → 360; entry row count 14 (4 H + 6 K + 4 J; the finding D04 is a Findings bullet).
+- C3 **operability** (capability): `tools/mado-win-dwm.py` (`VERSION r62-v1`) — the durable form.
+  Selftest **11/11** exit 0 after three red assertion-authoring runs (the M61-1 class again: a generic
+  `"wmi"` substring ban colliding with the legitimate `DwmIsCompositionEnabled` P/Invoke; two static
+  count assertions written against remembered shapes — `enumwindows` 5 sites not 2, `iswindow(` paren
+  form 3 not the bare-substring 5; each read against the implementation, every fixed assertion carries
+  its site list); live `MADO_WINDWM: CLEAN (composition=on reasons=app+shell
+  timing=unavailable(hr=0x88980090))` twice, **verdict lines byte-identical** rc=0, the JSON lines
+  differing only in the named churn field (`windows.top_level` 168→170, receipt
+  `windwm-live-churn-diff.txt` — the declared amendment narrowed this receipt shape before the formal
+  runs); `--from-file` re-derives from the committed snapshot (rc=0); malformed snapshot →
+  `MADO_WINDWM: ERROR (stage=parse …)` rc=2, raw bytes never echoed; crosscheck **5/5** stable fields
+  AGREE against the independently executed probe (+ census structure, no equality claim on churn-prone
+  counters); no Set*/Move*/Change* verb exists in the tool. Tool ledger population 101 → 102 (ledger
+  row + PROVINCE round-62 refinement landed in the same round).
+- Harm watch / disclosure: census exit 0 both ends (start tee'd to `census-start-r62.txt` — the r61
+  committed-receipt shape kept; end receipt `census-after-r62.txt`); navigation counter at the landing
+  revision expected 77/77 exit 0; used-by counter at the landing expected missing=0 `TARGET_MET` (the
+  M59-4 rule applied proactively: every row this round's appends name — S418-S423 — carries the citing
+  paths in its used-by cell at insertion); `tools/mado-verify.sh` bytes untouched this round (sha256
+  prefix `050efc720599345a` re-measured); both fail-closed checkers' selftests stay green at current
+  bytes (55/55, 63/63 — receipt `harmwatch-selftests-r62.txt`); no existing knowledge entry body or
+  registry proposition cell changed (the six S-rows are new rows with their cells written at insertion;
+  everything else appends, insertions, or new files).
+- L2 disclosure: unchanged since r57 — no AgentSwarm dispatch surface on this host; L1-only round.
+  Sources: 354 → 360 rows (S418-S423, tier A, `mined`, opened 2026-11-01 in full; one bounded sweep, no
+  rejected-row event; one URL-correction event recorded in the search log and mined M62-2). Considerthese
+  mined: none adoptable (nine files re-screened; nothing new since the r58 mining). Assimilation: none —
+  shokuknow unreachable. Mined M62-1..M62-2 in `corpus/lessons/round-62.md` (M62-1: the number-shape
+  drift class recurring in the r61 report's own Landed-changes table beside a C1 that corrected the same
+  class — every table number now carries its numstat; M62-2: a struct slug written with hyphens where
+  the docs keep the type name's underscore — the M61-2 locator rule applied, refinement recorded).

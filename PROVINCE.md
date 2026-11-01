@@ -197,3 +197,25 @@ fails to report; a zero frequency/dimension/bpp) are treated as CHECK FAILED, ne
 | Tool | Reads | Writes | Owner and adjacent lanes |
 |---|---|---|---|
 | `tools/mado-win-display.py` | live mode: the JSON stdout of exactly one spawned read-only PowerShell child (`--powershell`, default `powershell.exe`, resolved on PATH) running a fixed embedded script whose only inputs are the user32 getters `EnumDisplayMonitors` and `GetMonitorInfoW` (MONITORINFOEXW fill) and the `EnumDisplaySettingsW` mode family (device name taken from the enumeration, never guessed); `--from-file`: one caller-named JSON snapshot (4 MiB cap); `--selftest`: nothing (in-memory; ephemeral fixtures in a private temp dir it removes) | nothing — stdout only (one `MADO_WINDISPLAY:`/`MADO_WINDISPLAY_SELFTEST:` line plus one JSON object line); it never prints window titles, process names, window handles, clipboard, environment values or file contents, and never echoes raw child output | mado, round 61 (read-only observation of the native topology + mode layer: point-in-time, no privileged API, no mutation, no rendered-output claim); operator applies any change; kagi keeps secret-shaped values (titles and names are not collected at all) |
+| `tools/mado-win-dwm.py` | live mode: the JSON stdout of exactly one spawned read-only PowerShell child (`--powershell`, default `powershell.exe`, resolved on PATH) running a fixed embedded script whose only inputs are the dwmapi getters `DwmIsCompositionEnabled`, `DwmGetWindowAttribute` (DWMWA_CLOAKED per enumerated top-level window; DWMWA_EXTENDED_FRAME_BOUNDS for the probe's own console/foreground window) and `DwmGetCompositionTimingInfo` (both documented call shapes; the non-NULL shape recorded, never asserted), plus the user32 getters `EnumWindows`, `IsWindowVisible`, `IsWindow`, `GetWindowRect`, `GetConsoleWindow` and `GetForegroundWindow`; `--from-file`: one caller-named JSON snapshot (4 MiB cap); `--selftest`: nothing (in-memory; ephemeral fixtures in a private temp dir it removes) | nothing — stdout only (one `MADO_WINDWM:`/`MADO_WINDWM_SELFTEST:` line plus one JSON object line); it never prints window titles, process names, window handles, clipboard, environment values or file contents, and never echoes raw child output | mado, round 62 (read-only observation of the DWM client-attribute plane: point-in-time counts and reason buckets, no per-window rows, no privileged API, no mutation, no rendered-output claim); operator applies any change; kagi keeps secret-shaped values (titles and names are not collected at all) |
+
+**Round-62 refinement (append-only; one read-only tool; no new write surface):** `tools/mado-win-dwm.py`
+observes the DWM client-attribute plane read-only. Live mode spawns exactly one PowerShell child
+(`--powershell`, default `powershell.exe`) running a fixed embedded script whose only inputs are the
+dwmapi getters — `DwmIsCompositionEnabled`, `DwmGetWindowAttribute` with `DWMWA_CLOAKED` per
+enumerated top-level window (counts and the three documented reason buckets only: DWM_CLOAKED_APP /
+DWM_CLOAKED_SHELL / DWM_CLOAKED_INHERITED — no per-window rows, no handles, no titles) and with
+`DWMWA_EXTENDED_FRAME_BOUNDS` for the probe's own console window (fallback: the foreground window),
+`DwmGetCompositionTimingInfo` in its two documented call shapes (the Windows 8.1+ NULL requirement,
+and the non-NULL shape the page promises E_INVALIDARG for — recorded, never asserted: the host fails
+both with `0x88980090`, entry finding D04) — and the user32 getters `EnumWindows`, `IsWindowVisible`,
+`IsWindow`, `GetWindowRect`, `GetConsoleWindow`, `GetForegroundWindow` (fallback only). It parses its
+stdout as JSON and re-prints whitelisted fields only; `--from-file` re-derives a verdict from a captured
+snapshot (4 MiB cap); `--selftest` (11 assertions) spawns nothing. The verdict line is built from
+structure only because the census counters churn with desktop activity (the churn class is named per
+field in `.ufo/waves/round-62/receipts/windwm-live-churn-diff.txt`). It collects no window titles, no
+process names and no window handles, never echoes raw child output, writes no file, opens no socket and
+mutates nothing: no Set*/Move*/Change* verb exists in it, and cloaking, attribute writes and composition
+changes stay operator-owned (SKILL § Round 57 rule 4 carried). Which cloaked windows are also
+`IsWindowVisible` is not observed (J22's `[UNK]`: the layers are separate axes, the tool records
+counts, never a per-window tabulation).

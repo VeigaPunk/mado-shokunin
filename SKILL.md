@@ -2608,3 +2608,73 @@ windisplay-fromfile, windisplay-error-path rc=2, display-crosscheck.py +
 windisplay-crosscheck 5/5, harmwatch-selftests 55/55 + 63/63, before-state,
 census-start + census-after, landing-counters-r61 with named sections);
 lesson `corpus/lessons/round-61.md`.
+
+## Round 62 — the DWM client-attribute plane, the durable DWM observer, the r61 carry-in corrections (append-only, dated 2026-11-01)
+
+1. **The DWM client-attribute plane is measured ground, distinct from the
+   layers already held.**
+   `corpus/knowledge/windows-dwm-attributes-r62.md` (rows S418-S423,
+   opened 2026-11-01 before any row was written) reads the dwmapi getter
+   surface itself: `DwmIsCompositionEnabled` TRUE re-measured beside r59's
+   pin (H21/J21); the **cloaked-window census** — `DwmGetWindowAttribute(
+   DWMWA_CLOAKED)` over `EnumWindows`, counts and the three documented
+   reason buckets only: 14 cloaked of 161-170 top-level in every
+   committed execution, reasons 7 app + 7 shell + 0 inherited in every
+   execution, `attr_failed` 0 (H22; never handles, titles, or a per-window
+   tabulation — J22's cross-layer `[UNK]` is named, not filled); the
+   **frame-bounds join** — `GetWindowRect` beside
+   `DWMWA_EXTENDED_FRAME_BOUNDS` on the probe's own console window: a
+   7 px inset left/right/bottom, 0 px top, in every execution (H23; J23
+   keeps the two documented causes of a rect/frame difference separate —
+   the GetWindowRect Remarks' invisible-resize-border cause is the one
+   observed, the DPI-virtualization cause is vacuous at effective 96, the
+   r60 J13 shape); and **D04** — `DwmGetCompositionTimingInfo` fails with
+   undocumented `0x88980090` in both documented call shapes (the Windows
+   8.1+ NULL shape and the non-NULL shape the page promises E_INVALIDARG
+   for), cbSize 320 per the documented layout, deterministic, cause
+   `[UNK]`: the compositor-refresh join to r61's 64 Hz mode frequency
+   never lands and stays documentation-layer.
+2. **The DWM observer is a durable lane tool, and its verdict line is
+   structure, not census.**
+   `tools/mado-win-dwm.py` (`VERSION r62-v1`): one read-only PowerShell
+   child; whitelist + sanity layers that treat the documented 0-failure
+   return classes and a nonzero `attr_failed` as CHECK FAILED, never a
+   measurement, require the three reason buckets to sum to `cloaked`;
+   `--selftest` 11/11; live `MADO_WINDWM: CLEAN (composition=on
+   reasons=app+shell timing=unavailable(hr=0x88980090))` twice with
+   byte-identical verdict lines while the JSON census churns on exactly
+   the field the churn receipt names (`windows.top_level` 168→170) — the
+   verdict line is built from structure because the census moves with
+   desktop activity, and the from-file re-derivation is the determinism
+   receipt; malformed input → `ERROR` exit 2, raw bytes never echoed;
+   crosscheck 5/5 stable fields against the independent probe. It collects
+   no titles, no process names, no handles, no per-window rows; no
+   Set*/Move*/Change* verb exists in it — cloaking, attribute writes and
+   composition changes stay operator-owned. Tool ledger population
+   101 → 102.
+3. **A report table's number carries its numstat, and a section name is
+   read from the file, not from memory.** The r61 closure routed two
+   defects of the drift class this lane keeps re-catching: the round-61
+   report's Landed-changes table under-counted LOG/PROVINCE/SKILL (+52/
+   +13/+50 against measured +64/+19/+55, totals correct), and the r61
+   correction block named a receipt section by a short form that is a
+   prefix of the real header. Both corrected append-only (`## Corrections
+   (round 62)` blocks in `corpus/lessons/round-61.md` and
+   `corpus/lessons/round-60.md`; the LOG round-62 correction bullet names
+   the second short-form site), each with its re-derivation command
+   (`git diff-tree -r --numstat cccda4da ad4e8403 -- LOG.md PROVINCE.md
+   SKILL.md` → `64 0` / `19 0` / `55 0`; `git show <base>:
+   .ufo/waves/round-60/receipts/landing-counters-r60.txt | grep -n '^--'`
+   → line 2); the filed defect bytes stay untouched. Rule, now applied
+   three rounds running: an append-only record is corrected by a dated
+   block that names the superseding value and its counting command — a
+   number asserted without its command is the defect, whatever surface it
+   sits on.
+
+Ground: entry `corpus/knowledge/windows-dwm-attributes-r62.md` (S418-S423);
+receipts `.ufo/waves/round-62/` (dwm-attributes-probe.ps1 + dwm-run1/run2,
+windwm-selftest 11/11 + stderr, windwm-live-run1/run2 + churn-diff,
+windwm-snapshot.json + fromfile, error-path rc=2, dwm-crosscheck 5/5,
+harmwatch-selftests 55/55 + 63/63, before-state, census-start +
+census-after, landing-counters-r62 with named sections); lesson
+`corpus/lessons/round-62.md`.
