@@ -215,3 +215,21 @@ this round's correction names).
    iff one exists in the documented vocabulary the sweep opens, lands the
    rateRefresh→64 Hz join D04 left open; a Win11-labeled DWM model
    sentence, if one surfaces, still strengthens the D01 pin.
+
+## Addendum (used-by repair, same round, before closure)
+
+The M59-4 rule fired on this round's own landing: the used-by counter at
+`19407ef2` read `missing=1 … TARGET_MISSED` — row S400 is named by the new
+entry (J21 quotes its manifest caveat) but S400's used-by cell did not yet
+carry the citing path (the entry's composition-state join re-quotes S400
+from its held page; the sweep named it a re-quote, but the cell extension
+was missed). Repaired as the used-by contract's own consistency move, in
+the round: S400's used-by cell extended old→new
+`…, corpus/knowledge/windows-desktop-plane-r57.md |` →
+`…, corpus/knowledge/windows-desktop-plane-r57.md,
+corpus/knowledge/windows-dwm-attributes-r62.md |` (a pure in-place cell
+extension, the same shape r59 logged for S399/S400; proposition text
+untouched). The landing counters receipt records both runs: `TARGET_MISSED`
+at `19407ef2` (the red side, disclosed) and the re-run at the repair
+commit. The M59-4 proactivity rule is thereby re-learned with a sharper
+edge: it covers re-quoted rows, not only newly inserted rows.
