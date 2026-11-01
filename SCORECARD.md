@@ -3452,3 +3452,23 @@ Verdicts are the closure's to rule.
 4. The citecheck's standing use: a landing-counters scan of the round's own
    receipt trees each round (the green leg beside navigation/used-by/ledger),
    so citation-resolvability is checked before every closure.
+
+### Corrections (round 64)
+
+The § Round 64 C3 cell says "the landing-state green run is in the landing
+counters receipt" — incomplete as to what the landing's ledger run actually
+was, corrected here append-only before closure: the landing `688144573a26`
+carried a ledger-append defect (the ledger's final r63 row had no trailing
+newline at base, so the append glued the new row onto it — one physical
+line, two rows) and the ledger counter went RED at the landing
+(`population=104 ledger_rows=102 uncovered=2 dangling=1 … verdict=TARGET_MISSED`,
+rc=1, at `688144573a26`); the diff-tree numstat's `1 deleted` was the
+second tell. Repaired keyed on the row content (glued line split; r63 row
+bytes restored byte-exact by head-prefix cmp against base; trailing newline
+added): GREEN at the repair `8c5af6ad67007c6c77c3f71c689684e5fd626c2d`
+(`population=104 ledger_rows=104 uncovered=0 dangling=0 … verdict=TARGET_MET`).
+Both runs are in `landing-counters-r64.txt` in named sections; the repair
+commit and the lesson Addendum disclose the defect and the class rule (an
+append is read back at its JOIN, not only at its new bytes). The ledger row
+of the C3 counting command is therefore read at the repair revision, the
+round's true final landing state.

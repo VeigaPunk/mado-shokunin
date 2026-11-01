@@ -3126,3 +3126,21 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   directory listing + mtimes unchanged since the r63 screen). Assimilation:
   none — shokuknow unreachable. L2 disclosure: unchanged since r57. Mined
   M64-1..M64-2 in `corpus/lessons/round-64.md`.
+
+- Amendment to this round's harm-watch bullet above, recorded per the
+  append-only rule before closure: the ledger-append at the landing
+  `688144573a26` glued the new citecheck row onto `quality/tool-ledger.md`'s
+  final r63 row (that row carried no trailing newline at base), and the
+  ledger counter went RED at the landing
+  (`population=104 ledger_rows=102 uncovered=2 dangling=1 …
+  verdict=TARGET_MISSED`, rc=1) — the ledger gate caught the write defect
+  before closure. The diff-tree numstat's `1 deleted` on the ledger file
+  was the second tell (no honest pure-append round contains a deletion).
+  Repaired keyed on the row content: glued line split, r63 row bytes
+  restored byte-exact (head-prefix cmp against base, R63_ROW_RESTORED_BYTE_EXACT),
+  trailing newline added; GREEN at the repair `8c5af6ad`
+  (`population=104 ledger_rows=104 uncovered=0 dangling=0 …
+  verdict=TARGET_MET`). Both states in `landing-counters-r64.txt` (named
+  sections); the repair commit discloses the defect. Lesson Addendum
+  records the class rule: an append is read back at its JOIN, not only at
+  its new bytes.

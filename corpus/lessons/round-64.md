@@ -185,3 +185,31 @@ citecheck-green at the landing, named sections).
 3. D05's remaining residue: the driver-class / second-host reading only
    if the operator scopes one; the lane-side flag matrix is complete.
 4. The citecheck's standing use in the landing counters each round.
+
+## Addendum (the ledger append glued onto the ledger's final line; the ledger gate went red at the landing; repaired before closure)
+
+The landing commit `688144573a26` carried a ledger-append defect the round's
+own receipts did not predict: `quality/tool-ledger.md`'s final r63 row had
+no trailing newline at base, so the round's `cat >>` append glued the new
+citecheck row onto the r63 row's last line (`…| \`PROVINCE.md\` || \`tools/mado-receipt-citecheck.py\`…`
+— one physical line, two rows). The landing counters receipt records the
+result: the ledger counter failed at the landing
+(`population=104 ledger_rows=102 uncovered=2 dangling=1 …
+verdict=TARGET_MISSED`, rc=1, at `688144573a26`) — the ledger gate caught
+the write defect before closure, the same red-then-disclosed shape as r62's
+and r63's used-by gates. Class: the M64-1/M64-2 class one layer down — an
+append written against an assumed trailing newline that was never checked
+(a write trusted from its intent, caught by the counter at the landing and
+by the diff-tree numstat's `1 deleted`, which no honest pure-append round
+may contain). Repaired as the ledger contract's own consistency move, keyed
+on the row content: the glued line split, the r63 row's bytes restored
+byte-exact (verified by a head-prefix `cmp` of the first 32955 bytes
+against the base git object — R63_ROW_RESTORED_BYTE_EXACT), the new row on
+its own line, and the file now ends with a newline. Green at the repair
+`8c5af6ad67007c6c77c3f71c689684e5fd626c2d`:
+`population=104 ledger_rows=104 uncovered=0 dangling=0 … verdict=TARGET_MET`
+(landing-counters-r64.txt records both states in named sections; the
+diff-tree numstat of the repair is the split itself). The M63 Addendum 2
+rule is extended here: an append is verified not only at its own new bytes
+but at its JOIN — the last line of the target file is read back after every
+append.
