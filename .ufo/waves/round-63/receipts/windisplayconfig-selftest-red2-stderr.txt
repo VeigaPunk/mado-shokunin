@@ -1,0 +1,164 @@
+======================================================================
+FAIL: test_fixed_script_only_getters_never_names_or_changes (__main__.selftest.<locals>.Tests.test_fixed_script_only_getters_never_names_or_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\jpvei\.zcode\workspace\95b1ba4d-5089-47a4-9fd8-54adebbce2ae\fleet\mado-shokunin\tools\mado-win-displayconfig.py", line 707, in test_fixed_script_only_getters_never_names_or_changes
+    self.assertEqual(low.count("intptr.zero"), 2, low)  # comment + call argument
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2 : 
+$erroractionpreference = 'stop'
+add-type -typedefinition @"
+using system;
+using system.collections.generic;
+using system.runtime.interopservices;
+namespace madodisplayconfig {
+  [structlayout(layoutkind.sequential)]
+  public struct rational { public uint numerator; public uint denominator; }
+  [structlayout(layoutkind.sequential)]
+  public struct region2d { public uint cx; public uint cy; }
+  // displayconfig_video_signal_info (wingdi.h): pixelrate, hsyncfreq,
+  // vsyncfreq, activesize, totalsize, the dummyunionname 32-bit storage,
+  // scanlineordering. the union is carried as its 32-bit storage (uint);
+  // the tool reads no bitfield of it.
+  [structlayout(layoutkind.sequential)]
+  public struct video_signal_info {
+    public ulong pixelrate;
+    public rational hsyncfreq;
+    public rational vsyncfreq;
+    public region2d activesize;
+    public region2d totalsize;
+    public uint unionbits;
+    public int scanlineordering;
+  }
+  [structlayout(layoutkind.sequential)]
+  public struct target_mode { public video_signal_info targetvideosignalinfo; }
+  // displayconfig_path_source_info: luid adapterid (two 32-bit halves —
+  // carried as two uints so the 4-byte alignment of the documented luid is
+  // preserved; the halves are never emitted), id, the dummyunionname
+  // 32-bit storage (modeinfoidx), statusflags.
+  [structlayout(layoutkind.sequential)]
+  public struct source_info {
+    public uint adapteridlow;
+    public uint adapteridhigh;
+    public uint id;
+    public uint modeinfoidx;
+    public uint statusflags;
+  }
+  // displayconfig_path_target_info: luid adapterid, id, dummyunionname
+  // (modeinfoidx), outputtechnology, rotation, scaling, refreshrate
+  // (displayconfig_rational), scanlineordering, targetavailable (bool),
+  // statusflags. enum members stay integers; names are never emitted.
+  [structlayout(layoutkind.sequential)]
+  public struct target_info {
+    public uint adapteridlow;
+    public uint adapteridhigh;
+    public uint id;
+    public uint modeinfoidx;
+    public int outputtechnology;
+    public int rotation;
+    public int scaling;
+    public rational refreshrate;
+    public int scanlineordering;
+    public int targetavailable;
+    public uint statusflags;
+  }
+  [structlayout(layoutkind.sequential)]
+  public struct path_info {
+    public source_info sourceinfo;
+    public target_info targetinfo;
+    public uint flags;
+  }
+  // displayconfig_mode_info: infotype (displayconfig_mode_info_type:
+  // source=1, target=2, desktop_image=3 per the enumeration page), id,
+  // luid adapterid, the union mapped to its largest documented member
+  // displayconfig_target_mode (48 bytes >= source mode 20 bytes);
+  // interpreted only when infotype == 2.
+  [structlayout(layoutkind.sequential)]
+  public struct mode_info {
+    public int infotype;
+    public uint id;
+    public uint adapteridlow;
+    public uint adapteridhigh;
+    public target_mode targetmode;
+  }
+  public static class native {
+    [dllimport("user32.dll")] public static extern int getdisplayconfigbuffersizes(uint flags, out uint numpatharrayelements, out uint nummodeinfoarrayelements);
+    [dllimport("user32.dll")] public static extern int querydisplayconfig(uint flags, ref uint numpatharrayelements, [in, out] path_info[] patharray, ref uint nummodeinfoarrayelements, [in, out] mode_info[] modeinfoarray, intptr currenttopologyid);
+    public static object snapshot() {
+      // qdc_only_active_paths = 0x2 (the function page's flag table).
+      // currenttopologyid stays null: the page requires null for any flags
+      // value other than qdc_database_current (a getter call — no state is
+      // touched).
+      uint allocflags = 2;
+      uint bufpath = 0, bufmode = 0;
+      int hrbuf = getdisplayconfigbuffersizes(allocflags, out bufpath, out bufmode);
+      var doc = new dictionary<string, object>();
+      doc["buffer_hr"] = hrbuf;
+      doc["qdc_flags"] = allocflags;
+      doc["buffer_paths"] = bufpath;
+      doc["buffer_modes"] = bufmode;
+      if (hrbuf != 0) { return doc; }
+      var paths = new path_info[bufpath];
+      var modes = new mode_info[bufmode];
+      uint npath = bufpath, nmode = bufmode;
+      int hrquery = querydisplayconfig(allocflags, ref npath, paths, ref nmode, modes, intptr.zero);
+      doc["query_hr"] = hrquery;
+      doc["paths"] = npath;
+      doc["modes"] = nmode;
+      if (hrquery != 0) { return doc; }
+      var pathlist = new list<object>();
+      for (uint i = 0; i < npath; i++) {
+        var p = paths[i];
+        var pj = new dictionary<string, object>();
+        pj["flags"] = p.flags;
+        var t = p.targetinfo;
+        var tj = new dictionary<string, object>();
+        tj["refresh_num"] = t.refreshrate.numerator;
+        tj["refresh_den"] = t.refreshrate.denominator;
+        tj["output_technology"] = t.outputtechnology;
+        tj["rotation"] = t.rotation;
+        tj["scaling"] = t.scaling;
+        tj["scanline_ordering"] = t.scanlineordering;
+        tj["target_available"] = t.targetavailable;
+        tj["status_flags"] = t.statusflags;
+        tj["mode_info_idx"] = t.modeinfoidx;
+        pj["target"] = tj;
+        var sj = new dictionary<string, object>();
+        sj["status_flags"] = p.sourceinfo.statusflags;
+        sj["mode_info_idx"] = p.sourceinfo.modeinfoidx;
+        pj["source"] = sj;
+        uint idx = t.modeinfoidx;
+        if (idx < nmode && modes[idx].infotype == 2) {
+          var tm = modes[idx].targetmode.targetvideosignalinfo;
+          var mj = new dictionary<string, object>();
+          mj["vsync_num"] = tm.vsyncfreq.numerator;
+          mj["vsync_den"] = tm.vsyncfreq.denominator;
+          mj["hsync_num"] = tm.hsyncfreq.numerator;
+          mj["hsync_den"] = tm.hsyncfreq.denominator;
+          mj["pixel_rate"] = (double)tm.pixelrate;
+          mj["active_cx"] = tm.activesize.cx;
+          mj["active_cy"] = tm.activesize.cy;
+          mj["total_cx"] = tm.totalsize.cx;
+          mj["total_cy"] = tm.totalsize.cy;
+          mj["scanline_ordering"] = tm.scanlineordering;
+          mj["join_agree"] = (tm.vsyncfreq.numerator == t.refreshrate.numerator && tm.vsyncfreq.denominator == t.refreshrate.denominator);
+          pj["target_mode"] = mj;
+        }
+        pathlist.add(pj);
+      }
+      var modetypes = new list<int>();
+      for (uint i = 0; i < nmode; i++) { modetypes.add(modes[i].infotype); }
+      doc["mode_info_types"] = modetypes;
+      doc["path_list"] = pathlist;
+      return doc;
+    }
+  }
+}
+"@
+[madodisplayconfig.native]::snapshot() | convertto-json -depth 8 -compress
+
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.048s
+
+FAILED (failures=1)
