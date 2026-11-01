@@ -1,0 +1,18 @@
+== fail-closed defaults preserved (round 58, after the --scratch-root change) ==
+-- default --work under home, check-tool-ledger (must refuse, rc=2)
+check-tool-ledger.py: refusing work dir inside the home directory (got ~\.zcode\workspace\95b1ba4d-5089-47a4-9fd8-54adebbce2ae\scratch\mado-r58\work)
+rc=2
+-- default --work under home, check-wave-done (must refuse, rc=2)
+check-wave-done.py: refusing work dir inside the home directory (got ~\.zcode\workspace\95b1ba4d-5089-47a4-9fd8-54adebbce2ae\scratch\mado-r58\work): use a scratch filesystem
+rc=2
+-- --work and --scratch-root together (must be a usage error, rc=2)
+usage: check-tool-ledger.py [-h] [--repo REPO] [--rev REV] [--selftest]
+                            [--work WORK] [--scratch-root DIR] [--verbose]
+check-tool-ledger.py: error: --work and --scratch-root are mutually exclusive
+rc=2
+-- C:/tmp as --work (the POSIX-prefix compare now resolves prefixes, must refuse, rc=2)
+check-tool-ledger.py: refusing work dir under /tmp (got C:\tmp\mado-r58-probe): use a scratch filesystem
+rc=2
+-- production (non-selftest) mode reads git objects, writes nothing
+LEDGER: population=99 ledger_rows=99 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=5e483f0d1fcabbbe21cb9ade04a93c24e8224b35
+rc=0

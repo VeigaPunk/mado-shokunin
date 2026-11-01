@@ -349,6 +349,9 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
 | S399 | Microsoft Learn — Desktop Window Manager (DWM) overview - https://learn.microsoft.com/en-us/windows/win32/dwm/dwm-overview | docs | A | what DWM desktop composition is, per the overview page (with its era-drift finding, r57 entry D01) | intro @ ms.date 2018-05-31 (git_commit 26465e18219d6311381977f154b0a5b7ed53c8d6; updated_at 2025-03-11); opened 2026-10-31 | "Desktop composition is performed by the Desktop Window Manager (DWM)." — and (drift) a Vista/7-era sentence claiming DWM runs as a service that can be disabled via Administrative Tools; both carried, the drift classed D01 | mined | 2026-10-31 | 180d | corpus/knowledge/windows-desktop-plane-r57.md, corpus/lessons/round-57.md |
 | S400 | Microsoft Learn — DwmIsCompositionEnabled function (dwmapi.h) - https://learn.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmiscompositionenabled | docs | A | the composition-state query the round-57 observer calls, and its always-enabled note with the manifest caveat | § Parameters (Note) @ ms.date 2018-12-05 (git_commit 9267262487657894a8af112d7165006fed5035a7; updated_at 2024-02-22); opened 2026-10-31 | "As of Windows 8, DWM composition is always enabled." — same note: a process without a Windows 8 compatibility manifest entry receives FALSE, so the observed TRUE binds the querying process's context | mined | 2026-10-31 | 180d | corpus/knowledge/windows-desktop-plane-r57.md, corpus/lessons/round-57.md |
 | S401 | Microsoft Learn — Screen Class (System.Windows.Forms) - https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.screen | docs | A | the documented surface of the display-enumeration class the round-57 instrument uses | § Definition + § Properties @ ms.date 2025-07-01 (git_commit e2eb860ae6fa7ab79f7111620dd4c075e9149d8c; updated_at 2026-07-01); opened 2026-10-31 | "Represents a display device or multiple display devices on a single system." / AllScreens: "Gets an array of all displays on the system." — the instrument ground for the topology rows | mined | 2026-10-31 | 180d | corpus/knowledge/windows-desktop-plane-r57.md, corpus/lessons/round-57.md |
+| S402 | Microsoft Learn — MONITOR_DPI_TYPE (shellscalingapi.h) - https://learn.microsoft.com/en-us/windows/win32/api/shellscalingapi/ne-shellscalingapi-monitor_dpi_type | docs | A | the documented meaning and values of the three GetDpiForMonitor dpiType modes the round-58 probe queries | § Syntax + § Constants @ ms.date 2018-12-05 (git_commit 9267262487657894a8af112d7165006fed5035a7; updated_at 2024-02-22); opened 2026-10-31 | "This value is the linear DPI of the screen as measured on the screen itself." (MDT_RAW_DPI) / enum values MDT_EFFECTIVE_DPI=0, MDT_ANGULAR_DPI=1, MDT_RAW_DPI=2; Remarks: "All of these settings are affected by the PROCESS_DPI_AWARENESS of your application" — documentation layer only, never a host fact (QUALITY 16) | mined | 2026-10-31 | 180d | corpus/knowledge/windows-permonitor-dpi-r58.md, corpus/lessons/round-58.md |
+| S403 | Microsoft Learn (archived) — GetDpiForMonitor function - https://learn.microsoft.com/en-us/previous-versions/dn302058(v=vs.85) | docs | A | the function contract of the per-monitor DPI query the round-58 probe calls (archived previous-versions page; status carried in the row and the entry) | § Description + § Remarks @ ms.date 2014-01-13 (git_commit f20b80560c60734d65702f9567c96e92580859ff; is_archived true); opened 2026-10-31 | "Queries the specified monitor for the dots per inch (dpi) horizontal and vertical values." / Remarks: "the returned dpi value includes any changes that the user made to the dpi" (MDT_Effective_DPI); its dpiType table maps the same 0/1/2 values as S402 | mined | 2026-10-31 | 180d | corpus/knowledge/windows-permonitor-dpi-r58.md, corpus/lessons/round-58.md |
+| S404 | Microsoft Learn — GetDpiForWindow function (winuser.h) - https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdpiforwindow | docs | A | the documented per-window DPI query and its awareness-dependent return table, grounding the probe's foreground-window row | § Description + § Remarks @ ms.date 2022-05-25 (git_commit fa53641576e3603fa7b66d3a4ad969d3ce49d6f3; updated_at 2025-07-01); opened 2026-10-31 | "Returns the dots per inch (dpi) value for the specified window." / the return "depends on the DPI_AWARENESS" of the provided hwnd (UNAWARE → 96 base; SYSTEM_AWARE → "The system DPI."; PER_MONITOR_AWARE → "The DPI of the monitor where the window is located.") | mined | 2026-10-31 | 180d | corpus/knowledge/windows-permonitor-dpi-r58.md, corpus/lessons/round-58.md |
 
 ## Paths
 
@@ -628,3 +631,20 @@ claimed from them (QUALITY 16), and the r57 entry's host rows cite commands,
 not pages. Registry overlap: none of the four URLs was previously held
 (census W04 reports no new duplicate-URL warning for S398-S401). All four
 opened 2026-10-31 on the Windows host itself.
+
+Round 58 (2026-10-31), bounded per-monitor-DPI source sweep, by L1: question —
+which primary Microsoft documentation rows ground the per-monitor DPI join the
+r57 entry named as future ground (the three MONITOR_DPI_TYPE modes and the
+per-window DPI query)? Searched: learn.microsoft.com win32 shellscalingapi and
+winuser API reference trees plus the archived GetDpiForMonitor page (three
+pages opened in full via fetch: S402, S403, S404). Identified 3 candidate
+sources, screened 3 (each page's ms.date/git_commit recorded; each located
+quote taken verbatim from the page body), included 3; excluded 0 — the sweep
+was bounded to the documentation surfaces the round's probe actually rests on.
+The sweep itself caught a live defect before any row was written: the probe's
+first draft ordered the enum values from an unopened search snippet
+(raw=1/angular=2); both opened pages state MDT_ANGULAR_DPI=1 and
+MDT_RAW_DPI=2, the probe was corrected and re-run, and the mislabel is mined
+as lesson M58-2 (the sourced-row discipline working as designed). Registry
+overlap: none of the three URLs was previously held (no new census W04
+warning for S402-S404). All three opened 2026-10-31 on the Windows host.

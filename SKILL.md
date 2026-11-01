@@ -2409,3 +2409,47 @@ receipts (committed): gate `--no-live` DIVERGED transcript
 (`receipts/xprobe-indep.txt` + `receipts/crosscheck.txt`), snapshot
 re-derivation (`receipts/fromfile-rerun.txt`), pins `receipts/PINS.txt`;
 quoted in the round-57 report.
+
+## Round 58 — the per-monitor DPI join and the host-portable checker scratch policy (append-only, dated 2026-10-31)
+
+1. **The per-monitor DPI layer is now measured ground on the live host.** The r57 entry's
+   "future ground" note is closed by `corpus/knowledge/windows-permonitor-dpi-r58.md`
+   (rows S402-S404, opened 2026-10-31): on the single 1920x1080 display, `GetDpiForMonitor`
+   returns effective 96 / angular 91 / raw 92 — three distinct documented modes (only the
+   effective mode carries the user's scale factor; the pages' own 0/1/2 value mapping caught
+   this round's first probe draft mislabeling raw/angular before any row was written), and
+   `GetDpiForWindow` reports the foreground window at 96 with the awareness branch `[UNK]`.
+   Finding D02 there: raw/angular are panel facts and must never feed UI scale factors.
+   The probe is committed (`.ufo/waves/round-58/receipts/dpi-probe.ps1`, read-only; the
+   caller's own PROCESS_DPI_AWARENESS stays `[UNK]`).
+2. **The fail-closed record checkers run on this host again — by explicit caller
+   declaration only.** Round-57 lesson M57-1 routed the fix: `quality/check-tool-ledger.py`
+   and `quality/check-wave-done.py` accept `--scratch-root <dir>`, a caller-declared scratch
+   tree that waives **only** the home-directory refusal (shared-scratch prefixes stay
+   refused in every mode, and the prefix compare now resolves prefixes so `C:\tmp` cannot
+   slip past the rule on Windows). Selftests pin the policy: `LEDGER_SELFTEST: 54/54` and
+   `MADO_WAVE_DONE_SELFTEST: 62/62`, both exit 0 via `--scratch-root`; default `--work`
+   under home still refuses (rc=2). The gate `tools/mado-verify.sh` stays byte-untouched
+   and frozen.
+3. **The gate's `--selftest` is not re-derivable on this host — measured, disclosed, routed.**
+   `bash tools/mado-verify.sh --selftest` → `MADO_SELFTEST: FAILED — 360 passed, 100 failed`
+   (rc=2; POSIX symlink fixtures denied by the host; receipt
+   `.ufo/waves/round-58/receipts/gate-selftest-windows.txt`). This supersedes the r57 §
+   Round 57 sentence "the `--selftest` modes of the pure-Python record instruments run
+   unchanged" insofar as it covered the bash gate and the two checkers: the checkers run
+   again via item 2; the gate's fixture style is POSIX-bound and unmodified by lane choice
+   (frozen instrument). The operability rubric that counted it stands as the omarchy-host
+   value; disposal is routed to L0 with the freshness question.
+4. **The observer's selftest now carries the ERROR path (r57 closure receipt gap closed).**
+   `tools/mado-win-desk.py` (`VERSION r58-v1`) folds the malformed-snapshot sub-claim into
+   its tally: `MADO_WINDESK_SELFTEST: 10/10` (the new assertion runs `--from-file` against
+   a malformed snapshot and pins rc=2, the `ERROR (stage=parse …)` line, and that the raw
+   payload bytes are never echoed); the committed ERROR run is
+   `.ufo/waves/round-58/receipts/windesk-error-path.txt`. Live mode re-verified CLEAN.
+
+Ground: `corpus/knowledge/windows-permonitor-dpi-r58.md` (sourced entry, S402-S404, D02);
+checker receipts `.ufo/waves/round-58/receipts/` (before-refusal, after 54/54 + 62/62,
+failclosed-after, census-before/after); observer receipts (`windesk-selftest-10.txt`,
+`windesk-error-path.txt`, `windesk-live-r58.txt`); gate host-gap receipt
+(`gate-selftest-windows.txt`); pins `receipts/PINS.txt`; lesson `corpus/lessons/round-58.md`
+(M58-1..M58-4).

@@ -2963,3 +2963,44 @@ L2 disclosure: MISSION's ≥8-L2-subagent floor could not be met this round — 
 | freshness / file-plane gate agreement (omarchy-host rubric) | 9.6552 — **dormant, host-absent** | not re-derivable on this host: the command's planes are absent; the score stands as the omarchy-host value frozen at round 56 | `5337d2509f5c91c6f200b6637cf77bd0ad1cd67f` | 56 (dormant from 57; disposal is an operator ruling — L0 filed) |
 
 Harm watch (at landing): census exit 0; index 72/72 (navigation counter exit 0); ledger 99/99; `tools/mado-verify.sh` bytes untouched this round; no existing knowledge entry or registry row text changed (S398-S401 are new rows; used-by cells only added on new rows). Verdicts are the closure's to rule.
+
+## Round 58 — the per-monitor DPI join, the host-portable checker scratch policy, the r57 receipt gap closed (2026-10-31, hyaku run 12)
+
+Axis posture: saturation 9.0 / window N=3. At base every published scored sub-axis sat at its
+finite maximum — navigation 72/72 = 10.0000, operability "existing hermetic suite pass
+fraction" 10.0000 and freshness "surface-state audit currency" 8/8 = 10.0000, calibration
+resolved-active 86/86 = 10.0000; the omarchy-host freshness rubric (9.6552) is dormant,
+host-absent (r57, L0 open) — so no axis is distinctly lowest, the same posture as round 56.
+The r57 carry-in fixed the claims: the closure's routed receipt gap became C3 (calibration),
+M57-1 became C1 (operability), and the r57 entry's named "future ground" became C2 (coverage,
+sourced). This round also **measured** that the operability rubric's own command is not
+re-derivable on this host: `bash tools/mado-verify.sh --selftest` → `MADO_SELFTEST: FAILED —
+360 passed, 100 failed`, rc=2 (POSIX symlink fixtures denied; receipt
+`.ufo/waves/round-58/receipts/gate-selftest-windows.txt`). The 10.0000 stands as the
+omarchy-host value with the receipt attached; the gate is byte-untouched (frozen instrument —
+rewriting it was the round's named reject), and disposal is routed to L0 beside the r57
+freshness question. No scored value changed this round; the moves below are measured
+before→afters on real open ground, not score edits. L1-only round again (no dispatch surface
+on this host; disclosed since r57, L0 open). Claims were declared before the formal receipt
+runs; no predicate changed after scoring. Base `5e483f0d1fcabbbe21cb9ade04a93c24e8224b35`;
+measured at the landing commit (see the report).
+
+| Claim / axis | Before → after | Counting command (runs on THIS host) | Verdict |
+|---|---|---|---|
+| C1 **operability** — M57-1 routed fix: the two fail-closed checkers accept a caller-declared scratch tree, so their selftests run on this host again; fail-closed defaults preserved | base `5e483f0`: both `--selftest` modes refuse the contract scratch path (home-under rule fires; M57-1) — committed before-receipts show `refusing work dir inside the home directory`, rc=2 for both checkers at base bytes → landing: `--scratch-root <dir>` (waiver scope: only the home refusal, only inside the declared tree; shared-scratch prefixes refused in every mode; prefix compare resolves the prefix, closing the base-state `C:/tmp` bypass); selftests pinned 50 → 54 and 58 → 62 and green via the flag; default `--work` under home still refuses; `--work`+`--scratch-root` mutually exclusive | `python quality/check-tool-ledger.py --selftest --work <scratch>` at base → rc=2 (receipt `ledger-selftest-before-refusal.txt`); `python quality/check-wave-done.py --selftest --work <scratch>` at base → rc=2 (receipt); after: `python quality/check-tool-ledger.py --selftest --scratch-root <scratch>` → `LEDGER_SELFTEST: 54/54 passed`, exit 0; `python quality/check-wave-done.py --selftest --scratch-root <scratch>` → `MADO_WAVE_DONE_SELFTEST: 62/62 passed`, exit 0 (receipts); `python quality/check-tool-ledger.py --selftest --work <scratch>` after → rc=2; `--work C:/tmp/…` → rc=2 `refusing work dir under /tmp` (receipt `failclosed-after.txt`, 4 refusals + production `TARGET_MET` rc=0) | **TARGET_MET** (runnable and green on this host, fail-closed preserved — the refusal side is receipted, not asserted) |
+| C2 **coverage** (sourced) — the r57 entry's named future ground: the per-monitor DPI join | base: knowledge files 72, index rows 72, registry rows 338; zero rows cover per-monitor DPI (`GetDpiForMonitor`/`GetDpiForWindow` named only as "future ground" in the r57 entry § 6) → landing: `corpus/knowledge/windows-permonitor-dpi-r58.md` (3 host rows H06-H08 with re-derivation commands — effective 96 / angular 91 / raw 92, two stable runs; 7 dated [INF-docs] rows K08-K14; 4 joins J05-J08; divergence D02: the three documented modes do not collapse), indexed; registry gains S402-S404 (Microsoft Learn incl. one archived previous-versions page, tier A, opened 2026-10-31) | `ls corpus/knowledge/*.md \| wc -l` → **73** (base 72); `grep -cE '^\| `knowledge/[^`]+\.md`' corpus/README.md` → **73** (base 72); `grep -cE '^[[:space:]]*\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md` → **341** (base 338); entry row count `grep -cE '^\| [HJK][0-9]{2} ' corpus/knowledge/windows-permonitor-dpi-r58.md` → 14 (3 H + 7 K + 4 J; D02 not in the class); navigation counter (SCORECARD § Counting command, fleet round 1) at the landing revision with `python` in place of `python3` → `indexed=73/73 … coverage=10.0000/10`, exit 0; probe receipts `dpi-probe-run1.txt`/`run2.txt` | **TARGET_MET** (entry indexed and reachable; sources opened and quoted this round; the claim rests on S402-S404) |
+| C3 **calibration** — the r57 closure's routed receipt gap: the C2 ERROR sub-claim now carries committed evidence both ways | base: 0 committed receipts of the ERROR path (r57 closure note 2: "no observed ERROR run is committed") and the selftest tally (9 assertions) did not cover it → landing: the tally itself covers the ERROR path (10th assertion: `--from-file` on a malformed snapshot → rc=2, `ERROR (stage=parse …)`, raw payload bytes never echoed) and a committed ERROR run exists; live mode re-verified CLEAN after the change; the r57 entry carries an `## Errata (round 58)` block so its historical 9/9 line and the current count can no longer be confused | `python tools/mado-win-desk.py --selftest` → `MADO_WINDESK_SELFTEST: 10/10 assertions passed`, exit 0 (base receipt `.ufo/waves/round-57/receipts/selftest.txt` shows 9/9); `grep -rc "MADO_WINDESK: ERROR" .ufo/waves/round-57/receipts/` → 0; `grep -c "MADO_WINDESK: ERROR" .ufo/waves/round-58/receipts/windesk-error-path.txt` → 1 (rc=2 recorded); tool ledger row updated in the same round (`LEDGER: population=99 ledger_rows=99 … verdict=TARGET_MET` at the landing revision) | **TARGET_MET** (the sub-claim's evidence is now committed and re-runnable; the record matches observed state) |
+
+### Capabilities (round 58)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Caller-declared scratch tree (`--scratch-root`) in the fail-closed checkers | run the r55/r56 checker selftests on hosts with no writable scratch outside home, by explicit caller declaration, without weakening the fail-closed defaults (shared-scratch prefixes refused in every mode; home refusal intact without the flag) | `LEDGER_SELFTEST: 54/54` + `MADO_WAVE_DONE_SELFTEST: 62/62` via `--scratch-root`; before-refusal and failclosed-after receipts in `.ufo/waves/round-58/receipts/` | 58 |
+
+Harm watch (at landing): census exit 0 both ends; index 73/73 (navigation counter exit 0);
+ledger population 99/99 with the observer row's assertion count updated in the same round;
+`tools/mado-verify.sh` bytes untouched this round (blob identity checked at commit time in the
+report); no existing knowledge entry body or registry row cell changed (r57 entry errata is an
+append-only block; S402-S404 are new rows); the gate-selftest failure is a host measurement,
+not a regression — first measured this round, receipt committed, disposal at L0. Verdicts are
+the closure's to rule.

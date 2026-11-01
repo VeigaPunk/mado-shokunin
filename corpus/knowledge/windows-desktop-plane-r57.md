@@ -91,6 +91,18 @@ is gone; that verdict is the absence record, not a regression claim.
   runs (H05); only the stable fields are cross-checked.
 - K04's manifest caveat leaves which compatibility clause applied `[UNK]`.
 - D01 is open: the build-26200 DWM service model is unrowed.
+
+## Errata (round 58)
+
+- § 5's "selftest … 9/9" line records the round-57 observation and stands as
+  history; round 58 folded the malformed-snapshot ERROR path into the tally
+  (the r57 closure's routed receipt gap), so the current count is **10/10**
+  (receipt `.ufo/waves/round-58/receipts/windesk-selftest-10.txt`; committed
+  ERROR run `windesk-error-path.txt`). The tool bytes changed with it
+  (`VERSION r58-v1`); every other § 5 command reads unchanged.
+- The § 6 limit "No per-monitor DPI table" closed the same round:
+  [windows-permonitor-dpi-r58.md](windows-permonitor-dpi-r58.md) lands the
+  join (rows S402-S404; finding D02 there).
 - The lane spawns one read-only PowerShell child per observation; it never
   mutates settings, never reads window titles, clipboard, environment values or
   file contents, and never echoes raw child output (round-56 M56-17 rule).

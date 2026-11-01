@@ -55,7 +55,9 @@ KNOWN LIMITS (stated, not hidden):
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
+import io
 import json
 import os
 import subprocess
@@ -64,7 +66,7 @@ import unittest
 from typing import Any
 
 TOOL = "mado-win-desk"
-VERSION = "r57-v1"
+VERSION = "r58-v1"
 
 # The fixed read-only script handed to PowerShell. It is embedded verbatim so
 # the tool's own bytes pin exactly what ran. It must never print environment
@@ -357,6 +359,25 @@ def selftest() -> int:
             msg = _brief("a\nb\tc  d" + "x" * 500)
             self.assertNotIn("\n", msg)
             self.assertLessEqual(len(msg), 120)
+
+        def test_malformed_snapshot_is_error_and_bytes_never_echoed(self):
+            # Round 58: the r57 closure routed the ERROR-path receipt — the C2 sub-claim
+            # "malformed input -> MADO_WINDESK: ERROR exit 2, raw bytes never echoed" now
+            # runs as part of this tally instead of resting on an uncommitted run.
+            payload = '{"os": TRUNCATED-NOT-JSON ::<<raw-payload-marker>>'
+            with tempfile.TemporaryDirectory() as tmp:
+                fd, snap = tempfile.mkstemp(suffix=".json", dir=tmp)
+                os.close(fd)  # Windows: an open fd locks the file against cleanup
+                with open(snap, "w", encoding="utf-8") as fh:
+                    fh.write(payload)
+                buffer = io.StringIO()
+                with contextlib.redirect_stdout(buffer):
+                    rc = run_file(snap)
+            out = buffer.getvalue()
+            self.assertEqual(rc, 2)
+            self.assertTrue(out.startswith("MADO_WINDESK: ERROR (stage=parse"), out[:80])
+            self.assertNotIn("TRUNCATED-NOT-JSON", out)
+            self.assertNotIn("raw-payload-marker", out)
 
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(Tests)
     result = unittest.TextTestRunner(verbosity=0).run(suite)

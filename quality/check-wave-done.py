@@ -15,9 +15,12 @@ space. ``--selftest`` is the only mode that writes, and it refuses a work dir
 under ``/tmp``, ``/var/tmp`` or ``/dev/shm``, and inside a home directory: a
 fixture is a git repository with commits, so under a home it would be home state
 (round-48 M48-10), and a killed run would leave it there. The home rule reads
-``$HOME`` *and* the passwd home for the uid, and an absent or empty ``$HOME`` is an
-error -- a rule that reads only ``$HOME`` is switched off by unsetting it, and its
-own proof would disappear with it. The selftest asserts its exact case count
+``$HOME`` (falling back to ``USERPROFILE`` on hosts that set no ``$HOME``) *and*
+the passwd home for the uid, and an absent home is an error -- a rule that reads
+only ``$HOME`` is switched off by unsetting it, and its own proof would disappear
+with it. A caller-declared scratch root (``--scratch-root``, round-58 lesson
+M57-1: some hosts have no writable scratch outside home) waives the home refusal
+and nothing else. The selftest asserts its exact case count
 (``SELFTEST_CHECKS``) for the same reason.
 
 The results-file contract (derived, not invented)
@@ -157,7 +160,7 @@ REFUSED_WORK_PREFIXES = ("/tmp", "/var/tmp", "/dev/shm")
 
 # The exact number of assertions --selftest must make. A case that silently disappears (an
 # env-dependent skip, a removed fixture) turns into a failure instead of a smaller green run.
-SELFTEST_CHECKS = 58
+SELFTEST_CHECKS = 62
 
 NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 UNSAFE_DETAIL_RE = re.compile(r"[^A-Za-z0-9._-]+")
@@ -507,7 +510,7 @@ def home_roots():
     home-refusal cases would then vanish with it and still report success. So an absent or
     empty $HOME is an error, not "no home to compare", and the passwd home is checked too.
     """
-    env_home = os.environ.get("HOME")
+    env_home = os.environ.get("HOME") or os.environ.get("USERPROFILE")
     if not env_home or not env_home.strip():
         raise GateError("HOME is unset or empty: the home rule cannot be checked, and an absent "
                         "HOME must not switch it off (set HOME and point --work at a scratch "
@@ -522,22 +525,35 @@ def home_roots():
     return roots
 
 
-def resolve_work(explicit):
-    cand = explicit or os.environ.get("TMPDIR")
+def resolve_work(explicit, declared_tree=None):
+    # declared_tree (round-58, lesson M57-1): a caller-declared scratch tree. It may supply
+    # the work root when --work is absent, and everything inside it is scratch by
+    # declaration, so the home refusal never fires there. The shared-scratch prefixes are
+    # refused in every mode. Fixtures are still git repositories with commits and files:
+    # under a home they are home state (round-48 M48-10) the moment the caller declares
+    # the location scratch instead.
+    cand = explicit or declared_tree or os.environ.get("TMPDIR")
     if not cand:
-        raise GateError("--selftest needs --work <dir> or a TMPDIR outside /tmp, /var/tmp, "
-                        "/dev/shm and the home directory")
+        raise GateError("--selftest needs --work <dir> (or --scratch-root <dir>, or a TMPDIR) "
+                        "outside /tmp, /var/tmp, /dev/shm and the home directory")
     real = os.path.realpath(cand)
     for bad in REFUSED_WORK_PREFIXES:
-        if real == bad or real.startswith(bad + os.sep):
+        # Compare the resolved prefix too: on Windows the literal POSIX prefix can never
+        # match a drive-letter candidate, and "C:\\tmp" would slip past the rule.
+        real_bad = os.path.realpath(bad)
+        if (real == bad or real.startswith(bad + os.sep)
+                or real == real_bad or real.startswith(real_bad + os.sep)):
             raise GateError("refusing work dir under %s (got %s): use a scratch filesystem"
                             % (bad, real))
-    for home in home_roots():
-        # Fixtures are git repositories with commits and files: under a home they are
-        # home state (round-48 M48-10), and a SIGKILL leaves them there.
-        if real == home or real.startswith(home + os.sep):
-            raise GateError("refusing work dir inside the home directory (got ~%s): use a "
-                            "scratch filesystem" % real[len(home):])
+    inside_tree = False
+    if declared_tree:
+        tree_real = os.path.realpath(declared_tree)
+        inside_tree = real == tree_real or real.startswith(tree_real + os.sep)
+    if not inside_tree:
+        for home in home_roots():
+            if real == home or real.startswith(home + os.sep):
+                raise GateError("refusing work dir inside the home directory (got ~%s): use a "
+                                "scratch filesystem" % real[len(home):])
     os.makedirs(real, exist_ok=True)
     return tempfile.mkdtemp(prefix="wave-done-selftest.", dir=real)
 
@@ -977,6 +993,36 @@ def selftest(work, verbose=False):
                 os.environ.pop("HOME", None)
         suite.check("refuse-work-%s" % label, refused, detail)
 
+    # A caller-declared scratch tree (--scratch-root) waives the home refusal and nothing
+    # else: the shared-scratch prefixes stay refused in every mode, so the waiver can
+    # never be used to point the suite at /tmp-style scratch (round-58, lesson M57-1).
+    existing_homes = [r for r in home_roots() if os.path.isdir(r)]
+    if existing_homes:
+        declared = os.path.join(existing_homes[0], "wave-done-selftest-declared")
+        made = None
+        try:
+            made = resolve_work(declared, declared_tree=declared)
+            suite.check("declared-root-accepts-home",
+                        os.path.realpath(made).startswith(os.path.realpath(declared) + os.sep),
+                        made)
+        except (GateError, OSError) as exc:
+            suite.check("declared-root-accepts-home", False, str(exc)[:60])
+        finally:
+            if made is not None:
+                shutil.rmtree(made, ignore_errors=True)
+            shutil.rmtree(declared, ignore_errors=True)
+    else:
+        suite.check("declared-root-accepts-home", False, "no existing home root")
+    for bad_dir in ("/tmp/wave-done-selftest", "/var/tmp/wave-done-selftest",
+                    "/dev/shm/wave-done-selftest"):
+        try:
+            resolve_work(bad_dir, declared_tree=work)
+            refused, detail = False, "accepted"
+        except GateError as exc:
+            refused, detail = True, str(exc)[:60]
+        suite.check("declared-root-refuse-%s" % bad_dir.strip("/").replace("/", "-"),
+                    refused, detail)
+
     return suite.report()
 
 
@@ -989,14 +1035,19 @@ def main(argv=None):
     parser.add_argument("--round", type=int, help="round number: scans .ufo/waves/round-N")
     parser.add_argument("--selftest", action="store_true", help="run the hermetic fixture suite")
     parser.add_argument("--work", help="scratch dir for --selftest (or TMPDIR); /tmp is refused")
+    parser.add_argument("--scratch-root", metavar="DIR", dest="scratch_root",
+                        help="caller-declared scratch root for --selftest: accepted even under "
+                             "the home directory (shared-scratch prefixes stay refused)")
     parser.add_argument("--verbose", action="store_true", help="print every passing selftest case")
     args = parser.parse_args(argv)
 
     if args.selftest:
         if args.repo or args.rev or args.round is not None:
-            parser.error("--selftest takes only --work/--verbose")
+            parser.error("--selftest takes only --work/--scratch-root/--verbose")
+        if args.work and args.scratch_root:
+            parser.error("--work and --scratch-root are mutually exclusive")
         try:
-            work = resolve_work(args.work)
+            work = resolve_work(args.work, declared_tree=args.scratch_root)
         except GateError as exc:
             sys.stderr.write("check-wave-done.py: %s\n" % exc)
             return 2

@@ -47,10 +47,13 @@ that is not UTF-8, a refused work dir).
 Usage::
 
     check-tool-ledger.py --repo <lane> --rev <rev> [--verbose]
-    check-tool-ledger.py --selftest [--work <dir>] [--verbose]
+    check-tool-ledger.py --selftest [--work <dir> | --scratch-root <dir>] [--verbose]
 
 Reads committed bytes only (read-only git); writes nothing, except `--selftest`, which builds
-throwaway fixture repositories in a private directory under --work/TMPDIR and removes it.
+throwaway fixture repositories in a private directory under --work/--scratch-root/TMPDIR and
+removes it. ``--scratch-root`` is the caller-declared scratch root (round-58, lesson M57-1):
+on some hosts every writable scratch lives under the home directory, so an explicitly declared
+root is accepted there; the shared-scratch prefixes stay refused in every mode.
 """
 import argparse
 import os
@@ -65,7 +68,7 @@ PRED = "PRED-C1-r51"
 
 # The exact number of assertions --selftest must make: a case that silently disappears (an
 # env-dependent skip, a removed fixture) must fail the run, not shrink it.
-SELFTEST_CHECKS = 50
+SELFTEST_CHECKS = 54
 
 REFUSED_WORK_PREFIXES = ("/tmp", "/var/tmp", "/dev/shm")
 GIT_ENV_KEYS = ("PATH", "SYSTEMROOT")
@@ -402,7 +405,9 @@ def home_roots():
         cand = pwd.getpwuid(os.getuid()).pw_dir
     except (ImportError, KeyError, OSError):
         cand = None
-    for home in (os.environ.get("HOME"), cand):
+    # USERPROFILE is the home evidence on native Windows, where $HOME is often unset;
+    # on POSIX it is unset and the tuple degrades to the old shape.
+    for home in (os.environ.get("HOME"), os.environ.get("USERPROFILE"), cand):
         if not home or not home.strip():
             continue
         real = os.path.realpath(home)
@@ -411,20 +416,33 @@ def home_roots():
     return roots
 
 
-def resolve_work(explicit):
-    cand = explicit or os.environ.get("TMPDIR")
+def resolve_work(explicit, declared_tree=None):
+    # declared_tree (round-58, lesson M57-1): a caller-declared scratch tree. It may supply
+    # the work root when --work is absent, and everything inside it is scratch by
+    # declaration, so the home refusal never fires there. The shared-scratch prefixes are
+    # refused in every mode.
+    cand = explicit or declared_tree or os.environ.get("TMPDIR")
     if not cand:
-        raise GateError("--selftest needs --work <dir> or a TMPDIR outside /tmp, /var/tmp, "
-                        "/dev/shm and the home directory")
+        raise GateError("--selftest needs --work <dir> (or --scratch-root <dir>, or a TMPDIR) "
+                        "outside /tmp, /var/tmp, /dev/shm and the home directory")
     real = os.path.realpath(cand)
     for bad in REFUSED_WORK_PREFIXES:
-        if real == bad or real.startswith(bad + os.sep):
+        # Compare the resolved prefix too: on Windows the literal POSIX prefix can never
+        # match a drive-letter candidate, and "C:\\tmp" would slip past the rule.
+        real_bad = os.path.realpath(bad)
+        if (real == bad or real.startswith(bad + os.sep)
+                or real == real_bad or real.startswith(real_bad + os.sep)):
             raise GateError("refusing work dir under %s (got %s): use a scratch filesystem"
                             % (bad, real))
-    for home in home_roots():
-        if real == home or real.startswith(home + os.sep):
-            raise GateError("refusing work dir inside the home directory (got ~%s)" %
-                            real[len(home):])
+    inside_tree = False
+    if declared_tree:
+        tree_real = os.path.realpath(declared_tree)
+        inside_tree = real == tree_real or real.startswith(tree_real + os.sep)
+    if not inside_tree:
+        for home in home_roots():
+            if real == home or real.startswith(home + os.sep):
+                raise GateError("refusing work dir inside the home directory (got ~%s)" %
+                                real[len(home):])
     os.makedirs(real, exist_ok=True)
     return tempfile.mkdtemp(prefix="ledger-selftest.", dir=real)
 
@@ -772,11 +790,13 @@ def selftest(work, verbose=False):
     suite.check("refuse-work-home", not accepted,
                 "roots=%d accepted=%s" % (len(roots), accepted[:2]))
 
-    # P -- TMPDIR is honoured when --work is not given.
+    # P -- TMPDIR is honoured when --work is not given. The run's own scratch tree is the
+    # declared tree, so a TMPDIR inside it is scratch by declaration (on hosts where the
+    # tree lives under the home, this is exactly the M57-1 case).
     saved = os.environ.get("TMPDIR")
     os.environ["TMPDIR"] = work
     try:
-        made = resolve_work(None)
+        made = resolve_work(None, declared_tree=work)
         try:
             suite.check("tmpdir-honoured",
                         os.path.realpath(made).startswith(os.path.realpath(work) + os.sep),
@@ -789,6 +809,36 @@ def selftest(work, verbose=False):
         else:
             os.environ["TMPDIR"] = saved
 
+    # Q -- a caller-declared scratch tree (--scratch-root) waives the home refusal and
+    # nothing else: the shared-scratch prefixes stay refused in every mode, so the
+    # waiver can never be used to point the suite at /tmp-style scratch.
+    existing_homes = [r for r in home_roots() if os.path.isdir(r)]
+    if existing_homes:
+        declared = os.path.join(existing_homes[0], "ledger-selftest-declared")
+        made = None
+        try:
+            made = resolve_work(declared, declared_tree=declared)
+            suite.check("declared-root-accepts-home",
+                        os.path.realpath(made).startswith(os.path.realpath(declared) + os.sep),
+                        made)
+        except (GateError, OSError) as exc:
+            suite.check("declared-root-accepts-home", False, str(exc)[:60])
+        finally:
+            if made is not None:
+                shutil.rmtree(made, ignore_errors=True)
+            shutil.rmtree(declared, ignore_errors=True)
+    else:
+        suite.check("declared-root-accepts-home", False, "no existing home root")
+    for bad_dir in REFUSED_WORK_PREFIXES:
+        cand = os.path.join(bad_dir, "ledger-selftest")
+        try:
+            resolve_work(cand, declared_tree=work)
+            refused, detail = False, "accepted"
+        except GateError as exc:
+            refused, detail = True, str(exc)[:60]
+        suite.check("declared-root-refuse-%s" % bad_dir.strip("/").replace("/", "-"),
+                    refused, detail)
+
     return suite.report()
 
 
@@ -800,15 +850,20 @@ def main(argv=None):
     parser.add_argument("--rev", help="revision whose committed bytes are scored")
     parser.add_argument("--selftest", action="store_true", help="run the hermetic fixture suite")
     parser.add_argument("--work", help="scratch dir for --selftest (or TMPDIR); /tmp is refused")
+    parser.add_argument("--scratch-root", metavar="DIR", dest="scratch_root",
+                        help="caller-declared scratch root for --selftest: accepted even under "
+                             "the home directory (shared-scratch prefixes stay refused)")
     parser.add_argument("--verbose", action="store_true",
                         help="print every passing selftest case / every finding")
     args = parser.parse_args(argv)
 
     if args.selftest:
         if args.repo or args.rev:
-            parser.error("--selftest takes only --work/--verbose")
+            parser.error("--selftest takes only --work/--scratch-root/--verbose")
+        if args.work and args.scratch_root:
+            parser.error("--work and --scratch-root are mutually exclusive")
         try:
-            work = resolve_work(args.work)
+            work = resolve_work(args.work, declared_tree=args.scratch_root)
         except GateError as exc:
             sys.stderr.write("check-tool-ledger.py: %s\n" % exc)
             return 2
