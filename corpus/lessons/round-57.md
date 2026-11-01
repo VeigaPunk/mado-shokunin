@@ -150,10 +150,17 @@ in PROVINCE's omarchy-era "Owns" paragraph against the register).
 
 ## Census
 
-Start: `scratch/mado-r57/receipts/census-before.txt` → `mado ok`, exit 0 (334
-rows; warnings unchanged from round 56: W04 duplicate-URL-across-scopes, one
-W01). End: same command → `mado ok`, exit 0 (338 rows; see the round report for
-both outputs and the S398-S401 warning check).
+Start: `.ufo/waves/round-57/receipts/census-before.txt` → `mado ok`, exit 0
+(334 rows by the SCORECARD grep; the validate emit lists warnings plus the ok
+line only, so the before/after emits are byte-identical — 36 W04 + 1 W01,
+unchanged from round 56 — and the row totals come from the grep commands).
+End: `.ufo/waves/round-57/receipts/census-after.txt` → same warning set, exit 0
+(338 rows by the grep); the S398-S401 warning check is the diff of the two
+emits (empty). Tool receipts committed beside them: `selftest.txt`
+(9/9, exit 0), `windesk-live1.txt` (CLEAN), `xprobe-indep.txt` +
+`crosscheck.txt` (5/5 AGREE), `fromfile-rerun.txt` (snapshot re-derivation),
+`gate-nolive-windows.txt` (the absence receipt), `snapshot-live1.json`,
+`PINS.txt` (tool and gate sha256 at the landing commit).
 
 ## Considerthese and assimilation
 

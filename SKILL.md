@@ -2402,8 +2402,10 @@ ten declared config/doc trees exists under `$HOME` (10/10 absent; full probes in
 
 Ground: `PROVINCE.md` round-57 record + surface state register (8 groups, dated probes);
 `corpus/knowledge/windows-desktop-plane-r57.md` (sourced entry, rows S398-S401);
-receipts: gate `--no-live` DIVERGED transcript (round-57 report), tool selftest 9/9, live
-`MADO_WINDESK: CLEAN (screens=1 dpi=96 dwm=on …)`, cross-check 5/5 stable fields AGREE
-(`scratch/mado-r57/receipts/`, receipts quoted in the round-57 report; scratch is ephemeral —
-the committed copies live in `corpus/knowledge/windows-desktop-plane-r57.md` § Verify and the
-report).
+receipts (committed): gate `--no-live` DIVERGED transcript
+`.ufo/waves/round-57/receipts/gate-nolive-windows.txt`; tool selftest 9/9
+(`receipts/selftest.txt`), live `MADO_WINDESK: CLEAN (screens=1 dpi=96 dwm=on …)`
+(`receipts/windesk-live1.txt`), cross-check 5/5 stable fields AGREE
+(`receipts/xprobe-indep.txt` + `receipts/crosscheck.txt`), snapshot
+re-derivation (`receipts/fromfile-rerun.txt`), pins `receipts/PINS.txt`;
+quoted in the round-57 report.

@@ -70,7 +70,8 @@ DWM_COMPOSITION hr=0 enabled=True                                          (dwma
 WINDOWS_WITH_MAIN 6..7; PROCESS_NAMES (point-in-time, see H05)
 ```
 
-Cross-check receipt (round-57 report; scratch copy `receipts/crosscheck.txt`):
+Cross-check receipt (`.ufo/waves/round-57/receipts/crosscheck.txt`, quoted in
+the round-57 report):
 **5/5 stable fields AGREE** (screens.count, primary.bounds, applied_dpi,
 reg_applied_dpi, dwm flag) between one tool run and independently executed
 probes; the window census is bound only as a point-in-time observation (H05).
