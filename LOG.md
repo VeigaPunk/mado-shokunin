@@ -2904,3 +2904,17 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   drift class recurring in the r61 report's own Landed-changes table beside a C1 that corrected the same
   class — every table number now carries its numstat; M62-2: a struct slug written with hyphens where
   the docs keep the type name's underscore — the M61-2 locator rule applied, refinement recorded).
+
+- Amendment to this round's harm-watch bullet above, recorded here per the
+  append-only rule before closure: the sentence "no existing knowledge entry
+  body or registry proposition cell changed" is incomplete as to the
+  used-by layer. Row S400's used-by cell moved in place across the round
+  (old suffix `…windows-dwm-service-model-r59.md, corpus/lessons/round-59.md |`
+  → new suffix `…corpus/lessons/round-59.md,
+  corpus/knowledge/windows-dwm-attributes-r62.md |`; proposition text
+  untouched), which is why the final landing range numstat reads
+  +1806/−1 with the single −1 being S400's row line (the used-by
+  contract's own consistency move, red-amber-green recorded in
+  `landing-counters-r62.txt` and the lesson Addendum/Addendum 2;
+  S405's mis-aimed extension nets to zero at the final tip). The
+  proposition-cell half of the sentence stands as written.

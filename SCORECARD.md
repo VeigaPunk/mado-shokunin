@@ -3263,3 +3263,19 @@ new files). Verdicts are the closure's to rule.
    compositor's refresh (if one exists in the documented vocabulary) would
    land the rateRefresh→64 Hz join D04 left open; a Win11-labeled DWM model
    sentence, if one surfaces, still strengthens the D01 pin.
+
+### Corrections (round 62)
+
+The r62 harm watch above says "no existing knowledge entry body or registry
+proposition cell changed" — incomplete as to the used-by layer, corrected
+here append-only before closure: row S400's used-by cell moved in place
+across the round (the entry's J21 re-quotes S400; the M59-4 counter fired
+red at the landing `19407ef2`, amber at the first repair `f300b2ce` — the
+extension keyed on a tail substring hit S405, reverted exactly — and green
+at `bd06d021` after the extension keyed on the row id; full record in
+`landing-counters-r62.txt` and lesson Addendum/Addendum 2). The final
+landing range numstat is **+1806/−1 across 34 files** (base `4c5435d8` →
+receipts tip `4fe4544`), the single −1 being S400's row line (the used-by
+contract's own consistency move, proposition text untouched; S405 nets to
+zero at the final tip). The proposition-cell half of the harm-watch
+sentence stands as written.
