@@ -178,3 +178,22 @@ cannot (vacuous at effective 96 — `corpus/knowledge/windows-dpi-awareness-metr
 | Tool | Reads | Writes | Owner and adjacent lanes |
 |---|---|---|---|
 | `tools/mado-win-dpi.py` | live mode: the JSON stdout of exactly one spawned read-only PowerShell child (`--powershell`, default `powershell.exe`, resolved on PATH) running a fixed embedded script whose only inputs are the user32 getters `GetThreadDpiAwarenessContext`, `GetAwarenessFromDpiAwarenessContext`, `GetWindowDpiAwarenessContext`, `GetForegroundWindow`, `GetDpiForWindow`, `GetSystemMetrics` and `GetSystemMetricsForDpi`, plus the `Get-Process` main-window census (handles filtered, never emitted); `--from-file`: one caller-named JSON snapshot (4 MiB cap); `--selftest`: nothing (in-memory; ephemeral fixtures in a private temp dir it removes) | nothing — stdout only (one `MADO_WINDPI:`/`MADO_WINDPI_SELFTEST:` line plus one JSON object line); it never prints window titles, process names, window handles, clipboard, environment values or file contents, and never echoes raw child output | mado, round 60 (read-only observation of the DPI-virtualization layer: point-in-time census/foreground, no privileged API, no mutation, no rendered-output claim); operator applies any change; kagi keeps secret-shaped values (titles and names are not collected at all) |
+
+**Round-61 refinement (append-only; one read-only tool; no new write surface):** `tools/mado-win-display.py`
+observes the native display-topology and display-mode layer read-only. Live mode spawns exactly one PowerShell child
+(`--powershell`, default `powershell.exe`) running a fixed embedded script whose only inputs are user32 getters —
+`EnumDisplayMonitors` (hdc and clip NULL: the documented enumerate-all shape) with `GetMonitorInfoW` per returned
+handle into a MONITORINFOEXW (szDevice, rcMonitor, rcWork, dwFlags), and `EnumDisplaySettingsW` in its three
+documented iModeNum shapes (ENUM_CURRENT_SETTINGS −1, ENUM_REGISTRY_SETTINGS −2, graphics-mode index series 0..N
+bounded at 256, stopping at the documented zero return) — parses its stdout as JSON and re-prints whitelisted fields
+only; `--from-file` re-derives a verdict from a captured snapshot (4 MiB cap); `--selftest` (10 assertions) spawns
+nothing. It collects no window titles, no process names and no window handles, never echoes raw child output, writes
+no file, opens no socket and mutates nothing: no Set*/Change* verb exists in it, and display-mode changes stay
+operator-owned (SKILL § Round 57 rule 4 carried). The work-area subtraction's owner (which appbar occupies the band)
+is not observed — no Shell surface is queried — and the documented 0-failure return classes (a current mode that
+fails to report; a zero frequency/dimension/bpp) are treated as CHECK FAILED, never a measurement
+(`corpus/knowledge/windows-display-topology-r61.md` H19/H20, J17).
+
+| Tool | Reads | Writes | Owner and adjacent lanes |
+|---|---|---|---|
+| `tools/mado-win-display.py` | live mode: the JSON stdout of exactly one spawned read-only PowerShell child (`--powershell`, default `powershell.exe`, resolved on PATH) running a fixed embedded script whose only inputs are the user32 getters `EnumDisplayMonitors` and `GetMonitorInfoW` (MONITORINFOEXW fill) and the `EnumDisplaySettingsW` mode family (device name taken from the enumeration, never guessed); `--from-file`: one caller-named JSON snapshot (4 MiB cap); `--selftest`: nothing (in-memory; ephemeral fixtures in a private temp dir it removes) | nothing — stdout only (one `MADO_WINDISPLAY:`/`MADO_WINDISPLAY_SELFTEST:` line plus one JSON object line); it never prints window titles, process names, window handles, clipboard, environment values or file contents, and never echoes raw child output | mado, round 61 (read-only observation of the native topology + mode layer: point-in-time, no privileged API, no mutation, no rendered-output claim); operator applies any change; kagi keeps secret-shaped values (titles and names are not collected at all) |

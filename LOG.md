@@ -2767,3 +2767,67 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   here per the append-only rule: that bullet's "Mined M59-1..M59-3" is wrong — the r59 lesson holds
   M59-1..M59-4 (the r59 verifier spot-check § 6 item 2 named it; the same-class SKILL § Round 59 ground
   line was found by this round's sweep).
+
+## Round 61 (2026-11-01, hyaku run 12) — the native display-topology plane, the durable display observer, the r60 carry-in corrections
+
+- Carry-in addressed first, per the r60 non-author closure routing (two routed defects + the standing L0 set):
+  (1) pointer-resolution defect — the r60 lesson's Census section named three receipt files that do not exist under
+  those names (`navigation-landing-r60.txt`, `usedby-after-r60.txt`, `ledger-landing-r60.txt`); the runs they describe
+  live in `.ufo/waves/round-60/receipts/landing-counters-r60.txt` (sections `-- navigation counter --`,
+  `-- used-by counter --`, `-- tool ledger production --`), and the base used-by run is `usedby-before-r60.txt` —
+  corrected append-only as `## Corrections (round 61)` in the r60 lesson naming the three supersedings (filed bytes
+  untouched; this round's own landing counters adopt the named-sections file shape by construction, so the defect
+  class cannot recur here). (2) Same-class sweep incompleteness — `corpus/lessons/round-59.md` line 74's
+  "(diff shape +4/−0 each, checked at commit time in the report)" is the number-shape drift class round 60 corrected
+  in SCORECARD/LOG/SKILL; it was counted by r60's `before-state-r60.txt` but left without a disposition — corrected
+  append-only as `## Corrections (round 61)` in the r59 lesson beside the measured per-file +17/−0 and +5/−0
+  (re-derivation `git diff-tree -r --numstat 6f2e4115 25294ab3 -- <the two entries>` → `17 0` / `5 0`; the
+  corrections-block precedent is the r59→r58-lesson block). Preservation for both: originals byte-exact
+  (`git show <base>:… | diff - <(head -n N)` — r59 lesson 217 lines, r60 lesson 181 lines at base; appends only,
+  0 deleted lines). (3) The four open L0 questions (omarchy freshness-rubric disposal; gate-selftest host gap;
+  calibration resolved-active re-derivability; screen-capture scope) routed around, never treated as answered; no
+  new L0 line this round — the fourth is already filed (r60) and nothing new needed an operator decision.
+- C1 **calibration** (carry-in corrections): the corrections above. Counting: `grep -c '^## Corrections (round 61)'
+  corpus/lessons/round-59.md` → 0 → 1; `grep -c '^## Corrections (round 61)' corpus/lessons/round-60.md` → 0 → 1;
+  `grep -c 'landing-counters-r60' corpus/lessons/round-60.md` → 0 → 3 (the superseding names now resolve);
+  preservation by ORIGINAL_PRESERVED diff checks (worktree-vs-index diff is host garbage, the M59-3 rule — the
+  check is `git show <base>:<file> | diff - <(head -n <base-lines>)`, both empty).
+- C2 **coverage** (sourced): `corpus/knowledge/windows-display-topology-r61.md` lands the native display-topology
+  plane and the display-mode layer — the one Windows-plane layer no entry held (r57 managed Screen, r58 per-monitor
+  DPI, r59 DWM service model, r60 metrics/awareness). Sourced rows S412-S417 (Microsoft Learn winuser/wingdi, opened
+  2026-11-01 in full BEFORE any row was written; ms.date 2018-12-05 for five pages — git_commit
+  9267262487657894a8af112d7165006fed5035a7 / a9040b7bd365036907a35293e28d8cd449e31b87 /
+  fa53641576e3603fa7b66d3a4ad969d3ce49d6f3 — and 2023-06-13 with f014fff5b27fe5eb5115f15dd6762713bc73c697 for
+  DEVMODEW; every located quote verbatim). Host facts (probe committed read-only, two byte-identical runs rc=0;
+  the tool independently agrees): native enumeration count 1 (H17, equal to the managed count); primary
+  MONITORINFOEXW `\\.\DISPLAY1` rcMonitor (0,0,1920,1080) MONITORINFOF_PRIMARY set (H18, field-for-field with the
+  managed layer); work area (0,0,1920,1032) — 48 px band, owner `[UNK]`, the taskbar is never read (H19, J17
+  directional); current mode 1920x1080 @ 64 Hz, 32 bpp, registry settings identical, mode index series exactly 1
+  (H20, D03 — a 1-mode driver list beside the three-way DPI split of r58 D02). 4 H + 10 K + 4 J rows. Index row
+  added; knowledge files 75 → 76; registry 348 → 354; the mode layer is documented to ignore the calling context
+  (K37), so the DPI entries' caller-awareness `[UNK]` does not arise here (J20).
+- C3 **operability** (capability): `tools/mado-win-display.py` (`VERSION r61-v1`) — the durable form. Selftest
+  **10/10** exit 0 (named assertions: whitelist drop, two-primaries CHECK FAILED, work-outside-monitor CHECK FAILED,
+  the documented 0-failure return classes as CHECK FAILED never measurements, empty mode list CHECK FAILED,
+  from-file roundtrip, malformed ERROR with bytes never echoed, static getter-only pins with exact per-site counts);
+  live `MADO_WINDISPLAY: CLEAN (monitors=1 primary=\\.\DISPLAY1 mode=1920x1080@64 work=1920x1032)` twice,
+  byte-identical rc=0; `--from-file` re-derives from the committed snapshot (rc=0); malformed snapshot →
+  `MADO_WINDISPLAY: ERROR (stage=parse …)` rc=2, raw bytes never echoed; crosscheck **5/5** stable fields AGREE
+  against the independently executed managed probe (crosscheck script committed beside its receipt). Tool ledger
+  population 100 → 101 (ledger row + PROVINCE round-61 refinement landed in the same round). Harm watch: both
+  checker selftests stay green at current bytes (`LEDGER_SELFTEST: 55/55`, `MADO_WAVE_DONE_SELFTEST: 63/63`, rc 0;
+  receipt `harmwatch-selftests-r61.txt`); `tools/mado-verify.sh` bytes untouched this round.
+- Harm watch / disclosure: census exit 0 both ends (`mado ok`; START TEE'D TO A COMMITTED RECEIPT this round —
+  `census-start-r61.txt` closes the r59/r60 un-tee'd disclosure; end receipt `census-after-r61.txt`); navigation
+  counter at the landing revision expected 76/76 exit 0; used-by counter at the landing expected missing=0
+  `TARGET_MET` (the M59-4 rule applied proactively: every row this round's appends name — S412-S417 — carries the
+  citing paths in its used-by cell in the same landing); no existing knowledge entry body or registry proposition
+  cell changed this round (the six S-rows are new rows with their cells written at insertion; everything else
+  appends, insertions, or new files).
+- L2 disclosure: unchanged since r57 — no AgentSwarm dispatch surface on this host; L1-only round. Sources: 348 →
+  354 rows (S412-S417, tier A, `mined`, opened 2026-11-01 in full; one bounded sweep, no rejected-row event; one
+  URL-correction event recorded in the search log and mined M61-2). Considerthese mined: none adoptable (nine files
+  re-screened; nothing new since the r58 mining). Assimilation: none — shokuknow unreachable. Mined M61-1..M61-2 in
+  `corpus/lessons/round-61.md` (M61-1: the M60-1 class recurring three times in one selftest tally — assertion
+  bugs, never tool bugs, each read against the implementation before either was edited; M61-2: a struct-header
+  locator guess 404'd inside the sweep, caught by open-before-write).

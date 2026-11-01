@@ -215,3 +215,26 @@ dwm-service-probe.ps1 + dwm-service-run1/run2.txt.
    rules screen capture read-only in scope).
 3. A Win11-labeled DWM model sentence, if one surfaces, strengthens the D01
    closure pin (the residue is named in the r59 entry).
+
+## Corrections (round 61)
+
+The round-60 verifier spot-check (§ 6 item 2) routed one more member of the
+number-shape drift class that round 60 corrected in SCORECARD/LOG/SKILL; this
+lesson's own copy is corrected here append-only (the defect line's bytes are
+untouched; the load-bearing property it records — pure insertions, zero
+existing lines modified — was verified true then and stays true):
+
+- The "Record corrections (C1)" bullet above ends "(diff shape +4/−0 each,
+  checked at commit time in the report)". The "+4/−0 each" figure is wrong
+  as a per-file diff shape. The measured per-file insertions at the round-59
+  landing are **+17/−0** (`corpus/knowledge/windows-desktop-plane-r57.md`:
+  provenance trio +4 lines + the `## Errata (round 59)` append +13) and
+  **+5/−0** (`corpus/knowledge/windows-permonitor-dpi-r58.md`: provenance
+  trio). Re-derivation: `git diff-tree -r --numstat 6f2e4115 25294ab3 --
+  corpus/knowledge/windows-desktop-plane-r57.md
+  corpus/knowledge/windows-permonitor-dpi-r58.md` → `17 0` and `5 0`. This
+  is the same class and the same measured numbers the round-60 SCORECARD
+  `### Corrections (round 60)` block carries for the round-59 C1 row; this
+  lesson's occurrence was counted by round 60's `before-state-r60.txt` but
+  left without a named disposition — recorded now, beside the preserved
+  defect line, per the append-only rule.

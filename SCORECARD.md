@@ -3137,3 +3137,64 @@ else appends, insertions, or new files). Verdicts are the closure's to rule.
    the candidate shape; without a ruling the limit stays named, not worked.
 3. A Win11-labeled DWM model sentence, if one surfaces, still strengthens the
    D01 pin (the r59 residue stands).
+
+## Round 61 — the native display-topology plane, the durable display observer, the r60 carry-in corrections (2026-11-01, hyaku run 12)
+
+Axis posture: saturation 9.0 / window N=3, last capability r60, so the
+stagnation nudge does not apply (gap 1 < 3 at round start). At base every
+published scored sub-axis sat at its finite maximum — measured at base:
+navigation 75/75 = 10.0000 and SOURCES 348 rows (receipt
+`before-state-r61.txt`); carried from the published tables: freshness
+"surface-state audit currency" 8/8 = 10.0000, calibration resolved-active
+86/86 (last re-derived r56-era; the aggregator's underlying counters still
+emit no contract lines on this host), the omarchy-host rubrics dormant with
+receipts (freshness 9.6552; operability gate selftest 360/100 rc=2) — all
+four disposals are the open L0 questions (r57/r58/r59/r60), routed around
+again this round, never treated as answered. So no axis is distinctly
+lowest: the same posture as rounds 56, 58, 59 and 60, and the round works
+the open ground the r60 closure routed in (the carry-in corrections, C1)
+plus real axis moves on sourced coverage (C2) and operability (C3, a
+capability acquisition). L1-only round again (no dispatch surface on this
+host; disclosed since r57, L0 open). Claims were declared before the formal
+receipt runs (declaration file quoted in the report); no predicate changed
+after scoring. Base `cccda4dacc1009f767799ce62fe112fd53d2d47a`; measured at
+the landing commit (see the report).
+
+| Claim / axis | Before → after | Counting command (runs on THIS host) | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the r60 carry-in corrections: the r60 lesson's Census pointer-resolution defect (three receipt names that do not exist under those names) and the r59 lesson's line-74 number-shape drift (the last standing member of the "+4/−0 each" class) corrected — all append-only | base `cccda4da`: the r60 Census names `navigation-landing-r60.txt`, `usedby-after-r60.txt`, `ledger-landing-r60.txt` (none exists; `git grep` finds them only in the lesson and the spot-check) and the r59 lesson line 74 reads "(diff shape +4/−0 each, checked at commit time in the report)"; neither lesson carries a `## Corrections (round 61)` block → landing: `## Corrections (round 61)` in `corpus/lessons/round-60.md` naming the three supersedings (the runs live in `landing-counters-r60.txt`'s named sections; the base used-by run is `usedby-before-r60.txt`, re-derivation `git grep`/`ls` carried in the block) and `## Corrections (round 61)` in `corpus/lessons/round-59.md` beside the measured per-file +17/−0 and +5/−0 (re-derivation `git diff-tree -r --numstat 6f2e4115 25294ab3 -- <the two entries>` → `17 0` / `5 0`) — the defect lines keep their original bytes (append-only) | anchored block counts: `grep -c '^## Corrections (round 61)' corpus/lessons/round-59.md` → **0**, at landing → **1**; same grep on `corpus/lessons/round-60.md` → **0 → 1**; `grep -c 'landing-counters-r60' corpus/lessons/round-60.md` → **0 → 3** (the superseding names now resolve); preservation: `git show <base>:<lesson> \| diff - <(head -n <base-lines> <lesson>)` → **empty, ORIGINAL_PRESERVED** for both (r59 217 lines, r60 181 lines at base; worktree-vs-index diff is host garbage, the M59-3 rule — the show-pipe check is the instrument) | **TARGET_MET** (both routed defects dispositioned beside preserved defect lines, each with a re-derivation command; the pointers now resolve at closure; this round's own landing counters adopt the named-sections file shape the correction names, so the defect class cannot recur here) |
+| C2 **coverage** (sourced) — the native display-topology plane and the display-mode layer: monitor enumeration, work area, device name, primary flag, current/registry modes, refresh rate, mode index series | base: knowledge files 75, index rows 75 (75/75 reachable), registry rows 348; no committed entry holds the native enumeration surface or any mode/refresh-rate/work-area fact → landing: `corpus/knowledge/windows-display-topology-r61.md` (4 host rows H17-H20 with re-derivation commands — native enumeration count 1 equal to the managed count; primary MONITORINFOEXW `\\.\DISPLAY1` rcMonitor (0,0,1920,1080) MONITORINFOF_PRIMARY set, field-for-field with the managed layer; work area (0,0,1920,1032), 48 px band, owner `[UNK]`, taskbar never read; current mode 1920x1080 @ 64 Hz, 32 bpp, registry settings identical, mode index series exactly 1; finding D03), 10 documented rows K28-K37, 4 joins J17-J20 (J20: S416's no-DPI-virtualization remark makes the DPI entries' caller-awareness `[UNK]` not arise here), indexed; registry gains S412-S417 (Microsoft Learn winuser/wingdi, tier A, opened 2026-11-01 in full before any row was written; no reused rows) | `ls corpus/knowledge/*.md \| wc -l` → **76** (base 75); `grep -cE '^\| `knowledge/[^`]+\.md`' corpus/README.md` → **76** (base 75); `grep -cE '^[[:space:]]*\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md` → **354** (base 348); entry row count `grep -cE '^\| [HJKD][0-9]{2} ' corpus/knowledge/windows-display-topology-r61.md` → **19** (4 H + 10 K + 4 J + D03); probe re-run `powershell.exe -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File .ufo/waves/round-61/receipts/display-probe.ps1` → rc=0, `monitor_count=1`, `work h=1032`, runs byte-identical; navigation counter (SCORECARD § Counting command, fleet round 1) at the landing revision with `python` in place of `python3` → `indexed=76/76 … coverage=10.0000/10`, exit 0 | **TARGET_MET** (entry indexed and reachable; sources opened and quoted this round; the claim rests on S412-S417) |
+| C3 **operability** (capability acquisition) — `tools/mado-win-display.py`, the durable read-only display-topology observer | base: tool absent (`git ls-tree <base> --name-only tools/ \| grep -c win-display` → 0; ledger population 100) → landing: selftest **10/10** exit 0 (named assertions incl. the documented 0-failure return classes treated as CHECK FAILED, work-rect-inside-monitor, exactly one primary, empty mode list, whitelist drop, from-file roundtrip, malformed ERROR with bytes never echoed, static getter-only pins at exact per-site counts); live `MADO_WINDISPLAY: CLEAN (monitors=1 primary=\\.\DISPLAY1 mode=1920x1080@64 work=1920x1032)` exit 0, two byte-identical runs; `--from-file` re-derives the verdict from the committed snapshot; malformed snapshot → `MADO_WINDISPLAY: ERROR` exit 2, raw bytes never echoed; crosscheck **5/5** stable fields AGREE against the independently executed managed probe; ledger population 100 → **101** | `git ls-tree cccda4da --name-only tools/ \| grep -c win-display` → **0**; `python tools/mado-win-display.py --selftest` → `MADO_WINDISPLAY_SELFTEST: 10/10 assertions passed`, exit 0 (receipt `windisplay-selftest.txt`; three red assertion-authoring runs 9/10 before it — M61-1, the red side disclosed in the lesson); `python tools/mado-win-display.py` → `MADO_WINDISPLAY: CLEAN …` exit 0 ×2 byte-identical (receipts `windisplay-live-run1/2.txt`); `python tools/mado-win-display.py --from-file .ufo/waves/round-61/receipts/windisplay-snapshot.json` → rc=0 (receipt `windisplay-fromfile.txt`); malformed snapshot → `MADO_WINDISPLAY: ERROR (stage=parse …)` rc=2 (receipt `windisplay-error-path.txt`); `python .ufo/waves/round-61/receipts/display-crosscheck.py` → 5/5 (receipt `windisplay-crosscheck.txt`); `python quality/check-tool-ledger.py --repo . --rev <landing>` → `population=101 ledger_rows=101 … verdict=TARGET_MET` | **TARGET_MET** (capability runs, output verifies, row enters the table below the same round) |
+
+### Capabilities (round 61)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Windows display-topology observer (`tools/mado-win-display.py`) | observe the native monitor enumeration (`EnumDisplayMonitors` + `GetMonitorInfoW`: device name, monitor rectangle, work-area rectangle, MONITORINFOF_PRIMARY) and the display-mode layer per enumerated device (`EnumDisplaySettingsW` in its three documented iModeNum shapes: current settings, registry settings, bounded index series) — read-only, one fixed PowerShell child; re-derives from snapshots (`--from-file`); treats the documented 0-failure return classes as CHECK FAILED; never collects titles, names or handles; no Set*/Change* verb | `MADO_WINDISPLAY_SELFTEST: 10/10`; `MADO_WINDISPLAY: CLEAN (monitors=1 primary=\\.\DISPLAY1 mode=1920x1080@64 work=1920x1032)` ×2 byte-identical; crosscheck 5/5 (receipts in `.ufo/waves/round-61/receipts/`); C3 line above | 61 |
+
+Harm watch (at landing): census exit 0 both ends (`mado ok`; START tee'd to a
+committed receipt this round — `census-start-r61.txt` closes the r59/r60
+un-tee'd disclosure; end receipt `census-after-r61.txt`); index 76/76
+(navigation counter exit 0); ledger population 101/101; used-by counter
+missing=0 `TARGET_MET` at the landing (the M59-4 rule applied proactively —
+every row the round's appends name carries the citing paths in its used-by
+cell in the same landing); `tools/mado-verify.sh` bytes untouched this round
+(sha256 prefix `050efc720599345a` re-measured — the r59 lesson's recorded
+identity); both fail-closed checkers' selftests stay green at current bytes
+(55/55, 63/63 — receipt `harmwatch-selftests-r61.txt`); no existing knowledge
+entry body or registry proposition cell changed (the six S-rows are new rows
+with their used-by cells written at insertion; everything else appends,
+insertions, or new files). Verdicts are the closure's to rule.
+
+### Planned (round 62; intent only)
+
+1. The four L0 rulings (omarchy freshness disposal; gate-selftest host gap;
+   calibration resolved-active re-derivability; screen-capture scope) —
+   whichever way they land, the SCORECARD tables follow the ruling, not
+   before.
+2. The rendered-pixel observation, if the screen-capture-scope L0 question is
+   ruled: a statistics-only, no-persist capture probe is the candidate shape;
+   without a ruling the limit stays named, not worked.
+3. The taskbar-band owner join (H19's `[UNK]`) only behind a Shell-plane
+   operator ruling; a Win11-labeled DWM model sentence, if one surfaces,
+   still strengthens the D01 pin.

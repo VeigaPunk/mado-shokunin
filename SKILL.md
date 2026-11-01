@@ -2553,3 +2553,58 @@ byte-identical, windpi-selftest 10/10, windpi-live-run1/run2 byte-identical,
 windpi-snapshot.json + windpi-fromfile, windpi-error-path rc=2,
 windpi-crosscheck 5/5, harmwatch-selftests 55/55 + 63/63, before-state,
 counters, census-after); lesson `corpus/lessons/round-60.md`.
+
+## Round 61 — the native display-topology plane, the durable display observer, the r60 carry-in corrections (append-only, dated 2026-11-01)
+
+1. **The native display topology and the display-mode layer are measured
+   ground, distinct from every layer already held.**
+   `corpus/knowledge/windows-display-topology-r61.md` (rows S412-S417,
+   opened 2026-11-01, opened before any row was written) lands the surface
+   r57's managed Screen facts, r58's DPI modes and r60's metrics join left
+   open: `EnumDisplayMonitors` + `GetMonitorInfoW` read the primary
+   monitor's device name `\\.\DISPLAY1`, monitor rectangle (0,0,1920,1080)
+   and **work area** (0,0,1920,1032 — a 48 px band whose owner is `[UNK]`;
+   the taskbar is never read); `EnumDisplaySettings` reads the **current
+   mode** 1920x1080 @ **64 Hz**, 32 bpp with ENUM_REGISTRY_SETTINGS
+   identical and a mode index series of exactly 1 (D03: a 1-mode driver
+   list beside the three-way DPI-mode split of r58 D02 — the layers answer
+   different questions). The mode layer is documented to ignore the calling
+   context (K37), so the caller-awareness `[UNK]` the DPI entries carry
+   does not arise on this surface (J20).
+2. **The display observer is a durable lane tool.**
+   `tools/mado-win-display.py` (`VERSION r61-v1`): one read-only PowerShell
+   child; whitelist + sanity layers that treat the documented 0-failure
+   return classes as CHECK FAILED, never a measurement, require the work
+   rect inside the monitor rect and exactly one primary; `--selftest`
+   10/10; live `MADO_WINDISPLAY: CLEAN (monitors=1 primary=\\.\DISPLAY1
+   mode=1920x1080@64 work=1920x1032)` twice, byte-identical; `--from-file`
+   re-derives from committed snapshot bytes; malformed input → `ERROR`
+   exit 2, raw bytes never echoed; crosscheck 5/5 stable fields against the
+   independent managed probe. It collects no titles, no process names, no
+   handles; no Set*/Change* verb exists in it — display-mode changes stay
+   operator-owned. Tool ledger population 100 → 101.
+3. **Correct the record where the pointer resolves, and name the
+   superseding location.** The r60 closure routed two record defects: the
+   r60 lesson's Census named three receipt files that never existed under
+   those names (the runs live in `landing-counters-r60.txt`'s named
+   sections; the base used-by run is `usedby-before-r60.txt`), and the r59
+   lesson's line 74 still carried the "+4/−0 each" drift class round 60
+   had corrected everywhere else. Both are corrected append-only
+   (`## Corrections (round 61)` blocks in the respective lessons), each
+   carrying its re-derivation command; the filed defect bytes are
+   untouched. The rule, now twice applied across rounds: an append-only
+   record is corrected by a dated block that names the superseding
+   location explicitly — a correction that does not say where the evidence
+   actually lives fixes nothing — and a receipt-file shape adopted by a
+   later round should be the shape the earlier lesson's correction names
+   (this round's landing counters use the named-sections file by
+   construction).
+
+Ground: `corpus/knowledge/windows-display-topology-r61.md` (sourced
+entry, S412-S417); receipts `.ufo/waves/round-61/receipts/`
+(display-probe.ps1 + run1/run2 byte-identical, windisplay-selftest 10/10,
+windisplay-live-run1/run2 byte-identical, windisplay-snapshot.json +
+windisplay-fromfile, windisplay-error-path rc=2, display-crosscheck.py +
+windisplay-crosscheck 5/5, harmwatch-selftests 55/55 + 63/63, before-state,
+census-start + census-after, landing-counters-r61 with named sections);
+lesson `corpus/lessons/round-61.md`.

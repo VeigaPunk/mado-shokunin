@@ -179,3 +179,30 @@ usedby-after-r60.txt, ledger-landing-r60.txt.
    (dimensions + two-frame stability; no content, no digests printed).
 3. A Win11-labeled DWM model sentence, if one surfaces, strengthens the D01
    pin (the r59 residue stands).
+
+## Corrections (round 61)
+
+The round-60 verifier spot-check (§ 6 item 1) routed a pointer-resolution
+defect in the Census section above; corrected here append-only (the filed
+Census bytes are untouched; the runs themselves were always committed and
+verifiable — only the names were wrong):
+
+- The Census section names three receipt files that do not exist under those
+  names anywhere in the repo: `navigation-landing-r60.txt`,
+  `usedby-after-r60.txt`, `ledger-landing-r60.txt`. The three landing runs
+  they describe live inside
+  `.ufo/waves/round-60/receipts/landing-counters-r60.txt` as its three named
+  sections: `-- navigation counter --` (`NAV_LANDING_RC=0`,
+  `indexed=75/75 missing=0 dangling=0 duplicates=0 coverage=10.0000/10`,
+  rev-pinned `edc2d378`), `-- used-by counter --` (`USEDBY_LANDING_RC=0`,
+  `entries=75 rows=348 missing=0 … verdict=TARGET_MET`), and `-- tool ledger
+  production --` (`LEDGER_LANDING_RC=0`, `population=100 ledger_rows=100
+  uncovered=0 … verdict=TARGET_MET`). The base used-by run the Census's
+  "used-by missing=0" before→after pairs against is
+  `.ufo/waves/round-60/receipts/usedby-before-r60.txt` (`entries=74
+  rows=342 missing=0 … TARGET_MET`). Re-derivation of the supersedings:
+  `git grep -c 'landing-counters-r60' <base> -- corpus/lessons/round-60.md`
+  → 0 at base, 1 with this block; `ls .ufo/waves/round-60/receipts/` lists
+  `landing-counters-r60.txt` and `usedby-before-r60.txt`, and none of the
+  three named files. The evidence standard requires pointers to resolve at
+  closure; the pointers now resolve to the file that holds the runs.
