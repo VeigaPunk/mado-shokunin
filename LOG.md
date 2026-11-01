@@ -3027,3 +3027,16 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   red run at `c9a70974` and the green run at the repair `cdacf215`
   (`entries=78 rows=371 … TARGET_MET`). Full record: lesson Addendum and
   `landing-counters-r63.txt`.
+
+- Second amendment to this round's record, before closure: the landing
+  commit `c9a70974` named `.ufo/waves/round-63/receipts` as a commit path
+  and the plumbing helper landed none of the directory's 24 files — the
+  post-landing `ls-tree` check on the receipts subtree caught it (the
+  commit-side twin of M63-1's write-trusted-from-its-echo; the helper
+  accepts a directory argument silently and lands only explicitly named
+  files). All 24 receipt files re-landed by explicit path at `49b053e8`,
+  bytes as measured; the rule is recorded in lesson Addendum 2 (receipt
+  directories are committed file-by-file; every committed artifact is
+  verified at its own path). The counters receipts at `c9a70974` /
+  `cdacf215` are unaffected (they recorded git-object runs at those shas,
+  which exist unchanged).

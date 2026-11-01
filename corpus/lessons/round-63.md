@@ -251,3 +251,23 @@ receipt records the red run at `c9a70974` and the green run at the repair
 M59-4 proactivity rule held — every named row's used-by cell was already
 correct, and the M59-4 row-id rule held on the repair (no extra, no
 mis-aimed neighbor this time).
+
+## Addendum 2 (the landing commit dropped the receipts directory; re-landed by explicit path, disclosed before closure)
+
+The landing commit `c9a70974` named `.ufo/waves/round-63/receipts` as a
+commit path and the plumbing helper landed **none of its 24 files** — the
+post-landing tree check (`git ls-tree <sha>:.ufo/waves/round-63/receipts`)
+came back "Not a valid object name", caught before the round closed. The
+helper accepts a directory argument silently and lands only explicitly
+named files (the same call's two named wave-root files landed). Class:
+the M63-1 shape one level up — a write trusted from its echo instead of
+being read back at its target (here, a commit trusted from the helper's
+sha instead of being read back with `ls-tree`; the M59-3 worktree rule's
+commit-side twin). Captured-by: the landing-verification step the contract
+prescribes (`git diff <base>..<new> --stat` + `git show <new>:<path>`) —
+run here with `ls-tree` on the receipts subtree, which the stat's file
+count did not make obvious (13 files looked plausible beside the landing's
+nine record files). Fix: all 24 receipt files re-landed by explicit path
+(`49b053e8`); rule carried — a commit path that is a directory is not a
+landed directory; every committed artifact is verified at its own path,
+and receipt directories are committed file-by-file.
