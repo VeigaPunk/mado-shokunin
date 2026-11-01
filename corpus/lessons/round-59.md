@@ -171,7 +171,11 @@ selftests (55/55, 63/63), and the CLI refusals receipt; (d) the C1 receipts
   `corpus/knowledge/windows-desktop-plane-r57.md` this round — counter at
   the landing revision: missing=0 (receipt `usedby-after-r59.txt`). The
   general rule: an append that names rows inside an existing entry extends
-  those rows' used-by cells in the same landing.
+  those rows' used-by cells in the same landing. Same-round recurrence,
+  caught by the landing-revision counter run before push: this round's own
+  r57-entry errata named S405 without extending its cell, the landing counter
+  read `missing=1`, and the cell was extended in the follow-up receipts
+  commit — the rule re-proven against its own author within one round.
 
 ## Census
 
