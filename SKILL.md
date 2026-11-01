@@ -2678,3 +2678,70 @@ windwm-snapshot.json + fromfile, error-path rc=2, dwm-crosscheck 5/5,
 harmwatch-selftests 55/55 + 63/63, before-state, census-start +
 census-after, landing-counters-r62 with named sections); lesson
 `corpus/lessons/round-62.md`.
+
+## Round 63 — the DisplayConfig path/target plane, the durable CCD observer, the r62 carry-in corrections (append-only, dated 2026-11-01)
+
+1. **The CCD plane is measured ground, and it dual-sources the refresh
+   fact r61 single-sourced.**
+   `corpus/knowledge/windows-displayconfig-r63.md` (rows S424-S434,
+   opened 2026-11-01 before any row was written) reads the CCD
+   path/target surface: `GetDisplayConfigBufferSizes` +
+   `QueryDisplayConfig` under `QDC_ONLY_ACTIVE_PATHS` with
+   `currentTopologyId` NULL answer rc 0/rc 0 — 1 active path carrying
+   `DISPLAYCONFIG_PATH_ACTIVE`, `targetInfo.refreshRate` **64/1**, the
+   mode table `[2, 1]` = TARGET/SOURCE at the indexes the path names
+   (H25/H26); the indexed target mode's `activeSize`/`totalSize` read
+   1920x1080 while its `pixelRate`/`hSyncFreq`/`vSyncFreq` read the
+   undocumented sentinel `0xFFFFFFFE` in every committed execution
+   (H27 — finding **D05**, cause `[UNK]`, the D04 shape at the CCD
+   layer; raw-byte receipt distinguishes layout error from host fact);
+   and the CCD refresh **agrees with r61's GDI 64 Hz** across two
+   documented OS planes while the DWM timing side stays unobserved (D04
+   rechecked unchanged) (H28/J27). The refresh fact is now
+   dual-sourced; the compositor rate itself remains unobserved on this
+   host.
+2. **The CCD observer is a durable lane tool, and its verdict line
+   records the sentinel instead of guessing it.**
+   `tools/mado-win-displayconfig.py` (`VERSION r63-v1`): one read-only
+   PowerShell child; whitelist + sanity layers (documented failure
+   return classes as CHECK FAILED, `DISPLAYCONFIG_PATH_ACTIVE`
+   required, positive refresh rational, in-bounds mode indexes,
+   SOURCE=1/TARGET=2 vocabulary); `--selftest` 13/13 after two
+   disclosed red runs; live
+   `MADO_WINDISPLAYCONFIG: CLEAN (paths=1 refresh=64/1
+   vsync=unavailable(0xfffffffe))` twice with byte-identical outputs;
+   `--from-file` re-derivation; malformed input → `ERROR` exit 2, raw
+   bytes never echoed; crosscheck 5/5 stable fields against the
+   independent probe. It collects no adapter LUID halves, no ids, no
+   names, no handles — the documented name getter is deliberately not
+   called; no Set*/Change* verb exists in it — topology, mode and
+   refresh changes stay operator-owned. Tool ledger population
+   102 → 103.
+3. **The carried number-shape rule applies to the prior round's own
+   corrections, and an enum's values come from its page.** The r62
+   closure routed six M62-1-class drifts in the round's own report
+   records; all six are dispositioned in ONE `## Corrections (round 63)`
+   block in `corpus/lessons/round-62.md`, each beside its re-derivation
+   command (three numstat ranges at three tips; receipts/wave numstats;
+   the receipt-file count; the first-parent commit count; the committed
+   census endpoints; the declaration spread), with the in-file erratum
+   on entry H22 and the defect bytes everywhere preserved — the rule's
+   surface list now includes the prior round's corrections blocks and
+   amendment bullets. And the sweep caught a remembered enum order
+   (TARGET=1) contradicted by the opened page (SOURCE=1, TARGET=2)
+   before any code or row was written (M63-3): enumerated values are
+   copied from the opened enumeration page, never from memory. Two
+   red runs before the green selftest — a write that lost the embedded
+   script's tail (the tokenizer reported it 190 lines away; M63-1) and
+   a count assertion against a remembered comment shape (M63-2, the
+   M62-3 class's fourth recurrence) — are disclosed in the lesson, not
+   smoothed.
+
+Ground: entry `corpus/knowledge/windows-displayconfig-r63.md`
+(S424-S434); receipts `.ufo/waves/round-63/` (displayconfig-probe.ps1 +
+dwdc-run1/run2, displayconfig-rawdump, windisplayconfig-selftest 13/13 +
+red-run stderr x2, windisplayconfig-live-run1/run2,
+windisplayconfig-snapshot.json + fromfile, error-path rc=2,
+displayconfig-crosscheck 5/5, dwm-recheck, harmwatch-selftests 55/55 +
+63/63, before-state, census-start + census-after, landing-counters-r63
+with named sections); lesson `corpus/lessons/round-63.md`.

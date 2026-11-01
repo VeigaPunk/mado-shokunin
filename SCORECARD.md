@@ -3279,3 +3279,84 @@ receipts tip `4fe4544`), the single −1 being S400's row line (the used-by
 contract's own consistency move, proposition text untouched; S405 nets to
 zero at the final tip). The proposition-cell half of the harm-watch
 sentence stands as written.
+
+## Round 63 — the DisplayConfig path/target plane, the durable CCD observer, the r62 carry-in corrections (2026-11-01, hyaku run 12)
+
+Axis posture: saturation 9.0 / window N=3, last capability r62, so the
+stagnation nudge does not apply (gap 1 < 3 at round start). At base every
+published scored sub-axis sat at its finite maximum — measured at base:
+navigation 77/77 = 10.0000 and SOURCES 360 rows (receipt
+`before-state-r63.txt`, measured before any edit); carried from the
+published tables: freshness "surface-state audit currency" 8/8 = 10.0000,
+calibration resolved-active 86/86 (last re-derived r56-era; the aggregator's
+underlying counters still emit no contract lines on this host), the
+omarchy-host rubrics dormant with receipts (freshness 9.6552; operability
+gate selftest 360/100 rc=2) — all four disposals plus the L2 floor are the
+open L0 questions (r57/r58/r59/r60 + the standing L2 line), routed around
+again this round, never treated as answered. So no axis is distinctly
+lowest: the same posture as rounds 56 and 58-62, and the round works the
+open ground the r62 closure routed in (the six carry-in drift fixes, C1)
+plus real axis moves on sourced coverage (C2) and operability (C3, a
+capability acquisition). L1-only round again (no dispatch surface on this
+host; disclosed since r57, L0 open). Claims were declared before the formal
+receipt runs (declaration file
+`.ufo/waves/round-63/claims-declaration-r63.md`); no predicate changed
+after scoring. Base `cb442f663ca616c0825ed10beccece26bf920b35`; measured at
+the landing commit (see the report).
+
+| Claim / axis | Before → after | Counting command (runs on THIS host) | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the r62 carry-in corrections: the closure's six routed number-shape drifts (all M62-1 class) in the round's own report records — the total-range mislabel ("34 files +1806/−1" printed against the receipts-tip and final ranges), the "wave receipts +441" figure, the "18 receipt files" count, the "Four commits" prose, the census-range endpoint "161-170" (committed run 2 records 160), and the declaration's S418-S422 spread — dispositioned in ONE `## Corrections (round 63)` block in `corpus/lessons/round-62.md`, each beside its re-derivation command, plus the in-file `## Errata (round 63)` on entry row H22 | base `cb442f66`: the six re-derivations in `before-state-r63.txt` — `4c5435d8→4fe4544` = 35 files +1830/−1, `4c5435d8→bd06d021` = 34 files +1806/−1, `4c5435d8→df415ef3` = 35 files +1860/−1; receipts-only 21 files +359/−0, wave total 23 files +466/−0 (442 at `bd06d021`); 20 receipt files at `19407ef2`; 5 first-parent commits; committed `top_level` values 161/160/168/170 (all-run range 160-170); declaration line 36 reads S418-S422; neither the r62 lesson nor the r62 entry carries a round-63 corrections block → landing: `## Corrections (round 63)` in `corpus/lessons/round-62.md` (six items, one block, every number beside its command) and `## Errata (round 63)` in `corpus/knowledge/windows-dwm-attributes-r62.md` (H22's endpoint superseded in place-file, defect row untouched); the README/SKILL/SCORECARD defect sites keep their original bytes and the round-63 report restates the erratum | anchored block counts: `grep -c '^## Corrections (round 63)' corpus/lessons/round-62.md` → **0**, at landing → **1**; `grep -c '^## Errata (round 63)' corpus/knowledge/windows-dwm-attributes-r62.md` → **0 → 1**; re-derivations re-pasted in the block; preservation: `git show <base>:<file> \| diff - <(head -n <base-lines> <file>)` → **empty, ORIGINAL_PRESERVED** for both (r62 lesson 254 lines, r62 entry 72 lines at base; the show-pipe check is the instrument — the M59-3 rule) | **TARGET_MET** (all six routed defects dispositioned beside preserved defect lines, each with a re-derivation command; one drift in this round's own draft correction block — "255 lines at base" for base 254 — was caught and fixed before landing, the class rule applied to itself) |
+| C2 **coverage** (sourced) — the DisplayConfig (CCD) path/target plane: the active-path query, the path refresh rational, the mode-table join, the documented DPI-virtualization non-participation, and finding D05 (the mode table's undocumented frequency sentinel) | base: knowledge files 77, index rows 77 (77/77 reachable), registry rows 360; no committed entry reads the CCD query surface (r61 holds the GDI mode layer; the r62 D04 route named this plane) → landing: `corpus/knowledge/windows-displayconfig-r63.md` (4 host rows H25-H28 with re-derivation commands — rc 0/rc 0, 1 active path with `DISPLAYCONFIG_PATH_ACTIVE`, refresh **64/1**, mode table [2, 1] = TARGET/SOURCE at the path's indexes; target-mode `activeSize`/`totalSize` 1920x1080 with `pixelRate`/`hSyncFreq`/`vSyncFreq` all the undocumented sentinel **0xFFFFFFFE** in every committed execution — D05, cause `[UNK]`; the CCD 64/1 **agrees with r61's GDI 64 Hz** across two documented OS planes while the DWM timing side stays unobserved, D04 rechecked unchanged), 11 dated `[INF-docs]` rows K44-K54, 4 joins J25-J28 (J26: the refreshRate↔vSyncFreq join lands `unavailable`, the D04 shape at the CCD layer), indexed; registry gains S424-S434 (Microsoft Learn winuser/wingdi, tier A, opened 2026-11-01 in full before any row was written; no reused rows; one locator event inside the sweep — the remembered enum order overruled by the page — mined M63-3) | `ls corpus/knowledge/*.md \| wc -l` → **78** (base 77); `grep -cE '^\| `knowledge/[^`]+\.md`' corpus/README.md` → **78** (base 77); `grep -cE '^[[:space:]]*\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md` → **371** (base 360); entry row count `grep -cE '^\| [HJK][0-9]{2} ' corpus/knowledge/windows-displayconfig-r63.md` → **19** (4 H + 11 K + 4 J; the finding D05 is a Findings bullet); probe re-run `powershell.exe -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File .ufo/waves/round-63/receipts/displayconfig-probe.ps1` → rc=0, `paths=1 refresh 64/1`, runs byte-identical; navigation counter (SCORECARD § Counting command, fleet round 1) at the landing revision with `python` in place of `python3` → `indexed=78/78 … coverage=10.0000/10`, exit 0 | **TARGET_MET** (entry indexed and reachable; sources opened and quoted this round; the claim rests on S424-S434) |
+| C3 **operability** (capability acquisition) — `tools/mado-win-displayconfig.py`, the durable read-only DisplayConfig path/target observer | base: tool absent (`git ls-tree <base> --name-only tools/ \| grep -c win-displayconfig` → 0; ledger population 102) → landing: selftest **13/13** exit 0 (after two disclosed red runs — M63-1 the write that lost the embedded script's tail, caught by the tokenizer 190 lines from the defect; M63-2 the M62-3 class's fourth recurrence, a count assertion against a remembered comment shape, fixed to the implementation's actual site list; named assertions incl. the documented failure return classes as CHECK FAILED, DISPLAYCONFIG_PATH_ACTIVE required, positive refresh rational, mode-index bounds, SOURCE=1/TARGET=2 vocabulary, the sentinel recorded never asserted, static getter-only pins at exact per-site counts); live `MADO_WINDISPLAYCONFIG: CLEAN (paths=1 refresh=64/1 vsync=unavailable(0xfffffffe))` exit 0, two **byte-identical** runs (the CCD topology moves only on a display change — a named, different churn class than the r62 census); `--from-file` re-derives the verdict from the committed snapshot; malformed snapshot → `MADO_WINDISPLAYCONFIG: ERROR` exit 2, raw bytes never echoed; crosscheck **5/5** stable fields AGREE against the independently executed probe (+ verdict structure); the raw-byte dump receipt distinguishes layout error from host fact for D05; no Set*/Change* verb exists in the tool and the documented name getter is deliberately not called; ledger population 102 → **103** | `git ls-tree cb442f66 --name-only tools/ \| grep -c win-displayconfig` → **0**; `python tools/mado-win-displayconfig.py --selftest` → `MADO_WINDISPLAYCONFIG_SELFTEST: 13/13 assertions passed`, exit 0 (receipt `windisplay-selftest.txt` as `windisplayconfig-selftest.txt`; two red runs: the syntax-error run and 12/13 — stderr committed); `python tools/mado-win-displayconfig.py` → `MADO_WINDISPLAYCONFIG: CLEAN …` exit 0 ×2, outputs byte-identical (`cmp`) (receipts `windisplayconfig-live-run1/2.txt`); `python tools/mado-win-displayconfig.py --from-file .ufo/waves/round-63/receipts/windisplayconfig-snapshot.json` → rc=0 (receipt `windisplayconfig-fromfile.txt`); malformed snapshot → `MADO_WINDISPLAYCONFIG: ERROR (stage=parse …)` rc=2 (receipt `windisplayconfig-error-path.txt`); `python .ufo/waves/round-63/receipts/displayconfig-crosscheck.py .` → 5/5 (receipt `windisplayconfig-crosscheck.txt`); `python quality/check-tool-ledger.py --repo . --rev <landing>` → `population=103 ledger_rows=103 … verdict=TARGET_MET` | **TARGET_MET** (capability runs, output verifies, row enters the table below the same round) |
+
+### Capabilities (round 63)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Windows DisplayConfig path/target observer (`tools/mado-win-displayconfig.py`) | observe the CCD active-path query (`GetDisplayConfigBufferSizes` + `QueryDisplayConfig`, QDC_ONLY_ACTIVE_PATHS with `currentTopologyId` NULL — the documented call shapes), the per-path target refresh rational (`DISPLAYCONFIG_PATH_TARGET_INFO.refreshRate` — the second documented refresh getter, agreeing with r61's GDI 64 Hz across planes), the mode-table join (path `modeInfoIdx` → `DISPLAYCONFIG_MODE_INFO` with the documented SOURCE=1/TARGET=2 decode, reading `DISPLAYCONFIG_TARGET_MODE`'s signal structure — activeSize/totalSize sane, the frequency fields' undocumented 0xFFFFFFFE sentinel recorded as `vsync=unavailable`, finding D05), and the path/target/source flag-and-status facts — read-only, one fixed PowerShell child; re-derives from snapshots (`--from-file`); treats documented failure return classes as CHECK FAILED; collects no adapter LUID halves, ids, names or handles (the documented name getter deliberately not called); no Set*/Change* verb | `MADO_WINDISPLAYCONFIG_SELFTEST: 13/13`; `MADO_WINDISPLAYCONFIG: CLEAN (paths=1 refresh=64/1 vsync=unavailable(0xfffffffe))` ×2 byte-identical; crosscheck 5/5 (receipts in `.ufo/waves/round-63/receipts/`); C3 line above | 63 |
+
+Harm watch (at landing): census exit 0 both ends (`mado ok`; start tee'd to
+`census-start-r63.txt`, the r61/r62 committed-receipt shape kept; end receipt
+`census-after-r63.txt`); index 78/78 (navigation counter exit 0); ledger
+population 103/103; used-by counter missing=0 `TARGET_MET` at the landing
+(the M59-4 rule applied proactively — every row the round's appends name —
+S424-S434 — carries the citing paths in its used-by cell at insertion);
+`tools/mado-verify.sh` bytes untouched this round (sha256 prefix
+`050efc720599345a` re-measured — the r59 lesson's recorded identity); both
+fail-closed checkers' selftests stay green at current bytes (55/55, 63/63 —
+receipt `harmwatch-selftests-r63.txt`); the r62 observer's live verdict
+re-measured unchanged (`timing=unavailable(hr=0x88980090)`, receipt
+`dwm-recheck`); the two corrected r62 records (lesson + entry) are pure
+appends — no defect bytes moved; no existing knowledge entry body or
+registry proposition cell changed (the eleven S-rows are new rows with
+their used-by cells written at insertion; everything else appends,
+insertions, or new files). Verdicts are the closure's to rule.
+
+### Planned (round 64; intent only)
+
+1. The five L0 rulings (omarchy freshness disposal; gate-selftest host gap;
+   calibration resolved-active re-derivability; screen-capture scope; the
+   L2 floor) — whichever way they land, the SCORECARD tables follow the
+   ruling, not before.
+2. The rendered-pixel observation, if the screen-capture-scope L0 question
+   is ruled: a statistics-only, no-persist capture probe is the candidate
+   shape; without a ruling the limit stays named, not worked.
+3. D05's residue: a `QDC_VIRTUAL_MODE_AWARE` query shape (one bounded
+   query, S424's flag table) to test whether the sentinel is
+   virtual-mode-path-specific — D05's named flip condition; a second-host
+   or driver-side reading only if the operator scopes one.
+
+### Corrections (round 63)
+
+The r62 records this round corrects sit in THIS file too: the § Round 62
+C2 cell's "cloaked census 14 of 161-170 top-level" and the § Corrections
+(round 62) block's "final landing range numstat is +1806/−1 across 34
+files (base `4c5435d8` → receipts tip `4fe4544`)" are both superseded —
+the committed range is 160-170 (probe run 2 records `top_level` 160) and
+the receipts-tip range is **35 files +1830/−1** (the printed figures equal
+`4c5435d8→bd06d021`; the true final `4c5435d8→df415ef3` is 35 files
++1860/−1). Both defect cells keep their original bytes (append-only); the
+full six-item correction block with re-derivation commands is
+`corpus/lessons/round-62.md` § Corrections (round 63), and the round-63
+report restates the erratum.

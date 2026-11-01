@@ -252,3 +252,67 @@ asserted on the edited line), never on a tail substring. The final
 counters receipt records the full red-amber-green: `TARGET_MISSED` at
 `19407ef2`, `missing=1 extra=1` at `f300b2ce`, and the re-run at this
 round's final revision.
+
+## Corrections (round 63)
+
+The non-author closure routed six number-shape defects in this round's own
+report records — all instances of this round's own M62-1 class (a number
+asserted beside a command that does not re-derive it). All six are
+dispositioned here, append-only, in one block, each beside its
+re-derivation command; every defect site keeps its original bytes
+(ORIGINAL_PRESERVED: this lesson is 254 lines at base
+`cb442f663ca616c0825ed10beccece26bf920b35`, base bytes untouched above
+this block; the fleet-root report file is not lane-edited — the round-63
+report restates the erratum).
+
+1. **Total-range mislabel** (report § Landed changes; repeated in the
+   SCORECARD § Corrections (round 62) block, the LOG round-62 amendment
+   bullet, and the `df415ef3` commit subject): "base `4c5435d8` →
+   receipts tip `4fe4544`: 34 files, +1806/−1". Superseded by:
+   `git diff-tree -r --numstat 4c5435d8 4fe4544 | awk '{a+=$1; d+=$2;
+   n++} END {print n" files "a" added "d" deleted"}'` → **35 files
+   +1830/−1**; the printed figures equal the range
+   `4c5435d8→bd06d021` (34 files, +1806/−1 — same command, different
+   tip); the true final range `4c5435d8→df415ef3` is **35 files
+   +1860/−1** (the receipts commit's +24 and the amendment commit's +54
+   were excluded from the printed figure).
+2. **"wave receipts +441/−0"** (report per-file list). Superseded by:
+   receipts-only `git diff-tree -r --numstat 4c5435d8 4fe4544 --
+   .ufo/waves/round-62/receipts | awk …` → **21 files +359/−0**; the
+   wave total (incl. the wave-root before-state and claims-declaration)
+   → **23 files +466/−0** at `4fe4544` and **22 files +442/−0** at
+   `bd06d021`; 441 matches neither shape.
+3. **"18 receipt files"** (report landing row). Superseded by:
+   `git ls-tree --name-only 19407ef2:.ufo/waves/round-62/receipts | wc
+   -l` → **20** (the wave dir holds 22 files including the two wave-root
+   records).
+4. **"Four commits"** (report prose) beside its own five-row table.
+   Superseded by: `git rev-list --first-parent --count 4c5435d8..df415ef3`
+   → **5** (`19407ef2`, `f300b2ce`, `bd06d021`, `4fe4544`, `df415ef3`).
+5. **Census-range endpoint "161-170 top-level in every committed
+   execution"** (entry H22; report C2 bullet; README index row and
+   frontier bullet "~165"; SKILL § Round 62 item 1; SCORECARD round-62
+   C2 cell). Superseded by: committed probe run 2 records
+   `"top_level":160` — the all-run committed range is **160-170**
+   (`grep -o '"top_level":[0-9]*'
+   .ufo/waves/round-62/receipts/dwm-run1.txt
+   .ufo/waves/round-62/receipts/dwm-run2.txt` → 161, 160; the live-tool
+   runs add 168 and 170). The load-bearing invariants (14 cloaked,
+   13 visible, reasons 7 app + 7 shell + 0 inherited, `attr_failed` 0)
+   hold in every committed execution including run 2. The entry file
+   carries the in-file erratum (`## Errata (round 63)` in
+   `corpus/knowledge/windows-dwm-attributes-r62.md`, defect row untouched).
+6. **Declaration spread** (nit, noted for the record): the claims
+   declaration names source rows S418-S422 (line 36 of
+   `.ufo/waves/round-62/claims-declaration-r62.md`); the landing carries
+   S418-S423 (S423 GetWindowRect, the documented side of the
+   already-declared frame-bounds join). No predicate changed after
+   scoring; no correction block is filed in the wave record (it is the
+   round's own declaration file, kept byte-exact as the
+   declared-before-measured evidence); this item records the spread.
+
+Carried rule (SKILL § Round 62 rule 3, applied to this round's own
+records as the closure directed): a number asserted without its counting
+command is the defect, whatever surface it sits on — and the surface list
+now includes the prior round's corrections blocks and amendment bullets,
+not only its landing tables.

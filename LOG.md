@@ -2918,3 +2918,99 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   `landing-counters-r62.txt` and the lesson Addendum/Addendum 2;
   S405's mis-aimed extension nets to zero at the final tip). The
   proposition-cell half of the sentence stands as written.
+
+## Round 63 (2026-11-01, hyaku run 12) — the DisplayConfig path/target plane, the durable CCD observer, the r62 carry-in corrections
+
+- Base `cb442f663ca616c0825ed10beccece26bf920b35` (the r62 verifier
+  spot-check). Claims declared before the formal receipt runs:
+  `.ufo/waves/round-63/claims-declaration-r63.md`. Axis posture unchanged
+  (saturation 9.0 / N=3, last capability r62, gap 1 < 3; every published
+  scored sub-axis at its finite maximum at base — before-state-r63.txt:
+  navigation 77/77, SOURCES 360, ledger 102/102 TARGET_MET); the four
+  dormant-rubric L0 questions plus the standing L2-floor line routed
+  around again, never treated as answered. L1-only round (no dispatch
+  surface on this host; disclosed since r57).
+- C1 **calibration** — the r62 carry-in corrections, append-only: ONE
+  `## Corrections (round 63)` block in `corpus/lessons/round-62.md`
+  dispositioning all six closure-routed drifts (total-range mislabel →
+  35 files +1830/−1 at the receipts tip / 34 files +1806/−1 only at
+  `bd06d021` / 35 files +1860/−1 final; "wave receipts +441" → 21 files
+  +359 receipts-only, 23 files +466 wave total; "18 receipt files" → 20;
+  "Four commits" → 5; census endpoint "161-170" → committed all-run range
+  160-170 with probe run 2's `top_level` 160; declaration S418-S422 vs
+  landed S418-S423 noted), each beside its re-derivation command, plus
+  the in-file `## Errata (round 63)` on entry row H22 in
+  `corpus/knowledge/windows-dwm-attributes-r62.md` (defect row
+  untouched). ORIGINAL_PRESERVED both files (r62 lesson 254 lines, r62
+  entry 72 lines at base; show-pipe diff empty). One drift in this
+  round's own draft block — "255 lines at base" against base 254 —
+  caught and fixed before landing: the class rule applies to itself.
+- C2 **coverage** (sourced) — the DisplayConfig (CCD) path/target plane:
+  `corpus/knowledge/windows-displayconfig-r63.md` (H25-H28 with
+  re-derivation commands, K44-K54 dated `[INF-docs]`, J25-J28, finding
+  D05 — the mode table's `pixelRate`/`hSyncFreq`/`vSyncFreq` read the
+  undocumented sentinel 0xFFFFFFFE in every committed execution beside a
+  sane 1920x1080 `activeSize`, while the path-side `refreshRate` reads
+  **64/1**, agreeing with r61's GDI 64 Hz across two documented OS
+  planes; the DWM timing side rechecked unchanged this round:
+  `MADO_WINDWM: CLEAN (composition=on reasons=app+shell
+  timing=unavailable(hr=0x88980090))` — D04 stands). Registry S424-S434
+  (tier A, `mined`, opened in full before any row was written; 11
+  identified / 11 screened / 11 included / 0 excluded; one locator event
+  — the remembered enum order overruled by the opened page — mined
+  M63-3; no 404 event). Limits restated: no rendered pixel, no names or
+  ids (the documented name getter deliberately not called), enum
+  integers only, source-mode union not decoded, no Set*/Change* verb.
+- C3 **operability** (capability): `tools/mado-win-displayconfig.py`
+  (`VERSION r63-v1`) — the durable form. Selftest **13/13** exit 0 after
+  two disclosed red runs (M63-1: the first on-disk write lost the
+  embedded script's two-line tail — invocation + closing triple-quote —
+  and the tokenizer reported it 190 lines away as an "invalid character"
+  inside an ordinary docstring; the odd triple-quote count was the
+  diagnosis; M63-2: the M62-3 class's fourth recurrence, a count
+  assertion `intptr.zero == 2` written against a remembered comment
+  shape, actual sites 1, fixed to the implementation with its site
+  list); live `MADO_WINDISPLAYCONFIG: CLEAN (paths=1 refresh=64/1
+  vsync=unavailable(0xfffffffe))` twice, **outputs byte-identical** rc=0
+  (the CCD topology moves only on a display change — a named, different
+  churn class than the r62 census); `--from-file` re-derives from the
+  committed snapshot (rc=0); malformed snapshot →
+  `MADO_WINDISPLAYCONFIG: ERROR (stage=parse …)` rc=2, raw bytes never
+  echoed; crosscheck **5/5** stable fields AGREE against the
+  independently executed probe (+ verdict structure); the raw-byte dump
+  receipt (`displayconfig-rawdump.txt`) distinguishes layout error from
+  host fact for D05 (documented offsets carry `FE-FF-FF-FF` while
+  `activeSize` carries 1920/1080); no Set*/Change* verb exists in the
+  tool. Tool ledger population 102 → 103 (ledger row + PROVINCE
+  round-63 refinement landed in the same round).
+- Harm watch / disclosure: census exit 0 both ends (start tee'd to
+  `census-start-r63.txt` — the r61/r62 committed-receipt shape kept; end
+  receipt `census-after-r63.txt`); navigation counter at the landing
+  revision expected 78/78 exit 0; used-by counter at the landing expected
+  missing=0 `TARGET_MET` (the M59-4 rule applied proactively: every row
+  this round's appends name — S424-S434 — carries the citing paths in
+  its used-by cell at insertion); `tools/mado-verify.sh` bytes untouched
+  this round (sha256 prefix `050efc720599345a` re-measured); both
+  fail-closed checkers' selftests stay green at current bytes (55/55,
+  63/63 — receipt `harmwatch-selftests-r63.txt`); the two corrected r62
+  records are pure appends; no existing knowledge entry body or registry
+  proposition cell changed (the eleven S-rows are new rows with their
+  cells written at insertion; everything else appends, insertions, or
+  new files). Receipt defect disclosed before commit: the first
+  before-state draft ran the harmwatch selftests without the
+  caller-declared `--scratch-root` and mis-grepped the live-run JSON
+  spacing — both re-derived in the receipt (QUALITY 26).
+- L2 disclosure: unchanged since r57 — no AgentSwarm dispatch surface on
+  this host; L1-only round. Sources: 360 → 371 rows (S424-S434, tier A,
+  `mined`, opened 2026-11-01 in full; one bounded sweep, no rejected-row
+  event; one locator event recorded in the search log and mined M63-3).
+  Considerthese mined: none adoptable (nine files re-screened 2026-11-01;
+  nothing new since the r58 mining). Assimilation: none — shokuknow
+  unreachable. Mined M63-1..M63-3 in `corpus/lessons/round-63.md` (M63-1:
+  the write-tail truncation the tokenizer reported 190 lines from the
+  defect — the selftest is the first reader of every new tool byte;
+  M63-2: the static-count-assertion class's fourth recurrence — counts
+  are written from the implementation's bytes, never from memory;
+  M63-3: an enum's values remembered in the wrong order, caught by the
+  open-before-write sweep before any code or row was written — enumerated
+  values come from the opened page).

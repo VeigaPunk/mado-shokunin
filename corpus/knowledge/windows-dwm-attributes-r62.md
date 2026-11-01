@@ -70,3 +70,23 @@ measurement.
   sentence here is documentation-layer (`[INF-docs]`), never a host fact.
 - No Set*/Move*/Change* verb exists in the probe or the tool; cloaking and
   attribute writes stay operator-owned.
+
+## Errata (round 63)
+
+- Row **H22**'s census-range endpoint is superseded: the row reads
+  "161-170 top-level windows across five executions" (and its evidence
+  cell names the churn receipt's 168→170), but the committed probe run 2
+  records `"top_level":160`, so the all-run committed range is
+  **160-170**, not 161-170. The load-bearing invariants the row asserts
+  (13 visible every time, 14 cloaked every time, reasons 7 app + 7 shell
+  + 0 inherited in every execution, `attr_failed` 0 in every execution,
+  counts never per-window rows) hold in every committed execution
+  including run 2 and are unchanged. Re-derivation:
+  `grep -o '"top_level":[0-9]*' .ufo/waves/round-62/receipts/dwm-run1.txt .ufo/waves/round-62/receipts/dwm-run2.txt`
+  → 161, 160 (and the live-tool runs' `top_level` 168/170 complete the
+  committed set). The same superseded figure sits in the round-62 records
+  (README index row and frontier bullet "~165", SKILL § Round 62 item 1,
+  the SCORECARD round-62 C2 cell, and the fleet-root report — not
+  lane-edited); the full six-item correction record with re-derivation
+  commands is `corpus/lessons/round-62.md` § Corrections (round 63).
+  Defect bytes above stay untouched (append-only).
