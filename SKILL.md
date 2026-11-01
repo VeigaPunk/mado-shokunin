@@ -2363,3 +2363,47 @@ verdict is not read on that path (exit 1 with empty stdout only where an unset `
 `corpus/lessons/round-47.md` M47-11). Ground:
 `corpus/knowledge/xdg-terminal-selection-r47.md` (rows S326..) (the warm path is the round-48 tool contract, no new rows); locators
 in `.ufo/waves/round-48/w1/ScrSkill/receipts/resolver-cache-locators.txt`.
+## Round 57 — host change: the omarchy plane is absent, the Windows desktop is the live plane (append-only, dated 2026-10-31)
+
+The lane's live host changed after round 56: this round observes a **Windows 11 Home host, build
+26200** (`HOME=/c/Users/jpvei`, `MINGW64_NT-10.0-26200`). Every Linux/compositor surface the
+sections above describe is **absent on this host** — `command -v` finds none of `hyprctl waybar
+walker hypridle hyprlock hyprsunset mako swayosd grim slurp omarchy` (11/11 absent), and none of the
+ten declared config/doc trees exists under `$HOME` (10/10 absent; full probes in `PROVINCE.md`
+"Round-57 host-change record"). Rules that survive the move unchanged:
+
+1. **Every present-tense sentence above is host-scoped to the omarchy host and is frozen as of the
+   2026-10-28 host state** — it is a record of that host, not a claim about this one. Quote a
+   section's date before relying on it; do not re-derive an omarchy-host number here.
+2. `bash tools/mado-verify.sh` runs on this host only as an absence detector: `--no-live` reads
+   `MADO_VERIFY: DIVERGED (17 fail, 7 unknown, 2 pass)` with first fail `hypr.file.root` (missing
+   `~/.config/hypr/hyprland.conf`) because the planes it guards are gone — that verdict means "the
+   omarchy plane is absent here", not "a config regressed". The published freshness sub-axis
+   "file-plane gate agreement" is therefore not re-derivable on this host (SCORECARD round 57
+   records the re-baseline; an L0 question asks the operator to rule on the old rubric's disposal).
+3. **The live plane here is the Windows desktop, read-only**: window-manager state (census of
+   processes with a main window, foreground process), DPI facts (`AppliedDPI`, observed 96 with two
+   independent registry-read layers agreeing), and compositor state (`DwmIsCompositionEnabled`,
+   observed TRUE). Instrument: `python tools/mado-win-desk.py` (selftest / live / `--from-file`);
+   it spawns one read-only PowerShell child, prints whitelisted fields only, and never prints
+   window titles, clipboard, environment values or file contents. `python` is the interpreter name
+   on this host (`python3` is absent; Python 3.13.15).
+4. **No mutating verb exists for this plane in the lane.** Registry writes, setting changes and
+   process operations stay operator-owned; the lane's `Set-*`, `reg add`, `taskkill` class is
+   refused the same way `hyprctl keyword` was.
+5. **Secret-material rule carried and tightened (round-56 M56-17):** an env channel may be asserted
+   to exist; its values are never printed, copied or excerpted — and no r56-era credential material
+   is surfaced by any round-57 artifact. Window titles are excluded from every output for the same
+   reason (they can carry secret material).
+6. Commands in the sections above are quoted with their original names (`python3 -I`, `bash`,
+   `hyprctl`, …). On this host only the ones whose whole surface exists here can run: the
+   `--selftest` modes of the pure-Python record instruments run unchanged; anything reaching a
+   `hyprctl`/config-tree object reports its absence instead of a value.
+
+Ground: `PROVINCE.md` round-57 record + surface state register (8 groups, dated probes);
+`corpus/knowledge/windows-desktop-plane-r57.md` (sourced entry, rows S398-S401);
+receipts: gate `--no-live` DIVERGED transcript (round-57 report), tool selftest 9/9, live
+`MADO_WINDESK: CLEAN (screens=1 dpi=96 dwm=on …)`, cross-check 5/5 stable fields AGREE
+(`scratch/mado-r57/receipts/`, receipts quoted in the round-57 report; scratch is ephemeral —
+the committed copies live in `corpus/knowledge/windows-desktop-plane-r57.md` § Verify and the
+report).
