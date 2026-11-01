@@ -3040,3 +3040,89 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   verified at its own path). The counters receipts at `c9a70974` /
   `cdacf215` are unaffected (they recorded git-object runs at those shas,
   which exist unchanged).
+
+## Round 64 (2026-11-01, hyaku run 12) — the r63 carry-in repair, the D05 flip-condition probe, the citation checker capability
+
+- Base `7fe65562c15d20e5cfdc1da536f774149ab52b7e` (the r63 closure tip,
+  pushed). Claims declared before the formal receipt runs:
+  `.ufo/waves/round-64/claims-declaration-r64.md`. Axis posture unchanged
+  (saturation 9.0 / N=3, last capability r63, gap 1 < 3; every published
+  scored sub-axis at its finite maximum at base — `before-state-r64.txt`,
+  every producer's rc captured: navigation 78/78 = 10.0000, used-by
+  missing=0 TARGET_MET, ledger population=103 TARGET_MET, registry 371
+  rows, mado-verify.sh sha prefix `050efc720599345a`); the four
+  dormant-rubric L0 questions plus the standing L2-floor line routed around
+  again, never treated as answered. L1-only round (no dispatch surface on
+  this host; disclosed since r57).
+- C1 **calibration** — the r63 carry-in repair (the closure's routed item
+  1): the r63 error-path receipt cited its input fixture
+  `.ufo/waves/round-63/receipts/broken-fixture.json`, which never landed.
+  The fixture is now committed at the cited path — disclosed everywhere it
+  is claimed as the round-64 re-creation (a truncated JSON snapshot; the
+  r63 original's bytes were ephemeral and are unrecoverable, and the r63
+  receipt remains the record of the r63 run) — and the verdict is
+  re-derived against committed bytes: rc=2,
+  `MADO_WINDISPLAYCONFIG: ERROR (stage=parse detail=JSONDecodeError in
+  snapshot .ufo/waves/round-63/receipts/broken-fixture.json)` — the same
+  whitelisted detail line as the r63 receipt, raw bytes never echoed
+  (`windisplayconfig-errorpath-r64.txt` + stderr). Before 0 → after 1 by
+  the ls-tree count; the citation now resolves.
+- C2 **coverage** (sourced) — the D05 flip-condition probe the r63 closure
+  named as the r64 candidate: S424 re-opened this round (page unchanged:
+  ms.date 2018-12-05, git_commit `39f250c30f4e46de1ef92f2ef07161753ba36e35`,
+  updated_at 2026-05-15; the flags table pins QDC_VIRTUAL_MODE_AWARE 0x10
+  Windows 10+ and QDC_VIRTUAL_REFRESH_RATE_AWARE 0x40 Windows 11+; the
+  page's own example code is the 0x12 shape), then one bounded read-only
+  probe (`.ufo/waves/round-64/receipts/qdc-flagmatrix-probe.ps1`; getters
+  only; whitelist unchanged — counts, rationals, flags, enum integers; no
+  ids, no LUID halves, no names) ran the four documented shapes 0x02 / 0x12
+  / 0x42 / 0x52 twice, byte-identical (`qdc-matrix-run1/2.json`). Measured:
+  the virtual-refresh shape is the r63 baseline verbatim — same table,
+  same 0xFFFFFFFE sentinel (H29); the virtual-mode shapes grow the mode
+  table by a DESKTOP_IMAGE entry (infoType 3, the documented K51
+  vocabulary), set the documented SUPPORT_VIRTUAL_MODE path flag 0x8
+  (K46), and move the path's target `modeInfoIdx` 0 → 2 onto that
+  non-TARGET entry, where the decode guard (infoType == 2) emits null —
+  the r63 rejected-row discipline kept (H30). Disposition: D05 **narrowed,
+  not flipped** — no documented shape returns decoded frequencies, the
+  cause stays `[UNK]`, and the remaining residue is the driver-class /
+  second-host reading, operator-scoped (H31); D05's original bytes
+  untouched. The entry gains the append-only `## Update (round 64)`
+  sections (rows H29-H31 + J29; 19 → 23 row sites); the 0x02 leg
+  crosschecks 19/19 stable fields AGREE against the r63 committed snapshot
+  (`qdc-matrix-crosscheck.py` + receipt); the r63 observer re-run CLEAN at
+  r64 (`windisplayconfig-recheck-r64.txt`).
+- C3 **operability** (capability acquisition) —
+  `tools/mado-receipt-citecheck.py`: the r63 closure's routed defect class
+  (a receipt citing a committed-looking path that never landed) mechanized
+  as a read-only checker — strict anchored file-path-citation grammar
+  (bare-directory, rev-prefixed, absolute and URL forms are not
+  citations), one `git ls-tree -r --name-only` child per run, MISSING
+  citations named with their citing files, 4 MiB read cap, hermetic
+  12-assertion `--selftest` under a caller-declared `--scratch-root` that
+  spawns nothing; caller-named scan scope only, never run over r56-era
+  material (the security boundary). Red demonstration at the base rev:
+  the checker over the r63 receipts at `7fe65562` names exactly the routed
+  citation MISSING (`missing=1 … TARGET_MISSED` rc=1,
+  `citecheck-red-base-rev.txt`); green at the landing (landing counters).
+  Ledger row + PROVINCE round-64 refinement landed the same round;
+  ledger population 103 → 104.
+- Harm watch / disclosure: census exit 0 both ends (start tee'd to
+  `census-start-r64.txt`; end receipt `census-after-r64.txt`); navigation
+  78/78 exit 0 at the landing; used-by missing=0 TARGET_MET at the landing
+  (registry untouched at 371 — no rows added or edited); ledger 104/104;
+  `tools/mado-verify.sh` bytes untouched (sha prefix `050efc720599345a`);
+  both fail-closed checkers' selftests green (55/55, 63/63) with the
+  caller-declared `--scratch-root`; r62/r63 observers' verdicts re-measured
+  unchanged (`dwm-recheck-r64.txt` — D04 stands; displayconfig recheck —
+  the D05 baseline); every record edit an append (head-diff prefix checks
+  in the landing counters receipt); the two work-window write defects
+  (M64-1 quoting, M64-2 truncated long-heredoc — SCORECARD restored
+  byte-exact from the base git object) disclosed in
+  `corpus/lessons/round-64.md`. Sources: 371 → 371 rows (no new URL entered
+  the sweep — the r64 probe's entire documented surface is the r63-opened
+  row set; S424 re-opened, recorded in the lesson Gate); no new census W04.
+  Considerthese mined: none adoptable (nine files re-screened 2026-11-01;
+  directory listing + mtimes unchanged since the r63 screen). Assimilation:
+  none — shokuknow unreachable. L2 disclosure: unchanged since r57. Mined
+  M64-1..M64-2 in `corpus/lessons/round-64.md`.

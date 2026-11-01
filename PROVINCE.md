@@ -239,3 +239,19 @@ host writes into the target mode's frequency fields as `vsync=unavailable(0xffff
 at (entry finding D05, cause `[UNK]`). It collects no window titles, no process names, no window handles, never
 echoes raw child output, writes no file, opens no socket and mutates nothing: no Set*/Change* verb exists in it,
 and topology, mode and refresh changes stay operator-owned (SKILL § Round 57 rule 4 carried).
+
+**Round-64 refinement (append-only; one read-only tool; no new write surface):** `tools/mado-receipt-citecheck.py`
+audits the lane's own record hygiene read-only — it extracts repo-relative committed file-path citations from
+caller-named artifacts (strict anchored grammar: the token must start with a lane top — `.ufo/ corpus/ tools/
+quality/ plans/` — at a token boundary, and its last segment must carry an extension; bare-directory tokens,
+rev-prefixed `rev:path` forms, absolute host paths and URLs are not citations) and verifies every extracted path
+resolves in the git tree at `--rev`, using exactly one `git ls-tree -r --name-only <rev>` child per run. MISSING
+citations are named with their citing files, never silently skipped; files over a 4 MiB read cap are skipped and
+counted. `--selftest` (12 assertions) is hermetic: pure functions over in-memory fixtures plus a private temp
+tree under the caller-declared `--scratch-root` (M57-1 policy; `/tmp` refused), removed at exit; it spawns
+nothing. The tool writes nothing, opens no socket and mutates nothing; its scan scope is the paths the caller
+names, and it is never run over r56-era material (the standing security boundary). First working demonstration
+(round 64): the red run at the r63 base rev reports exactly the closure's routed citation
+(`.ufo/waves/round-63/receipts/broken-fixture.json`, from `windisplayconfig-error-path.txt`) MISSING with
+`TARGET_MISSED` rc=1, and the landing-state run reports `TARGET_MET` after the fixture landed — the ephemeral-
+fixture class the r63 closure routed by hand is now a standing one-command check.

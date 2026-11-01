@@ -3373,3 +3373,82 @@ extra=0` at the repair `cdacf215`. The red-green is recorded in
 `landing-counters-r63.txt` (named sections) and lesson Addendum; the
 `cdacf215` commit message discloses the repair. The M59-4 half of the
 harm-watch sentence stands as written.
+
+## Round 64 — the r63 carry-in repair, the D05 flip-condition probe, the citation checker capability (2026-11-01, hyaku run 12)
+
+Axis posture: saturation 9.0 / window N=3, last capability r63, so the
+stagnation nudge does not apply (gap 1 < 3 at round start). At base every
+published scored sub-axis sat at its finite maximum — measured at base
+(receipt `before-state-r64.txt`, every producer's rc captured): navigation
+78/78 = 10.0000, used-by missing=0 TARGET_MET, ledger population=103
+TARGET_MET, mado-verify.sh sha prefix `050efc720599345a`, registry 371
+rows; carried from the published tables: freshness "surface-state audit
+currency" 8/8 = 10.0000, calibration resolved-active 86/86 (published
+r56-era; the aggregator's underlying counters still emit no contract lines
+on this host), the omarchy-host rubrics dormant with receipts (freshness
+9.6552; operability gate selftest 360/100 rc=2) — all four disposals plus
+the L2 floor are the open L0 questions (r57/r58/r59/r60 + the standing L2
+line), routed around again this round, never treated as answered. So no
+axis is distinctly lowest: the same posture as rounds 56 and 58-63, and the
+round works the closure's routed carry-in (C1) plus real axis moves on
+sourced coverage (C2, the D05 flip condition the r63 closure named as the
+r64 candidate) and operability (C3, a capability acquisition that mechanizes
+the routed defect class). L1-only round again (no dispatch surface on this
+host; disclosed since r57, L0 open). Claims were declared before the formal
+receipt runs (declaration file
+`.ufo/waves/round-64/claims-declaration-r64.md`); no predicate changed
+after scoring. Base `7fe65562c15d20e5cfdc1da536f774149ab52b7e`; measured at
+the landing commit (see the report).
+
+| Claim / axis | Before → after | Counting command (runs on THIS host) | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the r63 carry-in repair (the closure's routed item 1): the r63 error-path receipt cited its input fixture `…receipts/broken-fixture.json`, which never landed (ephemeral). Round 64 commits a fixture at the cited path — disclosed in the entry's Update section and the lesson as the round-64 re-creation (the r63 original's bytes are unrecoverable; the r63 receipt stays the record of the r63 run) — and re-derives the verdict against the committed bytes: `MADO_WINDISPLAYCONFIG: ERROR (stage=parse detail=JSONDecodeError in snapshot .ufo/waves/round-63/receipts/broken-fixture.json)` rc=2, the same whitelisted detail line as the r63 receipt, raw bytes never echoed | base `7fe65562`: `git ls-tree 7fe65562c15d20e5cfdc1da536f774149ab52b7e --name-only -- .ufo/waves/round-63/receipts/broken-fixture.json \| wc -l` → **0**; the r63 receipt's citation names the path with no committed fixture behind it (r63 spot-check §6.1; before-state receipt) → landing: the same command at the landing rev → **1**; the re-derivation receipt `windisplayconfig-errorpath-r64.txt` (rc=2) beside its stderr; the citation now resolves to committed bytes | before: `git ls-tree <base> --name-only -- .ufo/waves/round-63/receipts/broken-fixture.json \| wc -l` → 0; after: same at the landing → 1; verdict re-derivation: `python tools/mado-win-displayconfig.py --from-file .ufo/waves/round-63/receipts/broken-fixture.json` → rc=2, stdout tee'd to `.ufo/waves/round-64/receipts/windisplayconfig-errorpath-r64.txt` | **TARGET_MET** (the routed citation resolves; the re-creation disclosure is on record in the entry, lesson, LOG and this file) |
+| C2 **coverage** (sourced) — the D05 flip-condition probe: one bounded read-only probe runs the QDC flag matrix (0x02 baseline / 0x12 / 0x42 / 0x52) off S424's flags table, re-opened this round (page unchanged: git_commit `39f250c3…`, updated_at 2026-05-15; the page's own example is the 0x12 shape). Measured: the virtual-refresh shape returns the identical table and identical 0xFFFFFFFE sentinel (H29); the virtual-mode shapes grow the mode table by a DESKTOP_IMAGE entry (infoType 3, the documented K51 vocabulary), set the documented SUPPORT_VIRTUAL_MODE path flag 0x8 (K46), and move the path's target `modeInfoIdx` 0 → 2 onto that non-TARGET entry (H30, decode guard emits null — the r63 rejected-row discipline kept). D05: **narrowed, not flipped** — no documented shape returns decoded frequencies, cause stays `[UNK]`, remaining residue is the driver-class / second-host reading, operator-scoped (H31); D05's original bytes untouched | base: entry rows 19, `## Update (round 64)` sections 0, probe absent (before-state receipt) → landing: entry gains the Update section with rows H29-H31 + J29 (rows 19 → **23**), the probe + two byte-identical run receipts + the 19/19-AGREE crosscheck + the dwm/displayconfig recheck receipts committed; the 0x02 leg agrees with the r63 committed snapshot on all 19 stable fields | `grep -cE '^\| [HJK][0-9]{2} ' corpus/knowledge/windows-displayconfig-r63.md` → **19** at base (git-show form in the before-state receipt), **23** at landing; `grep -c '^## Update (round 64)' corpus/knowledge/windows-displayconfig-r63.md` → **0 → 2**; probe determinism: `cmp .ufo/waves/round-64/receipts/qdc-matrix-run1.json .ufo/waves/round-64/receipts/qdc-matrix-run2.json` → identical (rc 0 ×2); crosscheck: `python -I .ufo/waves/round-64/receipts/qdc-matrix-crosscheck.py .` → **19/19 stable fields AGREE**, exit 0 | **TARGET_MET** (the flip condition the r63 closure named is measured on this host with committed receipts; the claim rests on S424, opened/re-opened this round) |
+| C3 **operability** (capability acquisition) — `tools/mado-receipt-citecheck.py`, the read-only citation-resolvability checker that mechanizes the routed defect class: strict anchored file-path-citation grammar (bare-directory, rev-prefixed, absolute and URL forms are not citations), one `git ls-tree -r --name-only` child per run, MISSING citations named with their citing files, 4 MiB read cap, hermetic `--selftest` under a caller-declared `--scratch-root` that spawns nothing; caller-named scan scope only, never run over r56-era material (the security boundary) | base: tool absent, ledger population 103 (before-state receipt) → landing: selftest **12/12** exit 0 — the formal receipt run at the final bytes; the grammar gained its bare-directory clause after the first draft's 11-assertion run (the draft never left the work window; the clause exists because the green landing run would otherwise false-MISS on cmd-line directory tokens, and the draft run is disclosed here, not smoothed); the **red demonstration at the base rev**: the checker run over the r63 receipts at `7fe65562` names exactly the routed citation MISSING (`missing=1 … TARGET_MISSED` rc=1, receipt `citecheck-red-base-rev.txt`) — the class caught by instrument, not by hand; ledger row lands (population 103 → **104**); the PROVINCE round-64 refinement lands in the same round; the landing-state green run is in the landing counters receipt | `git ls-tree <rev> --name-only tools/ \| grep -c citecheck` → **0** at base, **1** at landing; `python tools/mado-receipt-citecheck.py --selftest --scratch-root <scratch>` → `MADO_CITECHECK_SELFTEST: 12/12 assertions passed`, exit 0 (receipt `citecheck-selftest.txt`); red: `python -I tools/mado-receipt-citecheck.py --repo . --rev 7fe65562… --paths .ufo/waves/round-63/receipts` → `MADO_CITECHECK: … citations=9 resolved=8 missing=1 … verdict=TARGET_MISSED` rc=1; `python quality/check-tool-ledger.py --repo . --rev <landing>` → `population=104 … TARGET_MET` | **TARGET_MET** (capability runs, output verifies, row enters the table below the same round) |
+
+### Capabilities (round 64)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Receipt citation checker (`tools/mado-receipt-citecheck.py`) | verify, in one command, that every repo-relative committed file-path citation inside caller-named receipt/record artifacts resolves in the git tree at a named revision (one `git ls-tree -r` child; MISSING named with citing files; strict anchored file-suffix grammar that ignores rev-prefixed, absolute, URL and bare-directory forms; 4 MiB cap; hermetic 12-assertion selftest, spawns nothing; scan scope caller-named, never r56-era material) — demonstrated red (`missing=1 TARGET_MISSED` on the r63 receipts at the r63 base rev, the routed ephemeral-fixture citation) and green at the landing | `MADO_CITECHECK_SELFTEST: 12/12`; `citecheck-red-base-rev.txt`; landing counters receipt; C3 line above | 64 |
+
+Harm watch (at landing): census exit 0 both ends (start tee'd to
+`census-start-r64.txt`, the r61-r63 committed-receipt shape kept; end receipt
+`census-after-r64.txt`); index 78/78 (navigation counter exit 0 — no new
+knowledge file this round, the entry is an append); ledger population 104/104;
+used-by counter missing=0 `TARGET_MET` at the landing (no registry rows were
+added or edited this round — 371 rows unchanged, so the M59-4 rule is
+trivially satisfied and the counter re-run confirms); `tools/mado-verify.sh`
+bytes untouched this round (sha256 prefix `050efc720599345a` re-measured in
+the before-state receipt); both fail-closed checkers' selftests stay green
+(55/55, 63/63 — before-state receipt, with the caller-declared
+`--scratch-root` the M57-1 policy requires); the r62 and r63 observers' live
+verdicts re-measured unchanged (`dwm-recheck-r64.txt`:
+`timing=unavailable(hr=0x88980090)` — D04 stands;
+`windisplayconfig-recheck-r64.txt`: CLEAN 64/1 sentinel 0xfffffffe — the D05
+baseline at r64); the prior tools' bytes are untouched this round (the new
+tool is a new file); every record edit this round is an append (the entry's
+original 105 lines, PROVINCE, tool-ledger, LOG, SCORECARD are byte-preserved
+prefixes — head-diff checks in the landing counters receipt); no registry
+proposition cell changed (registry untouched at 371). Two work-window write
+defects are disclosed in the lesson (M64-1, M64-2 — one in the before-state
+script's quoting, one the long-heredoc truncation this section's first
+append attempt suffered and the tail read-back caught; SCORECARD was
+restored byte-exact from the base git object before this section landed).
+Verdicts are the closure's to rule.
+
+### Planned (round 65; intent only)
+
+1. The five L0 rulings (omarchy freshness disposal; gate-selftest host gap;
+   calibration resolved-active re-derivability; screen-capture scope; the
+   L2 floor) — whichever way they land, the SCORECARD tables follow the
+   ruling, not before.
+2. The rendered-pixel observation, if the screen-capture-scope L0 question
+   is ruled (the statistics-only, no-persist candidate shape stands).
+3. D05's remaining residue: the driver-class / second-host reading only if
+   the operator scopes a second host or a driver-side probe; lane-side, the
+   flag matrix is complete (both documented virtual flags measured), so no
+   further query shape is claimable without a ruling.
+4. The citecheck's standing use: a landing-counters scan of the round's own
+   receipt trees each round (the green leg beside navigation/used-by/ledger),
+   so citation-resolvability is checked before every closure.

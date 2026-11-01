@@ -103,3 +103,52 @@ python tools/mado-win-displayconfig.py --from-file .ufo/waves/round-63/receipts/
 # crosscheck: independently executed probe vs tool, 5 stable fields
 python .ufo/waves/round-63/receipts/displayconfig-crosscheck.py .
 ```
+
+## Update (round 64) — the D05 flip-condition probe: the QDC flag matrix
+
+Appended 2026-11-01 (round 64, append-only; every row above keeps its original bytes).
+Finding D05 named its flip condition: "whether a `QDC_VIRTUAL_MODE_AWARE` query fills
+the fields differently". S424 was re-opened this round (page unchanged since the r63
+open: ms.date 2018-12-05, git_commit 39f250c30f4e46de1ef92f2ef07161753ba36e35,
+updated_at 2026-05-15) and its flags table pins the two virtual flags:
+`QDC_VIRTUAL_MODE_AWARE` 0x10 (Windows 10+) and `QDC_VIRTUAL_REFRESH_RATE_AWARE` 0x40
+(Windows 11+); the page's own example code is the
+`QDC_ONLY_ACTIVE_PATHS | QDC_VIRTUAL_MODE_AWARE` shape. One bounded read-only probe
+(`.ufo/waves/round-64/receipts/qdc-flagmatrix-probe.ps1`, getters only, whitelist
+unchanged: counts, rationals, flags, enum integers — no ids, no LUID halves, no names)
+ran the four documented shapes — 0x02 (the r63 baseline), 0x12, 0x42, 0x52 — twice,
+byte-identical runs (`qdc-matrix-run1.json` / `qdc-matrix-run2.json`); the 0x02 leg
+crosschecks 19/19 stable fields AGREE against the r63 committed snapshot
+(`qdc-matrix-crosscheck.py` + `qdc-matrix-crosscheck.txt`). The r63 baseline still
+holds at r64 (`tools/mado-win-displayconfig.py` live re-run CLEAN,
+`windisplayconfig-recheck-r64.txt`).
+
+| row | claim (this host, 2026-11-01) | re-derivation |
+|---|---|---|
+| H29 | The virtual-refresh-aware shape does not change the answer: 0x42 returns the identical table to the r63 baseline (buffer 1/2, rc 0/0, modes [2, 1], path_flags 0x1, target idx 0, refresh 64/1, pixelRate/hSyncFreq/vSyncFreq all the 0xFFFFFFFE sentinel, active/total 1920x1080) — D05's "Windows-11 virtual-refresh artifact" residue branch is now measured on this host, and it is not the cause | `powershell.exe -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File .ufo/waves/round-64/receipts/qdc-flagmatrix-probe.ps1` → rc 0 twice, byte-identical by `cmp`; the `qdc_flags=66` (0x42) block of `qdc-matrix-run1.json` |
+| H30 | The virtual-mode-aware shapes change the table structure instead: under 0x12 and 0x52 the buffer answers 1 path / 3 modes, the mode table gains a third entry with `infoType` 3 (the documented DESKTOP_IMAGE value, S431/K51), the path's `flags` gain 0x8 (the documented `DISPLAYCONFIG_PATH_SUPPORT_VIRTUAL_MODE`, S426/K46), and the path's `targetInfo.modeInfoIdx` moves 0 → 2 — naming the new DESKTOP_IMAGE entry, not the TARGET entry. The probe's decode guard (decodes only `infoType == 2`, the r63 tool's rule) therefore emits `target_mode = null` for these shapes: at the index the path names, the union storage is a non-TARGET member and is deliberately not decoded (the r63 rejected-row discipline kept) | same receipts; the `qdc_flags=18` (0x12) and `qdc_flags=82` (0x52) blocks of `qdc-matrix-run1.json` |
+| H31 | D05 disposition after the probe: **narrowed, not flipped**. No documented query shape returns decoded frequencies: the virtual-refresh flag returns the identical sentinel (H29); the virtual-mode flag re-indexes the path's target entry to a non-TARGET union member (H30). The sentinel's cause stays `[UNK]`; D05's own Flip sentence ("a query shape that returns decoded frequencies") did not fire. The residue that remains named is the driver-class / second-host reading, operator-scoped | this Update section; D05's original text above stands byte-untouched (append-only) |
+| J29 | H29/H30 ↔ K44/K46/K51: the flag table's two virtual flags each answer a distinct D05 residue branch on this host — the refresh flag (0x40, Windows 11) changes nothing in the mode data, the mode flag (0x10, Windows 10) adds the documented SUPPORT_VIRTUAL_MODE path flag and a DESKTOP_IMAGE mode entry and re-points the target index — the documented vocabulary (SOURCE=1 / TARGET=2 / DESKTOP_IMAGE=3) decides the third entry's class with no new page opened | rows above; K44/K46/K51 (S424 re-opened 2026-11-01; S426/S431 held from the r63 sweep) |
+
+Limits of this Update: the DESKTOP_IMAGE union member stays undecoded (same rejected
+row class as SOURCE_MODE); no rendered-pixel claim (the screen-capture-scope L0 stays
+open, routed around); point-in-time; the probe emits no target/source ids, no LUID
+halves, no names; no Set*/Change* verb exists in it (topology, mode and refresh
+changes stay operator-owned).
+
+## Update (round 64) — the r63 receipt's fixture citation repaired (carry-in)
+
+The r63 closure routed: the error-path receipt
+`.ufo/waves/round-63/receipts/windisplayconfig-error-path.txt` cites its input fixture
+`…receipts/broken-fixture.json`, which never landed. Round 64 commits a fixture at the
+cited path and re-derives the verdict against the committed bytes. Disclosure: the
+committed fixture is the round-64 re-creation (a truncated JSON snapshot whose
+`JSONDecodeError` the parse stage refuses) — the r63 original's bytes were ephemeral
+and are not recoverable; the r63 receipt remains the record of the r63 run, and the
+round-64 receipt (`windisplayconfig-errorpath-r64.txt`) records the re-derivation:
+`MADO_WINDISPLAYCONFIG: ERROR (stage=parse detail=JSONDecodeError in snapshot
+.ufo/waves/round-63/receipts/broken-fixture.json)`, rc=2 — the same verdict class and
+the same whitelisted detail line as the r63 receipt, raw bytes never echoed. The
+citation now resolves to committed bytes; the class is mechanized as
+`tools/mado-receipt-citecheck.py` (its red run at the r63 base rev names exactly this
+citation MISSING — `citecheck-red-base-rev.txt`).

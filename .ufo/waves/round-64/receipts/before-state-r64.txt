@@ -1,0 +1,57 @@
+== mado round-64 before-state, measured 2026-11-01T14:57:30Z at base 7fe65562c15d20e5cfdc1da536f774149ab52b7e (every producer's own rc captured, QUALITY 26) ==
+-- C1: the r63 error-path receipt's cited fixture at base --
+cmd: git ls-tree 7fe65562c15d20e5cfdc1da536f774149ab52b7e --name-only -- .ufo/waves/round-63/receipts/broken-fixture.json | wc -l
+0
+FIXTURE_AT_BASE_RC=0
+cmd: git show <base>:.ufo/waves/round-63/receipts/windisplayconfig-error-path.txt
+MADO_WINDISPLAYCONFIG: ERROR (stage=parse detail=JSONDecodeError in snapshot .ufo/waves/round-63/receipts/broken-fixture.json)
+SHOW_RC=0
+cmd: git grep -l broken-fixture <base> -- .ufo/waves/round-63 corpus | wc -l  (citing files in lane-authored paths)
+2
+GREP_RC=0
+-- C2 base: coverage counters --
+cmd: git show <base>:corpus/knowledge/windows-displayconfig-r63.md | grep -cE '^\| [HJK][0-9]{2} '
+19
+ENTRY_ROWS_RC=0
+cmd: ... | grep -c 'QDC_VIRTUAL_MODE_AWARE'   (entry mentions at base)
+2
+QDC_MENTIONS_RC=0
+cmd: ... | grep -c '^## Update (round 64)'
+0
+UPDATE_RC=1
+cmd: git show <base>:corpus/SOURCES.md | grep -cE '^[[:space:]]*\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'
+371
+REGISTRY_RC=0
+cmd: git ls-tree --name-only <base>:corpus/knowledge | grep -c '\.md$'
+78
+KNOWLEDGE_RC=0
+cmd: git show <base>:corpus/README.md | grep -cE (index rows; backtick-free transcription of the SCORECARD regex: pipe, space, backtick, knowledge/, name, backtick)
+78
+INDEX_RC=0
+-- D05 flip-condition line at base (the sentence this round's probe tests) --
+FLIP_GREP_RC=0
+-- C3 base: citecheck tool absent; ledger population --
+cmd: git ls-tree <base> --name-only tools/ | grep -c citecheck
+0
+CITECHECK_RC=1
+cmd: python quality/check-tool-ledger.py --repo . --rev <base>
+LEDGER: population=103 ledger_rows=103 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=7fe65562c15d20e5cfdc1da536f774149ab52b7e
+LEDGER_RC=0
+-- harmwatch baselines at base bytes --
+cmd: python quality/check-tool-ledger.py --selftest --scratch-root <scratch>
+LEDGER_SELFTEST: 55/55 passed
+LEDGER_SELFTEST_RC=0
+cmd: python quality/check-wave-done.py --selftest --scratch-root <scratch>
+MADO_WAVE_DONE_SELFTEST: 63/63 passed
+WAVEDONE_SELFTEST_RC=0
+cmd: sha256sum tools/mado-verify.sh | cut -c1-16
+050efc720599345a
+SHA_RC=0
+-- used-by counter at base --
+cmd: python quality/counters/c3-r56-used-by.py --repo . --rev <base> --work <scratch>/ub
+MADO_USED_BY: rev=7fe65562c15d20e5cfdc1da536f774149ab52b7e entries=78 rows=371 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+USEDBY_RC=0
+-- navigation counter at base (SCORECARD § Counting command; python in place of python3, this host) --
+revision=7fe65562c15d20e5cfdc1da536f774149ab52b7e indexed=78/78 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+NAV_RC=0
+== before-state end ==
