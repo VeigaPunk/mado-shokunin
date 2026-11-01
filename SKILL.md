@@ -2453,3 +2453,53 @@ failclosed-after, census-before/after); observer receipts (`windesk-selftest-10.
 `windesk-error-path.txt`, `windesk-live-r58.txt`); gate host-gap receipt
 (`gate-selftest-windows.txt`); pins `receipts/PINS.txt`; lesson `corpus/lessons/round-58.md`
 (M58-1..M58-4).
+
+## Round 59 — the DWM service model, the case-folded scratch refusal, the record corrections (append-only, dated 2026-10-31)
+
+1. **The DWM service model is measured ground, and D01 is closed.**
+   `corpus/knowledge/windows-dwm-service-model-r59.md` lands the sourced model
+   row (S405, Compatibility Cookbook: Windows-8+ DWM is an always-on core OS
+   component; every Windows-7-era disabling path, the Administrative Tools →
+   Services toggle included, removed) and joins it to build-26200 host probes:
+   no service matching dwm/uxsms/"Desktop Window" is registered (`SERVICES 0`),
+   `sc query UxSms` → rc 1060, dwm.exe runs outside any service
+   (`tasklist /svc` services N/A), composition enabled (`hr=0 enabled=True`).
+   The r57 finding D01 closes as flip-met with a named residue: no
+   Win11-labeled model sentence surfaced in the bounded sweep — the
+   build-26200 pin is the host join, never a sentence the record does not
+   hold. The probe is a committed read-only receipt artifact; both runs
+   byte-identical. An important host nuance is on record: `C:\tmp` and
+   `C:\var` exist here with third-party content (other lanes' artifacts, left
+   untouched), which masks `realpath`'s missing case-folding for those two
+   prefixes — the residual demonstrable on this host was the absent
+   `C:/DEV/shm` prefix.
+2. **The fail-closed checkers' scratch refusal folds letter case.** The r58
+   closure's carry-in residual, demonstrated red at base bytes
+   (`.ufo/waves/round-59/receipts/casefold-before.txt`: both checkers ACCEPTED
+   `C:/DEV/shm/…` because `realpath` cannot case-fold an absent prefix):
+   `quality/check-tool-ledger.py` and `quality/check-wave-done.py` now apply
+   `os.path.normcase` in the shared-scratch prefix compare (identity on
+   POSIX, so omarchy behavior is unchanged), each selftest pins the case with
+   a named assertion (`refuse-work-casefold`; counts 54 → 55 and 62 → 63 on
+   this host, `SELFTEST_CHECKS` host-derived), the CLI refuses the variant
+   (rc=2 ×4 receipt), the home refusal and the canonical `C:/tmp` refusal are
+   intact, and production mode stays `TARGET_MET` (population 99/99). The
+   gate `tools/mado-verify.sh` stays byte-untouched and frozen.
+3. **Cite the measured blob identity when invoking the frozen-instrument
+   rationale.** The r58 lesson quoted the arc-era pin `93e43f8f…` for the
+   gate; the corrected record (r58 lesson `## Corrections (round 59)`)
+   measures the current bytes: blob `9113c7c05e586328f44ed6822a3d12ff34c47a36`,
+   sha256 `050efc720599345a73bdce6c1d13d50eadeee9769c2ece02462223d0156703f1`,
+   4,194 lines, byte-stable since round 19 (`7b4839d3`). The same correction
+   round added the provenance trios (`source:` / `verified-at:` / `recheck:`)
+   the r57 and r58 entries lacked, as pure insertions — an entry that opens
+   without its trio is a corpus-contract defect (CORPUS.md, kaika rule), and
+   a frozen-instrument claim without the current blob identity is a
+   reference-drift defect (M59-3's cross-check rule: tree state on this host
+   is asserted by `git show <rev>:<path>` byte comparison, never `git status`).
+
+Ground: `corpus/knowledge/windows-dwm-service-model-r59.md` (sourced entry,
+S405 + re-used S399/S400, D01 closed); receipts `.ufo/waves/round-59/receipts/`
+(casefold red/green pair, both selftests, CLI refusals, fail-closed home
+refusal, ledger production run, gate identity, DWM service probe ×2); lesson
+`corpus/lessons/round-59.md` (M59-1..M59-3).

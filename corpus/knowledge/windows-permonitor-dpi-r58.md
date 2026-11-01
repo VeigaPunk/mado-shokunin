@@ -1,3 +1,8 @@
+source: S402, S403, S404 (corpus/SOURCES.md; Microsoft Learn, opened 2026-10-31; S403 is an
+  archived previous-versions page, status carried in the row)
+verified-at: 2026-10-31
+recheck: on-release
+
 # The per-monitor DPI join on the Windows host (round 58)
 
 **Scope.** Round 57 recorded the lane's live Windows host (Windows 11 Home,

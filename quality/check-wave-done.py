@@ -20,7 +20,9 @@ the passwd home for the uid, and an absent home is an error -- a rule that reads
 only ``$HOME`` is switched off by unsetting it, and its own proof would disappear
 with it. A caller-declared scratch root (``--scratch-root``, round-58 lesson
 M57-1: some hosts have no writable scratch outside home) waives the home refusal
-and nothing else. The selftest asserts its exact case count
+and nothing else. The shared-scratch refusal folds letter case (round 59: the
+compare applies ``os.path.normcase``, because ``realpath`` cannot case-fold a
+prefix that is not on disk). The selftest asserts its exact case count
 (``SELFTEST_CHECKS``) for the same reason.
 
 The results-file contract (derived, not invented)
@@ -160,7 +162,9 @@ REFUSED_WORK_PREFIXES = ("/tmp", "/var/tmp", "/dev/shm")
 
 # The exact number of assertions --selftest must make. A case that silently disappears (an
 # env-dependent skip, a removed fixture) turns into a failure instead of a smaller green run.
-SELFTEST_CHECKS = 62
+# 62 portable cases; +1 on Windows for the case-variation pin (round-59 carry-in), which
+# exists only where os.path.normcase folds -- on POSIX it is skipped by construction.
+SELFTEST_CHECKS = 63 if os.name == "nt" else 62
 
 NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 UNSAFE_DETAIL_RE = re.compile(r"[^A-Za-z0-9._-]+")
@@ -537,12 +541,20 @@ def resolve_work(explicit, declared_tree=None):
         raise GateError("--selftest needs --work <dir> (or --scratch-root <dir>, or a TMPDIR) "
                         "outside /tmp, /var/tmp, /dev/shm and the home directory")
     real = os.path.realpath(cand)
+    folded = os.path.normcase(real)
     for bad in REFUSED_WORK_PREFIXES:
         # Compare the resolved prefix too: on Windows the literal POSIX prefix can never
-        # match a drive-letter candidate, and "C:\\tmp" would slip past the rule.
-        real_bad = os.path.realpath(bad)
-        if (real == bad or real.startswith(bad + os.sep)
-                or real == real_bad or real.startswith(real_bad + os.sep)):
+        # match a drive-letter candidate, and "C:\\tmp" would slip past the rule. The
+        # compare also folds letter case (os.path.normcase; identity on POSIX): realpath
+        # cannot case-fold a prefix that is not on disk, so before round 59 a case-variant
+        # spelling of an absent shared-scratch prefix (C:\\DEV\\shm for /dev/shm) matched
+        # nothing and was accepted -- the r58 closure's C:/TMP residual, bypass receipt
+        # .ufo/waves/round-59/receipts/casefold-before.txt, pin assertion
+        # refuse-work-casefold below.
+        real_bad = os.path.normcase(os.path.realpath(bad))
+        folded_bad = os.path.normcase(bad)
+        if (folded == folded_bad or folded.startswith(folded_bad + os.sep)
+                or folded == real_bad or folded.startswith(real_bad + os.sep)):
             raise GateError("refusing work dir under %s (got %s): use a scratch filesystem"
                             % (bad, real))
     inside_tree = False
@@ -960,6 +972,43 @@ def selftest(work, verbose=False):
         except GateError as exc:
             refused, detail = True, str(exc)[:60]
         suite.check("refuse-work-%s" % bad_dir.strip("/").replace("/", "-"), refused, detail)
+
+    # Case-variation pin (round-59 carry-in): a case-variant spelling of a shared-scratch
+    # prefix names the same directory on a case-insensitive filesystem, but realpath
+    # cannot case-fold a prefix that is not on disk -- so the compare itself must fold
+    # case. The probe uses the first prefix that is absent: an existing prefix is
+    # true-cased by realpath on both sides, which masks the variation (this host's
+    # C:\\tmp state; receipt casefold-before.txt). On POSIX normcase is the identity,
+    # the case cannot arise, and the assertion is skipped by construction
+    # (SELFTEST_CHECKS follows the host).
+    if os.name == "nt":
+        base = next((b for b in REFUSED_WORK_PREFIXES
+                     if not os.path.exists(os.path.realpath(b))), None)
+        if base is None:
+            suite.check("refuse-work-casefold", False, "no absent shared-scratch prefix")
+        else:
+            probe_real = os.path.realpath(base)
+            drive, tail = os.path.splitdrive(probe_real)
+            variant_root = drive + os.sep + tail.lstrip("/\\").replace("/", os.sep).swapcase()
+            cand = os.path.join(variant_root, "wave-done-selftest")
+            plain = os.path.join(probe_real, "wave-done-selftest")
+            folds = cand != plain and os.path.normcase(cand) == os.path.normcase(plain)
+            chain = [cand, variant_root]
+            existed = {p: os.path.exists(p) for p in chain}
+            made = None
+            try:
+                made = resolve_work(cand)
+                refused, detail = False, "accepted %s" % made
+            except GateError as exc:
+                refused, detail = True, str(exc)[:60]
+            finally:
+                if made is not None:
+                    shutil.rmtree(made, ignore_errors=True)
+                    for p in chain:
+                        if not existed[p]:
+                            shutil.rmtree(p, ignore_errors=True)
+            suite.check("refuse-work-casefold", folds and refused,
+                        "base=%s folds=%s %s" % (base, folds, detail))
 
     home = os.environ.get("HOME")
     if home and os.path.realpath(home) != os.sep:

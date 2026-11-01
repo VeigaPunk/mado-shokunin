@@ -1,3 +1,7 @@
+source: S398, S399, S400, S401 (corpus/SOURCES.md; Microsoft Learn, opened 2026-10-31)
+verified-at: 2026-10-31
+recheck: on-release
+
 # The Windows desktop plane observed read-only (round 57)
 
 **Scope.** The lane's live host changed after round 56. This entry is the first
@@ -106,3 +110,16 @@ is gone; that verdict is the absence record, not a regression claim.
 - The lane spawns one read-only PowerShell child per observation; it never
   mutates settings, never reads window titles, clipboard, environment values or
   file contents, and never echoes raw child output (round-56 M56-17 rule).
+
+## Errata (round 59)
+
+- D01 (§ 4) is closed: [windows-dwm-service-model-r59.md](windows-dwm-service-model-r59.md)
+  lands the sourced model row (S405, Compatibility Cookbook, opened 2026-10-31) and the
+  build-26200 host joins (no DWM service registered; `sc query UxSms` rc 1060; dwm.exe
+  hosts no services; composition enabled). The flip D01 named is met; the residue (no
+  Win11-labeled model sentence in the bounded sweep) is named in the r59 entry. The
+  § 6 line "D01 is open" is history as of the r59 entry.
+- The entry's header gained the provenance trio the corpus contract requires (CORPUS.md,
+  "a new knowledge entry opens with its provenance trio" — `source:`, `verified-at:`,
+  `recheck:` first): a round-59 correction, insertion only, no existing line changed.
+  `windows-permonitor-dpi-r58.md` gained its trio the same way.

@@ -201,3 +201,21 @@ windesk selftest-10/ERROR/live, dpi-probe.ps1 + run1/run2, PINS.txt.
 3. Multi-display or caller-awareness DPI ground is available only if the
    host changes or the operator rules the process-local awareness probe in
    scope (the r58 rejected list names the flip).
+
+## Corrections (round 59)
+
+- **The Rejected list's gate identity is stale: `93e43f8f…` does not name the
+  bytes this round declined to rewrite.** That pin is the round-9-11 arc
+  freeze (3,231 L / selftest 268). The gate on this host, measured 2026-10-31
+  at the r58 tip `6f2e4115`: git blob `9113c7c05e586328f44ed6822a3d12ff34c47a36`,
+  sha256 `050efc720599345a73bdce6c1d13d50eadeee9769c2ece02462223d0156703f1`,
+  4,194 lines — byte-unchanged since round 19 (`7b4839d3`, the last commit
+  touching the file; selftest 460). The rejection's reasoning stands unchanged
+  (the gate was byte-identical at the r57 and r58 bases and the round left it
+  untouched); only the cited identity was wrong — the r58 SKILL/SCORECARD
+  texts said "byte-untouched/frozen" without the pin, and this lesson is the
+  only place the stale value appeared. Command + receipt:
+  `.ufo/waves/round-59/receipts/gate-identity-r59.txt`. Captured-by: the r58
+  non-author closure routing (carry-in correction, round 59). Class of the
+  original slip: `reference-drift` (an arc-era pin quoted where the current
+  blob identity was owed).

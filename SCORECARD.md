@@ -3004,3 +3004,54 @@ report); no existing knowledge entry body or registry row cell changed (r57 entr
 append-only block; S402-S404 are new rows); the gate-selftest failure is a host measurement,
 not a regression — first measured this round, receipt committed, disposal at L0. Verdicts are
 the closure's to rule.
+
+## Round 59 — the DWM service model, the case-folded scratch refusal, the r58 carry-in corrections (2026-10-31, hyaku run 12)
+
+Axis posture: saturation 9.0 / window N=3, last capability r58, so the stagnation nudge does
+not apply. At base every published scored sub-axis sat at its finite maximum — measured this
+round at base: navigation 73/73 = 10.0000 (the fleet-round-1 counter, exit 0) and the
+used-by back-reference counter (missing=2 at base — the M59-4 defect, repaired this round;
+`TARGET_MET` at landing); carried from the published tables: freshness "surface-state audit
+currency" 8/8 = 10.0000, calibration resolved-active 86/86 (last re-derived r56-era; the
+`check-axis-scores.py` aggregator's underlying counters do not emit their contract lines on
+this host — `MADO_AXIS_NOTE: … no indexed=A/B / no resolved_active` — so the values stand as
+published); the omarchy-host rubrics stay dormant with receipts (freshness 9.6552; operability
+gate selftest measured 360/100 rc=2 in r58) — both disposals are the two open L0 questions,
+routed around again, never treated as answered. So no axis is distinctly lowest: the same
+posture as rounds 56 and 58, and the round works the open ground the r58 closure routed in
+(the carry-in corrections, C1) plus real axis moves on operability (C2) and sourced coverage
+(C3). This round also measured the checker tree bytes against the tip before work started
+(`git show HEAD:<path> | sha256sum` = working bytes for both checkers — the `MM` status
+output on this host is index noise, M59-3). Claims were declared before the formal receipt
+runs; no predicate changed after scoring. Base `6f2e4115dc1ebeb87c4d1aba9803c04c82dc4c80`;
+measured at the landing commit (see the report). L1-only round again (no dispatch surface on
+this host; disclosed since r57, L0 open).
+
+| Claim / axis | Before → after | Counting command (runs on THIS host) | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the r58 carry-in corrections: the stale gate identity corrected append-only; the missing provenance trios added as pure insertions | base: `corpus/lessons/round-58.md` cites the arc-era pin `93e43f8f…` for the frozen gate with no correction (grep → 0 rows for the current blob id `9113c7c05e58`), and both Windows entries open without the CORPUS-required trio (grep → 0) → landing: the lesson carries `## Corrections (round 59)` recording the measured current identity (blob `9113c7c05e586328f44ed6822a3d12ff34c47a36`, sha256 `050efc720599345a…`, 4,194 L, byte-stable since round 19 / `7b4839d3`; receipt `gate-identity-r59.txt`), and both entries open with `source:` / `verified-at:` / `recheck:` — insertions only, no existing line modified | `grep -c '## Corrections (round 59)' corpus/lessons/round-58.md` at base → **0**, at landing → **1**; `grep -c '9113c7c05e58' corpus/lessons/round-58.md` at base → **0**, at landing → **1**; `grep -c '^source:' corpus/knowledge/windows-desktop-plane-r57.md` → **0 → 1** (same shape for `windows-permonitor-dpi-r58.md`); `git diff <base>..<landing> --stat -- corpus/knowledge/windows-desktop-plane-r57.md corpus/knowledge/windows-permonitor-dpi-r58.md` → insertions only (+4/−0, +5/−0) | **TARGET_MET** (the records now match observed state; both corrections carry re-derivation commands; the r58 lesson's original bytes untouched — append-only) |
+| C2 **operability** — the carry-in's case-variation residual in the checker prefix rule hardened, with a named test; fail-closed behavior preserved both directions | base `6f2e4115`: both checkers ACCEPT a case-variant spelling of an ABSENT shared-scratch prefix (`C:/DEV/shm/…`; `realpath` cannot case-fold a missing path) → landing: the prefix compare folds case (`os.path.normcase`, identity on POSIX), the variant is refused in every mode and through the CLI, each selftest pins it with the named assertion `refuse-work-casefold` (Windows-conditional — the case cannot arise where normcase is the identity; `SELFTEST_CHECKS` host-derived), and the canonical refusals are intact | `python .ufo/waves/round-59/receipts/casefold-probe.py` at base → `CASEFOLD_PROBE: BYPASS (bypasses=2)`, rc=**1** (receipt `casefold-before.txt`; the `C:/TMP` spelling is REFUSED at base — masked by the existing `C:\tmp`, per-prefix table in the receipt); at landing → `CASEFOLD_PROBE: NO-BYPASS (bypasses=0)`, rc=**0** (receipt `casefold-after.txt`); `python quality/check-tool-ledger.py --selftest --scratch-root <scratch>` → `LEDGER_SELFTEST: 55/55 passed` rc=0 (was 54/54); `python quality/check-wave-done.py --selftest --scratch-root <scratch>` → `MADO_WAVE_DONE_SELFTEST: 63/63 passed` rc=0 (was 62/62); CLI: `--selftest --work C:/DEV/shm/…` and `--work C:/tmp/…` → rc=2 ×4 (receipt `casefold-cli-refusals.txt`); default `--work` under home → rc=2 (receipt `failclosed-after-r59.txt`); production `LEDGER: population=99 … TARGET_MET` rc=0 | **TARGET_MET** (red demonstrated at base bytes, green at landing with the fix as the only delta; the named test kills the pre-change behavior — the base-bytes receipt is the mutant credit, the landing receipt the rejection; fail-closed refusals receipted, not asserted) |
+| C3 **coverage** (sourced) — the DWM service model: the r57 entry's finding D01 closed on a sourced row + host joins | base: knowledge files 73, index rows 73 (73/73 reachable), registry rows 341, D01 open ("which sentence describes the build-26200 service model is not resolvable from these rows") → landing: `corpus/knowledge/windows-dwm-service-model-r59.md` (4 host rows H09-H12 with re-derivation commands — `SERVICES 0`, `sc query UxSms` rc 1060, dwm.exe services N/A point-in-time, composition `hr=0 enabled=True`, two byte-identical runs; 6 dated `[INF-docs]` rows K15-K20; 4 joins J09-J12), indexed; D01 closes flip-met with the named residue; registry gains S405 (Microsoft Learn Compatibility Cookbook, tier A, opened 2026-10-31; S399/S400 re-opened) | `ls corpus/knowledge/*.md \| wc -l` → **74** (base 73); `grep -cE '^\| `knowledge/[^`]+\.md`' corpus/README.md` → **74** (base 73); `grep -cE '^[[:space:]]*\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md` → **342** (base 341); entry row count `grep -cE '^\| [HJK][0-9]{2} ' corpus/knowledge/windows-dwm-service-model-r59.md` → 14 (4 H + 6 K + 4 J); probe re-run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .ufo/waves/round-59/receipts/dwm-service-probe.ps1` → rc=0, `SERVICES 0`, `SC_UXSMS_RC=1060`, `DWM_COMPOSITION hr=0 enabled=True`; navigation counter (SCORECARD § Counting command, fleet round 1) at the landing revision with `python` in place of `python3` → `indexed=74/74 … coverage=10.0000/10`, exit 0 | **TARGET_MET** (entry indexed and reachable; sources opened and quoted this round; the claim rests on S405 + re-opened S399/S400) |
+
+Harm watch (at landing): census exit 0 both ends (`mado ok`; the round-start run quoted in
+the report — not tee'd, disclosed; end receipt committed); index 74/74 (navigation counter
+exit 0); ledger population 99/99; `tools/mado-verify.sh` bytes untouched this round (blob
+identity re-measured: `9113c7c05e58…` / sha256 `050efc72…`); no existing knowledge entry
+body or registry proposition cell changed (the r58 lesson and r57 entry gains are append-only
+blocks; the trios are insertions with zero deleted lines; the used-by cell extensions on
+S399/S400/S402/S404 are the used-by contract's own consistency moves; S405 is a new row); the
+checkers' POSIX behavior unchanged (normcase is the identity there; the +1 assertions are
+Windows-conditional by construction). Used-by counter: base `missing=2 … TARGET_MISSED` — a
+pre-existing r58-era defect (the r57 entry's round-58 errata block names S402-S404 without
+their used-by cells; mined M59-4), repaired this round; landing `missing=0 … TARGET_MET`
+(receipts `usedby-before/after-r59.txt`). Verdicts are the closure's to rule.
+
+### Planned (round 60; intent only)
+
+1. The two L0 rubric rulings (omarchy freshness disposal; gate-selftest host gap) —
+   whichever way they land, the SCORECARD tables follow the ruling, not before.
+2. The rendered-pixel observation (the plane entries' named limit) — needs the right
+   read-only surface and an operator ruling on whether screen-capture APIs are
+   read-only in lane scope.
+3. A Win11-labeled DWM model sentence, if one surfaces, strengthens the D01 pin
+   (residue named in the r59 entry).
