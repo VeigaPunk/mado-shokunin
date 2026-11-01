@@ -233,3 +233,22 @@ untouched). The landing counters receipt records both runs: `TARGET_MISSED`
 at `19407ef2` (the red side, disclosed) and the re-run at the repair
 commit. The M59-4 proactivity rule is thereby re-learned with a sharper
 edge: it covers re-quoted rows, not only newly inserted rows.
+
+## Addendum 2 (the first repair mis-aimed; disclosed before closure)
+
+The addendum's repair commit (`f300b2ce`) extended the wrong row: the cell
+suffix matched (ending `…windows-desktop-plane-r57.md |`) belongs to S405,
+not S400 — S400's cell ends `…windows-dwm-service-model-r59.md,
+corpus/lessons/round-59.md |`. The counter at `f300b2ce` therefore read
+`missing=1 extra=1 … TARGET_MISSED` (S400 still uncited; S405 citing a path
+that does not name it). Repaired in this round, before closure: S400's cell
+extended (the citing path appended after `…, corpus/lessons/round-59.md`)
+and S405's mis-aimed extension reverted exactly (its cell back to
+`…, corpus/knowledge/windows-desktop-plane-r57.md |`; proposition text
+untouched in both). The class is the report-table number-drift class again,
+one level down: a cell edit keyed on a remembered suffix instead of the
+row's identity. Rule: a used-by extension keys on the row id (`| S400 |`
+asserted on the edited line), never on a tail substring. The final
+counters receipt records the full red-amber-green: `TARGET_MISSED` at
+`19407ef2`, `missing=1 extra=1` at `f300b2ce`, and the re-run at this
+round's final revision.
