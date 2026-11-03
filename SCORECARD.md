@@ -3472,3 +3472,49 @@ commit and the lesson Addendum disclose the defect and the class rule (an
 append is read back at its JOIN, not only at its new bytes). The ledger row
 of the C3 counting command is therefore read at the repair revision, the
 round's true final landing state.
+
+## Round 65 — returned-host register and standing landing instrument (2026-11-03)
+
+Frozen declaration: `.ufo/waves/round-65/claims-declaration-r65.md`, landed
+`cb63ab13ccaf85191318701d5db5ace050bd5bd4`; base
+`524fa1f90b1f2de44b3019bacf833d54e0af13a0`. Measured content:
+`c6b8ec301ac54c2c082ad228cbacabecbd15b48e`.
+
+| Claim / axis | Counter and before → after | Verdict |
+|---|---|---|
+| C1 freshness / current-host register re-derivation | `python3 quality/counters/c1-r65-register.py --repo . --rev REV`: base rows=0 groups=0/8 TARGET_MISSED rc=1 → measured rows=8 groups=8/8 receipts=4 resolved=4 gate=ok TARGET_MET rc=0; bounded score 0/10 → 10/10 for this host's register block only | improved, with the named forgery limit below |
+| C2 operability / standing landing instrument | `python3 quality/counters/c2-r65-landing-instrument.py --repo . --rev REV --scratch-root /fast/scratch/hyaku/mado-r65/c2`: base instrument absent TARGET_MISSED rc=1 → measured selftest=0 landing=0 green=yes TARGET_MET rc=0; demonstrated binary capability 0 → 1 | improved |
+
+Evidence: `.ufo/waves/round-65/measurement-final-r65.txt`; the first measurement
+(`measurement-first-r65.txt`) went red because its output was written inside the
+scanned receipts tree. Moving the measurement output outside that tree made both
+claim counters green without changing their bytes or predicates.
+
+The historical seven absent rows remain as dated Windows-host observations, not
+falsehoods to erase. C1 adds the returned-host block. The live rubric re-derivation
+is environmental remeasurement, not a causal repair by this round: file 29/29,
+live 52/52, gate selftest 460/460 rc=0, gate bytes unchanged (`050efc720599345a`).
+
+### Capabilities (round 65)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Standing landing counters | Run navigation, used-by, ledger and citation-resolvability checks in one invocation, with individual rc lines; scratch required; hermetic 19/19 selftest | `quality/landing-counters.sh`; `.ufo/waves/round-65/measurement-final-r65.txt`: GREEN, all four rc=0 at c6b8ec30 | 65 |
+
+Harm watch: navigation 78/78; used-by missing=0; ledger 106/106; citations
+10/10; ledger/wave-done/citecheck selftests 54/54, 62/62, 12/12; census
+exit 0. The Windows-only +1 assertions explain the prior 55/55 and 63/63.
+SOURCES 371 → 371; S028/S097 reopened with opened dates updated, cadence
+on-release unchanged. Full evidence in the measurement and lesson.
+
+Limits: C1 accepts forged state cells (reviewer A3); this is not machine
+truth verification. Independent seat probes reproduced all eight groups;
+the outside-lane closure remains authoritative. C2 mutation survivors and
+critic residue are disclosed in the lesson, not claimed fixed.
+
+### Planned (round 66; intent only)
+
+Counter-design hardening under a new frozen predicate: per-row source binding
+and exact live-gate receipt; distinguish a child that never ran from a red leg;
+pin default scope and strengthen scratch/hermeticity tests. Existing L0
+questions remain open; the Windows waiver and screenshot scope are not inferred.

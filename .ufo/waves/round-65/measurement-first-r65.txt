@@ -1,0 +1,85 @@
+== mado round-65 measurement at c6b8ec301ac54c2c082ad228cbacabecbd15b48e (base 524fa1f90b1f2de44b3019bacf833d54e0af13a0) 2026-11-03T22:49:42Z ==
+-- C1 counter at measured rev (predicate TARGET_MET) --
+cmd: python3 quality/counters/c1-r65-register.py --repo . --rev c6b8ec301ac54c2c082ad228cbacabecbd15b48e
+MADO_R65_REGISTER: rows=8 groups=8/8 receipts=4 resolved=4 gate=ok verdict=TARGET_MET rev=c6b8ec301ac54c2c082ad228cbacabecbd15b48e
+C1_RC=0
+-- C1 do-nothing control at base (predicate must MISS) --
+cmd: python3 quality/counters/c1-r65-register.py --repo . --rev 524fa1f90b1f2de44b3019bacf833d54e0af13a0
+C1_R65: detail=no '### Surface state register (2026-11-03' block at 524fa1f90b1f2de44b3019bacf833d54e0af13a0
+MADO_R65_REGISTER: rows=0 groups=0/8 receipts=0 resolved=0 gate=missing verdict=TARGET_MISSED rev=524fa1f90b1f2de44b3019bacf833d54e0af13a0
+C1_BASE_RC=1
+-- register staleness at measured rev --
+cmd: git show c6b8ec301ac54c2c082ad228cbacabecbd15b48e:PROVINCE.md | grep -c 'absent (2026-10-31)'
+7
+STALE_RC=0
+-- C2 driver at measured rev (predicate TARGET_MET) --
+cmd: python3 quality/counters/c2-r65-landing-instrument.py --repo . --rev c6b8ec301ac54c2c082ad228cbacabecbd15b48e --scratch-root /fast/scratch/hyaku/mado-r65/meas/c2
+MADO_R65_INSTRUMENT: selftest=0 landing=2 green=no verdict=TARGET_MISSED rev=c6b8ec301ac54c2c082ad228cbacabecbd15b48e
+C2_RC=1
+-- C2 driver control at base (predicate must MISS: instrument absent at base) --
+cmd: python3 quality/counters/c2-r65-landing-instrument.py --repo . --rev 524fa1f90b1f2de44b3019bacf833d54e0af13a0 --scratch-root /fast/scratch/hyaku/mado-r65/meas/c2base
+MADO_R65_INSTRUMENT: instrument=absent verdict=TARGET_MISSED rev=524fa1f90b1f2de44b3019bacf833d54e0af13a0 rc=1
+C2_BASE_RC=1
+-- landing instrument directly at measured rev (four legs, own rc lines) --
+cmd: bash quality/landing-counters.sh --repo . --rev c6b8ec301ac54c2c082ad228cbacabecbd15b48e --scratch-root /fast/scratch/hyaku/mado-r65/meas/land
+?? .ufo/waves/round-65/receipts/measure-at-c6b8ec30-r65.txt
+landing-counters.sh: receipts tree has uncommitted changes; commit them before a landing run
+LAND_RC=2
+-- navigation counter at measured rev --
+revision=c6b8ec301ac54c2c082ad228cbacabecbd15b48e indexed=78/78 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+NAV_RC=0
+-- used-by counter at measured rev --
+cmd: python3 quality/counters/c3-r56-used-by.py --repo . --rev c6b8ec301ac54c2c082ad228cbacabecbd15b48e --work /fast/scratch/hyaku/mado-r65/meas/ub
+MADO_USED_BY: rev=c6b8ec301ac54c2c082ad228cbacabecbd15b48e entries=78 rows=371 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+USEDBY_RC=0
+-- tool ledger at measured rev --
+cmd: python3 quality/check-tool-ledger.py --repo . --rev c6b8ec301ac54c2c082ad228cbacabecbd15b48e
+LEDGER: population=106 ledger_rows=106 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=c6b8ec301ac54c2c082ad228cbacabecbd15b48e
+LEDGER_RC=0
+-- citecheck over round-65 receipts at measured rev --
+cmd: python3 tools/mado-receipt-citecheck.py --repo . --rev c6b8ec301ac54c2c082ad228cbacabecbd15b48e --paths .ufo/waves/round-65/receipts
+CITECHECK resolved: corpus/SOURCES.md (from 1 site(s))
+CITECHECK resolved: corpus/knowledge/request-limits-upstream-r31.md (from 2 site(s))
+CITECHECK resolved: corpus/knowledge/request-socket-live-bound-r8.md (from 2 site(s))
+CITECHECK resolved: corpus/knowledge/windows-desktop-plane-r57.md (from 1 site(s))
+CITECHECK resolved: quality/check-tool-ledger.py (from 2 site(s))
+CITECHECK resolved: quality/check-wave-done.py (from 1 site(s))
+CITECHECK resolved: quality/counters/c1-r65-register.py (from 1 site(s))
+CITECHECK resolved: quality/counters/c2-r65-landing-instrument.py (from 1 site(s))
+CITECHECK resolved: quality/counters/c3-r56-used-by.py (from 2 site(s))
+CITECHECK resolved: quality/landing-counters.sh (from 3 site(s))
+CITECHECK resolved: tools/mado-receipt-citecheck.py (from 1 site(s))
+CITECHECK resolved: tools/mado-verify.sh (from 1 site(s))
+CITECHECK resolved: tools/mado-win-desk.py (from 2 site(s))
+CITECHECK MISSING: .ufo/waves/round-65/receipts/measure-at-c6b8ec30-r65.txt (from .ufo/waves/round-65/receipts/measure-at-c6b8ec30-r65.txt)
+MADO_CITECHECK: rev=c6b8ec301ac54c2c082ad228cbacabecbd15b48e files=9 citations=14 resolved=13 missing=1 skipped_large=0 verdict=TARGET_MISSED (VERSION r64-v1)
+CITECHECK_RC=1
+-- selftests (fail-closed checkers, caller-declared scratch) --
+cmd: python3 quality/check-tool-ledger.py --selftest --scratch-root /fast/scratch/hyaku/mado-r65/meas/st-l
+LEDGER_SELFTEST: 54/54 passed
+LEDGER_ST_RC=0
+cmd: python3 quality/check-wave-done.py --selftest --scratch-root /fast/scratch/hyaku/mado-r65/meas/st-w
+MADO_WAVE_DONE_SELFTEST: 62/62 passed
+WAVEDONE_ST_RC=0
+cmd: python3 tools/mado-receipt-citecheck.py --selftest --scratch-root /fast/scratch/hyaku/mado-r65/meas/st-c
+MADO_CITECHECK_SELFTEST: 12/12 assertions passed
+CITECHECK_ST_RC=0
+cmd: bash quality/landing-counters.sh --selftest --scratch-root /fast/scratch/hyaku/mado-r65/meas/st-n
+MADO_LANDING_COUNTERS_SELFTEST: 19/19 assertions passed
+LANDING_ST_RC=0
+-- gate (freshness file plane + live) at measured rev; the live run is the lane's bytes --
+cmd: bash tools/mado-verify.sh --no-live | tail -1 ; bash tools/mado-verify.sh | tail -1
+MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)
+GATE_FILE_RC=0
+MADO_VERIFY: CLEAN (52 pass, 8 notes; file + live planes verified read-only)
+GATE_LIVE_RC=0
+cmd: sha256sum tools/mado-verify.sh | cut -c1-16
+050efc720599345a
+SHA_RC=0
+cmd: bash tools/mado-verify.sh --selftest | tail -1
+MADO_SELFTEST: 460/460 assertions passed
+GATE_SELFTEST_RC=0
+-- census at round end (fleet validator, exit 0 required) --
+cmd: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+CENSUS_END_RC=0
+== measurement end ==

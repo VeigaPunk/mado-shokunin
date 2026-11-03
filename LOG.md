@@ -3144,3 +3144,27 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   sections); the repair commit discloses the defect. Lesson Addendum
   records the class rule: an append is read back at its JOIN, not only at
   its new bytes.
+
+## Round 65 (2026-11-03) — returned-host register and standing landing instrument
+
+- Claims frozen at `cb63ab13ccaf85191318701d5db5ace050bd5bd4`: C1 freshness
+  (eight-group register re-derived on returned omarchy host); C2 operability
+  (one-command landing-counters capability). Content landed at
+  `c6b8ec301ac54c2c082ad228cbacabecbd15b48e`.
+- C1 base control MISS rc=1 → measured MET rc=0 (8 groups, 4 resolved receipts);
+  C2 absent-at-base MISS rc=1 → MET selftest=0 landing=0 rc=0. Exact commands
+  and outputs: `.ufo/waves/round-65/measurement-final-r65.txt`. First-run red
+  is preserved in `measurement-first-r65.txt`: output inside the receipts scan
+  made the tree dirty; relocating the output fixed the observation, not code.
+- Wave w1: 12 seats, all settled (WAVE-DONE received); 4 executors, 2 scouts,
+  2 reviewers, 1 critic, 1 mutation-tester, 1 scribe, 1 connector; 4/12 attack.
+  Planner mapping: L1. Results and seat reports under `.ufo/waves/round-65/`.
+- Lesson `corpus/lessons/round-65.md` records the live-host return, forged-cell
+  counter limit, critic blockers, fixes, mutation survivors and wrong-column
+  premise. Live gate CLEAN 52 pass, selftest 460/460; no desktop writes.
+- Source rows 371 unchanged in count; S028/S097 reopened with located quotes,
+  opened cells advanced to 2026-11-03, on-release cadence unchanged. Census
+  exit 0 both ends. Assimilation none: package reachable, no fitting theme.
+  Considerthese unchanged since prior screen. No tools installed.
+- Prior-art attribution: kumitate round-gate/cite-check and tsukuroi cited-receipt
+  gate share the one-command shape; mado claims capability, not novelty.

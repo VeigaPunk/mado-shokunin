@@ -124,3 +124,27 @@ No new rows were appended this round. Staged rows: none (`R65RevFrontier` F4: th
    tree must be pinned, and the used-by sibling absence must be distinguishable from red.
 3. The windows desktop plane stays not re-derivable on this host (no PowerShell here); its
    row cites the committed absence receipt and does not claim a re-derivation.
+
+## Landing addendum
+
+- Historical register correction: M65-1's phrase "factually wrong" means unrefreshed
+  for the returned host, not that dated Windows observations were false. Those
+  observations are preserved. The register already carried re-derivation probes;
+  this round exercised them on the returned host.
+- Measurement-output recursion: the first measurement wrote its own output inside
+  the receipts scope. The new dirty-tree refusal correctly fired (C2 landing=2),
+  and citecheck detected the uncommitted output's self-citation. Fix: measurement
+  outputs live outside the scanned receipts tree. This fix was demonstrated able
+  to fail (first receipt red) and then green without changing code or predicate:
+  `.ufo/waves/round-65/measurement-first-r65.txt` and `measurement-final-r65.txt`.
+- At measured `c6b8ec301ac54c2c082ad228cbacabecbd15b48e`, C1 and C2 are both
+  TARGET_MET rc=0. C2 selftest 19/19; four legs rc=0; ledger 106/106;
+  citation check files=8 citations=10 resolved=10 missing=0. The gate selftest
+  re-derived at 460/460 on Linux; no gate bytes changed.
+- Census end is stored outside the scanned receipts scope at
+  `.ufo/waves/round-65/census-end-r65.txt` (the earlier Frontier reference to
+  `receipts/census-end-r65.txt` is superseded by this path). Likewise the
+  mid receipt is `receipts/census-mid-r65.txt`.
+- F4 clarification: no staged package rows were selected for adoption; the
+  package itself does contain rows. The lesson's phrase "staged set empty"
+  refers only to this round's selection, not the package's contents.
