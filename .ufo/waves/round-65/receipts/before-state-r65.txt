@@ -1,0 +1,46 @@
+== mado round-65 before-state, measured 2026-11-03T22:29:06Z at base 524fa1f90b1f2de44b3019bacf833d54e0af13a0 (every producer's own rc captured, QUALITY 26) ==
+-- register staleness at base (the C1 deficiency) --
+cmd: grep -c 'absent (2026-10-31)' PROVINCE.md
+7
+REGISTER_STALE_RC=0
+-- omarchy freshness rubric rows last state (published, dormant since r57) --
+cmd: grep -n 'surface-state audit currency' SCORECARD.md | tail -2
+3209:published tables: freshness "surface-state audit currency" 8/8 = 10.0000,
+3290:published tables: freshness "surface-state audit currency" 8/8 = 10.0000,
+RUBRIC_GREP_RC=0
+-- used-by counter at base --
+cmd: python3 quality/counters/c3-r56-used-by.py --repo . --rev 524fa1f90b1f2de44b3019bacf833d54e0af13a0 --work /fast/scratch/hyaku/mado-r65/before-state/ub
+MADO_USED_BY: rev=524fa1f90b1f2de44b3019bacf833d54e0af13a0 entries=78 rows=371 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+USEDBY_RC=0
+-- ledger counter at base --
+cmd: python3 quality/check-tool-ledger.py --repo . --rev 524fa1f90b1f2de44b3019bacf833d54e0af13a0
+LEDGER: population=104 ledger_rows=104 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=524fa1f90b1f2de44b3019bacf833d54e0af13a0
+LEDGER_RC=0
+-- ledger selftest at base bytes --
+cmd: python3 quality/check-tool-ledger.py --selftest --scratch-root /fast/scratch/hyaku/mado-r65/before-state/st
+LEDGER_SELFTEST: 54/54 passed
+LEDGER_SELFTEST_RC=0
+-- wave-done selftest at base bytes --
+cmd: python3 quality/check-wave-done.py --selftest --scratch-root /fast/scratch/hyaku/mado-r65/before-state/wd
+MADO_WAVE_DONE_SELFTEST: 62/62 passed
+WAVEDONE_SELFTEST_RC=0
+-- landing-counters standing instrument absent at base (the C2 deficiency) --
+cmd: ls quality/landing-counters.sh
+ls: cannot access 'quality/landing-counters.sh': No such file or directory
+LANDINGCOUNTERS_ABSENT_RC=2 (nonzero = absent, expected before)
+-- citecheck present (r64 capability) --
+cmd: git ls-tree --name-only 524fa1f90b1f2de44b3019bacf833d54e0af13a0 -- tools/ | grep -c citecheck
+1
+CITECHECK_PRESENT_RC=0
+-- gate sha at base --
+cmd: sha256sum tools/mado-verify.sh | cut -c1-16
+050efc720599345a
+SHA_RC=0
+-- navigation counter at base (SCORECARD literal block) --
+revision=524fa1f90b1f2de44b3019bacf833d54e0af13a0 indexed=78/78 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+NAV_RC=0
+-- registry row count at base --
+cmd: grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md
+371
+REGISTRY_RC=0
+== before-state end ==
