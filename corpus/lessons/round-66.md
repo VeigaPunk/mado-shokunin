@@ -100,3 +100,40 @@ Explicit citation paths outside the repository are refused so dirty checking is 
 This is a disclosed behavior restriction versus r65's wider path acceptance, not silent
 compatibility or an added claim. SKILL registers the restriction before landing; closure
 may judge the preserve-existing-behavior clause against it.
+
+## Committed integration measurements
+
+After WAVE-DONE for all 12 seats, L1 ran both frozen commands at base
+eafd500fa7be76dca59e729435e231a5032cc037 and committed content
+739a01c5191a1b5bb21ef2a5f7792aab6e152328 (no draft-diagnostic flag).
+C1: baseline 1/4 TARGET_MISSED rc1 → candidate 4/4 TARGET_MET rc0,
+selftest rc0. C2: baseline 1/4 TARGET_MISSED rc1 → candidate 4/4
+TARGET_MET rc0, selftest rc0 and actual extracted driver TARGET_MET rc0.
+Exact commands/output: `.ufo/waves/round-66/measurement-c1-before.txt`,
+`.ufo/waves/round-66/measurement-c1-after.txt`,
+`.ufo/waves/round-66/measurement-c2-before.txt`,
+`.ufo/waves/round-66/measurement-c2-after.txt`.
+
+The real driver log is retained at
+`.ufo/waves/round-66/measurement-evidence/c2-after/candidate/driver/c2r66-o52_1j4l.landing.log`:
+navigation 78/78, used-by missing=0, ledger 108/108, citations 4/4, all four rc0,
+MADO_LANDING_COUNTERS GREEN. Its selftest log records 58/58.
+Wave checker at that same revision: one wave, dispatched=12, settled=12, OK rc0,
+`.ufo/waves/round-66/wave-done-final-r66.txt`. Census end exit0 is retained
+at `.ufo/waves/round-66/census-end-r66.txt`. Counting command and full source
+histograms at both revisions are in `.ufo/waves/round-66/sources-shape-r66.txt`:
+371→372 rows, A357→358, B7/C7 unchanged, malformed0 both ends.
+
+Final register bytes are 8ca15c66e953b093913559b7eda7f390c111a79062ef22f75caa498a4a04ec31
+(sha256): compared with 4e1b94ff, only fixed GIT_NO_REPLACE_OBJECTS=1 and comments
+were added after the sentinel's replacement-ref demonstration; predicate unchanged.
+Final harness bytes are 2e34eab0705b173a6c90d5635b4eb7bd8a71d57932821a0c01c855d17967db13:
+fresh private scratch replaces predictable paths after a planted-symlink finding.
+Final mutation coverage supersedes earlier draft tallies: C1 four of five killed by
+the published subset, C2 eight of ten; replacement-ref and zero-citation mutants need
+auxiliary probes. No claim that the frozen counts cover those residuals.
+
+Both bounded numeric targets met. Admission remains for closure: chronology defects,
+the ambiguous third C1 construction, shared ledger/citation landing housekeeping and
+the external-path restriction are disclosed, not erased by green counts. No fresh
+outside-lane admit/reject spot-check or promotion has occurred.

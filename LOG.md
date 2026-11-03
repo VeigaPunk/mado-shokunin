@@ -3189,3 +3189,30 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
 - The lesson retains freeze/control-order violations, marker premise error,
   file-plane-only control ambiguity, state-truth gap and mutation survivors.
   No universal soundness, promotion or novelty claim. Assimilation none.
+
+### Round 66 — committed measurement result
+
+- At `739a01c5191a1b5bb21ef2a5f7792aab6e152328`, both frozen commands
+  print correct=4/4 TARGET_MET rc0; each base run at `eafd500f` scores
+  correct=1/4 TARGET_MISSED rc1. Full commands and outputs:
+  `.ufo/waves/round-66/measurement-c1-before.txt`,
+  `measurement-c1-after.txt`, `measurement-c2-before.txt`,
+  `measurement-c2-after.txt` in that same wave directory.
+- C2 includes extracted driver selftest 58/58 and actual landing GREEN:
+  navigation 78/78, used-by missing0, ledger108/108, citations4/4.
+  Retained raw driver logs are under
+  `.ufo/waves/round-66/measurement-evidence/c2-after/candidate/driver/`.
+- WAVE-DONE received: one v1, 12 settled seats, four executors, two scribes,
+  scout/connector/reviewer/critic/mutation-tester/sentinel one each;
+  attack3/12, planner L1, residual0, dead0. Wave checker OK rc0:
+  `.ufo/waves/round-66/wave-done-final-r66.txt`.
+- Source census exit0 both ends; exact histograms/commands in
+  `.ufo/waves/round-66/sources-shape-r66.txt`. Rows371→372, one new
+  A/docs/mined S435; no old source cells changed. No tool installs.
+- No attributable misroot found; unrelated fleet `.scratch`, sibling
+  reports and unattributed `after` left untouched. Recorded at
+  `.ufo/waves/round-66/misroot-disposition-r66.txt`.
+- This is local bounded repair, not fleet novelty: connector cites
+  kumitate NO_CHILD, tsukuroi could-not-evaluate and tameshi ARM_DEAD.
+  Current route-table drift is recorded, not silently overridden.
+  Closure owns admission and any trade/no-harm judgment.

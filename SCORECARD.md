@@ -3518,3 +3518,56 @@ Counter-design hardening under a new frozen predicate: per-row source binding
 and exact live-gate receipt; distinguish a child that never ran from a red leg;
 pin default scope and strengthen scratch/hermeticity tests. Existing L0
 questions remain open; the Windows waiver and screenshot scope are not inferred.
+
+## Round 66 — structural binding and child-status distinction (2026-11-03)
+
+SKILL.md now documents explicit shell execution failures separately from domain findings.
+
+Two declared claims: C1 calibration and C2 operability; declaration
+`ed980316e330703030d0c17b2a7098e058295b99`, base
+`eafd500fa7be76dca59e729435e231a5032cc037`, measured content
+`739a01c5191a1b5bb21ef2a5f7792aab6e152328`. Existing finite rubrics are saturated;
+neither broad desktop mastery nor state-cell truth is scored. New bounded discrimination
+sub-axis score is `10 × correct / 4` for each named finite control set.
+
+| Claim / axis | Counting command (REV is before or measured content above) | Before → after | Verdict |
+|---|---|---|---|
+| C1 calibration / register structural discrimination | `python3 .ufo/waves/round-66/check-controls.py --repo . --rev REV --claim c1 --scratch-root /fast/scratch/hyaku/mado-r66/measure` | 1/4 rc1 → 4/4 rc0; bounded 2.5/10 → 10/10; candidate selftest 15/15 | improved on declared controls; stronger forgery remains accepted |
+| C2 operability / child-status discrimination | `python3 .ufo/waves/round-66/check-controls.py --repo . --rev REV --claim c2 --scratch-root /fast/scratch/hyaku/mado-r66/measure` | 1/4 rc1 → 4/4 rc0; bounded 2.5/10 → 10/10; selftest 58/58, committed extracted driver TARGET_MET, real four-leg GREEN | improved on bounded target; preserve-behavior restriction disclosed |
+
+Raw commands, revision bindings and exit codes:
+`.ufo/waves/round-66/measurement-c1-before.txt`,
+`.ufo/waves/round-66/measurement-c1-after.txt`,
+`.ufo/waves/round-66/measurement-c2-before.txt`,
+`.ufo/waves/round-66/measurement-c2-after.txt`.
+Real landing log under `.ufo/waves/round-66/measurement-evidence/c2-after/candidate/driver/`:
+navigation 78/78, used-by missing=0, ledger 108/108, citations 4/4; every leg rc0.
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Three-way landing child verdict | distinguish genuine RED/1 from crash, missing sibling or missing child marker ERROR/2, with explicit round scope; run all four real lane checks GREEN | `.ufo/waves/round-66/measurement-c2-after.txt` and retained extracted driver logs | 66 |
+
+### Limits and conformance
+
+C1 file-plane-only control omits the live receipt object. A live object left committed but
+uncited still satisfies the tree-level gate; forged state prose also passes. This is a
+disclosed control-construction ambiguity, not a truth fix. C2 external citation paths are
+now refused; this narrower behavior is declared, not claimed backward-compatible.
+Freeze/control ordering and marker-literal defects remain in the lesson.
+Connector identified shared ledger/citation housekeeping between the two otherwise separate
+instruments; no claim of landing-order independence is made.
+
+Source census rc0 both ends; rows 371→372 (one new A/docs/mined S435), no existing
+cells changed. No knowledge entry or PROVINCE frontier move; expansion unchanged.
+The final mutation denominators leave replacement-ref safety and zero-citation positivity
+requiring auxiliary probes; no universal soundness claim.
+One w1, 12 seats, 3/12 attack, planner L1, no dead seats; WAVE-DONE received and retained.
+Outside-lane closure owns admission, trade/no-harm judgment and promotion.
+
+### Planned (next steered round; intent only)
+
+Resolve the stronger citation-to-live-object gap under a newly frozen predicate; improve
+selftest coverage for zero-citation and replacement-ref controls without changing r66's
+record. Existing capture-scope and historical Windows-host L0 questions remain operator-owned.
