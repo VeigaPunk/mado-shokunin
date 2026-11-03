@@ -3168,3 +3168,24 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   Considerthese unchanged since prior screen. No tools installed.
 - Prior-art attribution: kumitate round-gate/cite-check and tsukuroi cited-receipt
   gate share the one-command shape; mado claims capability, not novelty.
+
+## Round 66 (2026-11-03) — record binding and child-status discrimination
+
+- Two claims, declaration `ed980316e330703030d0c17b2a7098e058295b99`:
+  C1 calibration (three structural register controls plus genuine case),
+  C2 operability (four child-status controls plus selftest and actual landing).
+  Motivation: `corpus/lessons/round-65-verifier-spotcheck.md` routed items 1-3.
+- New `quality/counters/c1-r66-register.py` and
+  `quality/counters/c2-r66-landing-instrument.py`; current
+  `quality/landing-counters.sh` cutover requires round scope and distinguishes
+  ERROR from RED. Old r65 counter files remain pinned history, not aliases.
+- Sources: one new S435, Bash exit-status vocabulary, cited by
+  `corpus/lessons/round-66.md`; no existing source cells changed.
+  QUALITY 108, SKILL gate rows and PROVINCE inventory document the bounded
+  structural guarantee. No new desktop surface or knowledge entry.
+- Seat evidence under `.ufo/waves/round-66/w1/`: baseline 1/4 for each
+  claim; candidate demonstrations 4/4. Committed-revision results follow
+  in a separate measurement entry; draft tests are not substituted for them.
+- The lesson retains freeze/control-order violations, marker premise error,
+  file-plane-only control ambiguity, state-truth gap and mutation survivors.
+  No universal soundness, promotion or novelty claim. Assimilation none.

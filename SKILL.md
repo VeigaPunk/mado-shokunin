@@ -2745,3 +2745,26 @@ windisplayconfig-snapshot.json + fromfile, error-path rc=2,
 displayconfig-crosscheck 5/5, dwm-recheck, harmwatch-selftests 55/55 +
 63/63, before-state, census-start + census-after, landing-counters-r63
 with named sections); lesson `corpus/lessons/round-63.md`.
+
+## Round 66 — bounded record-instrument cutover
+
+The returned-host register remains documentary evidence, not automatically verified row truth.
+Use the new register checker for structural binding and the hardened landing script for
+child-status classification. A marker plus rc is consistency evidence, not authentication.
+Missing output or a setup failure is ERROR, never a domain finding disguised as RED.
+S435 in `corpus/SOURCES.md` supplies shell exit-status vocabulary only; marker requirements
+are lane policy. See `corpus/lessons/round-66.md` for red-before evidence and limitations.
+
+| name | gate/probe | entry command | verdict map | self-test command / spelling | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|---|
+| mado-r66-register | gate | `python3 quality/counters/c1-r66-register.py --repo . --rev REV` | 0 clean; 1 failed; 2 could-not-evaluate | `python3 quality/counters/c1-r66-register.py --selftest` | `.ufo/waves/round-66/claims-declaration-r66.md`; exact line in `.ufo/waves/round-65/receipts/gate-live-r65.txt` | Git reads only; no writes | mado |
+| mado-r66-instrument | gate | `python3 quality/counters/c2-r66-landing-instrument.py --repo . --rev REV --scratch-root DIR` | 0 clean when selftest and actual landing pass; 1 failed; 2 could-not-evaluate | invokes the standing instrument's hermetic `--selftest` | `.ufo/waves/round-66/claims-declaration-r66.md` | private caller scratch; Git reads; extracted child checks | mado |
+| mado-landing-counters-r66 | gate | `bash quality/landing-counters.sh --repo . --rev REV --round N --scratch-root DIR` | 0 GREEN/clean; 1 RED/failed; 2 ERROR/could-not-evaluate | `bash quality/landing-counters.sh --selftest --scratch-root DIR` | `.ufo/waves/round-66/claims-declaration-r66.md`; child marker rules in script | caller scratch only; no host writes | mado |
+
+Default citation scope is `.ufo/waves/round-N/receipts`; `--citecheck-paths PATH ...`
+overrides it, with dirty-path refusal. Keep measurement output outside that scope.
+The frozen r65 counters still describe their pinned historical revisions; no compatibility
+alias is added. The current standing script requires explicit `--round`.
+Explicit citation paths must remain inside the repository so the dirty-tree guard can
+check them consistently; external paths are refused. This is a declared cutover restriction,
+not a claim of compatibility with the r65 script's wider PATH acceptance.

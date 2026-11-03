@@ -1,236 +1,254 @@
 #!/usr/bin/env bash
-# landing-counters.sh -- mado round-65 claim C2 (operability) standing landing instrument.
-# Frozen contract: .ufo/waves/round-65/claims-declaration-r65.md section C2.
-# Four legs (navigation / used-by / ledger / citecheck); each producer's own rc is the evidence
-# (QUALITY 26). Writes only under --scratch-root; no mktemp, no network, no sleeps.
+# Round-66 C2: four child contracts; GREEN/RED/ERROR exit 0/1/2.
+# All writes are confined to caller-declared scratch. No network or host changes.
 set -u
-# Ambient GIT_* steering (hooks export GIT_DIR) must not redirect any leg (round-65 critic B4).
-unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES
-
+# Remove every Git steering variable, including GIT_CONFIG_COUNT and indexed keys.
+for git_var in "${!GIT_@}"; do unset "$git_var"; done
+# Status must not refresh the lane index; object reads must ignore local replacements.
+export GIT_OPTIONAL_LOCKS=0 GIT_NO_REPLACE_OBJECTS=1
 PROG=landing-counters.sh
-N=0
-P=0
-
-die() { printf '%s: %s\n' "$PROG" "$*" >&2; exit 2; }
-usage() {
-  printf 'usage: %s --repo DIR --rev REV --scratch-root DIR [--citecheck-paths PATH ...] [--selftest]\n' "$PROG"
-}
-ok() { N=$((N + 1)); P=$((P + 1)); printf 'SELFTEST ok %d: %s\n' "$N" "$1"; }
-bad() { N=$((N + 1)); printf 'SELFTEST FAIL %d: %s\n' "$N" "$1"; }
-check_val() { # desc want got
-  if [ "$2" = "$3" ]; then ok "$1 (got=$3)"; else bad "$1 (want=$2 got=$3)"; fi
-}
-
-SELF_PATH=$(readlink -f "$0") || die "cannot resolve own path"
-SELF_DIR=$(cd "$(dirname "$SELF_PATH")" && pwd) || die "cannot resolve own directory"
-# Sibling instruments are resolved from the script's own real path (never from cwd).
-USEDBY_SIBLING="$SELF_DIR/../quality/counters/c3-r56-used-by.py"
-LEDGER_SIBLING="$SELF_DIR/../quality/check-tool-ledger.py"
+N=0 P=0
+fail() { printf '%s: %s\n' "$PROG" "$*" >&2; exit 2; }
+SELF_PATH=$(readlink -f -- "$0") || fail 'cannot resolve own path'
+SELF_DIR=${SELF_PATH%/*}
+USEDBY_SIBLING="$SELF_DIR/counters/c3-r56-used-by.py"
+LEDGER_SIBLING="$SELF_DIR/check-tool-ledger.py"
 CITECHECK_SIBLING="$SELF_DIR/../tools/mado-receipt-citecheck.py"
-
-# ---- leg 1: navigation, the SCORECARD literal counter body, verbatim -------------------------
+usage() { printf 'usage: %s --repo DIR --rev REV --round N --scratch-root DIR [--citecheck-paths PATH ...] | --selftest --scratch-root DIR\n' "$PROG"; }
+check() { N=$((N+1)); if [ "$2" = "$3" ]; then P=$((P+1)); printf 'SELFTEST ok %d: %s\n' "$N" "$1"; else printf 'SELFTEST FAIL %d: %s want=%s got=%s\n' "$N" "$1" "$2" "$3"; fi; }
 leg_nav() (
-  cd "$REPO_ABS" || exit 125
+  cd "$REPO_ABS" || exit 2
   REV="$REV" python3 - <<'PY'
 import os, re, subprocess
 from collections import Counter
-rev = os.environ["REV"]
+rev = os.environ['REV']
 def git(*args):
-    return subprocess.check_output(["git", *args], text=True)
-notes = {p for p in git("ls-tree", "--name-only", rev + ":corpus/knowledge").splitlines() if p.endswith(".md")}
-index = git("show", rev + ":corpus/README.md")
-rows = re.findall(r"^\| `knowledge/([^`]+\.md)`", index, re.M)
+    return subprocess.check_output(['git', *args], text=True)
+notes = {p for p in git('ls-tree', '--name-only', rev + ':corpus/knowledge').splitlines() if p.endswith('.md')}
+rows = re.findall(r'^\| `knowledge/([^`]+\.md)`', git('show', rev + ':corpus/README.md'), re.M)
 counts = Counter(rows)
 missing = sorted(notes - counts.keys())
 dangling = sorted(counts.keys() - notes)
 duplicates = sorted(p for p, n in counts.items() if n != 1)
 covered = sum(counts[p] == 1 for p in notes)
-print(f"revision={rev} indexed={covered}/{len(notes)} missing={len(missing)} dangling={len(dangling)} duplicates={len(duplicates)} coverage={10*covered/len(notes):.4f}/10")
-for kind, paths in (("missing", missing), ("dangling", dangling), ("duplicate", duplicates)):
+print(f'revision={rev} indexed={covered}/{len(notes)} missing={len(missing)} dangling={len(dangling)} duplicates={len(duplicates)} coverage={10*covered/len(notes) if notes else 0:.4f}/10')
+for kind, paths in (('missing', missing), ('dangling', dangling), ('duplicate', duplicates)):
     for path in paths:
-        print(f"{kind}: knowledge/{path}")
-raise SystemExit(1 if missing or dangling or duplicates else 0)
+        print(f'{kind}: knowledge/{path}')
+raise SystemExit(1 if not notes or missing or dangling or duplicates else 0)
 PY
 )
-
-leg_usedby() {
-  python3 "$USEDBY_SIBLING" --repo "$REPO_ABS" --rev "$REV" --work "$SCRATCH_ABS/ub"
-}
-leg_ledger() {
-  python3 "$LEDGER_SIBLING" --repo "$REPO_ABS" --rev "$REV"
-}
-leg_citecheck() {
-  local -a paths=("$REPO_ABS/.ufo/waves/round-65/receipts")
-  local out rc
-  if [ "${#CITE_PATHS[@]}" -gt 0 ]; then paths=("${CITE_PATHS[@]}"); fi
-  out=$(python3 "$CITECHECK_SIBLING" --repo "$REPO_ABS" --rev "$REV" --paths "${paths[@]}" 2>&1); rc=$?
-  printf '%s\n' "$out"
-  # A green verdict over zero evidence is not a green leg (round-65 critic B2).
-  if [ "$rc" -eq 0 ] && ! printf '%s\n' "$out" | grep -qE 'citations=[1-9][0-9]*'; then
-    printf 'citecheck: zero citations scanned; the leg cannot pass on an empty set\n' >&2
-    return 1
+leg_usedby() { python3 "$USEDBY_SIBLING" --repo "$REPO_ABS" --rev "$REV" --work "$SCRATCH_ABS/ub"; }
+leg_ledger() { python3 "$LEDGER_SIBLING" --repo "$REPO_ABS" --rev "$REV"; }
+leg_citecheck() { python3 "$CITECHECK_SIBLING" --repo "$REPO_ABS" --rev "$REV" --paths "${CITE_PATHS[@]}"; }
+# Validate exactly one child-owned marker, its revision and verdict against its rc.
+# These are structural witnesses, not an authenticity guarantee against malicious children.
+marker_valid() {
+  local leg=$1 rc=$2 out=$3 line marker= count=0 prefix met field
+  [ "$rc" -le 1 ] || return 1
+  case "$leg" in nav) prefix=revision= ;; usedby) prefix='MADO_USED_BY:' ;; ledger) prefix='LEDGER:' ;; citecheck) prefix='MADO_CITECHECK:' ;; esac
+  while IFS= read -r line; do
+    if [[ "$line" == "$prefix"* ]]; then marker=$line; count=$((count+1)); fi
+  done <<<"$out"
+  [ "$count" -eq 1 ] || return 1
+  if [ "$leg" = nav ]; then
+    [[ "$marker" =~ ^revision=([^\ ]+)\ indexed=([0-9]+)/([0-9]+)\ missing=([0-9]+)\ dangling=([0-9]+)\ duplicates=([0-9]+)\ coverage=[0-9.]+/10$ ]] || return 1
+    [ "${BASH_REMATCH[1]}" = "$REV" ] || return 1
+    local a=${BASH_REMATCH[2]} b=${BASH_REMATCH[3]} m=${BASH_REMATCH[4]} d=${BASH_REMATCH[5]} dup=${BASH_REMATCH[6]}
+    [ "$a" -le "$b" ] || return 1
+    met=1
+    if [ "$b" -gt 0 ] && [ "$a" -eq "$b" ] && [ "$m" -eq 0 ] && [ "$d" -eq 0 ] && [ "$dup" -eq 0 ]; then met=0; fi
+    [ "$rc" -eq "$met" ]
+    return
   fi
-  return "$rc"
-}
-
-landing_verdict() { # nav_rc usedby_rc ledger_rc citecheck_rc
-  if [ "$1" -eq 0 ] && [ "$2" -eq 0 ] && [ "$3" -eq 0 ] && [ "$4" -eq 0 ]; then
-    printf 'GREEN\n'
-  else
-    printf 'RED\n'
+  [[ " $marker " == *" rev=$REV "* ]] || return 1
+  if [ "$rc" -eq 0 ]; then met=TARGET_MET; else met=TARGET_MISSED; fi
+  [[ " $marker " == *" verdict=$met "* ]] || return 1
+  # Refuse contradictory or duplicated verdict fields as malformed evidence.
+  field=${marker#*verdict=}; field=${field%% *}
+  [ "$field" = "$met" ] && [[ "${marker#*verdict=}" != *verdict=* ]] || return 1
+  if [ "$leg" = citecheck ]; then
+    [[ "$marker" =~ \ citations=([0-9]+)\ resolved=([0-9]+)\ missing=([0-9]+)\  ]] || return 1
+    local citations=${BASH_REMATCH[1]} resolved=${BASH_REMATCH[2]} missing=${BASH_REMATCH[3]}
+    [ "$citations" -gt 0 ] && [ "$citations" -eq "$((resolved+missing))" ] || return 1
+    if [ "$rc" -eq 0 ]; then [ "$missing" -eq 0 ]; else [ "$missing" -gt 0 ]; fi
   fi
 }
-landing_exitcode() { if [ "$(landing_verdict "$@")" = GREEN ]; then printf '0\n'; else printf '1\n'; fi; }
-
 run_selftest() {
-  SELFTEST_WORK="$SCRATCH_ABS/selftest.$$"
-  local SW="$SELFTEST_WORK"
-  local D REV_F top out rc left leg
-  rm -rf -- "$SW"
-  mkdir -p -- "$SW" || { printf 'MADO_LANDING_COUNTERS_SELFTEST: 0/0 assertions passed (scratch unusable)\n'; return 2; }
+  local SW="$SCRATCH_ABS/selftest.$$" D top out rc leg mode expected witness real_python
+  mkdir -p -- "$SW" || return 2
+  SELFTEST_WORK=$SW
   trap 'rm -rf -- "$SELFTEST_WORK"' EXIT
-  if [ "${MADO_LANDING_SELFTEST_CHILD:-0}" = 1 ]; then
-    mkdir -p -- "$SW/probe" || return 2
-    return 0
-  fi
-
-  # a1: --rev is required in landing mode
-  out=$(bash "$SELF_PATH" --repo "$SW" --scratch-root "$SW/a1" 2>&1); rc=$?
-  check_val "a1 missing --rev refused" 2 "$rc"
-
-  # a2: /tmp-family scratch roots are refused and never created
-  out=$(bash "$SELF_PATH" --repo "$SW" --rev HEAD --scratch-root "/tmp/mado-r65-selftest-$$" 2>&1); rc=$?
-  check_val "a2 scratch-root under /tmp refused" 2 "$rc"
-  if [ -e "/tmp/mado-r65-selftest-$$" ]; then bad "a2 nothing created under /tmp"; else ok "a2 nothing created under /tmp"; fi
-
-  # a3: a symlinked scratch root is refused
-  mkdir -p -- "$SW/realroot"
-  ln -s "$SW/realroot" "$SW/linkroot"
-  out=$(bash "$SELF_PATH" --repo "$SW" --rev HEAD --scratch-root "$SW/linkroot" 2>&1); rc=$?
-  check_val "a3 symlinked scratch-root refused" 2 "$rc"
-
-  # a4-a6: hermetic fixture repo, every git call through -C, toplevel verified before commit
   D="$SW/fixture"
-  mkdir -p "$D/corpus/knowledge" "$D/quality" "$D/.ufo/waves/round-65/receipts"
-  printf '# PROVINCE\nfixture\n' >"$D/PROVINCE.md"
-  printf '# corpus\n\n| note |\n| --- |\n| `knowledge/fixture-note.md` |\n' >"$D/corpus/README.md"
-  printf '# SOURCES\n| id | url |\n| --- | --- |\n' >"$D/corpus/SOURCES.md"
-  printf '# fixture note\n' >"$D/corpus/knowledge/fixture-note.md"
-  printf '# tool ledger\nfixture\n' >"$D/quality/tool-ledger.md"
-  printf 'MADO_FIXTURE: cite corpus/README.md\n' >"$D/.ufo/waves/round-65/receipts/fixture-receipt.txt"
-  git -C "$D" init -q >/dev/null 2>&1
-  check_val "a4 fixture git repo created" 0 "$?"
-  top=$(git -C "$D" rev-parse --show-toplevel 2>/dev/null)
-  check_val "a5 fixture toplevel verified before commit" "$(cd "$D" && pwd -P)" "$top"
-  git -C "$D" add -A >/dev/null 2>&1
-  git -C "$D" -c user.name=mado-selftest -c user.email=selftest@example.invalid \
-    -c commit.gpgsign=false commit -q -m fixture >/dev/null 2>&1
-  REV_F=$(git -C "$D" rev-parse HEAD 2>/dev/null)
-  if [ -n "${REV_F:-}" ]; then ok "a6 fixture commit created (${REV_F:0:12})"; else bad "a6 fixture commit created"; fi
-
-  # a7-a11: all four legs run against the fixture and their own rcs are named in the summary
-  out=$(bash "$SELF_PATH" --repo "$D" --rev "$REV_F" --scratch-root "$SW/red" 2>&1); rc=$?
-  for leg in nav usedby ledger citecheck; do
-    if printf '%s\n' "$out" | grep -qE "^LANDING_LEG $leg rc=[0-9]+\$"; then
-      ok "a7 leg $leg ran (rc captured)"
-    else
-      bad "a7 leg $leg ran (rc captured)"
-    fi
-  done
-  if printf '%s\n' "$out" | grep -qE '^MADO_LANDING_COUNTERS: (GREEN|RED) \(nav=[0-9]+ usedby=[0-9]+ ledger=[0-9]+ citecheck=[0-9]+ rev=[0-9a-f]{7,40}\)$'; then
-    ok "a8 summary line carries all four rcs and the rev"
-  else
-    bad "a8 summary line carries all four rcs and the rev"
-  fi
-  check_val "a9 fixture landing run exits 1 when a leg is red" 1 "$rc"
-
-  # a10-a11: an all-green run (stub python3 exits 0) is GREEN and exits 0
-  mkdir -p "$SW/shim"
-  printf '#!/bin/sh\necho "MADO_CITECHECK: rev=$REV files=1 citations=1 resolved=1 missing=0 skipped_large=0 verdict=TARGET_MET"\nexit 0\n' >"$SW/shim/python3"
+  mkdir -p "$D/corpus/knowledge" "$D/.ufo/waves/round-66/receipts" "$D/.ufo/waves/round-65/receipts" "$SW/instrument/quality/counters" "$SW/instrument/tools" "$SW/shim"
+  printf '| `knowledge/n.md` |\n' >"$D/corpus/README.md"
+  printf '# note\n' >"$D/corpus/knowledge/n.md"
+  printf 'cite corpus/README.md\n' >"$D/.ufo/waves/round-66/receipts/a.txt"
+  printf 'decoy\n' >"$D/.ufo/waves/round-65/receipts/a.txt"
+  git -C "$D" init -q || return 2
+  top=$(git -C "$D" rev-parse --show-toplevel) || return 2
+  [ "$top" = "$D" ] || return 2
+  git -C "$D" add -A && git -C "$D" -c user.name=mado-selftest -c user.email=selftest@example.invalid -c commit.gpgsign=false commit -qm fixture || return 2
+  local rev_f
+  rev_f=$(git -C "$D" rev-parse HEAD) || return 2
+  cp -- "$SELF_PATH" "$SW/instrument/quality/landing-counters.sh"
+  for leg in "$SW/instrument/quality/counters/c3-r56-used-by.py" "$SW/instrument/quality/check-tool-ledger.py" "$SW/instrument/tools/mado-receipt-citecheck.py"; do printf '# fixture child dispatched by shim\n' >"$leg"; done
+  real_python=$(command -v python3)
+  cat >"$SW/shim/python3" <<'SHIM'
+#!/usr/bin/env bash
+case "$1" in
+  -) leg=nav ;;
+  */c3-r56-used-by.py) leg=usedby ;;
+  */check-tool-ledger.py) leg=ledger ;;
+  */mado-receipt-citecheck.py) leg=citecheck ;;
+  *) exit 2 ;;
+esac
+if [ "$leg" != nav ] && [ ! -r "$1" ]; then
+  printf 'fixture child missing: %s\n' "$1" >&2
+  exit 2
+fi
+printf '%s\n' "$leg" >>"$WITNESS"
+if [ "$leg" = "$TEST_LEG" ]; then
+  case "$TEST_MODE" in skip) exit 0 ;; crash) exit 2 ;; esac
+fi
+rc=0 verdict=TARGET_MET
+if [ "$leg" = "$TEST_LEG" ] && [ "$TEST_MODE" = red ]; then rc=1 verdict=TARGET_MISSED; fi
+output=$(case "$leg" in
+  nav)
+    if [ "$rc" = 0 ]; then exec "$REAL_PYTHON" "$@"; fi
+    printf 'revision=%s indexed=0/1 missing=1 dangling=0 duplicates=0 coverage=0.0000/10\n' "$FIXTURE_REV" ;;
+  usedby) printf 'MADO_USED_BY: rev=%s entries=1 rows=1 missing=%s extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=0 verdict=%s missed=none\n' "$FIXTURE_REV" "$rc" "$verdict" ;;
+  ledger) printf 'LEDGER: population=1 ledger_rows=1 uncovered=%s dangling=0 bad_pointer=0 empty_desc=0 verdict=%s rev=%s\n' "$rc" "$verdict" "$FIXTURE_REV" ;;
+  citecheck) printf 'MADO_CITECHECK: rev=%s files=1 citations=1 resolved=%s missing=%s skipped_large=0 verdict=%s\n' "$FIXTURE_REV" "$((1-rc))" "$rc" "$verdict" ;;
+esac)
+child_status=$?
+if [ "$leg" = nav ] && [ "$rc" -eq 0 ]; then rc=$child_status; fi
+printf '%s\n' "$output"
+if [ "$leg" = "$TEST_LEG" ] && [ "$TEST_MODE" = duplicate ]; then printf '%s\n' "$output"; fi
+exit "$rc"
+SHIM
   chmod +x "$SW/shim/python3"
-  out=$(PATH="$SW/shim:$PATH" bash "$SELF_PATH" --repo "$D" --rev "$REV_F" --scratch-root "$SW/green" 2>&1); rc=$?
-  case "$out" in
-    *"MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0 ledger=0 citecheck=0 rev=$REV_F)"*)
-      ok "a10 all four rc=0 yields GREEN" ;;
-    *) bad "a10 all four rc=0 yields GREEN" ;;
-  esac
-  check_val "a11 all four rc=0 exits 0" 0 "$rc"
-
-  # a12-a13: rc arithmetic directly
-  check_val "a12 verdict arithmetic RED on mixed rcs" RED "$(landing_verdict 0 0 1 0)"
-  check_val "a13 exit arithmetic 1 on mixed rcs" 1 "$(landing_exitcode 0 0 1 0)"
-
-  # a14: the selftest scratch is removed on exit (observed from a bounded child run)
-  out=$(MADO_LANDING_SELFTEST_CHILD=1 bash "$SELF_PATH" --selftest --scratch-root "$SW/exitprobe" 2>&1); rc=$?
-  check_val "a14 exit-path child selftest rc" 0 "$rc"
-  left=$(find "$SW/exitprobe" -mindepth 1 -maxdepth 1 -name 'selftest.*' 2>/dev/null | head -n1)
-  if [ -z "$left" ]; then ok "a15 selftest scratch removed on exit"; else bad "a15 selftest scratch removed on exit (left: $left)"; fi
-
+  local instrument="$SW/instrument/quality/landing-counters.sh"
+  export WITNESS="$SW/witness" FIXTURE_REV="$rev_f" REAL_PYTHON="$real_python" TEST_LEG=none TEST_MODE=green
+  local -a cmd=(bash "$instrument" --repo "$D" --rev "$rev_f" --round 66 --scratch-root "$SW/run")
+  for leg in none nav usedby ledger citecheck; do
+    for mode in green red crash skip duplicate; do
+      [ "$leg" != none ] || [ "$mode" = green ] || continue
+      TEST_LEG=$leg TEST_MODE=$mode
+      : >"$WITNESS"
+      out=$(PATH="$SW/shim:$PATH" "${cmd[@]}" 2>&1); rc=$?
+      expected=0
+      case "$mode" in red) expected=1 ;; crash|skip|duplicate) expected=2 ;; esac
+      check "$leg $mode rc" "$expected" "$rc"
+      witness=$(<"$WITNESS")
+      check "$leg $mode all execution witnesses" $'nav\nusedby\nledger\ncitecheck' "$witness"
+    done
+  done
+  TEST_LEG=none TEST_MODE=green
+  rm -- "$SW/instrument/quality/counters/c3-r56-used-by.py"
+  out=$(PATH="$SW/shim:$PATH" "${cmd[@]}" 2>&1); rc=$?
+  check 'missing sibling' 2 "$rc"
+  check 'missing sibling emits ERROR classification' yes "$([[ "$out" == *'MADO_LANDING_COUNTERS: ERROR ('* ]] && printf yes || printf no)"
+  printf '# fixture child\n' >"$SW/instrument/quality/counters/c3-r56-used-by.py"
+  # Exercise absent --round while both candidate/default receipt trees are clean.
+  out=$(PATH="$SW/shim:$PATH" bash "$instrument" --repo "$D" --rev "$rev_f" --scratch-root "$SW/clean-no-round" 2>&1); rc=$?
+  check 'round required on clean fixture' 2 "$rc"
+  printf 'dirty decoy\n' >>"$D/.ufo/waves/round-65/receipts/a.txt"
+  out=$(PATH="$SW/shim:$PATH" "${cmd[@]}" 2>&1); rc=$?
+  check 'round-65 dirty decoy does not select scope' 0 "$rc"
+  printf 'dirty selected\n' >>"$D/.ufo/waves/round-66/receipts/a.txt"
+  out=$(PATH="$SW/shim:$PATH" "${cmd[@]}" 2>&1); rc=$?
+  check 'round-66 dirty selected scope' 2 "$rc"
+  out=$(PATH="$SW/shim:$PATH" "${cmd[@]}" --citecheck-paths .ufo/waves/round-65/receipts 2>&1); rc=$?
+  check 'explicit paths dirty guard' 2 "$rc"
+  # Reset only fixture bytes, never the lane or another seat.
+  printf 'cite corpus/README.md\n' >"$D/.ufo/waves/round-66/receipts/a.txt"
+  out=$(GIT_DIR="$SW/absent" GIT_WORK_TREE="$SW" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.worktree GIT_CONFIG_VALUE_0="$SW" PATH="$SW/shim:$PATH" "${cmd[@]}" 2>&1); rc=$?
+  check 'all inherited Git steering isolated' 0 "$rc"
+  out=$(bash "$instrument" --repo "$D" --rev "$rev_f" --scratch-root "$SW/no-round" 2>&1); rc=$?
+  check 'round required' 2 "$rc"
+  out=$(bash "$instrument" --repo "$D" --round 66 --scratch-root "$SW/no-rev" 2>&1); rc=$?
+  check 'revision required' 2 "$rc"
+  for top in /tmp /var/tmp /dev/shm; do
+    out=$(bash "$instrument" --selftest --scratch-root "$top/mado-selftest-$$" 2>&1); rc=$?
+    check "scratch rejects $top" 2 "$rc"
+  done
+  ln -s "$SW" "$SW/link"
+  out=$(bash "$instrument" --selftest --scratch-root "$SW/link/not-created/child" 2>&1); rc=$?
+  check 'symlink scratch parent refused' 2 "$rc"
+  check 'symlink escape creates nothing' no "$([ -e "$SW/not-created" ] && printf yes || printf no)"
+  # Real navigation must stay red on an empty population, never vacuously green.
+  rm -- "$D/corpus/knowledge/n.md"
+  printf '# directory placeholder\n' >"$D/corpus/knowledge/.keep"
+  printf '# empty index\n' >"$D/corpus/README.md"
+  [ "$(git -C "$D" rev-parse --show-toplevel)" = "$D" ] || return 2
+  git -C "$D" add -A && git -C "$D" -c user.name=mado-selftest -c user.email=selftest@example.invalid -c commit.gpgsign=false commit -qm empty-population || return 2
+  FIXTURE_REV=$(git -C "$D" rev-parse HEAD) || return 2
+  out=$(PATH="$SW/shim:$PATH" bash "$instrument" --repo "$D" --rev "$FIXTURE_REV" --round 66 --scratch-root "$SW/empty" 2>&1); rc=$?
+  check 'empty population genuine red' 1 "$rc"
+  check 'empty population summary RED' yes "$([[ "$out" == *'MADO_LANDING_COUNTERS: RED (nav=1 '* ]] && printf yes || printf no)"
   printf 'MADO_LANDING_COUNTERS_SELFTEST: %d/%d assertions passed\n' "$P" "$N"
   [ "$P" -eq "$N" ]
 }
-
-# ---- CLI ------------------------------------------------------------------------------------
-REPO=
-REV=
-SCRATCH=
-SELFTEST=0
+REPO= REV= SCRATCH= ROUND= SELFTEST=0
 CITE_PATHS=()
 while [ $# -gt 0 ]; do
   case "$1" in
-    --repo) [ $# -ge 2 ] || die "--repo needs DIR"; REPO=$2; shift 2 ;;
-    --rev) [ $# -ge 2 ] || die "--rev needs REV"; REV=$2; shift 2 ;;
-    --scratch-root) [ $# -ge 2 ] || die "--scratch-root needs DIR"; SCRATCH=$2; shift 2 ;;
+    --repo|--rev|--round|--scratch-root)
+      [ $# -ge 2 ] || fail "$1 needs a value"
+      case "$1" in --repo) REPO=$2 ;; --rev) REV=$2 ;; --round) ROUND=$2 ;; --scratch-root) SCRATCH=$2 ;; esac
+      shift 2 ;;
     --citecheck-paths)
-      shift
-      n=0
-      while [ $# -gt 0 ] && [ "${1#--}" = "$1" ]; do CITE_PATHS+=("$1"); shift; n=$((n + 1)); done
-      [ "$n" -gt 0 ] || die "--citecheck-paths needs at least one PATH"
-      ;;
+      shift; n=0
+      while [ $# -gt 0 ] && [[ "$1" != --* ]]; do CITE_PATHS+=("$1"); shift; n=$((n+1)); done
+      [ "$n" -gt 0 ] || fail '--citecheck-paths requires paths' ;;
     --selftest) SELFTEST=1; shift ;;
-    -h | --help) usage; exit 0 ;;
-    *) die "unknown argument: $1" ;;
+    --help|-h) usage; exit 0 ;;
+    *) fail "unknown argument: $1" ;;
   esac
 done
-
-[ -n "$SCRATCH" ] || die "--scratch-root DIR is required"
-case "$SCRATCH" in
-  /tmp | /tmp/* | /var/tmp | /var/tmp/*) die "--scratch-root must not be under /tmp or /var/tmp: $SCRATCH" ;;
-esac
-SCRATCH="${SCRATCH%/}"; [ -n "$SCRATCH" ] || SCRATCH=/
-if [ -L "$SCRATCH" ]; then die "--scratch-root must not be a symlink: $SCRATCH"; fi
-mkdir -p -- "$SCRATCH" 2>/dev/null || die "--scratch-root does not exist and could not be created: $SCRATCH"
-SCRATCH_ABS=$(cd "$SCRATCH" && pwd -P) || die "--scratch-root is not a usable directory: $SCRATCH"
-case "$SCRATCH_ABS" in
-  /tmp | /tmp/* | /var/tmp | /var/tmp/*) die "--scratch-root resolves under /tmp or /var/tmp: $SCRATCH_ABS" ;;
-esac
-
-if [ "$SELFTEST" = 1 ]; then
-  run_selftest
-  exit $?
-fi
-
-[ -n "$REPO" ] || die "--repo DIR is required"
-[ -n "$REV" ] || die "--rev REV is required"
-case "$REV" in -*) die "--rev must not start with '-': $REV" ;; esac
-[ -d "$REPO" ] || die "--repo is not a directory: $REPO"
-REPO_ABS=$(cd "$REPO" && pwd -P) || die "--repo is not a usable directory: $REPO"
-# The citecheck leg scans the receipts tree on disk; a landing verdict must rest on committed
-# bytes only, so an uncommitted receipt refuses the run (round-65 critic B1).
-if [ -n "$(git -C "$REPO_ABS" status --porcelain -- .ufo/waves/round-65/receipts 2>/dev/null)" ]; then
-  die "receipts tree has uncommitted changes; commit them before a landing run"
-fi
-
+[ -n "$SCRATCH" ] || fail '--scratch-root is required'
+# Check both lexical components and resolved location BEFORE mkdir (including missing suffixes).
+case "$SCRATCH" in /*) ;; *) SCRATCH="$PWD/$SCRATCH" ;; esac
+probe=$SCRATCH
+while [ "$probe" != / ]; do
+  [ ! -L "$probe" ] || fail 'scratch contains a symlink component'
+  probe=${probe%/*}; [ -n "$probe" ] || probe=/
+done
+SCRATCH_ABS=$(realpath -m -- "$SCRATCH") || fail 'invalid scratch path'
+case "$SCRATCH_ABS" in /|/tmp|/tmp/*|/var/tmp|/var/tmp/*|/dev/shm|/dev/shm/*) fail 'unsafe scratch root' ;; esac
+mkdir -p -- "$SCRATCH_ABS" || fail 'cannot create scratch root'
+if [ "$SELFTEST" -eq 1 ]; then run_selftest; exit $?; fi
+[ -n "$REPO" ] && [ -n "$REV" ] || fail '--repo and --rev required'
+[[ "$ROUND" =~ ^[1-9][0-9]*$ ]] || fail '--round N required (positive integer)'
+[[ "$REV" != -* ]] || fail 'revision cannot begin with dash'
+REPO_ABS=$(cd "$REPO" && pwd -P) || fail 'invalid repo'
+REV=$(git -C "$REPO_ABS" rev-parse --verify "$REV^{commit}") || fail 'invalid revision'
+[ "${#CITE_PATHS[@]}" -gt 0 ] || CITE_PATHS=(".ufo/waves/round-$ROUND/receipts")
+for i in "${!CITE_PATHS[@]}"; do
+  path=${CITE_PATHS[$i]}
+  case "$path" in /*) ;; *) path="$REPO_ABS/$path" ;; esac
+  path=$(realpath -m -- "$path") || fail 'cannot resolve citecheck path'
+  case "$path" in "$REPO_ABS"/*) ;; *) fail 'citecheck paths must be inside repository for dirty guard' ;; esac
+  [ -e "$path" ] || fail "citecheck path missing: $path"
+  relative=${path#"$REPO_ABS/"}
+  dirty=$(git -C "$REPO_ABS" --literal-pathspecs status --porcelain --untracked-files=all --ignored -- "$relative") || fail 'cannot inspect citecheck paths'
+  [ -z "$dirty" ] || fail "citecheck path has uncommitted changes: $relative"
+  CITE_PATHS[$i]=$path
+done
+verdict=GREEN exitcode=0
 for leg in nav usedby ledger citecheck; do
   printf -- '-- leg %s --\n' "$leg"
-  "leg_$leg"
-  rc=$?
+  out=$("leg_$leg" 2>&1); rc=$?
+  printf '%s\n' "$out"
   printf 'LANDING_LEG %s rc=%d\n' "$leg" "$rc"
   printf -v "${leg}_rc" '%d' "$rc"
+  if ! marker_valid "$leg" "$rc" "$out"; then
+    printf 'LANDING_CONTRACT %s ERROR (rc=%d; missing, malformed or inconsistent child marker)\n' "$leg" "$rc"
+    verdict=ERROR exitcode=2
+  elif [ "$rc" -eq 1 ] && [ "$exitcode" -eq 0 ]; then
+    verdict=RED exitcode=1
+  fi
 done
-
-verdict=$(landing_verdict "$nav_rc" "$usedby_rc" "$ledger_rc" "$citecheck_rc")
-printf 'MADO_LANDING_COUNTERS: %s (nav=%d usedby=%d ledger=%d citecheck=%d rev=%s)\n' \
-  "$verdict" "$nav_rc" "$usedby_rc" "$ledger_rc" "$citecheck_rc" "$REV"
-[ "$verdict" = GREEN ]
-exit $?
+printf 'MADO_LANDING_COUNTERS: %s (nav=%d usedby=%d ledger=%d citecheck=%d rev=%s)\n' "$verdict" "$nav_rc" "$usedby_rc" "$ledger_rc" "$citecheck_rc" "$REV"
+exit "$exitcode"

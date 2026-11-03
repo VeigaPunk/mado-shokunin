@@ -1,0 +1,136 @@
+== 0. fetch-if-missing (each source is opened by URL, not from a retained copy) ==
+fetched: 4 files
+
+== 1. lane identity ==
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin rev-parse HEAD
+ed980316e330703030d0c17b2a7098e058295b99
+rc=0
+
+declared base: eafd500fa7be76dca59e729435e231a5032cc037
+
+== 2. allocated source: Bash 5.3 release (tarball -> doc/bashref.texi §3.7.5) ==
+$ sha256sum /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-5.3.tar.gz /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-5.3/doc/bashref.texi
+0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba  /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-5.3.tar.gz
+f3d37d57a1061e24d266051de9bd47ffa43dc86584afea11576c535ad2be32d5  /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-5.3/doc/bashref.texi
+rc=0
+
+$ wc -c /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-5.3.tar.gz /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-5.3/doc/bashref.texi
+11355854 /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-5.3.tar.gz
+  415804 /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-5.3/doc/bashref.texi
+11771658 total
+rc=0
+
+$ grep -n '@node Exit Status\|@subsection Exit Status\|exit status of zero indicates\|returns a status of 127\|status of 2 to indicate' doc/bashref.texi
+3890:@node Exit Status
+3891:@subsection Exit Status
+3905:So while an exit status of zero indicates success, a non-zero
+3915:execute it returns a status of 127.
+3928:All builtins return an exit status of 2 to indicate incorrect usage,
+rc=0
+
+$ sed -n '/@node Exit Status/,/^So while/p' doc/bashref.texi   (quote at :3905-3906)
+For the shell's purposes, a command which exits with a
+zero exit status has succeeded.
+So while an exit status of zero indicates success, a non-zero
+rc=0
+
+== 2b. readable rendering of the same section (HTML node + single-page version line) ==
+$ sha256sum /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-exit-status.html /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-manual.html
+b5489d3d21e32da01de356e7a63093ec276a60a020d616a05fffcc9b7b19d983  /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-exit-status.html
+78d0eefbe60cfe7345ffdafede7294f055b04e53bd520360ff699b24f81e2b4b  /fast/scratch/hyaku/mado-r66/R66ScribeSources/bash-manual.html
+rc=0
+
+$ grep -n 'So while an exit status\|fatal signal whose number\|returns a status of 127\|status of 2 to indicate incorrect usage' Exit-Status.html
+68:So while an exit status of zero indicates success, a non-zero
+74:<p>When a command terminates on a fatal signal whose number is <var class="var">N</var>,
+78:execute it returns a status of 127.
+91:All builtins return an exit status of 2 to indicate incorrect usage,
+rc=0
+
+$ grep -o 'version 5.3, 18 May 2025' bash-manual.html
+version 5.3, 18 May 2025
+version 5.3, 18 May 2025
+rc=0
+
+$ bash --version | head -1
+GNU bash, version 5.3.20(1)-release (x86_64-pc-linux-gnu)
+rc=0
+
+== 3. screened-not-allocated candidate (scout CPython subprocess.rst) ==
+$ sha256sum /fast/scratch/hyaku/mado-r66/R66ScribeSources/subprocess.rst
+05cd782c5181481ad961788dd678b99c903eb3ff53e0ebab3095c38b48c74dfd  /fast/scratch/hyaku/mado-r66/R66ScribeSources/subprocess.rst
+rc=0
+
+$ sed -n '240,243p' subprocess.rst
+    .. attribute:: returncode
+
+        Exit status of the child process, an integer.  If the process
+        exited due to a signal, this will be the negative signal number.
+rc=0
+
+$ python3 -c word count of the scout quote
+23
+rc=0
+
+$ grep -c 'subprocess.rst' corpus/SOURCES.md (S108 already holds this URL)
+1
+rc=0
+
+== 4. registry id frontier and shape ==
+$ grep -o '^| S[0-9]{3}' corpus/SOURCES.md | sort -u | tail -3
+| S432
+| S433
+| S434
+rc=0
+$ grep -c '^| S435 ' corpus/SOURCES.md
+0
+rc=1
+$ grep -c 'bash-5.3.tar.gz\|Exit-Status.html' corpus/SOURCES.md (URLs must be unused)
+1
+rc=0
+$ sources-census.sh census --root <fleet> mado  (shape baseline before append)
+mado	rows	371
+mado	tier.A	357
+mado	tier.B	7
+mado	tier.C	7
+mado	status.mined	350
+mado	status.queued	10
+mado	status.rejected	11
+FLEET	rows	371
+rc=0
+
+== 5. census validate on the live lane (start state; receipt outside scanned scope) ==
+rc=0
+$ diff census-now.txt .ufo/waves/round-66/census-start-r66.txt
+0a1
+> $ scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+38a40
+> exit=0
+rc=1 (1 = header/trailer only; see diff body)
+$ grep -c 'W0[14]' census-now.txt
+37
+rc=0
+
+== 6. census A/B on mirror lanes: base registry vs base+S435 ==
+lane-row: S435 (11 cells) inserted after S434 (line 384)
+base_rc=0
+row_rc=0
+lane-row	rows	372
+lane-row	tier.A	358
+lane-row	tier.B	7
+lane-row	tier.C	7
+lane-row	status.mined	351
+lane-row	status.queued	10
+lane-row	status.rejected	11
+$ diff n-base.txt n-row.txt
+38c38
+< LANE	ok	/fast/scratch/hyaku/mado-r66/R66ScribeSources/mirror/lane-base/corpus/SOURCES.md
+---
+> LANE	ok	/fast/scratch/hyaku/mado-r66/R66ScribeSources/mirror/lane-row/corpus/SOURCES.md
+rc=1 (only the terminal ok-line path should differ)
+$ grep -c 'W0' n-row.txt
+37
+warnings_rc=0
+$ grep -c '	S435	' n-row.txt
+0
+s435_rc=1 (1 = no finding names the new row)

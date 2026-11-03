@@ -1,0 +1,266 @@
+mado round-66 R66ScribeLesson evidence — 2026-11-03T23:25:17Z
+lane=/home/vgpnk/Projects/shokunin/mado-shokunin
+
+== head ==
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin rev-parse HEAD
+ed980316e330703030d0c17b2a7098e058295b99
+rc=0
+
+== freeze commit identity ==
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show -s --format=%H%n%cI%n%s HEAD
+ed980316e330703030d0c17b2a7098e058295b99
+2026-11-03T20:03:29-03:00
+round-66: freeze bounded counter-discrimination claims
+rc=0
+
+== wave registry and ready mtimes ==
+$ stat -c %n %y /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1.ready /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/swarm-registry.json
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1.ready 2026-11-03 20:03:21.905673442 -0300
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/swarm-registry.json 2026-11-03 20:03:10.290973619 -0300
+rc=0
+
+== registry createdAt ==
+$ python3 -c import json;print(json.load(open('/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/swarm-registry.json'))['createdAt'])
+2026-11-03T23:03:10.291Z
+rc=0
+
+== SOURCES S028/S097 cell comparison (base vs r65 tip) ==
+rev_base=524fa1f90b1f rows=99
+rev_tip =23fbc174d02f rows=99
+rows_added=[] rows_removed=[]
+S028 changed_cells=1 [('opened', '2026-10-19', '2026-11-03')]
+S097 changed_cells=1 [('opened', '2026-10-20', '2026-11-03')]
+all_changed_rows=['S028', 'S097']
+rc=0
+
+== exact live CLEAN line ==
+$ sed -n 65p /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/receipts/gate-live-r65.txt
+MADO_VERIFY: CLEAN (52 pass, 8 notes; file + live planes verified read-only)
+rc=0
+
+== file-plane CLEAN line ==
+$ sed -n 46p /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/receipts/gate-fileplane-r65.txt
+MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)
+rc=0
+
+== r65 forge summary lines ==
+$ grep -nE FORGED_RC|MADO_R65_REGISTER: rows=8 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65RevRegister/a3-forge-r65.txt
+14:MADO_R65_REGISTER: rows=8 groups=8/8 receipts=1 resolved=1 gate=ok verdict=TARGET_MET rev=42670341a54fa9791a29e4cf5b43215b66b5e9f7
+15:FORGED_RC=0 (0 = counter ACCEPTS forged state cells)
+rc=0
+
+== r65 forge counter sha prefix ==
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65RevRegister/../R65ExecC1Counter/c1-r65-register.py
+2ccedc6852a35a8cfbaaf8a92b1ad473c1464499cc892fa8753dc199eaaa1871  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65RevRegister/../R65ExecC1Counter/c1-r65-register.py
+rc=0
+
+== r65 instrument mutant verdicts ==
+$ python3 -c import json;d=json.load(open('/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65MutCounters/evidence/instr-mutants.json'));print({r['id']:(r['verdict'],r['summary']) for r in d['rows'] if r['id'] in ('I1','I7','I9','I8')})
+{'I1': ('SURVIVED', 'MADO_LANDING_COUNTERS_SELFTEST: 19/19 assertions passed'), 'I7': ('SURVIVED', 'MADO_LANDING_COUNTERS_SELFTEST: 19/19 assertions passed'), 'I9': ('SURVIVED', 'MADO_LANDING_COUNTERS_SELFTEST: 19/19 assertions passed'), 'I8': ('SURVIVED', 'MADO_LANDING_COUNTERS_SELFTEST: 19/19 assertions passed')}
+rc=0
+
+== I1 GREEN-at-red-rev probe ==
+$ grep -nE LANDING_LEG citecheck rc=0|MADO_LANDING_COUNTERS: GREEN /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65MutCounters/evidence/probe-I1.log
+11:LANDING_LEG citecheck rc=0
+12:MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0 ledger=0 citecheck=0 rev=cb63ab13ccaf85191318701d5db5ace050bd5bd4)
+rc=0
+
+== I7 r64-tree probe ==
+$ grep -nE files=21 citations=18|MADO_CITECHECK /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65MutCounters/evidence/probe-I7.log
+29:MADO_CITECHECK: rev=cb63ab13ccaf85191318701d5db5ace050bd5bd4 files=21 citations=18 resolved=18 missing=0 skipped_large=0 verdict=TARGET_MET (VERSION r64-v1)
+rc=0
+
+== I9 usedby rc=2 inside RED ==
+$ grep -nE LANDING_LEG usedby rc=2|MADO_LANDING_COUNTERS: RED /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65MutCounters/evidence/probe-I9.log
+6:LANDING_LEG usedby rc=2
+23:MADO_LANDING_COUNTERS: RED (nav=0 usedby=2 ledger=0 citecheck=1 rev=cb63ab13ccaf85191318701d5db5ace050bd5bd4)
+rc=0
+
+== location-blind selftest ==
+$ grep -nE SELFTEST ok 19|MADO_LANDING_COUNTERS_SELFTEST /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65MutCounters/evidence/probe-location-blind.log
+19:SELFTEST ok 19: a15 selftest scratch removed on exit
+20:MADO_LANDING_COUNTERS_SELFTEST: 19/19 assertions passed
+rc=0
+
+== S5 crash-as-red report line ==
+$ grep -nE S5\. Red and crash|MADO_LANDING_COUNTERS: RED /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65CriticInstrument/report.md
+74:**S5. Red and crash are indistinguishable; selftest a9 cannot tell them apart.**
+76:- Base run `bash landing-counters.sh --repo LANE --rev cb63ab13… --scratch-root …`: `LANDING_LEG usedby rc=2`, `ledger rc=2`, `citecheck rc=2` (sibling path failures) → `MADO_LANDING_COUNTERS: RED (nav=0 usedby=2 ledger=2 citecheck=2 …)`, exit 1. Identical exit to a genuine red.
+rc=0
+
+== C1 candidate selftest ==
+$ sed -n 1,17p /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecRegister/selftest.txt
+selftest genuine: PASS
+selftest duplicate-heading: PASS
+selftest row-without-receipt: PASS
+selftest file-plane-only: PASS
+selftest file-plane-at-live-path: PASS
+selftest live-line-substring: PASS
+selftest missing-heading: PASS
+selftest duplicate-group: PASS
+selftest missing-row: PASS
+selftest extra-row: PASS
+selftest receipt-in-state-only: PASS
+selftest unresolved-receipt: PASS
+selftest missing-fourth-cell: PASS
+selftest state-truth-not-measured: PASS
+selftest unreferenced-live-receipt: PASS
+MADO_R66_REGISTER_SELFTEST: PASS cases=15 failed=0
+rc=0
+rc=0
+
+== C1 candidate genuine base ==
+$ cat /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecRegister/genuine-base.txt
+MADO_R66_REGISTER: headings=1 rows=8 groups=8/8 receipts=4 resolved=4 gate=ok verdict=TARGET_MET rev=eafd500fa7be76dca59e729435e231a5032cc037
+rc=0
+rc=0
+
+== C1 candidate controls summary ==
+$ python3 -c import json;d=json.load(open('/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecRegister/controls.json'));print('correct=',d['correct']);print('base=',d['base'])
+correct= {'baseline': 1, 'candidate': 4}
+base= eafd500fa7be76dca59e729435e231a5032cc037
+rc=0
+
+== C1 candidate sha ==
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecRegister/c1-r66-register.py
+8ca15c66e953b093913559b7eda7f390c111a79062ef22f75caa498a4a04ec31  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecRegister/c1-r66-register.py
+rc=0
+
+== C2 landing selftest tail ==
+$ tail -4 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecLanding/selftest.txt
+SELFTEST ok 58: empty population summary RED
+MADO_LANDING_COUNTERS_SELFTEST: 58/58 assertions passed
+
+COMMAND_RC=0
+rc=0
+
+== C2 landing candidate sha ==
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecLanding/landing-counters.sh
+e4767ec74f1ff481a826573c7880f6107734ad31bd3b085e0eaba45415d82c4f  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecLanding/landing-counters.sh
+rc=0
+
+== C2 landing selftest case count ==
+$ grep -c ^SELFTEST ok  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecLanding/selftest.txt
+58
+rc=0
+
+== C2 landing report SHA line ==
+$ grep -n SHA256 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecLanding/report.md
+9:SHA256: `e4767ec74f1ff481a826573c7880f6107734ad31bd3b085e0eaba45415d82c4f`.
+rc=0
+
+== r65 committed counter sha ==
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r65-register.py
+2ccedc6852a35a8cfbaaf8a92b1ad473c1464499cc892fa8753dc199eaaa1871  /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r65-register.py
+rc=0
+
+== C2 driver baseline verdict ==
+$ grep -nE selftest=0 landing=2|unknown argument: --round|TARGET_MISSED /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecDriver/report.md
+7:The new driver pins `--rev` to a commit SHA, reads only committed regular blobs for the instrument and its three frozen dependencies, strips all inherited `GIT_*` variables from git and leg children, runs selftest and landing, and passes `--round 66 --citecheck-paths <real --repo>/.ufo/waves/round-66/receipts`. Both producer rcs must be zero; the landing output must carry exactly one matching GREEN summary and one zero-rc witness per leg. The standing instrument owns child-marker validation. Missing artifacts produce TARGET_MISSED/1; unsafe setup exits 2. Scratch rejects tmp-family roots and symlink ancestors, uses exclusive private directories, and removes private work in finally. Stdout/stderr and command/rc sidecars survive under declared scratch for caller retention.
+15:   - rc **1**; `selftest=0 landing=2 green=no verdict=TARGET_MISSED`.
+16:   - Frozen baseline selftest **19/19**, rc **0**. Actual baseline landing rc **2**, stderr `landing-counters.sh: unknown argument: --round`.
+18:2. In-memory focused contract harness: rc **0**, **14 checks passed**. Covers complete/partial/duplicate/conflicting/wrong-revision GREEN witnesses, missing/nonzero leg witnesses, `/tmp`, `/var/tmp`, `/dev/shm`, symlink-ancestor escape, missing artifact TARGET_MISSED/1, and inherited invalid `GIT_DIR`/`GIT_WORK_TREE` isolation. Exact case list, commands, results: `evidence/targeted-checks.txt`.
+19:3. Final revised driver with `--rev eafd500f`, otherwise command 1, and invalid inherited `GIT_DIR`/`GIT_WORK_TREE`: rc **1**, `selftest=0 landing=2 green=no verdict=TARGET_MISSED`. Asserted child argv contains full frozen SHA, explicit round 66 and repo-derived receipts path. Exact command/result: `evidence/short-revision.txt`; corresponding final leg logs retained alongside baseline logs.
+24:- The real **candidate** four-leg GREEN cannot be claimed: the peer draft is not a committed candidate revision, and this seat may not integrate or commit. Parent must run this driver against its integrated revision with committed round-66 receipts; this report records baseline TARGET_MISSED, not candidate success.
+rc=0
+
+== harness wave-root and seat sha ==
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/check-controls.py /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecHarness/check-controls.py
+84ec73ddca64872fc76282b78729847b4d5f584e1482a39206e995dd773e519a  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/check-controls.py
+2e34eab0705b173a6c90d5635b4eb7bd8a71d57932821a0c01c855d17967db13  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecHarness/check-controls.py
+rc=0
+
+== harness c1 candidate summary ==
+$ cat /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecHarness/evidence/final-c1-cand/r66harness/c1/summary.txt
+claim=c1 rev=eafd500fa7be76dca59e729435e231a5032cc037 baseline_from=eafd500fa7be76dca59e729435e231a5032cc037 candidate=draft-diagnostic:/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecHarness/../R66ExecRegister/c1-r66-register.py
+baseline correct=1/4
+candidate correct=4/4
+candidate selftest rc=0
+correct=4/4 TARGET_MET mode=candidate
+rc=0
+
+== harness c2 candidate summary ==
+$ cat /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecHarness/evidence/final-c2-cand/r66harness/c2/summary.txt
+claim=c2 rev=eafd500fa7be76dca59e729435e231a5032cc037 baseline_from=eafd500fa7be76dca59e729435e231a5032cc037 candidate=draft-diagnostic:/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ExecHarness/../R66ExecLanding/landing-counters.sh
+case=diag-real-children expected=observe-only baseline=RED/1 candidate=ERROR/2 (diagnostic, uncounted)
+baseline correct=1/4
+candidate correct=4/4
+candidate selftest rc=0
+candidate driver=skipped (draft-diagnostic mode: driver absent at rev; the frozen command runs it at an integrated rev)
+correct=4/4 TARGET_MET mode=candidate
+rc=0
+
+== critic F1 lines ==
+$ sed -n 35p;43p /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66CriticLanding.md
+| F1 | closed | A4 | Count instrument 218781fb ran cases a–d only and printed `correct=4/4 TARGET_MET` without selftest/landing. Fixed in `84ec73dd…`: candidate selftest rc0 gate + driver TARGET_MET gate at rev (skip disclosed in diagnostic mode). L1 installed `84ec73dd…` at `.ufo/waves/round-66/check-controls.py`; verified on the installed path: a–d 4/4, selftest rc0, driver-skip line, TARGET_MET rc0 | none |
+### F1 — count omitted selftest and real landing (P1; closed in `84ec73dd…`, installed and verified)
+rc=0
+
+== critic F2 line ==
+$ sed -n 58p /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66CriticLanding.md
+at an integrated rev)` — disclosed, not silently omitted. Observed output: a–d candidate 4/4,
+rc=0
+
+== mutation kill denominators ==
+$ grep -nE killed by the published|killed once|7/7 killed /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66MutHardening.md
+23:  an honest split between "killed by the published denominator" and "killed only by an extended probe".
+89:**Finite denominator:** 4 mutants; 3 killed by the published three-control quartet, 4/4 killed once
+rc=0
+
+== evidence-scope absent at HEAD ==
+$ bash -c git -C '/home/vgpnk/Projects/shokunin/mado-shokunin' cat-file -e HEAD:.ufo/waves/round-66/receipts/evidence-scope.txt 2>&1; echo cat-file-rc=$?
+fatal: path '.ufo/waves/round-66/receipts/evidence-scope.txt' exists on disk, but not in 'HEAD'
+cat-file-rc=128
+rc=0
+
+== driver CLI options ==
+$ grep -n add_argument /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r66-landing-instrument.py
+125:    parser.add_argument("--repo", default=".")
+126:    parser.add_argument("--rev", required=True)
+127:    parser.add_argument("--scratch-root", required=True)
+rc=0
+
+== supporting quote word count ==
+$ bash -c printf '%s' 'If a command is not found, the child process created to execute it returns a status of 127.' | wc -w
+18
+rc=0
+
+== ledger child actual marker source ==
+$ sed -n 368,371p /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-tool-ledger.py
+    print("LEDGER: population=%d ledger_rows=%d uncovered=%d dangling=%d "
+          "bad_pointer=%d empty_desc=%d verdict=%s rev=%s"
+          % (len(pop), rowcount, len(uncovered), dangling, bad_pointer, empty_desc,
+             "TARGET_MET" if met else "TARGET_MISSED", sha))
+rc=0
+
+== ledger verdict at HEAD ==
+$ bash -c python3 '/home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-tool-ledger.py' --repo '/home/vgpnk/Projects/shokunin/mado-shokunin' --rev HEAD 2>&1 | tail -1
+LEDGER: population=106 ledger_rows=106 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=ed980316e330703030d0c17b2a7098e058295b99
+rc=0
+
+== tool-ledger row count ==
+$ grep -cE ^\| ` /home/vgpnk/Projects/shokunin/mado-shokunin/quality/tool-ledger.md
+109
+rc=0
+
+== routed-defect age derivation ==
+$ printf %s\n 1
+1
+rc=0
+
+== census warning count ==
+$ grep -cE ^mado	W0 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/census-start-r66.txt
+37
+rc=0
+
+== census trailing status ==
+$ tail -1 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/census-start-r66.txt
+exit=0
+rc=0
+
+== source seat row id ==
+$ grep -nE ^\| S435  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-66/w1/R66ScribeSources/SOURCES.append.md
+7:| S435 | GNU Bash 5.3 official release tarball — `doc/bashref.texi` §3.7.5 Exit Status (HTML rendering: https://www.gnu.org/software/bash/manual/html_node/Exit-Status.html) — https://ftp.gnu.org/gnu/bash/bash-5.3.tar.gz | docs | A | the release-tagged exit-status classes a shell receives from an executed command (0 success convention, non-zero failure, 127 not found, 126 not executable, 128+N fatal signal, builtin misuse 2), scoped to the round-66 C2 child-completion rc vocabulary; not a marker, receipt or row-truth source | tarball 11,355,854 B sha256 `0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba`; extracted `doc/bashref.texi` 415,804 B sha256 `f3d37d57a1061e24d266051de9bd47ffa43dc86584afea11576c535ad2be32d5`; §3.7.5 `@node Exit Status` :3890, `@subsection` :3891, quotes :3902-3906, :3911-3912, :3914-3916, :3925-3928; HTML node `Exit-Status.html` 5,187 B sha256 `b5489d3d21e32da01de356e7a63093ec276a60a020d616a05fffcc9b7b19d983` (version line "5.3, 18 May 2025" is on the single-page manual, sha256 `78d0eefbe60cfe7345ffdafede7294f055b04e53bd520360ff699b24f81e2b4b`); host `bash --version` → `5.3.20(1)-release`; opened 2026-11-03 | an exit status is the value returned through `waitpid`, so zero is a success convention the shell applies and non-zero the failure signal; 126/127 mark the child failing to execute the named command and 128+N a fatal-signal termination; a wrapper-forced 0 is therefore indistinguishable in the status from genuine success, and no status records what work the child did — completion needs a separate marker (C2), never an rc inference | mined | 2026-11-03 | on-release | corpus/lessons/round-66.md |
+rc=0
+
+== end ==

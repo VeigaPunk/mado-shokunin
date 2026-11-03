@@ -1,0 +1,26 @@
+# R66CriticLanding command log (cwd /home/vgpnk/Projects/shokunin unless noted; scratch under /fast/scratch/hyaku/mado-r66/R66CriticLanding)
+# All runs read sandbox copies of the drafts; no lane writes.
+bash <draft-v2>/quality/landing-counters.sh --selftest --scratch-root <scratch>/st-v2            rc=0  56/56  -> selftest-v2.out
+bash <draft-v2>/quality/landing-counters.sh --repo <lane> --rev HEAD --round 65 --scratch-root <scratch>/att/v2real  rc=0 GREEN -> landing-real-round65-v2.out
+bash <draft-v2> --repo <fx/empty> --rev <rev> --round 66 --scratch-root <scratch>/att/v2empty   rc=0 GREEN (bug; nav indexed=0/0) -> landing-empty-corpus-v2.out
+bash <baseline-r65> --repo <fx/empty> --rev <rev> --scratch-root <scratch>/att/empty-b          rc=1 RED (ZeroDivisionError in nav) -> landing-empty-corpus-r65-baseline.out/.err
+bash <draft-v2> missing-usedby copy --repo <fx/fixture> --rev <rev> --round 66                  rc=2 ERROR summary -> landing-missing-usedby-v2.out
+bash <draft-v2> with synthetic zerocite marker --repo <fx/fixture> --round 66                   rc=2 ERROR (r65: RED/1) -> landing-zerocite-v2.out
+bash <draft-v2> with inconsistent marker (rc0+TARGET_MISSED)                                    rc=2 ERROR -> landing-inconsistent-marker-v2.out
+bash <draft-v2> with duplicate marker                                                            rc=2 ERROR -> landing-duplicate-marker-v2.out
+bash <draft-v2> with wrong marker rev                                                            rc=2 ERROR -> landing-wrong-rev-v2.out
+bash <draft-v2> with nav rc0 indexed=0/1                                                         rc=2 ERROR -> landing-nav-parity-v2.out
+bash <draft-v1> control grid a=RED/1 b=ERROR/2 c=ERROR/2; green GREEN/0; dup/badverdict/wrongrev/navincons ERROR/2; d tested separately (v1 rc=2 no summary; v2 rc=2 ERROR summary)
+bash <baseline-r65> GIT_REPLACE_REF_BASE=refs/altpre/ --repo <fx/ns2> --rev <C1>                rc=1 RED (redirected read)
+bash <draft-v1>    GIT_REPLACE_REF_BASE=refs/altpre/ --repo <fx/ns2> --rev <C1>                 rc=0 GREEN (neutralized) -> git-replace-base-*.out
+bash <draft-v1>    in-repo `git replace C1 C2` --rev <C1>                                        rc=1 RED (replacement read; residual) -> git-inrepo-replace-draft-v1.out
+bash <draft-v1>    GIT_NAMESPACE=e --repo <fx/ns2> --rev HEAD                                    rc=0 GREEN (no local redirect observed)
+bash <draft-v2>    --scratch-root <scratch>/esc/link/sub/root (parent symlink)                    rc=2 refused, victim empty -> scratch-parent-symlink-refusal.err
+bash <baseline-r65> with PATH shim, forced-zero children (no markers)                            rc=0 GREEN (baseline defect c)
+bash <baseline-r65> with ledger crash rc=2                                                       rc=1 RED (baseline defect b: no ERROR)
+bash <baseline-r65> missing usedby sibling                                                       rc=1 RED (baseline defect d: no ERROR)
+python3 <harness 218781fb> --repo <lane> --rev HEAD --claim c2 --scratch-root <measure> --candidate-draft <draft-v2>  rc=0 baseline 1/4 candidate 4/4 -> harness-c2-candidate-v2-latest.out
+python3 <harness 218781fb> --repo <lane> --rev HEAD --claim c2 --scratch-root <measure>          rc=1 baseline-only 1/4 -> harness-c2-baseline-only-latest.out
+python3 <harness 94941bef> --repo <lane> --rev HEAD --claim c2                                   rc=1 TypeError crash -> harness-tuple-crash-old-sha.err
+python3 tools/mado-receipt-citecheck.py --repo <lane> --rev HEAD --paths .ufo/waves/round-66/receipts  rc=1 citations=4 resolved=1 missing=3 -> citecheck-r66-scope-at-head.out
+grep -n 'selftest|MADO_R66_INSTRUMENT|actual_green' <harness 218781fb>                           rc=1 no matches (count omits selftest/real-landing legs) -> harness-missing-final-legs-grep.txt

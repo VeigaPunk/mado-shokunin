@@ -1,0 +1,73 @@
+R66SentFrontier — security/hermeticity probe transcript (scratch-only; lane read-only)
+Lane HEAD observed: ed980316e330703030d0c17b2a7098e058295b99
+Base under claims: eafd500fa7be76dca59e729435e231a5032cc037
+
+1) C1 replace-ref steering (old draft 4e1b94ff…; fixed in 8ca15c66…)
+   Scratch repo: commit A PROVINCE walker receipt cell = `none`; commit B genuine.
+   `git -C repo replace A B`
+   old 4e1b: `MADO_R66_REGISTER: ... verdict=TARGET_MET rev=A` rc=0
+             (`git --no-replace-objects cat-file -p A:PROVINCE.md` still shows `none`)
+   fixed 8ca (GIT_NO_REPLACE_OBJECTS=1):
+             `MADO_R66_REGISTER: ... verdict=TARGET_MISSED rev=A` rc=1
+             `C1_R66: detail=row-receipt-missing='walker'`
+
+2) landing dirty-guard index write (old 1671cebc…; fixed in e4767ec7…)
+   Scratch clone: `git update-index --refresh`; `touch .ufo/waves/round-65/receipts/gate-live-r65.txt`
+   old 1671: landing rc=0 GREEN; .git/index sha256
+             310eaeacfabc0dc02e8af3371dcd152f888d464a97983e885bd4dc650c55c732 →
+             196a484514adbd87848832fdec487c17c0e8c52ffa9e13767323442eec801254  INDEX_CHANGED
+   fixed e476 (export GIT_OPTIONAL_LOCKS=0 GIT_NO_REPLACE_OBJECTS=1): landing rc=0 GREEN;
+             .git/index 9c73f1f3a07b3c697f3f8d5c1b2659fe2e382cdebd42b3c54db475d227f044fa
+             before and after  INDEX_UNCHANGED
+
+3) harness scratch symlink follow (old 84ec73dd…; fixed in 2e34eab0…)
+   Scratch: `r66harness/c1/extracted -> <scratch>/victim`
+   old 84ec: harness wrote c1-r65-register.py, gate-live-r65.txt, gate-fileplane-r65.txt
+             into victim (3 files); victim_count=3
+   fixed 2e34: harness rc=1 baseline-only; victim_count=0; fresh private temp dir + symlink
+               component refusal.
+
+4) C2 harness final target (2e34eab0…; candidate C1 8ca, landing e476, driver e4d62)
+   Scratch clone rev d6ca466ddff4d9adf66fd24df5f0dc3bde2c8d3e
+   C1: candidate 4/4, selftest rc=0, TARGET_MET; baseline 1/4
+   C2: candidate 4/4, selftest rc=0, driver rc=0 verdict=TARGET_MET; baseline 1/4
+
+5) Tool-ledger pointer simulation
+   old rows (evidence-scope.txt absent at rev): population=108 ledger_rows=108
+       bad_pointer=2, both `pointer-missing:.ufo/waves/round-66/receipts/evidence-scope.txt`, rc=1
+   fixed rows (c1 -> claims-declaration-r66.md; c2 -> w1-dispatch.json):
+       population=108 ledger_rows=108 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0
+       verdict=TARGET_MET, rc=0 (fresh clone rev ef40c42ceaad19ade1f029929a8b07bb7269cff3)
+
+6) Source row/frontier checks
+   S435 row: 11 inner cells, split('|') NF=13, escaped pipes=0; id S435 absent from lane;
+   URL `ftp.gnu.org/gnu/bash/bash-5.3.tar.gz` absent as a URL in lane; S110 independently
+   records doc/bashref.texi 415,804 B sha256 f3d37d57… (same digest as S435's anchor).
+   HTML node verified this session: 5,187 B sha256 b5489d3d…; quote at Exit-Status.html:68-69;
+   supporting quote at :77-78 (18 whitespace tokens; source gate still says 19).
+   lane `git diff -- corpus/SOURCES.md` empty; no opened-cell edit.
+   Mirror census (S435 inserted after S434 + actual round-66 lesson draft):
+       scripts/sources-census.sh validate --root <mirror> <mirror>/lane  -> rc=0,
+       0 E-lines, 0 findings naming S435; baseline W04/W01 set unchanged.
+   Lane census now: rc=0, no S435 line (row not integrated), identical to census-start-r66
+   except wrapper lines.
+
+7) Citecheck coupling (round-66 receipts, current lane)
+   python3 tools/mado-receipt-citecheck.py --repo . --rev HEAD --paths .ufo/waves/round-66/receipts
+       rc=1 citations=4 resolved=1 missing=3:
+       corpus/lessons/round-66.md, quality/counters/c1-r66-register.py,
+       quality/counters/c2-r66-landing-instrument.py
+   In a scratch clone with the lesson and both counters committed, the C2 driver returned
+   `MADO_R66_INSTRUMENT: selftest=0 landing=0 green=yes verdict=TARGET_MET`.
+
+8) Landing external citecheck path
+   landing-counters.sh --citecheck-paths <scratch>/ext-receipts (outside --repo) -> rc=2
+   `citecheck paths must be inside repository for dirty guard` (disclosed cutover restriction).
+
+9) Residual replace-ref hardening absence
+   `grep GIT_NO_REPLACE_OBJECTS`: absent in c2-r66-landing-instrument.py (e4d62b3c…) and
+   check-controls.py (2e34eab0…); present in c1-r66-register.py (8ca15c66…) and
+   landing-counters.sh (e4767ec7…).
+
+No credentials, session files, environment dumps, r56 material, host configuration/service/
+compositor changes, or lane/fleet git/jj mutations were performed by this seat.

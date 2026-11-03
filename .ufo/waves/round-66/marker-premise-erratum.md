@@ -1,0 +1,3 @@
+# Round 66 marker premise erratum
+
+R66ExecLanding inspected the actual ledger child before candidate implementation: `quality/check-tool-ledger.py:349-371` emits `LEDGER:`, not the declaration's remembered literal `MADO_TOOL_LEDGER`. The declaration also instructs reading actual existing outputs. Implementation uses the actual anchored `LEDGER:` marker and never renames/fabricates child output. This is a named declaration premise defect, not a silent replacement of frozen bytes. The four C2 fixture conditions, expected exit codes, target 4/4, default-round and scratch predicates are unchanged. Closure may grade the literal mismatch as a conformance defect. Source: seat's direct code inspection message, 2026-11-03.

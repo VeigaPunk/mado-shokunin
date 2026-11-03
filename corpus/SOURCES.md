@@ -382,6 +382,7 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
 | S432 | Microsoft Learn — DISPLAYCONFIG_TARGET_MODE structure (wingdi.h) - https://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-displayconfig_target_mode | docs | A | the documented target-mode structure (the union member the tool maps and interprets when infoType is TARGET): the single member targetVideoSignalInfo | § Syntax + § Members @ ms.date 2018-12-05 (git_commit 9267262487657894a8af112d7165006fed5035a7; updated_at 2024-02-22); opened 2026-11-01 | "The DISPLAYCONFIG_TARGET_MODE structure describes a display path target mode." | mined | 2026-11-01 | 180d | corpus/knowledge/windows-displayconfig-r63.md, corpus/lessons/round-63.md |
 | S433 | Microsoft Learn — DISPLAYCONFIG_RATIONAL structure (wingdi.h) - https://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-displayconfig_rational | docs | A | the documented fractional-frequency type that carries every refresh fact of the round (Numerator/Denominator), specified in the target-info and video-signal structures | § Description + § Syntax + § Remarks @ ms.date 2018-12-05 (git_commit 9267262487657894a8af112d7165006fed5035a7; updated_at 2024-02-22); opened 2026-11-01 | "The DISPLAYCONFIG_RATIONAL structure describes a fractional value that represents vertical and horizontal frequencies of a video mode" | mined | 2026-11-01 | 180d | corpus/knowledge/windows-displayconfig-r63.md, corpus/lessons/round-63.md |
 | S434 | Microsoft Learn — DISPLAYCONFIG_2DREGION structure (wingdi.h) - https://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-displayconfig_2dregion | docs | A | the documented point/offset type behind the signal structure's activeSize/totalSize members the tool reads (cx/cy UINT32 pair) | § Description + § Syntax @ ms.date 2018-12-05 (git_commit 9267262487657894a8af112d7165006fed5035a7; updated_at 2024-02-22); opened 2026-11-01 | "The DISPLAYCONFIG_2DREGION structure represents a point or an offset in a two-dimensional space." | mined | 2026-11-01 | 180d | corpus/knowledge/windows-displayconfig-r63.md, corpus/lessons/round-63.md |
+| S435 | GNU Bash 5.3 official release manual — https://www.gnu.org/software/bash/manual/html_node/Exit-Status.html | docs | A | documented exit-status vocabulary supporting the round-66 C2 distinction between ordinary red and execution failure; not row truth or child invocation | Bash Reference Manual 5.3 §3.7.5 Exit Status; release doc/bashref.texi:3902-3906,3911-3916,3925-3928 (release tarball sha256 0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba); HTML rendering opened 2026-11-03 | Zero is the shell success convention; 126 and 127 distinguish execution failures and 128+N fatal signals. The lane separately requires child markers as policy, not proof of truth or honest invocation. | mined | 2026-11-03 | on-release | corpus/lessons/round-66.md |
 
 ## Paths
 
@@ -808,3 +809,13 @@ join decodes keeps the sweep bounded — stated in the entry's limits). The
 pages were opened BEFORE any row was written. Registry overlap: none of the
 eleven URLs was previously held (no new census W04 warning). All eleven
 opened 2026-11-01 on the Windows host itself.
+
+## Round 66 — bounded child-status source sweep (2026-11-03)
+
+Question: what does a child exit code establish? Searched official GNU Bash
+Exit Status and Python subprocess returncode documentation. Identified 2,
+screened 2, included 1 (S435, Bash), excluded 1 from this round's append
+(Python is relevant but unnecessary for this shell-policy claim; not rejected
+as false). Stop: one primary source suffices for the bounded rc vocabulary.
+No source establishes row truth or authentic child invocation. No existing
+status, recheck, used-by or opened cell changed.

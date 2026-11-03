@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# R66ExecHarness case shim: dispatches the four landing legs by child script path.
+# Emits the legs' real contract marker shapes with case-controlled rc.
+# nav passes through to the real python3 so the navigation leg stays genuine.
+set -u
+case "${1:-}" in
+  -) leg=nav ;;
+  */c3-r56-used-by.py) leg=usedby ;;
+  */check-tool-ledger.py) leg=ledger ;;
+  */mado-receipt-citecheck.py) leg=citecheck ;;
+  *) printf 'shim: unexpected child argv: %s\n' "$*" >&2; exit 2 ;;
+esac
+printf '%s\n' "$leg" >>"$WITNESS"
+if [ "$leg" = "$TEST_LEG" ]; then
+  case "$TEST_MODE" in
+    skip) exit 0 ;;
+    crash) exit 2 ;;
+  esac
+fi
+rc=0
+if [ "$leg" = "$TEST_LEG" ] && [ "$TEST_MODE" = red ]; then rc=1; fi
+if [ "$leg" = nav ]; then
+  if [ "$rc" -eq 0 ]; then exec "$REAL_PYTHON" "$@"; fi
+  printf 'revision=%s indexed=1/2 missing=1 dangling=0 duplicates=0 coverage=5.0000/10\n' "$FIXTURE_REV"
+  exit 1
+fi
+case "$leg" in
+  usedby)
+    if [ "$rc" -eq 0 ]; then
+      printf 'MADO_USED_BY: rev=%s entries=1 rows=1 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=0 verdict=TARGET_MET missed=none\n' "$FIXTURE_REV"
+    else
+      printf 'MADO_USED_BY: rev=%s entries=1 rows=1 missing=1 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=0 verdict=TARGET_MISSED missed=rows\n' "$FIXTURE_REV"
+    fi ;;
+  ledger)
+    if [ "$rc" -eq 0 ]; then
+      printf 'LEDGER: population=1 ledger_rows=1 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=%s\n' "$FIXTURE_REV"
+    else
+      printf 'LEDGER: population=1 ledger_rows=1 uncovered=1 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=%s\n' "$FIXTURE_REV"
+    fi ;;
+  citecheck)
+    if [ "$rc" -eq 0 ]; then
+      printf 'MADO_CITECHECK: rev=%s files=1 citations=1 resolved=1 missing=0 skipped_large=0 verdict=TARGET_MET\n' "$FIXTURE_REV"
+    else
+      printf 'MADO_CITECHECK: rev=%s files=1 citations=1 resolved=0 missing=1 skipped_large=0 verdict=TARGET_MISSED\n' "$FIXTURE_REV"
+    fi ;;
+esac
+exit "$rc"

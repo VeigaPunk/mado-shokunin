@@ -274,3 +274,15 @@ Provenance: every state cell below was re-observed read-only on the returned oma
 <!-- r65 register end -->
 
 **Round-65 refinement (append-only; two record counters, one standing instrument, no new write surface):** the round-65 instruments are `quality/counters/c1-r65-register.py` (reads git objects at `--rev`, checks the register block above; writes nothing), `quality/counters/c2-r65-landing-instrument.py` (a read-only driver that extracts its own four dependencies into scratch and runs `quality/landing-counters.sh`; refuses /tmp-family and symlink scratch roots), and `quality/landing-counters.sh` (four legs: navigation, used-by, ledger, citecheck; each leg rc captured; `MADO_LANDING_COUNTERS: GREEN|RED`). They score the lane’s own record and the receipts it lands; none touches a config plane, a compositor socket or a host service. The omarchy-host freshness and gate-selftest rubrics are re-derived by the committed round-65 gate receipts (`.ufo/waves/round-65/receipts/gate-fileplane-r65.txt`, `gate-live-r65.txt`).
+
+**Round-66 refinement — no new desktop/write surface.** `quality/counters/c1-r66-register.py`
+checks unique heading/group rows, row-local resolving receipts and the exact committed live-gate
+line; it reads Git objects only. `quality/counters/c2-r66-landing-instrument.py` extracts the
+standing script and dependencies at a revision, runs its selftest and real round-66 landing
+inside caller scratch, and removes its private work. `quality/landing-counters.sh` now requires
+`--round N` and binds child markers to actual exit status: GREEN/0, genuine RED/1, ERROR/2.
+These are lane record instruments, not desktop-state or child-honesty proofs. The live receipt
+check is tree-level: an unreferenced live object can satisfy it; forged state cells remain
+unmeasured. Existing r65 counter files stay unchanged; the r65 standing script is preserved
+at its historical revisions, while its current path is the r66 cutover. No historical invocation
+is claimed valid against unpinned current bytes. Evidence: `corpus/lessons/round-66.md`.

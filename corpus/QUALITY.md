@@ -616,3 +616,21 @@ Declared limits.
 - An entry with no evidence rows reads `rows=0 verdict=FAIL`, so an empty entry is not vacuously green.
 
 Enforcement at landing: the round-56 C1 counter's `scope:<id>` leg covers K rows only (30/30 at the final revision); the draft all-row-class checker `.ufo/waves/round-56/w1/R56RevQuality/check-anchor-cover.py` reported `rows=39 covered=39 miss=0` on the round-56 entry at `b70f6a2c` after the E rows were re-pointed at supplementary rows S392-S395, but it lacks the EOF, reversed-range, duplicate-id and malformed-pin clauses of this text (`w2/R56W2CritScopeFix.md` item 3), so it is a draft instrument, not the gate of this criterion.
+
+## Criterion from round-65 child-status residue (round 66)
+
+**108. Aggregate a child verdict only with its own contract marker and actual exit status.**
+Read the marker spelling from the child source/output. A genuine rc=1 red marker is a finding;
+a crash, absent marker, inconsistent marker or missing executable is ERROR, not RED or GREEN.
+ERROR dominates RED. The standing landing script requires explicit `--round N` for default
+scope; empty navigation and empty citation evidence cannot yield GREEN.
+Ground: `lessons/round-66.md` M66-3/M66-5 and the prior non-author
+`lessons/round-65-verifier-spotcheck.md` routed defect 3.
+
+Shown able to fail: unchanged base instruments score 1/4 on the four named C2 controls
+in `.ufo/waves/round-66/w1/R66ExecHarness/evidence/`; the skipped child, crash and
+missing-sibling controls expose rc-only aggregation. Recheck with
+`python3 .ufo/waves/round-66/check-controls.py --repo . --rev REV --claim c2 --scratch-root DIR`.
+This harness also requires the committed driver's selftest and real four-leg landing.
+Limits: marker consistency does not authenticate a child, establish source truth or contain
+a malicious child. The finite control set is not universal fault coverage.
