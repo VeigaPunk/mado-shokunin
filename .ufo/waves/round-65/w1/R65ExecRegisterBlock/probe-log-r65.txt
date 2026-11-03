@@ -1,0 +1,117 @@
+== R65ExecRegisterBlock probe log — 2026-11-03, returned omarchy host (live Hyprland 0.56.2) ==
+Each probe below is the VERBATIM command from register-block-r65.md row N probe cell; rc is that command own.
+
+-- row 1 hypr plane
+cmd: command -v hyprctl && hyprctl version && hyprctl instances -j && test -d ~/.config/hypr
+/usr/bin/hyprctl
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Date: Wed Aug 5 14:13:21 2026
+Tag: v0.56.2, commits: 7661
+
+Libraries:
+Hyprgraphics: built against 0.5.1, system has 0.5.1
+Hyprutils: built against 0.14.2, system has 0.14.2
+Hyprcursor: built against 0.1.13, system has 0.1.13
+Hyprlang: built against 0.6.8, system has 0.6.8
+Aquamarine: built against 0.15.1, system has 0.15.1
+
+Version ABI string: efb50993780079460b0cbed1363e2166a2de1d9f_aq_0.15_hu_0.14_hg_0.5_hc_0.1_hlg_0.6
+no flags were set
+
+[
+{
+    "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1793632040_1005787507",
+    "time": 1793632040,
+    "pid": 1665,
+    "wl_socket": "wayland-1"
+}
+]
+
+rc=0
+
+-- row 2 waybar
+cmd: command -v waybar && waybar --version && pgrep -x waybar && test -d ~/.config/waybar
+/usr/bin/waybar
+Waybar v0.15.0
+1720
+rc=0
+
+-- row 3 walker
+cmd: command -v walker && walker --version && test -d ~/.config/walker && systemctl --user is-active app-walker@autostart.service elephant.service
+/usr/bin/walker
+2.17.2
+active
+active
+rc=0
+
+-- row 4 terminal configs
+cmd: for d in alacritty foot kitty ghostty; do if test -d "$HOME/.config/$d"; then echo "$d config present"; else echo "$d config missing"; fi; if command -v "$d" >/dev/null; then echo "$d bin present"; else echo "$d bin not found"; fi; done
+alacritty config present
+alacritty bin present
+foot config present
+foot bin not found
+kitty config present
+kitty bin not found
+ghostty config present
+ghostty bin not found
+rc=0
+
+-- row 5 theme/wallpaper omarchy plane
+cmd: test -d ~/.config/omarchy && test -d ~/.local/share/omarchy && cat ~/.config/omarchy/current/theme.name && readlink ~/.config/omarchy/current/background && if command -v swayosd >/dev/null; then echo "swayosd present"; else echo "swayosd not found"; fi
+matte-black
+/home/vgpnk/.config/omarchy/current/theme/backgrounds/0-ship-at-sea.jpg
+swayosd not found
+rc=0
+
+-- row 6 idle/lock plane
+cmd: for b in hypridle hyprlock hyprsunset; do printf "%s " "$b"; command -v "$b"; done; for p in hypridle hyprlock hyprsunset; do if pgrep -x "$p" >/dev/null; then echo "$p: running"; else echo "$p: no process"; fi; done
+hypridle /usr/bin/hypridle
+hyprlock /usr/bin/hyprlock
+hyprsunset /usr/bin/hyprsunset
+hypridle: no process
+hyprlock: no process
+hyprsunset: no process
+rc=0
+
+-- row 7 omarchy skill docs
+cmd: test -d ~/.agents/skills/omarchy && readlink -f ~/.agents/skills/omarchy
+/home/vgpnk/.local/share/omarchy/default/omarchy-skill
+rc=0
+
+-- row 8 windows desktop plane
+cmd: for b in powershell.exe pwsh powershell; do printf "%s " "$b"; if command -v "$b" >/dev/null; then echo present; else echo "not found"; fi; done
+powershell.exe not found
+pwsh not found
+powershell not found
+rc=0
+
+-- supporting checks (state-cell facts not shown by the probe cell)
+cmd: wc -l ~/.config/hypr/hyprland.conf
+32 /home/vgpnk/.config/hypr/hyprland.conf
+rc=0
+cmd: wc -l ~/.config/waybar/config.jsonc
+260 /home/vgpnk/.config/waybar/config.jsonc
+rc=0
+cmd: ls -la ~/.agents/skills/omarchy
+lrwxrwxrwx 1 vgpnk vgpnk 54 Oct  3 17:44 /home/vgpnk/.agents/skills/omarchy -> /home/vgpnk/.local/share/omarchy/default/omarchy-skill
+rc=0
+cmd: sha256sum <skill leaf>
+becd149e4d1c0767a80bcc1eb84e86e509149dc1e4b3d680cf24ab54bea5256d  /home/vgpnk/.local/share/omarchy/default/omarchy-skill/SKILL.md
+rc=0
+cmd: cat ~/.local/share/omarchy/version
+3.8.3
+rc=0
+cmd: grep -nE "timeout" ~/.config/hypr/hypridle.conf
+10:    timeout = 150
+11:    on-timeout = pidof hyprlock || omarchy-launch-screensaver
+16:    timeout = 152
+17:    on-timeout = omarchy-system-lock
+rc=0
+cmd: git -C lane ls-tree -r --name-only HEAD -- .ufo/waves/round-65/receipts
+.ufo/waves/round-65/receipts/before-register-probes-r65.txt
+.ufo/waves/round-65/receipts/before-state-r65.txt
+.ufo/waves/round-65/receipts/census-start-r65.txt
+.ufo/waves/round-65/receipts/control-c1-c2-base-r65.txt
+.ufo/waves/round-65/receipts/gate-fileplane-r65.txt
+.ufo/waves/round-65/receipts/gate-live-r65.txt
+rc=0

@@ -1,0 +1,121 @@
+{
+ "baseline": {
+  "pos": [
+   0,
+   "MET",
+   "MADO_R65_REGISTER: rows=8 groups=8/8 receipts=2 resolved=2 gate=ok verdict=TARGET_MET rev=61ea1fb63658993cc03930472d897011c90e8af8"
+  ],
+  "pos-extra": [
+   0,
+   "MET",
+   "MADO_R65_REGISTER: rows=9 groups=8/8 receipts=2 resolved=2 gate=ok verdict=TARGET_MET rev=7d38f9fcbf0fe47b0dcbbcd77257dad8af29a45d"
+  ],
+  "neg-dupgroup": [
+   0,
+   "MET",
+   "MADO_R65_REGISTER: rows=8 groups=8/8 receipts=2 resolved=2 gate=ok verdict=TARGET_MET rev=517ea54dc8b42c4d61c407c0bf7d838abe687e47"
+  ],
+  "neg-droprow": [
+   1,
+   "MISSED",
+   "MADO_R65_REGISTER: rows=7 groups=7/8 receipts=1 resolved=1 gate=missing verdict=TARGET_MISSED rev=622d3d7fba16c44e122c61cc3d2454ad56299f79"
+  ],
+  "neg-gate-dirty": [
+   1,
+   "MISSED",
+   "MADO_R65_REGISTER: rows=8 groups=8/8 receipts=2 resolved=2 gate=missing verdict=TARGET_MISSED rev=82fedf78db859dd4a1df5b07fa2761744f6c1f08"
+  ],
+  "neg-dangling": [
+   1,
+   "MISSED",
+   "MADO_R65_REGISTER: rows=8 groups=8/8 receipts=3 resolved=2 gate=ok verdict=TARGET_MISSED rev=725639402474fdedb5f90efa541566e9e808699f"
+  ],
+  "neg-nearmiss": [
+   1,
+   "MISSED",
+   "MADO_R65_REGISTER: rows=8 groups=7/8 receipts=2 resolved=2 gate=ok verdict=TARGET_MISSED rev=496aae2f2bff01aa5ba0b3d9c9180173fdbcfe13"
+  ],
+  "neg-base": [
+   1,
+   "MISSED",
+   "MADO_R65_REGISTER: rows=0 groups=0/8 receipts=0 resolved=0 gate=missing verdict=TARGET_MISSED rev=fc3e9d34d929ffe321de53ac9c53fae364afd7f2"
+  ],
+  "neg-8r7g-gateok": [
+   1,
+   "MISSED",
+   "MADO_R65_REGISTER: rows=8 groups=7/8 receipts=2 resolved=2 gate=ok verdict=TARGET_MISSED rev=2b869c45931997cba42951f83ee8037840e959f4"
+  ],
+  "neg-sentinel-leak": [
+   1,
+   "MISSED",
+   "MADO_R65_REGISTER: rows=7 groups=7/8 receipts=1 resolved=1 gate=missing verdict=TARGET_MISSED rev=611241f531a9e17aba0f743418dc38303c69a96f"
+  ],
+  "neg-wt-only": [
+   1,
+   "MISSED",
+   "MADO_R65_REGISTER: rows=0 groups=0/8 receipts=0 resolved=0 gate=missing verdict=TARGET_MISSED rev=9286e34fa717d687a5ff377e9716f24d77061e64"
+  ]
+ },
+ "rows": [
+  [
+   "M1 rows>=9 (off-by-one up)",
+   "KILLED",
+   "pos: MET/rc0 -> MISSED/rc1; neg-dupgroup: MET/rc0 -> MISSED/rc1",
+   "11 fixtures"
+  ],
+  [
+   "M2 rows>=7 (off-by-one down)",
+   "SURVIVED",
+   "no deviation",
+   "11 fixtures"
+  ],
+  [
+   "M3 groups>=7 (weaken required set)",
+   "KILLED",
+   "neg-nearmiss: MISSED/rc1 -> MET/rc0; neg-8r7g-gateok: MISSED/rc1 -> MET/rc0",
+   "11 fixtures"
+  ],
+  [
+   "M4 gate token weakened",
+   "KILLED",
+   "neg-gate-dirty: MISSED/rc1 -> MET/rc0",
+   "11 fixtures"
+  ],
+  [
+   "M5 receipt resolution dropped",
+   "KILLED",
+   "neg-dangling: MISSED/rc1 -> MET/rc0",
+   "11 fixtures"
+  ],
+  [
+   "M6 group first-cell substring",
+   "KILLED",
+   "neg-nearmiss: MISSED/rc1 -> MET/rc0",
+   "11 fixtures"
+  ],
+  [
+   "M7 worktree instead of rev",
+   "KILLED",
+   "neg-wt-only: MISSED/rc1 -> MET/rc0",
+   "11 fixtures"
+  ],
+  [
+   "M8 always exit 0",
+   "KILLED",
+   "neg-droprow: MISSED/rc1 -> MISSED/rc0; neg-gate-dirty: MISSED/rc1 -> MISSED/rc0; neg-dangling: MISSED/rc1 -> MISSED/rc0; neg-nearmiss: MISSED/rc1 -> MISSED/rc0; neg-8r7g-gateok: MISSED/rc1 -> MISSED/rc0; neg-sentinel-leak: MISSED/rc1 -> MISSED/rc0",
+   "11 fixtures"
+  ],
+  [
+   "M10 required group dropped from GROUPS",
+   "KILLED",
+   "neg-8r7g-gateok: MISSED/rc1 -> MET/rc0",
+   "11 fixtures"
+  ],
+  [
+   "M9 sentinel ignored",
+   "KILLED",
+   "neg-sentinel-leak: MISSED/rc1 -> MET/rc0",
+   "11 fixtures"
+  ]
+ ]
+}

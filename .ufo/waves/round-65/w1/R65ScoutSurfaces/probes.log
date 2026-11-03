@@ -1,0 +1,221 @@
+# R65ScoutSurfaces — Surface State Register Probes (2026-11-03)
+# Host: Linux plazir27 7.2.11-arch1-1 #1 SMP PREEMPT_DYNAMIC Fri, 16 Oct 2026 00:28:58 +0000 x86_64 GNU/Linux
+# Date: 2026-11-03T22:37:26Z
+
+=================================================================
+=== Surface Group 1: hypr plane                               ===
+=================================================================
+--- PROBE: 1.1: command -v hyprctl ---
+$ command -v hyprctl
+/usr/bin/hyprctl
+[exit code: 0]
+
+--- PROBE: 1.2: test -d ~/.config/hypr ---
+$ test -d ~/.config/hypr
+[exit code: 0]
+
+--- PROBE: 1.3: hyprctl version (first 2 lines) ---
+$ hyprctl version | head -n 2
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Date: Wed Aug 5 14:13:21 2026
+[exit code: 0]
+
+--- PROBE: 1.3b: hyprctl version (full) ---
+$ hyprctl version
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Date: Wed Aug 5 14:13:21 2026
+Tag: v0.56.2, commits: 7661
+
+Libraries:
+Hyprgraphics: built against 0.5.1, system has 0.5.1
+Hyprutils: built against 0.14.2, system has 0.14.2
+Hyprcursor: built against 0.1.13, system has 0.1.13
+Hyprlang: built against 0.6.8, system has 0.6.8
+Aquamarine: built against 0.15.1, system has 0.15.1
+
+Version ABI string: efb50993780079460b0cbed1363e2166a2de1d9f_aq_0.15_hu_0.14_hg_0.5_hc_0.1_hlg_0.6
+no flags were set
+
+[exit code: 0]
+
+--- PROBE: 1.4: hyprctl instances ---
+$ hyprctl instances
+instance efb50993780079460b0cbed1363e2166a2de1d9f_1793632040_1005787507:
+	time: 1793632040
+	pid: 1665
+	wl socket: wayland-1
+
+
+
+[exit code: 0]
+
+--- PROBE: 1.4b: hyprctl instances count ---
+$ hyprctl instances | grep -c '^instance '
+1
+[exit code: 0]
+
+=================================================================
+=== Surface Group 2: waybar                                   ===
+=================================================================
+--- PROBE: 2.1: command -v waybar ---
+$ command -v waybar
+/usr/bin/waybar
+[exit code: 0]
+
+--- PROBE: 2.2: test -d ~/.config/waybar ---
+$ test -d ~/.config/waybar
+[exit code: 0]
+
+--- PROBE: 2.3: waybar --version ---
+$ waybar --version
+Waybar v0.15.0
+[exit code: 0]
+
+--- PROBE: 2.4: pgrep -x waybar count (observation only) ---
+$ pgrep -x waybar | wc -l
+1
+[exit code: 0]
+
+--- PROBE: 2.4b: pgrep -l -x waybar ---
+$ pgrep -l -x waybar
+1720 waybar
+[exit code: 0]
+
+=================================================================
+=== Surface Group 3: walker                                   ===
+=================================================================
+--- PROBE: 3.1: command -v walker ---
+$ command -v walker
+/usr/bin/walker
+[exit code: 0]
+
+--- PROBE: 3.2: test -d ~/.config/walker ---
+$ test -d ~/.config/walker
+[exit code: 0]
+
+--- PROBE: 3.3: walker --version ---
+$ walker --version
+2.17.2
+[exit code: 0]
+
+=================================================================
+=== Surface Group 4: terminal configs                         ===
+=================================================================
+--- PROBE: 4.1: test -e ~/.config/alacritty ---
+$ test -e ~/.config/alacritty
+[exit code: 0]
+
+--- PROBE: 4.2: test -e ~/.config/foot ---
+$ test -e ~/.config/foot
+[exit code: 0]
+
+--- PROBE: 4.3: test -e ~/.config/kitty ---
+$ test -e ~/.config/kitty
+[exit code: 0]
+
+--- PROBE: 4.4: test -e ~/.config/ghostty ---
+$ test -e ~/.config/ghostty
+[exit code: 0]
+
+--- PROBE: 4.5: combined terminal configs presence check ---
+$ for t in alacritty foot kitty ghostty; do test -e "$HOME/.config/$t" && echo "$t: present (rc=0)" || echo "$t: absent (rc=$?)"; done
+alacritty: present (rc=0)
+foot: present (rc=0)
+kitty: present (rc=0)
+ghostty: present (rc=0)
+[exit code: 0]
+
+=================================================================
+=== Surface Group 5: theme/wallpaper omarchy plane            ===
+=================================================================
+--- PROBE: 5.1: test -e ~/.config/omarchy ~/.local/share/omarchy ---
+$ test -e ~/.config/omarchy && test -e ~/.local/share/omarchy
+[exit code: 0]
+
+--- PROBE: 5.2: cat ~/.config/omarchy/current/theme.name ---
+$ cat ~/.config/omarchy/current/theme.name
+matte-black
+[exit code: 0]
+
+--- PROBE: 5.3: readlink ~/.config/omarchy/current/background ---
+$ readlink ~/.config/omarchy/current/background
+/home/vgpnk/.config/omarchy/current/theme/backgrounds/0-ship-at-sea.jpg
+[exit code: 0]
+
+--- PROBE: 5.4: readlink -f ~/.config/omarchy/current/background ---
+$ readlink -f ~/.config/omarchy/current/background
+/home/vgpnk/.config/omarchy/current/theme/backgrounds/0-ship-at-sea.jpg
+[exit code: 0]
+
+=================================================================
+=== Surface Group 6: idle/lock plane                          ===
+=================================================================
+--- PROBE: 6.1: command -v hypridle hyprlock hyprsunset ---
+$ command -v hypridle hyprlock hyprsunset
+/usr/bin/hypridle
+/usr/bin/hyprlock
+/usr/bin/hyprsunset
+[exit code: 0]
+
+--- PROBE: 6.2: command -v hypridle ---
+$ command -v hypridle
+/usr/bin/hypridle
+[exit code: 0]
+
+--- PROBE: 6.3: command -v hyprlock ---
+$ command -v hyprlock
+/usr/bin/hyprlock
+[exit code: 0]
+
+--- PROBE: 6.4: command -v hyprsunset ---
+$ command -v hyprsunset
+/usr/bin/hyprsunset
+[exit code: 0]
+
+=================================================================
+=== Surface Group 7: omarchy skill docs                       ===
+=================================================================
+--- PROBE: 7.1: test -d ~/.agents/skills/omarchy ---
+$ test -d ~/.agents/skills/omarchy
+[exit code: 0]
+
+--- PROBE: 7.2: omarchy version ---
+$ omarchy version
+3.8.3
+[exit code: 0]
+
+--- PROBE: 7.3: command -v omarchy ---
+$ command -v omarchy
+/home/vgpnk/.local/share/omarchy/bin/omarchy
+[exit code: 0]
+
+--- PROBE: 7.4: cat ~/.local/share/omarchy/version ---
+$ cat ~/.local/share/omarchy/version
+3.8.3
+[exit code: 0]
+
+--- PROBE: 7.5: git describe ~/.local/share/omarchy ---
+$ git -C ~/.local/share/omarchy describe --tags --always
+v3.8.4
+[exit code: 0]
+
+=================================================================
+=== Surface Group 8: windows desktop plane                    ===
+=================================================================
+--- PROBE: 8.1: command -v powershell.exe pwsh powershell ---
+$ command -v powershell.exe pwsh powershell
+[exit code: 1]
+
+--- PROBE: 8.2: command -v powershell.exe ---
+$ command -v powershell.exe
+[exit code: 1]
+
+--- PROBE: 8.3: command -v pwsh ---
+$ command -v pwsh
+[exit code: 1]
+
+--- PROBE: 8.4: command -v powershell ---
+$ command -v powershell
+[exit code: 1]
+
+=== END OF PROBES ===

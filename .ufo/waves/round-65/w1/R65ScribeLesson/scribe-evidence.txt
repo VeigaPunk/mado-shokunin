@@ -1,0 +1,171 @@
+== R65ScribeLesson evidence, 2026-11-03T22:37:27Z, base 524fa1f90b1f2de44b3019bacf833d54e0af13a0 ==
+
+-- m1 numstat r64 range
+cmd: bash -c git diff-tree -r --numstat 7fe65562c15d20e5cfdc1da536f774149ab52b7e 66b8994b6397e27904779a26264c0196d2bd0368 | awk '{f++; a+=$1; d+=$2} END {print "files="f" added="a" deleted="d}'
+files=31 added=1193 deleted=1
+rc=0
+
+-- m1 receipt files at r64 landing
+cmd: bash -c git ls-tree -r --name-only 688144573a2605704dfeb2bbca2d5bd6a06bf938 -- .ufo/waves/round-64/receipts/ | wc -l
+19
+rc=0
+
+-- m1 receipt files across r64 range
+cmd: bash -c git diff-tree -r --name-only 7fe65562c15d20e5cfdc1da536f774149ab52b7e 66b8994b6397e27904779a26264c0196d2bd0368 -- .ufo/waves/round-64/receipts/ | wc -l
+21
+rc=0
+
+-- m1 report prose (fleet root, read-only)
+cmd: bash -c grep -n '18 round-64 receipt files\|30 files, +1192' /home/vgpnk/Projects/shokunin/.ufo/reports/round-64/mado.md
+87:| Fixture `broken-fixture.json` at its cited path; error-path re-derivation receipt; claims declaration; 18 round-64 receipt files; entry Update; ledger row; PROVINCE refinement; SCORECARD r64 section; LOG entry; lesson round-64.md; the new tool | `688144573a2605704dfeb2bbca2d5bd6a06bf938` |
+93:bullet). Range numstat `7fe65562..66b8994b`: 30 files, +1192/−1 — the −1
+rc=0
+
+== m3 selftest pinned totals (host-conditional) ==
+-- ledger selftest
+cmd: python3 quality/check-tool-ledger.py --selftest --scratch-root /fast/scratch/hyaku/mado-r65/w1/R65ScribeLesson/st-ledger
+LEDGER_SELFTEST: 54/54 passed
+rc=0
+
+-- wave-done selftest
+cmd: python3 quality/check-wave-done.py --selftest --scratch-root /fast/scratch/hyaku/mado-r65/w1/R65ScribeLesson/st-wave
+MADO_WAVE_DONE_SELFTEST: 62/62 passed
+rc=0
+
+-- ledger pin line
+cmd: bash -c grep -n 'SELFTEST_CHECKS' quality/check-tool-ledger.py
+76:SELFTEST_CHECKS = 55 if os.name == "nt" else 54
+396:        if total != SELFTEST_CHECKS:
+398:                                "expected=%d got=%d" % (SELFTEST_CHECKS, total)))
+800:    # the assertion is skipped by construction (SELFTEST_CHECKS follows the host).
+rc=0
+
+-- wave-done pin line
+cmd: bash -c grep -n 'SELFTEST_CHECKS' quality/check-wave-done.py
+26:(``SELFTEST_CHECKS``) for the same reason.
+167:SELFTEST_CHECKS = 63 if os.name == "nt" else 62
+488:        if total != SELFTEST_CHECKS:
+490:                                "expected=%d got=%d" % (SELFTEST_CHECKS, total)))
+983:    # (SELFTEST_CHECKS follows the host).
+rc=0
+
+-- r64 counts for contrast
+cmd: bash -c grep -n 'LEDGER_SELFTEST\|MADO_WAVE_DONE_SELFTEST' .ufo/waves/round-64/receipts/before-state-r64.txt
+42:LEDGER_SELFTEST: 55/55 passed
+43:LEDGER_SELFTEST_RC=0
+45:MADO_WAVE_DONE_SELFTEST: 63/63 passed
+rc=0
+
+== m2 register: r57 probe column ==
+-- r57 register rows
+cmd: bash -c grep -cE '^\| .* \| (absent|observed) \(2026-10-31\) \|' PROVINCE.md
+8
+rc=0
+
+-- stale-row grep
+cmd: bash -c grep -c 'absent (2026-10-31)' PROVINCE.md
+7
+rc=0
+
+-- r65 probe receipt lines
+cmd: bash -c sed -n '/== surface probes this host/,/== versions/p' .ufo/waves/round-65/receipts/before-register-probes-r65.txt
+== surface probes this host 2026-11-03T22:28:36Z
+hyprctl: PRESENT /usr/bin/hyprctl
+waybar: PRESENT /usr/bin/waybar
+walker: PRESENT /usr/bin/walker
+hypridle: PRESENT /usr/bin/hypridle
+hyprlock: PRESENT /usr/bin/hyprlock
+hyprsunset: PRESENT /usr/bin/hyprsunset
+mako: PRESENT /usr/bin/mako
+swayosd: ABSENT
+grim: PRESENT /usr/bin/grim
+slurp: PRESENT /usr/bin/slurp
+omarchy: PRESENT /home/vgpnk/.local/share/omarchy/bin/omarchy
+.config/hypr: present
+.config/waybar: present
+.config/walker: present
+.config/alacritty: present
+.config/foot: present
+.config/kitty: present
+.config/ghostty: present
+.config/omarchy: present
+.local/share/omarchy: present
+.agents/skills/omarchy: present
+== versions
+rc=0
+
+== m65-2 version probes, attributed (this host, read-only) ==
+-- hyprctl version
+cmd: hyprctl version
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Date: Wed Aug 5 14:13:21 2026
+Tag: v0.56.2, commits: 7661
+
+Libraries:
+Hyprgraphics: built against 0.5.1, system has 0.5.1
+Hyprutils: built against 0.14.2, system has 0.14.2
+Hyprcursor: built against 0.1.13, system has 0.1.13
+Hyprlang: built against 0.6.8, system has 0.6.8
+Aquamarine: built against 0.15.1, system has 0.15.1
+
+Version ABI string: efb50993780079460b0cbed1363e2166a2de1d9f_aq_0.15_hu_0.14_hg_0.5_hc_0.1_hlg_0.6
+no flags were set
+rc=0
+
+-- walker --version
+cmd: walker --version
+2.17.2
+rc=0
+
+-- omarchy version
+cmd: omarchy version
+3.8.3
+rc=0
+
+-- omarchy --version (wrong flag shape)
+cmd: omarchy --version
+Unknown Omarchy command: omarchy --version
+Run 'omarchy commands --all' to discover available commands.
+rc=127
+
+== Gate host anchors ==
+-- registry rows at base
+cmd: bash -c grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md
+371
+rc=0
+
+-- S028 row
+cmd: bash -c grep -nE '^\| *S028 *\|' corpus/SOURCES.md | cut -c1-200
+40:| S028 | Hyprland v0.56.2 release — https://github.com/hyprwm/Hyprland/releases/tag/v0.56.2 | docs | A | 0.56.2 rule behavior fix | “Fixes backported”; v0.56.2 tag, released 2026-08-05 | Shows why 
+rc=0
+
+-- S097 recheck cell
+cmd: bash -c grep -E '^\| *S097 *\|' corpus/SOURCES.md | awk -F'|' '{print $9" | "$10}'
+ mined  |  2026-10-20 
+rc=0
+
+== census start receipt counts ==
+-- census W04
+cmd: bash -c grep -c W04 .ufo/waves/round-65/receipts/census-start-r65.txt
+36
+rc=0
+
+-- census W01
+cmd: bash -c grep -c W01 .ufo/waves/round-65/receipts/census-start-r65.txt
+1
+rc=0
+
+== gate receipts: verdict lines ==
+-- fileplane verdict
+cmd: bash -c grep -E '^counts:|^MADO_VERIFY:' .ufo/waves/round-65/receipts/gate-fileplane-r65.txt
+counts: pass=29 fail=0 unknown=0 skip=8 note=4
+MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)
+rc=0
+
+-- live verdict
+cmd: bash -c grep -E '^counts:|^MADO_VERIFY:' .ufo/waves/round-65/receipts/gate-live-r65.txt
+counts: pass=52 fail=0 unknown=0 skip=0 note=8
+MADO_VERIFY: CLEAN (52 pass, 8 notes; file + live planes verified read-only)
+rc=0
+
+== end ==

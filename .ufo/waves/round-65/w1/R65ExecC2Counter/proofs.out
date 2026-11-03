@@ -1,0 +1,154 @@
+== draft identity ==
+b8658db640142a011a5b8d421b8f037bfb74a63fabd5bd12b4e04116b00e18b7  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65ExecC2Counter/c2-r65-landing-instrument.py
+lines=253
+AST_OK
+
+== PROOF 1: MISS at base (instrument absent) ==
+MADO_R65_INSTRUMENT: instrument=absent verdict=TARGET_MISSED rev=524fa1f90b1f2de44b3019bacf833d54e0af13a0 rc=1
+EXIT=1
+
+== PROOF 2: MISS at the contract rev (instrument still absent) ==
+MADO_R65_INSTRUMENT: instrument=absent verdict=TARGET_MISSED rev=cb63ab13ccaf85191318701d5db5ace050bd5bd4 rc=1
+EXIT=1
+
+== PROOF 3: refuse scratch under /tmp ==
+MADO_R65_INSTRUMENT: scratch-root refused: /tmp-family root: /tmp/c2r65-probe (real path /tmp/c2r65-probe)
+EXIT=2
+
+== PROOF 4: refuse scratch under /var/tmp ==
+MADO_R65_INSTRUMENT: scratch-root refused: /tmp-family root: /var/tmp/c2r65-probe (real path /var/tmp/c2r65-probe)
+EXIT=2
+
+== PROOF 5: refuse symlinked scratch root ==
+MADO_R65_INSTRUMENT: scratch-root refused: path is itself a symlink: /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/link-to-st
+EXIT=2
+
+== PROOF 6: symlink resolving into /tmp refused by prefix ==
+MADO_R65_INSTRUMENT: scratch-root refused: /tmp-family root: /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/link-to-tmp/st (real path /tmp/st)
+EXIT=2
+
+== OBSERVATION: nonexistent --repo (fail-closed, still one line) ==
+MADO_R65_INSTRUMENT: ls-tree rc=128: fatal: cannot change to '/fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/no-such-repo': No such file or directory
+MADO_R65_INSTRUMENT: instrument=absent verdict=TARGET_MISSED rev=HEAD rc=1
+EXIT=1
+
+== FIXTURE BATTERY (stub instrument; orchestration only) ==
+fixture toplevel: /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fixture
+fixture base: cb63ab13ccaf85191318701d5db5ace050bd5bd4
+A=becc9e36ca28a728bf87a3ab82570e52564d7a7d
+B=6109bc873ef1576d92564f3d5ceb95bd427e879e
+C=2729b308004c4f2db4c922eda827027e10624ca1
+D=72b7bbd0c0b79d364e33f1822ae850c014f52236
+G=978022015abb53d3c2c545644ec92f2b12160586
+E=f88ccfb9ab7f03a218e585fdac920c1a1417687d
+== v1-green rev=becc9e36ca28a728bf87a3ab82570e52564d7a7d
+MADO_R65_INSTRUMENT: selftest=0 landing=0 green=yes verdict=TARGET_MET rev=becc9e36ca28a728bf87a3ab82570e52564d7a7d
+EXIT=0
+== v2-red rev=6109bc873ef1576d92564f3d5ceb95bd427e879e
+MADO_R65_INSTRUMENT: selftest=0 landing=1 green=no verdict=TARGET_MISSED rev=6109bc873ef1576d92564f3d5ceb95bd427e879e
+EXIT=1
+== v3-selftest-fail rev=2729b308004c4f2db4c922eda827027e10624ca1
+MADO_R65_INSTRUMENT: selftest=3 landing=0 green=yes verdict=TARGET_MISSED rev=2729b308004c4f2db4c922eda827027e10624ca1
+EXIT=1
+== v4-green-bad-rc rev=72b7bbd0c0b79d364e33f1822ae850c014f52236
+MADO_R65_INSTRUMENT: selftest=0 landing=1 green=yes verdict=TARGET_MISSED rev=72b7bbd0c0b79d364e33f1822ae850c014f52236
+EXIT=1
+== v8-stderr-green rev=978022015abb53d3c2c545644ec92f2b12160586
+MADO_R65_INSTRUMENT: selftest=0 landing=0 green=no verdict=TARGET_MISSED rev=978022015abb53d3c2c545644ec92f2b12160586
+EXIT=1
+== v5-extraction-incomplete rev=f88ccfb9ab7f03a218e585fdac920c1a1417687d
+MADO_R65_INSTRUMENT: extraction diagnostic: git archive rc=128
+MADO_R65_INSTRUMENT: reason=extraction-incomplete missing=tools/mado-receipt-citecheck.py verdict=TARGET_MISSED rev=f88ccfb9ab7f03a218e585fdac920c1a1417687d
+EXIT=1
+WORKTREE_AT=cb63ab13ccaf85191318701d5db5ace050bd5bd4
+WORKTREE_HAS_INSTRUMENT=no
+== v6-worktree-without-instrument rev=becc9e36ca28a728bf87a3ab82570e52564d7a7d
+MADO_R65_INSTRUMENT: selftest=0 landing=0 green=yes verdict=TARGET_MET rev=becc9e36ca28a728bf87a3ab82570e52564d7a7d
+EXIT=0
+== retained evidence per scratch root ==
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v1-green
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 451 Nov  3 19:41 c2r65-983247.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 517 Nov  3 19:41 c2r65-983247.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v2-red
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 445 Nov  3 19:41 c2r65-984497.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 509 Nov  3 19:41 c2r65-984497.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v3-selftest-fail
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 467 Nov  3 19:41 c2r65-985738.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 549 Nov  3 19:41 c2r65-985738.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v4-green-bad-rc
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 465 Nov  3 19:41 c2r65-986962.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 545 Nov  3 19:41 c2r65-986962.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v5-extraction-incomplete
+total 0
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v6-worktree-without-instrument
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 495 Nov  3 19:41 c2r65-990805.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 605 Nov  3 19:41 c2r65-990805.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v8-stderr-green
+total 12
+-rw-r--r-- 1 vgpnk vgpnk  43 Nov  3 19:41 c2r65-988125.landing.err.log
+-rw-r--r-- 1 vgpnk vgpnk 119 Nov  3 19:41 c2r65-988125.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 257 Nov  3 19:41 c2r65-988125.selftest.log
+== work dirs left (must be none) ==
+0
+DONE
+
+== INTEGRATION: real sibling instrument bytes in a fixture rev ==
+sibling sha256 (before copy):
+c12b72e20cfaeb92e7ff242b26f2a26eecd6184610e78287fb7b326a30fd5e9a  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65ExecLandingCounters/landing-counters.sh
+R=c314e28484e03dbc53869e6722736c5ca8e51144
+c12b72e20cfaeb92e7ff242b26f2a26eecd6184610e78287fb7b326a30fd5e9a  /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fixture/quality/landing-counters.sh
+MADO_R65_INSTRUMENT: selftest=0 landing=0 green=yes verdict=TARGET_MET rev=c314e28484e03dbc53869e6722736c5ca8e51144
+EXIT=0
+sibling sha256 (after run):
+c12b72e20cfaeb92e7ff242b26f2a26eecd6184610e78287fb7b326a30fd5e9a  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-65/w1/R65ExecLandingCounters/landing-counters.sh
+
+== retained leg evidence ==
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-real
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 1572 Nov  3 19:41 c2r65-992614.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 1484 Nov  3 19:41 c2r65-992614.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v1-green
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 451 Nov  3 19:41 c2r65-983247.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 517 Nov  3 19:41 c2r65-983247.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v2-red
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 445 Nov  3 19:41 c2r65-984497.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 509 Nov  3 19:41 c2r65-984497.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v3-selftest-fail
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 467 Nov  3 19:41 c2r65-985738.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 549 Nov  3 19:41 c2r65-985738.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v4-green-bad-rc
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 465 Nov  3 19:41 c2r65-986962.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 545 Nov  3 19:41 c2r65-986962.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v5-extraction-incomplete
+total 0
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v6-worktree-without-instrument
+total 8
+-rw-r--r-- 1 vgpnk vgpnk 495 Nov  3 19:41 c2r65-990805.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 605 Nov  3 19:41 c2r65-990805.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fx-st-v8-stderr-green
+total 12
+-rw-r--r-- 1 vgpnk vgpnk  43 Nov  3 19:41 c2r65-988125.landing.err.log
+-rw-r--r-- 1 vgpnk vgpnk 119 Nov  3 19:41 c2r65-988125.landing.log
+-rw-r--r-- 1 vgpnk vgpnk 257 Nov  3 19:41 c2r65-988125.selftest.log
+-- /fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/st
+total 0
+== work dirs left (must be 0) ==
+0
+BATTERY_DONE
+
+== EXTRA (post-battery): relative --repo resolves to an absolute path ==
+$ cd …/R65ExecC2Counter && python3 <draft> --repo fixture \
+    --rev becc9e36ca28a728bf87a3ab82570e52564d7a7d --scratch-root …/st-rel
+MADO_R65_INSTRUMENT: selftest=0 landing=0 green=yes verdict=TARGET_MET rev=becc9e36ca28a728bf87a3ab82570e52564d7a7d
+EXIT=0
+child landing argv (retained log): repo=/fast/scratch/hyaku/mado-r65/w1/R65ExecC2Counter/fixture
+
