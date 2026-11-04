@@ -1,0 +1,80 @@
+[
+ {
+  "name": "regex-search-to-match",
+  "anchor": "    if kind == \"regex\":\n        return re.search(value, text) is not None",
+  "replacement": "    if kind == \"regex\":\n        return re.match(value, text) is not None",
+  "selftest_rc": 0,
+  "selftest": "90/90",
+  "selftest_fails": [],
+  "run_rc": 1,
+  "matched": 27,
+  "summary": "MADO_R82_RUNBOOK: cases=29 executed=29 matched=27 shapes=22/24 anchors=29/29 rows=29/29 control_new=0/3 mutants=0 killed=0 verdict=TARGET_MISSED",
+  "broken_cases": [
+   "tray-owner",
+   "tray-interface"
+  ],
+  "verdict": "29",
+  "run_stderr_tail": ""
+ },
+ {
+  "name": "lines-shape-floor-minus-one",
+  "anchor": "        pattern = re.compile(value[\"regex\"])\n        if len(lines) < value.get(\"min_lines\", 1):\n            return False",
+  "replacement": "        pattern = re.compile(value[\"regex\"])\n        if len(lines) < value.get(\"min_lines\", 1) - 1:\n            return False",
+  "selftest_rc": 1,
+  "selftest": "89/90",
+  "selftest_fails": [
+   "lines shape length floor"
+  ],
+  "run_rc": 1,
+  "matched": 27,
+  "summary": "MADO_R82_RUNBOOK: cases=29 executed=29 matched=27 shapes=22/24 anchors=29/29 rows=29/29 control_new=0/3 mutants=0 killed=0 verdict=TARGET_MISSED",
+  "broken_cases": [
+   "omarchy-menu-keybindings",
+   "tray-methods"
+  ],
+  "verdict": "29",
+  "run_stderr_tail": ""
+ },
+ {
+  "name": "array-fields-dict-accepted",
+  "anchor": "        if not isinstance(data, list) or len(data) < value.get(\"min_items\", 1):\n            return False\n        return all(fields_ok(item, value) for item in data)",
+  "replacement": "        if not isinstance(data, (list, dict)) or len(data) < value.get(\"min_items\", 1):\n            return False\n        items = list(data.values()) if isinstance(data, dict) else data\n        return all(fields_ok(item, value) for item in items)",
+  "selftest_rc": 0,
+  "selftest": "90/90",
+  "selftest_fails": [],
+  "run_rc": 0,
+  "matched": 29,
+  "summary": "MADO_R82_RUNBOOK: cases=29 executed=29 matched=29 shapes=24/24 anchors=29/29 rows=29/29 control_new=0/3 mutants=0 killed=0 verdict=TARGET_MET",
+  "broken_cases": [],
+  "verdict": "29",
+  "run_stderr_tail": ""
+ },
+ {
+  "name": "refusal-stage-prefix",
+  "anchor": "    return rc == value[\"rc\"] and (\"ERROR (stage=%s \" % value.get(\"stage\", \"model\")) in stdout",
+  "replacement": "    return rc == value[\"rc\"] and (\"ERROR (stage=%s\" % value.get(\"stage\", \"model\")) in stdout",
+  "selftest_rc": 0,
+  "selftest": "90/90",
+  "selftest_fails": [],
+  "run_rc": 0,
+  "matched": 29,
+  "summary": "MADO_R82_RUNBOOK: cases=29 executed=29 matched=29 shapes=24/24 anchors=29/29 rows=29/29 control_new=0/3 mutants=0 killed=0 verdict=TARGET_MET",
+  "broken_cases": [],
+  "verdict": "29",
+  "run_stderr_tail": ""
+ },
+ {
+  "name": "row-binding-double-bind-allowed",
+  "anchor": "            if hits[0] in bindings:\n                raise Setup(\"row %d is bound by %r and %r\"\n                            % (hits[0], bindings[hits[0]], case[\"name\"]))",
+  "replacement": "            if False:\n                raise Setup(\"row %d is bound by %r and %r\"\n                            % (hits[0], bindings[hits[0]], case[\"name\"]))",
+  "selftest_rc": 0,
+  "selftest": "90/90",
+  "selftest_fails": [],
+  "run_rc": 0,
+  "matched": 29,
+  "summary": "MADO_R82_RUNBOOK: cases=29 executed=29 matched=29 shapes=24/24 anchors=29/29 rows=29/29 control_new=0/3 mutants=0 killed=0 verdict=TARGET_MET",
+  "broken_cases": [],
+  "verdict": "29",
+  "run_stderr_tail": ""
+ }
+]

@@ -4863,3 +4863,23 @@ round-83 ground are recorded in `corpus/lessons/round-82.md` and the round repor
 - **V5/V6 (info), disclosed.** The frozen declaration's S481 locator (`:116-123`) and its pre-erratum
   C2 controls sha (`f64d7d5d…`) no longer resolve to the corrected bytes; both are disclosed in the
   report and the lesson rather than rewritten under the freeze.
+- **V7 (high), open — the critic's C1 verdict.** The counter does not force the *declared
+  allocation* to be the band source: a candidate tool that replaces the map value with the observed
+  layers box before the resolver still scores 47/47, because every new case's `layers` reply echoes
+  the declared band. No case expects `box=DIFFER`, so `box_verdict` (`tools/mado-barfoot.py:1025`)
+  is unexercised and a `box-verdict-blind` mutant survives 47/47. The model is implemented and the
+  held r81 tool is out of reach (39/47), but the counter proves "the band equals the arranged box on
+  consistent fixtures", not "the allocation is the band source". C1 is reported **improved on the
+  modelled surface, not admitted as a causal proof**; the fix is routed: one
+  `alloc-live-band-differs` case (layers `h=40`, allocation 34, expect `box=DIFFER reserved=EQ band=34
+  expected=34 verdict=DIFFER` rc 1) plus `box-verdict-blind` in `MUTATIONS` — verified by the critic
+  against the honest tool and the cheat.
+- **V8 (low), open — the critic's C2 predicate note.** The `control_new=0/3` clause is true by
+  construction (`held_rule` returns False for a case with no `frozen` key); the substantive control is
+  the held r81 instrument's setup refusal at this tree, which the critic accepts. Round 83: drop the
+  tautological clause from the predicate and print the setup refusal as the named control. Also
+  cosmetic: `rows=` and `anchors=` print the same `len(bindings)`, and `tray-interface` binds
+  existence (say "an interface line").
+- **V9 (low), open — the critic's flag defect.** `quality/counters/c1-r82-allocation-band.py:405`
+  parses `--no-mutants` but the mutant loop at `:468` is unguarded, so the flag does nothing. Not
+  exercised by this round's measurements (the default invocation); round 83 guards the loop.

@@ -126,3 +126,19 @@ The runbook's count cells were corrected at `df6c613d` (`tray-methods` 1/3 → 2
 `keybindings-chords` 2/7 → 2/8) and `tray-owner`'s PID wording no longer claims a ceiling the
 matcher does not enforce; the `--selftest` transcripts now sit under `receipts/`. The frozen
 declaration's S481 locator and its pre-erratum controls sha are disclosed, not rewritten.
+
+
+## Wave-routed defects (append-only, round 82)
+
+- **V7 (high), open.** The C1 counter does not force the declared allocation to be the band source
+  (the critic's live-box candidate scores 47/47; no case expects `box=DIFFER`, so
+  `tools/mado-barfoot.py:1025` is unexercised). Round 83: an `alloc-live-band-differs` case plus a
+  `box-verdict-blind` mutant.
+- **V8 (low), open.** The C2 predicate's `control_new=0/3` is tautological by construction; the
+  substantive control is the held instrument's setup refusal. Round 83 drops the clause.
+- **V9 (low), open.** `--no-mutants` is parsed but unguarded in the C1 counter.
+- **V1 (medium), open.** The C1 mutation list omits the vertical band branch (`band_of` for
+  left/right); the reviewer's own mutant dies on `alloc-dyn-width-dock`, so the case is live.
+- **Fixed in-round:** the inert allocation entry (E2), the two false runbook cells and the
+  `tray-owner` PID wording (`df6c613d`), the `--selftest` transcripts (now under `receipts/`), the
+  three new-case fixture identifiers and the counter's `TMPDIR` (E1).

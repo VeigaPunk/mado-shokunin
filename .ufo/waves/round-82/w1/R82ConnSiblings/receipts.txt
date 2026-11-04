@@ -1,0 +1,147 @@
+R82ConnSiblings — receipts
+==========================
+
+Seat: R82ConnSiblings (connector, leaf, read-only)
+Lane: mado-shokunin, round 82, wave 1
+Lane base: 6ea2386d49318a5f223097c78b5fe79c31b064f8
+Sibling trees: read-only. Nothing written, staged or copied in any sibling tree.
+Owner report: ../R82ConnSiblings.md
+
+All commands were run with cwd = /home/vgpnk/Projects/shokunin.
+Redaction: no monitor description/serial/make/model, token, session id or home path outside the
+lane tree was captured. The live bus probe below prints bus name, PID and process name only.
+
+[1] Census over each sibling tree's corpus/, SKILL.md, PROVINCE.md
+--------------------------------------------------------------------
+$ for t in layer_surface exclusive_zone 'bar footprint' StatusNotifier 'busctl --user' \
+      waybar set_size allocation; do row=""; \
+    for d in *-shokunin/ kumitate-shokinin/; do \
+      [ "$d" = "mado-shokunin/" ] && continue; n=0; \
+      for f in "$d/corpus" "$d/SKILL.md" "$d/PROVINCE.md"; do \
+        [ -e "$f" ] || continue; c=$(grep -riF -- "$t" "$f" 2>/dev/null | wc -l); n=$((n+c)); \
+      done; [ "$n" -gt 0 ] && row="$row ${d%/}=$n"; done; \
+    printf '%-16s |%s\n' "$t" "${row:- NONE}"; done
+
+layer_surface    | NONE
+exclusive_zone   | NONE
+bar footprint    | NONE
+StatusNotifier   | NONE
+busctl --user    | tabi-shokunin=15
+waybar           | audio-shokunin=2958 kaidoku-shokunin=14 kotoba-shokunin=4 tabi-shokunin=16 tameshi-shokunin=2 tsukuroi-shokunin=6
+set_size         | audio-shokunin=636 game-dev-2d-shokunin=80 kaidoku-shokunin=1 mori-shokunin=2 tabi-shokunin=2
+allocation       | audio-shokunin=17 chousa-shokunin=27 game-dev-2d-shokunin=571 game-dev-3d-shokunin=4960 kagi-shokunin=1 kaidoku-shokunin=51 kasegi-shokunin=51 kengaku-shokunin=2 kotodama-shokunin=59 kumitate-shokunin=11 mori-shokunin=1065 revenger-shokunin=10 tabi-shokunin=43 tameshi-shokunin=5 tsukuroi-shokunin=38
+
+Lanes with all-zero rows (not printed by the loop): chousa, game-dev-2d, game-dev-3d, kagi, kake,
+kama, kasegi, kengaku, kotodama, kumitate, lore, revenger, souji, tabi, tameshi, tsukuroi, audio,
+kaidoku, kotoba, mori — 20 sibling trees scanned; 21 `*-shokunin/` minus `mado-shokunin`.
+`kumitate-shokinin/` (misnamed wrapper, does not match the glob) scanned too: zero anchors.
+
+[2] Word-boundary tray (the substring count is dominated by stray/array/Raycast/betray)
+----------------------------------------------------------------------------------------
+$ for d in *-shokunin/; do [ "$d" = "mado-shokunin/" ] && continue; \
+    grep -rniE '\btray(s)?\b' "$d/corpus" "$d/SKILL.md" "$d/PROVINCE.md" 2>/dev/null; done \
+  | grep -vE 'node_modules|fixture\.x86_64|/evidence/round-(13|34)/' | cut -c1-150
+
+kake-shokunin//corpus/knowledge/freshness-pins.json:159:   "omarchy-usage-tray",
+kotodama-shokunin//corpus/knowledge/civilizations/yoruba.md:73:| Ọ̀rúnmìlà / Ifá | ... chain, tray, signs, trained recitati
+kotodama-shokunin//corpus/knowledge/culture-material/furniture-interior-lexicon.md:76:- **Posture and the table's height are one decision** (§2). A f
+kotodama-shokunin//corpus/lessons/round-57.md:93:- Met Mamluk tray stand 91.1.601 (Wayback) and Met tiger rank badge (Wayback)
+
+=> one desktop-bar token (kake: a Waybar *module product* name), three unrelated (divination tray,
+   furniture tray, museum tray stand). No StatusNotifier tray-plane usage anywhere.
+
+[3] Fleet-wide decisive anchors (all files, mado tree excluded)
+---------------------------------------------------------------
+$ grep -rniE 'layer_surface|exclusive_zone' . 2>/dev/null | grep -v '^\./mado-shokunin/' | cut -c1-200
+./MANIFEST.json:43505: ... "notes": "... D8 S460 locator set_exclusive_zone :152-190 but the quote
+sits at :196 in set_margin ..."   (fleet-root record of mado's own round-77 defect; not a lane claim)
+
+$ grep -rniF -- 'StatusNotifier' . 2>/dev/null | grep -v '^\./mado-shokunin/' | cut -c1-200
+./tameshi-shokunin/.ufo/evidence/round-25/mte-reports/bash-mado-verify.mte.json:187  (mirror of
+      mado's own tools/mado-verify.sh body: "busctl --user get-property fr.arouillard.waybar
+      /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems")
+./tsukuroi-shokunin/.ufo/waves/round-24/w1/ExecMirrorTimestamps/host-extra-pkglist.txt:5294: kstatusnotifieritem 6.31.0-1
+./tsukuroi-shokunin/.ufo/waves/round-24/w1/ExecMirrorTimestamps/official-extra-pkglist.txt:5297: (same)
+./tsukuroi-shokunin/.ufo/waves/round-24/w1/ExecMirrorTimestamps/stable-extra-pkglist.txt:5297: (same)
+=> zero in any lane's corpus/, SKILL.md or PROVINCE.md; zero claim usage.
+
+$ for d in *-shokunin/; do for f in "$d/SKILL.md" "$d/PROVINCE.md"; do \
+    grep -niE 'wayland|compositor|\bwlr\b|layer.shell|hyprland' "$f"; done; done
+game-dev-3d-shokunin/PROVINCE.md:75:- Desktop/compositor display behavior belongs to `mado-shokunin`
+kengaku-shokunin/PROVINCE.md:380:  "is not a sandbox — the environment and the compositor/session sockets stay reachable"
+kotoba-shokunin/PROVINCE.md:72:| mado | none | ... mado owns the Hyprland/waybar/walker/terminal config plane ...
+kumitate-shokunin/SKILL.md:623:| bind-oracle | gate | ... (requested **mount** binds — not the Hyprland `mado-binds.py` keybind file)
+tsukuroi-shokunin/PROVINCE.md:124:| OUT-004 | ADJ-03 | `mado-shokunin/PROVINCE.md` @ `a4046a821608` | ...
+
+[4] Lane revisions at scan (git rev-parse --short=12 HEAD)
+----------------------------------------------------------
+audio-shokunin         f9da7ee97e0b      kama-shokunin          6da926f27e2d
+kaidoku-shokunin       369fa6e7fe1a      kengaku-shokunin       614f00559c75
+kotoba-shokunin        1c8f37edf2e5      kumitate-shokunin      a648a6f8f302
+tabi-shokunin          57b29bade4b0      mori-shokunin          6056d0010250
+tameshi-shokunin       c8d40f5d4ed8      kagi-shokunin          880824b1d3da
+tsukuroi-shokunin      06f1bbbb8037      game-dev-3d-shokunin   39ca3973c786
+
+[5] mado-side provenance (read-only, lane bytes at base 6ea2386d)
+-----------------------------------------------------------------
+$ grep -n 'StatusNotifier' tools/mado-verify.sh
+3634:    tray=$(tmo busctl --user get-property fr.arouillard.waybar /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems 2>/dev/null); trc=$?
+
+$ grep -n 'StatusNotifier\|busctl' tools/mado-verify.sh
+3630:  if ! have busctl; then
+3631:    row hypr-live live.waybar.tray UNKNOWN "busctl not on PATH"
+3634:    tray=$(tmo busctl --user get-property ...)
+
+$ sed -n '156p' SKILL.md
+| Bar runtime facts (running? mapped? tray? module text) | hyprctl live + consumer-side probe | `hyprctl -j layers` (namespace `waybar`, pid, geometry); `pgrep -x waybar`; tray via `busctl --user get-property fr.arouillard.waybar /StatusNot...
+
+$ sed -n '274,276p' SKILL.md   (round-82 row classes, C2)
+| `busctl --user list` | the watcher's bus name owned by a live PID: an `org.kde.StatusNotifierWatcher` line whose PID column is a decimal in 1..4194304, rc 0 | 2 / 4 |
+| `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager` | one `org.kde.StatusNotifierWatcher interface` line in the census, rc 0 | 2 / 3 |
+| `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager | awk '$2=="method"'` | every line `.Name method …`, at least 2 lines, rc 0 | 1 / 3 |
+
+[6] kake pointer measurements (not a claim; the page body is NOT captured)
+-------------------------------------------------------------------------
+$ grep -n 'omarchy-usage-tray' kake-shokunin/corpus/knowledge/freshness-pins.json
+159:   "omarchy-usage-tray",
+   (JSON path: /pins/projectsChildrenSet/5 of 14 child-project names)
+
+$ ls kake-shokunin/.ufo/waves/round-82/capture/
+ds4cc-primary  ds4cc-robots  ds4cc-sitemap  manifest.json
+
+$ python3 -c "json: pins/projectsChildrenSet"  -> 14 names incl. "omarchy-usage-tray"
+
+$ grep -c 'omarchy-usage/' kake-shokunin/.ufo/waves/round-82/capture/ds4cc-sitemap/body.bin
+1
+$ grep -c 'omarchy-usage/' kake-shokunin/.ufo/waves/round-82/capture/ds4cc-primary/body.bin
+4
+
+$ sed -n '710p;1043p' kake-shokunin/.ufo/waves/round-82/capture/ds4cc-primary/body.bin
+<h3 ...>omarchy-usage-tray</h3> ... "14 AI usage meters on one chip — ... Quattro plugin or Waybar."
+<a href="./omarchy-usage/">omarchy usage</a> · OS tuning / Waybar limits
+
+$ capture/manifest.json checks: 3 only — https://ds4cc.com/ , /robots.txt , /sitemap.xml.
+   No entry for /omarchy-usage/ => the "Waybar limits" page body is not held by kake.
+
+[7] Live read-only user-bus probe (NON-FROZEN; shape only; not a receipt for the claim)
+--------------------------------------------------------------------------------------
+$ busctl --user list --no-pager | awk 'NR==1 || /StatusNotifier|arouillard/ {print $1, $2, $3}'
+NAME PID PROCESS
+fr.arouillard.waybar 1720 waybar
+org.kde.StatusNotifierHost-1720-2 1720 waybar
+org.kde.StatusNotifierWatcher 1720 waybar
+
+Interpretation limits: one sample; PID is host state and must not enter a control, a frozen
+expectation or the claim arithmetic. The durable relation is the byte-level one (all three names
+present in one listing, one PID), not a protocol guarantee that waybar always owns the name.
+
+[8] Scope exclusions (deliberate)
+---------------------------------
+- `/home/vgpnk/Projects/shokunin/mado-shokunin` — the lane itself, excluded per seat spec.
+- Fleet-root `.ufo/`, `research/`, `templates/`, `tools/`, `scripts/` — not lane trees; touched only
+  by the fleet-wide grep in [3], which is reported as context, never as a lane claim.
+- Sibling `.ufo/` trees — outside the scoped files; consulted only to classify same-round sibling
+  connectors (kengaku ConnectorR82, kama CN01SiblingScan) and the two out-of-corpus mentions in [3].
+- Pinned ground-truth blobs (S464, S466, S470) — not needed for an ownership scan and not re-read.
+
+STATUS: ok
