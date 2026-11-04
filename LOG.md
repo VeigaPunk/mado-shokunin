@@ -3838,8 +3838,10 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   r76 pointer corrections in the lesson.
 - **Registry and gate bookkeeping.** `quality/tool-ledger.md` 136 → 140 rows; `SKILL.md`
   canonical Gate registry gains `mado-r77-barfoot` (probe), `mado-r77-barfoot-counter` and
-  `mado-r77-runbook` (gates); index 95 → 96 rows; SCORECARD round-77 block with both axis rows
-  and two capability rows.
+  `mado-r77-runbook` (gates); index 95 → 96 rows; SCORECARD round-77 block with both axis rows and two capability
+  rows. The used-by back-references of seven registry rows are repaired in place (12 pairs,
+  logged old→new in `corpus/lessons/round-77.md`), and `quality/landing-counters.sh` is GREEN
+  (nav/usedby/ledger/citecheck all rc 0).
 - **No-harm.** Gate `bash tools/mado-verify.sh --selftest` 460/460 at unchanged bytes; the
   frozen r72–r76 instruments and `quality/landing-counters.sh`, `check-tool-ledger.py`,
   `check-axis-scores.py` keep their base blob ids (the r76 counter takes a docstring-only
