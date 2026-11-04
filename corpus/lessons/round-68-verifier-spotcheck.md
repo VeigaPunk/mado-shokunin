@@ -35,7 +35,7 @@ Conformance defects (status-neutral; none bars admission):
    selftest battery `measurement-selftests-r68.txt` (measured content `18d692f3`) reads C1 `26/26`
    and C2 `25/25`, and `c2-denominator-erratum-r68.txt` reads `25/25`. The static check counts
    reproduce 27 and 26 (C1: 3×5 recipe assertions + 1 base + 4 contract-line + 1 sha + 6 scratch =
-   27; C2: 22 classifier/verdict/CLI wants + 4 contract/guard cases = 26), so the numbers are true,
+   27; C2: 14 classifier + 5 contract/guard-shape + 1 CLI-parse + 6 verdict_met wants = 26), so the numbers are true,
    but a numeric claim should carry its run at the measured revision.
 2. **Wave-settlement wording.** The report says “Settlement at tip `80c6d7aa`:
    `WAVE wave=w1 … verdict=OK`”. The receipt `wave-done-r68.txt` was *committed* at `80c6d7aa` but
@@ -150,7 +150,7 @@ axis-posture erratum).
 
 | item | decision | re-opened source | agree/disagree | reason |
 |---|---|---|---|---|
-| S437 — git v2.56.0 `Documentation/git-cat-file.adoc`, tier A `docs`, status `mined` | admit | `https://raw.githubusercontent.com/git/git/v2.56.0/Documentation/git-cat-file.adoc` re-fetched 2026-11-04T01:2xZ: 16,099 B, sha256 `6c32dbda8c2106be08bda471592db50b5afaf185de32f2e513e80d802b4a95b2`; DESCRIPTION lines 21-22; `--batch-all-objects` lines 198-199; `git ls-remote` tag object `2478544319491bbd2a42cc57a83e3d2f4730a280`, peeled `a018953688f1b10bddf91bff8747068f5f4746a4`; host `git version 2.56.0` | agree | the lesson's 18-word quote matches lines 21-22 verbatim (≤25 words); the 198-199 boundary sentence matches and is scoped to `--batch-all-objects`; the tag pin and byte hash resolve; the row is 11 cells with no pipe, `mined`, and both `used-by` paths exist (`corpus/lessons/round-68.md`, `corpus/knowledge/gate-git-read-guards-r68.md`) |
+| S437 — git v2.56.0 `Documentation/git-cat-file.adoc`, tier A `docs`, status `mined` | admit | `https://raw.githubusercontent.com/git/git/v2.56.0/Documentation/git-cat-file.adoc` re-fetched 2026-11-04T01:27:50Z: 16,099 B, sha256 `6c32dbda8c2106be08bda471592db50b5afaf185de32f2e513e80d802b4a95b2`; DESCRIPTION lines 21-22; `--batch-all-objects` lines 198-199; `git ls-remote` tag object `2478544319491bbd2a42cc57a83e3d2f4730a280`, peeled `a018953688f1b10bddf91bff8747068f5f4746a4`; host `git version 2.56.0` | agree | the lesson's 18-word quote matches lines 21-22 verbatim (≤25 words); the 198-199 boundary sentence matches and is scoped to `--batch-all-objects`; the tag pin and byte hash resolve; the row is 11 cells with no pipe, `mined`, and both `used-by` paths exist (`corpus/lessons/round-68.md`, `corpus/knowledge/gate-git-read-guards-r68.md`) |
 | Reject: “`git cat-file -e` establishes object authenticity or integrity” | reject | same URL, OPTIONS `-e` lines 49-52 and line 291 (“If `-e` is specified, no output, unless the `<object>` is malformed.”) | agree | the page defines `-e` as existence plus format validity (“exists and is a valid object”), never provenance or content truth; the offered flip (a signature/verification sentence, or an instrument that pins bytes to a digest) is the right boundary |
 
 Census: `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado` → exit 0
