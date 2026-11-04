@@ -182,3 +182,55 @@ correction a new row, never an in-place rewrite:
 The propositions in §§1–8 are unaffected: both corrections are about where a claim lives, not about
 what the compositor does. The entry's `source:` line keeps the original ids for that reason, and
 these two rows carry this path in `used-by`.
+
+## 11. Reachable classes the frozen set does not pin, and where the model is wrong
+
+Wave seat `R80ScoutModel` built 28 probe quadruples against the frozen tool and the sources; four
+classes are wrong, all outside the frozen 33's declared shapes. They are recorded here because a
+named wrong answer is a limit, not a truth, and because they are round 81's finite ground:
+
+1. **Centring past a negative tie (1 px).** `arranged_box` uses r79's integer formula
+   `(bounds.size - size + 1) // 2`, which equals `CBox::round`'s result only when the tie's absolute
+   coordinate is non-negative. A 1001-wide panel with both horizontal anchors on a 1000-wide monitor
+   at the layout origin gives `-0.5` in the source (`round` → `-1`, width `1002`) and `0` in the
+   tool. Needs `w > bounds.w` **and** a negative absolute tie; every frozen box fits its bounds.
+2. **`auto` zone on a dynamic band size.** gtk-layer-shell's auto zone is the surface's *allocation*
+   plus the unanchored margin (`S464:276-280`); the tool computes it from the declared size, so a
+   `height = 0` auto surface gets `zone = 0`, no `ATTR` row, and `expected` short by the whole band.
+   For a lone such surface the band then collapses to zero and the join reads `DIFFER`
+   deterministically. The frozen `empty-box-skip` case has this shape but its box is empty, so the
+   `continue` fires before the zone is used — it pins the skip, not the zone.
+3. **`auto` on a corner/parallel anchor pair.** gtk-layer-shell sends no zone for those anchor
+   pairs (`S464:269-288` gates on `horiz`/`vert`), while the tool still prints `size + margin`.
+4. **A declared surface with no `exclusive` key.** The declaration grammar defaults it to `"auto"`
+   (a convenience for modelling waybar), while the protocol's default is `0` (`S460:183`): a plain
+   client declared without the key reserves as if it were a bar. A caller modelling a plain client
+   must say `"exclusive": 0` explicitly.
+
+Also unpinned but *correct* in the tool (probed, no case): a monitor origin `x/y ≠ 0`, a static
+reserve plus a second exclusive surface, `exclusive == 0`/`-2` bounds, a non-exclusive surface on a
+lower level, an exclusive surface with an empty box, a left/right attribution vector, a non-top bar,
+and a negative anchored margin with a positive sum.
+
+## 12. Errata (append-only; wave seat `R80ScribeEntry` §F3 re-read the pinned bytes)
+
+Six citation errors in §§1–7, corrected here rather than rewritten in place:
+
+1. "`box.round()` follows (:2653)" — `box.round()` is at `S470:2660`; `:2653` closes the margin
+   block.
+2. "`ReservedArea.cpp:11-15, 37-48, 88-99`" — the constructors are `:10-17`, `calculate` `:43-51`,
+   the accessors `:80-94` (S466 pin).
+3. The `source:` line's "S473, S474" are the *C2* rows and do not belong to this entry; the body
+   also cites `S464` (§3, gtk-layer-shell's auto zone) and `S458` (§4, the layers reply), which the
+   `source:` line omits. The entry's C1 ground is S470/S471/S472/S476/S477 plus held
+   S457/S458/S459/S464/S465/S466.
+4. "(S470 :2575-2576)" for the match condition — the condition is the single line `:2575`
+   (`:2576` is the opening brace of the guarded block).
+5. §7 item 4 ("a box wider than the bounds … the join's centring arithmetic is integer-only")
+   conflated two facts; §11 item 1 now states the actual divergence (the tie's negative absolute
+   coordinate) and its 1 px size.
+6. §6's `MADO_BARFOOT_RESULT:` field list is complete but was written before §11's probes; the
+   `ls=` field is `VALID|INVALID` and `attr=`/`gt=` are in the reply's left, top, right, bottom
+   order, which §6 already says.
+
+None of these changes a proposition: each names where a claim lives.

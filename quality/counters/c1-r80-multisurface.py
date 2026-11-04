@@ -2,14 +2,14 @@
 """mado — PRED-C1-r80-v1: score the multi-surface composition on a frozen case set.
 
 Scores `tools/mado-barfoot.py` (the r80 generation) over a frozen case set: the
-twenty-three round-79 cases carried unchanged plus the composition cases. Each case
+twenty-three round-79 cases carried unchanged plus the ten composition cases (thirty-three in all). Each case
 supplies a waybar config, a layers reply, a monitors reply and (for the new cases) a
 surfaces declaration; the counter writes them into the caller's scratch root, runs the
 tool from the measured revision's bytes, and compares its RESULT (and its ATTR lines)
 against expectations derived from Hyprland 0.56.2's own arrangement arithmetic
 (`Renderer.cpp:2529-2700`, `ReservedArea.cpp:9-31`), never from a tool run.
 
-Contract: MADO_R80_BARFOOT: cases=30 correct=30 mutants=22 killed=22 base_correct=23/30
+Contract: MADO_R80_BARFOOT: cases=33 correct=33 mutants=22 killed=22 base_correct=23/33
 carried=23/23 tool_selftest=p/n verdict=TARGET_MET rev=<hash> tool_sha256=<sha>
 (rc 0 iff every clause holds).
 

@@ -164,3 +164,17 @@ substantiates. One sourced claim: C1 (S470/S471/S472) and C2 (S473/S474).
 
 No seat may rewrite `tools/mado-barfoot.py`, the two counters, the two control sets, the
 fixtures or this declaration. Seats return findings and draft files; the L1 integrates.
+
+## Repair R1 (append-only; after the freeze measurement, wave seat R80ScribeEntry F1)
+
+The composition path's `box=` field read `boxes[order.index(0)]`, but `boxes` is appended in
+*arrangement-sequence* order (the exclusive pass, then the non-exclusive pass) while `order` is the
+level/order-sorted list. The two positions coincide in every frozen case (all ten composition cases
+use an exclusive bar and no non-exclusive surface sorts before it), so no case, expectation, mutant
+or target moves; the field would misreport only for a non-exclusive bar with an exclusive surface
+sorting after it (a reachable declaration the set does not carry). Repaired to
+`boxes[sequence.index(0)]`; the r80 tool's `VERSION` stays `r80-v1` (the generation's contract is
+unchanged) and the measured `tool_sha256` moves from `c3eb5fbe…` to the value the new receipts print.
+A second, documentation-only repair in the same commit corrects the C1 counter's docstring contract
+line (`cases=30 … base_correct=23/30` → `cases=33 … base_correct=23/33`); no executable constant or
+branch changes.

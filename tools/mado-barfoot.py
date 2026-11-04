@@ -782,7 +782,7 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
         reserved_verdict = "GT"
     else:
         reserved_verdict = "DIFFER"
-    bar_box = boxes[order.index(0)] if 0 in order else "NO_LAYER"
+    bar_box = boxes[sequence.index(0)] if 0 in sequence else "NO_LAYER"
     if bar_box == "DIFFER" or reserved_verdict == "DIFFER":
         verdict, rc = "DIFFER", 1
     elif any(state in ("DIFFER", "NO_LAYER") for state in boxes):
