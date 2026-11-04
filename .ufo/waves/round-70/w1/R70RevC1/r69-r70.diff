@@ -1,0 +1,315 @@
+--- /fast/scratch/hyaku/mado-r70/R70RevC1/r69.py	2026-11-03 23:33:29.022532679 -0300
++++ /fast/scratch/hyaku/mado-r70/R70RevC1/r70.py	2026-11-03 23:33:29.023532682 -0300
+@@ -1,9 +1,17 @@
+ #!/usr/bin/env python3
+-r"""Round-69 C1 control harness: the standing landing instrument and its git-reading
+-children, measured against the two frozen defect controls (claim C1, round 69).
+-
+-    python3 quality/counters/c1-r69-landing-controls.py --repo . --rev REV --scratch-root DIR
+-    python3 quality/counters/c1-r69-landing-controls.py --selftest --scratch-root DIR
++r"""Round-70 C1 control harness (successor to the frozen round-69 harness): the standing
++landing instrument and its git-reading children, measured against the two frozen defect
++controls, with the M-Z kill-credit repaired to require a parsed failed assertion.
++
++Difference from `quality/counters/c1-r69-landing-controls.py`, which stays byte-frozen and
++is not edited: the round-69 line credits an M-Z mutant whenever its selftest exits nonzero
++(`mz_killed = mz_rc != 0`), so a child that crashes (no summary) or prints a garbled summary
++is credited as a kill. This harness credits M-Z only when the child's own
++`MADO_LANDING_COUNTERS_SELFTEST: <p>/<n> assertions passed` summary parses AND reports
++`p < n`. Everything else (extraction, M-R, evidence lines, selftest) is the round-69 body.
++
++    python3 quality/counters/c1-r70-landing-controls.py --repo . --rev REV --scratch-root DIR
++    python3 quality/counters/c1-r70-landing-controls.py --selftest --scratch-root DIR
+ 
+ Exit map: 0 iff the extracted instrument's own --selftest is rc 0 AND both frozen defect
+ mutants are killed (2/2); 1 iff the measurement ran and the contract was not met (red
+@@ -12,7 +20,7 @@
+ 
+ What one measurement does (every write stays under the caller-declared scratch root):
+ 
+-  extract  the four instrument files at --rev into <scratch>/r69-c1/tree/ with a scrubbed
++  extract  the four instrument files at --rev into <scratch>/r70-c1/tree/ with a scrubbed
+            git env carrying GIT_OPTIONAL_LOCKS=0 and GIT_NO_REPLACE_OBJECTS=1, so a planted
+            replacement in the source repo cannot forge the extracted bytes:
+              quality/landing-counters.sh
+@@ -23,7 +31,9 @@
+   M-Z      copy the tree, delete the exact frozen zero-citation guard clause
+            `[ "$citations" -gt 0 ] && ` once (asserting exactly one occurrence first; the
+            mutant must still pass `bash -n`), and re-run `--selftest`: the mutation is killed
+-           iff that selftest exits nonzero (the instrument's zero-citation case must go red).
++           iff that selftest exits nonzero AND its output carries a parseable
++           `MADO_LANDING_COUNTERS_SELFTEST: <p>/<n> assertions passed` summary with p < n
++           (the instrument's zero-citation case must go red, not merely break).
+   M-R      build a scratch fixture repo whose real tree lacks `corpus/cited.md` while a receipt
+            in the worktree cites it, then plant a `refs/replace` ref on the root tree so the
+            path appears; copy the extracted citecheck child, delete the exact
+@@ -36,9 +46,9 @@
+ 
+ Printed receipt (last line, exact):
+ 
+-    MADO_R69_LANDING_CONTROLS: selftest=<rc> mz=<pass|fail> mr=<pass|fail> killed=<n>/2 baseline=0/2 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
++    MADO_R70_LANDING_CONTROLS: selftest=<rc> mz=<pass|fail> mr=<pass|fail> killed=<n>/2 baseline=0/2 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
+ 
+-Preceded by one `MADO_R69_*` evidence line per extraction, mutant (with its sha256), R-control
++Preceded by one `MADO_R70_*` evidence line per extraction, mutant (with its sha256), R-control
+ leg, and the exact environment handed to the child under test. Mutant bytes are never claimed
+ killed when the recipe was inapplicable: a missing guard yields `recipe=none killed=no`, and
+ the unverified leg is named.
+@@ -49,11 +59,12 @@
+ printed contract line are exercised without a child. On top of that it asserts the hermetic
+ spawn guard is installed for the check body, and that an attempted spawn under it raises.
+ 
+-Declared limits: the paired assertions cover two hazards of the kill-credit logic only - a
+-crashing M-R child (rc 2, no MADO_CITECHECK marker) is not a kill, and an M-Z run whose
+-combined output carries no `MADO_LANDING_COUNTERS_SELFTEST:` summary is not a kill. Both use
+-scripted stand-ins; the harness claims nothing about real children in those positions, and
+-the real-children leg stays the harm-watch leg.
++Declared limits: the M-Z credit now requires a parsed failed-assertion summary, so a child
++that crashes, is missing, or prints a garbled summary earns no credit; the paired assertion
++still covers the crashing M-R child (rc 2, no MADO_CITECHECK marker). Those selftest cases
++use scripted stand-ins. The real-children evidence lives in the round's counting command
++(`quality/counters/c1-r70-real-children.py`), which runs a real `bash` fixture lane in three
++states; this harness claims nothing by itself about real children.
+ """
+ import argparse
+ import contextlib
+@@ -65,7 +76,7 @@
+ import subprocess
+ import sys
+ 
+-TOOL = "c1-r69-landing-controls.py"
++TOOL = "c1-r70-landing-controls.py"
+ LANE = "quality/landing-counters.sh"
+ USEDBY = "quality/counters/c3-r56-used-by.py"
+ LEDGER = "quality/check-tool-ledger.py"
+@@ -84,7 +95,7 @@
+     "GIT_TERMINAL_PROMPT",
+ )
+ CONTRACT_RE = re.compile(
+-    r"MADO_R69_LANDING_CONTROLS: selftest=[0-9]+ mz=(?:pass|fail) mr=(?:pass|fail) "
++    r"MADO_R70_LANDING_CONTROLS: selftest=[0-9]+ mz=(?:pass|fail) mr=(?:pass|fail) "
+     r"killed=[0-2]/2 baseline=0/2 verdict=(?:TARGET_MET|TARGET_MISSED) rev=[0-9a-f]{40,64}"
+ )
+ 
+@@ -301,6 +312,21 @@
+     return sum(1 for line in out.splitlines() if line.startswith("SELFTEST FAIL"))
+ 
+ 
++def summary_shows_failure(out):
++    """True only when the child's own summary parses AND reports fewer passes than assertions.
++
++    `MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed` -> True; `... 2/2 ...` -> False;
++    a crash (no summary) and a garbled summary -> False. A kill is credited on a failed
++    assertion, never on a broken child.
++    """
++    line = last_summary(out)
++    m = re.fullmatch(r"MADO_LANDING_COUNTERS_SELFTEST: (\d+)/(\d+) assertions passed", line)
++    if not m:
++        return False
++    passed, total = int(m.group(1)), int(m.group(2))
++    return total > 0 and passed < total
++
++
+ def describe_env(env):
+     """Exact key set and values of the child env, PATH summarized (host PATH is long noise)."""
+     parts = ["no_replace_objects=%s"
+@@ -324,7 +350,7 @@
+ 
+ 
+ def contract_line(selftest_rc, mz, mr, killed, rev):
+-    return ("MADO_R69_LANDING_CONTROLS: selftest=%d mz=%s mr=%s killed=%d/2 baseline=%s "
++    return ("MADO_R70_LANDING_CONTROLS: selftest=%d mz=%s mr=%s killed=%d/2 baseline=%s "
+             "verdict=%s rev=%s" % (selftest_rc, mz, mr, killed, BASELINE,
+                                    outcome_verdict(selftest_rc, killed), rev))
+ 
+@@ -357,8 +383,8 @@
+     write_file(os.path.join(d, receipt_rel, "a.txt"), b"cites corpus/cited.md\n")
+     write_file(os.path.join(d, "keep.txt"), b"keep\n")
+     git("add", "-A")
+-    git("-c", "user.name=r69-c1", "-c", "user.email=r69-c1@example.invalid",
+-        "-c", "commit.gpgsign=false", "commit", "-qm", "r69-c1 replacement-ref fixture")
++    git("-c", "user.name=r70-c1", "-c", "user.email=r70-c1@example.invalid",
++        "-c", "commit.gpgsign=false", "commit", "-qm", "r70-c1 replacement-ref fixture")
+     rev = git("rev-parse", "HEAD").stdout.decode("ascii", "replace").strip()
+     if not re.fullmatch(r"[0-9a-f]{40,64}", rev):
+         raise SetupError("fixture revision is malformed")
+@@ -403,7 +429,7 @@
+     repo = os.path.abspath(args.repo)
+     if not os.path.isdir(repo):
+         raise SetupError("--repo is not a directory: %s" % repo)
+-    work = os.path.join(scratch, "r69-c1")
++    work = os.path.join(scratch, "r70-c1")
+     shutil.rmtree(work, ignore_errors=True)
+     home = os.path.join(work, "home")
+     os.makedirs(home)
+@@ -411,15 +437,15 @@
+     tree = os.path.join(work, "tree")
+     files = extract(repo, sha, tree, home)
+     for rel in EXTRACT:
+-        emit("MADO_R69_EXTRACT path=%s bytes=%d sha256=%s"
++        emit("MADO_R70_EXTRACT path=%s bytes=%d sha256=%s"
+              % (rel, len(files[rel]), sha256_hex(files[rel])))
+-    emit("MADO_R69_EXTRACT rev=%s files=%d" % (sha, len(files)))
++    emit("MADO_R70_EXTRACT rev=%s files=%d" % (sha, len(files)))
+ 
+     # --- extracted instrument's own selftest -----------------------------------------------------
+     r = run(["bash", os.path.join(tree, LANE), "--selftest",
+              "--scratch-root", os.path.join(work, "st")], env=child_env(home), cwd=work, timeout=900)
+     selftest_rc = r.returncode
+-    emit("MADO_R69_SELFTEST instrument=%s rc=%d assertions=%s"
++    emit("MADO_R70_SELFTEST instrument=%s rc=%d assertions=%s"
+          % (LANE, selftest_rc, summary_fraction(dec(r.stdout) + dec(r.stderr))))
+ 
+     # --- M-Z: zero-citation guard clause deleted -------------------------------------------------
+@@ -449,10 +475,10 @@
+         mz_out = dec(r.stdout) + dec(r.stderr)
+         mz_fails = count_fails(mz_out)
+         mz_summary = summary_fraction(mz_out)
+-        mz_killed = mz_rc != 0
++        mz_killed = bool(mz_rc != 0 and summary_shows_failure(mz_out))
+     except RecipeError as exc:
+         mz_note = str(exc)
+-    emit("MADO_R69_MUTANT M-Z path=%s clause_count=%d recipe=%s removed=%s from_sha256=%s "
++    emit("MADO_R70_MUTANT M-Z path=%s clause_count=%d recipe=%s removed=%s from_sha256=%s "
+          "rc=%s failed_assertions=%s assertions=%s killed=%s sha256=%s%s"
+          % (Z_PATH, clause_count, mz_recipe,
+             repr(Z_CLAUSE.decode("ascii")) if mz_recipe != "none" else "none",
+@@ -464,19 +490,19 @@
+     # --- M-R: replacement-ref guard removed from the citecheck child ----------------------------
+     # Bound target is the citecheck child (L1 steering 2026-11-03): its explicit env constructor
+     # is the guard, and the tree-replacement fixture exercises exactly its `ls-tree` read.
+-    emit("MADO_R69_GUARDS citecheck=%d usedby=%d ledger=%d"
++    emit("MADO_R70_GUARDS citecheck=%d usedby=%d ledger=%d"
+          % (files[CITECHECK].count(R_TOKEN), files[USEDBY].count(R_TOKEN),
+             files[LEDGER].count(R_TOKEN)))
+     guard_count = files[R_PATH].count(R_TOKEN)
+     fixture = build_r_fixture(work, home)
+-    emit("MADO_R69_R_CONTROL fixture_rev=%s real_tree=%s forged_tree=%s "
++    emit("MADO_R70_R_CONTROL fixture_rev=%s real_tree=%s forged_tree=%s "
+          "forged_visible=yes guarded_visible=no"
+          % (fixture["rev"], fixture["real_tree"], fixture["forged_tree"]))
+     cenv = child_env(home)
+-    emit("MADO_R69_CHILD_ENV %s" % describe_env(cenv))
++    emit("MADO_R70_CHILD_ENV %s" % describe_env(cenv))
+     unmutated = run_r_child(os.path.join(tree, R_PATH), fixture, work, home)
+     u_ok = control_ok(unmutated["rc"], unmutated["marker"])
+-    emit("MADO_R69_R_CHILD role=unmutated rc=%d verdict=%s missing=%s control=%s"
++    emit("MADO_R70_R_CHILD role=unmutated rc=%d verdict=%s missing=%s control=%s"
+          % (unmutated["rc"],
+             unmutated["marker"][0] if unmutated["marker"] else "none",
+             unmutated["marker"][1] if unmutated["marker"] else "-",
+@@ -507,7 +533,7 @@
+             mr_note = str(exc)
+     else:
+         mr_note = "guard absent at rev (count=%d): recipe not applicable" % guard_count
+-    emit("MADO_R69_MUTANT M-R path=%s guard_count=%d recipe=%s removed_line=%s "
++    emit("MADO_R70_MUTANT M-R path=%s guard_count=%d recipe=%s removed_line=%s "
+          "from_sha256=%s rc=%s verdict=%s missing=%s forged_credit=%s killed=%s sha256=%s%s"
+          % (R_PATH, guard_count, mr_recipe, mr_removed, sha256_hex(files[R_PATH]),
+             "-" if mr_rc is None else mr_rc,
+@@ -619,7 +645,7 @@
+     finally:
+         globals()["run"] = saved
+     lines = [ln for ln in buf.getvalue().splitlines()
+-             if ln.startswith("MADO_R69_LANDING_CONTROLS:")]
++             if ln.startswith("MADO_R70_LANDING_CONTROLS:")]
+     return rc, (lines[-1] if lines else "none")
+ 
+ 
+@@ -640,7 +666,7 @@
+     met = {"name": "both-killed", "mz_rc": 1, "child_rc": 0, "child_marker": MET_MARKER}
+     rc, line = _measure_case(work, met, sha)
+     want("scripted both-killed prints the met line",
+-         line == ("MADO_R69_LANDING_CONTROLS: selftest=0 mz=pass mr=pass killed=2/2 "
++         line == ("MADO_R70_LANDING_CONTROLS: selftest=0 mz=pass mr=pass killed=2/2 "
+                   "baseline=0/2 verdict=TARGET_MET rev=" + sha))
+     want("scripted both-killed exits 0", rc == 0)
+ 
+@@ -648,7 +674,7 @@
+             "child_marker": MISSED_MARKER}
+     rc2, line2 = _measure_case(work, none, sha)
+     want("scripted none-killed prints the miss line",
+-         line2 == ("MADO_R69_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
++         line2 == ("MADO_R70_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
+                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
+     want("scripted none-killed exits 1", rc2 == 1)
+     want("both scripted lines match the frozen contract shape",
+@@ -657,7 +683,7 @@
+     crash = {"name": "mr-crash", "mz_rc": 1, "child_rc": 2, "child_marker": None}
+     rc3, line3 = _measure_case(work, crash, sha)
+     want("a crashing M-R child is not a kill (decision + oracle pair)",
+-         line3 == ("MADO_R69_LANDING_CONTROLS: selftest=0 mz=pass mr=fail killed=1/2 "
++         line3 == ("MADO_R70_LANDING_CONTROLS: selftest=0 mz=pass mr=fail killed=1/2 "
+                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
+     want("mr-crash exits 1", rc3 == 1)
+ 
+@@ -666,11 +692,39 @@
+             "child_rc": 1, "child_marker": MISSED_MARKER}
+     rc4, line4 = _measure_case(work, mute, sha)
+     want("an M-Z run with no assertion summary is not a kill",
+-         line4 == ("MADO_R69_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
++         line4 == ("MADO_R70_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
+                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
+     want("mz-unparseable exits 1", rc4 == 1)
+     want("paired scripted lines match the frozen contract shape",
+          CONTRACT_RE.fullmatch(line3) is not None and CONTRACT_RE.fullmatch(line4) is not None)
++
++    crashed = {"name": "mz-crash", "mz_rc": 2,
++               "mz_stdout": b"bash: line 3: unexpected EOF while looking for matching quote\n",
++               "child_rc": 1, "child_marker": MISSED_MARKER}
++    rc5, line5 = _measure_case(work, crashed, sha)
++    want("a crashing M-Z child is not a kill (a parsed failed assertion is required)",
++         line5 == ("MADO_R70_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
++                   "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
++    want("mz-crash exits 1", rc5 == 1)
++
++    allpass = {"name": "mz-allpass", "mz_rc": 1,
++               "mz_stdout": b"MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed\n",
++               "child_rc": 1, "child_marker": MISSED_MARKER}
++    rc6, line6 = _measure_case(work, allpass, sha)
++    want("an M-Z run whose summary reports no failure is not a kill",
++         line6 == ("MADO_R70_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
++                   "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
++    want("mz-allpass exits 1", rc6 == 1)
++
++    want("summary 1/2 shows failure",
++         summary_shows_failure("MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed"))
++    want("summary 2/2 shows no failure",
++         not summary_shows_failure("MADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed"))
++    want("garbled summary shows no failure",
++         not summary_shows_failure("MADO_LANDING_COUNTERS_SELFTEST: ??? assertions passed"))
++    want("absent summary shows no failure", not summary_shows_failure("boom\n"))
++    want("zero-total summary shows no failure",
++         not summary_shows_failure("MADO_LANDING_COUNTERS_SELFTEST: 0/0 assertions passed"))
+     return checks
+ 
+ 
+@@ -744,7 +798,7 @@
+          CONTRACT_RE.fullmatch(line) is not None and " baseline=0/2 " in line)
+     want("contract line reports the miss",
+          contract_line(0, "pass", "fail", 1, "a" * 40)
+-         == ("MADO_R69_LANDING_CONTROLS: selftest=0 mz=pass mr=fail killed=1/2 "
++         == ("MADO_R70_LANDING_CONTROLS: selftest=0 mz=pass mr=fail killed=1/2 "
+              "baseline=0/2 verdict=TARGET_MISSED rev=" + "a" * 40))
+ 
+     want("scratch accepts its own real directory", absolute_scratch(work) == os.path.normpath(work))
+@@ -828,8 +882,8 @@
+     passed = sum(1 for _name, ok in checks if ok)
+     for name, ok in checks:
+         if not ok:
+-            print("MADO_R69_SELFTEST FAIL: %s" % name)
+-    print("MADO_R69_LANDING_CONTROLS_SELFTEST: %d/%d assertions passed" % (passed, len(checks)))
++            print("MADO_R70_SELFTEST FAIL: %s" % name)
++    print("MADO_R70_LANDING_CONTROLS_SELFTEST: %d/%d assertions passed" % (passed, len(checks)))
+     return 0 if passed == len(checks) else 1
+ 
+ 
+@@ -839,7 +893,7 @@
+     except UsageError as exc:
+         sys.stderr.write("%s: %s\n" % (TOOL, exc))
+         return 2
+-    work = os.path.join(scratch, "r69-c1-selftest")
++    work = os.path.join(scratch, "r70-c1-selftest")
+     shutil.rmtree(work, ignore_errors=True)
+     os.makedirs(work)
+     try:

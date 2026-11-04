@@ -1,0 +1,438 @@
+[
+ {
+  "id": "c1h-a",
+  "instrument": "quality/counters/c1-r70-landing-controls.py",
+  "note": "kill credit = nonzero rc only",
+  "pristine_sha256": "71a7b6c45b904a734f194be9a8de6cc2eeb5f5ea1922760f908f5637f1d4db58",
+  "mutant_sha256": "4c3e9021a17c56afc3eea8fad2cd8f09cc24eef6bf53d960fb9b42bdb7b178bc",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1h-a/c1-r70-landing-controls.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_SELFTEST FAIL: a crashing M-Z child is not a kill (a parsed failed assertion is required)",
+   "MADO_R70_SELFTEST FAIL: an M-Z run whose summary reports no failure is not a kill"
+  ],
+  "summary": "MADO_R70_LANDING_CONTROLS_SELFTEST: 66/68 assertions passed",
+  "offset": 20243,
+  "removed": "mz_killed = bool(mz_rc != 0 and summary_shows_failure(mz_out))",
+  "added": "mz_killed = bool(mz_rc != 0)",
+  "diff_sha256": "bc98a68921a868698341fe68dfcf1eab9d08d7e0d874eef95f7f09fcab6e693a",
+  "diff_lines": [
+   "-        mz_killed = bool(mz_rc != 0 and summary_shows_failure(mz_out))",
+   "+        mz_killed = bool(mz_rc != 0)"
+  ]
+ },
+ {
+  "id": "c1h-b",
+  "instrument": "quality/counters/c1-r70-landing-controls.py",
+  "note": "summary_shows_failure always True",
+  "pristine_sha256": "71a7b6c45b904a734f194be9a8de6cc2eeb5f5ea1922760f908f5637f1d4db58",
+  "mutant_sha256": "b864642a62bba71eca3dc225a02041daaa21cf1694618217f179a90bc2ba5fbe",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1h-b/c1-r70-landing-controls.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_SELFTEST FAIL: a crashing M-Z child is not a kill (a parsed failed assertion is required)",
+   "MADO_R70_SELFTEST FAIL: an M-Z run whose summary reports no failure is not a kill",
+   "MADO_R70_SELFTEST FAIL: summary 2/2 shows no failure",
+   "MADO_R70_SELFTEST FAIL: garbled summary shows no failure",
+   "MADO_R70_SELFTEST FAIL: absent summary shows no failure",
+   "MADO_R70_SELFTEST FAIL: zero-total summary shows no failure"
+  ],
+  "summary": "MADO_R70_LANDING_CONTROLS_SELFTEST: 62/68 assertions passed",
+  "offset": 13152,
+  "removed": "    assertion, never on a broken child.\n    \"\"\"\n",
+  "added": "    assertion, never on a broken child.\n    \"\"\"\n    return True\n",
+  "diff_sha256": "fc8918dec68ba6e0bf23a162ba595d22a35c4489fea8849decac0fd8272986c1",
+  "diff_lines": [
+   "+    return True"
+  ]
+ },
+ {
+  "id": "c1h-c",
+  "instrument": "quality/counters/c1-r70-landing-controls.py",
+  "note": "summary_shows_failure always False",
+  "pristine_sha256": "71a7b6c45b904a734f194be9a8de6cc2eeb5f5ea1922760f908f5637f1d4db58",
+  "mutant_sha256": "795c1bc2e0b8ffccf8657195891c993701e740269b6f617dadb9881cd476a4a1",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1h-c/c1-r70-landing-controls.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_SELFTEST FAIL: scripted both-killed prints the met line",
+   "MADO_R70_SELFTEST FAIL: scripted both-killed exits 0",
+   "MADO_R70_SELFTEST FAIL: a crashing M-R child is not a kill (decision + oracle pair)",
+   "MADO_R70_SELFTEST FAIL: summary 1/2 shows failure"
+  ],
+  "summary": "MADO_R70_LANDING_CONTROLS_SELFTEST: 64/68 assertions passed",
+  "offset": 13152,
+  "removed": "    assertion, never on a broken child.\n    \"\"\"\n",
+  "added": "    assertion, never on a broken child.\n    \"\"\"\n    return False\n",
+  "diff_sha256": "32a8e707b3a5f0d8b5d061f6308507e0538584dae9cfaaa4f575cfcbc20cccc2",
+  "diff_lines": [
+   "+    return False"
+  ]
+ },
+ {
+  "id": "c1h-d",
+  "instrument": "quality/counters/c1-r70-landing-controls.py",
+  "note": "p < n -> p <= n",
+  "pristine_sha256": "71a7b6c45b904a734f194be9a8de6cc2eeb5f5ea1922760f908f5637f1d4db58",
+  "mutant_sha256": "c77bb3a3ea45397f0e20d9f83685224adb9bf79206942f27105651bc9207e695",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1h-d/c1-r70-landing-controls.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_SELFTEST FAIL: an M-Z run whose summary reports no failure is not a kill",
+   "MADO_R70_SELFTEST FAIL: summary 2/2 shows no failure"
+  ],
+  "summary": "MADO_R70_LANDING_CONTROLS_SELFTEST: 66/68 assertions passed",
+  "offset": 13410,
+  "removed": "    return total > 0 and passed < total\n",
+  "added": "    return total > 0 and passed <= total\n",
+  "diff_sha256": "a6e10d7108e927c30bc815ccbcc5f42aca1760556e4e17246f07a1f9015691bf",
+  "diff_lines": [
+   "-    return total > 0 and passed < total",
+   "+    return total > 0 and passed <= total"
+  ]
+ },
+ {
+  "id": "c1h-e",
+  "instrument": "quality/counters/c1-r70-landing-controls.py",
+  "note": "summary regex fullmatch -> search",
+  "pristine_sha256": "71a7b6c45b904a734f194be9a8de6cc2eeb5f5ea1922760f908f5637f1d4db58",
+  "mutant_sha256": "2ff8224964ae3e47490ae998c2854d9688c4ee2581c57e81349c73b8db398288",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1h-e/c1-r70-landing-controls.py",
+  "selftest_rc": 0,
+  "selftest_killed": false,
+  "fails": [],
+  "summary": "MADO_R70_LANDING_CONTROLS_SELFTEST: 68/68 assertions passed",
+  "offset": 13229,
+  "removed": "    m = re.fullmatch(r\"MADO_LANDING_COUNTERS_SELFTEST: ",
+  "added": "    m = re.search(r\"MADO_LANDING_COUNTERS_SELFTEST: ",
+  "diff_sha256": "cae2e70e00387819c1b73be55ef373bbe501a69d0d74b4dbd582648951b82349",
+  "diff_lines": [
+   "-    m = re.fullmatch(r\"MADO_LANDING_COUNTERS_SELFTEST: (\\d+)/(\\d+) assertions passed\", line)",
+   "+    m = re.search(r\"MADO_LANDING_COUNTERS_SELFTEST: (\\d+)/(\\d+) assertions passed\", line)"
+  ]
+ },
+ {
+  "id": "c1h-g",
+  "instrument": "quality/counters/c1-r70-landing-controls.py",
+  "note": "rev regex fullmatch -> search (extra)",
+  "pristine_sha256": "71a7b6c45b904a734f194be9a8de6cc2eeb5f5ea1922760f908f5637f1d4db58",
+  "mutant_sha256": "094a3666148b3c66277e45dc2b6f39949506c6836ad1e6ad81aa98af723410e6",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1h-g/c1-r70-landing-controls.py",
+  "selftest_rc": 0,
+  "selftest_killed": false,
+  "fails": [],
+  "summary": "MADO_R70_LANDING_CONTROLS_SELFTEST: 68/68 assertions passed",
+  "offset": 16109,
+  "removed": "    if not re.fullmatch(r\"[0-9a-f]{40,64}\", rev):",
+  "added": "    if not re.search(r\"[0-9a-f]{40,64}\", rev):",
+  "diff_sha256": "b7b05fc50d2c2f893680633934ec1f903896d8e83fae37c5ad1af945c90ce325",
+  "diff_lines": [
+   "-    if not re.fullmatch(r\"[0-9a-f]{40,64}\", rev):",
+   "+    if not re.search(r\"[0-9a-f]{40,64}\", rev):"
+  ]
+ },
+ {
+  "id": "c1h-f",
+  "instrument": "quality/counters/c1-r70-landing-controls.py",
+  "note": "sha regex fullmatch -> search (extra)",
+  "pristine_sha256": "71a7b6c45b904a734f194be9a8de6cc2eeb5f5ea1922760f908f5637f1d4db58",
+  "mutant_sha256": "ffb1b61ba4d5bcb29755d76b5f51ea0d4831e0e29f5511d19fb0a82e3289f7b1",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1h-f/c1-r70-landing-controls.py",
+  "selftest_rc": 0,
+  "selftest_killed": false,
+  "fails": [],
+  "summary": "MADO_R70_LANDING_CONTROLS_SELFTEST: 68/68 assertions passed",
+  "offset": 8997,
+  "removed": "    if not re.fullmatch(r\"[0-9a-f]{40,64}\", sha):",
+  "added": "    if not re.search(r\"[0-9a-f]{40,64}\", sha):",
+  "diff_sha256": "0eb88e9aca1663411fca0f49cc7db2308f181bb68405784a0fa4376211fb32a8",
+  "diff_lines": [
+   "-    if not re.fullmatch(r\"[0-9a-f]{40,64}\", sha):",
+   "+    if not re.search(r\"[0-9a-f]{40,64}\", sha):"
+  ]
+ },
+ {
+  "id": "c1c-a",
+  "instrument": "quality/counters/c1-r70-real-children.py",
+  "note": "score() compares the answer with itself",
+  "pristine_sha256": "b3a6f131abf371ecf64273b65a143478c4b23eaa7acf974ec80e5efebf6e6a7b",
+  "mutant_sha256": "e10e84361ec0b9c29fe1644ff15eb8a1f5dc7e41f0bedf23e73f153711b1dc96",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1c-a/c1-r70-real-children.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_REAL_CHILDREN_SELFTEST FAIL: crash pass is a false credit",
+   "MADO_R70_REAL_CHILDREN_SELFTEST FAIL: garbage pass is a false credit"
+  ],
+  "summary": "MADO_R70_REAL_CHILDREN_SELFTEST: 24/26 assertions passed",
+  "offset": 6963,
+  "removed": "    return got is not None and got == expect",
+  "added": "    return got is not None",
+  "diff_sha256": "110ee013f407683a8ba1ace6d9b7e23d9a03ca5151016314e75eebefee864e42",
+  "diff_lines": [
+   "-    return got is not None and got == expect",
+   "+    return got is not None"
+  ]
+ },
+ {
+  "id": "c1c-b",
+  "instrument": "quality/counters/c1-r70-real-children.py",
+  "note": "base leg dropped, base_correct forced to 1",
+  "pristine_sha256": "b3a6f131abf371ecf64273b65a143478c4b23eaa7acf974ec80e5efebf6e6a7b",
+  "mutant_sha256": "f581f03145eec6526a28903bfa344f2ab8e44c1b81d3b0a570258b5167ead907",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1c-b/c1-r70-real-children.py",
+  "selftest_rc": 0,
+  "selftest_killed": false,
+  "fails": [],
+  "summary": "MADO_R70_REAL_CHILDREN_SELFTEST: 26/26 assertions passed",
+  "offset": 12250,
+  "removed": "        base_ok = score(EXPECT[mode], base_got)",
+  "added": "        base_ok = mode == MODES[0]",
+  "diff_sha256": "2d0ba42b81eed89dce656a9b6580851fd39fbea92cec66aa44da8fc5cbc4ad0d",
+  "diff_lines": [
+   "-        base_ok = score(EXPECT[mode], base_got)",
+   "+        base_ok = mode == MODES[0]"
+  ]
+ },
+ {
+  "id": "c1c-b2",
+  "instrument": "quality/counters/c1-r70-real-children.py",
+  "note": "base leg dropped, base_correct forced to 3 (extra)",
+  "pristine_sha256": "b3a6f131abf371ecf64273b65a143478c4b23eaa7acf974ec80e5efebf6e6a7b",
+  "mutant_sha256": "32af200a2067bdaa94dd9292b09e23089aade71f04b8c764fab731cd8b940c7e",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1c-b2/c1-r70-real-children.py",
+  "selftest_rc": 0,
+  "selftest_killed": false,
+  "fails": [],
+  "summary": "MADO_R70_REAL_CHILDREN_SELFTEST: 26/26 assertions passed",
+  "offset": 12250,
+  "removed": "        base_ok = score(EXPECT[mode], base_got)",
+  "added": "        base_ok = True",
+  "diff_sha256": "34564cfcbbb5b95628058f84cd991e10075678930a2be871d87825e255800bd2",
+  "diff_lines": [
+   "-        base_ok = score(EXPECT[mode], base_got)",
+   "+        base_ok = True"
+  ]
+ },
+ {
+  "id": "c1c-c",
+  "instrument": "quality/counters/c1-r70-real-children.py",
+  "note": "verdict_met correct >= 2",
+  "pristine_sha256": "b3a6f131abf371ecf64273b65a143478c4b23eaa7acf974ec80e5efebf6e6a7b",
+  "mutant_sha256": "8d4c3627bfa6233afdab26c1f1ddc8550064219ff6ad13c7156f5cf7d50c4a39",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1c-c/c1-r70-real-children.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [],
+  "summary": "none",
+  "offset": 7050,
+  "removed": "    return correct == FROZEN_CORRECT and base_correct == FROZEN_BASE_CORRECT",
+  "added": "    return correct >= 2 and base_correct == FROZEN_BASE_CORRECT",
+  "diff_sha256": "e069e611ec76f586cabfec351d5ec6254195bf7282191a623bbd4f072300eb69",
+  "diff_lines": [
+   "-    return correct == FROZEN_CORRECT and base_correct == FROZEN_BASE_CORRECT",
+   "+    return correct >= 2 and base_correct == FROZEN_BASE_CORRECT"
+  ]
+ },
+ {
+  "id": "c1c-d",
+  "instrument": "quality/counters/c1-r70-real-children.py",
+  "note": "EXPECT crash -> pass",
+  "pristine_sha256": "b3a6f131abf371ecf64273b65a143478c4b23eaa7acf974ec80e5efebf6e6a7b",
+  "mutant_sha256": "9bc7240617706750b95b1904e12145068f202a2697ed97bdc8354d31f1a25ac4",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c1c-d/c1-r70-real-children.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_REAL_CHILDREN_SELFTEST FAIL: expectations"
+  ],
+  "summary": "MADO_R70_REAL_CHILDREN_SELFTEST: 25/26 assertions passed",
+  "offset": 3587,
+  "removed": "EXPECT = {\"genuine\": \"pass\", \"crash\": \"fail\", \"garbage\": \"fail\"}",
+  "added": "EXPECT = {\"genuine\": \"pass\", \"crash\": \"pass\", \"garbage\": \"fail\"}",
+  "diff_sha256": "94cc0e575335d40f62bbfa23ff564887e63914fcc976cbd1e38d094ef3ac3dc4",
+  "diff_lines": [
+   "-EXPECT = {\"genuine\": \"pass\", \"crash\": \"fail\", \"garbage\": \"fail\"}",
+   "+EXPECT = {\"genuine\": \"pass\", \"crash\": \"pass\", \"garbage\": \"fail\"}"
+  ]
+ },
+ {
+  "id": "c2-a",
+  "instrument": "quality/counters/c2-r70-carriers.py",
+  "note": "carrier_guard -> True",
+  "pristine_sha256": "d868ae334b794f99544bd41b1265a9ee6bb5a380278755c6d1223630abd21363",
+  "mutant_sha256": "7fb049d1428fe9e583ae0f3fbc73595dcf3dd02372630ae98d2bbaf005d02009",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c2-a/c2-r70-carriers.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify value-position-only is (True, False)",
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify dead-branch-only is (True, False)",
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify uncalled-helper is (True, False)",
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify overwritten-env is (True, False)",
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify mention-only is (True, False)",
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify guarded-env-for-a-non-git-call is (True, False)"
+  ],
+  "summary": "MADO_R70_GUARD_CARRIERS_SELFTEST: 32/49 assertions passed",
+  "offset": 26366,
+  "removed": "    \"\"\"The four round-70 carrier shapes, each still subject to the dominance flows.\"\"\"\n",
+  "added": "    \"\"\"The four round-70 carrier shapes, each still subject to the dominance flows.\"\"\"\n    return True\n",
+  "diff_sha256": "84138ff48c99c9fd0ab6608b30caf3101bafe37ff9ce2daa9d02693907430f1a",
+  "diff_lines": [
+   "+    return True"
+  ]
+ },
+ {
+  "id": "c2-b",
+  "instrument": "quality/counters/c2-r70-carriers.py",
+  "note": "carrier_guard -> False",
+  "pristine_sha256": "d868ae334b794f99544bd41b1265a9ee6bb5a380278755c6d1223630abd21363",
+  "mutant_sha256": "b5804ae2ef44b078cd43f2b0306ac160b760ff5653911096d77a260f9813884b",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c2-b/c2-r70-carriers.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify alias-carried is (True, True)",
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify attribute-carried is (True, True)",
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify splat-carried is (True, True)",
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify constant-key is (True, True)"
+  ],
+  "summary": "MADO_R70_GUARD_CARRIERS_SELFTEST: 45/49 assertions passed",
+  "offset": 26366,
+  "removed": "    \"\"\"The four round-70 carrier shapes, each still subject to the dominance flows.\"\"\"\n",
+  "added": "    \"\"\"The four round-70 carrier shapes, each still subject to the dominance flows.\"\"\"\n    return False\n",
+  "diff_sha256": "bdc19f550bbf67517664a93ba2abc95e9b673824bea2ec9a0ce4d52dcfa7eab1",
+  "diff_lines": [
+   "+    return False"
+  ]
+ },
+ {
+  "id": "c2-c",
+  "instrument": "quality/counters/c2-r70-carriers.py",
+  "note": "alias detector removed",
+  "pristine_sha256": "d868ae334b794f99544bd41b1265a9ee6bb5a380278755c6d1223630abd21363",
+  "mutant_sha256": "5c2540fdebbef2828092c5d8908449b0e067e04e75ab2dc17989e6305c3bad7e",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c2-c/c2-r70-carriers.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify alias-carried is (True, True)"
+  ],
+  "summary": "MADO_R70_GUARD_CARRIERS_SELFTEST: 48/49 assertions passed",
+  "offset": 23344,
+  "removed": "    \"\"\"env-named source name -> guard lines applied through a non-env-named alias of it.\"\"\"\n",
+  "added": "    \"\"\"env-named source name -> guard lines applied through a non-env-named alias of it.\"\"\"\n    return {}\n",
+  "diff_sha256": "b6bf6f6d71a6e1fea164a2736dcc029b22b7f09e445eb5cae40264ccf0fec273",
+  "diff_lines": [
+   "+    return {}"
+  ]
+ },
+ {
+  "id": "c2-d",
+  "instrument": "quality/counters/c2-r70-carriers.py",
+  "note": "attribute detector removed",
+  "pristine_sha256": "d868ae334b794f99544bd41b1265a9ee6bb5a380278755c6d1223630abd21363",
+  "mutant_sha256": "f760d074490294956da364bcb533952c01338b3689901b519cf32f09cf0dcf50",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c2-d/c2-r70-carriers.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify attribute-carried is (True, True)"
+  ],
+  "summary": "MADO_R70_GUARD_CARRIERS_SELFTEST: 48/49 assertions passed",
+  "offset": 25142,
+  "removed": "    \"\"\"Guard key stored on an attribute that reaches a git launch.\"\"\"\n",
+  "added": "    \"\"\"Guard key stored on an attribute that reaches a git launch.\"\"\"\n    return False\n",
+  "diff_sha256": "9b0714e91d45d1691913907c1ef840f16d2d38f99f2b596850d8a0cc5bc78547",
+  "diff_lines": [
+   "+    return False"
+  ]
+ },
+ {
+  "id": "c2-e",
+  "instrument": "quality/counters/c2-r70-carriers.py",
+  "note": "splat detector removed",
+  "pristine_sha256": "d868ae334b794f99544bd41b1265a9ee6bb5a380278755c6d1223630abd21363",
+  "mutant_sha256": "ae3dfc835431a303247a0c76e4642f48590261b0e600e10924695a343ca34d41",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c2-e/c2-r70-carriers.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify splat-carried is (True, True)"
+  ],
+  "summary": "MADO_R70_GUARD_CARRIERS_SELFTEST: 48/49 assertions passed",
+  "offset": 24407,
+  "removed": "    \"\"\"env-named name -> guard lines where a `**module_mapping` expands into its literal.\"\"\"\n",
+  "added": "    \"\"\"env-named name -> guard lines where a `**module_mapping` expands into its literal.\"\"\"\n    return {}\n",
+  "diff_sha256": "453b596cb4fe44798170ea809a158e7481cc4883b9021a30936660223050b3b3",
+  "diff_lines": [
+   "+    return {}"
+  ]
+ },
+ {
+  "id": "c2-f",
+  "instrument": "quality/counters/c2-r70-carriers.py",
+  "note": "constant-key detector removed (const_key_names -> set())",
+  "pristine_sha256": "d868ae334b794f99544bd41b1265a9ee6bb5a380278755c6d1223630abd21363",
+  "mutant_sha256": "5bf1424b75a1ec10a9865d7788bdba7da5a9267df2cde5e3e9618623eb7906a9",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c2-f/c2-r70-carriers.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: classify constant-key is (True, True)"
+  ],
+  "summary": "MADO_R70_GUARD_CARRIERS_SELFTEST: 48/49 assertions passed",
+  "offset": 21464,
+  "removed": "    return {name for name, value in module_literals(tree).items()",
+  "added": "    return set()\n    return {name for name, value in module_literals(tree).items()",
+  "diff_sha256": "4832527989fb61884b1aead7d8b3ae24496fb73cc05d5403118ff160e8d19c0d",
+  "diff_lines": [
+   "+    return set()"
+  ]
+ },
+ {
+  "id": "c2-g",
+  "instrument": "quality/counters/c2-r70-carriers.py",
+  "note": "held_check guard dropped (return 0)",
+  "pristine_sha256": "d868ae334b794f99544bd41b1265a9ee6bb5a380278755c6d1223630abd21363",
+  "mutant_sha256": "c5d1322484fa005c7ce173f275803be82f7be4357c4f243724b3896a8f81ae0e",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c2-g/c2-r70-carriers.py",
+  "selftest_rc": 0,
+  "selftest_killed": false,
+  "fails": [],
+  "summary": "MADO_R70_GUARD_CARRIERS_SELFTEST: 49/49 assertions passed",
+  "offset": 29555,
+  "removed": "    \"\"\"The round-69 control file must still hash to its frozen digest and match the held cases.\"\"\"\n",
+  "added": "    \"\"\"The round-69 control file must still hash to its frozen digest and match the held cases.\"\"\"\n    return 0\n",
+  "diff_sha256": "e5cd4e0ecdc1866d0befb35abcb467f0f91a3e15ca2d1923a7d571ab52db927c",
+  "diff_lines": [
+   "+    return 0"
+  ]
+ },
+ {
+  "id": "c2-h",
+  "instrument": "quality/counters/c2-r70-carriers.py",
+  "note": "verdict_met no longer requires base_controls == 13",
+  "pristine_sha256": "d868ae334b794f99544bd41b1265a9ee6bb5a380278755c6d1223630abd21363",
+  "mutant_sha256": "eb852370d04b9fcba577f372790c031c2bf3c08ffe2c285d3410e5efa4c4ec97",
+  "mutant_path": "/fast/scratch/hyaku/mado-r70/R70MutBattery/mut/c2-h/c2-r70-carriers.py",
+  "selftest_rc": 1,
+  "selftest_killed": true,
+  "fails": [
+   "MADO_R70_GUARD_CARRIERS_SELFTEST FAIL: verdict requires the frozen base-control score"
+  ],
+  "summary": "MADO_R70_GUARD_CARRIERS_SELFTEST: 48/49 assertions passed",
+  "offset": 28712,
+  "removed": "            and controls == FROZEN_CONTROLS and base_controls == FROZEN_BASE_CONTROLS)",
+  "added": "            and controls == FROZEN_CONTROLS)",
+  "diff_sha256": "26ce54fb970f9a38b4d48e349f963118abc829a9d5b556c3cc289eb57c0fb848",
+  "diff_lines": [
+   "-            and controls == FROZEN_CONTROLS and base_controls == FROZEN_BASE_CONTROLS)",
+   "+            and controls == FROZEN_CONTROLS)"
+  ]
+ }
+]

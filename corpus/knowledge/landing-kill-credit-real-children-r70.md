@@ -1,4 +1,4 @@
-source: S435 — GNU Bash 5.3 official release manual, §3.7.5 Exit Status (opened 2026-11-03, held) — the documented exit-status vocabulary: zero is the success convention, 126/127 are execution failures, 128+N is a fatal signal — the ground for reading a nonzero status as "a child failed somehow", never as "the child's assertions failed"
+source: S441 — CPython 3.14 documentation, `subprocess` — CompletedProcess.returncode (rendered page, fetched 2026-11-04 three times, byte-identical, sha256 c8a66b3abf91790cea34128c5636c2e27a4b26ade459f7d4f797400da706079f, 207155 bytes, subprocess.html:360-366) — "Exit status of the child process. Typically, an exit status of 0 indicates that it ran successfully." and "A negative value -N indicates that the child was terminated by signal N (POSIX only)." — the ground for reading a nonzero status as a process outcome; plus held S435 (GNU Bash 5.3 §3.7.5: 126/127 execution failures, 128+N signals) for the multi-cause vocabulary
 verified-at: 2026-11-04
 recheck: 90d — re-read S435 at the release manual; re-run `quality/counters/c1-r70-real-children.py` when the harness's kill-credit line, the fixture lane template, or the landing instrument's summary format changes
 
@@ -71,11 +71,20 @@ behaviour from *that clause's own effect*:
 | `crash` | the lane exits before reporting | 2 | none | `fail` | `pass` ✘ | `fail` ✔ |
 | `garbage` | the lane prints an unparseable summary | 1 | `??? assertions passed` | `fail` | `pass` ✘ | `fail` ✔ |
 
-Measured at `5adba5a92a8d58eb76533b39a9216d8e85d48fbc`:
+Measured at `6a25e86509c3938971befd913b47daf8c7b3691d` (the counter is byte-identical to its
+`5adba5a9` form):
 `MADO_R70_REAL_CHILDREN: cases=3 correct=3 base_correct=1 verdict=TARGET_MET` rc 0
 (`.ufo/waves/round-70/measurement-r70.txt`). The fixture's lane file is
 `.ufo/waves/round-70/proto/fixture-lane.tmpl`; the counter rebuilds it byte-for-byte from
 its own `LANE_TEMPLATE`.
+
+## Pins
+
+| id | proposition | source | pin |
+|---|---|---|---|
+| K01 | A child's exit status has more than one cause: 0 is success, 126/127 are execution failures and 128+N a fatal signal, so a nonzero status is not "the assertions failed". | S435 | Exit-Status.html:3902 |
+| K02 | The status is the *child process's* exit status; a negative value is a signal death, so the harness cannot read it as an assertion result. | S441 | subprocess.html:364 |
+| K03 | A crash (no summary) and a garbled summary both leave the assertion outcome unknown; the harness must therefore require a parsed failed-assertion summary. | S441 | subprocess.html:361 |
 
 ## 5. Limits
 

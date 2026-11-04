@@ -1,0 +1,370 @@
+{
+  "instrument_sha256": "87ca466432302feaabf2c504dc131184178afe199d8b84fa492ad3b5211af9f7",
+  "attacks": [
+    {
+      "name": "a01-two-hop-alias",
+      "src": "def run(repo):\n    env = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n    a = env\n    b = a\n    b[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": true,
+      "note": "guard real at runtime; rule (a) alias; one-hop limit declared",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a02-alias-then-env-rebind",
+      "src": "def run(repo):\n    env = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n    alias = env\n    alias[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    env = {\"PATH\": \"/usr/bin\"}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": false,
+      "note": "env-named name rebound unguarded after the guard",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a03-attr-different-attribute",
+      "src": "class Runner:\n    def __init__(self):\n        self.env = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n        self.env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n\n    def head(self, repo):\n        return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=self.environ)\n",
+      "expected_guard": false,
+      "note": "guard stored on self.env, call uses self.environ",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a04-attr-object-alias",
+      "src": "class Runner:\n    def __init__(self):\n        self.env = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n        self.env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n\n    def head(self, repo):\n        r = self\n        env = r.env\n        return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": true,
+      "note": "r = self aliases the receiver; r.env is the same object",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a05-splat-non-guarded",
+      "src": "OTHER = {\"PATH\": \"/usr/bin\"}\n\n\ndef run(repo):\n    env = {**os.environ, **OTHER}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": false,
+      "note": "splat source carries no key",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a06-splat-dict-call",
+      "src": "GUARD = {\"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n\n\ndef run(repo):\n    env = dict(os.environ, **GUARD)\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": true,
+      "note": "** of module literal into dict() call; rule (c) says 'expanded with ** into the env mapping'",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a07-const-key-rebound-module",
+      "src": "KEY = \"GIT_NO_REPLACE_OBJECTS\"\nKEY = \"OTHER\"\n\n\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\"}\n    env[KEY] = \"1\"\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": false,
+      "note": "rule (d): no other module-level statement may rebind the constant",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a07b-const-key-local-shadow",
+      "src": "KEY = \"GIT_NO_REPLACE_OBJECTS\"\n\n\ndef run(repo):\n    KEY = \"OTHER\"\n    env = {\"PATH\": \"/usr/bin\"}\n    env[KEY] = \"1\"\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": false,
+      "note": "used key value is OTHER; module constant matched by spelling only",
+      "observed_new": [
+        true,
+        true
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a08-const-key-value-position",
+      "src": "KEY = \"GIT_NO_REPLACE_OBJECTS\"\n\n\ndef run(repo):\n    env = {\"LABEL\": KEY}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": false,
+      "note": "key-position rule: constant in value position is not a guard",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a09-alias-source-not-env-named",
+      "src": "def run(repo):\n    base = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n    a = base\n    a[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    env = base\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": true,
+      "note": "two names bound to the same mapping; guard through alias a; env handed to call",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a10-module-map-mutated-after-splat",
+      "src": "GUARD = {\"PATH\": \"/usr/bin\"}\n\n\ndef run(repo):\n    env = {**os.environ, **GUARD}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n\n\nGUARD[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n",
+      "expected_guard": true,
+      "note": "mutation executes at import, before run() is called",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a11-env-substring-name-openvswitch",
+      "src": "def run(repo):\n    openvswitch = {\"PATH\": \"/usr/bin\"}\n    openvswitch[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=openvswitch)\n",
+      "expected_guard": true,
+      "note": "env_named matches 'env' inside 'openvswitch'; runtime guard is real anyway",
+      "observed_new": [
+        true,
+        true
+      ],
+      "observed_held": [
+        true,
+        true
+      ]
+    },
+    {
+      "name": "a12-splat-local-source",
+      "src": "def run(repo):\n    guard = {\"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    env = {**os.environ, **guard}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+      "expected_guard": false,
+      "note": "rule (c) limits splat source to a module-level constant",
+      "observed_new": [
+        true,
+        false
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a13-attribute-rebound",
+      "src": "def run(repo):\n    self.env = {}\n    self.env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    self.env = {}\n    return subprocess.run([\"git\", \"show\", \"HEAD:a\"], env=self.env)\n",
+      "expected_guard": false,
+      "note": "Same one-dotted attribute; frozen dominance must still hold",
+      "observed_new": [
+        true,
+        true
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    },
+    {
+      "name": "a14-attribute-guard-after-use",
+      "src": "def run(repo):\n    self.env = {}\n    subprocess.run([\"git\", \"show\", \"HEAD:a\"], env=self.env)\n    self.env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n",
+      "expected_guard": false,
+      "note": "Same one-dotted attribute; frozen dominance must still hold",
+      "observed_new": [
+        true,
+        true
+      ],
+      "observed_held": [
+        true,
+        false
+      ]
+    }
+  ],
+  "pinned_measurement": {
+    "command": [
+      "python3",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/w1/R70RevC2/instrument-pinned.py",
+      "--repo",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin",
+      "--rev",
+      "5144a6b5f43225d8021a469f4d24c19558026b9e",
+      "--base-rev",
+      "b37a5aec4ea03f2223d8e09dd5d386d055c24179",
+      "--controls",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/controls/c2-controls-r70.json",
+      "--scratch-root",
+      "/fast/scratch/hyaku/mado-r70/R70RevC2"
+    ],
+    "rc": 0,
+    "stdout": "MADO_R70_CONTROLS path=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/controls/c2-controls-r70.json cases=17 sha256=29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff\nMADO_R70_HELD_CONTROLS path=.ufo/waves/round-69/controls/c2-controls-r69.json cases=11 sha256=975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9 carried=yes\nMADO_R70_READER file=quality/check-anchor-cover.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-axis-scores.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-control-receipts.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-counter-discrimination.py reader=no guard=no\nMADO_R70_READER file=quality/check-deliverables.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-evidence-pointers.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-freeze-order.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-index-rows.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-index.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-landed-contract.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-locators.py reader=no guard=no\nMADO_R70_READER file=quality/check-population.py reader=no guard=no\nMADO_R70_READER file=quality/check-r38-discrimination.py reader=no guard=no\nMADO_R70_READER file=quality/check-r55-controls.py reader=no guard=no\nMADO_R70_READER file=quality/check-r56-controls.py reader=no guard=no\nMADO_R70_READER file=quality/check-round-outcome-first.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-session-material.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-state-cite.py reader=no guard=no\nMADO_R70_READER file=quality/check-tool-ledger.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-wave-done.py reader=yes guard=yes\nMADO_R70_CONTROL name=guarded-inline reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=value-position-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=dead-branch-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=uncalled-helper reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=overwritten-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=update-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=subscript-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=module-constant reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=producer-helper reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=argv-name-flow reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=mention-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=alias-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=attribute-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=splat-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=constant-key reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=guarded-env-for-a-non-git-call reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=git-called-without-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_BASE_COUNTER path=quality/counters/c2-r69-guard-dominance.py present=yes sha256=53f256f4693526f2c37cced5203c2e1d6007b721c4b6c0d7fa522e165597e929\nMADO_R70_CONTROL name=guarded-inline reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=value-position-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=dead-branch-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=uncalled-helper reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=overwritten-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=update-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=subscript-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=module-constant reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=producer-helper reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=argv-name-flow reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=mention-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=alias-carried reader=yes guard=no expect_reader=yes expect_guard=yes correct=no\nMADO_R70_CONTROL name=attribute-carried reader=yes guard=no expect_reader=yes expect_guard=yes correct=no\nMADO_R70_CONTROL name=splat-carried reader=yes guard=no expect_reader=yes expect_guard=yes correct=no\nMADO_R70_CONTROL name=constant-key reader=yes guard=no expect_reader=yes expect_guard=yes correct=no\nMADO_R70_CONTROL name=guarded-env-for-a-non-git-call reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=git-called-without-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_BASE controls=13/17 (the round-68 rule must miss the target)\nMADO_R70_GUARD_CARRIERS: population=20 readers=13 guarded=13 unguarded=0 controls=17/17 base_controls=13/17 verdict=TARGET_MET rev=5144a6b5f43225d8021a469f4d24c19558026b9e\n",
+    "stderr": ""
+  },
+  "controls_attacks": {
+    "truncated.json": {
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/w1/R70RevC2/instrument-pinned.py",
+        "--repo",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin",
+        "--rev",
+        "5144a6b5f43225d8021a469f4d24c19558026b9e",
+        "--base-rev",
+        "b37a5aec4ea03f2223d8e09dd5d386d055c24179",
+        "--controls",
+        "/fast/scratch/hyaku/mado-r70/R70RevC2/truncated.json",
+        "--scratch-root",
+        "/fast/scratch/hyaku/mado-r70/R70RevC2"
+      ],
+      "rc": 2,
+      "stdout": "",
+      "stderr": "c2-r70-carriers.py: controls file sha256 c64ba7c84da75825ce53e59629f00194c725053508b9af18e6bf68deca33e2f6 does not match the frozen digest\n"
+    },
+    "renamed.json": {
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/w1/R70RevC2/instrument-pinned.py",
+        "--repo",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin",
+        "--rev",
+        "5144a6b5f43225d8021a469f4d24c19558026b9e",
+        "--base-rev",
+        "b37a5aec4ea03f2223d8e09dd5d386d055c24179",
+        "--controls",
+        "/fast/scratch/hyaku/mado-r70/R70RevC2/renamed.json",
+        "--scratch-root",
+        "/fast/scratch/hyaku/mado-r70/R70RevC2"
+      ],
+      "rc": 2,
+      "stdout": "",
+      "stderr": "c2-r70-carriers.py: controls file sha256 0b5f1db87b9575b6a7e4f16da0d8cc8b3eb94afdb0bb865f9c5a77eae0f630ed does not match the frozen digest\n"
+    },
+    "sixteen.json": {
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/w1/R70RevC2/instrument-pinned.py",
+        "--repo",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin",
+        "--rev",
+        "5144a6b5f43225d8021a469f4d24c19558026b9e",
+        "--base-rev",
+        "b37a5aec4ea03f2223d8e09dd5d386d055c24179",
+        "--controls",
+        "/fast/scratch/hyaku/mado-r70/R70RevC2/sixteen.json",
+        "--scratch-root",
+        "/fast/scratch/hyaku/mado-r70/R70RevC2"
+      ],
+      "rc": 2,
+      "stdout": "",
+      "stderr": "c2-r70-carriers.py: controls file sha256 bd6f24a8ba7e7bd50dc2a2e3e3277c8e2c0186b5993bae5f4cc9a67ab3905b10 does not match the frozen digest\n"
+    }
+  },
+  "verdict_attacks": {
+    "base17": {
+      "values": [
+        20,
+        13,
+        13,
+        0,
+        17,
+        17
+      ],
+      "accepted": false,
+      "line": "MADO_R70_GUARD_CARRIERS: population=20 readers=13 guarded=13 unguarded=0 controls=17/17 base_controls=17/17 verdict=TARGET_MISSED rev=5144a6b5f43225d8021a469f4d24c19558026b9e"
+    },
+    "controls16": {
+      "values": [
+        20,
+        13,
+        13,
+        0,
+        16,
+        13
+      ],
+      "accepted": false,
+      "line": "MADO_R70_GUARD_CARRIERS: population=20 readers=13 guarded=13 unguarded=0 controls=16/17 base_controls=13/17 verdict=TARGET_MISSED rev=5144a6b5f43225d8021a469f4d24c19558026b9e"
+    },
+    "population19": {
+      "values": [
+        19,
+        13,
+        13,
+        0,
+        17,
+        13
+      ],
+      "accepted": false,
+      "line": "MADO_R70_GUARD_CARRIERS: population=19 readers=13 guarded=13 unguarded=0 controls=17/17 base_controls=13/17 verdict=TARGET_MISSED rev=5144a6b5f43225d8021a469f4d24c19558026b9e"
+    }
+  },
+  "population19_cli": {
+    "command": [
+      "python3",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/w1/R70RevC2/instrument-pinned.py",
+      "--repo",
+      "/fast/scratch/hyaku/mado-r70/R70RevC2/fixture.rb9en0xp",
+      "--rev",
+      "7e9b25573047b4f63f12f403a50b38302b18fb68",
+      "--base-rev",
+      "b37a5aec4ea03f2223d8e09dd5d386d055c24179",
+      "--controls",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/controls/c2-controls-r70.json",
+      "--scratch-root",
+      "/fast/scratch/hyaku/mado-r70/R70RevC2"
+    ],
+    "rc": 1,
+    "stdout": "MADO_R70_CONTROLS path=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/controls/c2-controls-r70.json cases=17 sha256=29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff\nMADO_R70_HELD_CONTROLS path=.ufo/waves/round-69/controls/c2-controls-r69.json cases=11 sha256=975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9 carried=yes\nMADO_R70_READER file=quality/check-anchor-cover.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-axis-scores.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-control-receipts.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-counter-discrimination.py reader=no guard=no\nMADO_R70_READER file=quality/check-deliverables.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-evidence-pointers.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-freeze-order.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-index-rows.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-index.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-landed-contract.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-locators.py reader=no guard=no\nMADO_R70_READER file=quality/check-population.py reader=no guard=no\nMADO_R70_READER file=quality/check-r38-discrimination.py reader=no guard=no\nMADO_R70_READER file=quality/check-r55-controls.py reader=no guard=no\nMADO_R70_READER file=quality/check-r56-controls.py reader=no guard=no\nMADO_R70_READER file=quality/check-round-outcome-first.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-session-material.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-tool-ledger.py reader=yes guard=yes\nMADO_R70_READER file=quality/check-wave-done.py reader=yes guard=yes\nMADO_R70_CONTROL name=guarded-inline reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=value-position-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=dead-branch-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=uncalled-helper reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=overwritten-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=update-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=subscript-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=module-constant reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=producer-helper reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=argv-name-flow reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=mention-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=alias-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=attribute-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=splat-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=constant-key reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=guarded-env-for-a-non-git-call reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=git-called-without-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_BASE_COUNTER path=quality/counters/c2-r69-guard-dominance.py present=yes sha256=53f256f4693526f2c37cced5203c2e1d6007b721c4b6c0d7fa522e165597e929\nMADO_R70_CONTROL name=guarded-inline reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=value-position-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=dead-branch-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=uncalled-helper reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=overwritten-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=update-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=subscript-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=module-constant reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=producer-helper reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=argv-name-flow reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes\nMADO_R70_CONTROL name=mention-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=alias-carried reader=yes guard=no expect_reader=yes expect_guard=yes correct=no\nMADO_R70_CONTROL name=attribute-carried reader=yes guard=no expect_reader=yes expect_guard=yes correct=no\nMADO_R70_CONTROL name=splat-carried reader=yes guard=no expect_reader=yes expect_guard=yes correct=no\nMADO_R70_CONTROL name=constant-key reader=yes guard=no expect_reader=yes expect_guard=yes correct=no\nMADO_R70_CONTROL name=guarded-env-for-a-non-git-call reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_CONTROL name=git-called-without-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes\nMADO_R70_BASE controls=13/17 (the round-68 rule must miss the target)\nMADO_R70_GUARD_CARRIERS: population=19 readers=13 guarded=13 unguarded=0 controls=17/17 base_controls=13/17 verdict=TARGET_MISSED rev=7e9b25573047b4f63f12f403a50b38302b18fb68\n",
+    "stderr": ""
+  },
+  "held_digest_break": {
+    "command": [
+      "python3",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/w1/R70RevC2/instrument-pinned.py",
+      "--repo",
+      "/fast/scratch/hyaku/mado-r70/R70RevC2/fixture.rb9en0xp",
+      "--rev",
+      "5c59139d50b0d00b49827ee0abf9db8648b3b387",
+      "--base-rev",
+      "b37a5aec4ea03f2223d8e09dd5d386d055c24179",
+      "--controls",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/controls/c2-controls-r70.json",
+      "--scratch-root",
+      "/fast/scratch/hyaku/mado-r70/R70RevC2"
+    ],
+    "rc": 2,
+    "stdout": "MADO_R70_CONTROLS path=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/controls/c2-controls-r70.json cases=17 sha256=29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff\n",
+    "stderr": "c2-r70-carriers.py: held controls sha256 e25d250806a173fafe159ea9462fbaec351fa10bfa2e839ea65774ed6eff8af0 does not match the frozen digest\n"
+  },
+  "scratch_removed": true
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "name": "a01-two-hop-alias",
+    "src": "def run(repo):\n    env = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n    a = env\n    b = a\n    b[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": true,
+    "note": "guard real at runtime; rule (a) alias; one-hop limit declared"
+  },
+  {
+    "name": "a02-alias-then-env-rebind",
+    "src": "def run(repo):\n    env = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n    alias = env\n    alias[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    env = {\"PATH\": \"/usr/bin\"}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": false,
+    "note": "env-named name rebound unguarded after the guard"
+  },
+  {
+    "name": "a03-attr-different-attribute",
+    "src": "class Runner:\n    def __init__(self):\n        self.env = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n        self.env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n\n    def head(self, repo):\n        return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=self.environ)\n",
+    "expected_guard": false,
+    "note": "guard stored on self.env, call uses self.environ"
+  },
+  {
+    "name": "a04-attr-object-alias",
+    "src": "class Runner:\n    def __init__(self):\n        self.env = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n        self.env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n\n    def head(self, repo):\n        r = self\n        env = r.env\n        return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": true,
+    "note": "r = self aliases the receiver; r.env is the same object"
+  },
+  {
+    "name": "a05-splat-non-guarded",
+    "src": "OTHER = {\"PATH\": \"/usr/bin\"}\n\n\ndef run(repo):\n    env = {**os.environ, **OTHER}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": false,
+    "note": "splat source carries no key"
+  },
+  {
+    "name": "a06-splat-dict-call",
+    "src": "GUARD = {\"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n\n\ndef run(repo):\n    env = dict(os.environ, **GUARD)\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": true,
+    "note": "** of module literal into dict() call; rule (c) says 'expanded with ** into the env mapping'"
+  },
+  {
+    "name": "a07-const-key-rebound-module",
+    "src": "KEY = \"GIT_NO_REPLACE_OBJECTS\"\nKEY = \"OTHER\"\n\n\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\"}\n    env[KEY] = \"1\"\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": false,
+    "note": "rule (d): no other module-level statement may rebind the constant"
+  },
+  {
+    "name": "a07b-const-key-local-shadow",
+    "src": "KEY = \"GIT_NO_REPLACE_OBJECTS\"\n\n\ndef run(repo):\n    KEY = \"OTHER\"\n    env = {\"PATH\": \"/usr/bin\"}\n    env[KEY] = \"1\"\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": false,
+    "note": "used key value is OTHER; module constant matched by spelling only"
+  },
+  {
+    "name": "a08-const-key-value-position",
+    "src": "KEY = \"GIT_NO_REPLACE_OBJECTS\"\n\n\ndef run(repo):\n    env = {\"LABEL\": KEY}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": false,
+    "note": "key-position rule: constant in value position is not a guard"
+  },
+  {
+    "name": "a09-alias-source-not-env-named",
+    "src": "def run(repo):\n    base = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n    a = base\n    a[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    env = base\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": true,
+    "note": "two names bound to the same mapping; guard through alias a; env handed to call"
+  },
+  {
+    "name": "a10-module-map-mutated-after-splat",
+    "src": "GUARD = {\"PATH\": \"/usr/bin\"}\n\n\ndef run(repo):\n    env = {**os.environ, **GUARD}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n\n\nGUARD[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n",
+    "expected_guard": true,
+    "note": "mutation executes at import, before run() is called"
+  },
+  {
+    "name": "a11-env-substring-name-openvswitch",
+    "src": "def run(repo):\n    openvswitch = {\"PATH\": \"/usr/bin\"}\n    openvswitch[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=openvswitch)\n",
+    "expected_guard": true,
+    "note": "env_named matches 'env' inside 'openvswitch'; runtime guard is real anyway"
+  },
+  {
+    "name": "a12-splat-local-source",
+    "src": "def run(repo):\n    guard = {\"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    env = {**os.environ, **guard}\n    return subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+    "expected_guard": false,
+    "note": "rule (c) limits splat source to a module-level constant"
+  },
+  {
+    "name": "a13-attribute-rebound",
+    "src": "def run(repo):\n    self.env = {}\n    self.env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    self.env = {}\n    return subprocess.run([\"git\", \"show\", \"HEAD:a\"], env=self.env)\n",
+    "expected_guard": false,
+    "note": "Same one-dotted attribute; frozen dominance must still hold"
+  },
+  {
+    "name": "a14-attribute-guard-after-use",
+    "src": "def run(repo):\n    self.env = {}\n    subprocess.run([\"git\", \"show\", \"HEAD:a\"], env=self.env)\n    self.env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n",
+    "expected_guard": false,
+    "note": "Same one-dotted attribute; frozen dominance must still hold"
+  }
+]

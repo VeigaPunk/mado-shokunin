@@ -1,0 +1,281 @@
+# R70ExecCadence — harm-watch and publication-cadence battery, round 70 (read-only)
+
+Seat: R70ExecCadence. Lane: /home/vgpnk/Projects/shokunin/mado-shokunin.
+Scored rev named by the seat: 5144a6b5f43225d8021a469f4d24c19558026b9e.
+Lane HEAD at first command: 5144a6b5f43225d8021a469f4d24c19558026b9e.
+Lane HEAD at end of the battery: 71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab; at the last
+observation before yield: 3aea1e10 (a receipt-only commit adding .ufo/waves/round-70/harm-watch-r70.txt;
+instrument bytes there equal 71caa8b7).
+HEAD advanced during this run (jj export): 5144a6b5 -> 9508e878 -> 5adba5a9 -> 71caa8b7 -> 3aea1e10.
+Both the assigned rev and the live HEAD are reported where they differ. No production draft,
+no scoring run of C1/C2 (the measurement seats own that), no file written outside this seat dir
+and the named report.
+
+Scratch: /fast/scratch/hyaku/mado-r70/R70ExecCadence (removed before yield).
+All python invocations after the first pass used PYTHONDONTWRITEBYTECODE=1 and an explicit
+TMPDIR under the seat scratch; none relied on an inherited TMPDIR.
+
+## 1. hermetic selftest
+$ cd /home/vgpnk/Projects/shokunin/mado-shokunin && bash tools/mado-verify.sh --selftest
+rc=0
+MADO_SELFTEST: 460/460 assertions passed
+
+## 2. landing instrument (assigned command and its two repair variants)
+
+### 2a. the exact assigned command
+$ bash quality/landing-counters.sh --repo . --rev 5144a6b5f43225d8021a469f4d24c19558026b9e \
+    --round 69 --scratch-root /fast/scratch/hyaku/mado-r70/R70ExecCadence/landing
+rc=2
+landing-counters.sh: citecheck path missing: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/receipts
+(no leg ran: the default citecheck path `.ufo/waves/round-69/receipts` is not in the tree at
+5144a6b, at HEAD, or in any commit of this lane — `git log --diff-filter=D -- .ufo/waves/round-69/receipts`
+is empty, and round-69's committed tree has no receipts/ member. The tool fails closed before
+the legs when the path is absent or dirty.)
+
+### 2b. same command with an existing, committed, clean citecheck path
+$ bash quality/landing-counters.sh --repo . --rev 5144a6b5f43225d8021a469f4d24c19558026b9e \
+    --round 69 --scratch-root /fast/scratch/hyaku/mado-r70/R70ExecCadence/landing2 \
+    --citecheck-paths .ufo/waves/round-69/claims-declaration-r69.md
+rc=1
+LANDING_LEG nav rc=0        revision=5144a6b... indexed=81/81 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+LANDING_LEG usedby rc=0     MADO_USED_BY: rev=5144a6b... entries=81 rows=375 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+LANDING_LEG ledger rc=1     LEDGER: population=119 ledger_rows=116 uncovered=3 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=5144a6b...
+                            uncovered: quality/counters/c1-r70-landing-controls.py, quality/counters/c1-r70-real-children.py, quality/counters/c2-r70-carriers.py (detail=no-row)
+LANDING_LEG citecheck rc=0  MADO_CITECHECK: rev=5144a6b... files=1 citations=11 resolved=11 missing=0 skipped_large=0 verdict=TARGET_MET (VERSION r64-v1)
+MADO_LANDING_COUNTERS: RED (nav=0 usedby=0 ledger=1 citecheck=0 rev=5144a6b5f43225d8021a469f4d24c19558026b9e)
+
+### 2c. same explicit-path command at the live HEAD
+$ bash quality/landing-counters.sh --repo . --rev HEAD --round 69 \
+    --scratch-root /fast/scratch/hyaku/mado-r70/R70ExecCadence/landing-head \
+    --citecheck-paths .ufo/waves/round-69/claims-declaration-r69.md
+rc=0
+LANDING_LEG nav rc=0
+LANDING_LEG usedby rc=0
+LEDGER: population=119 ledger_rows=119 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=71caa8b7...
+LANDING_LEG ledger rc=0
+LANDING_LEG citecheck rc=0
+MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0 ledger=0 citecheck=0 rev=71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab)
+
+### 2d. the literal default path at HEAD (structural, not rev-specific)
+$ bash quality/landing-counters.sh --repo . --rev HEAD --round 69 --scratch-root .../landing-head-default
+rc=2
+landing-counters.sh: citecheck path missing: .../.ufo/waves/round-69/receipts
+`.ufo/waves/round-70/receipts` is likewise absent, so `--round 70` dies the same way.
+
+## 3. axis table
+$ python3 quality/check-axis-scores.py --repo . --rev 5144a6b5f43225d8021a469f4d24c19558026b9e
+rc=0
+MADO_AXIS_ROW: axis=navigation published=81/81 derived=81/81 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=5144a6b5f43225d8021a469f4d24c19558026b9e
+at HEAD 71caa8b7: identical three rows, MADO_AXIS: checked=3 mismatched=0, rc=0.
+
+### 3b. axis table at the integrated content (opportunistic re-measure)
+$ python3 quality/check-axis-scores.py --repo . --rev f754347a
+    (HEAD after the two round-70 knowledge entries, registry rows S439/S440 and index rows landed)
+rc=1
+MADO_AXIS_ROW: axis=navigation published=81/81 derived=83/83 verdict=STALE
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=1 rev=f754347a1201c2bf7406f90a65ed75fcba9f7fa1
+The published round-70 block at SCORECARD.md reads: "Axis table re-derived at the round-70
+records (`harm-watch-r70.txt` and `quality/check-axis-scores.py`): navigation 81/81;
+calibration resolved-active 86/86; operability selftest 12/12, ledger 119/119." It predates the
+two notes: `check-index.py --repo . --rev f754347a` is 83/83 (rc 0). Publication-cadence defect
+for the L1: re-publish navigation 83/83 at the final content or the axis gate stays rc 1. At
+5144a6b the same command is 3/3 MATCH (rc 0), so this is the records landing after the
+publication, not the new instruments.
+
+STALENESS VERDICT: not stale against the three new instruments. The gate publishes the last
+unquoted "Axis table re-derived at ..." line in SCORECARD.md and re-derives only:
+  navigation  <- `quality/check-index.py --rev <rev> --repo .`      -> indexed=A/B
+  calibration <- `.ufo/waves/round-31/c2/count.py <rev>`            -> resolved_active=A active=B
+  operability <- `quality/check-index.py --selftest`                -> A/B assertions passed
+No rule references c1-r70-landing-controls.py, c1-r70-real-children.py or c2-r70-carriers.py.
+The three new instruments are claim instruments, not axis rows; arrival alone cannot stale the
+table. Only a change to those three counts (or to the published SCORECARD.md line) would — and
+that is exactly what happened at f754347a: the note population changed 81 -> 83, so the published
+navigation fraction must be refreshed (§3b).
+
+## 4. instrument selftests (all rc 0)
+Every counter that takes --scratch-root requires the directory to EXIST; a missing dir is
+refused rc 2 ("--scratch-root is not a directory"/"is required"). All dirs were pre-created
+under the seat scratch. The first pass, run without the flag, is superseded by this table.
+Working tree == HEAD content for all nine files at run time (verified with git hash-object vs
+`git rev-parse HEAD:<path>`, and `git diff --quiet` mattered only after HEAD moved — see §7).
+
+| instrument | command (scratch root elided, under seat scratch) | rc | terminal line |
+|---|---|---|---|
+| c1-r69-paired-recipes.py | --selftest --scratch-root | 0 | MADO_R69_PAIRED_RECIPES_SELFTEST: 28/28 assertions passed |
+| c1-r69-landing-controls.py | --selftest --scratch-root | 0 | MADO_R69_LANDING_CONTROLS_SELFTEST: 59/59 assertions passed |
+| c2-r69-guard-dominance.py | --selftest --controls .ufo/waves/round-69/controls/c2-controls-r69.json --scratch-root | 0 | MADO_R69_GUARD_DOMINANCE_SELFTEST: 43/43 assertions passed |
+| c1-r70-landing-controls.py | --selftest --scratch-root | 0 | MADO_R70_LANDING_CONTROLS_SELFTEST: 68/68 assertions passed |
+| c1-r70-real-children.py | --selftest --scratch-root | 0 | MADO_R70_REAL_CHILDREN_SELFTEST: 26/26 assertions passed |
+| c2-r70-carriers.py | --selftest --controls .ufo/waves/round-70/controls/c2-controls-r70.json --scratch-root | 0 | MADO_R70_GUARD_CARRIERS_SELFTEST: 49/49 assertions passed |
+| check-wave-done.py | --selftest | 0 | MADO_WAVE_DONE_SELFTEST: 62/62 passed |
+| check-tool-ledger.py | --selftest | 0 | LEDGER_SELFTEST: 54/54 passed |
+| tools/mado-receipt-citecheck.py | --selftest --scratch-root | 0 | MADO_CITECHECK_SELFTEST: 12/12 assertions passed |
+| (extra) quality/landing-counters.sh | --selftest --scratch-root | 0 | MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed |
+
+Because HEAD moved past 5144a6b, the two r70 counters were re-tested from the committed blobs
+extracted with `git cat-file blob 5144a6b:<path>` into the seat scratch:
+  c1-r70-real-children.py 26/26 rc 0 (blob sha256 b1785f38...)
+  c2-r70-carriers.py      49/49 rc 0 (blob sha256 87ca4664...)
+So the selftests hold on both sides of the post-freeze edits (9508e878, 5adba5a9).
+Harm-watch scoring leg named by the declaration (not a selftest):
+$ python3 quality/counters/c1-r69-paired-recipes.py --repo . --rev 5144a6b... \
+    --base-rev b37a5aec4ea03f2223d8e09dd5d386d055c24179 --scratch-root .../paired-run
+rc=0
+MADO_R69_PAIRED_RECIPES: selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET rev=5144a6b...
+
+## 5. anchor cover on the newest entry
+$ python3 quality/check-anchor-cover.py --repo . --rev 5144a6b... \
+    --entry corpus/knowledge/gate-guard-dominance-r69.md --work .../anchor
+rc=0
+ANCHOR_COVER: row=K01..K08 ... verdict=OK   (8 rows, each sid/name/locators/verdict=OK)
+CHECK107: rows=8 covered=8 miss=0 verdict=OK
+The tool emits no `entries=` token; its summary tokens are rows/covered/miss/verdict (rows is
+the entry count).
+
+## 6. contract gates at 5144a6b
+$ python3 quality/check-evidence-pointers.py --repo . --rev 5144a6b... --branch master
+rc=0
+PRED-PTR-r36-v1 rev=5144a6b... pointers_r35=8 dangling_r35=2 dangling_r35_closed=1 pointers_r36=35
+dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1
+setup=ok verdict=TARGET_MET
+(lane HEAD is detached; `--branch master` resolves to the local master branch, which contains
+the rev — rc 0 as measured, no fallback needed.)
+
+$ python3 quality/check-landed-contract.py --repo . --frozen-rev 5144a6b... \
+    --frozen tools/mado-terminal.py --landed tools/mado-terminal.py
+rc=0
+CHECK96: frozen=9 landed=9 added=0 removed=0 unregistered=0 verdict=OK
+Argument choice: the tool's docstring advertises placeholders only, and the lane has exactly
+two contract-bearing docstrings (`grep -rl "Out of contract:" tools quality` -> tools/mado-terminal.py,
+quality/check-landed-contract.py itself). No round-70 tool adds a contract list; the pair above is
+the same frozen reference the round-69 cadence seat proved, landed bytes unchanged.
+
+$ python3 quality/check-deliverables.py --repo . --rev 5144a6b... --report <the 12 committed round-69 w1 seat reports>
+rc=1
+DECLARATION report=.ufo/waves/round-69/w1/R69MutBattery.md
+  named=.ufo/waves/round-69/w1/R69MutBattery/mado-shokunin/.ufo/waves/round-69/w1/R69MutBattery.md
+  grammar=trailer status=ABSENT
+... (4 EXISTS, 8 UNDECLARED)
+CHECK101: reports=12 declared=5 exists=4 absent=1 undeclared=8 verdict=FAIL
+Cause is the pre-existing report-grammar class, not round-70 harm: R69MutBattery's trailer carries
+a leading `mado-shokunin/` so the resolver doubles the seat prefix, and 8 of the 12 reports carry
+no `Report:` trailer at all. Same class as the round-69 seat's round-68 measurement
+(4 declared / 1 exists / 3 absent / 12 reports there; 5 declared / 4 exists / 1 absent here).
+
+$ python3 quality/check-index.py --repo . --rev 5144a6b...
+rc=0
+MADO_INDEX: rev=5144a6b... indexed=81/81 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+
+Gate re-runs at HEAD 71caa8b7: check-index rc 0 indexed=81/81; check-evidence-pointers rc 0
+TARGET_MET; check-axis-scores rc 0 3/3 MATCH. At the later HEAD f754347a: check-index rc 0
+indexed=83/83; check-axis-scores rc 1 (navigation STALE, §3b).
+
+## 7. scope check
+`git status --porcelain` in the lane:
+  at the first command: 7 lines, all untracked round-70 L1 bookkeeping
+    (make-spec-r70.py, w1-dispatch.json, w1-run.err, w1-spec.json, w1.ready,
+     w1.ready.partial, w1/)
+  mid-run: 8 lines; the extra was ` M quality/counters/c1-r70-real-children.py`, coincident with
+    the HEAD advance (the lane is jj-colocated and HEAD moves by "export from jj")
+  at the last check before yield (HEAD f754347a; the lane is under active concurrent edit by the
+  scribe seats, so this line is a timestamp, not a stable state):
+    M  corpus/SOURCES.md
+    M  corpus/knowledge/guard-carrier-shapes-r70.md
+    M  corpus/knowledge/landing-kill-credit-real-children-r70.md
+    ?? .ufo/waves/round-70/w1/      (the untracked wave seat tree holding every in-flight seat)
+    ?? corpus/lessons/round-70.md
+  Earlier observations: 7 untracked L1 bookkeeping paths at start; a transient
+  ` M quality/counters/c1-r70-real-children.py` while HEAD advanced; then `M SCORECARD.md`,
+  `M corpus/SOURCES.md` and two untracked notes before f754347a committed them. No observation
+  showed a tracked path modified by this seat. Status is therefore NOT empty, and cannot be
+  during a wave. A check seconds later additionally showed `M quality/counters/c2-r70-carriers.py`
+  (sibling edit), confirming the lane is live during this wave.
+
+Method for "nothing outside my seat dir changed": `date +%s > start.epoch` BEFORE any run
+(start 2026-11-03 23:32:14 -0300); `find . -path ./.git -prune -o -type f -printf '%T@ %p\n'
+| sort -k2 > mtime.before` (45,997 files); after the battery, the same find with `.jj` and `.git`
+pruned and `-newermt "2026-11-03 23:32:14"`, filtered `grep -v '/R70ExecCadence'` = 30 paths:
+  corpus/knowledge/guard-carrier-shapes-r70.md
+  corpus/knowledge/landing-kill-credit-real-children-r70.md
+  corpus/SOURCES.md, SCORECARD.md                                   (scribe seats)
+  quality/counters/c2-r70-carriers.py, quality/tool-ledger.md       (L1 5adba5a9 / 71caa8b7)
+  quality/counters/__pycache__/c1-r70-real-children.cpython-314.pyc
+  quality/counters/__pycache__/c2-r70-carriers.cpython-314.pyc
+  quality/__pycache__/check-anchor-cover.cpython-314.pyc            (ignored caches, see below)
+  .ufo/waves/round-70/harm-watch-r70.txt                            (L1; committed as 3aea1e10)
+  .ufo/waves/round-70/measurement-r70.txt                           (L1/sibling measurement)
+  .ufo/waves/round-70/w1/R70ExecC2Rule.md, R70ExecC2Rule/probe-harness.py,
+    R70ExecHarness.md                                               (sibling seats)
+  .ufo/waves/round-70/w1/R70ScoutCensus.md, R70ScoutCensus/staged-titles.tsv,
+    R70ScoutCensus/census-census-r70.txt, R70ScoutCensus/census-validate-file-r70.txt,
+    R70ScoutCensus/census-validate-r70.txt,
+    R70ScoutCensus/assimilation/{collisions,quarantine-slice,reg-ids,staged-ids}  (sibling seat)
+  .ufo/waves/round-70/w1/R70ScoutSources.md, R70ScoutSources/sources-r70.json      (sibling seat)
+  .ufo/waves/round-70/w1/R70ScribeEntryC1.md,
+    R70ScribeEntryC1/draft/corpus/knowledge/landing-kill-credit-real-children-r70.md (sibling seat)
+  .ufo/waves/round-70/w1/R70ScribeEntryC2/draft/corpus/knowledge/guard-carrier-shapes-r70.md
+  .ufo/waves/round-70/w1/R70ScribeRowLesson/draft/corpus/SOURCES-rows.txt,
+    R70ScribeRowLesson/draft/corpus/SOURCES-row-subprocess-CONFLICT.txt               (sibling seat)
+No production path was written by this seat. The three ignored bytecode caches are not this
+seat's: a script executed directly is never cached as __main__, and their mtimes (23:32:56,
+23:36:12, 23:37:29) belong to concurrent L1/sibling executions that import the modules; all are
+ignored by .gitignore:3 `__pycache__/`.
+
+Worktree index state at the last observation (recorded for the L1's final-content sequence, not
+a gate this seat scores): `python3 quality/check-index.py --root .` rc 0,
+MADO_INDEX: root=. indexed=83/83 missing=0 dangling=0 duplicates=0 coverage=10.0000/10 — the two
+round-70 notes and their corpus/README.md rows are in place, and `--rev f754347a` agrees (83/83,
+rc 0). The axis publication, however, still says navigation 81/81 (§3b): at the final content it
+must read 83/83.
+
+## 8. rev pinning (finding for the L1)
+The scored bytes at 5144a6b are not the bytes at HEAD:
+  $ git diff --stat 5144a6b..HEAD
+  quality/counters/c1-r70-real-children.py | 1 +
+  quality/counters/c2-r70-carriers.py      | 8 +-
+  quality/tool-ledger.md                   | 3 +
+  .ufo/waves/round-70/*                    | (spec/dispatch/ready/measurement evidence)
+Both r70 counters' selftests pass on both sides (§4). Because HEAD moved, the claim's counting
+command must be pinned to the final content commit explicitly; `--rev HEAD` at measurement time
+is not the same bytes the C1 claim's frozen sentence names, and 5144a6b no longer covers the
+recorded instrument/harness edits. HEAD advanced twice more: 3aea1e10 (adds only
+`.ufo/waves/round-70/harm-watch-r70.txt`; instrument bytes unchanged) and f754347a (the two
+knowledge entries with registry/index/scorecard rows — the commit after which the published axis
+line is stale, §3b).
+
+## summary
+GREEN: mado-verify 460/460 (rc 0); all nine assigned instrument selftests plus the landing
+instrument's own 62/62 (rc 0, on both 5144a6b blobs and live HEAD); anchor cover rows=8
+covered=8 miss=0 (rc 0); evidence pointers TARGET_MET (rc 0); landed contract OK (rc 0);
+check-index 81/81 at 5144a6b and 83/83 at f754347a after the two notes landed (rc 0 at both);
+axis table 3/3 MATCH at 5144a6b and 71caa8b7 (rc 0), stale navigation at f754347a (RED (e)); the
+round-69 frozen pair counter TARGET_MET (rc 0).
+
+RED, all pre-existing or setup, none caused by round-70 instruments:
+  (a) the literal landing command exits 2 on the absent default citecheck dir
+      `.ufo/waves/round-69/receipts` (never committed; structural for rounds 69 and 70) —
+      explicit `--citecheck-paths` is required;
+  (b) with an explicit path at 5144a6b the ledger leg is rc 1 because the three r70 counters
+      have no quality/tool-ledger.md rows there (population=119, rows=116, uncovered=3);
+      fixed at HEAD 71caa8b7 (rows=119, uncovered=0, landing GREEN);
+  (c) check-deliverables over the round-69 report set FAIL (1 ABSENT doubled-prefix trailer,
+      8 UNDECLARED) — the historical report-grammar class;
+  (d) the L1's own harm-watch-r70.txt already records the round-69 evidence-dir citecheck leg
+      RED at HEAD with 5 missing citations inside committed round-68/69 seat evidence;
+  (e) at the integrated content f754347a the axis gate is rc 1: navigation published 81/81 vs
+      derived 83/83 (STALE) after the two notes and their index rows landed; at 5144a6b and
+      71caa8b7 it was 3/3 MATCH rc 0. Re-publish navigation 83/83 before closure.
+
+L1 re-run at the final measured content (one line):
+  `bash quality/landing-counters.sh --repo . --rev <final-content-sha> --round 69
+   --scratch-root <dir> --citecheck-paths <clean committed artifact(s)>` together with
+  `python3 quality/check-axis-scores.py --repo . --rev <final>`,
+  `python3 quality/check-index.py --repo . --rev <final>`, `bash tools/mado-verify.sh --selftest`,
+  and the six counter selftests — pinning `--rev` to the final commit, never `HEAD`; check-index
+  must read 83/83 and the published axis line must read navigation 83/83 (re-publication, RED (e)).

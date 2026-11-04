@@ -3817,7 +3817,8 @@ Frozen declaration: `.ufo/waves/round-70/claims-declaration-r70.md`, landed
 `bc18399b409a6390a6c6e8831bf9ad2dacbbf189`; base `b37a5aec4ea03f2223d8e09dd5d386d055c24179`.
 Frozen control set: `.ufo/waves/round-70/controls/c2-controls-r70.json` (17 cases, sha256
 `29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff`). Measured content for both claims:
-`5adba5a92a8d58eb76533b39a9216d8e85d48fbc` (receipt `.ufo/waves/round-70/measurement-r70.txt`); the
+`6a25e86509c3938971befd913b47daf8c7b3691d` (receipt `.ufo/waves/round-70/measurement-r70.txt`; the C1 counter is
+byte-identical to its `5adba5a9` form and the C2 classifier carries the reviewer-driven repair); the
 receipt-bearing tip is `71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab` (ledger rows and wave evidence). Axis
 posture at round start: every published finite sub-axis at its measured maximum (navigation 81/81,
 calibration 86/86, operability 12/12 at `379e97f8`; gate `MADO_SELFTEST: 460/460`), so no axis is
@@ -3826,18 +3827,39 @@ claims take new finite denominators and both do-nothing controls miss their targ
 
 | Claim / axis | Counting command (REV is before or the measured content) | Before → after | Verdict |
 |---|---|---|---|
-| C1 **calibration** — the landing harness credits a kill only on a parsed failed assertion, proven with real children | `python3 -I quality/counters/c1-r70-real-children.py --repo . --rev REV --base-rev b37a5aec4ea03f2223d8e09dd5d386d055c24179 --scratch-root DIR` | at base: the counter and the r70 harness are absent (`absent_at_base=yes`); the held harness scores the three real-child scenarios `mz=pass` on genuine **and** on crash and garbage → `base_correct=1/3` (3.3333); at `5adba5a9`: `cases=3 correct=3 base_correct=1 verdict=TARGET_MET` rc 0; bounded `10 × correct / 3` 3.3333 → 10.0000 (the do-nothing control keeps 1/3) | improved on the frozen three-scenario set |
-| C2 **operability** — the guard census counts alias, attribute, splat and constant-key carriers while keeping the git-launch negatives | `python3 -I quality/counters/c2-r70-carriers.py --repo . --rev REV --base-rev b37a5aec… --controls .ufo/waves/round-70/controls/c2-controls-r70.json --scratch-root DIR` | at base: the counter is absent; the held round-69 classifier scores the same 17 frozen cases `13/17` (7.6471) — it misses `alias-carried`, `attribute-carried`, `splat-carried`, `constant-key`; at `5adba5a9`: `population=20 readers=13 guarded=13 unguarded=0 controls=17/17 base_controls=13/17 verdict=TARGET_MET` rc 0; bounded `10 × controls / 17` 7.6471 → 10.0000 | improved on the frozen seventeen-case set |
+| C1 **calibration** — the landing harness credits a kill only on a parsed failed assertion, proven with real children | `python3 -I quality/counters/c1-r70-real-children.py --repo . --rev REV --base-rev b37a5aec4ea03f2223d8e09dd5d386d055c24179 --scratch-root DIR` | at base: the counter and the r70 harness are absent (`absent_at_base=yes`); the held harness scores the three real-child scenarios `mz=pass` on genuine **and** on crash and garbage → `base_correct=1/3` (3.3333); at `6a25e865`: `cases=3 correct=3 base_correct=1 verdict=TARGET_MET` rc 0; bounded `10 × correct / 3` 3.3333 → 10.0000 (the do-nothing control keeps 1/3) | improved on the frozen three-scenario set |
+| C2 **operability** — the guard census counts alias, attribute, splat and constant-key carriers while keeping the git-launch negatives | `python3 -I quality/counters/c2-r70-carriers.py --repo . --rev REV --base-rev b37a5aec… --controls .ufo/waves/round-70/controls/c2-controls-r70.json --scratch-root DIR` | at base: the counter is absent; the held round-69 classifier scores the same 17 frozen cases `13/17` (7.6471) — it misses `alias-carried`, `attribute-carried`, `splat-carried`, `constant-key`; at `6a25e865`: `population=20 readers=13 guarded=13 unguarded=0 controls=17/17 base_controls=13/17 verdict=TARGET_MET` rc 0 (classifier repaired against the frozen dominance sentence after review: `.ufo/waves/round-70/c2-classifier-repair-r70.txt`); bounded `10 × controls / 17` 7.6471 → 10.0000 | improved on the frozen seventeen-case set |
 | — | coverage / admitted-note reachability (unchanged rubric) | `quality/check-index.py` | 81/81 both ends | unchanged (harm watch) |
 | — | operability / hermetic gate | `bash tools/mado-verify.sh --selftest` | 460/460 both ends | unchanged (harm watch) |
 | — | operability / instrument ledger | `python3 quality/check-tool-ledger.py --repo . --rev REV` | 119 rows, 119 population, 0 uncovered at `71caa8b7` | improved (three new instruments registered) |
 | — | calibration / frozen round-69 claim | `python3 quality/counters/c1-r69-paired-recipes.py --repo . --rev REV --base-rev b37a5aec…` | `killed=3/3 applied=3/3 base=0/3 TARGET_MET` at the round-70 tip | unchanged (the r69 harness stays byte-frozen) |
 
 **Evidence.** `.ufo/waves/round-70/measurement-r70.txt` (both counters, both ends, before-state proofs),
-`control-baseline-r70.txt` (the two do-nothing controls before freeze), `harm-watch-r70.txt` (gate 460/460,
+`control-baseline-r70.txt` (the two do-nothing controls before freeze), `c2-classifier-repair-r70.txt`
+(red-before → green-after for the reviewer's three attack cases), `harm-watch-r70.txt` (gate 460/460,
 the frozen r69 counter TARGET_MET, landing GREEN on the round's committed artifacts, axis table
 `checked=3 mismatched=0`, every instrument selftest), `w1/` (the wave's seat reports), `proto/`
 (the fixture lane the three scenarios ride).
+
+### Closure corrections (round 70, after the wave settled)
+
+The wave's attack seats filed findings after the first measurement; each disposition is recorded here
+rather than smoothed.
+
+| finding | source | disposition |
+|---|---|---|
+| R1: an agreement-only stand-in (reading the fixture's `MODE=` line) scores C1's target 3/3 without parsing any child output. | `w1/R70RevC1.md` finding 1 | **disclosed, not a blocker under the frozen sentence**: the declaration and the entry's §5 already bound the claim to the delivered harness's decisions on three frozen inputs; the counter's opening paragraph names the same limit. The report repeats it. |
+| R2: attribute carriers bypass dominance — a later `self.env = {}` replacement and a call before the store both scored `guard=yes`. | `w1/R70RevC2.md` finding 1 (a13, a14) | **fixed** against the frozen sentence: the attribute flow now requires a store line before the call and no plain assignment to the same dotted attribute in between (`c2-classifier-repair-r70.txt`: prefix `(True, True)` → postfix `(True, False)` for both). Not a predicate change: the frozen sentence already required the dominance test for every carrier. |
+| R3: constant-key resolution ignored a local shadow (`KEY = "OTHER"` in the function). | `w1/R70RevC2.md` finding 2 (a07b) | **fixed**: function scopes now see only the constants they do not rebind (`consts - assigned_names(nodes)`); prefix `(True, True)` → postfix `(True, False)`. |
+| R4: the splat sentence is broader than the implementation (`dict(os.environ, **GUARD)` is missed) and the alias sentence is broader than the implementation (a two-hop alias is missed). | `w1/R70RevC2.md` finding 3 | **disclosed as declared limits**, not narrowed silently: the entry §4 and the report name both shapes, and the counter's selftest pins them at `(True, False)` so a future widening shows as a case change. |
+| R5: the exact-count success does not prove per-file soundness (compensating FP/FN could preserve totals). | `w1/R70RevC2.md` close | **disclosed**: the population census is a count, and the entry's limits say the rule is a bounded syntactic approximation; no per-file soundness claim is made. |
+| R6: `check-deliverables.py` is red on the round-69 seat reports (`reports=12 declared=5 exists=4 absent=1 undeclared=8`). | `w1/R70ExecCadence.md` finding 6 | **pre-existing, not round-70 harm**: the ABSENT is a round-69 trailer with a doubled seat prefix; recorded here, not repaired (another round's seat reports). |
+| R7: the C1 counter's first committed form (`5144a6b5`) created no per-scenario scratch dir and died mid-measurement. | L1's own first run | **fixed pre-data** in `9508e878`; mined as `M70-1` in `corpus/lessons/round-70.md` under the existing criterion 110(a). |
+| R8: the C2 `MADO_R70_CONTROL` lines carried the candidate and base legs under one label. | L1's own receipt review | **fixed** in `5adba5a9` (`leg=candidate|base`); observability only. |
+
+The claim predicates are unchanged: C1's contract line still reads `cases=3 correct=3 base_correct=1`,
+and C2's frozen set still carries `controls=17/17 base_controls=13/17` (the repair only rejects more
+inputs, and the frozen 17 score identically before and after).
 
 ### Capability demonstrated
 

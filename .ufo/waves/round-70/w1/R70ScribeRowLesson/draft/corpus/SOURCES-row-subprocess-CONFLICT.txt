@@ -1,0 +1,27 @@
+# mado round 70 — CONFLICT row: CPython Doc/library/subprocess.rst @ v3.14.8  →  S442, REJECTED this round
+#
+# ROUND STATE (read this first): the L1's production lesson corpus/lessons/round-70.md § Gate (lines 91-96)
+# refuses this row and substitutes the held row S435 (GNU Bash 5.3 § Exit Status) as the C1 ground.
+# The C1 entry seat must therefore cite S435, not this row and not S108, unless the L1 reverses.
+# This file is kept as the ready-to-adopt artifact for the flip, not as a row to append now.
+#
+# WHY THE URL ALREADY HAS A ROW: corpus/SOURCES.md:120  S108  tier A  status mined
+#   scope: the command parameter of subprocess.run/Popen/call/check_call/check_output is `args`
+#   anchor: `subprocess.rst` 61,603 B sha256 05cd782c..., run :38-43, Popen :359-366, Popen.args :898-900
+# A second row for the same URL in a different scope is the census's W04 "duplicate url ... across
+# scopes" (scripts/sources-census.sh:33,645); a duplicate within the same scope is E04 unless the
+# teaches cell says "supersedes S###" (line 646-649), which the row below does.
+#
+# WHY THE FLIP EXISTS (measured, not asserted): quality/check-anchor-cover.py:136-155 resolves the row's
+# file name from the LAST URL in the source cell (for S108 that is Lib/subprocess.py, so name =
+# `subprocess.py`) and then requires `subprocess.py:NNN` occurrences inside the registry ANCHOR cell.
+# S108's anchor carries bare `:38-43` locators and no `subprocess.py:` occurrence, so ANY pin citing
+# S108 reports `locators=none verdict=MISS reason=no-cover`. Re-derivation: the `occurrences()` replica
+# in the seat report § Commands printed `name=subprocess.py occurrences=[]`. The registry header permits
+# only `status`, `recheck` and `used-by` in place, so S108's anchor cannot be widened without a contract
+# change; the L1's flip (a later round that must quote the returncode paragraph re-opens S108 as a
+# superseding row with the new anchor) is the clean path, and this row is that shape.
+#
+# If a later round takes the flip, adopt this row exactly; the teaches cell already carries
+# "supersedes S108" and status is `rejected`, so neither E04 nor a mined-row warning applies.
+| S442 | CPython v3.14.8 subprocess reference — return-code semantics — https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/subprocess.rst | docs | A | the return-code semantics a kill-credit rule rests on: a nonzero child status has several causes, and a signal death is a negative status, so nonzero cannot mean the child's assertions failed | CompletedProcess.returncode + Popen.returncode + getstatusoutput examples, subprocess.rst:136-142,949-963,1500-1510 @ tag v3.14.8 (tag object 992560c2cc62d47b308cec662feb485456847931, peeled commit 8e6e75d9102e39bed2a2b279203a396741180f12; fetched 2026-11-04, 61603 bytes, sha256 05cd782c5181481ad961788dd678b99c903eb3ff53e0ebab3095c38b48c74dfd, 1622 lines; three fetches byte-identical, same bytes as S108 recorded) | REJECTED this round as a duplicate URL (S108, same 61,603 B and 05cd782c...); supersedes S108 for this page's return-code paragraph, whose anchor S108 does not carry. Quotes on file: "A negative value ``-N`` indicates that the child was terminated by signal ``N`` (POSIX only)." (:141-142); the getstatusoutput examples report 1 for an ordinary failure, 127 for a missing program and -15 for a killed child (:1503-1510); "Typically, an exit status of 0 indicates that it ran successfully" (:138-139). Flip: a round whose claim must quote the return-code paragraph adopts this row and re-anchors S108's page. Does not establish which cause produced a given status | rejected | 2026-11-04 | on-release | — |
