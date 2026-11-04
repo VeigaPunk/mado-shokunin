@@ -3,7 +3,8 @@ r"""Round-73 C1 counting command: the frozen outcome set separates the four name
 (claim C1, round 73).
 
     python3 quality/counters/c1-r73-summary-mutants.py --repo . --rev REV \
-        --base-rev d3f6c9f5d8b3401c01f189e8cd4b8dbc917a2bce --scratch-root DIR
+        --base-rev d3f6c9f5d8b3401c01f189e8cd4b8dbc917a2bce \
+        --controls .ufo/waves/round-73/controls/c1-outcomes-r73.json --scratch-root DIR
     python3 quality/counters/c1-r73-summary-mutants.py --selftest --scratch-root DIR
 
 What is scored. The frozen ten-case outcome set (`.ufo/waves/round-73/controls/c1-outcomes-r73.json`)
@@ -242,8 +243,23 @@ def measure(args):
              os.path.abspath(args.controls), "rb").read())))
 
     sha = rev_parse(repo, args.rev)
-    emit("MADO_R73_REVS rev=%s base=%s" % (sha, args.base_rev or sha))
+    base_sha = rev_parse(repo, args.base_rev or args.rev)
+    emit("MADO_R73_REVS rev=%s base=%s" % (sha, base_sha))
     held = held_check(repo, sha, cases)
+
+    base_data = extract(repo, base_sha, CANDIDATE)
+    if base_data is None:
+        raise SetupError("the base harness %s is absent at %s" % (CANDIDATE, base_sha))
+    if base_data != extract(repo, sha, CANDIDATE):
+        raise SetupError("the candidate harness differs between --base-rev and --rev; the "
+                         "carried comparison is not a base-rev comparison")
+    base_module = load_module(base_data, "mado_r73_base")
+    base_good, base_misses = score(held, base_module["outcome_verdict"])
+    if base_good != len(held):
+        raise SetupError("the base harness does not answer the held eight-case set "
+                         "(misses=%s)" % ",".join(base_misses))
+    emit("MADO_R73_BASE_PROVENANCE base=%s harness_same=yes held_set=8/8"
+         % base_sha)
 
     data = extract(repo, sha, CANDIDATE)
     if data is None:
@@ -394,6 +410,7 @@ def _selftest_checks(scratch, controls_path):
     except SystemExit:
         parsed_ok = False
     want("the frozen counting command's argument set parses", parsed_ok)
+    want("the usage example names --controls", "--controls" in (__doc__ or ""))
     if controls_path:
         try:
             cases = load_controls(os.path.abspath(controls_path))

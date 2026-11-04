@@ -926,23 +926,61 @@ def global_guard(tree, dead, consts):
     if not stores:
         return False
     replaced = {}
-    for node in ast.walk(tree):
+
+    def note_replacement(node):
         if not isinstance(node, ast.Assign) or node.lineno in dead:
-            continue
+            return
         for target in node.targets:
             if isinstance(target, ast.Name) and target.id in stores \
                     and not mapping_has_key(node.value):
                 replaced.setdefault(target.id, set()).add(node.lineno)
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call) or not call_is_git(node) or node.lineno in dead:
+
+    # Only an assignment that resolves to the module binding cancels a store: a module-level
+    # assignment, or one inside a function that declares the name `global` (R73RevC2 F2).
+    for node in tree.body:
+        note_replacement(node)
+    for fn in ast.walk(tree):
+        if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
-        for kw in node.keywords:
-            if kw.arg != "env" or not isinstance(kw.value, ast.Name):
+        globals_here = set()
+        for node in ast.walk(fn):
+            if isinstance(node, ast.Global):
+                globals_here.update(node.names)
+        if not stores.keys() & globals_here:
+            continue
+        for node in ast.walk(fn):
+            note_replacement(node)
+
+    # A launch inside a function that binds the name as a parameter or as a non-global local
+    # does not resolve to the module binding (R73RevC2 F1).
+    for scope in function_scopes(tree):
+        nodes = scoped_nodes(scope)
+        shadow = set()
+        if scope is not tree:
+            shadow.update(arg.arg for arg in scope.args.args)
+            shadow.update(arg.arg for arg in scope.args.kwonlyargs)
+            if scope.args.vararg is not None:
+                shadow.add(scope.args.vararg.arg)
+            if scope.args.kwarg is not None:
+                shadow.add(scope.args.kwarg.arg)
+            globals_here = set()
+            for node in ast.walk(scope):
+                if isinstance(node, ast.Global):
+                    globals_here.update(node.names)
+            shadow.update(name for name in assigned_names(nodes) if name not in globals_here)
+        for node in nodes:
+            if not isinstance(node, ast.Call) or not call_is_git(node) or node.lineno in dead:
                 continue
-            for store in stores.get(kw.value.id, ()):
-                if store < node.lineno and not any(store < r < node.lineno
-                                                   for r in replaced.get(kw.value.id, ())):
-                    return True
+            for kw in node.keywords:
+                if kw.arg != "env" or not isinstance(kw.value, ast.Name):
+                    continue
+                name = kw.value.id
+                if name in shadow:
+                    continue
+                for store in stores.get(name, ()):
+                    if store < node.lineno and not any(store < r < node.lineno
+                                                       for r in replaced.get(name, ())):
+                        return True
     return False
 
 
@@ -966,6 +1004,13 @@ def environ_transport_guard(tree, dead, consts):
     stores = set()
     replaced = set()
     for node in ast.walk(tree):
+        if isinstance(node, ast.Delete) and node.lineno not in dead:
+            for target in node.targets:
+                if isinstance(target, ast.Subscript) and isinstance(target.ctx, ast.Del) \
+                        and attr_dotted(target.value) == "os.environ" \
+                        and key_is_guard(target.slice, consts):
+                    replaced.add(node.lineno)
+            continue
         if not isinstance(node, ast.Assign) or node.lineno in dead:
             continue
         for target in node.targets:
@@ -1328,6 +1373,24 @@ REGRESSIONS = {
         'GUARD = {"GIT_NO_REPLACE_OBJECTS": "1"}\n\n\ndef run(repo):\n'
         '    env = {**os.environ, **GUARD}\n'
         '    subprocess.run(["git", "show", "HEAD:a"], env=env)\n', True, True),
+    "r73-global-parameter-shadow": ('ENV = {"PATH": "/usr/bin"}\n'
+                                    'def setup():\n    global ENV\n'
+                                    '    ENV["GIT_NO_REPLACE_OBJECTS"] = "1"\n\n\n'
+                                    'def run(repo, ENV=None):\n    setup()\n'
+                                    '    subprocess.run(["git", "show", "HEAD:a"], env=ENV)\n',
+                                    True, False),
+    "r73-global-unrelated-local-rebind": ('ENV = {"PATH": "/usr/bin"}\n'
+                                         'def setup():\n    global ENV\n'
+                                         '    ENV["GIT_NO_REPLACE_OBJECTS"] = "1"\n\n\n'
+                                         'def unused():\n    ENV = {}\n    return ENV\n\n\n'
+                                         'def run(repo):\n    setup()\n'
+                                         '    subprocess.run(["git", "show", "HEAD:a"], env=ENV)\n',
+                                         True, True),
+    "r73-environ-key-deleted": ('def run(repo):\n'
+                               '    os.environ["GIT_NO_REPLACE_OBJECTS"] = "1"\n'
+                               '    del os.environ["GIT_NO_REPLACE_OBJECTS"]\n'
+                               '    subprocess.run(["git", "show", "HEAD:a"], env=dict(os.environ))\n',
+                               True, False),
     "r73-environ-call-with-extra-keyword": (
         'def run(repo):\n    os.environ["GIT_NO_REPLACE_OBJECTS"] = "1"\n'
         '    subprocess.run(["git", "show", "HEAD:a"], env=dict(os.environ, EXTRA="1"))\n',
