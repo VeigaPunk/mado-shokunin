@@ -128,6 +128,27 @@ seven mutants and the 8/18 control are unchanged (measured at `b774f920`), the s
 22/22 → 28/28, and the red/green receipt is `receipts/repair-r78-tool.txt`. The frozen predicate's
 substance — 18/18 cases, 7/7 mutants, base below target — did not move.
 
+## Critic dispositions (append-only)
+
+- **The C2 counter's enforcement changed after the freeze; its counts and control set did not.**
+  The frozen sentence says the cases are "bound to their committed `SKILL.md` table rows", but the
+  frozen counter `b9c774b8` tested a file-wide substring (a bare-anchor fixture scored
+  `TARGET_MET`, critic §2.2). The repairs bind the anchor to a table row's command cell
+  (`d27c5ff4`) and refuse padded integers and padded list parts (`aea5409e`); the cases, the
+  control set, the kill rule and the target never moved, and every count is unchanged
+  (`17/17`, `5/17`, `5/5`). The instrument of record for the landing is the repaired
+  `c2-r78-runbook.py`; its final sha and the receipt revision are named in the round report.
+- **The do-nothing C1 control was first rendered against the pre-amendment case set.** The
+  frozen-set re-score is `receipts/control-baseline-c1-r78-frozen.txt` (`correct=8`,
+  `base_correct=8/18`, control sha `99f1d82f…`, `TARGET_MISSED`); the declaration's earlier
+  sentence points at the pre-freeze receipt and this note supersedes that pointer.
+- **Residual row-identity weakness.** Seventeen cases name thirteen distinct anchors; the two dump
+  anchors pre-existed the round. The binding is presence-based per anchor, so `anchors=17/17` is
+  necessary, not sufficient; per-case distinct anchors are round-79 ground.
+- **Closure rule.** A closure should compare the printed `MADO_R78_*` line (exact `base_correct`,
+  `tool_selftest`, `control`, `shapes`), not only the exit code: rc 0 admits any base below the
+  target and any n/n selftest.
+
 ## Known limits (append-only, from the wave)
 
 - **The `version` row is only as strong as its regex.** An rc-0 line that begins with

@@ -4509,7 +4509,10 @@ seat in the round report; an empty seat output is an evidence gap, never backfil
    the `omarchy menu keybindings` row, each with its own churn fixtures.
 3. The landed `check-cited-revisions.py` widened to the rows this round moved (a standing probe over
    SCORECARD's claim citations), with a red/green pair.
-4. `considerthese/2026-10-28.md` proposal 4 (the live-tool table) stays available.
+4. Round-79 control upgrades the critic named: `exclusive-false` gains `"expected": 26`; the
+   refusal cases pin `stage=model`; per-case distinct anchors for the runbook rows; the printed
+   `base_correct`/`control` values pinned in the rc rule, not only their inequalities.
+5. `considerthese/2026-10-28.md` proposal 4 (the live-tool table) stays available.
 5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
    session-material history question) stay operator-owned.
 

@@ -156,7 +156,8 @@ transform, refresh rate, position), not the raw reply, which carries the output'
 - `.ufo/waves/round-78/receipts/control-baseline-c1-r78.txt` — base `f597eccb`,
   `TARGET_MISSED`, tool sha `e54787b7…`.
 - `.ufo/waves/round-78/receipts/live-join-r78.txt` and `fetch/live-{layers,monitors}-r78.json`
-  — the read-only host join (the monitors reply reduced to the fields the join reads).
+  — the read-only host join; both replies are reduced to the fields the join reads (no monitor
+  serial/description, no pids or surface addresses).
 - `.ufo/waves/round-78/controls/c1-cases-r78.json` — frozen cases, sha `99f1d82f…`;
   generator `.ufo/waves/round-78/controls/make-cases-r78.py`.
 - `tools/mado-barfoot.py` — `r78-v1`, sha `aac5d41b…`;

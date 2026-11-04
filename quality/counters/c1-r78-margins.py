@@ -71,6 +71,8 @@ def run(argv, cwd, timeout=60):
         "LC_ALL": "C",
         "LANG": "C",
         "PYTHONDONTWRITEBYTECODE": "1",
+        # the tool's selftest uses tempfile; keep its throwaway dir inside caller scratch
+        "TMPDIR": cwd,
     }
     try:
         proc = subprocess.run(argv, cwd=cwd, env=env, stdout=subprocess.PIPE,
