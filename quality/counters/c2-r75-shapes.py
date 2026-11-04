@@ -374,7 +374,7 @@ def producer_calls(nodes, producers):
     return out
 
 
-def unguarded_rebindings(nodes, maps=frozenset()):
+def unguarded_rebindings(nodes, maps=frozenset(), dead=frozenset()):
     out = {}
     for node in nodes:
         if isinstance(node, ast.Assign):
@@ -390,6 +390,8 @@ def unguarded_rebindings(nodes, maps=frozenset()):
     # guard binding name-neutral), so a plain rebinding cancels a guard whatever the name; and a
     # `del env[KEY]` removes the key the guard stored, so it cancels too (literal key, same scope).
     for node in nodes:
+        if getattr(node, "lineno", None) in dead:
+            continue
         if isinstance(node, ast.Assign):
             for target in node.targets:
                 if isinstance(target, ast.Name) and not mapping_has_key(node.value, maps):
@@ -414,10 +416,11 @@ def usage_lines(nodes, name, locals_):
         if not isinstance(node, ast.Call):
             continue
         if call_is_git(node):
+            # Round-75 repair (R75RevC2 P1): the frozen sentence says the mapping is handed
+            # as `env=`; a positional Name argument to a git launch is argv-adjacent metadata,
+            # never the child environment, so it is not a usage line.
             handed = any(kw.arg == "env" and isinstance(kw.value, ast.Name)
                          and kw.value.id == name for kw in node.keywords)
-            handed = handed or any(isinstance(arg, ast.Name) and arg.id == name
-                                   for arg in node.args)
             if handed:
                 lines.add(node.lineno)
             continue
@@ -445,7 +448,7 @@ def guard_producers(tree, maps=frozenset()):
         nodes = scoped_nodes(fn)
         dead_here = dead | false_guarded_lines(fn)
         guarded = guard_construction_lines(nodes, dead_here, maps)
-        rebinds = unguarded_rebindings(nodes, maps)
+        rebinds = unguarded_rebindings(nodes, maps, dead_here)
         for node in nodes:
             if not isinstance(node, ast.Return) or node.value is None:
                 continue
@@ -520,7 +523,7 @@ def has_guard(src):
                     binds[name] = set(lines)
         if not binds:
             continue
-        rebinds = unguarded_rebindings(nodes, maps)
+        rebinds = unguarded_rebindings(nodes, maps, dead)
         for name, guard_lines in binds.items():
             uses = usage_lines(nodes, name, locals_)
             for guard_line in guard_lines:
