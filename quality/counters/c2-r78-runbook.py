@@ -232,7 +232,13 @@ def held_rule(case, rc, stdout):
     return held_matches(case["frozen"], rc, stdout)
 
 
-def observed(rc, stdout):
+JSON_KINDS = ("json_object_fields", "array_fields", "int4", "levels_dump")
+
+
+def observed(kind, rc, stdout):
+    """Never quote a JSON dump: a monitors reply carries the output's serial/description."""
+    if kind in JSON_KINDS:
+        return "rc=%d json-bytes=%d" % (rc, len(stdout))
     text = stdout.rstrip("\n")
     if len(text) > 100:
         text = text[:97] + "..."
@@ -379,7 +385,7 @@ def main(argv):
             shapes += 1 if case["kind"] not in EXACT_KINDS and good else 0
             print("MADO_R78_PROBE: name=%s row=%s kind=%s match=%s %s"
                   % (case["name"], case["skill_anchor"], case["kind"],
-                     "yes" if good else "no", observed(rc, stdout)))
+                     "yes" if good else "no", observed(case["kind"], rc, stdout)))
 
         killed = 0
         if not args.no_mutants:
