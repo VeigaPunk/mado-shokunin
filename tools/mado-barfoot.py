@@ -55,9 +55,10 @@ Contract (v1, round 77):
     horizontal surface with height 0, or a vertical one with width 0) unless `--allocation`
     declares the client's own band for that namespace, in which case the allocation is the
     band (both the arranged box and gtk-layer-shell's auto zone, layer-surface.c:276/282)
-    and a zero or absent allocation is refused, never guessed (round 83: this holds for
-    every declared surface, not only the bar, and a dynamic band with no entry is refused
-    at the surface's turn, after the empty-box skip); a list-valued config
+    and a zero or absent allocation is refused, never guessed (round 83: an entry in the map
+    resolves the band of *any* declared surface, not only the bar's; a dynamic band with an
+    explicit zone and no entry keeps the compositor's assign branch, the box spanning the
+    usable axis, and the auto-zone arm that needs the band stays a refusal); a list-valued config
     (multiple bars); a
     space-bearing or string-`*` output pattern; a negative margin; a `mode` key (presets
     rewrite layer and exclusive zone at runtime); and a `--rules` file carrying a `source =`
@@ -831,8 +832,6 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
                 if (zone_for_pass(surfaces[i]) > 0) == want]
     for index in sequence:
         spec = surfaces[index]
-        axis = "height" if spec["position"] in ("top", "bottom") else "width"
-        dynamic = spec[axis] == 0
         if spec["exclusive"] == -1:
             bounds = dict(full)
         else:
@@ -846,12 +845,6 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
             boxes.append("SKIP")
             invalid_empty.append(spec["namespace"])
             continue
-        if dynamic:
-            # no declaration for this surface's namespace: the band is the client's
-            # allocation, not a value this join can guess (the empty-box skip ran first)
-            raise Unmodelled("%s %r has a dynamic %s (0) and no --allocation entry: the band "
-                             "is the client's allocation, not a declared value"
-                             % (spec["namespace"], spec["position"], axis))
         zone = surface_zone(spec)
         rows.append(("DECL", "monitor=%s level=%d ns=%s box=%d,%d,%d,%d anchor=%s zone=%d"
                      % (monitor, spec["level"], spec["namespace"], box["x"], box["y"],
@@ -1540,14 +1533,15 @@ def selftest():
        and any("ns=panel box=0,26,1000,40 anchor=top+left+right zone=40" in text
                for text in line(rows, "DECL")),
        "a declared surface's dynamic band resolves from the allocation")
-    try:
-        comp({"position": "top", "layer": "top", "height": 26},
-             {2: [waybar], 3: [{"namespace": "panel", "x": 0, "y": 26, "w": 1000, "h": 40}]},
-             [0, 26, 0, 0],
-             [{"namespace": "panel", "level": 3, "height": 0, "exclusive": 40}])
-        ok(False, "a declared surface's dynamic band with no allocation is refused")
-    except Unmodelled:
-        ok(True, "a declared surface's dynamic band with no allocation is refused")
+    v, rc, rows = comp({"position": "top", "layer": "top", "height": 26},
+                       {2: [waybar], 3: [{"namespace": "panel", "x": 0, "y": 26,
+                                          "w": 1000, "h": 774}]},
+                       [0, 66, 0, 0],
+                       [{"namespace": "panel", "level": 3, "height": 0, "exclusive": 40}])
+    ok((v, rc) == ("CLEAN", 0)
+       and any("ns=panel box=0,26,1000,774" in text and "zone=40" in text
+               for text in line(rows, "DECL")),
+       "an unallocated dynamic band with an explicit zone keeps the assign branch")
     try:
         comp(top, {2: [waybar], 3: []}, [0, 26, 0, 0], [], allocation={"nope": 3})
         ok(False, "an allocation naming no declared surface is refused")

@@ -89,16 +89,19 @@ def new_cases():
                    "ls": "VALID", "reserved": "EQ", "verdict": "CLEAN"},
     })
 
-    # 4. a second surface's dynamic band with no allocation entry is refused (stage=model),
-    #    where the r82 model arranged it over the usable box and called the live box DIFFER
+    # 4. a bottom surface's dynamic band resolved: the second edge, and the composed reserve
     cases.append({
-        "name": "extra-dyn-band-refused",
+        "name": "extra-dyn-band-bottom",
         "config": dict(TOP26),
-        "surfaces": [{"namespace": "panel", "level": 3, "height": 0, "exclusive": 40}],
-        "layers": layers({2: [BAR26], 3: [entry("panel", 0, 26, W, 40)]}),
-        "monitors": mon([0, 66, 0, 0]),
+        "surfaces": [{"namespace": "panel", "level": 3, "position": "bottom", "height": 0,
+                      "exclusive": "auto"}],
+        "allocation": {"panel": 30},
+        "layers": layers({2: [BAR26], 3: [entry("panel", 0, H - 30, W, 30)]}),
+        "monitors": mon([0, 26, 0, 30]),
         "monitor": None,
-        "expect": {"error": True, "rc": 3, "stage": "model"},
+        "expect": {"rc": 0, "band": 26, "box": "MATCH", "boxes": "MATCH,MATCH",
+                   "expected": 26, "attributed": 26, "attr": "0,26,0,30",
+                   "gt": "0,26,0,30", "ls": "VALID", "reserved": "EQ", "verdict": "CLEAN"},
     })
 
     # 5. a zero allocation for a second surface is refused, never guessed

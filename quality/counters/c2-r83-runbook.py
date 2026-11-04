@@ -12,8 +12,8 @@ command, and each row is bound by exactly one case. A case is correct only when
   * every committed negative sample does not match (the rule can fail).
 
 The twenty-nine round-82 cases are carried with their command, expectation, churn and
-negative fixtures unchanged, except the one declared supersession (`waybar-pgrep`'s sample
-PID, a capture-hygiene fix that touches no rule). The two cases this round adds are the tray
+negative fixtures unchanged, except the one declared supersession (`waybar-pgrep`'s churn and
+negative samples' live PID, a capture-hygiene fix that touches no rule). The two cases this round adds are the tray
 *state pair*: the registered item count (`RegisteredStatusNotifierItems`, projected to its
 entry count) and the host-registered flag (`IsStatusNotifierHostRegistered`, a boolean
 literal — a new matcher class). Their names and types are S482's property block; the terse
@@ -56,7 +56,7 @@ SHAPES = 26
 MUTANTS = 27
 
 # a carried case may differ from the round-82 set only in these fields (declared, printed)
-SUPERSEDED = {"waybar-pgrep": ("samples",)}
+SUPERSEDED = {"waybar-pgrep": ("samples", "negatives")}
 
 SECTION = "### Executable runbook rows (round 83)"
 

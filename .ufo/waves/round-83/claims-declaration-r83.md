@@ -13,18 +13,24 @@ band. An `--allocation` entry naming any other declared surface is a setup refus
 (`height = 0` horizontal, `width = 0` vertical) is arranged over the usable box by the legacy
 zero-size branch (explicit exclusive) or refused (auto zone).
 
-**After.** Every declared surface's band axis resolves declaration → allocation → refusal:
-an allocation entry for a declared namespace is that surface's own band (both the arranged box
-and gtk-layer-shell's auto zone, `S464:276`/`:282`), a zero entry is refused
-(`was allocated a 0 … band`), a dynamic band with no entry is refused at the surface's turn
-after the empty-box skip (stage=model), and an entry naming a namespace no declared surface
-carries stays a setup refusal. The freeze drives this class through the composition path, so
-the surface's band also shrinks the usable box for later surfaces.
+**After.** Every declared surface's band axis resolves from the map: an allocation entry for
+a declared namespace is that surface's own band (both the arranged box and gtk-layer-shell's
+auto zone, `S464:276`/`:282`), a zero entry is refused (`was allocated a 0 … band`), an entry
+naming a namespace no declared surface carries stays a setup refusal, and a dynamic band with
+no entry keeps the two classes the lane already froze — the auto-zone arm that needs the band
+is refused (`S464:276`, carried `auto-dynamic-band-refused`), and an explicit zone keeps the
+compositor's assign branch, the box spanning the usable axis (`S470:2610-2637`, carried
+`auto-left-dock`). The freeze drives the new resolution through the composition path, so the
+surface's band also shrinks the usable box for later surfaces. The first freeze attempt
+(`4e48d8e7`) refused the unallocated explicit-zone class and regressed the carried
+`auto-left-dock` case (`correct=54/55`); that is why the freeze now keeps that branch — the
+carried set is the evidence, and the instrument was corrected before any measurement was
+cited.
 
 **Frozen control set.** `.ufo/waves/round-83/controls/c1-cases-r83.json`, sha256
-`b337cc4bc278f5b60b635392c072918dae75f858e934a4841a72ed5e28b8f75c` — the 47 round-82 cases
+`8cd3f5bc873a30b744b9b2c2d3fb980f97e9bff68eb16da1b177ea99837c7bfd` — the 47 round-82 cases
 carried parsed-equal plus 8 new: six on the new class (`extra-dyn-band-top`, `-dock`,
-`-explicit`, `-refused`, `-zero-alloc`, `alloc-two-namespaces`) and two closing the round-82
+`-bottom`, `-explicit`, `-zero-alloc`, `alloc-two-namespaces`) and two closing the round-82
 routed gaps — `alloc-live-band-differs` (V7's causal discriminator) and `alloc-bool-refused`
 (G1). Generator: `.ufo/waves/round-83/controls/make-c1-cases-r83.py` (no tool run; every
 expectation derived from S481/S464/S457/S470's arithmetic).
@@ -41,12 +47,12 @@ python3 -I quality/counters/c1-r83-surface-band.py --repo . --rev REV \
 ```
 
 **Predicate (one sentence, the same in this declaration, the counter's target clause and the
-receipt's label).** Every one of the 55 frozen cases scores correct, every one of the 39 named
+receipt's label).** Every one of the 55 frozen cases scores correct, every one of the 38 named
 mutants is killed, the held r82 tool at the base scores exactly 49 of 55, the 47 round-82 cases
 are carried parsed-equal, and the tool selftest is green; only then does the counter print
 `verdict=TARGET_MET` with rc 0.
 
-**Target line.** `MADO_R83_BARFOOT: cases=55 correct=55 mutants=39 killed=39 base_correct=49/55
+**Target line.** `MADO_R83_BARFOOT: cases=55 correct=55 mutants=38 killed=38 base_correct=49/55
 carried=47/47 tool_selftest=136/136 verdict=TARGET_MET rev=<freeze> tool_sha256=<sha>`.
 
 **Kill rule.** Any clause false → `verdict=TARGET_MISSED`, rc 1, reported as an honest stop;
@@ -61,7 +67,9 @@ boolean), and all six new-class cases fail. A tree that does nothing cannot reac
 allocation 34 and a live box of height 40: the model must report `box=DIFFER band=34
 expected=34 reserved=EQ verdict=DIFFER` rc 1, and the mutant `box-verdict-blind`
 (`boxes.append("MATCH" if …)` → always `"MATCH"`) dies on exactly that case. The band is the
-declared allocation, never an echo of the observed box.
+declared allocation, never an echo of the observed box. `extra-alloc-ignored` (the map entry
+unused for a non-bar surface) dies on `extra-dyn-band-top`, and `alloc-resolved-set-bar-only`
+(the declared set narrowed back to the bar) dies on `alloc-two-namespaces`.
 
 ## C2 — operability: the tray state pair in the read-only runbook
 
@@ -83,8 +91,8 @@ projects to the entry count so no item's session-bus address enters the output.
 
 **Frozen control set.** `.ufo/waves/round-83/controls/c2-runbook-cases-r83.json`, sha256
 `a0fba389676a87f2ceaf4933535057587b4ba7f1b2e0b63c00de256df3ae3f86` — the 29 round-82 cases
-carried with one declared supersession (`waybar-pgrep`'s churn sample PID, the round-82 F1
-remainder) plus the two new cases. Generator:
+carried with one declared supersession (`waybar-pgrep`'s churn and negative samples' live
+PID, the round-82 F1 remainder) plus the two new cases. Generator:
 `.ufo/waves/round-83/controls/make-c2-cases-r83.py`.
 
 **Counter.** `quality/counters/c2-r83-runbook.py`.
