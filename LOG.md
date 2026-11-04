@@ -3644,3 +3644,54 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   three fixtures flip as named in `.ufo/waves/round-73/receipts/repair-r73.txt`, three regressions pin
   the repairs, selftests 26/26 and 78/78. Both claims re-measured at the repair commit with identical
   counts (`measurement-c{1,2}-r73.txt`); no predicate, control label, kill rule or target changed.
+
+### Round 74 — the rule's own witness and two more guard carriers (2026-11-04, hyaku run 15)
+
+- Claims (both frozen before any candidate data in `.ufo/waves/round-74/claims-declaration-r74.md`,
+  landed with the instruments at `b73db773aaf67c9b26c8cf1a4cd567dec3af11f4`, base
+  `bd5a971532f37df85a78f6f566dd1e649b79de11`): **C1 calibration** — the landing kill credit
+  requires the run's own echo of a caller-generated per-run challenge, closing the round-71/72/73
+  declared replay limit on the rule; **C2 operability** — the guard census counts a one-hop object
+  alias stored at one dotted spelling and handed at the other, and a one-hop `os.environ` alias
+  whose store reaches `env=alias`, `dict(alias)` or `{**alias}`.
+- Instruments: `quality/counters/c1-r74-witness-rule.py` (`credit(out, nonce)`, hermetic selftest
+  21/21), `quality/counters/c1-r74-replay-witness.py` (twelve real `bash` children, a fresh
+  `secrets.token_hex(8)` challenge per run, the held round-72 `credit` as the control; selftest
+  21/21) and `quality/counters/c2-r74-shapes.py` (the round-73 classifier plus `twohop_guard` and
+  `environ_alias_guard`; selftest 86/86). Frozen control sets:
+  `.ufo/waves/round-74/controls/c1-replay-cases-r74.json` (12 cases, sha256 `17c95774…`) and
+  `c2-cases-r74.json` (36 cases, sha256 `4db4cc70…`, the round-73 twenty-eight carried
+  byte-identically).
+- Pre-freeze do-nothing receipt `.ufo/waves/round-74/control-baseline-r74.txt`: the held round-72
+  credit scores 8/12 and the held round-73 classifier 32/36 — both below their targets before the
+  freeze. Mistake red states: `receipts/m74-1-red.txt` (a fixture lane built without the harness
+  mutation scores the held rule 9/12) and `receipts/m74-2-red.txt` (two draft case labels
+  disagree with the held classifier).
+- Frozen counting commands run at `b73db773aaf67c9b26c8cf1a4cd567dec3af11f4`:
+  `MADO_R74_REPLAY_WITNESS: cases=12 correct=12 base_correct=8 verdict=TARGET_MET` rc 0 and
+  `MADO_R74_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 controls=36/36
+  base_controls=32/36 verdict=TARGET_MET` rc 0 (`.ufo/waves/round-74/measurement-c{1,2}-r74.txt`).
+- Curation: SOURCES 386 → 389 rows — S450 (CPython 3.14.8 `Doc/library/secrets.rst`, `token_hex`),
+  S451 (`Doc/reference/simple_stmts.rst`, the attribute-reference assignment bullet), S452
+  (`Doc/library/os.rst`, the environ mapping-modification paragraph) — all `mined` and cited by the
+  two new entries; S452 supersedes S448's false digest (round-73 closure D1) with the re-derived
+  `2d0f2892…b2ae5` (208,655 B, three byte-identical fetches). Re-opened reject S446 now carries its
+  located quote (round-73 D5). Fetches three times byte-identical each
+  (`.ufo/waves/round-74/fetch/`); the census prints the documented W04 warnings and exits 0.
+- Knowledge: two entries admitted (`corpus/knowledge/replay-witness-credit-r74.md`,
+  `corpus/knowledge/guard-carrier-twohop-environ-alias-r74.md`); README index 89 → 91 rows plus the
+  round-74 Frontier bullet; QUALITY criteria 118–119 appended to the canonical
+  `corpus/QUALITY.md` (round-73 D4) and 120–121 registered from `corpus/lessons/round-74.md`
+  `## Mistakes`; the root `QUALITY.md` fragment carries a redirect line.
+- Registry: `quality/tool-ledger.md` 127 → 130 rows; the `SKILL.md` Gate registry gains three rows
+  (`mado-r74-witness-rule`, `mado-r74-replay-witness`, `mado-r74-guard-shapes`).
+- Wave: one v1 wave of 13 seats (executor 3, scribe 2, scout 2, reviewer 2, critic 1,
+  mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%) validated under the
+  band-8–16 policy and dispatched through the inline spawn handoff; seat outcomes are reported per
+  seat in the round report (QUALITY 115).
+- Harm watch: gate `MADO_SELFTEST: 460/460` (`receipts/gate-selftest-r74.txt`, the L1-run leg; the
+  harm seat kept its stricter no-/tmp bound and recorded it as NOT RUN for itself); index 91/91;
+  ledger 130/130 `uncovered=0`; axis table re-derived; census exit 0; five frozen instrument blob
+  ids unchanged. No config tree, compositor, service or sibling repo was written; no pacman
+  transaction; no tool installed or upgraded. Routed defect: `tools/mado-verify.sh:418` hardcodes a
+  `/tmp` selftest scratch (scratch rule 4, next round's frozen-counter amendment).

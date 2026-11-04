@@ -4116,3 +4116,56 @@ the module, and treats `del os.environ[KEY]` as a cancellation — the reviewers
 commit: both claims `TARGET_MET` with identical counts (`measurement-c{1,2}-r73.txt`), and the frozen
 10-case and 28-case sets score identically before and after. The reviewer's two line-order
 observations stay declared limits (F4).
+
+## Round 74 — the rule's own witness and two more guard carriers (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-74/claims-declaration-r74.md`, landed with the instruments
+at `b73db773aaf67c9b26c8cf1a4cd567dec3af11f4`; base `bd5a971532f37df85a78f6f566dd1e649b79de11`.
+Frozen control sets: `.ufo/waves/round-74/controls/c1-replay-cases-r74.json` (12 cases, sha256
+`17c95774…`) and `c2-cases-r74.json` (36 cases, sha256 `4db4cc70…`). Pre-freeze do-nothing
+receipt: `.ufo/waves/round-74/control-baseline-r74.txt` (held credit 8/12; held classifier
+32/36). Measured at the instrument commit (receipts
+`.ufo/waves/round-74/measurement-c{1,2}-r74.txt`). Axis posture at round start: every published
+finite sub-axis at its measured maximum (navigation 89/89, calibration resolved-active 86/86,
+operability selftest 12/12, ledger 127/127; gate `MADO_SELFTEST: 460/460`), so no axis is
+distinctly lowest; the stagnation nudge does not apply (last capability r73, window N=3, gap 0).
+Both claims take new finite denominators and both do-nothing controls miss their targets (8/12 and
+32/36).
+
+| Claim / axis | Counting command (REV = `b73db773…`) | Before → after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the credit rule requires the run's own echo of a per-run challenge | `python3 -I quality/counters/c1-r74-replay-witness.py --repo . --rev REV --base-rev bd5a971532f37df85a78f6f566dd1e649b79de11 --controls .ufo/waves/round-74/controls/c1-replay-cases-r74.json --scratch-root DIR` | at the base rev the successor rule is absent; the held round-72 `credit(out)` scores the twelve frozen modes `base_correct=8/12` (6.6667), crediting exactly the four replay modes (`control-baseline-r74.txt`); at `b73db773`: `cases=12 correct=12 base_correct=8 verdict=TARGET_MET` rc 0; bounded `10 × correct / 12` → 10.0000 | improved on the frozen twelve-mode set |
+| C2 **operability** — the guard census counts the two-hop object alias and the one-hop `os.environ` alias | `python3 -I quality/counters/c2-r74-shapes.py --repo . --rev REV --base-rev bd5a971532f37df85a78f6f566dd1e649b79de11 --controls .ufo/waves/round-74/controls/c2-cases-r74.json --scratch-root DIR` | at the base rev the successor is absent; the held round-73 classifier scores the thirty-six frozen cases `base_controls=32/36` (8.8889), missing exactly the four new positives; at `b73db773`: `population=20 readers=13 guarded=13 unguarded=0 controls=36/36 base_controls=32/36 verdict=TARGET_MET` rc 0; bounded 10.0000 | improved on the frozen thirty-six-case set |
+| — | coverage / admitted-note reachability (unchanged rubric) | `quality/check-index.py --repo . --rev REV` | 91/91 at the landing tip (89/89 at base) | unchanged (harm watch; two new entries indexed) |
+| — | operability / hermetic gate | `bash tools/mado-verify.sh --selftest` | 460/460 both ends | unchanged (harm watch) |
+| — | operability / instrument ledger | `quality/check-tool-ledger.py --repo . --rev REV` | 130 rows, 130 ledger_rows, 0 uncovered at the landing tip (127/127 with three uncovered before their rows) | improved (three new instruments registered) |
+| — | calibration / frozen round-72/73 instruments | `git rev-parse bd5a9715:<path> b73db773:<path>` | identical blob ids for `c1-r72-landing-controls.py`, `c1-r73-summary-mutants.py`, `c2-r73-shapes.py`, `tools/mado-verify.sh`, `quality/landing-counters.sh` | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-74/measurement-c1-r74.txt`, `measurement-c2-r74.txt` (both
+counters' per-case lines plus the contract line), `control-baseline-r74.txt` (the pre-freeze
+do-nothing legs, produced by `proto/held-r74.py`), `receipts/m74-1-red.txt` and
+`receipts/m74-2-red.txt` (the two mistake red states), `controls/` (both frozen sets),
+`w1-spec.json`/`w1-dispatch.json` (the one v1 wave, 13 seats). **Wave-review disclosures** are
+reported per seat in the round report; a seat whose output is empty is an evidence gap, never
+backfilled (QUALITY 115).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Challenge-witnessed kill credit + two-hop/alias guard carriers | Credit a landing kill only when the run echoes a caller-generated per-run challenge (the last parsed witness equals it), proven on twelve real `bash` children whose replay modes the held rule credits; and classify a guard that reaches a git launch through a one-hop object alias at either spelling of the dotted path, or through a one-hop `os.environ` alias copied by `dict(alias)`/`{**alias}` | `.ufo/waves/round-74/measurement-c{1,2}-r74.txt`; `quality/counters/c1-r74-witness-rule.py`, `c1-r74-replay-witness.py`, `c2-r74-shapes.py` | round 74 |
+
+### Planned (round 75; intent only)
+
+1. C1's next finite ground: wire the witness rule into a successor landing harness (a new
+   `c1-r75-landing-controls.py`, the frozen r72 generation untouched) and carry the harness's own
+   red-before receipt; or, if wiring needs the live chain, a successor predicate under its own
+   denominator.
+2. C2's next finite ground: the generic env-named flow's `del env[KEY]` cancellation and the
+   `dict(alias, KEY="1")` copy spelling, each with its own negatives.
+3. The `summary_fraction()` first-vs-summary ambiguity: a successor contract field that reports
+   the summary fraction and flags disagreement with the first.
+4. The routed `tools/mado-verify.sh:418` hardcoded `/tmp` scratch (QUALITY-class, scratch rule 4)
+   as a frozen-counter amendment.
+5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.

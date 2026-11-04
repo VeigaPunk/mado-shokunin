@@ -362,3 +362,21 @@ only, and never probe a config plane, compositor, session, socket or service. Th
 bounded syntactic approximation: line order not execution order, one `global` declaration, one
 `os.environ` store and two copy spellings, no value interpretation. Evidence:
 `corpus/lessons/round-73.md`.
+
+**Round-74 refinement (append-only; three record instruments, no new write surface):**
+`quality/counters/c1-r74-witness-rule.py` is the successor landing-credit rule — the round-72
+arithmetic plus the run's last parsed `MADO_LANDING_WITNESS: <16 hex>` echo of a caller-supplied
+per-run challenge; it reads only the output text it is handed, writes nothing, and its `--selftest`
+is hermetic. `quality/counters/c1-r74-replay-witness.py` builds twelve `bash` fixture lanes inside
+the caller-declared scratch root (each with the landing harness's zero-citation clause deleted
+exactly once), runs each child with a fresh `secrets.token_hex(8)` challenge in
+`MADO_LANDING_NONCE`, and scores the successor rule against the held round-72 rule on the same
+outputs (12/12 vs 8/12); it starts only `bash` children and `git show` reads, and writes scratch
+only. `quality/counters/c2-r74-shapes.py` is the guard census's round-74 generation: the held
+round-73 classifier plus a one-hop object-alias resolver (`r = cfg.runner`, store at `r.env[KEY]`,
+launch at `env=cfg.runner.env` or the reverse) and a one-hop `os.environ` alias detector
+(`env = os.environ`; store; `env=env`, `dict(env)` or `{**env}`), scoring 36 frozen cases (36/36 vs
+32/36) over the unchanged `quality/check-*.py` population (20 files, 13 readers, 13 guarded). All
+three read committed bytes and caller scratch, never a config plane, compositor, session, socket or
+service; the census remains a bounded syntactic approximation (line order not execution order, one
+alias edge, no chain, no value interpretation). Evidence: `corpus/lessons/round-74.md`.

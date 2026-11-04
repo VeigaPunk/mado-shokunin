@@ -800,3 +800,67 @@ the successor scores 8/8. A verdict whose receipt does not state which input dec
 be re-derived by a reader.
 Limits: this governs the lane's own instruments; it is not a claim that every child prints a
 summary, nor that a summary cannot be forged.
+
+
+## Criteria from the round-73 control-set and census work (round 73)
+
+**118. A frozen declaration's counting command is replayed verbatim before the receipt is filed,
+and every required argument is named in the declaration itself.** (a) A declaration that prints a
+counting command must print the exact argv the receipt will run, flags included; (b) the round
+replays that line once before the instrument's receipt lands, and a usage error is a defect of the
+declaration, not of the counter.
+Shown able to fail: round 73's §C1 line omits `--controls`; replaying it exits 2 with
+`--repo, --rev and --controls are required` and no contract line (the wave's `R73RevC1` F1), while
+the corrected invocation prints `killed=4 base_killed=2 verdict=TARGET_MET` rc 0 — the defect and
+its repair are erratum E1 in `.ufo/waves/round-73/claims-declaration-r73.md` and M73-1 in
+`corpus/lessons/round-73.md`.
+Limits: a replay proves the argv parses and the arguments are present; it does not prove the
+counter's verdict and it is not a substitute for the do-nothing control.
+
+**119. A regression fixture's expected label is derived from the rule's declared bound, not from
+the behaviour the author wishes the rule had; a label that assumes a stronger rule must fail the
+harness selftest.**
+Shown able to fail: the first `r73-global-rebind-after-use` case in
+`quality/counters/c2-r73-shapes.py` labelled a store-then-later-call program `(True, False)` while
+the line-order classifier answers `(True, True)`; the selftest printed
+`FAIL: review regression r73-global-rebind-after-use is (True, False)` until the case was replaced
+by `r73-global-rebind-replaced-between`, which the declared bound does refuse (M73-2 in
+`corpus/lessons/round-73.md`).
+Limits: the embedded table is the lane's own, not an independent control set; the selftest checks
+that the label and the classifier agree, not that the declared bound is the right approximation.
+
+**120. A fixture lane is the mutated lane: a counter that scores a harness's rule must build the
+subject through that harness's mutation, asserting the mutation applies exactly once, before any
+case runs.**
+Shown able to fail: round 74's first prototype ran the landing-counter fixture with the
+zero-citation clause still in place, so three carried modes took the other branch and the held
+rule scored `9/12` with three false rejections (`receipts/m74-1-red.txt`); the committed
+`build_lane` asserts the marker occurs once and deletes it, and the held leg scores the declared
+`8/12` (`control-baseline-r74.txt`).
+Limits: the assertion proves the marker was present and removed once; it does not prove the
+mutation is the harness's only delta.
+
+**121. Every frozen control-case label is scored by the do-nothing control before the freeze, and
+a disagreement is resolved by re-cutting the label or the rule — never by proceeding.**
+Shown able to fail: round 74's first C2 draft labelled `environ-alias-not-environ` and
+`environ-alias-deleted` as negatives; the held classifier answers `(True, True)` for both
+(`receipts/m74-2-red.txt`) — one because the key really is in the handed mapping, the other
+because the generic flow does not model `del`. The set was re-cut before the freeze and the gap
+named as a declared limit.
+Limits: the prototype shares the held rule's blind spots; agreement is a lower bound on the
+label, not proof the case is load-bearing.
+
+**122. A fetched artifact's digest is re-derived from the committed fetch before its row lands,
+and a wrong digest is corrected by a superseding row, never by an edit.**
+Shown able to fail: round 73 recorded S448's sha256 as a value sharing only its first 16 hex
+characters with the bytes; round 74's three fetches all hash to
+`2d0f2892676e1cf9547be2bd94cfe2a6221dddea82d52cb2475d4a3d819b2ae5` and S452 supersedes S448
+(append-only, CORPUS rule 2).
+Limits: a digest proves byte identity of the fetch, not the source's authority or stability.
+
+**123. An admission criterion lands at the contract path (`corpus/QUALITY.md`); a root fragment
+is never the bar.**
+Shown able to fail: round 73's criteria 118–119 landed in the root `QUALITY.md`, so a reader
+following `corpus/README.md`'s pointer found the bar ending at 117 (round-73 closure D4);
+`grep -c '^118\.' corpus/QUALITY.md` printed 0 before the round-74 append and 1 after.
+Limits: this governs placement; it does not judge a criterion's content.

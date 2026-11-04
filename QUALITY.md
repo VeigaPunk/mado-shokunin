@@ -25,3 +25,8 @@ by `r73-global-rebind-replaced-between`, which the declared bound does refuse (M
 `corpus/lessons/round-73.md`).
 Limits: the embedded table is the lane's own, not an independent control set; the selftest checks
 that the label and the classifier agree, not that the declared bound is the right approximation.
+
+
+> Round 74: criteria 118–119 in this fragment were appended to the canonical
+> `corpus/QUALITY.md` (the bar `corpus/README.md` points at) and this fragment is retained
+> only as history; read `corpus/QUALITY.md`.

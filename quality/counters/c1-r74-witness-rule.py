@@ -9,7 +9,10 @@ The rule, frozen by `.ufo/waves/round-74/claims-declaration-r74.md` § C1:
     credit(out, nonce) is True iff the round-72 arithmetic holds (the LAST parsed
     `MADO_LANDING_COUNTERS_SELFTEST: <p>/<n> assertions passed` line reports `n > 0` and
     `p < n`, and the run's own `SELFTEST FAIL <i>: ` lines number exactly `n - p`) AND the LAST
-    parsed `MADO_LANDING_WITNESS: <16 hex>` line equals the caller-supplied `nonce`.
+    parsed `MADO_LANDING_WITNESS: <16 hex>` line equals the caller-supplied `nonce`. The
+    witness grammar is the frozen "<16 hex>" (either case); the comparison is byte-exact, so a
+    caller-supplied uppercase challenge matches an uppercase echo and a lowercase challenge does
+    not, and a later valid-looking witness always wins over an earlier one.
 
 Why a witness. The round-72 rule bounds the summary to the run's own fail lines but cannot tell
 a fresh run from a captured block replayed with its own matching detail lines (the rule's own
@@ -34,7 +37,7 @@ import re
 import sys
 
 SUMMARY_RE = re.compile(r"MADO_LANDING_COUNTERS_SELFTEST: (\d+)/(\d+) assertions passed")
-WITNESS_RE = re.compile(r"MADO_LANDING_WITNESS: ([0-9a-f]{16})")
+WITNESS_RE = re.compile(r"MADO_LANDING_WITNESS: ([0-9a-fA-F]{16})")
 FAIL_RE = re.compile(r"SELFTEST FAIL [0-9]+: ")
 UNSAFE_ROOTS = ("/tmp", "/var/tmp", "/dev/shm")
 
@@ -136,6 +139,14 @@ TABLE = (
                           "SELFTEST FAIL 1: a\n"
                           "MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n"
                           % NONCE.upper(), False),
+    ("uppercase-challenge-witness", "MADO_LANDING_WITNESS: %s\n"
+                                    "SELFTEST FAIL 1: a\n"
+                                    "MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n"
+                                    % NONCE.upper(), True),
+    ("valid-then-uppercase-wrong", "MADO_LANDING_WITNESS: %s\nMADO_LANDING_WITNESS: DEADBEEFDEADBEEF\n"
+                                   "SELFTEST FAIL 1: a\n"
+                                   "MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n" % NONCE,
+     False),
     ("witness-substring", "MADO_LANDING_WITNESS: %s\n"
                           "SELFTEST FAIL 1: a\n"
                           "MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n"
@@ -149,9 +160,10 @@ def selftest(scratch):
     def want(name, cond):
         checks.append((name, bool(cond)))
 
-    want("twelve rule cases", len(TABLE) == 12)
+    want("fourteen rule cases", len(TABLE) == 14)
     for name, out, expect in TABLE:
-        want("credit %s is %s" % (name, expect), credit(out, NONCE) is expect)
+        challenge = NONCE.upper() if name == "uppercase-challenge-witness" else NONCE
+        want("credit %s is %s" % (name, expect), credit(out, challenge) is expect)
     want("a bare summary with a witness is still refused",
          not credit("MADO_LANDING_WITNESS: %s\n"
                     "MADO_LANDING_COUNTERS_SELFTEST: 0/2 assertions passed\n" % NONCE, NONCE))
@@ -166,8 +178,9 @@ def selftest(scratch):
          last_parsed_summary("MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n"
                              "MADO_LANDING_COUNTERS_SELFTEST: cleanup\n")
          == "MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed")
-    want("the witness grammar is 16 lowercase hex",
+    want("the witness grammar is 16 hex, either case",
          last_witness("MADO_LANDING_WITNESS: deadbeefdeadbeef\n") == "deadbeefdeadbeef"
+         and last_witness("MADO_LANDING_WITNESS: DEADBEEFDEADBEEF\n") == "DEADBEEFDEADBEEF"
          and last_witness("MADO_LANDING_WITNESS: nothex\n") is None
          and last_witness("MADO_LANDING_WITNESS: deadbeefdeadbeef0\n") is None)
     want("the fail grammar is the production emitter's",

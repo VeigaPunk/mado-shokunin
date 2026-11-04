@@ -9,9 +9,10 @@ counter's per-run challenge (claim C1, round 74).
 
 What is scored. Twelve REAL `bash` children, one per frozen case, each a copy of the lane's
 landing-counter fixture with the frozen zero-citation clause deleted once (the harness's own
-M-Z mutation, asserted to occur exactly once). Every child is run with a per-run challenge in
-`MADO_LANDING_NONCE`; a genuine child echoes it in `MADO_LANDING_WITNESS: <16 hex>`, a replay
-child carries a stale, wrong, missing or last-wrong witness.
+M-Z mutation, asserted to occur exactly once). Every child is run with its OWN fresh challenge in
+`MADO_LANDING_NONCE` (one `secrets.token_hex(8)` per case, never the frozen stale value); a
+genuine child echoes it in `MADO_LANDING_WITNESS: <16 hex>`, a replay child carries a stale,
+wrong, missing or last-wrong witness.
 
 Two rules are scored on the same twelve outputs in the same run:
 
@@ -279,14 +280,14 @@ def measure(args):
     emit("MADO_R74_RULE role=base path=%s sha256=%s" % (BASE_HARNESS, sha256_hex(base)))
     base_credit = runpy.run_path(base_path)["credit"]
 
-    nonce = secrets.token_hex(8)
-    while nonce == STALE:
-        nonce = secrets.token_hex(8)
-    emit("MADO_R74_CHALLENGE nonce=%s len=%d" % (nonce, len(nonce)))
-
     correct = 0
     base_correct = 0
     for case in cases:
+        nonce = secrets.token_hex(8)
+        while nonce == STALE:
+            nonce = secrets.token_hex(8)
+        emit("MADO_R74_CHALLENGE case=%s nonce=%s len=%d"
+             % (case["name"], nonce, len(nonce)))
         lane = build_lane(case["mode"], work)
         r = subprocess.run(["bash", lane], cwd=work, stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE, env=child_env(nonce), timeout=120)

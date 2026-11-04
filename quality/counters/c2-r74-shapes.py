@@ -1039,21 +1039,35 @@ def environ_transport_guard(tree, dead, consts):
 
 
 # --------------------------------------------------------------------------------------- r74 carriers
+def binding_nodes(tree, dead):
+    """Every binding statement of a plain name, `Assign` and `AnnAssign` alike."""
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+            continue
+        if node.lineno in dead:
+            continue
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 \
+                and isinstance(node.targets[0], ast.Name):
+            yield node, node.targets[0], node.value
+        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) \
+                and node.value is not None:
+            yield node, node.target, node.value
+
+
 def object_alias_map(tree, dead):
-    """Plain name -> dotted path for names bound exactly once to a dotted attribute chain."""
+    """Plain name -> (dotted path, binding line) for names bound exactly once to a dotted chain.
+
+    Round-74 review (R74RevC2 P2): `AnnAssign` bindings count too, and the binding line is kept
+    so the alias edge must exist before the store that crosses it (R74RevC2 P2, `13_late_alias`).
+    """
     binds = {}
     counts = {}
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Assign) or len(node.targets) != 1 or node.lineno in dead:
-            continue
-        target = node.targets[0]
-        if not isinstance(target, ast.Name):
-            continue
+    for node, target, value in binding_nodes(tree, dead):
         counts[target.id] = counts.get(target.id, 0) + 1
-        d = attr_dotted(node.value)
+        d = attr_dotted(value)
         if d:
-            binds[target.id] = d
-    return {n: d for n, d in binds.items() if counts.get(n) == 1}
+            binds[target.id] = (d, node.lineno)
+    return {n: v for n, v in binds.items() if counts.get(n) == 1}
 
 
 def canonical_dotted(d, aliases):
@@ -1062,8 +1076,21 @@ def canonical_dotted(d, aliases):
     for i in range(len(parts) - 1, 0, -1):
         prefix = ".".join(parts[:i])
         if prefix in aliases:
-            return aliases[prefix] + "." + ".".join(parts[i:])
+            return aliases[prefix][0] + "." + ".".join(parts[i:])
     return d
+
+
+def root_name(d):
+    return d.split(".", 1)[0]
+
+
+def shadow_names(scope):
+    """Parameter names of a function scope; a module scope shadows nothing."""
+    if scope is None or scope is getattr(scope, "_module_marker", None):
+        return set()
+    if not isinstance(scope, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        return set()
+    return {p.arg for p in _params(scope)}
 
 
 def twohop_guard(tree, dead, consts):
@@ -1071,9 +1098,10 @@ def twohop_guard(tree, dead, consts):
 
     ``r = cfg.runner`` binds a plain name to a dotted path exactly once; the guard key stored at
     ``r.env[KEY]`` and a launch handing ``env=cfg.runner.env`` (or the reverse) name the same
-    dotted path. The store must sit strictly before the launch, no replacement of that path may
-    sit in between, and at least one side must actually cross the alias edge (the same-spelling
-    store is the held attribute flow's ground, not this carrier's).
+    dotted path. The store must sit strictly before the launch, the alias edge must exist before
+    the store (R74RevC2 P2), no replacement of that path may sit in between, and at least one side
+    must actually cross the alias edge. A launch inside a function whose parameter shadows the
+    alias root is not the module binding (R74RevC2 P1).
     """
     aliases = object_alias_map(tree, dead)
     if not aliases:
@@ -1088,45 +1116,50 @@ def twohop_guard(tree, dead, consts):
                 d = attr_dotted(target.value)
                 if d and key_is_guard(target.slice, consts):
                     canonical = canonical_dotted(d, aliases)
-                    guarded.setdefault(canonical, []).append((node.lineno, d != canonical))
+                    root = root_name(d)
+                    bind = aliases.get(root, (None, 1 << 30))[1]
+                    guarded.setdefault(canonical, []).append(
+                        (node.lineno, d != canonical, bind))
             else:
                 d = attr_dotted(target)
                 if d:
                     replaced.setdefault(canonical_dotted(d, aliases), set()).add(node.lineno)
     if not guarded:
         return False
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call) or not call_is_git(node) or node.lineno in dead:
-            continue
-        for kw in node.keywords:
-            if kw.arg != "env":
+    for scope in function_scopes(tree):
+        nodes = scoped_nodes(scope)
+        shadow = shadow_names(scope)
+        for node in nodes:
+            if not isinstance(node, ast.Call) or not call_is_git(node) or node.lineno in dead:
                 continue
-            d = attr_dotted(kw.value)
-            if not d:
-                continue
-            canonical = canonical_dotted(d, aliases)
-            crossed_call = d != canonical
-            for store, crossed_store in guarded.get(canonical, ()):
-                if not (crossed_call or crossed_store):
+            for kw in node.keywords:
+                if kw.arg != "env":
                     continue
-                if store < node.lineno and not any(store < r < node.lineno
-                                                   for r in replaced.get(canonical, ())):
-                    return True
+                d = attr_dotted(kw.value)
+                if not d or root_name(d) in shadow:
+                    continue
+                canonical = canonical_dotted(d, aliases)
+                crossed_call = d != canonical
+                bind_call = aliases.get(root_name(d), (None, 1 << 30))[1]
+                for store, crossed_store, bind_store in guarded.get(canonical, ()):
+                    if not (crossed_call or crossed_store):
+                        continue
+                    store_ok = (not crossed_store) or bind_store < store
+                    call_ok = (not crossed_call) or bind_call < node.lineno
+                    if store_ok and call_ok and store < node.lineno \
+                            and not any(store < r < node.lineno
+                                        for r in replaced.get(canonical, ())):
+                        return True
     return False
 
 
 def environ_alias_names(tree, dead):
-    """One-hop aliases of ``os.environ``: a plain name bound to it exactly once."""
+    """One-hop aliases of ``os.environ``: a plain name bound to it exactly once (either form)."""
     counts = {}
     binds = {}
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Assign) or len(node.targets) != 1 or node.lineno in dead:
-            continue
-        target = node.targets[0]
-        if not isinstance(target, ast.Name):
-            continue
+    for node, target, value in binding_nodes(tree, dead):
         counts[target.id] = counts.get(target.id, 0) + 1
-        if attr_dotted(node.value) == "os.environ":
+        if attr_dotted(value) == "os.environ":
             binds[target.id] = node.lineno
     return {n: line for n, line in binds.items() if counts.get(n) == 1}
 
@@ -1146,10 +1179,11 @@ def copies_alias(node, aliases):
 def environ_alias_guard(tree, dead, consts):
     """Round-74: the guard key stored through a one-hop alias of ``os.environ``.
 
-    ``env = os.environ`` once, ``env[KEY] = "1"`` before a git launch whose ``env=`` is the
-    alias itself, ``dict(env)`` or ``{**env}``. A rebinding of the alias (more than one
-    assignment) leaves no alias at all; a ``del alias[KEY]`` between store and launch cancels
-    the store; a store after the launch is not a guard.
+    ``env = os.environ`` once (``Assign`` or ``AnnAssign``), ``env[KEY] = "1"`` after the binding
+    and before a git launch whose ``env=`` is the alias itself, ``dict(env)`` or ``{**env}``. A
+    second binding leaves no alias; a ``del alias[KEY]`` between store and launch cancels the
+    store; a store before the binding or after the launch is not a guard; a launch inside a
+    function whose parameter shadows the alias name is not the module binding (R74RevC2 P1).
     """
     aliases = environ_alias_names(tree, dead)
     if not aliases:
@@ -1173,25 +1207,29 @@ def environ_alias_guard(tree, dead, consts):
                 stores.setdefault(target.value.id, set()).add(node.lineno)
     if not stores:
         return False
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call) or not call_is_git(node) or node.lineno in dead:
-            continue
-        for kw in node.keywords:
-            if kw.arg != "env":
+    for scope in function_scopes(tree):
+        nodes = scoped_nodes(scope)
+        shadow = shadow_names(scope)
+        for node in nodes:
+            if not isinstance(node, ast.Call) or not call_is_git(node) or node.lineno in dead:
                 continue
-            name = None
-            if isinstance(kw.value, ast.Name) and kw.value.id in aliases:
-                name = kw.value.id
-            elif isinstance(kw.value, ast.Dict) and copies_alias(kw.value, aliases):
-                name = kw.value.values[0].id
-            elif isinstance(kw.value, ast.Call) and copies_alias(kw.value, aliases):
-                name = kw.value.args[0].id
-            if name is None:
-                continue
-            for store in stores.get(name, ()):
-                if store < node.lineno and not any(store < c < node.lineno
-                                                   for c in cancels.get(name, ())):
-                    return True
+            for kw in node.keywords:
+                if kw.arg != "env":
+                    continue
+                name = None
+                if isinstance(kw.value, ast.Name) and kw.value.id in aliases:
+                    name = kw.value.id
+                elif isinstance(kw.value, ast.Dict) and copies_alias(kw.value, aliases):
+                    name = kw.value.values[0].id
+                elif isinstance(kw.value, ast.Call) and copies_alias(kw.value, aliases):
+                    name = kw.value.args[0].id
+                if name is None or name in shadow:
+                    continue
+                for store in stores.get(name, ()):
+                    if aliases[name] < store and store < node.lineno \
+                            and not any(store < c < node.lineno
+                                        for c in cancels.get(name, ())):
+                        return True
     return False
 
 
