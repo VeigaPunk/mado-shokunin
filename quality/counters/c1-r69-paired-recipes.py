@@ -259,6 +259,8 @@ def _scripted_run(case, sha):
     """Stand-in for `run`: answers every argv the measurement issues, spawns nothing."""
     state = {"compiles": 0}
 
+    base_sha = "b" * 40
+
     def fake(argv, cwd=None, timeout=900):
         a = [str(x) for x in argv]
         out = b""
@@ -266,16 +268,17 @@ def _scripted_run(case, sha):
         if a[0] == "git":
             joined = " ".join(a)
             if "rev-parse" in a and "--verify" in joined:
-                out = (sha + "\n").encode()
+                out = ((base_sha if "BASE^{commit}" in joined else sha) + "\n").encode()
             elif "show" in a:
-                path = a[-1].split(":", 1)[-1]
-                if path == CANDIDATE_PATH:
+                spec = a[-1]
+                rev, path = spec.split(":", 1)
+                if rev == sha and path == CANDIDATE_PATH:
                     if case["candidate"] is None:
                         rc = 128
                         out = b"fatal: path does not exist in HEAD\n"
                     else:
                         out = case["candidate"].encode()
-                elif path == BASE_PATH:
+                elif rev == base_sha and path == BASE_PATH:
                     if case["base"] is None:
                         rc = 128
                     else:
