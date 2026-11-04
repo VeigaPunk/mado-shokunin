@@ -4198,3 +4198,11 @@ The successor's table labels seven specialized status pairs explicitly and corre
 counts, but the counter still authenticates command cells only. Neither Markdown edits nor
 the forward docstring/version corrections cure frozen C2. VERSION is now r85-v1; historical
 freeze carries r84-v1 and remains byte-resolvable.
+
+Main supplied WAVE-DONE for all13 seats before the report. Raw `w1-results.json` retains
+output=null for13 seats after the orchestrator kernel restart;13 substantive seat report
+files exist. Do not fill those nulls or infer terminal success/dead counts from report files.
+`receipts/settlement-r85.json` records exact names/roles and unavailable answering models.
+Configured scout/scribe routes currently use m_mim, contrary to the prompt's m_mim-off note;
+operator-owned routing was neither edited nor overridden. This is disclosed conformance
+drift, not an inferred change of the seats' captured routes.

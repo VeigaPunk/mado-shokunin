@@ -1,0 +1,104 @@
+independent-score-r85 — seat R85ExecScore (leaf re-execution; no edits to any counter, tool, control, fixture or SKILL.md)
+lane root: /home/vgpnk/Projects/shokunin/mado-shokunin
+scratch (removed before yield): /fast/scratch/hyaku/mado-r85/R85ExecScore
+
+== revisions observed ==
+frozen declaration rev (3905311c, "round-85: freeze identity-cause and status-class declarations, controls and instruments")
+  3905311c75a39c5710413105865c0a1a7dd0116a
+base rev (5f174ca4, round-84 spot-check)
+  5f174ca48d4f9cf94abf1a8c58b7d6f88733aced
+successor rev (d7c40e6d, "round-85: retain frozen failure and publish executable successor rows"), master at re-execution
+  d7c40e6d1b9a7476f2ff48254d577799ce9901e4
+  - descendant of 3905311c: yes; SKILL.md at d7c40e6d contains "### Executable runbook rows (round 85)" with 36 command rows
+  - working tree bound to d7c40e6d for SKILL.md, tools/mado-barfoot.py, quality/counters/c2-r85-status-classes.py and
+    .ufo/waves/round-85/controls/c2-cases-r85.json (blob sha256 == worktree sha256 for all four)
+C1 uses REV=3905311c (the frozen rev named in the declaration; the C1 counter at d7c40e6d is byte-identical to 3905311c).
+C2 uses REV=d7c40e6d (the newer commit that already contains the round-85 runbook rows, per the spec's exception).
+
+== input sha256 observed ==
+at 3905311c75a39c5710413105865c0a1a7dd0116a:
+  ab2306ac59f8744a51ff0d4bc4d719fc669fce03c7fe4d877872efad90d9ae9c  quality/counters/c1-r85-identity-causes.py
+  e689438131a633317799377065b84dd54afcb5ba90de1a1dcd67fdf58043f471  quality/counters/c2-r85-status-classes.py
+  d2eb4547b2e285fb80415e81b70c05e47aa6184eadb863e3cd72dab43e6bfd12  tools/mado-barfoot.py
+  94e5cf46e8157537c12f56fa34fc6882a7bd194a54f8d93eb67e86145b11efbe  SKILL.md
+  bacae37d29d06e4f9d623262c05f2975bcba338e650dbd38cbbd4039ca6216a1  .ufo/waves/round-85/controls/c1-cases-r85.json
+  5c9ce3891e1ec4be1820d229bbcfddfa5b61cfbd0d02cc93252ac38c6dd9e883  .ufo/waves/round-84/controls/c1-cases-r84.json
+  de8a68fe22799d4bf8366ab56c9d390559260dc8a70c3d1d7e0d03da98d23b64  .ufo/waves/round-85/controls/c2-cases-r85.json
+  2e86b4b64b7b7b95fcfdb78e2463762a8f8dc7a299145a992170fdc59d4b5efe  .ufo/waves/round-84/controls/c2-runbook-cases-r84.json
+at d7c40e6d1b9a7476f2ff48254d577799ce9901e4:
+  ab2306ac59f8744a51ff0d4bc4d719fc669fce03c7fe4d877872efad90d9ae9c  quality/counters/c1-r85-identity-causes.py
+  b4bde359f66804cf9b982e40bbdf8d4bc6c9baa283378f9f1448b3aff82b111c  quality/counters/c2-r85-status-classes.py
+  d2eb4547b2e285fb80415e81b70c05e47aa6184eadb863e3cd72dab43e6bfd12  tools/mado-barfoot.py
+  a70833e7bfdaa0ec1cec470a79a723c777fdedc03a0a327a89f36bb0b29b9a82  SKILL.md
+  bacae37d29d06e4f9d623262c05f2975bcba338e650dbd38cbbd4039ca6216a1  .ufo/waves/round-85/controls/c1-cases-r85.json
+  5c9ce3891e1ec4be1820d229bbcfddfa5b61cfbd0d02cc93252ac38c6dd9e883  .ufo/waves/round-84/controls/c1-cases-r84.json
+  de8a68fe22799d4bf8366ab56c9d390559260dc8a70c3d1d7e0d03da98d23b64  .ufo/waves/round-85/controls/c2-cases-r85.json
+  2e86b4b64b7b7b95fcfdb78e2463762a8f8dc7a299145a992170fdc59d4b5efe  .ufo/waves/round-84/controls/c2-runbook-cases-r84.json
+base 5f174ca4 (C1 base tool, observed by the counter): 72456666a31927dfc46f955f41b3aa57b2215a8fcd8dc736fc302d7b58830c7f  tools/mado-barfoot.py
+
+Instrument note: the C2 counter's sha256 changed between my observations (3264a372…, 9edfa3ed… in my scratch copies,
+and e689438… at 3905311c, b4bde359… at d7c40e6d). The C2 frozen-rev attempt ran from the working tree while L1 was
+editing; its exact instrument sha is not pinned by my run. The successor run ran from the committed blob b4bde359….
+
+== Run A — C1 identity causes (independent re-execution) ==
+command:
+  python3 -I quality/counters/c1-r85-identity-causes.py --repo . --rev 3905311c75a39c5710413105865c0a1a7dd0116a \
+    --base-rev 5f174ca48d4f9cf94abf1a8c58b7d6f88733aced --controls .ufo/waves/round-85/controls/c1-cases-r85.json \
+    --carried .ufo/waves/round-84/controls/c1-cases-r84.json --scratch-root <scratch>/c1
+exit code: 0 (two runs; both C1_RC=0 and both produced the identical contract line)
+contract line (verbatim):
+MADO_R85_IDENTITY: cases=72 correct=72 mutants=51 killed=51 base_correct=62/72 carried=61/61 tool_selftest=152/152 verdict=TARGET_MET rev=3905311c75a39c5710413105865c0a1a7dd0116a tool_sha256=d2eb4547b2e285fb80415e81b70c05e47aa6184eadb863e3cd72dab43e6bfd12
+stderr: 0 bytes
+counted from the log: 72/72 MADO_R85_CASE lines correct=yes; 51/51 MADO_R85_MUTANT lines killed=yes;
+  MADO_R85_BASE: correct=62/72 rule=held-r84-model(stage-only-no-cause) base_rev=5f174ca48d4f9cf94abf1a8c58b7d6f88733aced base_sha256=72456666a31927dfc46f955f41b3aa57b2215a8fcd8dc736fc302d7b58830c7f
+  MADO_R85_CONTROL: sha256=bacae37d29d06e4f9d623262c05f2975bcba338e650dbd38cbbd4039ca6216a1 carried=61/61
+verdict: TARGET_MET (matches the declared target exactly: cases=72 correct=72 mutants=51 killed=51 base_correct=62/72 carried=61/61)
+
+== Run B — C2 runbook status classes (independent re-execution) ==
+B1. frozen revision 3905311c (the rev the declaration names) — FROZEN FAILURE, retained, not replaced:
+  command: python3 -I quality/counters/c2-r85-status-classes.py --repo . --rev 3905311c75a39c5710413105865c0a1a7dd0116a
+    --controls .ufo/waves/round-85/controls/c2-cases-r85.json --carried .ufo/waves/round-84/controls/c2-runbook-cases-r84.json
+    --scratch-root <scratch>/c2
+  exit code: 2
+  contract line (verbatim):
+MADO_R85_RUNBOOK: ERROR (stage=setup SKILL.md in the working tree is not the measured revision's bytes)
+  reason: the rev blob of SKILL.md at 3905311c carries the round-84 section (33 rows); the working tree carried the
+  round-85 36-row section uncommitted. The counter's tree-binding check refused before any row was executed.
+  (The rev blob also has no status column, so a 36-row section cannot exist at 3905311c.)
+
+B2. successor revision d7c40e6d (master; contains the 36-row section) — the spec-required re-run after the section appeared:
+  command: python3 -I quality/counters/c2-r85-status-classes.py --repo . --rev d7c40e6d1b9a7476f2ff48254d577799ce9901e4
+    --controls .ufo/waves/round-85/controls/c2-cases-r85.json --carried .ufo/waves/round-84/controls/c2-runbook-cases-r84.json
+    --scratch-root <scratch>/c2
+  exit code: 1 (C2_SUCCESSOR_RC=1)
+  contract line (verbatim):
+MADO_R85_RUNBOOK: cases=36 executed=36 matched=36 shapes=26/26 anchors=36/36 rows=36/36 superseded=active-workspace,binds-count,clients-count,gaps-out,kb-layout,keybindings-actions,keybindings-chords,layers-namespaces,monitors-reserved,monitors-size,omarchy-version,tray-items,tray-methods,version,waybar-process,workspaces-count mutants=37 killed=33 verdict=TARGET_MISSED rev=d7c40e6d1b9a7476f2ff48254d577799ce9901e4 tree=bound
+  stderr: 0 bytes
+  control line (verbatim): MADO_R85_CONTROL: superseded=... status_classes=2/36 substantive-before=receipt(control-c2-r85-unguarded.txt; ...)
+  probes: 36/36 match=yes; no probe with match=no
+  mutants killed: 33/37. SURVIVORS (declared mutants that were NOT killed; each matched=36/36):
+    MADO_R85_MUTANT: name=regex-anchor-dropped matched=36/36 killed=no
+    MADO_R85_MUTANT: name=line-anchor-prefix matched=36/36 killed=no
+    MADO_R85_MUTANT: name=negatives-skipped matched=36/36 killed=no
+    MADO_R85_MUTANT: name=samples-skipped matched=36/36 killed=no
+  verdict: TARGET_MISSED, rc 1. The C2 target (mutants=37 killed=37) is NOT met at the successor revision.
+  Matches the orchestrator/L1 prediction of 33/37 kills; reported as measured, not as a pass.
+
+== what was NOT run ==
+- No edit to any counter, tool, control, fixture or SKILL.md. No commit, push or mutating git command.
+- No C2 frozen-revision pass is claimed; the frozen rev 3905311c produced rc 2 (setup), retained above.
+- The "rows-r85.done" marker was never written; the 15-minute poll was cancelled once the successor commit
+  d7c40e6d carried the 36 rows (verified by blob read, not by the marker).
+
+== Run B3 — clean-clone replay at d7c40e6d (drift-proof) ==
+lane drift observed after B2: lane tools/mado-barfoot.py sha256 62626fce852bc5bef263a26ddee78b12c6fc9b2883e41ef55c015becf3a76fb5
+(d7c blob d2eb4547…); lane also carries many unrelated dirty files. Re-run from a clean clone of d7c40e6d
+(git clone of the lane into scratch, checkout d7c40e6d, git status empty). Lane files untouched.
+  command: python3 -I <clone>/quality/counters/c2-r85-status-classes.py --repo <clone> --rev d7c40e6d1b9a7476f2ff48254d577799ce9901e4
+    --controls <lane>/.ufo/waves/round-85/controls/c2-cases-r85.json --carried <lane>/.ufo/waves/round-84/controls/c2-runbook-cases-r84.json
+    --scratch-root <scratch>/c2-clone
+  exit code: 1 (C2_CLONE_RC=1); stderr 0 bytes
+  MADO_R85_CONTROLS: sha256=de8a68fe22799d4bf8366ab56c9d390559260dc8a70c3d1d7e0d03da98d23b64 cases=36
+  MADO_R85_RUNBOOK: cases=36 executed=36 matched=36 shapes=26/26 anchors=36/36 rows=36/36 superseded=active-workspace,binds-count,clients-count,gaps-out,kb-layout,keybindings-actions,keybindings-chords,layers-namespaces,monitors-reserved,monitors-size,omarchy-version,tray-items,tray-methods,version,waybar-process,workspaces-count mutants=37 killed=33 verdict=TARGET_MISSED rev=d7c40e6d1b9a7476f2ff48254d577799ce9901e4 tree=bound
+  survivors: regex-anchor-dropped, line-anchor-prefix, negatives-skipped, samples-skipped (each matched=36/36 killed=no)
+verdict: identical to B2. C2 target NOT met at d7c40e6d.

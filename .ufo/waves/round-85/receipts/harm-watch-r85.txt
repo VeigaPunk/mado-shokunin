@@ -1,0 +1,157 @@
+# round-85 harm watch — seat R85ExecHarm
+
+Date: 2026-11-04
+Lane root: /home/vgpnk/Projects/shokunin/mado-shokunin
+Revision run: 3905311c75a39c5710413105865c0a1a7dd0116a (lane HEAD; equals the frozen freeze
+revision; base 5f174ca48d4f9cf94abf1a8c58b7d6f88733aced)
+Every command ran with cwd = the lane root unless stated. Outputs below are unfiltered and
+verbatim. All five gates were actually executed at that revision; nothing here is predicted.
+
+GATE VERDICTS (one line each):
+  [1] note index        GREEN  indexed=104/104 missing=0 dangling=0 duplicates=0
+  [2] instrument ledger RED    population=156 ledger_rows=154 uncovered=2 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED
+  [3] mado-verify selftest GREEN 460/460 assertions passed
+  [4] axis scores       GREEN  checked=3 mismatched=0 (navigation/calibration/operability all MATCH)
+  [5] sources census    GREEN  exit 0, ok for corpus/SOURCES.md; 54x W04 + 1x W01 known warnings
+
+RED GATE — [2] instrument ledger, which and why:
+  The freeze commit added two instruments without rows in quality/tool-ledger.md:
+    LEDGER-ROW reason=uncovered path=quality/counters/c1-r85-identity-causes.py detail=no-row
+    LEDGER-ROW reason=uncovered path=quality/counters/c2-r85-status-classes.py detail=no-row
+  Same checker at the base revision (diagnostic, retained in block [6]) is TARGET_MET
+  population=154/154 uncovered=0, so the red is introduced by the round-85 freeze commit itself:
+  +2 instruments, +0 ledger rows. The declaration's harm-watch line ("the instrument ledger
+  stays N/N with zero uncovered") does not hold at the frozen revision. The two round-85
+  counters are the C1/C2 scoring instruments named in the declaration. This seat owns no ledger
+  file; the red is reported, not suppressed and not fixed here.
+
+================================================================
+[1] note index gate
+$ python3 -I quality/check-index.py --repo . --rev 3905311c75a39c5710413105865c0a1a7dd0116a
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+exit code: 0
+final summary line:
+MADO_INDEX: rev=3905311c75a39c5710413105865c0a1a7dd0116a indexed=104/104 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+full output (unfiltered):
+MADO_INDEX: rev=3905311c75a39c5710413105865c0a1a7dd0116a indexed=104/104 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+================================================================
+[2] instrument ledger gate (the lane's ledger checker, quality/check-tool-ledger.py, found by
+    grep -rl "ledger" quality/*.py; its summary prints ledger_rows N/N with uncovered=N)
+$ python3 -I quality/check-tool-ledger.py --repo . --rev 3905311c75a39c5710413105865c0a1a7dd0116a
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+exit code: 1
+final summary line:
+LEDGER: population=156 ledger_rows=154 uncovered=2 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=3905311c75a39c5710413105865c0a1a7dd0116a
+full output (unfiltered):
+LEDGER-ROW reason=uncovered path=quality/counters/c1-r85-identity-causes.py detail=no-row
+LEDGER-ROW reason=uncovered path=quality/counters/c2-r85-status-classes.py detail=no-row
+LEDGER: population=156 ledger_rows=154 uncovered=2 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=3905311c75a39c5710413105865c0a1a7dd0116a
+================================================================
+[3] standing gate selftest
+$ TMPDIR=/fast/scratch/hyaku/mado-r85/R85ExecHarm bash tools/mado-verify.sh --selftest
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+exit code: 0
+final summary line:
+MADO_SELFTEST: 460/460 assertions passed
+full output (unfiltered):
+MADO_SELFTEST: 460/460 assertions passed
+================================================================
+[4] axis scores gate
+$ python3 -I quality/check-axis-scores.py --repo . --rev 3905311c75a39c5710413105865c0a1a7dd0116a
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+exit code: 0
+final summary line:
+MADO_AXIS: checked=3 mismatched=0 rev=3905311c75a39c5710413105865c0a1a7dd0116a
+full output (unfiltered):
+MADO_AXIS_ROW: axis=navigation published=104/104 derived=104/104 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=3905311c75a39c5710413105865c0a1a7dd0116a
+================================================================
+[5] source census
+$ TMPDIR=/fast/scratch/hyaku/mado-r85/R85ExecHarm /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+cwd: /home/vgpnk/Projects/shokunin
+exit code: 0
+final summary line:
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+full output (unfiltered, 56 lines: 54x W04 duplicate-url-across-scopes, 1x W01 tierC mined
+used-by, 1x ok — these are the census's known warnings; census verdict exit 0):
+mado	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+mado	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+mado	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+mado	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W01	S277 tierC mined used-by=corpus/knowledge/request-socket-live-bound-r8.md, corpus/knowledge/request-limits-upstream-r31.md
+mado	W04	S303 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S307 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S317 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S318 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/values/ConfigValues.cpp across scopes
+mado	W04	S320 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S321 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S324 duplicate url raw.githubusercontent.com/hyprwm/hyprlang/v0.6.8/src/config.cpp across scopes
+mado	W04	S326 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/xdg-terminal-exec across scopes
+mado	W04	S327 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/README.md across scopes
+mado	W04	S332 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/rule/matchEngine/RegexMatchEngine.cpp across scopes
+mado	W04	S353 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S354 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/input/InputManager.cpp across scopes
+mado	W04	S364 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+mado	W04	S366 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S368 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S370 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/DispatcherTranslator.cpp across scopes
+mado	W04	S371 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigActions.cpp across scopes
+mado	W04	S373 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+mado	W04	S380 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+mado	W04	S381 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/core/Seat.cpp across scopes
+mado	W04	S382 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+mado	W04	S384 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/values/ConfigValues.cpp across scopes
+mado	W04	S387 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S388 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S389 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S392 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/inotify/ConfigWatcher.cpp across scopes
+mado	W04	S393 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S394 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S395 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S442 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/subprocess.rst across scopes
+mado	W04	S443 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/expressions.rst across scopes
+mado	W04	S447 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S448 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/os.rst across scopes
+mado	W04	S449 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/subprocess.rst across scopes
+mado	W04	S451 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S452 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/os.rst across scopes
+mado	W04	S453 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S454 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/builtins/stdtypes.rst across scopes
+mado	W04	S455 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/expressions.rst across scopes
+mado	W04	S456 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S458 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S465 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/output/Monitor.cpp across scopes
+mado	W04	S466 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/reserved/ReservedArea.cpp across scopes
+mado	W04	S470 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/render/Renderer.cpp across scopes
+mado	W04	S475 duplicate url wiki.hypr.land/Configuring/Monitors across scopes
+mado	W04	S477 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/tests/desktop/Reserved.cpp across scopes
+mado	W04	S481 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/protocols/wlr-layer-shell-unstable-v1.xml across scopes
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+================================================================
+[6] diagnostic (extra, not a gate): same ledger checker at the base revision, run to date the
+    [2] red. Retained because it locates the regression at the freeze commit.
+$ python3 -I quality/check-tool-ledger.py --repo . --rev 5f174ca48d4f9cf94abf1a8c58b7d6f88733aced
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+exit code: 0
+final summary line:
+LEDGER: population=154 ledger_rows=154 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=5f174ca48d4f9cf94abf1a8c58b7d6f88733aced
+full output (unfiltered):
+LEDGER: population=154 ledger_rows=154 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=5f174ca48d4f9cf94abf1a8c58b7d6f88733aced
+================================================================
+
+Counts, restated:
+  note index: indexed 104/104, missing 0, dangling 0, duplicates 0, coverage 10.0000/10
+  instrument ledger: population 156, ledger rows 154, uncovered 2, dangling 0, bad_pointer 0,
+    empty_desc 0 — RED at rev 3905311c (GREEN, 154/154 uncovered 0, at base 5f174ca)
+  selftest: 460/460 assertions passed
+  axis scores: 3 checked, 0 mismatched; navigation 104/104, calibration 86/86,
+    operability 12/12, all MATCH
+  sources census: exit 0, final line ok; 54 W04 + 1 W01 warnings (all pre-known classes)
+
+No gate other than [2] is red. No config tree, compositor state, sibling repo or operator file
+was written by this seat; no pacman transaction was run.
