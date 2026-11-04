@@ -333,3 +333,14 @@ round-68 critic (B3) caught two rows sharing `M68-3`; the rows were renumbered b
   (22:04:51) precedes the registry and the harness, so the chronology rule holds; the note for the
   closure is that no seat is credited with constructing the scored artifact — the seats attacked it
   and the counter measures it at the named revision.
+
+### Final re-measurement after the critic-driven counter fixes
+
+At the post-fix content revision `180e5b2f55e2c4388f3496ace7574f4288af1450` (counters revised,
+declaration erratum appended, mistake rows renumbered): C1 `selftest=0 killed=3/3 applied=3/3
+base=0/3 verdict=TARGET_MET` rc 0 (selftest 27/27); C2 `population=20 readers=13 guarded=13
+unguarded=0 controls=11/11 verdict=TARGET_MET` rc 0 (selftest 26/26); landing GREEN; axis table
+`checked=3 mismatched=0`. Receipts: `measurement-final-r68.txt` (this revision) and
+`measurement-content-r68.txt` (the pre-fix, `379e97f8` run). Wave settlement at the lane tip
+`a4cb56fe`: `WAVE wave=w1 ready=1 results=present seats=12 dispatched=12 settled=12 verdict=OK`
+(`wave-done-r68.txt`).

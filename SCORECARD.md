@@ -3715,3 +3715,9 @@ disposition is recorded here rather than smoothed.
 The claim predicates are unchanged: the C2 frozen line still carries `controls=11/11`, and the C1
 frozen recipes are untouched. The two counter revisions are instrument-level enforcement of the
 frozen sentences (QUALITY 110).
+
+Final re-measurement (closing note): both counters re-ran green at
+`180e5b2f55e2c4388f3496ace7574f4288af1450` after the critic-driven fixes (C1 `killed=3/3` selftest
+27/27; C2 `guarded=13/13 controls=11/11` selftest 26/26), landing GREEN, axis table `checked=3
+mismatched=0`; wave w1 settled `seats=12 dispatched=12 settled=12 verdict=OK`
+(`.ufo/waves/round-68/measurement-final-r68.txt`, `wave-done-r68.txt`).
