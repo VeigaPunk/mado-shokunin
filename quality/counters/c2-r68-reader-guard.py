@@ -44,6 +44,7 @@ VERB_RE = re.compile(r"[\"'](%s)[\"']" % "|".join(re.escape(v) for v in VERBS))
 KEY = "GIT_NO_REPLACE_OBJECTS"
 FROZEN_POPULATION = 20
 FROZEN_READERS = 13
+FROZEN_CONTROLS = 11
 CONTRACT_RE = re.compile(
     r"MADO_R68_READER_GUARD: population=[0-9]+ readers=[0-9]+ guarded=[0-9]+ "
     r"unguarded=[0-9]+ controls=[0-9]+/[0-9]+ verdict=(?:TARGET_MET|TARGET_MISSED) "
@@ -143,9 +144,10 @@ def classify(src):
 
 # --------------------------------------------------------------------------------------------- measurement
 def verdict_met(population, readers, unguarded, correct, controls_total):
-    """The frozen target: the population and reader counts are part of it."""
+    """The frozen target: the population, reader and control counts are part of it."""
     return (population == FROZEN_POPULATION and readers == FROZEN_READERS
-            and unguarded == 0 and controls_total > 0 and correct == controls_total)
+            and unguarded == 0 and controls_total == FROZEN_CONTROLS
+            and correct == controls_total)
 
 
 def measure(repo, rev, controls_path):
@@ -186,10 +188,13 @@ def measure(repo, rev, controls_path):
                      "yes" if case["expect_reader"] else "no",
                      "yes" if case["expect_guard"] else "no", "yes" if ok else "no"))
     met = verdict_met(len(population), readers, unguarded, correct, controls_total)
-    print("MADO_R68_READER_GUARD: population=%d readers=%d guarded=%d unguarded=%d "
-          "controls=%d/%d verdict=%s rev=%s"
-          % (len(population), readers, guarded, unguarded, correct, controls_total,
-             "TARGET_MET" if met else "TARGET_MISSED", sha))
+    line = ("MADO_R68_READER_GUARD: population=%d readers=%d guarded=%d unguarded=%d "
+            "controls=%d/%d verdict=%s rev=%s"
+            % (len(population), readers, guarded, unguarded, correct, controls_total,
+               "TARGET_MET" if met else "TARGET_MISSED", sha))
+    if not CONTRACT_RE.fullmatch(line):
+        raise SetupError("emitted contract line does not match CONTRACT_RE")
+    print(line)
     return 0 if met else 1
 
 
@@ -320,6 +325,7 @@ def _selftest_checks():
     want("verdict requires the frozen reader count", not verdict_met(20, 12, 0, 11, 11))
     want("verdict requires no unguarded reader", not verdict_met(20, 13, 1, 11, 11))
     want("verdict requires every control correct", not verdict_met(20, 13, 0, 10, 11))
+    want("verdict requires the frozen control count", not verdict_met(20, 13, 0, 10, 10))
     want("verdict met on the frozen target", verdict_met(20, 13, 0, 11, 11))
     want("update() keyword with an env-named receiver is a guard",
          classify('def f(repo):\n    env = {}\n    env.update(GIT_NO_REPLACE_OBJECTS="1")\n'

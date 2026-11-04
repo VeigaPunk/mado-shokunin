@@ -1,0 +1,32 @@
+# round-68 claim-declaration erratum (append-only; the frozen declaration is not edited)
+# Raised by R68CriticClaims B2 (numbers) and B6 (reading). Captured 2026-11-03.
+
+1. Axis posture (declaration section 'Axis posture', lines 17-21). The paragraph says the published
+   sub-axes at the base read navigation 78/78 and ledger 108/108, citing the round-67 landing
+   receipt. The cited receipt and a fresh run at the base read 79/79 and 110/110:
+
+   $ python3 quality/check-index.py --repo . --rev 510100c81e6cf63fec6be380c2f2f9c670f32cbc
+   MADO_INDEX: rev=510100c81e6cf63fec6be380c2f2f9c670f32cbc indexed=79/79 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+   $ python3 quality/check-tool-ledger.py --repo . --rev 510100c81e6cf63fec6be380c2f2f9c670f32cbc
+   LEDGER: population=110 ledger_rows=110 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=510100c81e6cf63fec6be380c2f2f9c670f32cbc
+
+   The two stale values are the round-66 posture; the conclusion (every published finite
+   sub-axis at its measured maximum, so no axis is distinctly lowest) holds for 79/79 and
+   110/110. Corrected reading: navigation 79/79, gate selftest 460/460, register 8/8 groups,
+   used-by missing=0, ledger 110/110.
+
+   The N=3 stagnation window is not in SCORECARD.md section Saturation (a placeholder); it is
+   stated in the round-67 axis-posture prose in SCORECARD.md and carried into the round-68
+   section, which publishes the re-derived values.
+
+2. C2 'What changes' reading (B6). A planted refs/replace changes what an UNGUARDED reader
+   returns. A guard that is constructed but never passed to the git call (a dead function or a
+   never-taken branch) satisfies the census and leaves the read unguarded: the critic's fixture
+   c6219860 (the 20 base gates plus an uncalled _r68_dead_guard in each of the twelve readers)
+   scores population=20 readers=13 guarded=13 unguarded=0 controls=11/11 TARGET_MET. The twelve
+   production repairs are wired to the reads (diff-scope receipt
+   .ufo/waves/round-68/gate-diff-scope-r68.txt); the runtime hazard receipt covers one gate
+   (R68ExecHazard) and behaviour-identity runs cover the other eleven
+   (w1/R68ExecGate1.md, w1/R68ExecGate2.md, w1/R68ExecGate3.md, w1/R68RevC2.md). The census
+   counts construction, not wiring; that limit is in the entry section 5 and this erratum is the
+   declaration-level record.

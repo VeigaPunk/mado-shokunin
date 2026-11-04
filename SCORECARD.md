@@ -3696,3 +3696,22 @@ legs at the measured content), `measurement-selftests-r68.txt`, `control-baselin
    since round 56; keep the publication in the round that changes an instrument.
 4. The open L0 questions (r57-r60, the L2 floor, the host-recovery pacman pause, the r37/r38 session-material
    history question) stay operator-owned.
+
+### Closure corrections (round 68, after the wave settled)
+
+The critic seat (`w1/R68CriticClaims.md`) filed seven blockers after the first landing; each
+disposition is recorded here rather than smoothed.
+
+| blocker | finding | disposition |
+|---|---|---|
+| B1 | the C2 verdict accepted a truncated control set (`controls=10/10 … TARGET_MET`), so the frozen `controls=11/11` was unenforced | fixed: `verdict_met()` requires `controls_total == 11` (M68-6); selftest 26/26; the truncated-set run now prints `TARGET_MISSED rc=1` |
+| B2 | the declaration's axis posture cites `78/78`/`108/108` where the cited receipt reads `79/79`/`110/110`, and `N=3` is not in `SCORECARD.md` § Saturation | append-only erratum `.ufo/waves/round-68/axis-posture-erratum-r68.txt`; the conclusion is re-derived at the measured content |
+| B3 | two lesson rows shared `M68-3` | renumbered before closure (M68-3 sweep, M68-4 scratch-root, M68-5 denominator, M68-6 control count) |
+| B4 | the C1 counter docstring said `recipe=none` where the instrument prints `applicable=no` | docstring corrected to the emitted token; predicate untouched |
+| B5 | `CONTRACT_RE` was only exercised on selftest literals, never on the emitted line | both `measure()` bodies now `fullmatch` the assembled line and fail closed (`rc 2`) |
+| B6 | an uncalled dead guard satisfies the census; the C2 "What changes" sentence reads stronger than the count proves | declared limit restated in the erratum and the entry §5; the twelve production repairs are wired, one gate has a runtime hazard receipt, eleven have behaviour-identity runs |
+| B7 | C1 was already `TARGET_MET` at the harness cutover, 8 s after the wave dispatch | by design: the scored harness is the round's own instrument and the L1 owns it; the freeze precedes the registry and the harness, the Before state is the base rev, and no seat is credited with constructing the artifact |
+
+The claim predicates are unchanged: the C2 frozen line still carries `controls=11/11`, and the C1
+frozen recipes are untouched. The two counter revisions are instrument-level enforcement of the
+frozen sentences (QUALITY 110).

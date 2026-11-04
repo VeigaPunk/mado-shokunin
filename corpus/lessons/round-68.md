@@ -54,8 +54,10 @@ A fix counts only on its named red/green evidence. M68-1's green is the landing 
 and M68-3 are process/reference fixes with their red states at the named revisions, not new scored
 capabilities.
 
-| M68-3: the frozen C2 counting command passed `--scratch-root`, an argument the counter did not accept, so the declared command could not print its contract line (exit 2, "unrecognized arguments"). | stale-premise | `.ufo/waves/round-68/c2-command-erratum-r68.txt` — the counter blob at `e0727cda` exits 2 on the declared argv; `corpus/lessons/round-68.md` was drafted from the counter's docstring, not from a run. | `none` before this round; QUALITY 110(a) now requires the pre-freeze receipt to run the advertised invocation verbatim. | The counter accepts `--scratch-root` for interface parity and its selftest asserts the frozen argument set parses (`MADO_R68_READER_GUARD_SELFTEST: 25/25`); the errata receipt shows red-before `rc=2` and the same command printing `TARGET_MISSED rc=1` after. |
-| M68-4: the C2 counter's verdict did not enforce the frozen denominator, so deleting every quoted object-read verb from one repaired gate scored `readers=12 … TARGET_MET rc=0` — a repair could shrink the population and still pass. | vacuous | `R68RevC2` finding 1 and `.ufo/waves/round-68/c2-denominator-erratum-r68.txt` — the pre-fix counter at `2a39e741` prints `population=20 readers=12 guarded=12 unguarded=0 … TARGET_MET` rc 0 on the verb-deleted fixture. | `none` at freeze; QUALITY 110(b)'s "the frozen sentence and the counter's code are the same sentence" is the rule it violated. | `verdict_met()` now requires `population==20` and `readers==13` beside `unguarded==0` and every control correct; the same fixture reads `TARGET_MISSED rc=1` and the selftest carries five denominator assertions (25/25). |
+| M68-4: the frozen C2 counting command passed `--scratch-root`, an argument the counter did not accept, so the declared command could not print its contract line (exit 2, "unrecognized arguments"). | stale-premise | `.ufo/waves/round-68/c2-command-erratum-r68.txt` — the counter blob at `e0727cda` exits 2 on the declared argv; `corpus/lessons/round-68.md` was drafted from the counter's docstring, not from a run. | `none` before this round; QUALITY 110(a) now requires the pre-freeze receipt to run the advertised invocation verbatim. | The counter accepts `--scratch-root` for interface parity and its selftest asserts the frozen argument set parses (`MADO_R68_READER_GUARD_SELFTEST: 25/25`); the errata receipt shows red-before `rc=2` and the same command printing `TARGET_MISSED rc=1` after. |
+| M68-5: the C2 counter's verdict did not enforce the frozen denominator, so deleting every quoted object-read verb from one repaired gate scored `readers=12 … TARGET_MET rc=0` — a repair could shrink the population and still pass. | vacuous | `R68RevC2` finding 1 and `.ufo/waves/round-68/c2-denominator-erratum-r68.txt` — the pre-fix counter at `2a39e741` prints `population=20 readers=12 guarded=12 unguarded=0 … TARGET_MET` rc 0 on the verb-deleted fixture. | `none` at freeze; QUALITY 110(b)'s "the frozen sentence and the counter's code are the same sentence" is the rule it violated. | `verdict_met()` now requires `population==20` and `readers==13` beside `unguarded==0` and every control correct; the same fixture reads `TARGET_MISSED rc=1` and the selftest carries five denominator assertions (25/25). |
+
+| M68-6: the C2 counter's verdict still accepted a truncated control set (`controls=10/10 … TARGET_MET`) after the first denominator fix, so the frozen `controls=11/11` was not enforced. | vacuous | `R68CriticClaims` B1; the pre-fix landed counter (sha256 `5a6b3865…0faa`) prints `TARGET_MET` with a ten-case `--controls` file, while the frozen predicate line carries `controls=11/11`. | QUALITY 110(b) again — the same "frozen sentence and counter code are one sentence" rule, caught by the critic this time. | `verdict_met()` now requires `controls_total == 11` (frozen constant) and the selftest asserts `verdict_met(20, 13, 0, 10, 10)` is False (26/26); the truncated-set run prints `TARGET_MISSED rc=1`. |
 
 ## Gate
 
@@ -301,3 +303,33 @@ Measured content `379e97f884a6cf7ed3ac96068b0165d63495524f`; measured commands a
   (`dict(os.environ, GIT_NO_REPLACE_OBJECTS="1")` filtered by `GIT_*` reads forged bytes while
   classified guarded) — RevC2 and the connector, receipts in `aux-dominance-r68.txt`; and the two
   counter defects M68-3/M68-4 fixed before landing with red-before receipts.
+
+Mistake IDs as filed (closure note): M68-1 (r67 harness selftest never runs its decision body),
+M68-2 (r67 kill-rule sentence did not describe the delivered observable), M68-3 (r67 "controls
+unchanged" sweep is path-vacuous), M68-4 (the frozen C2 command passed an argument the counter did
+not accept), M68-5 (the C2 verdict did not enforce the frozen population/reader counts). The
+round-68 critic (B3) caught two rows sharing `M68-3`; the rows were renumbered before closure.
+
+### Closure corrections from the critic seat
+
+- **B1** (frozen `controls=11/11` unenforced): fixed as M68-6 above; instrument-only.
+- **B2** (axis-posture numbers in the declaration cite `78/78`/`108/108` where the cited receipt
+  reads `79/79`/`110/110`): the declaration is frozen and is not edited; the erratum is
+  `.ufo/waves/round-68/axis-posture-erratum-r68.txt`, and the conclusion (all published sub-axes
+  at their measured maximum) is re-derived at `379e97f8`.
+- **B3** (duplicate `M68-3`): rows renumbered before closure (see the closure note below the table).
+- **B4** (docstring token `recipe=none` vs emitted `applicable=no`): docstring corrected to the
+  emitted token; the printed contract line never carried the token.
+- **B5** (`CONTRACT_RE` only exercised on selftest literals): both `measure()` bodies now
+  `fullmatch` the assembled line and fail closed (`rc 2`) on a format drift.
+- **B6** (an uncalled dead guard satisfies the census; a planted replacement does not move such a
+  gate): declared limit, restated in the entry's §5 dominance/no-dataflow bullets; the production
+  twelve repairs are wired, one gate has a runtime hazard receipt, eleven have behaviour-identity
+  runs only.
+- **B7** (C1 already `TARGET_MET` at the harness cutover, before any seat returned): correct, and by
+  design. The scored harness is the L1's own instrument, committed at `40d2bef8` (22:06:33), 8 s
+  after the wave dispatch marker (22:06:25) and 43 s after the wave registry `createdAt`
+  (22:05:50 local). The claim's Before state is the base rev `510100c8` and the freeze `e0727cda`
+  (22:04:51) precedes the registry and the harness, so the chronology rule holds; the note for the
+  closure is that no seat is credited with constructing the scored artifact — the seats attacked it
+  and the counter measures it at the named revision.

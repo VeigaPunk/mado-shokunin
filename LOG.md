@@ -3302,3 +3302,16 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   `aux-dominance-r68.txt`). The guard is presence-tested, does not authenticate objects and does
   not protect an already-rewritten repository. No universal fault-coverage claim.
 - Tooling: none installed or upgraded; no pacman transaction (host pause respected).
+
+### Round 68 — closure addendum (critic blockers)
+
+- `R68CriticClaims` filed B1-B7 after the wave settled. B1 (frozen `controls=11/11` unenforced by
+  the C2 verdict) and B5 (`CONTRACT_RE` never checked on the emitted line) are instrument fixes:
+  `verdict_met()` now requires `controls_total == 11` (M68-6), both `measure()` bodies `fullmatch`
+  the assembled contract line and fail closed. B4 corrected the C1 docstring token to
+  `applicable=no`. B3 renumbered the duplicated `M68-3` row before closure. B2 is an append-only
+  erratum (`axis-posture-erratum-r68.txt`: 78/78 -> 79/79, 108/108 -> 110/110, N=3 citation).
+  B6 restates the dead-guard limit (the census counts construction, not wiring; one gate carries
+  a runtime hazard receipt) and B7 records that the scored harness is the L1's instrument,
+  committed 8 s after the dispatch marker. No frozen predicate changed; the claims re-measured
+  green after the fixes (C1 selftest 27/27, C2 26/26).

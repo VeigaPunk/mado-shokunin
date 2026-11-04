@@ -18,8 +18,8 @@ are applied to a scratch copy of it (each asserted to occur exactly once):
 A mutant is *killed* iff its own `--selftest` exits nonzero while the unmutated copy exits 0.
 The same three recipes are applied to the base harness `quality/counters/c2-r67-landing-
 controls.py` at --base-rev (the do-nothing control): a base survivor is a mutant whose
-selftest still exits 0 there. A recipe that does not occur exactly once is `recipe=none` and
-is never counted as killed.
+selftest still exits 0 there. A recipe that does not occur exactly once prints `applicable=no` and is
+never counted as killed.
 
 Printed receipt (last line, exact):
 
@@ -211,11 +211,14 @@ def measure(args):
                 base["applied"]))
 
     met = result["rc"] == 0 and result["killed"] == len(RECIPES)
-    emit("MADO_R68_SELFMUTANTS: selftest=%s killed=%d/%d applied=%d/%d base=%d/%d "
-         "verdict=%s rev=%s"
-         % (result["rc"], result["killed"], len(RECIPES), result["applied"],
-            len(RECIPES), base_killed, len(RECIPES),
-            "TARGET_MET" if met else "TARGET_MISSED", sha))
+    line = ("MADO_R68_SELFMUTANTS: selftest=%s killed=%d/%d applied=%d/%d base=%d/%d "
+            "verdict=%s rev=%s"
+            % (result["rc"], result["killed"], len(RECIPES), result["applied"],
+               len(RECIPES), base_killed, len(RECIPES),
+               "TARGET_MET" if met else "TARGET_MISSED", sha))
+    if not CONTRACT_RE.fullmatch(line):
+        raise SetupError("emitted contract line does not match CONTRACT_RE")
+    emit(line)
     return 0 if met else 1
 
 
@@ -253,6 +256,9 @@ def _selftest_checks():
          CONTRACT_RE.fullmatch(
              "MADO_R68_SELFMUTANTS: selftest=absent killed=0/3 applied=0/3 base=0/3 "
              "verdict=TARGET_MISSED rev=" + "a" * 40) is not None)
+    want("emitted-line check accepts the met line",
+         CONTRACT_RE.fullmatch("MADO_R68_SELFMUTANTS: selftest=0 killed=3/3 applied=3/3 "
+                               "base=0/3 verdict=TARGET_MET rev=" + "a" * 40) is not None)
     want("contract line refuses an out-of-range kill count",
          CONTRACT_RE.fullmatch(
              "MADO_R68_SELFMUTANTS: selftest=0 killed=4/3 applied=3/3 base=0/3 "
