@@ -106,10 +106,19 @@ is the tier-A surface for them, and the classifier's `update`/`setdefault` claus
 held from r69 without a fresh row. Flip condition: a claim whose subject is mapping-method
 behaviour (not call syntax) re-opens it then.
 
-Registry cell changes (old → new, logged per CORPUS rule 2): none — both new rows are
-appends; S108 and S439 keep every cell (the supersede pointer lives in the new rows'
-`teaches`). No `status` or `recheck` cell changed anywhere. The registry diff is +2 rows
-(378 → 380).
+Registry cell changes (old → new, logged per CORPUS rule 2): the five held rows the new
+entries cite gained their used-by reverse links (used-by is one of the three mutable cells;
+only the last cell of each row changed):
+
+- **S108** `used-by` `corpus/knowledge/tripwire-precision-r20.md` →
+  `corpus/knowledge/tripwire-precision-r20.md,corpus/knowledge/kill-credit-exit-disagreement-r71.md`;
+- **S435** `…landing-kill-credit-real-children-r70.md` → `…,corpus/knowledge/kill-credit-exit-disagreement-r71.md`;
+- **S438** `corpus/lessons/round-69.md,corpus/knowledge/gate-guard-dominance-r69.md` → `…,corpus/knowledge/guard-carrier-shapes-r71.md`;
+- **S439** `…guard-carrier-shapes-r70.md,corpus/lessons/round-70.md` → `…,corpus/knowledge/guard-carrier-shapes-r71.md`;
+- **S441** `…landing-kill-credit-real-children-r70.md,corpus/lessons/round-70.md` → `…,corpus/knowledge/kill-credit-exit-disagreement-r71.md`.
+
+No `status` or `recheck` cell changed anywhere. The registry diff is +2 rows (378 → 380) plus
+those five used-by appends; the used-by leg runs `missing=0` at the landing tip.
 
 ## Wave findings
 
