@@ -7,7 +7,7 @@ frozen declaration: `.ufo/waves/round-70/claims-declaration-r70.md`, `bc18399b40
 control set: `.ufo/waves/round-70/controls/c2-controls-r70.json`, sha256
 `29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff` (17 cases)
 pre-freeze baseline: `.ufo/waves/round-70/control-baseline-r70.txt`
-measured content: `6a25e86509c3938971befd913b47daf8c7b3691d` (C2 classifier repaired after review;
+measured content: `3d28f92a819b84e2004ef1301f9303f81ad497ab` (C2 classifier repaired after review;
 C1's counter byte-identical to its `5adba5a9` form); record tip `f754347a` and the commits after it
 
 ## Outcome and boundaries

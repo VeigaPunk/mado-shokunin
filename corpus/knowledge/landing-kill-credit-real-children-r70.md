@@ -71,7 +71,7 @@ behaviour from *that clause's own effect*:
 | `crash` | the lane exits before reporting | 2 | none | `fail` | `pass` ✘ | `fail` ✔ |
 | `garbage` | the lane prints an unparseable summary | 1 | `??? assertions passed` | `fail` | `pass` ✘ | `fail` ✔ |
 
-Measured at `6a25e86509c3938971befd913b47daf8c7b3691d` (the counter is byte-identical to its
+Measured at `3d28f92a819b84e2004ef1301f9303f81ad497ab` (the counter is byte-identical to its
 `5adba5a9` form):
 `MADO_R70_REAL_CHILDREN: cases=3 correct=3 base_correct=1 verdict=TARGET_MET` rc 0
 (`.ufo/waves/round-70/measurement-r70.txt`). The fixture's lane file is

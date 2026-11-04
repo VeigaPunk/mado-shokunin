@@ -3817,7 +3817,7 @@ Frozen declaration: `.ufo/waves/round-70/claims-declaration-r70.md`, landed
 `bc18399b409a6390a6c6e8831bf9ad2dacbbf189`; base `b37a5aec4ea03f2223d8e09dd5d386d055c24179`.
 Frozen control set: `.ufo/waves/round-70/controls/c2-controls-r70.json` (17 cases, sha256
 `29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff`). Measured content for both claims:
-`6a25e86509c3938971befd913b47daf8c7b3691d` (receipt `.ufo/waves/round-70/measurement-r70.txt`; the C1 counter is
+`3d28f92a819b84e2004ef1301f9303f81ad497ab` (receipt `.ufo/waves/round-70/measurement-r70.txt`; the C1 counter is
 byte-identical to its `5adba5a9` form and the C2 classifier carries the reviewer-driven repair); the
 receipt-bearing tip is `71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab` (ledger rows and wave evidence). Axis
 posture at round start: every published finite sub-axis at its measured maximum (navigation 81/81,
@@ -3860,6 +3860,40 @@ rather than smoothed.
 The claim predicates are unchanged: C1's contract line still reads `cases=3 correct=3 base_correct=1`,
 and C2's frozen set still carries `controls=17/17 base_controls=13/17` (the repair only rejects more
 inputs, and the frozen 17 score identically before and after).
+
+### Errata against the frozen declaration (round 70; append-only)
+
+The declaration `.ufo/waves/round-70/claims-declaration-r70.md` is frozen and is not edited; these
+corrections are recorded here instead. None of them changes a predicate, a target, a counter or a kill
+rule.
+
+- **E1 (B7): the seat count is 14, not 13.** Declaration `:6` says "One v1 wave of 13 seats"; the built
+  wave carries **14** seats (`w1-spec.json`, `w1-dispatch.json`: `spawn=14`), with roles executor 4,
+  scribe 3, scout 2, reviewer 2, critic 1, mutation-tester 1, connector 1 (attack share 4/14 = 28.6 %,
+  at or above the 25 % floor). The declaration was written before the item list closed.
+- **E2 (B2): the declared harm-watch command needs explicit `--citecheck-paths`.** The literal form
+  `quality/landing-counters.sh --round 69` defaults to `.ufo/waves/round-69/receipts`, a directory no
+  round ever committed, so it exits 2 as a *setup* error, not a leg result. With explicit committed
+  paths the instrument is GREEN once the three new instruments carry ledger rows (`71caa8b7`); before
+  those rows it is RED on `ledger=1`, which is the round's own working state, not a harm. The final
+  run at the round tip is recorded in `.ufo/waves/round-70/harm-watch-r70.txt` with its argv.
+- **E3 (B3): the C2 do-nothing control is the r69 *classifier*, not the r69 counter's CLI.** The r69
+  counter pins the r69 control-file digest and refuses the 17-case file (rc 2); the 13/17 is produced
+  by loading `c2-r69-guard-dominance.py`'s `classify` (the round-70 counter's `base_classify` leg, and
+  the pre-freeze receipt's `runpy` shim). The receipt names that vehicle.
+- **E4 (B4): C1's declared source was substituted pre-data.** The declaration named CPython
+  `Doc/library/subprocess.rst` @ `v3.14.8` and enumerated "a usage error, a signal death, a missing
+  program". That URL is S108's bytes (same 61,603 B) and its row is scoped to the `args` binding; the
+  "missing program" sentence is under `Popen`'s versionchanged note, not the `returncode` paragraph,
+  and "usage error" appears in neither. The adopted ground is S441 (the rendered 3.14 page's
+  `CompletedProcess.returncode`: 0 = ran successfully, negative = signal) plus held S435 (the
+  multi-cause vocabulary). The counter, target and kill rule are unchanged.
+- **E5 (B5): C2's two sourced sentences sit in two documents.** `expressions.rst` grounds `**`
+  (S439); the subscript-evaluation sentence is `simple_stmts.rst:190-192` (S440), not
+  `expressions.rst`. Both rows are committed and both are cited with locators.
+- **E6 (B6): one printed evidence line was mislabelled** ("the round-68 rule must miss the target"
+  while the classifier is the round-69 one). Corrected to "the held round-69 rule" in
+  `3d28f92a`; the contract line, verdict and counts are unchanged.
 
 ### Capability demonstrated
 

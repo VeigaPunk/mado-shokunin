@@ -60,7 +60,7 @@ cases:
 
 Measured: `population=20 readers=13 guarded=13 unguarded=0 controls=17/17
 base_controls=13/17 verdict=TARGET_MET` at
-`6a25e86509c3938971befd913b47daf8c7b3691d` (`.ufo/waves/round-70/measurement-r70.txt`). **After review** (`w1/R70RevC2.md` blockers 1-2) the implementation was repaired against this same rule - the attribute carrier now requires a store line before the call with no plain assignment to the same dotted attribute in between, and a module string constant counts only when the store's scope does not rebind it. The red-before/green-after is `.ufo/waves/round-70/c2-classifier-repair-r70.txt` (prefix `(True, True)` -> postfix `(True, False)` on all three attack cases), the frozen 17 score identically before and after, and the five attack cases are pinned in the counter's selftest (54/54).
+`3d28f92a819b84e2004ef1301f9303f81ad497ab` (`.ufo/waves/round-70/measurement-r70.txt`). **After review** (`w1/R70RevC2.md` blockers 1-2) the implementation was repaired against this same rule - the attribute carrier now requires a store line before the call with no plain assignment to the same dotted attribute in between, and a module string constant counts only when the store's scope does not rebind it. The red-before/green-after is `.ufo/waves/round-70/c2-classifier-repair-r70.txt` (prefix `(True, True)` -> postfix `(True, False)` on all three attack cases), the frozen 17 score identically before and after, and the five attack cases are pinned in the counter's selftest (54/54).
 
 ## Pins
 
