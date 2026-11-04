@@ -1,0 +1,19 @@
+# Round-67 C2 derived baseline: the candidate harness run at the frozen pre-r67 base (critic B6)
+$ python3 -I quality/counters/c2-r67-landing-controls.py --repo . --rev 0b28ffb4baac9586566d246c3f0986b2bb650a33 --scratch-root <scratch>
+# exit=1
+MADO_R67_EXTRACT path=quality/landing-counters.sh bytes=14340 sha256=e4767ec74f1ff481a826573c7880f6107734ad31bd3b085e0eaba45415d82c4f
+MADO_R67_EXTRACT path=quality/counters/c3-r56-used-by.py bytes=21287 sha256=68b34e3c7c1d61e7f5f3da36a0f8ab36ebe3c54b1b756cb18c740e0aa7c1635b
+MADO_R67_EXTRACT path=quality/check-tool-ledger.py bytes=40596 sha256=b65042e82b30f162909695f2f2560b13a8cb690a5dbfe0c116857bc4fb339991
+MADO_R67_EXTRACT path=tools/mado-receipt-citecheck.py bytes=10760 sha256=414ca759232a3d31451f86060f4b0ba3382dd151f4bffe797793cb2ced5cee11
+MADO_R67_EXTRACT rev=0b28ffb4baac9586566d246c3f0986b2bb650a33 files=4
+MADO_R67_SELFTEST instrument=quality/landing-counters.sh rc=0 assertions=58/58
+MADO_R67_MUTANT M-Z path=quality/landing-counters.sh clause_count=1 recipe=clause-delete removed='[ "$citations" -gt 0 ] && ' from_sha256=e4767ec74f1ff481a826573c7880f6107734ad31bd3b085e0eaba45415d82c4f rc=0 failed_assertions=0 assertions=58/58 killed=no sha256=8ab304938e12081b9ecca793f928aa4c079078da4b48f7958582d62d090abe69
+MADO_R67_GUARDS citecheck=0 usedby=0 ledger=0
+MADO_R67_R_CONTROL fixture_rev=788363360bf8b39f438e5c6a93522852bf61b319 real_tree=a82978be5fa20eb69fee0a6fbe51a99c37bc6a3e forged_tree=1b37d99db3872339180cf844ef9a05a3737bfb71 forged_visible=yes guarded_visible=no
+MADO_R67_CHILD_ENV no_replace_objects=absent keys=GIT_CONFIG_GLOBAL,GIT_CONFIG_NOSYSTEM,GIT_CONFIG_SYSTEM,GIT_TERMINAL_PROMPT,HOME,LC_ALL,PATH,TMPDIR GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_SYSTEM=/dev/null GIT_TERMINAL_PROMPT=0 HOME=/fast/scratch/hyaku/mado-r67/measure/c2base/r67-c2/home LC_ALL=C PATH=/home/vgpnk/.local/share/mise/installs/node/latest/bin...(22 dirs) TMPDIR=/fast/scratch/hyaku/mado-r67/measure/c2base/r67-c2/home
+MADO_R67_R_CHILD role=unmutated rc=0 verdict=TARGET_MET missing=0 control=red
+MADO_R67_MUTANT M-R path=tools/mado-receipt-citecheck.py guard_count=0 recipe=none removed_line=none from_sha256=414ca759232a3d31451f86060f4b0ba3382dd151f4bffe797793cb2ced5cee11 rc=- verdict=none missing=- forged_credit=no killed=no sha256=absent note=guard absent at rev (count=0): recipe not applicable
+MADO_R67_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 baseline=0/2 verdict=TARGET_MISSED rev=0b28ffb4baac9586566d246c3f0986b2bb650a33
+
+# The committed pre-freeze scorer receipt remains control-baseline-r67.txt; the killed=0/2 there
+# is a declaration constant, and this run is the derived measurement: harness at base -> killed=0/2 rc 1.

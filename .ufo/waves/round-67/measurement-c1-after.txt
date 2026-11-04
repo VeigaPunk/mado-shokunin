@@ -1,0 +1,36 @@
+# Round-67 C1 measured after-state at the record landing caf131d6be04dd2ccc742636625c1ce196610522
+$ python3 -I quality/counters/c1-r67-register.py --selftest
+# exit=0
+selftest genuine: PASS
+selftest duplicate-heading: PASS
+selftest row-without-receipt: PASS
+selftest file-plane-only: PASS
+selftest unreferenced-live-object: PASS
+selftest live-in-state-cell-only: PASS
+selftest live-plus-unresolved-same-row: PASS
+selftest wrong-heading-date: PASS
+selftest seven-rows: PASS
+selftest nine-rows: PASS
+selftest live-only-in-heading: PASS
+selftest missing-fourth-cell: PASS
+selftest duplicate-group: PASS
+selftest unresolved-receipt: PASS
+selftest probe-cell-unresolved: PASS
+selftest live-bytes-without-clean-line: PASS
+MADO_R67_REGISTER_SELFTEST: PASS cases=16 failed=0
+
+$ python3 -I quality/counters/c1-r67-register.py --repo . --rev caf131d6be04dd2ccc742636625c1ce196610522 --controls .ufo/waves/round-67/controls/c1-controls.json --scratch-root <scratch>
+# exit=0
+C1_R67 case=genuine verdict=accept expect=accept correct=yes headings=1 rows=8 groups=8/8 live-cited=yes
+C1_R67 case=duplicate-heading verdict=reject expect=reject correct=yes headings=2 rows=8 groups=8/8 live-cited=yes
+C1_R67 case=row-without-receipt verdict=reject expect=reject correct=yes headings=1 rows=8 groups=8/8 live-cited=yes
+C1_R67 case=file-plane-only verdict=reject expect=reject correct=yes headings=1 rows=8 groups=8/8 live-cited=no
+C1_R67 case=unreferenced-live-object verdict=reject expect=reject correct=yes headings=1 rows=8 groups=8/8 live-cited=no
+C1_R67 case=live-in-state-cell-only verdict=reject expect=reject correct=yes headings=1 rows=8 groups=8/8 live-cited=no
+MADO_R67_REGISTER: register=accept controls=6/6 headings=1 rows=8 groups=8/8 live-cited=yes verdict=TARGET_MET rev=caf131d6be04dd2ccc742636625c1ce196610522
+C1_R67: detail=case:duplicate-heading:heading-count=2 expected=1
+C1_R67: detail=case:row-without-receipt:row-receipt-missing='hypr plane'
+C1_R67: detail=case:file-plane-only:exact-live-line-missing=.ufo/waves/round-65/receipts/gate-live-r65.txt
+C1_R67: detail=case:file-plane-only:live-path-not-in-receipt-cell=.ufo/waves/round-65/receipts/gate-live-r65.txt
+C1_R67: detail=case:unreferenced-live-object:live-path-not-in-receipt-cell=.ufo/waves/round-65/receipts/gate-live-r65.txt
+C1_R67: detail=case:live-in-state-cell-only:live-path-not-in-receipt-cell=.ufo/waves/round-65/receipts/gate-live-r65.txt

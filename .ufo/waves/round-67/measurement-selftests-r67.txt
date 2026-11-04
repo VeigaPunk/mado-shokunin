@@ -1,0 +1,106 @@
+# Round-67 hermetic selftests at the record landing caf131d6be04dd2ccc742636625c1ce196610522
+$ python3 -I quality/counters/c1-r67-register.py --selftest
+# exit=0
+selftest genuine: PASS
+selftest duplicate-heading: PASS
+selftest row-without-receipt: PASS
+selftest file-plane-only: PASS
+selftest unreferenced-live-object: PASS
+selftest live-in-state-cell-only: PASS
+selftest live-plus-unresolved-same-row: PASS
+selftest wrong-heading-date: PASS
+selftest seven-rows: PASS
+selftest nine-rows: PASS
+selftest live-only-in-heading: PASS
+selftest missing-fourth-cell: PASS
+selftest duplicate-group: PASS
+selftest unresolved-receipt: PASS
+selftest probe-cell-unresolved: PASS
+selftest live-bytes-without-clean-line: PASS
+MADO_R67_REGISTER_SELFTEST: PASS cases=16 failed=0
+
+$ python3 -I quality/counters/c2-r67-landing-controls.py --selftest --scratch-root <scratch>
+# exit=0
+MADO_R67_LANDING_CONTROLS_SELFTEST: 47/47 assertions passed
+
+$ bash quality/landing-counters.sh --selftest --scratch-root <scratch>
+# exit=0
+SELFTEST ok 1: none green rc
+SELFTEST ok 2: none green all execution witnesses
+SELFTEST ok 3: nav green rc
+SELFTEST ok 4: nav green all execution witnesses
+SELFTEST ok 5: nav red rc
+SELFTEST ok 6: nav red all execution witnesses
+SELFTEST ok 7: nav crash rc
+SELFTEST ok 8: nav crash all execution witnesses
+SELFTEST ok 9: nav skip rc
+SELFTEST ok 10: nav skip all execution witnesses
+SELFTEST ok 11: nav duplicate rc
+SELFTEST ok 12: nav duplicate all execution witnesses
+SELFTEST ok 13: usedby green rc
+SELFTEST ok 14: usedby green all execution witnesses
+SELFTEST ok 15: usedby red rc
+SELFTEST ok 16: usedby red all execution witnesses
+SELFTEST ok 17: usedby crash rc
+SELFTEST ok 18: usedby crash all execution witnesses
+SELFTEST ok 19: usedby skip rc
+SELFTEST ok 20: usedby skip all execution witnesses
+SELFTEST ok 21: usedby duplicate rc
+SELFTEST ok 22: usedby duplicate all execution witnesses
+SELFTEST ok 23: ledger green rc
+SELFTEST ok 24: ledger green all execution witnesses
+SELFTEST ok 25: ledger red rc
+SELFTEST ok 26: ledger red all execution witnesses
+SELFTEST ok 27: ledger crash rc
+SELFTEST ok 28: ledger crash all execution witnesses
+SELFTEST ok 29: ledger skip rc
+SELFTEST ok 30: ledger skip all execution witnesses
+SELFTEST ok 31: ledger duplicate rc
+SELFTEST ok 32: ledger duplicate all execution witnesses
+SELFTEST ok 33: citecheck green rc
+SELFTEST ok 34: citecheck green all execution witnesses
+SELFTEST ok 35: citecheck red rc
+SELFTEST ok 36: citecheck red all execution witnesses
+SELFTEST ok 37: citecheck crash rc
+SELFTEST ok 38: citecheck crash all execution witnesses
+SELFTEST ok 39: citecheck skip rc
+SELFTEST ok 40: citecheck skip all execution witnesses
+SELFTEST ok 41: citecheck duplicate rc
+SELFTEST ok 42: citecheck duplicate all execution witnesses
+SELFTEST ok 43: citecheck zero citations refused
+SELFTEST ok 44: citecheck zero citations all execution witnesses
+SELFTEST ok 45: zero-citation guard occurs exactly once
+SELFTEST ok 46: zero-citation guard sits inside marker_valid
+SELFTEST ok 47: missing sibling
+SELFTEST ok 48: missing sibling emits ERROR classification
+SELFTEST ok 49: round required on clean fixture
+SELFTEST ok 50: round-65 dirty decoy does not select scope
+SELFTEST ok 51: round-66 dirty selected scope
+SELFTEST ok 52: explicit paths dirty guard
+SELFTEST ok 53: all inherited Git steering isolated
+SELFTEST ok 54: round required
+SELFTEST ok 55: revision required
+SELFTEST ok 56: scratch rejects /tmp
+SELFTEST ok 57: scratch rejects /var/tmp
+SELFTEST ok 58: scratch rejects /dev/shm
+SELFTEST ok 59: symlink scratch parent refused
+SELFTEST ok 60: symlink escape creates nothing
+SELFTEST ok 61: empty population genuine red
+SELFTEST ok 62: empty population summary RED
+MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed
+
+$ python3 -I quality/check-tool-ledger.py --repo . --rev caf131d6be04dd2ccc742636625c1ce196610522
+# exit=0
+LEDGER: population=110 ledger_rows=110 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=caf131d6be04dd2ccc742636625c1ce196610522
+
+$ python3 -I quality/counters/c3-r56-used-by.py --selftest --repo . --rev caf131d6be04dd2ccc742636625c1ce196610522 --work <scratch>
+# exit=0
+MADO_USED_BY_SELFTEST: 16/16 assertions passed
+
+$ python3 -I tools/mado-receipt-citecheck.py --selftest --scratch-root <scratch>
+# exit=0
+MADO_CITECHECK_SELFTEST: 12/12 assertions passed
+
+$ bash tools/mado-verify.sh --selftest
+# exit=0
+MADO_SELFTEST: 460/460 assertions passed

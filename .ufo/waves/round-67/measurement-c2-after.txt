@@ -1,0 +1,20 @@
+# Round-67 C2 measured after-state at the record landing caf131d6be04dd2ccc742636625c1ce196610522
+$ python3 -I quality/counters/c2-r67-landing-controls.py --selftest --scratch-root <scratch>
+# exit=0
+MADO_R67_LANDING_CONTROLS_SELFTEST: 47/47 assertions passed
+
+$ python3 -I quality/counters/c2-r67-landing-controls.py --repo . --rev caf131d6be04dd2ccc742636625c1ce196610522 --scratch-root <scratch>
+# exit=0
+MADO_R67_EXTRACT path=quality/landing-counters.sh bytes=15658 sha256=4378fd8c278126111ad6d970ac20215c170238ffe1a796c5c7d03c9e5b3b93a9
+MADO_R67_EXTRACT path=quality/counters/c3-r56-used-by.py bytes=21326 sha256=f54423eb8ab24eeb5a8cd51f2d38408fe02054797ba841c3940cde28d3903b3f
+MADO_R67_EXTRACT path=quality/check-tool-ledger.py bytes=40636 sha256=1c96c4cfd69ad97fbfc9174c9fe4d27b1d157df69cbcbc2451067f1374febdfb
+MADO_R67_EXTRACT path=tools/mado-receipt-citecheck.py bytes=10822 sha256=3b61fa42b77e9c8065ab05668247c330b537910b06f7209caba7afbd0b102ad0
+MADO_R67_EXTRACT rev=caf131d6be04dd2ccc742636625c1ce196610522 files=4
+MADO_R67_SELFTEST instrument=quality/landing-counters.sh rc=0 assertions=62/62
+MADO_R67_MUTANT M-Z path=quality/landing-counters.sh clause_count=1 recipe=clause-delete removed='[ "$citations" -gt 0 ] && ' from_sha256=4378fd8c278126111ad6d970ac20215c170238ffe1a796c5c7d03c9e5b3b93a9 rc=1 failed_assertions=3 assertions=59/62 killed=yes sha256=a6255a00262cc2f1790f813927dd5fa8ed9910e74d1ec19a8662e88df0fe0118
+MADO_R67_GUARDS citecheck=1 usedby=1 ledger=1
+MADO_R67_R_CONTROL fixture_rev=72ed5529d69b5ecc4fb2338f6d93a3e1bf416c5e real_tree=a82978be5fa20eb69fee0a6fbe51a99c37bc6a3e forged_tree=1b37d99db3872339180cf844ef9a05a3737bfb71 forged_visible=yes guarded_visible=no
+MADO_R67_CHILD_ENV no_replace_objects=absent keys=GIT_CONFIG_GLOBAL,GIT_CONFIG_NOSYSTEM,GIT_CONFIG_SYSTEM,GIT_TERMINAL_PROMPT,HOME,LC_ALL,PATH,TMPDIR GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_SYSTEM=/dev/null GIT_TERMINAL_PROMPT=0 HOME=/fast/scratch/hyaku/mado-r67/measureB/c2/r67-c2/home LC_ALL=C PATH=/home/vgpnk/.local/share/mise/installs/node/latest/bin...(22 dirs) TMPDIR=/fast/scratch/hyaku/mado-r67/measureB/c2/r67-c2/home
+MADO_R67_R_CHILD role=unmutated rc=1 verdict=TARGET_MISSED missing=1 control=green
+MADO_R67_MUTANT M-R path=tools/mado-receipt-citecheck.py guard_count=1 recipe=line-delete removed_line='            env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"),\n' from_sha256=3b61fa42b77e9c8065ab05668247c330b537910b06f7209caba7afbd0b102ad0 rc=0 verdict=TARGET_MET missing=0 forged_credit=yes killed=yes sha256=414ca759232a3d31451f86060f4b0ba3382dd151f4bffe797793cb2ced5cee11
+MADO_R67_LANDING_CONTROLS: selftest=0 mz=pass mr=pass killed=2/2 baseline=0/2 verdict=TARGET_MET rev=caf131d6be04dd2ccc742636625c1ce196610522
