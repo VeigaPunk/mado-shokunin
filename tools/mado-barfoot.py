@@ -82,9 +82,30 @@ import re
 import stat
 import sys
 
-VERSION = "r79-v1"
+VERSION = "r80-v1"
 
 MAX_BYTES = 1048576
+
+# zwlr_layer_surface_v1 anchor bits: top 1, bottom 2, left 4, right 8.
+ANCHOR = {"top": 1, "bottom": 2, "left": 4, "right": 8}
+
+# IHyprRenderer::applyExclusive walks these four rules in this order and stops at the
+# first match; the match is (exclusiveEdge == singular) or (anchor == singular) or
+# (anchor == triplet) and zone + margin(edge) > 0 (Renderer.cpp:2541-2586).
+EDGE_RULES = (
+    ("top", ANCHOR["top"], ANCHOR["left"] | ANCHOR["right"] | ANCHOR["top"]),
+    ("bottom", ANCHOR["bottom"], ANCHOR["left"] | ANCHOR["right"] | ANCHOR["bottom"]),
+    ("left", ANCHOR["left"], ANCHOR["left"] | ANCHOR["top"] | ANCHOR["bottom"]),
+    ("right", ANCHOR["right"], ANCHOR["right"] | ANCHOR["top"] | ANCHOR["bottom"]),
+)
+
+# The triplet each position anchors by default (gtk-layer-shell's set_anchor set).
+POSITION_ANCHORS = {
+    "top": ("top", "left", "right"),
+    "bottom": ("bottom", "left", "right"),
+    "left": ("left", "top", "bottom"),
+    "right": ("right", "top", "bottom"),
+}
 
 LEVEL = {"background": 0, "bottom": 1, "top": 2, "overlay": 3}
 POSITIONS = ("top", "bottom", "left", "right")
@@ -460,6 +481,326 @@ def edge_extent(bar, box, usable):
     return (usable["x"] + usable["w"]) - box["x"]
 
 
+def anchor_mask(names):
+    """The zwlr anchor mask for a list of edge names."""
+    mask = 0
+    for name in names:
+        mask |= ANCHOR[name]
+    return mask
+
+
+def arranged_box(spec, bounds):
+    """IHyprRenderer::arrangeLayerArray's box arithmetic against a bounds box
+    (Renderer.cpp:2601-2660): desired size, anchors, then margins."""
+    m = spec["margins"]
+    anchor = spec["anchor"]
+    both_h = bool(anchor & ANCHOR["left"]) and bool(anchor & ANCHOR["right"])
+    both_v = bool(anchor & ANCHOR["top"]) and bool(anchor & ANCHOR["bottom"])
+    w, h = spec["width"], spec["height"]
+    if w == 0:
+        x = bounds["x"]
+    elif both_h:
+        x = bounds["x"] + (bounds["w"] - w + 1) // 2  # Hyprland centres in doubles, rounds once
+    elif anchor & ANCHOR["left"]:
+        x = bounds["x"]
+    elif anchor & ANCHOR["right"]:
+        x = bounds["x"] + bounds["w"] - w
+    else:
+        x = bounds["x"] + (bounds["w"] - w + 1) // 2
+    if h == 0:
+        y = bounds["y"]
+    elif both_v:
+        y = bounds["y"] + (bounds["h"] - h + 1) // 2
+    elif anchor & ANCHOR["top"]:
+        y = bounds["y"]
+    elif anchor & ANCHOR["bottom"]:
+        y = bounds["y"] + bounds["h"] - h
+    else:
+        y = bounds["y"] + (bounds["h"] - h + 1) // 2
+    if w == 0:
+        x += m["left"]
+        w = bounds["w"] - m["left"] - m["right"]
+    elif both_h:
+        pass  # both horizontal anchors: margins are not applied
+    elif anchor & ANCHOR["left"]:
+        x += m["left"]
+    elif anchor & ANCHOR["right"]:
+        x -= m["right"]
+    if h == 0:
+        y += m["top"]
+        h = bounds["h"] - m["top"] - m["bottom"]
+    elif both_v:
+        pass
+    elif anchor & ANCHOR["top"]:
+        y += m["top"]
+    elif anchor & ANCHOR["bottom"]:
+        y -= m["bottom"]
+    return {"x": x, "y": y, "w": w, "h": h}
+
+
+def surface_zone(spec):
+    """The zone the surface requests from the compositor (`exclusive` in the schema)."""
+    declared = spec["exclusive"]
+    if declared == "auto":
+        size = spec["height"] if spec["position"] in ("top", "bottom") else spec["width"]
+        return size + spec["margins"][OPPOSITE_EDGE[spec["position"]]]
+    return declared
+
+
+def parse_surfaces(raw):
+    """The `--surfaces` declaration: a list (or {"surfaces": [...]}) of layer surfaces."""
+    data = load_json(raw, "surfaces")
+    if isinstance(data, dict):
+        data = data.get("surfaces")
+    if not isinstance(data, list):
+        raise Setup("surfaces declaration is not a list")
+    specs = []
+    for index, item in enumerate(data):
+        if not isinstance(item, dict):
+            raise Setup("surface %d is not an object" % index)
+        namespace = item.get("namespace")
+        if not isinstance(namespace, str) or not namespace:
+            raise Setup("surface %d has no namespace" % index)
+        level = item.get("level")
+        if not isinstance(level, int) or isinstance(level, bool) or not 0 <= level <= 3:
+            raise Setup("surface %r level is outside 0-3" % namespace)
+        position = item.get("position", "top")
+        if position not in POSITIONS:
+            raise Setup("surface %r position %r is outside top/bottom/left/right"
+                        % (namespace, position))
+        names = item.get("anchor")
+        if names is None:
+            names = list(POSITION_ANCHORS[position])
+        if not isinstance(names, list) or not names or any(n not in ANCHOR for n in names):
+            raise Setup("surface %r anchor is not a non-empty list of top/bottom/left/right"
+                        % namespace)
+        if len(set(names)) != len(names):
+            raise Setup("surface %r repeats an anchor" % namespace)
+        exclusive = item.get("exclusive", "auto")
+        if exclusive != "auto" and (not isinstance(exclusive, int)
+                                    or isinstance(exclusive, bool)):
+            raise Setup("surface %r exclusive is neither an integer nor \"auto\"" % namespace)
+        edge = item.get("exclusiveEdge")
+        if edge is not None and edge not in ANCHOR:
+            raise Setup("surface %r exclusiveEdge is not an edge name" % namespace)
+        if edge is not None and edge not in names:
+            # the protocol errors when the exclusive edge does not align with the anchor
+            raise Unmodelled("surface %r declares exclusiveEdge %r outside its anchor set"
+                             % (namespace, edge))
+        margins = {}
+        declared = item.get("margins", {})
+        if not isinstance(declared, dict):
+            raise Setup("surface %r margins is not an object" % namespace)
+        for side in MARGIN_SIDES:
+            value = declared.get(side, 0)
+            if not isinstance(value, int) or isinstance(value, bool):
+                raise Setup("surface %r margin %r is not an integer" % (namespace, side))
+            margins[side] = value
+        order = item.get("order", 0)
+        if not isinstance(order, int) or isinstance(order, bool):
+            raise Setup("surface %r order is not an integer" % namespace)
+        for key, kind in (("height", "height"), ("width", "width")):
+            value = item.get(key, 0)
+            if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+                raise Setup("surface %r %s is not a non-negative integer" % (namespace, kind))
+        specs.append({
+            "namespace": namespace,
+            "level": level,
+            "position": position,
+            "anchor": anchor_mask(names),
+            "anchor_names": list(names),
+            "height": item.get("height", 0),
+            "width": item.get("width", 0),
+            "margins": margins,
+            "exclusive": exclusive,
+            "exclusiveEdge": ANCHOR[edge] if edge else 0,
+            "order": order,
+        })
+    return specs
+
+
+def apply_exclusive(usable, spec, zone):
+    """IHyprRenderer::applyExclusive (Renderer.cpp:2529-2586): shrink the running usable
+    box on the first matching edge; returns the edge it hit, or None."""
+    if zone <= 0:
+        return None
+    for edge, singular, triplet in EDGE_RULES:
+        if ((spec["exclusiveEdge"] == singular or spec["anchor"] == singular
+             or spec["anchor"] == triplet) and zone + spec["margins"][edge] > 0):
+            amount = zone + spec["margins"][edge]
+            if edge == "top":
+                usable["y"] += amount
+                usable["h"] -= amount
+            elif edge == "bottom":
+                usable["h"] -= amount
+            elif edge == "left":
+                usable["x"] += amount
+                usable["w"] -= amount
+            else:
+                usable["w"] -= amount
+            return edge
+    return None
+
+
+def contains_box(parent, child):
+    """CBox::containsPoint at both child corners (ReservedArea.cpp:23-25)."""
+    return (child["x"] >= parent["x"] and child["y"] >= parent["y"]
+            and child["x"] + child["w"] <= parent["x"] + parent["w"]
+            and child["y"] + child["h"] <= parent["y"] + parent["h"])
+
+
+def evaluate_composition(config, layers, monitors, monitor, static, static_source, extras):
+    """The composition model: every declared layer surface is arranged in level order
+    against the *running* usable box; each exclusive surface's shrink is attributed."""
+    if monitor is None:
+        if len(monitors) != 1:
+            raise Setup("--monitor is required when the monitors reply carries %d entries"
+                        % len(monitors))
+        monitor = next(iter(monitors))
+    if monitor not in monitors:
+        raise Setup("monitor %r is not in the monitors reply" % monitor)
+    if monitor not in layers:
+        raise Setup("monitor %r is not in the layers reply" % monitor)
+    mon = monitors[monitor]
+    scale, transform = mon.get("scale"), mon.get("transform")
+    if scale not in (1, 1.0) or transform not in (0, 0.0):
+        raise Unmodelled("monitor %s has scale/transform %r/%r; the reply carries pixel size "
+                         "and the layer box is logical, so this join is not modelled"
+                         % (monitor, scale, transform))
+    bar = declared_bar(config)
+    static = dict(static or ZERO_STATIC)
+    if not output_matches(config, monitor):
+        rows = [("RESULT", "monitor=%s box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR"
+                 % monitor)]
+        return "NO_BAR", 3, rows
+    mon_w, mon_h = mon["width"], mon["height"]
+    original = {"x": mon.get("x", 0) + static["left"], "y": mon.get("y", 0) + static["top"],
+                "w": mon_w - static["left"] - static["right"],
+                "h": mon_h - static["top"] - static["bottom"]}
+    if original["w"] <= 0 or original["h"] <= 0:
+        raise Unmodelled("the static reserved area leaves no usable box (%dx%d)"
+                         % (original["w"], original["h"]))
+    full = {"x": mon.get("x", 0), "y": mon.get("y", 0), "w": mon_w, "h": mon_h}
+    usable = dict(original)
+
+    bar_spec = {
+        "namespace": bar["namespace"],
+        "level": bar["level"],
+        "position": bar["position"],
+        "anchor": anchor_mask(POSITION_ANCHORS[bar["position"]]),
+        "anchor_names": list(POSITION_ANCHORS[bar["position"]]),
+        "height": bar["height"],
+        "width": bar["width"],
+        "margins": bar["margins"],
+        "exclusive": "auto" if bar["exclusive"] else 0,
+        "exclusiveEdge": 0,
+        "order": 0,
+    }
+    surfaces = [bar_spec] + [dict(s) for s in extras]
+    order = sorted(range(len(surfaces)),
+                   key=lambda i: (surfaces[i]["level"], -surfaces[i]["order"], i))
+    rows = [("CONFIG", "pos=%s layer=%s level=%d ns=%s height=%d width=%d margins=%d,%d,%d,%d "
+             "exclusive=%s surfaces=%d"
+             % (bar["position"], bar["layer"], bar["level"], bar["namespace"], bar["height"],
+                bar["width"], bar["margins"]["top"], bar["margins"]["right"],
+                bar["margins"]["bottom"], bar["margins"]["left"],
+                "true" if bar["exclusive"] else "false", len(surfaces))),
+            ("STATIC", "monitor=%s top=%d right=%d bottom=%d left=%d source=%s"
+             % (monitor, static["top"], static["right"], static["bottom"], static["left"],
+                static_source))]
+
+    boxes = []
+    attribution = {}   # (namespace, edge) -> amount
+    invalid_empty = []
+    sequence = [i for want in (True, False) for i in order
+                if (surface_zone(surfaces[i]) > 0) == want]
+    for index in sequence:
+        spec = surfaces[index]
+        zone = surface_zone(spec)
+        if zone == -1:
+            bounds = dict(full)
+        else:
+            bounds = dict(usable)
+        box = arranged_box(spec, bounds)
+        if box["w"] <= 0 or box["h"] <= 0:
+            # the compositor logs and skips the surface: no box, no zone applied
+            rows.append(("SKIP", "monitor=%s level=%d ns=%s box=%d,%d,%d,%d reason=empty"
+                         % (monitor, spec["level"], spec["namespace"], box["x"], box["y"],
+                            box["w"], box["h"])))
+            boxes.append("SKIP")
+            invalid_empty.append(spec["namespace"])
+            continue
+        rows.append(("DECL", "monitor=%s level=%d ns=%s box=%d,%d,%d,%d anchor=%s zone=%d"
+                     % (monitor, spec["level"], spec["namespace"], box["x"], box["y"],
+                        box["w"], box["h"], "+".join(spec["anchor_names"]), zone)))
+        live = find_layer(layers, monitor, spec["level"], spec["namespace"])
+        if live is None:
+            rows.append(("LIVE", "monitor=%s level=%d ns=%s entries=0"
+                         % (monitor, spec["level"], spec["namespace"])))
+            boxes.append("NO_LAYER")
+        else:
+            try:
+                live_box = {k: int(live[k]) for k in ("x", "y", "w", "h")}
+            except (KeyError, TypeError, ValueError):
+                raise Setup("a layers entry lacks integer x/y/w/h")
+            rows.append(("LIVE", "monitor=%s level=%d ns=%s box=%d,%d,%d,%d entries=1"
+                         % (monitor, spec["level"], spec["namespace"], live_box["x"],
+                            live_box["y"], live_box["w"], live_box["h"])))
+            boxes.append("MATCH" if live_box == box else "DIFFER")
+        if zone > 0:
+            edge = apply_exclusive(usable, spec, zone)
+            if edge is None:
+                rows.append(("ATTR", "monitor=%s level=%d ns=%s edge=none contribution=0"
+                             % (monitor, spec["level"], spec["namespace"])))
+            else:
+                amount = zone + spec["margins"][edge]
+                attribution[(spec["namespace"], edge)] = \
+                    attribution.get((spec["namespace"], edge), 0) + amount
+                rows.append(("ATTR", "monitor=%s level=%d ns=%s edge=%s contribution=%d box=%d,%d,%d,%d"
+                             % (monitor, spec["level"], spec["namespace"], edge, amount,
+                                box["x"], box["y"], box["w"], box["h"])))
+
+    ls_valid = (usable["w"] > 0 and usable["h"] > 0 and contains_box(original, usable))
+    if ls_valid:
+        ls = {"left": usable["x"] - original["x"], "top": usable["y"] - original["y"],
+              "right": (original["x"] + original["w"]) - (usable["x"] + usable["w"]),
+              "bottom": (original["y"] + original["h"]) - (usable["y"] + usable["h"])}
+    else:
+        ls = dict(ZERO_STATIC)
+    expected = {edge: static[edge] + ls[edge] for edge in POSITIONS}
+    attributed = {edge: static[edge] + sum(
+        amount for (namespace, hit), amount in attribution.items() if hit == edge)
+        for edge in POSITIONS}
+
+    edge = bar["position"]
+    band = mon["reserved"][RESERVED_INDEX[edge]]
+    if not bar["exclusive"] and not attribution:
+        reserved_verdict = "NOT_APPLIED"
+    elif band == expected[edge]:
+        reserved_verdict = "EQ"
+    elif band > expected[edge]:
+        reserved_verdict = "GT"
+    else:
+        reserved_verdict = "DIFFER"
+    bar_box = boxes[order.index(0)] if 0 in order else "NO_LAYER"
+    if bar_box == "DIFFER" or reserved_verdict == "DIFFER":
+        verdict, rc = "DIFFER", 1
+    elif any(state in ("DIFFER", "NO_LAYER") for state in boxes):
+        verdict, rc = "DIFFER", 1
+    else:
+        verdict, rc = "CLEAN", 0
+    vector = lambda area: "%d,%d,%d,%d" % (area["left"], area["top"], area["right"],
+                                           area["bottom"])
+    rows.append(("RESULT", "monitor=%s box=%s boxes=%s reserved=%s band=%d expected=%d "
+                 "attributed=%d gt=%s attr=%s ls=%s verdict=%s"
+                 % (monitor, bar_box, ",".join(boxes), reserved_verdict, band,
+                    expected[edge], attributed[edge],
+                    "%d,%d,%d,%d" % (mon["reserved"][0], mon["reserved"][1],
+                                     mon["reserved"][2], mon["reserved"][3]),
+                    vector(attributed), "VALID" if ls_valid else "INVALID", verdict)))
+    return verdict, rc, rows
+
+
 def parse_layers(raw):
     data = load_json(raw, "layers")
     if not isinstance(data, dict):
@@ -506,7 +847,11 @@ def find_layer(layers, monitor, level, namespace):
     return hits[0] if hits else None
 
 
-def evaluate(config, layers, monitors, monitor=None, static=None, static_source="none"):
+def evaluate(config, layers, monitors, monitor=None, static=None, static_source="none",
+             surfaces=None):
+    if surfaces:
+        return evaluate_composition(config, layers, monitors, monitor, static, static_source,
+                                    surfaces)
     bar = declared_bar(config)
     static = dict(static or ZERO_STATIC)
     if monitor is None:
@@ -885,6 +1230,119 @@ def selftest():
         except Setup:
             ok(True, "directory refused")
 
+    # --- r80: arranged_box reproduces declared_box on the bar's own specification grid ---
+    for pos in POSITIONS:
+        for width in (0, 120, 1200):
+            for height in (0, 26, 300):
+                for margin in (0, 4):
+                    if (pos in ("top", "bottom") and height == 0) or \
+                            (pos in ("left", "right") and width == 0):
+                        continue  # declared_box refuses the bar's dynamic band-axis size
+                    sides = dict((side, margin) for side in MARGIN_SIDES)
+                    bar = {"position": pos, "height": height, "width": width,
+                           "margins": sides}
+                    spec = {"position": pos, "anchor": anchor_mask(POSITION_ANCHORS[pos]),
+                            "height": height, "width": width, "margins": sides}
+                    ok(arranged_box(spec, {"x": 0, "y": 0, "w": 1920, "h": 1080})
+                       == declared_box(bar, 1920, 1080),
+                       "arranged_box = declared_box %s %dx%d m%d" % (pos, width, height,
+                                                                     margin))
+
+    def comp(config, level_entries, reserved, extras, static=None):
+        layers = {"M1": {"levels": dict((str(i), []) for i in range(4))}}
+        for level, entries in level_entries.items():
+            layers["M1"]["levels"][str(level)] = entries
+        mon = {"name": "M1", "width": 1000, "height": 800, "reserved": reserved,
+               "scale": 1, "transform": 0}
+        return evaluate(config, layers, {"M1": mon}, "M1", static, "rules",
+                        parse_surfaces(json.dumps(list(extras)).encode()))
+
+    def line(verdict_rows, prefix):
+        return [text for kind, text in verdict_rows if kind == prefix]
+
+    top = {"position": "top", "layer": "top", "height": 26}
+    waybar = {"namespace": "waybar", "x": 0, "y": 0, "w": 1000, "h": 26}
+    panel2 = {"namespace": "panel", "x": 0, "y": 26, "w": 1000, "h": 40}
+
+    # a later level is arranged against the box the earlier level already shrank
+    v, rc, rows = comp(top, {2: [waybar], 3: [panel2]}, [0, 66, 0, 0],
+                       [{"namespace": "panel", "level": 3, "height": 40}])
+    ok((v, rc) == ("CLEAN", 0) and any("attributed=66" in text and "boxes=MATCH,MATCH" in text
+                                       and "band=66 expected=66" in text
+                                       for text in line(rows, "RESULT")),
+       "overlay composes on top of the bar")
+    # ... and an earlier level moves the bar's own box
+    v, rc, rows = comp(top, {1: [{"namespace": "panel", "x": 0, "y": 0, "w": 1000, "h": 40}],
+                             2: [{"namespace": "waybar", "x": 0, "y": 40, "w": 1000, "h": 26}]},
+                       [0, 66, 0, 0],
+                       [{"namespace": "panel", "level": 1, "height": 40}])
+    ok((v, rc) == ("CLEAN", 0)
+       and any("ns=waybar box=0,40,1000,26" in text for text in line(rows, "DECL")),
+       "a lower level shifts the bar's box")
+    # a negative margin can cancel the zone: exclusive + margin must stay > 0
+    v, rc, rows = comp(top, {2: [waybar], 3: [{"namespace": "panel", "x": 0, "y": 14,
+                                               "w": 1000, "h": 100}]}, [0, 26, 0, 0],
+                       [{"namespace": "panel", "level": 3, "height": 100, "exclusive": 12,
+                         "margins": {"top": -12}}])
+    ok((v, rc) == ("CLEAN", 0)
+       and any("ns=panel edge=none contribution=0" in text for text in line(rows, "ATTR")),
+       "zone plus margin at zero reserves nothing")
+    # an exclusive zone on an anchor mask no rule matches reserves nothing
+    v, rc, rows = comp(top, {2: [waybar], 3: [{"namespace": "panel", "x": 800, "y": 26,
+                                               "w": 200, "h": 100}]}, [0, 26, 0, 0],
+                       [{"namespace": "panel", "level": 3, "height": 100, "width": 200,
+                         "anchor": ["top", "right"], "exclusive": 30}])
+    ok((v, rc) == ("CLEAN", 0)
+       and any("edge=none contribution=0" in text for text in line(rows, "ATTR")),
+       "an unmatched anchor mask reserves nothing")
+    # ... while the same declaration with a matching exclusive edge does reserve
+    v, rc, rows = comp(top, {2: [waybar], 3: [{"namespace": "panel", "x": 800, "y": 26,
+                                               "w": 200, "h": 100}]}, [0, 56, 0, 0],
+                       [{"namespace": "panel", "level": 3, "height": 100, "width": 200,
+                         "anchor": ["top", "right"], "exclusive": 30,
+                         "exclusiveEdge": "top"}])
+    ok((v, rc) == ("CLEAN", 0)
+       and any("ns=panel edge=top contribution=30" in text for text in line(rows, "ATTR")),
+       "an exclusive edge matching the anchor reserves")
+    # exclusive -1 arranges against the full monitor box, not the usable one
+    v, rc, rows = comp(top, {2: [waybar], 3: [{"namespace": "panel", "x": 800, "y": 700,
+                                               "w": 200, "h": 100}]}, [0, 26, 0, 0],
+                       [{"namespace": "panel", "level": 3, "height": 100, "width": 200,
+                         "anchor": ["bottom", "right"], "exclusive": -1}])
+    ok((v, rc) == ("CLEAN", 0)
+       and any("ns=panel box=800,700,200,100" in text for text in line(rows, "DECL")),
+       "exclusive -1 uses the full monitor box")
+    # an empty arranged box is skipped: no zone, no attribution
+    v, rc, rows = comp(top, {2: [waybar], 3: []}, [0, 26, 0, 0],
+                       [{"namespace": "panel", "level": 3, "height": 0,
+                         "margins": {"top": 1000}}])
+    ok((v, rc) == ("CLEAN", 0) and line(rows, "SKIP")
+       and any("attributed=26" in text for text in line(rows, "RESULT")),
+       "an empty box is skipped")
+    # a zone larger than the axis voids the whole layer reserve (the area guard)
+    v, rc, rows = comp(top, {2: [waybar], 3: [{"namespace": "panel", "x": 0, "y": 26,
+                                               "w": 1000, "h": 100}]}, [0, 0, 0, 0],
+                       [{"namespace": "panel", "level": 3, "height": 100,
+                         "exclusive": 2000}])
+    ok((v, rc) == ("CLEAN", 0)
+       and any("band=0 expected=0 attributed=2026" in text and "ls=INVALID" in text
+               for text in line(rows, "RESULT")),
+       "an invalid layer area zeroes the whole layer reserve")
+
+    # the surfaces declaration refuses what the protocol refuses
+    for label, item in (
+            ("level", {"namespace": "p", "level": 4}),
+            ("anchor", {"namespace": "p", "level": 3, "anchor": ["middle"]}),
+            ("edge-outside-anchor", {"namespace": "p", "level": 3, "anchor": ["top"],
+                                     "exclusiveEdge": "bottom"}),
+            ("margin", {"namespace": "p", "level": 3, "margins": {"top": "4"}}),
+            ("exclusive", {"namespace": "p", "level": 3, "exclusive": "max"})):
+        try:
+            parse_surfaces(json.dumps([item]).encode())
+            ok(False, "surfaces refuse %s" % label)
+        except (Setup, Unmodelled):
+            ok(True, "surfaces refuse %s" % label)
+
     print("MADO_BARFOOT_SELFTEST: %d/%d" % (checks, total))
     return 0 if checks == total else 1
 
@@ -896,12 +1354,13 @@ def main(argv):
     ap.add_argument("--monitors")
     ap.add_argument("--monitor")
     ap.add_argument("--rules")
+    ap.add_argument("--surfaces")
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args(argv)
     if args.selftest:
         return selftest()
     if not (args.config and args.layers and args.monitors):
-        print("MADO_BARFOOT: ERROR (usage: --config PATH --layers PATH|- --monitors PATH|- [--rules PATH])")
+        print("MADO_BARFOOT: ERROR (usage: --config PATH --layers PATH|- --monitors PATH|- [--rules PATH] [--surfaces PATH])")
         return 2
     try:
         config = load_jsonc(read_bytes(args.config), "config")
@@ -920,7 +1379,13 @@ def main(argv):
         if args.rules:
             static = parse_static_reserve(read_text(args.rules), monitor)
             static_source = "rules"
-        verdict, rc, rows = evaluate(config, layers, monitors, monitor, static, static_source)
+        surfaces = None
+        if args.surfaces:
+            surfaces = parse_surfaces(read_bytes(args.surfaces, stdin_ok=True))
+            if not surfaces:
+                raise Setup("the surfaces declaration is empty")
+        verdict, rc, rows = evaluate(config, layers, monitors, monitor, static, static_source,
+                                     surfaces)
         emit(rows, verdict)
         return rc
     except Unmodelled as exc:
