@@ -606,11 +606,12 @@ def main(argv):
             if len(hits) != 1 and not (args.before and len(hits) == 0):
                 raise Setup("anchor %r for %s binds %d rows, expected exactly 1"
                             % (case["skill_anchor"], case["name"], len(hits)))
-            if hits[0] in bindings:
+            if hits and hits[0] in bindings:
                 raise Setup("row %d is bound by %r and %r"
                             % (hits[0], bindings[hits[0]], case["name"]))
-            bindings[hits[0]] = case["name"]
-        if len(bindings) != CASES:
+            if hits:
+                bindings[hits[0]] = case["name"]
+        if len(bindings) != CASES and not args.before:
             raise Setup("only %d of %d rows are bound" % (len(bindings), CASES))
         for case in cases:
             argv = case["argv"]

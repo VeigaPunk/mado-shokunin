@@ -200,3 +200,14 @@ negative covers a `code:` token, so a narrowed rewrite would pass); **F4** the f
 chords truncate and still parse; **F6** five of the eight keybinding negatives are synthetic (a
 double space, a numeric mask, a repeated modifier, an arrow and a doubled key cannot come out of the
 piped formatter), which is fine as mutant-killers but not host-faithful; **F7** prose counts.
+
+**R80ExecC2Run** (executor; report at `w1/R80ExecC2Run.md`, STATUS: ok). Re-ran the C2 counting
+command at the measured rev (rc 0, `TARGET_MET`), captured both new rows' real replies
+(`chords.txt`, `state.txt` + `state.rc` = `inactive`/3), and wrote an independent checker
+(`chords-check.json`): 193 lines, 169 chords, 24 bare lines in 23 distinct forms (`F9` ×2, `PRINT`,
+`COPILOT KEY`, both `switch:` keys and 18 `XF86*` keys), **zero hard failures**, and 12 distinct
+modifier renderings — the count the S476 supersede row now records as the *rendered* tuples rather
+than the table's sixteen rules. It flagged three multi-word-key lines (`COPILOT KEY`,
+`SUPER + LEFT MOUSE BUTTON`, `SUPER + RIGHT MOUSE BUTTON`, both `switch:` keys) as soft notes; the
+grammar accepts them (a key may be more than one token), which is what the formatter's own
+`code:201`/mouse-button rewrites produce.
