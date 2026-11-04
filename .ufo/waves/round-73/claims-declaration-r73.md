@@ -105,3 +105,17 @@ Up to three new rows opened this round with three byte-identical fetches each (r
 statement), `Doc/library/os.rst` (`os.environ`), and `Doc/library/subprocess.rst` (`env`
 parameter) — the C2 entry cites them. Duplicate-id and duplicate-URL checks run before any
 append; the registry census must exit 0 at round end.
+
+## Erratum against the frozen declaration (round 73; append-only)
+
+E1. **The §C1 counting-command line omits `--controls`.** The counter requires it and refuses
+with exit 2, the reason on stderr and no contract line
+(`--repo, --rev and --controls are required`); the frozen set argument is
+`.ufo/waves/round-73/controls/c1-outcomes-r73.json`. The pinned invocation is:
+
+    python3 -I quality/counters/c1-r73-summary-mutants.py --repo . --rev REV \
+        --base-rev d3f6c9f5d8b3401c01f189e8cd4b8dbc917a2bce \
+        --controls .ufo/waves/round-73/controls/c1-outcomes-r73.json --scratch-root DIR
+
+No predicate, counter, kill rule, target, control label or measured value changes; the receipt at
+`1459cca1` used this invocation. Found by the wave's `R73RevC1` seat (F1) before the report.

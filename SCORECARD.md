@@ -4050,3 +4050,55 @@ after the repair (`cases=8 correct=8 base_correct=6` and `cases=8 correct=8 base
 `receipts/re-measure-r72.txt`). Declared limits unchanged: stream precedence is the captured
 concatenation order (`R72RevC2` Medium), and the C2 eight-case set carries no zero-denominator
 case (`R72CriticClaims` Counterexample A) — future controls, never a widening of this round's.
+
+## Round 73 — the control set as an instrument and two more guard carriers (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-73/claims-declaration-r73.md`, landed
+`87e4c61ac90e9ac587c9f65ac7844ded268d9046` (+ erratum E1 in the same file); base
+`d3f6c9f5d8b3401c01f189e8cd4b8dbc917a2bce`. Frozen control sets:
+`.ufo/waves/round-73/controls/c1-outcomes-r73.json` (10 cases, sha256 `263b3c5a…`) and
+`c2-cases-r73.json` (28 cases, sha256 `65e94644…`). Instruments committed
+`1459cca11fb5d3956a6e9a128217852dd0c28cb9`; measured at that commit (receipts
+`.ufo/waves/round-73/measurement-c{1,2}-r73.txt`). Axis posture at round start: every published
+finite sub-axis at its measured maximum (navigation 87/87, calibration resolved-active 86/86,
+operability selftest 12/12, ledger 125/125; gate `MADO_SELFTEST: 460/460`), so no axis is
+distinctly lowest; the stagnation nudge does not apply (last capability r72, window N=3, gap 0).
+Both claims take new finite denominators and both do-nothing controls miss their targets (2/4 and
+25/28).
+
+| Claim / axis | Counting command (REV = `1459cca1…`) | Before → after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the frozen outcome set separates four named mutations of the outcome rule | `python3 -I quality/counters/c1-r73-summary-mutants.py --repo . --rev REV --base-rev d3f6c9f5d8b3401c01f189e8cd4b8dbc917a2bce --controls .ufo/waves/round-73/controls/c1-outcomes-r73.json --scratch-root DIR` | the held eight-case set separates `killed=2/4` (N1's `n > 0` deletion and N2's pre-repair prefix parse survive; `control-baseline-r73.txt`); at `1459cca1`: `cases=10 mutants=4 killed=4 base_killed=2 verdict=TARGET_MET` rc 0. `zero-denominator` is N1's sole separator; `valid-then-garbled` is N2's sole separator; bounded `10 × killed / 4` → 5.0000 → 10.0000 | improved on the frozen ten-case set |
+| C2 **operability** — the guard census counts the `global`-declared guard and the mutated-`os.environ` transport | `python3 -I quality/counters/c2-r73-shapes.py --repo . --rev REV --base-rev d3f6c9f5d8b3401c01f189e8cd4b8dbc917a2bce --controls .ufo/waves/round-73/controls/c2-cases-r73.json --scratch-root DIR` | the held round-71 classifier scores `25/28`, missing exactly `global-rebind-guard`, `environ-splat-guard`, `environ-call-guard` (`control-baseline-r73.txt`); at `1459cca1`: `population=20 readers=13 guarded=13 unguarded=0 controls=28/28 base_controls=25/28 verdict=TARGET_MET` rc 0; bounded `10 × controls / 28` → 8.9286 → 10.0000 | improved on the frozen twenty-eight-case set |
+| — | coverage / admitted-note reachability (unchanged rubric) | `quality/check-index.py --repo . --rev REV` | 89/89 at the landing tip (87/87 at base) | unchanged (harm watch; two new entries indexed) |
+| — | operability / hermetic gate | `bash tools/mado-verify.sh --selftest` | 460/460 both ends | unchanged (harm watch) |
+| — | operability / instrument ledger | `quality/check-tool-ledger.py --repo . --rev REV` | 127 rows, 127 ledger_rows, 0 uncovered at the instrument commit (125/125 before their rows) | improved (two new instruments registered) |
+| — | calibration / frozen round-72 instruments | `git rev-parse 1459cca1:<path> d3f6c9f5:<path>` | identical blob ids for `c1-r72-landing-controls.py`, `c2-r71-shapes.py`, `c2-r70-carriers.py`, `tools/mado-verify.sh`, `quality/landing-counters.sh` | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-73/measurement-c1-r73.txt`, `measurement-c2-r73.txt` (both
+counters' per-case and per-mutant lines plus the contract line), `control-baseline-r73.txt` (the
+pre-freeze do-nothing legs, produced by `proto/held-r73.py`), `controls/` (both frozen sets),
+`w1-spec.json`/`w1-dispatch.json` (the one v1 wave, 13 seats), `fetch/` (three byte-identical
+fetches per source). **Wave-review disclosures** are reported per seat in the round report; a seat
+whose output is empty is an evidence gap, never backfilled (QUALITY 115).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Mutation-scored control set + extended guard-carrier census | Score a frozen outcome case set by mutating the rule it certifies — four named rule mutations separated 4/4, with each blind spot the previous set disclosed carried as the sole separator of one mutation — and classify a guard that reaches git through a `global`-declared mapping or through a mutated `os.environ` copied by dict-splat or `dict(...)` | `.ufo/waves/round-73/measurement-c{1,2}-r73.txt`; `quality/counters/c1-r73-summary-mutants.py`, `c2-r73-shapes.py` | round 73 |
+
+### Planned (round 74; intent only)
+
+1. C1's next finite ground: the stale/replay class — a captured summary replayed with its own
+   matching detail lines — as frozen negatives if a witness can be grounded (a nonce or an
+   execution-witness file); otherwise a successor predicate under its own denominator.
+2. C2's next finite ground: the two-hop store (`r = cfg.runner; r.env[KEY] = …` with the edge at
+   the call) and an alias of `os.environ`, each with its own negatives.
+3. The `summary_fraction()` first-vs-summary ambiguity: a successor contract field that reports
+   the summary fraction and flags disagreement with the first.
+4. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
+
+### Axis table re-derived at the landing tip (`receipts/harm-watch-r73.txt` and `quality/check-axis-scores.py`):
+navigation 89/89; calibration resolved-active 86/86; operability selftest 12/12, ledger 127/127.

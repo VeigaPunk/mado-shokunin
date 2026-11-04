@@ -3590,3 +3590,49 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   guard survives both frozen sets — no zero-denominator case) and GAP-2 (the counters'
   `score()` None-guard is vacuous on these sets — no absent candidate). Both become round-73
   controls under a new frozen denominator, never a widening of this round's.
+
+### Round 73 — the control set as an instrument and two more guard carriers (2026-11-04, hyaku run 15)
+
+- Claims frozen at `87e4c61a` before any candidate data: C1 **calibration** (the frozen outcome
+  case set separates four named mutations of the round-72 outcome rule; the held eight-case set
+  separates two) and C2 **operability** (the guard census counts the `global`-declared guard and
+  the mutated-`os.environ` transport). Declaration `.ufo/waves/round-73/claims-declaration-r73.md`;
+  control sets `controls/c1-outcomes-r73.json` (10 cases, sha256 `263b3c5a…`) and
+  `controls/c2-cases-r73.json` (28 cases, sha256 `65e94644…`); pre-freeze do-nothing receipts in
+  `control-baseline-r73.txt` (held set killed 2/4; held classifier 25/28). Base
+  `d3f6c9f5d8b3401c01f189e8cd4b8dbc917a2bce` (lane clean: `tracked=0 untracked=0`).
+- Instruments: `quality/counters/c1-r73-summary-mutants.py` (extracts the round-72 harness at
+  `--rev`, asserts the r72 eight-case set is carried byte-identically, applies four named literal
+  mutations exactly once each — the dropped `n > 0` guard, the pre-repair prefix-match parse, the
+  relaxed comparison, the kill-count-only outcome — and scores each on the ten-case and held
+  eight-case sets; selftest 25/25) and `quality/counters/c2-r73-shapes.py` (the round-71 classifier
+  plus `global_guard` and `environ_transport_guard`, 28 frozen cases, population unchanged;
+  selftest 75/75). Frozen rounds 70–72 untouched: identical blob ids at base and at the instrument
+  commit.
+- Frozen counting commands run at `1459cca11fb5d3956a6e9a128217852dd0c28cb9`:
+  `MADO_R73_MUTANT_KILL: cases=10 mutants=4 killed=4 base_killed=2 verdict=TARGET_MET` rc 0 and
+  `MADO_R73_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 controls=28/28
+  base_controls=25/28 verdict=TARGET_MET` rc 0 (`.ufo/waves/round-73/measurement-c{1,2}-r73.txt`).
+- Curation: SOURCES 383 → 386 rows — S447 (CPython 3.14.8 `Doc/reference/simple_stmts.rst`, the
+  `global` statement), S448 (`Doc/library/os.rst`, `os.environ`), S449 (`Doc/library/subprocess.rst`,
+  the `run` `env` paragraph; S442's document at a separate scope), all `mined` and cited by
+  `corpus/knowledge/guard-carrier-global-environ-r73.md`. Fetches three times byte-identical each
+  (`.ufo/waves/round-73/fetch/`); the census prints S449's documented W04 duplicate-URL warning
+  across scopes.
+- Knowledge: two entries admitted (`corpus/knowledge/control-set-mutant-kill-r73.md`,
+  `corpus/knowledge/guard-carrier-global-environ-r73.md`); README index 87 → 89 rows plus the
+  round-73 Frontier bullet; PROVINCE round-73 refinement; QUALITY criteria 118–119 registered from
+  `corpus/lessons/round-73.md` `## Mistakes`.
+- Registry: `quality/tool-ledger.md` 125 → 127 rows; the `SKILL.md` Gate registry gains two rows
+  (`mado-r73-mutant-kill`, `mado-r73-guard-shapes`).
+- Conformance repair: the declaration's §C1 printed command omitted `--controls` (the counter
+  exits 2 on it); found by the wave's `R73RevC1` before the report and repaired as append-only
+  erratum E1; logged as M73-1 and pinned by QUALITY 118.
+- Wave: one v1 wave of 13 seats (executor 3, scribe 3, scout 2, reviewer 2, critic 1,
+  mutation-tester 1, connector 1; attack share 4/13 = 30.8%) validated under the band-8–16 policy
+  and dispatched through the inline spawn handoff; seat outcomes are reported per seat in the round
+  report (QUALITY 115).
+- Harm watch at the landing tip: gate `MADO_SELFTEST: 460/460`; index 89/89; ledger 127/127
+  `uncovered=0`; axis table re-derived; census exit 0; frozen instrument blob ids unchanged
+  (`.ufo/waves/round-73/receipts/harm-watch-r73.txt`). No config tree, compositor, service or
+  sibling repo was written; no pacman transaction; no tool installed or upgraded.

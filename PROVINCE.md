@@ -348,3 +348,17 @@ and scores the committed outcome functions on eight frozen `(summary, rc, killed
 All three read git objects, launch only their own fixture children, and write caller scratch only;
 no config plane, compositor, session, socket or service is probed, and the rules remain bounded
 syntactic/evidence reads, not authentication of a forged report. Evidence: `corpus/lessons/round-72.md`.
+
+**Round-73 refinement — the control set as an instrument and two more guard carriers; no new desktop/write surface.**
+`quality/counters/c1-r73-summary-mutants.py` extracts the round-72 outcome rule at `--rev` and
+scores four named literal mutations of it against the round-73 ten-case set and the held eight-case
+set (4/4 vs 2/4); the ten cases are the round-72 eight carried byte-identically plus
+`zero-denominator` and `valid-then-garbled`, each the sole separator of one mutation.
+`quality/counters/c2-r73-shapes.py` is the guard census's round-73 generation: the held round-71
+classifier plus a `global`-declared store detector and a mutated-`os.environ` transport detector,
+scoring 28 frozen cases (28/28 vs 25/28) over the unchanged `quality/check-*.py` population
+(20 files, 13 readers, 13 guarded). Both read git objects and committed bytes, write caller scratch
+only, and never probe a config plane, compositor, session, socket or service. The census remains a
+bounded syntactic approximation: line order not execution order, one `global` declaration, one
+`os.environ` store and two copy spellings, no value interpretation. Evidence:
+`corpus/lessons/round-73.md`.
