@@ -3988,3 +3988,53 @@ presence, and the one-hop/one-edge spelling bounds.
 
 ### Axis table re-derived at the landing tip (`harm-watch-r71.txt` and `quality/check-axis-scores.py`):
 navigation 85/85; calibration resolved-active 86/86; operability selftest 12/12, ledger 122/122.
+
+## Round 72 — the summary's own detail and the outcome's own report (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-72/claims-declaration-r72.md`, landed
+`5601e5269bdc365213507604357375a74fe61fe1`; base `976684a27e99c2508037a60eec415f550f53d70e`.
+Frozen control sets: `.ufo/waves/round-72/controls/c1-modes-r72.json` (eight modes, sha256
+`18144745…`) and `.ufo/waves/round-72/controls/c2-controls-r72.json` (eight cases, sha256
+`640fb44f…`). Instruments committed `9bcb4fd5b598844f168230dc05e441721d95b272`; measured content
+for both claims `9bcb4fd5…` (receipts `.ufo/waves/round-72/measurement-c{1,2}-r72.txt`). Axis
+posture at round start: every published finite sub-axis at its measured maximum (navigation
+85/85, calibration resolved-active 86/86, operability selftest 12/12, ledger 122/122; gate
+`MADO_SELFTEST: 460/460`), so no axis is distinctly lowest; the stagnation nudge does not apply
+(last capability r71, window N=3, gap 0). Both claims take new finite denominators and both
+do-nothing controls miss their targets (6/8 and 4/8).
+
+| Claim / axis | Counting command (REV = `9bcb4fd5…`) | Before → after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the landing kill credit requires the run's own failure detail, not just a parsed summary line | `python3 -I quality/counters/c1-r72-summary-credit.py --repo . --rev REV --base-rev 976684a27e99c2508037a60eec415f550f53d70e --scratch-root DIR` | at the base rev the successor and counter are absent; the held round-71 harness scores the eight frozen modes `base_correct=6/8` (7.5000), crediting exactly `bare-failing` and `mismatch-detail` (`control-baseline-c1-r72.txt`); at `9bcb4fd5`: `cases=8 correct=8 base_correct=6 verdict=TARGET_MET` rc 0; bounded `10 × correct / 8` → 10.0000 | improved on the frozen eight-mode set |
+| C2 **operability** — the contract outcome reads the extracted instrument's own summary, not its exit status | `python3 -I quality/counters/c2-r72-outcome.py --repo . --rev REV --base-rev 976684a27e99c2508037a60eec415f550f53d70e --controls .ufo/waves/round-72/controls/c2-controls-r72.json --scratch-root DIR` | at the base rev the successor is absent; the held `outcome_verdict(rc, killed)` scores the eight frozen cases `base_correct=4/8` (5.0000), wrong in both directions (`failing-summary-exit0`, `green-summary-exit2`, `no-summary-exit0`, `garbled-summary-exit0`); at `9bcb4fd5`: `cases=8 correct=8 base_correct=4 verdict=TARGET_MET` rc 0; bounded 10.0000 | improved on the frozen eight-case set |
+| — | coverage / admitted-note reachability (unchanged rubric) | `quality/check-index.py --repo . --rev REV` | 87/87 at the landing tip (85/85 at base) | unchanged (harm watch; two new entries indexed) |
+| — | operability / hermetic gate | `bash tools/mado-verify.sh --selftest` | 460/460 both ends | unchanged (harm watch) |
+| — | operability / instrument ledger | `quality/check-tool-ledger.py --repo . --rev REV` | 125 rows, 125 ledger_rows, 0 uncovered at the landing tip (122/122 with three uncovered before their rows) | improved (three new instruments registered) |
+| — | calibration / frozen round-71 instruments | `git rev-parse 976684a2:<path> master:<path>` | identical blob ids for `c1-r71-landing-controls.py`, `c1-r71-real-children.py`, `c2-r71-shapes.py`, `tools/mado-verify.sh`, `quality/landing-counters.sh` | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-72/measurement-c1-r72.txt`, `measurement-c2-r72.txt` (both
+counters, both legs), `control-baseline-c{1,2}-r72.txt` (the do-nothing controls before freeze),
+`receipts/harm-watch-r72.txt` (gate, index, ledger, axis, census, frozen-blob identity),
+`w1-spec.json`/`w1-dispatch.json` (the one v1 wave, 13 seats), `controls/` (the two frozen sets).
+**Wave-review disclosures**: the wave's seat deliverables are reported per seat in the round
+report; a seat whose output is empty is an evidence gap, never backfilled (QUALITY 115).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Summary-authenticity kill credit + summary-driven outcome verdict | Credit a landing kill only on a summary whose shortfall the run's own `SELFTEST FAIL` lines account for, and green a contract outcome only on the subject's last parsed summary (`n > 0`, `p == n`) with the kill count at 2/2 — both scored against byte-frozen held generations on new finite sets | `.ufo/waves/round-72/measurement-c{1,2}-r72.txt`; `quality/counters/c1-r72-landing-controls.py`, `c1-r72-summary-credit.py`, `c2-r72-outcome.py` | round 72 |
+
+### Planned (round 73; intent only)
+
+1. C2's next finite ground: the r71 plan's guard-census widening (F1/F2 bypass fixtures as
+   frozen negatives, the `global`-rebind escape, edge-resolved stores) — a new control set.
+2. The stale/full-replay class: a run nonce or an execution witness that separates a captured
+   summary from a produced one, if one can be grounded.
+3. The `summary_fraction()` contract field's ambiguity (first fraction vs summary fraction) —
+   a successor under its own predicate.
+4. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
+
+### Axis table re-derived at the landing tip (`receipts/harm-watch-r72.txt` and `quality/check-axis-scores.py`):
+navigation 87/87; calibration resolved-active 86/86; operability selftest 12/12, ledger 125/125.

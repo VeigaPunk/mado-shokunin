@@ -3523,3 +3523,55 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   the `--round 71` default path (`.ufo/waves/round-71/harm-watch-r71.txt`,
   `.ufo/waves/round-71/receipts/`). No config tree, compositor, service or sibling repo was
   written; no pacman transaction; no tool installed or upgraded.
+
+### Round 72 — the summary's own detail and the outcome's own report (2026-11-04, hyaku run 15)
+
+- Claims frozen at `5601e526` before any candidate data: C1 **calibration** (the landing kill
+  credit requires the run's own failure detail, `n > 0` and `p < n` plus `SELFTEST FAIL` count =
+  `n − p`) and C2 **operability** (the contract outcome reads the extracted instrument's last
+  parsed summary, not its exit status). Declaration
+  `.ufo/waves/round-72/claims-declaration-r72.md`; control sets
+  `.ufo/waves/round-72/controls/c1-modes-r72.json` (sha256 `18144745…`) and
+  `c2-controls-r72.json` (sha256 `640fb44f…`); pre-freeze do-nothing controls
+  `control-baseline-c1-r72.txt` (held 6/8) and `control-baseline-c2-r72.txt` (held 4/8). Base
+  `976684a27e99c2508037a60eec415f550f53d70e` (lane clean: `tracked=0 untracked=0`).
+- Instruments: `quality/counters/c1-r72-landing-controls.py` (round-71 generation plus the two
+  disjoint rule deltas `credit()` and `summary_green()`/`outcome_verdict()`; selftest 83/83),
+  `quality/counters/c1-r72-summary-credit.py` (eight real `bash` fixture modes: the four
+  round-71 scenarios carried unchanged plus `bare-failing`, `mismatch-detail`, `last-wins-pass`,
+  `last-wins-fail`; selftest 33/33) and `quality/counters/c2-r72-outcome.py` (eight frozen
+  `(gate_out, gate_rc, killed)` cases; hermetic selftest 24/24). Frozen rounds 68–71 untouched:
+  `git rev-parse` shows identical blob ids for `c1-r71-landing-controls.py`,
+  `c1-r71-real-children.py`, `c2-r71-shapes.py`, `tools/mado-verify.sh` and
+  `quality/landing-counters.sh` at base and tip.
+- Frozen counting commands run verbatim at `9bcb4fd5`: `MADO_R72_SUMMARY_CREDIT: cases=8
+  correct=8 base_correct=6 verdict=TARGET_MET` rc 0 and `MADO_R72_OUTCOME: cases=8 correct=8
+  base_correct=4 verdict=TARGET_MET` rc 0 (`.ufo/waves/round-72/measurement-c{1,2}-r72.txt`).
+  The do-nothing controls miss exactly the declared shapes: the held harness credits
+  `bare-failing`/`mismatch-detail`, and the held outcome is wrong on four cases in both
+  directions.
+- Curation: SOURCES 380 → 383 rows — S444 (CPython 3.14.8 `Doc/library/unittest.rst`,
+  `wasSuccessful()`), S445 (`Lib/unittest/main.py`, the runner's exit derivation from
+  `wasSuccessful()`), both `mined` and cited by `corpus/knowledge/outcome-verdict-gate-summary-r72.md`;
+  S446 is the round-71 reject curated as a `rejected` row at its real 3.14 path
+  (`Doc/builtins/stdtypes.rst`; the r71 citation `Doc/library/stdtypes.rst` 404s, curl rc 22 ×3).
+  Fetches three times byte-identical each (`.ufo/waves/round-72/fetch/`). S442's `used-by` gained
+  the round-72 C1 entry (old→new logged in `corpus/lessons/round-72.md` § Gate). Census
+  `scripts/sources-census.sh validate` exit 0 at start (380) and end (383).
+- Knowledge: two entries admitted (`corpus/knowledge/summary-credit-own-detail-r72.md`,
+  `corpus/knowledge/outcome-verdict-gate-summary-r72.md`); README index 85 → 87 rows plus the
+  round-72 Frontier bullet; PROVINCE round-72 refinement; QUALITY criteria 116–117 registered
+  from `corpus/lessons/round-72.md`; the four r71 routed/conformance defects repaired or
+  curated (reject row S446, the 404 anchor, the quote word count, the harm-watch rc wording).
+- Registry: `quality/tool-ledger.md` 122 → 125 rows (harness + two counters); the `SKILL.md` Gate
+  registry gains four rows — the r71 and r72 counters (the r71 routed defect that neither r71
+  counting instrument was registered).
+- Wave: one v1 wave of 13 seats (executor 3, scribe 3, scout 2, reviewer 2, critic 1,
+  mutation-tester 1, connector 1; attack share 4/13 = 30.8%) validated under the band-8–16 policy
+  and dispatched through the inline spawn handoff; seat outcomes are reported per seat in the
+  round report (QUALITY 115).
+- Harm watch at the landing tip: gate `MADO_SELFTEST: 460/460`; index 87/87; ledger 125/125
+  `uncovered=0`; axis table re-derived (navigation 87/87, calibration 86/86, operability 12/12);
+  census exit 0; frozen instrument blob ids unchanged (`.ufo/waves/round-72/receipts/harm-watch-r72.txt`).
+  No config tree, compositor, service or sibling repo was written; no pacman transaction; no
+  tool installed or upgraded.
