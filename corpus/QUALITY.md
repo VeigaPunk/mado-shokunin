@@ -994,3 +994,16 @@ so correct=58/58 still yields TARGET_MISSED. Correcting the successor constant t
 TARGET_MET with the same tool and cases; the original frozen verdict remains missed.
 Source: `corpus/lessons/round-83.md`, number-drift row. Limits: matching list length does
 not show that each mutation is distinct or load-bearing.
+
+## Round-84 producer-status and registry lessons
+
+**138. A pipeline probe states how producer failure reaches its observed status.**
+Shown able to fail: `corpus/lessons/round-84.md` M84-1 and
+`.ufo/waves/round-84/receipts/control-c2-r84-unguarded.txt`: a producer exits7 after plausible
+stdout while its unguarded tail exits0. An rc-aware text matcher cannot restore the lost status.
+The guard and contained failing-producer case are the fix; neither proves producer honesty.
+
+**139. A new gate is registered at SKILL.md, not only in an instrument ledger.**
+Shown able to fail: `corpus/lessons/round-83-verifier-spotcheck.md` R1 finds four r82/r83 counters
+in the ledger but absent from the registry home. Round84 adds those rows plus its two successors.
+Source: `corpus/lessons/round-84.md` M84-2. Limits: registry completeness does not certify gates.

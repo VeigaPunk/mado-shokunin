@@ -467,3 +467,19 @@ committed bytes and caller scratch only; the C2 counter executes the lane's read
 `corpus/knowledge/bar-footprint-rounding-auto-r81.md` documents the layer plane the lane already
 owns; the host join it records was captured read-only with the monitor's identifying fields redacted.
 No config tree, compositor, service or sibling repo is written by this round.
+
+**Round-84 refinement — no new desktop or host-write surface.**
+The r82/r83/r84 bar-footprint generations retain the supplied-file/read-only boundary.
+Round84 refuses repeated declaration namespaces (bar included) and repeated allocation-object
+keys; uniqueness is the instrument's grammar, not a protocol-wide identity guarantee.
+`quality/counters/c1-r84-namespaces.py` reads Git objects, runs extracted tool copies and writes
+caller scratch only. `quality/counters/c2-r84-runbook.py` executes the committed read-only runbook
+verbs plus contained synthetic shell producers, never a custom live producer, writes caller
+scratch only and emits output-size metadata instead of live stdout. Its fifteen pipeline guards
+propagate nonzero status; a successful tail never proves live tray health.
+The earlier source-only/no-live examples do not grant general execution authority: the round's
+explicitly assigned frozen read verbs and contained fixtures are its bounded execution surface.
+No config edit, reload, dispatcher, input capture, package transaction, screenshot, service
+mutation or sibling-method ownership follows. Unit health remains tsukuroi's, mutation craft
+tameshi's, and cross-lane orchestration/record tooling kumitate's; this lane owns only these
+applications and evidence. See round84 connector report and the runbook interpretation caption.

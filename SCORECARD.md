@@ -4908,3 +4908,32 @@ forward to MUTANTS_SKIPPED. Both frozen claims remain honestly qualified.
 Axis table re-derived at the round83 content tip: navigation 102/102; calibration
 resolved-active 86/86; operability selftest 12/12. Ledger expected 152/152; committed
 harm-watch receipts establish whether this publication matches. No promotion change.
+
+## Round84 — declaration identity and pipeline status
+
+Base `7fd43921294116299dfce1443d56a951b9c81493`; freeze
+`3f9eec3906ddd1492e8bc08325e83064f00111ea`.
+Declaration `.ufo/waves/round-84/claims-declaration-r84.md` fixes C1 coverage and C2 operability,
+separate incremental mechanisms with a shared barfoot regression dependency in four C2 rows.
+No second score is awarded for that shared tool. Lowest-axis ties remain coverage/operability;
+dormant freshness stays operator-owned, saturation9.0/window3 and retirements unchanged.
+
+| Claim / axis | Counting command | Before / freeze observation | Qualification |
+|---|---|---|---|
+| C1 coverage / ambiguous declaration classes | `python3 -I quality/counters/c1-r84-namespaces.py --repo . --rev REV --base-rev 7fd43921294116299dfce1443d56a951b9c81493 --controls .ufo/waves/round-84/controls/c1-cases-r84.json --carried .ufo/waves/round-83/controls/c1-cases-r83.json --scratch-root DIR` | held58/61 → freeze61/61,41/41 mutants,carried58/58,selftest139/139; two independent wave re-executions | bounded refusal-class coverage, not predictive expansion or protocol uniqueness; further surviving cheats disclosed |
+| C2 operability / pipeline producer status | `python3 -I quality/counters/c2-r84-runbook.py --repo . --rev REV --controls .ufo/waves/round-84/controls/c2-runbook-cases-r84.json --carried .ufo/waves/round-83/controls/c2-runbook-cases-r83.json --scratch-root DIR` | no-guard intervention0/1; freeze33/33 rows but setup rc2, final mutation anchor duplicated | freeze did not verify; forward anchor-only repair retains predicate/cases/populations, measured result appended separately |
+
+Population preassertions41/29 preceded scoring and both fail rc2 when only their constants drift.
+Evidence: round84 `receipts/population-before-scoring-r84.txt`,
+`population-drift-refusals-r84.txt`, `w1/R84ExecPopulation.md`. The former receipt alone does not
+authenticate chronology; equality is also enforced inside the measured counter before scoring.
+
+Current publication for end gates (measurements below decide agreement): navigation 104/104;
+calibration resolved-active 86/86; operability selftest 12/12; instrument ledger 154/154.
+These finite rubrics do not retire broader domain axes. No numeric C2 delta is awarded to the
+raw frozen setup failure. No promotion change; SHONEN remains four lane assertions.
+
+Planned next round, intent only: equal-valued/interleaved allocation keys, cross-level declaration
+duplicates and case-sensitive names; precise cause discrimination rather than stage-only refusals;
+C2 any-nonzero/prefix acceptance, failing-tail/SIGPIPE distinctions, and inherited causal-cheat
+limits. Do not widen this round's frozen populations after seeing those attacks.

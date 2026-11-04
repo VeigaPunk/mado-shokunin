@@ -1,22 +1,16 @@
 #!/usr/bin/env python3
-"""mado — PRED-C1-r84-v1: score every declared surface's client-allocation band.
+"""mado — PRED-C1-r84-v1: score declaration-identity refusal coverage.
 
-Scores `tools/mado-barfoot.py` (the r84 generation) over a frozen case set: the
-forty-seven round-83 cases carried unchanged plus eight cases on the class round 82 refused —
-a *second* declared layer surface whose band axis is dynamic (`height = 0` on a horizontal
-surface, `width = 0` on a vertical one). Round 82 resolved only the bar's band; round 84
-resolves every declared surface's band from the same `--allocation` map, and refuses a
-dynamic band that has no entry. Each case supplies a waybar config, a layers reply, a
-monitors reply, an optional surfaces declaration and an optional allocation map; the counter
-writes them into the caller's scratch root, runs the tool from the measured revision's bytes,
-and compares its RESULT (and its ATTR lines) against expectations derived from the
-layer-shell protocol's zero-size clause (S481), gtk-layer-shell `layer-surface.c:276`/`:282`
-(S464) and Hyprland `Renderer.cpp`'s arrange/applyExclusive arithmetic — never from a tool
-run.
+Scores tools/mado-barfoot.py over 61 cases: 58 r83 cases carried parsed-equal and three
+ambiguous-identity witnesses. Repeated allocation keys are supplied as raw JSON bytes;
+repeated surface declarations include bar/extra and extra/extra collisions.
+Namespace uniqueness is this join's input grammar, not a layer-shell requirement.
+The held r83 tool scores 58/61; the candidate must score 61/61 and kill all 41 enumerated
+mutations, preserve carried cases and pass its own nonempty selftest.
 
-Contract: MADO_R84_BARFOOT: cases=58 correct=58 mutants=38 killed=38 base_correct=52/58
-carried=47/47 tool_selftest=p/n verdict=TARGET_MET rev=<hash> tool_sha256=<sha>
-(rc 0 iff every clause holds).
+Contract: MADO_R84_BARFOOT: cases=61 correct=61 mutants=41 killed=41 base_correct=58/61
+carried=58/58 tool_selftest=p/n verdict=TARGET_MET rev=<hash> tool_sha256=<sha>
+(rc 0 iff every executable clause holds). Extra surviving cheats remain finite-set limits.
 
 Exit map: 0 target met · 1 target missed · 2 setup error (never a verdict).
 Writes only inside the caller's scratch root; removes its generation directory.

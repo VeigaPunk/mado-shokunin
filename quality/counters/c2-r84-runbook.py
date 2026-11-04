@@ -11,28 +11,24 @@ command, and each row is bound by exactly one case. A case is correct only when
   * every committed churn sample still matches (a plausible next-day output), and
   * every committed negative sample does not match (the rule can fail).
 
-The twenty-nine round-83 cases are carried with their command, expectation, churn and
-negative fixtures unchanged, except the one declared supersession (`waybar-pgrep`'s churn and
-negative samples' live PID, a capture-hygiene fix that touches no rule). The two cases this round adds are the tray
-*state pair*: the registered item count (`RegisteredStatusNotifierItems`, projected to its
-entry count) and the host-registered flag (`IsStatusNotifierHostRegistered`, a boolean
-literal — a new matcher class). Their names and types are S482's property block; the terse
-`b true` / `as N ...` shapes are S484's.
+The thirty-one round-83 cases retain outcomes, samples and negatives. Fifteen pipeline
+argv/skill_anchor fields are explicitly superseded with pipefail guards. Two contained
+fixture rows compare guarded/unguarded status and bind rc7 plus synthetic b true output.
+Source S487 documents pipeline status, not live tray health.
 
 The working tree is bound to the measured revision: SKILL.md, `tools/mado-barfoot.py` and every
 refusal fixture must have the same sha256 as the blob at `--rev`, so the executed rows are the
-committed rows. The do-nothing control is the held round-83 instrument run against this tree:
-its section heading no longer exists, so it stops at `the runbook section carries 0 command
-rows, frozen target expects 29` (receipt `control-c2-r82-at-r84.txt`, rc 2) — a no-new-rows
-tree cannot reach this counter's thirty-one.
+committed rows. The substantive no-work control is the guard-free producer invocation in
+round-84/receipts/control-c2-r84-unguarded.txt (rc0, expected failure pair does not match).
+This control is one intervention case, not a full unchanged-runbook replay.
 
 Counting command (round 84):
   python3 -I quality/counters/c2-r84-runbook.py --repo . --rev REV \
-      --controls .ufo/waves/round-83/controls/c2-runbook-cases-r84.json \
-      --carried .ufo/waves/round-83/controls/c2-runbook-cases-r82.json --scratch-root DIR
+      --controls .ufo/waves/round-84/controls/c2-runbook-cases-r84.json \
+      --carried .ufo/waves/round-83/controls/c2-runbook-cases-r83.json --scratch-root DIR
 
-Contract: MADO_R84_RUNBOOK: cases=31 executed=31 matched=31 shapes=26/26 anchors=31/31
-rows=31/31 superseded=waybar-pgrep mutants=27 killed=27 verdict=TARGET_MET rev=<hash>
+Contract: MADO_R84_RUNBOOK: cases=33 executed=33 matched=33 shapes=26/26 anchors=33/33
+rows=33/33 superseded=<fifteen names> mutants=29 killed=29 verdict=TARGET_MET rev=<hash>
 tree=bound (rc 0 iff every clause holds).
 
 Exit map: 0 target met · 1 target missed · 2 setup error (never a verdict).
@@ -159,8 +155,10 @@ MUTATIONS = [
      'return rc == value["rc"] and stdout.rstrip("\\n") == value["text"]',
      'return stdout.rstrip("\\n") == value["text"]'),
     ("pipeline-guard-stripped",
-     '        executed_argv = list(argv)',
-     '        executed_argv = [part.replace("set -o pipefail; ", "") for part in argv]'),
+     '        executed_argv = list(argv)\n'
+     '        proc = subprocess.run(executed_argv, cwd=cwd, env=env, stdout=subprocess.PIPE,',
+     '        executed_argv = [part.replace("set -o pipefail; ", "") for part in argv]\n'
+     '        proc = subprocess.run(executed_argv, cwd=cwd, env=env, stdout=subprocess.PIPE,'),
 
 ]
 
@@ -478,13 +476,8 @@ def case_correct(case, rc, stdout):
 
 
 def observed(kind, rc, stdout):
-    """Never quote a JSON dump: a monitors reply carries the output's serial/description."""
-    if kind in ("json_object_fields", "array_fields", "int4", "levels_dump"):
-        return "rc=%d json-bytes=%d" % (rc, len(stdout))
-    text = stdout.rstrip("\n")
-    if len(text) > 100:
-        text = text[:97] + "..."
-    return "rc=%d out=%r" % (rc, text)
+    """Live output is matched in memory, never echoed into durable receipts."""
+    return "rc=%d stdout-bytes=%d" % (rc, len(stdout.encode("utf-8")))
 
 
 def selftest():
@@ -767,8 +760,8 @@ def main(argv):
                 print("MADO_R84_MUTANT: name=%s matched=%d/%d killed=%s"
                       % (name, mmatched, CASES, "yes" if dead else "no"))
 
-        print("MADO_R84_CONTROL: superseded=%s held-r82-instrument=receipt("
-              "control-c2-r82-at-r84.txt; stage=setup rows=0 expected=29)"
+        print("MADO_R84_CONTROL: superseded=%s substantive-before=receipt("
+              "control-c2-r84-unguarded.txt; pipeline-rc=0 failed-pair-matched=0/1)"
               % (",".join(sorted(SUPERSEDED)) or "-"))
         target = (executed == CASES and matched == CASES and shapes == SHAPES
                   and len(bindings) == CASES

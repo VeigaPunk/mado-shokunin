@@ -4112,3 +4112,29 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
 - C2 operability: SKILL.md executable runbook 29→31 rows, including tray items and host-registered boolean; dbc09269 receipt matched=31/31, mutants=27 killed=27, TARGET_MET.
 - Instruments, controls and declaration landed in 4e48d8e7, 4208c24a, aeeb5e54 and dbc09269. Pre-wave red measurements drove repairs; amendments are disclosed, not a clean pre-data freeze.
 - Sources S484/S485 and mistakes/gate: corpus/lessons/round-83.md. Round82 correction: set_size assignment sentence is 128–129; 347–348 is configure. Round82 seat status count is 7 ok/7 defect; census includes W01 S277.
+
+## Round 84 — namespace discipline and pipeline producer status (2026-11-04)
+
+- Claims: C1 coverage of three ambiguous declaration classes; C2 operability of guarded
+  pipeline commands plus two contained failure-propagation rows. Freeze landed at
+  `3f9eec3906ddd1492e8bc08325e83064f00111ea`; declaration and do-nothing receipts are
+  `.ufo/waves/round-84/claims-declaration-r84.md` and `receipts/control-c{1,2}-r84-*`.
+- ONE validated ten-seat v1 wave settled (Main WAVE-DONE; `w1-results.json`, ten nonempty
+  outputs). ExecC1 and ReviewerC1 independently re-executed61/61,41/41 kills,held58/61,
+  carried58/58,selftest139/139 at the freeze. ReviewerC1 retained three surviving cheats;
+  this is finite refusal coverage, not universal identity correctness.
+- Frozen C2 executed/matched33/33 but ended setup rc2: final mutation anchor occurred twice.
+  The forward repair expands only that anchor to a unique two-line executable block;
+  cases, predicate, kill rule and populations remain fixed. Original frozen rc2 is not
+  re-described as a pass. Counter docstrings/control citations corrected forward too.
+- Sentinel's live-stdout disclosure risk is repaired: C2 durable rows retain only rc and byte
+  count, never live values. Absolute handoff paths are protocol-required; census path output is
+  retained unfiltered per prompt. No credential issue was observed; no historical rewrite.
+- Sources S486/S487 were opened/pinned by L1; two bounded knowledge entries are indexed.
+  Gate/Mistakes and the one considerthese adoption (domain-share line) live in
+  `corpus/lessons/round-84.md`; QUALITY138/139 derive from producer masking and registry drift.
+- R83 routed R1: add four missing home-registry rows plus two current successors; R2:
+  population equality preassertions and constant-drift setup refusals; R3: connector delivers
+  file:line sibling ownership scan and one interpretation caption, without changing frozen rows.
+- Every source/claim result is either re-executed this round or explicitly attributed to
+  committed prior evidence. No tool installs, pacman transaction or desktop/service write.
