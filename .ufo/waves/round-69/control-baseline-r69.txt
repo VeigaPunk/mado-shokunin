@@ -1,0 +1,50 @@
+# round-69 pre-freeze do-nothing control baseline
+# date: 2026-11-04T01:42:06Z  base: 04093b83f73a841117d3b31dbb2a6063f4f2a454  lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+# every command below is read-only; scratch under /fast/scratch/hyaku/mado-r69/l1-baseline
+
+## C1 — do-nothing control: the r68 harness at base, same three frozen recipes
+## recipes: R1 drop the forged_credit term; R2 mz_killed = mz_rc != 0 or mz_summary == "none"; R3 subprocess.run = _no_spawn -> pass
+BASE_UNMUTATED rc=0 MADO_R68_LANDING_CONTROLS_SELFTEST: 52/52 assertions passed
+RECIPE R1 occurrences=1
+MUTANT R1 rc=0 killed=no MADO_R68_LANDING_CONTROLS_SELFTEST: 52/52 assertions passed
+RECIPE R2 occurrences=1
+MUTANT R2 rc=0 killed=no MADO_R68_LANDING_CONTROLS_SELFTEST: 52/52 assertions passed
+RECIPE R3 occurrences=1
+MUTANT R3 rc=0 killed=no MADO_R68_LANDING_CONTROLS_SELFTEST: 52/52 assertions passed
+MADO_R69_C1_BASE: selftest=0 killed=0/3 applied=3/3 verdict=TARGET_MISSED
+
+## C1 — candidate feasibility: the frozen r69 harness prototype, same recipes
+PROTO_UNMUTATED rc=0 MADO_R69_LANDING_CONTROLS_SELFTEST: 59/59 assertions passed
+RECIPE R1 occurrences=1
+MUTANT R1 rc=1 killed=yes MADO_R69_LANDING_CONTROLS_SELFTEST: 57/59 assertions passed
+RECIPE R2 occurrences=1
+MUTANT R2 rc=1 killed=yes MADO_R69_LANDING_CONTROLS_SELFTEST: 58/59 assertions passed
+RECIPE R3 occurrences=1
+MUTANT R3 rc=1 killed=yes MADO_R69_LANDING_CONTROLS_SELFTEST: 57/59 assertions passed
+MADO_R69_C1_PROTO: selftest=0 killed=3/3 applied=3/3 verdict=TARGET_MET
+
+## C1 — RevC1 recipe L equivalence probe (mined mistake M69-x)
+EQUIVALENCE recipe occurrences=1
+MUTANT L rc=0 killed=no MADO_R69_LANDING_CONTROLS_SELFTEST: 59/59 assertions passed
+EVIDENCE L is equivalent: the frozen text sits inside `try:` after `mz_rc = r.returncode`, so mz_rc is always an int there; grep -n "mz_rc = r.returncode" and "mz_killed = mz_rc" in the harness.
+435:        mz_rc = r.returncode
+439:        mz_killed = mz_rc != 0
+
+## C2 — do-nothing control: the r68 classifier on the frozen 11-case set
+CASE guarded-inline       r68=(True, True)   proto=(True, True)   expect=(True, True)   r68_correct=True proto_correct=True
+CASE value-position-only  r68=(True, True)   proto=(True, False)  expect=(True, False)  r68_correct=False proto_correct=True
+CASE dead-branch-only     r68=(True, True)   proto=(True, False)  expect=(True, False)  r68_correct=False proto_correct=True
+CASE uncalled-helper      r68=(True, True)   proto=(True, False)  expect=(True, False)  r68_correct=False proto_correct=True
+CASE overwritten-env      r68=(True, True)   proto=(True, False)  expect=(True, False)  r68_correct=False proto_correct=True
+CASE update-guard         r68=(True, True)   proto=(True, True)   expect=(True, True)   r68_correct=True proto_correct=True
+CASE subscript-guard      r68=(True, True)   proto=(True, True)   expect=(True, True)   r68_correct=True proto_correct=True
+CASE module-constant      r68=(True, True)   proto=(True, True)   expect=(True, True)   r68_correct=True proto_correct=True
+CASE producer-helper      r68=(True, True)   proto=(True, True)   expect=(True, True)   r68_correct=True proto_correct=True
+CASE argv-name-flow       r68=(True, True)   proto=(True, True)   expect=(True, True)   r68_correct=True proto_correct=True
+CASE mention-only         r68=(True, False)  proto=(True, False)  expect=(True, False)  r68_correct=True proto_correct=True
+MADO_R69_C2_BASE: controls=7/11 verdict=TARGET_MISSED
+MADO_R69_C2_PROTO: controls=11/11 verdict=TARGET_MET
+
+## C2 — population at the base revision
+## command: git -C <lane> ls-tree -r --name-only 04093b83f73a841117d3b31dbb2a6063f4f2a454 -- quality | grep -E '^quality/check-[^/]+[.]py$'
+population_at_base=20
