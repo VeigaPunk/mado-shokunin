@@ -174,3 +174,12 @@ census is a syntactic approximation that does not interpret values.
   and exit code.
 - R8 (doc nits): the usage examples in every new counter name the base revision actually
   used above.
+
+## Control receipt correction (pre-dispatch, disclosed)
+
+`control-baseline-r76.txt` was produced against label set v1/v2 and the echo-dropping mutants;
+the frozen set moved to v3 and the observable mutant class at freeze v2. The matched control is
+re-derived for the frozen set and committed as `control-baseline-r76-matched.txt` beside the
+historical receipt (both kept, append-only): held mz-only rule `16/16` on `mz` and `killed=0/4`;
+held round-75 classifier `55/59`. The measurement's own `base_killed=0` and `base_controls=55/59`
+agree with it. Recorded as lesson M76-5.

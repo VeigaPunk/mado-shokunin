@@ -3778,7 +3778,8 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
 - **Negative result.** The round-75 planned item "kill the echo-dropping outcome mutation" is
   impossible through `verdict=`: the field is green only when `killed == 2`, and the M-Z kill
   already requires the echo, so that mutation produces an identical field on every reachable case
-  (measured 16/16 in the v2 receipt kept beside the final one). The claim moves to the four
+  (measured 16/16 in the v2 receipt kept beside the final one; the matched control is
+  `control-baseline-r76-matched.txt`). The claim moves to the four
   observable outcome-rule mutations (`outcome-summary-only`, `-killed-only`, `-killed-any`,
   `-killed-or`) with `always-red` as the shape that separates a rule ignoring the green conjunct.
   Recorded in `corpus/knowledge/outcome-field-r76.md` §2 and lesson M76-2.

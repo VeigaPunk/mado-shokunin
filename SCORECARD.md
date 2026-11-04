@@ -4320,8 +4320,9 @@ named `outcome_green` rule and the observable mutant class); base
 `c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf`. Frozen control sets:
 `.ufo/waves/round-76/controls/c1-outcome-cases-r76.json` (v3, 16 cases, sha256 `320f7e6b…`) and
 `c2-cases-r76.json` (59 cases, sha256 `df9e8984…`). Pre-freeze do-nothing control:
-`.ufo/waves/round-76/control-baseline-r76.txt` (held mz-only rule kills 0/4; held round-75
-classifier 55/59). Labels re-derived from the harness's own evidence lines:
+`.ufo/waves/round-76/control-baseline-r76.txt` (historical, v1/v2 set) with the matched
+re-derivation `.ufo/waves/round-76/control-baseline-r76-matched.txt` (held mz-only rule 16/16 on
+`mz` and kills 0/4; held round-75 classifier 55/59). Labels re-derived from the harness's own evidence lines:
 `receipts/label-derivation-r76.txt`. Measured: C1 at `cb713254…` (its instrument's last change), C2 at `755b339f…` (its instrument's last
 change) and re-measured at `cb713254…` with identical counts (receipts `measurement-c1-r76.txt`,
 `measurement-c2-r76.txt`, `measurement-c2-r76-at-cb713254.txt`). Axis posture at round start: every published finite
@@ -4342,7 +4343,7 @@ miss their targets (0/4 and 55/59).
 | — | calibration / held instruments | `git rev-parse <rev>:<path>` | identical blob ids at base and tip for `tools/mado-verify.sh`, `quality/landing-counters.sh`, `quality/check-tool-ledger.py`, `c1-r72/r73/r74/r75-*`, `c2-r73/r74/r75-shapes.py`, `c1-r75-harness-witness.py` | unchanged (frozen) |
 
 **Evidence.** `.ufo/waves/round-76/measurement-c{1,2}-r76.txt` (per-case, per-mutant and contract
-lines), `control-baseline-r76.txt` (the pre-freeze control), `receipts/label-derivation-r76.txt`
+lines), `control-baseline-r76{,-matched}.txt` (the pre-freeze control and its matched re-derivation), `receipts/label-derivation-r76.txt`
 (every label re-derived from the harness's own evidence lines), `census-{start,end}-r76.txt`,
 `controls/`, `proto/`, `fetch/` (three byte-identical fetches per source), `w1-spec.json` /
 `w1-dispatch.json` / `w1-results.json` (the one v1 wave) and `w1/` (seat reports). **Wave

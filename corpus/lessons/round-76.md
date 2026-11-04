@@ -50,6 +50,8 @@ behaviour (none was probed); any `[x]`, promotion or axis retirement.
 | M76-3: the pre-freeze control's mutant leg parsed `MADO_R76_*` rows with a regex anchored to end-of-line while the row carries a trailing `sha256=`, so every mutant scored `0/15` and the control printed `killed_by_held_rule=yes` for mutations that were in fact unobserved. | instrument | `.ufo/waves/round-76/control-baseline-r76.txt` first produced (four `mz_score=0/15` rows) versus the final receipt (`15/15`, `killed_by_held_rule=no`). | none — a leg that finds no row at all printed a score instead of failing. | Both regexes use `search` on the parsed line, and a missing row is visible because the score is reported per mutant; QUALITY 130. Failure it can now show: a leg that silently measures nothing and reports 0%. |
 | M76-4: the C1 fixture template's first draft made `green-mutant`'s outcome expectation `pass`, but the contract's `killed=1/2` (the green summary never kills M-Z) makes it `fail`; the same draft assumed `right` could not green the outcome. | label | the case table in `receipts/label-derivation-r76.txt` at v1 (`right` and `liar-success` derived `pass`, `green-mutant` derived `fail`). | the derivation receipt itself (a label that disagrees with the instrument's own lines is reported, not silently accepted). | The derivation catches it before the wave; the frozen v3 labels equal the derived values for all sixteen cases. Failure it can now show: a label the derivation disagrees with. |
 
+| M76-5: the standalone pre-freeze control receipt (`control-baseline-r76.txt`) was produced against the v1/v2 fifteen-case set and the echo-dropping mutants, so it did not describe the frozen v3 sixteen-case set that the measurement scores; the matched control exists only inside the measurement row (`base_killed=0`). | provenance | `control-baseline-r76.txt` (`held_mz_correct=15/15`, mutant names `outcome-term-dropped`, `prefix-match`, `first-witness-wins`, `case-insensitive`) versus the v3 set and `control-baseline-r76-matched.txt` (`held_mz_correct=16/16`, four observable mutants `killed_by_held_rule=no`). | the round-76 wave's connector seat (R76Conn) — no criterion required the standalone control to be re-derived for a re-cut frozen set. | The control is re-derived for the frozen set and committed as `control-baseline-r76-matched.txt` beside the historical one (both kept, append-only), and the SCORECARD/LOG cite the matched receipt. Failure it can now show: a control receipt whose case set and mutant table no longer match the claim's frozen set. |
+
 A fix counts only on its named red/green evidence: M76-1's red is `correct=12/15` and its
 green `correct=16/16` with the derivation receipt agreeing on all sixteen labels; M76-2's red
 is `killed=0/4` and its green `killed=4/4` on the observable class with the negative result
@@ -98,10 +100,12 @@ Registry cell changes (old → new, per CORPUS rule 2; no held cell changed in p
   S440/S447/S451/S453), so each raises the documented non-failing W04 warning; neither
   carries `supersedes`, because no held row is replaced.
 - **S450 `used-by`** changes old → new: `corpus/knowledge/replay-witness-credit-r74.md` →
-  `corpus/knowledge/replay-witness-credit-r74.md, corpus/knowledge/outcome-field-r76.md` (the
-  round-76 C1 entry cites it).
-- S453's `used-by` is unchanged: the round-76 C2 entry re-cites it, and the entry names it in
-  its sources line without a registry edit (the row already names a round-75 entry).
+  `corpus/knowledge/replay-witness-credit-r74.md, corpus/knowledge/harness-witness-credit-r75.md,
+  corpus/knowledge/outcome-field-r76.md` (the round-76 C1 entry cites it; the round-75 back-link
+  the round-75 closure R4 named is added here with the round-76 one).
+- **S453 and S454 `used-by`** each change old → new: `corpus/knowledge/guard-carrier-copy-del-r75.md`
+  → `corpus/knowledge/guard-carrier-copy-del-r75.md, corpus/knowledge/interprocedural-del-r76.md`
+  (the round-76 C2 entry cites both).
 
 Registry 391 → 393 rows. Census, round start (`census-start-r76.txt`, run at round start):
 `validate --root /home/vgpnk/Projects/shokunin mado` → exit 0, 47 lines. Round end
