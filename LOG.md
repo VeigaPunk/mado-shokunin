@@ -3457,3 +3457,9 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   line. Predicates, targets, counters and kill rules unchanged.
 - Tooling: none installed or upgraded; no pacman transaction (host pause respected). No desktop,
   compositor, service or session probe this round.
+- Final integration `5a7af0fb`: WAVE-DONE and all 14 outputs, corrected the expressions locator
+  to 514–517, removed a wrong HTML-line pin for held S435 (its texi locator is not an HTML line),
+  and added standing SKILL/PROVINCE guidance. Final anchor checks are 2/2 and 2/2, census exit 0,
+  and origin/master matches the pushed hash (`final-record-checks-r70.txt`).
+  Fleet-root misroot sweep found only shared/operator changes and unattributed sibling artifacts;
+  no mado round-70 misroot was identified or removed.
