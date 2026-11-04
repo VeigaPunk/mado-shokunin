@@ -101,9 +101,12 @@ matters:
 | producer function | `check-freeze-order.py`, `check-wave-done.py` |
 | one-hop argument | `check-anchor-cover.py` |
 
-Outside the population: the shell instrument `quality/landing-counters.sh`, the older
-`quality/counters/*.py` instruments, `tools/mado-receipt-citecheck.py`, and every file
-that mentions git without an object-read verb. The r67 wider lexical reader set stays
+Outside the population: the shell instrument `quality/landing-counters.sh:8` (a shell
+`export`), the older `quality/counters/*.py` instruments
+(`quality/counters/c3-r56-used-by.py:95`, `quality/counters/c1-r56-autoreload-entry.py:67`),
+`tools/mado-receipt-citecheck.py`, and every file that mentions git without an object-read
+verb. Those constructions are dominant at runtime and invisible to this census — a declared
+population boundary, not a claim that they are unguarded. The r67 wider lexical reader set stays
 outside this census; the population regex is frozen in the counter.
 
 ## 5. What the green line does not prove
