@@ -170,6 +170,7 @@ def load_generation(args, scratch):
     # R75Sentinel P2: the generation and its home live in a private unpredictable directory
     # beneath the validated scratch root, so a pre-populated shared tree cannot seed a symlink
     # the check-then-open path would follow.
+    os.makedirs(scratch, exist_ok=True)
     private = tempfile.mkdtemp(prefix="r75-c1-gen-", dir=scratch)
     home = os.path.join(private, "gen-home")
     os.makedirs(home)
