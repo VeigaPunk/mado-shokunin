@@ -3404,3 +3404,56 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0.
 - Wave settlement: 12 seats dispatched, 12 settled, no dead seats (`w1-results.json`).
 - Tooling: none installed or upgraded; no pacman transaction (host pause respected).
+
+### Round 70 — the real-children kill credit and the guard carrier set (2026-11-04, hyaku run 15)
+
+- Claims frozen at `bc18399b` before any candidate data: C1 **calibration** (the landing harness
+  credits a kill only on a parsed failed assertion, proven with real children) and C2 **operability**
+  (the guard census counts alias, attribute, `**`-splat and constant-key carriers while keeping the
+  git-launch negatives). Declaration `.ufo/waves/round-70/claims-declaration-r70.md`; control set
+  `.ufo/waves/round-70/controls/c2-controls-r70.json` (17 cases, sha256 `29947b4c…`); pre-freeze
+  controls `.ufo/waves/round-70/control-baseline-r70.txt` (held harness `1/3`, held classifier
+  `13/17`). Base `b37a5aec4ea03f2223d8e09dd5d386d055c24179`.
+- C1 instruments: `quality/counters/c1-r70-landing-controls.py` (successor harness; M-Z credit =
+  nonzero exit AND a parsed `MADO_LANDING_COUNTERS_SELFTEST: p/n` with `p < n`) and
+  `quality/counters/c1-r70-real-children.py` (three real `bash` children in a scratch git fixture:
+  genuine failure / crash with no summary / garbled summary; candidate 3/3, held harness 1/3).
+  The first committed counter (`5144a6b5`) died mid-measurement on a missing per-scenario scratch
+  directory; repaired pre-data in `9508e878` (M70-1, criterion 110(a)).
+- C2 instrument: `quality/counters/c2-r70-carriers.py` (round-69 key position and dominance flows
+  plus four carriers; 17-case frozen set with the eleven held cases carried forward byte-identically
+  and asserted at `--rev`). Review (`R70RevC2` blockers 1–2) showed attribute carriers bypassing
+  dominance and a locally shadowed constant key still counting; repaired against the same frozen
+  sentence in `6a25e865` (attribute store-before-use with no intervening replacement; scope-filtered
+  constants), red-before → green-after in `c2-classifier-repair-r70.txt`, with the five attack cases
+  pinned in the selftest (54/54) and the two disclosed limits (`dict(**GUARD)`, two-hop alias) held
+  at `(True, False)`.
+- Measured at `3d28f92a` (`measurement-r70.txt`): C1 `cases=3 correct=3 base_correct=1
+  verdict=TARGET_MET` rc 0; C2 `population=20 readers=13 guarded=13 unguarded=0 controls=17/17
+  base_controls=13/17 verdict=TARGET_MET` rc 0. Before: both counters absent at the base rev, the
+  held harness `1/3` and the held classifier `13/17` on the same sets.
+- Knowledge: `corpus/knowledge/landing-kill-credit-real-children-r70.md` (MADO-R70-1) and
+  `corpus/knowledge/guard-carrier-shapes-r70.md` (MADO-R70-1), three new source rows **S439**
+  (expressions.rst, `**` unpacking), **S440** (simple_stmts.rst, subscription assignment) and
+  **S441** (rendered subprocess docs, `CompletedProcess.returncode`), plus the S435 `used-by`
+  reverse link; index rows and the Round 70 Frontier bullet. QUALITY **112** (append-only record
+  order and commit-list completeness, from the round-69 spot-check defects 1–2) and **113** (a kill
+  credit rests on a parsed failed assertion, and its real-children leg uses real child processes).
+  Lesson `corpus/lessons/round-70.md` with M70-1…M70-5 and the Gate block (three admits, two
+  rejects).
+- Harm watch (`harm-watch-r70.txt` at `40709300`): gate `MADO_SELFTEST: 460/460` rc 0; the frozen
+  round-69 counter `killed=3/3 applied=3/3 base=0/3 TARGET_MET` rc 0 (its harness file is
+  byte-identical to the base); landing instrument GREEN with all four legs (`nav=0 usedby=0
+  ledger=0 citecheck=0`) on the round's committed record files; axis table `checked=3 mismatched=0`
+  (navigation 83/83, calibration 86/86, operability 12/12); ledger 119/119 uncovered=0; every
+  instrument selftest green (68/68, 26/26, 54/54, 43/43, 59/59).
+- Wave: ONE v1 wave, 14 seats (executor 4, scribe 3, scout 2, reviewer 2, critic 1,
+  mutation-tester 1, connector 1; attack share 4/14), all 14 settled, no dead seats; dispatch
+  `w1-spec.json`/`w1-dispatch.json`/`w1.ready` committed as evidence, seat reports under
+  `.ufo/waves/round-70/w1/`.
+- Disclosures (SCORECARD § Closure corrections, errata E1–E6): review blockers R1–R8; declaration
+  errata for the stale seat count (14, not 13), the harm-watch command form, the C2 base-leg
+  vehicle, C1's substituted source, C2's two-document sentence, and the mislabelled base evidence
+  line. Predicates, targets, counters and kill rules unchanged.
+- Tooling: none installed or upgraded; no pacman transaction (host pause respected). No desktop,
+  compositor, service or session probe this round.
