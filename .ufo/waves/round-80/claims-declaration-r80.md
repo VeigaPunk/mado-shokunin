@@ -204,3 +204,16 @@ the C1 counter's shape. No case, sample, negative, expectation, mutant or target
 `24/24` is re-measured at the repair tip. The sentinel's F3 (a negative surface margin or an
 `exclusive` below −1 is accepted by `parse_surfaces`) is a model-faithfulness nit, not a boundary
 defect — `apply_exclusive`'s `zone + margin > 0` guard keeps it inert — and stays a named limit.
+
+## Repair R4 (append-only; after R3, wave seat R80ReviewerC2 F3)
+
+The `is_active` matcher pinned a non-zero exit status to `3` (`rc == (0 if text == "active" else
+3)`), which is an empirical narrowing, not the contract: the man page promises only "0 if at least
+one is active, non-zero otherwise", a nonexistent unit answers `inactive` rc **4**, and systemd's own
+`is-active` counts `reloading` as active (`systemctl.c`'s `arg_states = strv_new("active",
+"reloading")`), so a genuine `reloading` reply arrives with rc 0 and the old rule rejected it. The
+matcher now reads `(rc == 0) == (text in ("active", "reloading"))`; every frozen sample and negative
+still separates (the contradictory pairs are rejected, the honest ones accepted) and the frozen
+`24/24`/`16/16` is re-measured at the repair tip. The case's frozen enum stays as declared — the
+reviewer's F4 (the enum omits `maintenance`/`refreshing` and carries `unknown`) is a named limit for
+the next case set, not a change this round can make.

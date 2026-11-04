@@ -186,3 +186,17 @@ implicit; **F3 (INFO)** `parse_surfaces` accepts negative surface margins and an
 −1, both inert because `apply_exclusive` only shrinks when `zone + margin > 0`. F1 and F2 are
 repaired as **R3** (an allowlisted child environment plus `TMPDIR` inside the scratch root; 24/24
 re-measured); F3 stays a named model limit.
+
+**R80ReviewerC2** (reviewer; `w1/R80ReviewerC2/{findings.md,<name>.md}`, STATUS: ok). Its review
+independently found the empty-key false negative (F1, HIGH — repaired as R2) and three residuals,
+one of which is a **real defect repaired here**: **F3 (MEDIUM)**, the state matcher pinned a non-zero
+status to 3 while the man page only promises non-zero, a nonexistent unit answers `inactive` rc 4,
+and systemd's own `is-active` treats `reloading` as active (`arg_states`), so a genuine `reloading`
+reply (rc 0) was wrongly rejected — repaired as **R4** (`(rc == 0) == (text in ("active",
+"reloading"))`, 24/24 re-measured). Named limits it leaves for the next set: **F2** the
+`code:201 → COPILOT KEY` rewrite is mask-65-only and a leaked `code:201` token is accepted (no frozen
+negative covers a `code:` token, so a narrowed rewrite would pass); **F4** the frozen enum omits
+`maintenance`/`refreshing` (systemd 262's ACTIVE table) and carries `unknown`; **F5** >35-column
+chords truncate and still parse; **F6** five of the eight keybinding negatives are synthetic (a
+double space, a numeric mask, a repeated modifier, an arrow and a doubled key cannot come out of the
+piped formatter), which is fine as mutant-killers but not host-faithful; **F7** prose counts.

@@ -105,7 +105,7 @@ MUTATIONS = [
      '        return chords >= value.get("min_chords", 0)\n    if kind == "int_range":',
      '        return True\n    if kind == "int_range":'),
     ("state-rc-blind",
-     '        return rc == (0 if text == "active" else 3)\n    if kind != "refusal":',
+     '        return (rc == 0) == (text in ("active", "reloading"))\n    if kind != "refusal":',
      '        return True\n    if kind != "refusal":'),
     ("state-enum-blind",
      '        if text not in value.get("enum", []):\n            return False',
@@ -359,12 +359,13 @@ def matches(kind, value, rc, stdout):
 
 def special_matches(kind, value, rc, stdout):
     """A refusal and a state word are scored on their own exit status, not behind the
-    rc==0 gate: `systemctl --user is-active` exits 0 for `active` and 3 otherwise."""
+    rc==0 gate: systemd's is-active exits 0 for `active` and `reloading` and non-zero for the
+    rest (a nonexistent unit answers 4), so no non-zero value is pinned."""
     if kind == "is_active":
         text = stdout.strip()
         if text not in value.get("enum", []):
             return False
-        return rc == (0 if text == "active" else 3)
+        return (rc == 0) == (text in ("active", "reloading"))
     if kind != "refusal":
         return matches(kind, value, rc, stdout)
     return rc == value["rc"] and ("ERROR (stage=%s " % value.get("stage", "model")) in stdout
