@@ -1,6 +1,6 @@
-source: S441 — CPython v3.14.8 `Doc/library/subprocess.rst` (tag v3.14.8, fetched 2026-11-03, sha256 05cd782c5181481ad961788dd678b99c903eb3ff53e0ebab3095c38b48c74dfd, 61603 bytes) — the return-code vocabulary the kill decision turns on: `returncode` is the child's own exit status, a negative value is a signal death reported as `-N`, and the documented shell examples put a missing program at 127 and a signal death at -15, so a nonzero status names a family rather than an assertion verdict
-verified-at: 2026-11-03
-recheck: 90d — re-fetch the tag's `Doc/library/subprocess.rst` and re-hash it; also when the landing harness's decision line, the fixture-lane template or the frozen three-scenario set changes, when the `MADO_LANDING_COUNTERS_SELFTEST` summary grammar moves, or when the host python leaves 3.14.8
+source: S441 — CPython 3.14 documentation (rendered): `subprocess`, `CompletedProcess.returncode` — https://docs.python.org/3.14/library/subprocess.html (page title "Python 3.14.10 documentation"; fetched 2026-11-04 UTC, three byte-identical fetches, sha256 c8a66b3abf91790cea34128c5636c2e27a4b26ade459f7d4f797400da706079f, 207155 bytes, subprocess.html:360-366) — "Exit status of the child process. Typically, an exit status of 0 indicates that it ran successfully." and "A negative value -N indicates that the child was terminated by signal N (POSIX only)." — the ground for reading a nonzero status as a process outcome, not an assertion verdict; with held S435 (GNU Bash 5.3 §3.7.5 Exit Status, bashref.texi:3905-3916) for the multi-cause vocabulary
+verified-at: 2026-11-04
+recheck: 90d — re-fetch and re-hash the rendered page and the bash-5.3 release tarball; also when the harness's kill-credit line, the fixture-lane template or the frozen three-scenario set changes, when the `MADO_LANDING_COUNTERS_SELFTEST` summary grammar moves, or when docs.python.org re-renders the 3.14 line
 
 # Landing kill credit: a parsed failed assertion, not a child exit status (MADO-R70-1)
 
@@ -22,9 +22,8 @@ The round-69 harness decided a kill with one expression:
     mz_killed = mz_rc != 0          # quality/counters/c1-r69-landing-controls.py:452
 
 `mz_rc` is `r.returncode` (`:448`) of the child the harness spawns, `bash <mutant> --selftest
---scratch-root …` (`:445-447`). The file is byte-identical at the scored commit `5144a6b5` and
-at the measured content `5adba5a9`: sha256
-`9461a059466e723ba0ae88c86dea2fc97eb5f4fdfb15ef6c6646acce69649a73`.
+--scratch-root …` (`:445-447`). The file is byte-frozen: sha256
+`9461a059466e723ba0ae88c86dea2fc97eb5f4fdfb15ef6c6646acce69649a73` at the measured content.
 
 Under that line "kill" means only "the child exited nonzero". The pre-freeze receipt shows what
 that conflates. All three real `bash` children exit nonzero when the harness deletes the frozen
@@ -83,11 +82,10 @@ held harness crash and garbage print `mz=pass`; under the repaired one they prin
 ## 3. The real-children leg (`[OBS]`)
 
 The counting command `quality/counters/c1-r70-real-children.py` (sha256
-`b3a6f131abf371ecf64273b65a143478c4b23eaa7acf974ec80e5efebf6e6a7b` at the measured content)
-builds a scratch git repo and runs both harnesses against three real `bash` children — no
-scripted stand-in. The children are extracted at `--rev` from the lane itself
-(`c3-r56-used-by.py`, `check-tool-ledger.py`, `mado-receipt-citecheck.py`), so the fixture holds
-copies of real lane files:
+`b3a6f131abf371ecf64273b65a143478c4b23eaa7acf974ec80e5efebf6e6a7b`) builds a scratch git repo
+and runs both harnesses against three real `bash` children — no scripted stand-in. The children
+are extracted at `--rev` from the lane itself (`c3-r56-used-by.py`, `check-tool-ledger.py`,
+`mado-receipt-citecheck.py`), so the fixture holds copies of real lane files:
 
 - `build_fixture` (`:213`): `git init -q .`, asserts `rev-parse --show-toplevel` is the fixture
   dir, writes the children and the lane, then makes one commit per mode with an explicit
@@ -110,8 +108,9 @@ copies of real lane files:
   `0` (`1/2`, exit 1); `crash` exits 2 before printing any summary; `garbage` prints
   `MADO_LANDING_COUNTERS_SELFTEST: ??? assertions passed` and exits 1.
 
-Measured at content `5adba5a9` (`.ufo/waves/round-70/measurement-r70.txt` § C1), the candidate
-harness and the held one run against the same fixture:
+Measured at content `6a25e865` (`.ufo/waves/round-70/measurement-r70.txt` § C1; the same values
+were measured at `5adba5a9`), the candidate harness and the held one run against the same
+fixture:
 
 | mode | child rc | summary | r70 `mz=` (candidate) | r69 `mz=` (base) | correct | base correct |
 |---|---|---|---|---|---|---|
@@ -121,7 +120,7 @@ harness and the held one run against the same fixture:
 
 Last line, exit 0:
 
-    MADO_R70_REAL_CHILDREN: cases=3 correct=3 base_correct=1 verdict=TARGET_MET rev=5adba5a9...
+    MADO_R70_REAL_CHILDREN: cases=3 correct=3 base_correct=1 verdict=TARGET_MET rev=6a25e865...
 
 `base_correct=1` is the fixture-health assertion: the held harness must be wrong on exactly the
 two broken-child inputs, which is what makes the candidate's two flips a repair rather than a
@@ -143,60 +142,93 @@ correct decision from a decision that happens to agree on these three inputs."
   printed any `SELFTEST FAIL` line also scores 3/3 on these texts — genuine prints one, crash
   and garbage print none — so the set does not separate the parsed-fraction rule from a
   line-count heuristic (derived from the frozen template; not measured).
+- The credit is still presence-based: a summary that parses with `p < n` is credited even if
+  the failing assertion is unrelated to the frozen clause. The harness's M-Z recipe and the
+  child's own summary are the only join.
 - The selftest is hermetic and spawns nothing (`:41-44`): it drives the decision functions and
   the template's structural invariants, and does not claim a real `bash` child behaves as the
   fixture says. The measurement is what runs the children.
 - The `base_correct=1` leg says the held harness is wrong on these inputs; it does not
   characterize the held harness elsewhere.
 
-## 5. The sourced ground (`[INF-docs]`, tag `v3.14.8`)
+## 5. The sourced ground (`[INF-docs]`, S441 rendered + held S435)
 
-`Doc/library/subprocess.rst` @ `v3.14.8` (fetched 2026-11-03; sha256
-`05cd782c5181481ad961788dd678b99c903eb3ff53e0ebab3095c38b48c74dfd`, 61603 bytes, 1622 lines;
+`CompletedProcess.returncode`, rendered page (S441, fetched 2026-11-04 UTC; sha256
+`c8a66b3abf91790cea34128c5636c2e27a4b26ade459f7d4f797400da706079f`, 207155 bytes, 2032 lines;
 three fetches byte-identical):
 
 > "Exit status of the child process. Typically, an exit status of 0 indicates that it ran
-> successfully." (S441:138-139)
+> successfully." (S441:362-363)
 
 > "A negative value ``-N`` indicates that the child was terminated by signal ``N`` (POSIX
-> only)." (S441:141-142)
+> only)." (S441:364-365)
 
-> "The exit code for the command can be interpreted as the return code of subprocess."
-> (S441:1500-1501)
+The same page states the rule again for `Popen.returncode`, adding the shell mapping
+(subprocess.html:1176-1181: a negative value is a signal death; under `shell=True` the code is
+the shell's, which "may map signals to codes such as `128+N`"), and its `getstatusoutput`
+examples show two ordinary nonzero causes that are not assertion outcomes —
+`(127, 'sh: /bin/junk: not found')` at subprocess.html:1751 and `(-15, '')` at
+subprocess.html:1753.
 
-and the two examples that name ordinary nonzero causes:
+Held S435 supplies the multi-cause vocabulary from the Bash manual (fetched from the bash-5.3
+release tarball, sha256 `0d5cd869…` as the registry records; `doc/bashref.texi` sha256
+`f3d37d57a1061e24d266051de9bd47ffa43dc86584afea11576c535ad2be32d5`, 415804 bytes):
 
-> `(127, 'sh: /bin/junk: not found')` (S441:1508)
->
-> `(-15, '')` (S441:1510)
+> "So while an exit status of zero indicates success, a non-zero exit status indicates failure.
+> This seemingly counter-intuitive scheme is used so there is one well-defined way to indicate
+> success and a variety of ways to indicate various failure modes." (S435:3905-3909)
+
+> "When a command terminates on a fatal signal whose number is N, Bash uses the value 128+N as
+> the exit status." (S435:3911-3912)
+
+> "If a command is not found, the child process created to execute it returns a status of 127.
+> If a command is found but is not executable, the return status is 126." (S435:3914-3916)
 
 The documentary point is narrow and sufficient: a nonzero status records *that the child did
-not exit 0*, not *why*. The page itself shows two unrelated causes — a missing program (`127`)
-and a signal death (`-15`) — the `Popen.returncode` paragraph repeats the signal rule and adds
-that under `shell=True` the code is the shell's, which may map signals to `128+N`
-(S441:961-963). "Nonzero" therefore cannot mean "the mutant's assertions failed"; only the
-child's own summary carries that. This is why the repaired decision reads the summary and keeps
-the status as the necessary second witness.
+not exit 0*, not *why*. Both pages name causes unrelated to an assertion verdict — a signal
+death, a missing program, a non-executable program, the shell's own `128+N` mapping. "Nonzero"
+therefore cannot mean "the mutant's assertions failed"; only the child's own summary carries
+that. This is why the repaired decision reads the summary and keeps the status as the necessary
+second witness.
+
+The raw `Doc/library/subprocess.rst` carries the same `returncode` sentences at :136-142, but
+that URL is already `S108` (the `args` claim) and the L1 rejected a second row for it (lesson
+`round-70.md` § Gate); `S441` is the rendered page the L1 adopted. Locators in this entry are
+therefore `subprocess.html:36x`, not `subprocess.rst:13x` — a table pin at `subprocess.rst:136`
+resolves to `subprocess.html` and reports MISS.
 
 ## Evidence rows
 
 | id | claim the row grounds | source | locator |
 |---|---|---|---|
-| K01 | `returncode` is the child's exit status; `0` typically means success. | S441 | subprocess.rst:138 |
-| K02 | A negative `-N` is a signal death, not an assertion verdict. | S441 | subprocess.rst:141 |
-| K03 | A shell command's exit code is interpretable as the subprocess return code — the status records the child, not the harness's reading of it. | S441 | subprocess.rst:1500 |
-| K04 | A missing program is reported as `127` — an ordinary nonzero cause that is not a failed assertion. | S441 | subprocess.rst:1508 |
-| K05 | A signal death is reported as a negative code (`-15`) — a second nonzero cause beside the assertion outcome. | S441 | subprocess.rst:1510 |
-| K06 | Under `shell=True` the code is the shell's and may map signals to `128+N`. | S441 | subprocess.rst:961 |
+| K01 | `returncode` is the child's exit status; `0` typically means success. | S441 | subprocess.html:362 |
+| K02 | A negative `-N` is a signal death, not an assertion verdict. | S441 | subprocess.html:364 |
+
+S435 is cited in prose with its `bashref.texi` locators (§5), not as a pinned row: the registry
+anchor resolves its name as `Exit-Status.html` from the row's URL, while the anchor cell carries
+`bashref.texi:` locators, so a table pin to S435 reports `name=Exit-Status.html locators=none
+verdict=MISS reason=no-cover` (measured). The propositions it grounds are in §5; the two pinned
+rows above carry the sentences the rule actually joins on.
 
 ## 6. Recheck and provenance
 
-- Fetch (2026-11-03): `curl -sSfL -o subprocess.rst
-  https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/subprocess.rst`, three
-  times, all sha256 `05cd782c5181481ad961788dd678b99c903eb3ff53e0ebab3095c38b48c74dfd`, 61603
-  bytes, 1622 lines; tag `v3.14.8`.
-- Line pins checked against those bytes: the `CompletedProcess.returncode` block L136-142, the
-  `Popen.returncode` block L949-963, the `getstatusoutput` examples L1500-1510.
+- Fetch (2026-11-04 UTC, 2026-11-03 local): `curl -sSfL -o subprocess.html
+  https://docs.python.org/3.14/library/subprocess.html`, three times, all sha256
+  `c8a66b3abf91790cea34128c5636c2e27a4b26ade459f7d4f797400da706079f`, 207155 bytes, 2032
+  lines; `<title>` is `subprocess — Subprocess management — Python 3.14.10 documentation`.
+- S435 fetch: `https://ftp.gnu.org/gnu/bash/bash-5.3.tar.gz`, sha256
+  `0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba` (matches the registry
+  anchor's recorded tarball digest); `doc/bashref.texi` sha256
+  `f3d37d57a1061e24d266051de9bd47ffa43dc86584afea11576c535ad2be32d5`, 415804 bytes, 11553 lines.
+  The registry anchor cites :3902-3906,3911-3916,3925-3928; the zero/nonzero sentence actually
+  begins at :3905 in these bytes (the range covers its head, not its first line).
+- Line pins checked against those bytes: `returncode` block subprocess.html:359-366 (sentences
+  at 362-363 and 364-365), `Popen.returncode` block 1169-1181, `getstatusoutput` examples
+  1743-1753.
+- Anchor-cover measurement on a scratch registry copy carrying S441's landed row: the two pins
+  above score `rows=2 covered=2 miss=0 verdict=OK`, rc 0. A pin at `subprocess.rst:136` scores
+  MISS (`locators=360-366` but the pin line is outside them); a pin to S435 scores MISS as
+  described in `## Evidence rows`.
 - Instrument pins: r69 harness sha256
   `9461a059466e723ba0ae88c86dea2fc97eb5f4fdfb15ef6c6646acce69649a73`, `mz_killed` at `:452`;
   r70 harness sha256 `71a7b6c45b904a734f194be9a8de6cc2eeb5f5ea1922760f908f5637f1d4db58`,
@@ -204,24 +236,9 @@ the status as the necessary second witness.
   `b3a6f131abf371ecf64273b65a143478c4b23eaa7acf974ec80e5efebf6e6a7b`, fixture builder at
   `:213`, lane template at `:79`, declared limits at `:46-50`.
 - Receipts: `.ufo/waves/round-70/control-baseline-r70.txt:40-51` (§ C1, pre-freeze control);
-  `.ufo/waves/round-70/measurement-r70.txt` § C1 (measured content `5adba5a9`, rc 0).
-- The only change to the counting command after the scored commit is `9508e878`
-  (`os.makedirs(scratch, exist_ok=True)` in `run_harness`); it creates the per-scenario
-  directory and leaves `EXPECT`, the fixture text and the scoring untouched. [INFERENCE] from
-  the commit diff, not a re-measured statement.
-- Row id: the entry cites `S441`, the round's new tier-A registry row for the return-code
-  paragraph. The URL already has `S108` (scope: the `args` command parameter,
-  `corpus/SOURCES.md:120`), but that row cannot carry these pins: `check-anchor-cover.py`
-  derives the file name from the *last* URL in a row — for S108 that is `Lib/subprocess.py`, so
-  `name=subprocess.py` — and S108's anchor carries no `subprocess.py:` occurrence. A probe row
-  pinned to S108 against a scratch copy of the registry reports
-  `name=subprocess.py locators=none verdict=MISS reason=no-cover` (measured, `rows=1
-  covered=0 miss=1 verdict=FAIL`). `S441`'s anchor is
-  `subprocess.rst:136-142,949-963,1500-1510`; the same scratch run with that row reports
-  `rows=6 covered=6 miss=0 verdict=OK`. The row draft and the duplicate-URL (W04) decision sit
-  in `.ufo/waves/round-70/w1/R70ScribeRowLesson/draft/corpus/SOURCES-row-subprocess-CONFLICT.txt`.
-  The L1's adoption row
-  in `corpus/lessons/round-70.md` § Gate fixes the id; if a different id is adopted, every
-  `S441` here and in the Evidence rows table moves with it. Without that row the six evidence
-  rows have nothing to resolve against, and `check-anchor-cover.py` cannot pass.
+  `.ufo/waves/round-70/measurement-r70.txt` § C1 at rev `6a25e865` (candidate `mz=pass|fail|fail`,
+  base `mz=pass|pass|pass`, `cases=3 correct=3 base_correct=1`, rc 0).
+- Row adoption: `S441` is the L1's admitted rendered-page row (`corpus/lessons/round-70.md`
+  § Gate). If the L1 renames or re-anchors it, every `S441` and every `subprocess.html:36x`
+  locator here moves with it; the anchor must keep the range 360-366 for these two pins.
 - Cadence: 90d, plus the on-change triggers named above.

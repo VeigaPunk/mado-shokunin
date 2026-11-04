@@ -122,10 +122,12 @@ claim is about what an environment is. Flip condition: a future claim whose subj
 classifier's own grammar (for example "this detector keys on `ast.Subscript` with a store context")
 re-opens it then.
 
-Registry cell changes (old → new, logged per `CORPUS.md` rule 2): none — the two adopted rows are
-appends (`status: mined`, `opened: 2026-11-04`, `recheck: 90d`, `used-by` naming
-`corpus/knowledge/guard-carrier-shapes-r70.md` and `corpus/lessons/round-70.md`). S435 is cited as a
-held row and its cells are unchanged.
+Registry cell changes (old → new, logged per `CORPUS.md` rule 2): **S435 `used-by`**
+`corpus/lessons/round-66.md` → `corpus/lessons/round-66.md,corpus/knowledge/landing-kill-credit-real-children-r70.md`
+(the round-70 entry cites the held row; the reverse link was the used-by leg's one `missing` before
+the append and `verdict=TARGET_MET` after it). The three adopted rows S439/S440/S441 are appends
+(`status: mined`, `opened: 2026-11-04`, `recheck: 90d`, `used-by` naming the round's entry and
+lesson). No `status` or `recheck` cell changed.
 
 Assimilation: none this round — no `merge/mado/` theme was taken. `considerthese/2026-10-28.md`
 proposal 4 (a live-tool table) is named in the round report as an unmined proposal (it governs

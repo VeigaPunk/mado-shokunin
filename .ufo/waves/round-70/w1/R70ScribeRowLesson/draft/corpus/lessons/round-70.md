@@ -102,7 +102,7 @@ classifier reads — a `**` operand is unpacked into the mapping and a subscript
 key expression's value, which is what makes a splat-carried guard and a literal-name-key guard real
 carriers rather than mentions. It does not establish that any file is guarded.
 
-**REJECT — S441, CPython `Doc/library/ast.rst` @ `v3.14.8` (this seat's third row; rejected by the
+**REJECT — S442, CPython `Doc/library/ast.rst` @ `v3.14.8` (this seat's third row; rejected by the
 L1's round-70 Gate on discipline, not bytes).**
 URL `https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/ast.rst`; 92,619 bytes;
 2,698 lines; sha256 `9908f4f029c3258bdfb9ffa6af69d2bca5bd17ff2f175f92a71303d43699ab85`; same tag
@@ -117,7 +117,7 @@ branches actually test (`quality/counters/c2-r70-carriers.py:167-176,279-330`).
 
 The L1's reason for refusing it is discipline, not bytes: the page documents the node vocabulary the
 classifier reads, not the runtime carrier semantics the claim rests on, and the named flip is a future
-claim whose subject is the classifier's own grammar. This seat keeps the fetched row as **S441** with
+claim whose subject is the classifier's own grammar. This seat keeps the fetched row as **S442** with
 `status: rejected` in `draft/corpus/SOURCES-rows.txt` so a later round does not re-fetch it.
 
 **REJECT — a new registry row for CPython `Doc/library/subprocess.rst` @ `v3.14.8` (this seat's rule;
@@ -141,28 +141,50 @@ from the **last** URL in the source cell (for S108 that is `Lib/subprocess.py`, 
 bare `:38-43` locators and no `subprocess.py:` occurrence, so a pin citing S108 reports
 `locators=none verdict=MISS reason=no-cover` (replica of the check's own `occurrences()` run on S108's
 cells: `name=subprocess.py occurrences=[]`). The ready-to-adopt row for case (b) is
-`draft/corpus/SOURCES-row-subprocess-CONFLICT.txt` (S442, 11 cells verified; its teaches cell carries
+`draft/corpus/SOURCES-row-subprocess-CONFLICT.txt` (S443, 11 cells verified; its teaches cell carries
 `supersedes S108` so the row is E04-clean if a later round takes the flip); it is deliberately not in
 `SOURCES-rows.txt`.
 
-**Register state at integration (measured by this seat, 2026-11-04).** The L1's production lesson
-`corpus/lessons/round-70.md` (§ Gate) assigns **S439 = expressions.rst** and **S440 = simple_stmts.rst**,
-and refuses both `subprocess.rst` and `ast.rst`. This seat checked that Gate against the fetched bytes:
-- S440 is byte-correct and its quote location is exact: 41,375 bytes, 1,079 lines, sha256
-  `d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc`, three byte-identical fetches;
-  "If the target is a subscription: The primary expression in the reference is evaluated. Next, the
-  subscript expression is evaluated." sits at `simple_stmts.rst:190-192` exactly as cited.
-- S439's quote is mislocated in that Gate: it cites `expressions.rst:509-512`, but 509-513 are a blank
-  line plus `.. index::` with two index entries; the quoted sentence begins at `:514` and ends at
-  `:517` (numbering re-derived with `awk 'NR>=505 && NR<=520'`). Reported, not edited — the production
-  file is the L1's. The row drafted here anchors `:514`, so the register bytes will be right even
-  though the lesson's locator is not.
-- The L1's S439 anchor must cover the subscription ranges (`1096-1140`, `1161-1166`) or the C2 entry's
-  pins at `expressions.rst:1137` and `:1161` miss check-107; this seat's row provides that coverage, and
-  `R70ScribeEntryC2` independently re-ran the check's logic against it (`CHECK107_SIM rows=5
-  covered=5`).
+**Register state at integration (landed rows measured by this seat, 2026-11-04).** `corpus/SOURCES.md`
+carries, at HEAD `3aea1e10`: **S439** = expressions.rst (anchor `expressions.rst:509-512`, line 389)
+and **S440** = simple_stmts.rst (anchor `simple_stmts.rst:190-194`, line 390); the working tree adds
+**S441** = the **rendered** `https://docs.python.org/3.14/library/subprocess.html` (207,155 bytes,
+sha256 `c8a66b3abf91790cea34128c5636c2e27a4b26ade459f7d4f797400da706079f`, anchor
+`subprocess.html:360-366`, line 391). The production lesson's sentence "the registry diff is 2 rows
+(S439/S440), not 3" is already stale against the working tree (3 rows). This seat ran the real checker
+(`quality/check-anchor-cover.py`, over a scratch fixture repo holding a copy of `corpus/SOURCES.md` and
+an eight-row entry):
 
-**Register bookkeeping: nothing applied, and this round needs nothing.** The L1 substituted the held
-S435 (GNU Bash 5.3 § Exit Status) for C1, so S108 keeps its cells and no `used-by` change is logged. If
-a later round takes the S442 flip, S108's `used-by` still stays unchanged and that lesson cites S442.
-No row id is written into the declaration by this seat; `corpus/SOURCES.md` is untouched.
+```
+ANCHOR_COVER: row=E1 sid=S439 line=514  name=expressions.rst  locators=509-512  verdict=MISS reason=no-cover
+ANCHOR_COVER: row=E2 sid=S439 line=516  name=expressions.rst  locators=509-512  verdict=MISS reason=no-cover
+ANCHOR_COVER: row=E3 sid=S439 line=1161 name=expressions.rst  locators=509-512  verdict=MISS reason=no-cover
+ANCHOR_COVER: row=E4 sid=S439 line=1137 name=expressions.rst  locators=509-512  verdict=MISS reason=no-cover
+ANCHOR_COVER: row=E5 sid=S439 line=510  name=expressions.rst  locators=509-512  verdict=OK
+ANCHOR_COVER: row=E6 sid=S440 line=190  name=simple_stmts.rst locators=190-194  verdict=OK
+ANCHOR_COVER: row=E7 sid=S441 line=136  name=subprocess.html  locators=360-366  verdict=MISS reason=no-cover
+ANCHOR_COVER: row=E8 sid=S441 line=360  name=subprocess.html  locators=360-366  verdict=OK
+CHECK107: rows=8 covered=3 miss=5 verdict=FAIL   (rc 1)
+```
+
+Three consequences, in order:
+- **S439's anchor is short and self-inconsistent**: 509-512 is a blank line plus the `.. index::` block;
+  the row's own quoted sentence starts at `:514` and ends at `:517`. The four locators the C2 entry uses
+  (514, 516, 1137, 1161) all MISS. Widening the cell to
+  `expressions.rst:481-518,1096-1140,1161-1166` fixes all four (this seat's drafted S439 cell), but that
+  is an in-place anchor change, which the registry header does not permit; it is an L1/operator decision,
+  and a second row for the same URL would be W04.
+- **E5 is the trap, and it is the round's sharpest instrument limit**: a pin at `:510` passes check-107
+  while pointing at an index directive. A green check-107 does not evidence that a locator supports a
+  quote; QUALITY 112/113 do not catch it either.
+- **S441 is the rendered page**, not the raw `.rst`: only pins inside `360-366` pass, so the C1 entry's
+  `subprocess.rst:136` pin MISSes and its `getstatusoutput` `127`/`-15` lines sit outside the anchor. The
+  rendered URL is also not version-pinned (`/3.14/` served 3.14.10 on the fetch date), so its
+  `recheck: 90d` is a digest re-fetch rather than a tag watch; the raw `.rst` row (S443) is the
+  byte-stable alternative.
+
+**Register bookkeeping: nothing applied by this seat.** S108 keeps its cells (the L1 grounded C1 on
+S441 instead), no `used-by` change is logged, and `corpus/SOURCES.md` was not written here. S442 (ast)
+and S443 (raw `.rst`) stay rejected with their flips. Two documentation defects are routed rather than
+silently carried: the production lesson's "2 rows, not 3" line and its `509-512` locator both need an
+append-only correction in the round entry.

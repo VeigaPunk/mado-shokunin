@@ -3926,4 +3926,4 @@ the report. Outside-lane closure owns admission, the trade/no-harm judgment and 
    session-material history question) stay operator-owned.
 
 ### Axis table re-derived at the round-70 records (`harm-watch-r70.txt` and `quality/check-axis-scores.py`):
-navigation 81/81; calibration resolved-active 86/86; operability selftest 12/12, ledger 119/119.
+navigation 83/83; calibration resolved-active 86/86; operability selftest 12/12, ledger 119/119.

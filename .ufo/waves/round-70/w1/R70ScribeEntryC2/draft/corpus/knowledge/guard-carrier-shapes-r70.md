@@ -309,14 +309,24 @@ the round-69 entry, not re-fetched here.
 
 ## 7. Recheck and provenance
 
-- Fetch: `curl -sSfL -o expressions.rst https://raw.githubusercontent.com/python/
-  cpython/v3.14.8/Doc/reference/expressions.rst` (2026-11-03 local, −03:00; 2026-11-04Z)
-  → sha256
+- Fetch, `expressions.rst`: `curl -sSfL -o expressions.rst
+  https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/expressions.rst`
+  (2026-11-03 local, −03:00; 2026-11-04Z) → sha256
   `e19de4fead912abcb323f3a6ab42b20595bf6b8ae302e04f257b844b3ce7582a`, 92034 bytes,
   2407 lines; tag `v3.14.8`.
+- Fetch, `simple_stmts.rst`: `curl -sSfL -o simple_stmts.rst
+  https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst`
+  (same clock) → sha256
+  `d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc`, 41375 bytes,
+  1079 lines; tag `v3.14.8`.
 - Line numbers were checked against those bytes: the dictionary-unpacking
   paragraph is L514-517, the subscription-target paragraph L1161-1165, and the
-  runtime-evaluation paragraph L1137-1140.
+  read-side evaluation paragraph L1137-1140 on `expressions.rst`; the subscription
+  assignment-target block is L190-194 on `simple_stmts.rst`.
+- Adopted rows: `S439:514-517` lands with anchor `expressions.rst:509-512` (the
+  `.. index::` directive, five lines above the quoted sentence), and
+  `S440:190-194` lands with `simple_stmts.rst:190-194`. See Gate for the
+  anchor-cover consequence.
 - Control sets: `.ufo/waves/round-70/controls/c2-controls-r70.json` sha256
   `29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff`, 6142 bytes,
   17 cases; `.ufo/waves/round-69/controls/c2-controls-r69.json` sha256
@@ -338,7 +348,37 @@ the round-69 entry, not re-fetched here.
   prints 20 paths; the frozen reader and guarded counts (`13`, `13`, `0`) are the
   counter's declared predicate, re-derived at `REV`, not a number this entry
   measured.
-- Cadence: on-release (the reference URL is tag-pinned; a new tag is the change
-  event), with the re-fetch triggers above: re-check both control digests and the
-  population regex if any of them moves, and re-run the 17 cases when a gate's env
-  construction changes.
+- Cadence: 90d (the landed rows carry `90d`), with the re-fetch triggers above:
+  the reference URLs are tag-pinned, so re-fetch and re-hash on the 90-day cadence
+  and immediately when a new CPython tag is adopted; re-check both control digests
+  and the population regex if any of them moves, and re-run the 17 cases when a
+  gate's env construction changes.
+
+## Gate
+
+Rows adopted by the L1 (working tree `corpus/SOURCES.md`, uncommitted at this
+draft's time): `S439:514-517` carries the anchor `expressions.rst:509-512`, which is
+the `.. index::` directive and not the sentence the row quotes; `S440:190-194`
+carries `simple_stmts.rst:190-194`, which is correct.
+
+`quality/check-anchor-cover.py` logic run locally against the landed registry and
+this entry's five rows (verbatim output; the `sid=… line=…` tokens are the
+checker's own fields, not citations):
+
+```
+ANCHOR_COVER: sid=S439 line=514  name=expressions.rst locators=509-512 verdict=MISS reason=no-cover
+ANCHOR_COVER: sid=S439 line=516  name=expressions.rst locators=509-512 verdict=MISS reason=no-cover
+ANCHOR_COVER: sid=S439 line=1161 name=expressions.rst locators=509-512 verdict=MISS reason=no-cover
+ANCHOR_COVER: sid=S440 line=190  name=simple_stmts.rst locators=190-194 verdict=OK
+ANCHOR_COVER: sid=S438 line=928  name=git.adoc locators=14,178-182,927-929 verdict=OK
+CHECK107: rows=5 covered=2 miss=3 verdict=FAIL
+```
+
+The three misses belong to the registry row, not to the pins: the pins name the
+lines the quoted sentences occupy (514-517 and 1161-1165), and 509-512 is the
+`.. index::` block five lines above the first. Required registry fix (not made
+here — a production path): widen the `S439:514-517` anchor cell at
+`corpus/SOURCES.md:389` to `expressions.rst:514-517,1161-1165` (or the wider
+`expressions.rst:481-518,1096-1140,1161-1166`). With that anchor the same five rows
+cover: `rows=5 covered=5`. Pinning the entry at `:510` would turn the check green
+while citing the index directive, so this entry does not do it.
