@@ -1,0 +1,18 @@
+== run A: doctored samples, anchors present
+MADO_R77_PROBE: name=version row=`hyprctl version` match=yes rc=0 out='Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update...'
+MADO_R77_PROBE: name=configerrors row=`hyprctl configerrors` match=yes rc=0 out=''
+MADO_R77_PROBE: name=monitors-size row=`hyprctl monitors` match=yes rc=0 out='DP-1 3440x1440@99.99700'
+MADO_R77_PROBE: name=monitors-reserved row=`hyprctl monitors` match=yes rc=0 out='[0,26,0,0]'
+MADO_R77_PROBE: name=gaps-out row=`hyprctl getoption <key>` match=yes rc=0 out='custom type: 0 0 0 0'
+MADO_R77_PROBE: name=kb-layout row=`hyprctl getoption <key>` match=yes rc=0 out='str: br'
+MADO_R77_PROBE: name=binds-count row=`hyprctl binds -j` match=yes rc=0 out='192'
+MADO_R77_PROBE: name=layers-namespaces row=`hyprctl layers -j` match=yes rc=0 out='wallpaper,waybar'
+MADO_R77_PROBE: name=waybar-process row=`pgrep -a` match=yes rc=0 out='1720'
+MADO_R77_PROBE: name=mako-mode row=`makoctl mode` match=yes rc=0 out='default'
+MADO_R77_PROBE: name=omarchy-theme row=`omarchy theme current` match=yes rc=0 out='Matte Black'
+MADO_R77_PROBE: name=omarchy-version row=`omarchy theme current` match=yes rc=0 out='3.8.3'
+MADO_R77_BASE: executed=0 matched_by_read=12/12 rule=read-the-table
+MADO_R77_RUNBOOK: cases=12 executed=12 matched=12 unexecuted=0 anchors=12/12 verdict=TARGET_MET rev=7727d49efc6671aa7aa7689c5c90b73ea452942a
+runA_rc=0
+== run B: one anchor row REMOVED (layers row) -> expect Setup refusal
+MADO_R77_RUNBOOK: ERROR (stage=setup anchor '`hyprctl layers -j`' for layers-namespaces not in SKILL.md at d2bf7f8e4028)

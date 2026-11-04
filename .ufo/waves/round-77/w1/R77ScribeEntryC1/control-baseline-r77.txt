@@ -1,0 +1,54 @@
+rev=a83e9bee04bb65ab15204addde472a38c97eff73
+date=2026-11-04T04:57:51-03:00
+409e78a4aef2f46f80508820f3a58ae7023c1b614f5836d52bf2e6a05490cb15  tools/mado-barfoot.py
+566209593053083d6ce0ab0903e823426e1de9757afb656193161e9df4fe68bf  quality/counters/c1-r77-barfoot.py
+056a9152c55b6af492299d96d7aa38022715e8896552e10ed51359133df2985a  quality/counters/c2-r77-runbook.py
+7d6e2b1a5e046dff768d8705abde9f79ee3f34c9095e81e78059e47ededf74ab  .ufo/waves/round-77/controls/c1-cases-r77.json
+597b230216ca1645d659381dd314d39399eb03979440c22a259fd4425d4c1741  .ufo/waves/round-77/controls/c2-runbook-cases-r77.json
+--- C1 counter selftest
+MADO_R77_BARFOOT_SELFTEST: 15/15
+c1selftest rc=0
+--- C2 counter selftest
+MADO_R77_RUNBOOK_SELFTEST: 9/9
+c2selftest rc=0
+--- C1 control+candidate at freeze
+MADO_R77_CASE: name=host-top rc=0 box=MATCH reserved=EQ verdict=CLEAN correct=yes
+MADO_R77_CASE: name=bottom-bar rc=0 box=MATCH reserved=EQ verdict=CLEAN correct=yes
+MADO_R77_CASE: name=css-margins rc=3 box=MATCH reserved=NOT_MODELLED verdict=UNMODELLED correct=yes
+MADO_R77_CASE: name=exclusive-false rc=0 box=MATCH reserved=NOT_APPLIED verdict=CLEAN correct=yes
+MADO_R77_CASE: name=drift-box rc=1 box=DIFFER reserved=GT verdict=DIFFER correct=yes
+MADO_R77_CASE: name=drift-reserved rc=1 box=MATCH reserved=DIFFER verdict=DIFFER correct=yes
+MADO_R77_CASE: name=declared-level-miss rc=3 box=NO_LAYER reserved=NOT_CHECKED verdict=NO_LAYER correct=yes
+MADO_R77_CASE: name=two-monitors rc=0 box=MATCH reserved=EQ verdict=CLEAN correct=yes
+MADO_R77_CASE: name=output-excluded rc=3 box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR correct=yes
+MADO_R77_CASE: name=left-vertical rc=0 box=MATCH reserved=EQ verdict=CLEAN correct=yes
+MADO_R77_CASE: name=wrong-edge-band rc=1 box=MATCH reserved=DIFFER verdict=DIFFER correct=yes
+MADO_R77_CASE: name=centred-width rc=0 box=MATCH reserved=EQ verdict=CLEAN correct=yes
+MADO_R77_CASE: name=no-waybar-layer rc=3 box=NO_LAYER reserved=NOT_CHECKED verdict=NO_LAYER correct=yes
+MADO_R77_CASE: name=malformed-layers rc=2 box=None reserved=None verdict=None correct=yes
+MADO_R77_CASE: name=per-side-margin rc=3 box=MATCH reserved=NOT_MODELLED verdict=UNMODELLED correct=yes
+MADO_R77_MUTANT: name=level-top-swap correct=3/15 killed=yes
+MADO_R77_MUTANT: name=exclusive-false-ignored correct=14/15 killed=yes
+MADO_R77_MUTANT: name=no-centred-width correct=14/15 killed=yes
+MADO_R77_MUTANT: name=reserved-wrong-edge correct=4/15 killed=yes
+MADO_R77_MUTANT: name=per-side-margin-dropped correct=14/15 killed=yes
+MADO_R77_BASE: correct=8/15 rule=live-echo(no-config-model,no-reserved-model,no-drift)
+MADO_R77_CONTROL: sha256=7d6e2b1a5e046dff768d8705abde9f79ee3f34c9095e81e78059e47ededf74ab
+MADO_R77_BARFOOT: cases=15 correct=15 mutants=5 killed=5 base_correct=8/15 tool_selftest=18/18 verdict=TARGET_MET rev=a83e9bee04bb65ab15204addde472a38c97eff73 tool_sha256=409e78a4aef2f46f80508820f3a58ae7023c1b614f5836d52bf2e6a05490cb15
+c1 rc=0
+--- C2 control+candidate at freeze
+MADO_R77_PROBE: name=version row=`hyprctl version` match=yes rc=0 out='Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update...'
+MADO_R77_PROBE: name=configerrors row=`hyprctl configerrors` match=yes rc=0 out=''
+MADO_R77_PROBE: name=monitors-size row=`hyprctl monitors` match=yes rc=0 out='DP-1 3440x1440@99.99700'
+MADO_R77_PROBE: name=monitors-reserved row=`hyprctl monitors` match=yes rc=0 out='[0,26,0,0]'
+MADO_R77_PROBE: name=gaps-out row=`hyprctl getoption <key>` match=yes rc=0 out='custom type: 0 0 0 0'
+MADO_R77_PROBE: name=kb-layout row=`hyprctl getoption <key>` match=yes rc=0 out='str: br'
+MADO_R77_PROBE: name=binds-count row=`hyprctl binds -j` match=yes rc=0 out='192'
+MADO_R77_PROBE: name=layers-namespaces row=`hyprctl layers -j` match=yes rc=0 out='wallpaper,waybar'
+MADO_R77_PROBE: name=waybar-process row=`pgrep -a` match=yes rc=0 out='1720'
+MADO_R77_PROBE: name=mako-mode row=`makoctl mode` match=yes rc=0 out='default'
+MADO_R77_PROBE: name=omarchy-theme row=`omarchy theme current` match=yes rc=0 out='Matte Black'
+MADO_R77_PROBE: name=omarchy-version row=`omarchy theme current` match=yes rc=0 out='3.8.3'
+MADO_R77_BASE: executed=0 matched_by_read=12/12 rule=read-the-table
+MADO_R77_RUNBOOK: cases=12 executed=12 matched=12 unexecuted=0 anchors=12/12 verdict=TARGET_MET rev=a83e9bee04bb65ab15204addde472a38c97eff73
+c2 rc=0

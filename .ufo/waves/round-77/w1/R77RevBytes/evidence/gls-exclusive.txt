@@ -1,0 +1,37 @@
+gtk-layer-shell 0.10.1 (codeload tarball, meson version '0.10.1'), src/layer-surface.c:264-296
+layer_surface_update_auto_exclusive_zone (LayerSurface *self)
+{
+    if (!self->auto_exclusive_zone)
+        return;
+
+    gboolean horiz = (self->anchors[GTK_LAYER_SHELL_EDGE_LEFT] ==
+                      self->anchors[GTK_LAYER_SHELL_EDGE_RIGHT]);
+    gboolean vert = (self->anchors[GTK_LAYER_SHELL_EDGE_TOP] ==
+                     self->anchors[GTK_LAYER_SHELL_EDGE_BOTTOM]);
+    int new_exclusive_zone = -1;
+
+    if (horiz && !vert) {
+        new_exclusive_zone = self->current_allocation.height;
+        if (!self->anchors[GTK_LAYER_SHELL_EDGE_TOP])
+            new_exclusive_zone += self->margins[GTK_LAYER_SHELL_EDGE_TOP];
+        if (!self->anchors[GTK_LAYER_SHELL_EDGE_BOTTOM])
+            new_exclusive_zone += self->margins[GTK_LAYER_SHELL_EDGE_BOTTOM];
+    } else if (vert && !horiz) {
+        new_exclusive_zone = self->current_allocation.width;
+        if (!self->anchors[GTK_LAYER_SHELL_EDGE_LEFT])
+            new_exclusive_zone += self->margins[GTK_LAYER_SHELL_EDGE_LEFT];
+        if (!self->anchors[GTK_LAYER_SHELL_EDGE_RIGHT])
+            new_exclusive_zone += self->margins[GTK_LAYER_SHELL_EDGE_RIGHT];
+    }
+
+    if (new_exclusive_zone >= 0 && self->exclusive_zone != new_exclusive_zone) {
+        self->exclusive_zone = new_exclusive_zone;
+        if (self->layer_surface) {
+            zwlr_layer_surface_v1_set_exclusive_zone (self->layer_surface, self->exclusive_zone);
+        }
+    }
+}
+
+
+installed:
+gtk-layer-shell 0.10.1-1

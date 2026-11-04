@@ -136,3 +136,20 @@ re-runs it.
   QUALITY 135, counter selftest still 9/9 and the frozen twelve still 12/12. The seat's
   stronger-expectation proposals (version commit pin, layers geometry join, pid join) are
   round-78 case upgrades, not edits to the frozen set.
+
+- **R77RevClaims (claim review).** Re-derived both counters from blob-exact freeze bytes: every
+  frozen clause, case tuple, base control and live-evidence pointer agrees (`a83e9bee`). Findings:
+  F1 post-freeze instrument drift — four tool repairs, three counter repairs and three declaration
+  amendments during the wave; each carries a red/green receipt, the control sets are untouched and
+  the final measurement pins the repaired bytes, but "frozen" never names HEAD (the declaration now
+  says so); F2 the frozen C2 matcher was rc-blind (dispositioned at `bce906f3` + QUALITY 135);
+  F3 the `reserved-wrong-edge` mutation killed partly by a tuple crash (dispositioned at
+  `de627316`); F4 `anchors=12/12` is a pre-loop gate, not an independent measure, and
+  `omarchy-version` is bound to the shared omarchy row (declaration erratum; the exact-command
+  anchor upgrade is a round-78 case change).
+- **Dead/partial seats (honest record).** `R77ExecTool` settled mid-work with an empty write dir
+  and no report (`outlen=94`: "Now building the patched copy…"); `R77ExecCases` settled mid-work
+  with six case triples and no report (`outlen=154`); `R77ExecLive` settled mid-work after the t0
+  capture (`outlen=729`, t0 join CLEAN, no t1 field). Their partial evidence is kept, never
+  backfilled; the other nine seats returned reports (or, for `R77RevClaims`, a JSON verdict plus
+  its report). No seat was replaced.

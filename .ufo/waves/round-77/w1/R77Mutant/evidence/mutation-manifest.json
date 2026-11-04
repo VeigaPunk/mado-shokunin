@@ -1,0 +1,197 @@
+{
+  "seat": "R77Mutant",
+  "round": 77,
+  "wave": 1,
+  "target": "tools/mado-barfoot.py",
+  "frozen_sha256": "409e78a4aef2f46f80508820f3a58ae7023c1b614f5836d52bf2e6a05490cb15",
+  "frozen_sha256_after_run": "409e78a4aef2f46f80508820f3a58ae7023c1b614f5836d52bf2e6a05490cb15",
+  "controls_sha256": {
+    "c1-cases-r77.json": "7d6e2b1a5e046dff768d8705abde9f79ee3f34c9095e81e78059e47ededf74ab",
+    "c2-runbook-cases-r77.json": "597b230216ca1645d659381dd314d39399eb03979440c22a259fd4425d4c1741",
+    "c1-r77-barfoot.py": "566209593053083d6ce0ab0903e823426e1de9757afb656193161e9df4fe68bf",
+    "c2-r77-runbook.py": "056a9152c55b6af492299d96d7aa38022715e8896552e10ed51359133df2985a"
+  },
+  "harness_sanity": {
+    "pristine_correct": "15/15",
+    "naive_live_echo_correct": "8/15",
+    "case_files_expected_ok_parse_result": "replicated verbatim from quality/counters/c1-r77-barfoot.py",
+    "anchor_uniqueness": "asserted count==1 per mutant"
+  },
+  "frozen_mutants_excluded": [
+    "level-top-swap", "exclusive-false-ignored", "no-centred-width",
+    "reserved-wrong-edge", "per-side-margin-dropped"
+  ],
+  "mutants": [
+    {
+      "name": "bottom-extent-form",
+      "anchor_old": "        return mon_h - box[\"y\"]",
+      "anchor_new": "        return box[\"y\"] + box[\"h\"]",
+      "verdict": "killed",
+      "correct": "14/15",
+      "killer": ["bottom-bar"],
+      "class": "edge-extent geometry"
+    },
+    {
+      "name": "bottom-extent-altform",
+      "anchor_old": "        return mon_h - box[\"y\"]",
+      "anchor_new": "        return box[\"h\"] + bar[\"margins\"][\"bottom\"]",
+      "verdict": "survived",
+      "correct": "15/15",
+      "killer": [],
+      "class": "equivalent mutant (algebraic identity mon_h - y == h + m_bottom on every declared_box bottom path; published fields and expected= text identical)",
+      "proof": "height>0: y=mon_h-h-m_b => mon_h-y=h+m_b; zero-height: h=mon_h-m_t-m_b, y=m_t => mon_h-y=mon_h-m_t=h+m_b"
+    },
+    {
+      "name": "left-extent-flip",
+      "anchor_old": "        return box[\"x\"] + box[\"w\"]",
+      "anchor_new": "        return mon_w - box[\"x\"]",
+      "verdict": "killed",
+      "correct": "14/15",
+      "killer": ["left-vertical"],
+      "class": "edge-extent geometry"
+    },
+    {
+      "name": "right-extent-flip",
+      "anchor_old": "    return mon_w - box[\"x\"]",
+      "anchor_new": "    return box[\"x\"] + box[\"w\"]",
+      "verdict": "survived",
+      "correct": "15/15",
+      "killer": [],
+      "class": "coverage gap: no right-edge case in the frozen set",
+      "discriminating_case": "1920x1080 monitor, position=right width=40, live box x=1880,w=40, reserved=[0,0,40,0]; pristine EQ/CLEAN, mutant extent=1920 -> DIFFER/rc1"
+    },
+    {
+      "name": "output-exclusion-dropped",
+      "anchor_old": "    if monitor in exclude:",
+      "anchor_new": "    if False:",
+      "verdict": "killed",
+      "correct": "14/15",
+      "killer": ["output-excluded"],
+      "class": "output model"
+    },
+    {
+      "name": "namespace-default-rename",
+      "anchor_old": "else \"waybar\"",
+      "anchor_new": "else \"wbar\"",
+      "verdict": "killed",
+      "correct": "4/15",
+      "killer": ["host-top", "bottom-bar", "css-margins", "exclusive-false", "drift-box", "drift-reserved", "two-monitors", "left-vertical", "wrong-edge-band", "centred-width", "per-side-margin"],
+      "class": "namespace default"
+    },
+    {
+      "name": "vertical-hw-swap",
+      "anchor_old": "        if bar[\"height\"] > 1:",
+      "anchor_new": "        if bar[\"width\"] > 1:",
+      "verdict": "killed",
+      "correct": "14/15",
+      "killer": ["left-vertical"],
+      "class": "height/width swap on vertical bars"
+    },
+    {
+      "name": "reserved-reversed-read",
+      "anchor_old": "    band = mon[\"reserved\"][RESERVED_INDEX[edge]]",
+      "anchor_new": "    band = mon[\"reserved\"][3 - RESERVED_INDEX[edge]]",
+      "verdict": "killed",
+      "correct": "9/15",
+      "killer": ["host-top", "bottom-bar", "drift-box", "two-monitors", "left-vertical", "centred-width"],
+      "class": "reserved index order (read site; distinct anchor from frozen reserved-wrong-edge)"
+    },
+    {
+      "name": "margin-guard-any-to-all",
+      "anchor_old": "    if any(isinstance(config.get(k), int) and not isinstance(config.get(k), bool) for k in per_side):",
+      "anchor_new": "    if all(isinstance(config.get(k), int) and not isinstance(config.get(k), bool) for k in per_side):",
+      "verdict": "killed",
+      "correct": "14/15",
+      "killer": ["per-side-margin"],
+      "class": "per-side margin precedence guard (distinct from frozen per-side-margin-dropped)"
+    },
+    {
+      "name": "zero-height-threshold",
+      "anchor_old": "        if bar[\"height\"] > 0:",
+      "anchor_new": "        if bar[\"height\"] > 1000:",
+      "verdict": "killed",
+      "correct": "5/15",
+      "killer": ["host-top", "bottom-bar", "css-margins", "exclusive-false", "drift-box", "drift-reserved", "two-monitors", "wrong-edge-band", "centred-width", "per-side-margin"],
+      "class": "zero-size branch"
+    },
+    {
+      "name": "gt-flattened",
+      "anchor_old": "        reserved_verdict = \"GT\"",
+      "anchor_new": "        reserved_verdict = \"EQ\"",
+      "verdict": "killed",
+      "correct": "14/15",
+      "killer": ["drift-box"],
+      "class": "GT admissibility",
+      "mutant_output_on_killer": "rc=1 box=DIFFER reserved=EQ verdict=DIFFER (expect reserved=GT)"
+    },
+    {
+      "name": "level-lookup-pinned",
+      "anchor_old": "    entries = levels.get(str(level))",
+      "anchor_new": "    entries = levels.get(\"2\")",
+      "verdict": "survived",
+      "correct": "15/15",
+      "killer": [],
+      "class": "coverage gap: declared-level lookup unpinned (declared-level-miss has an empty distractor level)",
+      "discriminating_case": "config layer=bottom with live waybar ONLY at level 2, levels['1'] empty; pristine NO_LAYER/rc3, mutant CLEAN/rc0"
+    },
+    {
+      "name": "output-empty-include-refused",
+      "anchor_old": "    if not include:\n        return True",
+      "anchor_new": "    if not include:\n        return False",
+      "verdict": "survived",
+      "correct": "15/15",
+      "killer": [],
+      "class": "coverage gap: exclusion-only output spec (line unreachable on the frozen set)",
+      "discriminating_case": "config output=\"!M2\" joined on monitor M1; pristine CLEAN/EQ/rc0 (exclusion-only matches non-excluded monitors), mutant NOT_ON_MONITOR/NO_BAR/rc3"
+    }
+  ],
+  "tally": { "mutants": 13, "killed": 10, "survived": 3, "equivalent": 1 },
+  "c2_findings": [
+    {
+      "probe": "all 12 (matcher)",
+      "weakness": "matched() ignores rc and stderr; frozen matcher returns True for empty-kind rc=127 stderr='command not found' and for exact '192' with rc=1; regex shape accepts pid 999999",
+      "stronger": "require rc==0 before kind matching; gate the run on a liveness probe"
+    },
+    {
+      "probe": "configerrors (empty)",
+      "weakness": "broken/absent session leaves stdout empty and still passes",
+      "stronger": "rc==0 AND stdout==''"
+    },
+    {
+      "probe": "version (contains Hyprland 0.56.2)",
+      "weakness": "any 0.56.2 build string passes (dirty tree, other commit)",
+      "stronger": "pin commit efb5099... in the expected first line (regex)"
+    },
+    {
+      "probe": "layers-namespaces (wallpaper,waybar)",
+      "weakness": "geometry- and level-blind namespace walk; drift/demotion/duplication invisible",
+      "stronger": "row-join levels['DP-1'].levels['2'][ns=waybar] box 0,0,3440,26 with reserved [0,26,0,0] and reserved_top==y+h; demonstrated green on committed captures 46eb2481/e732af34"
+    },
+    {
+      "probe": "waybar-process (pgrep -x waybar, shape)",
+      "weakness": "any pid passes; pid uncorrelated with the layer surface",
+      "stronger": "same-instant join pgrep pid == layers waybar entry pid"
+    },
+    {
+      "probe": "omarchy-version (anchor reuses theme cell)",
+      "weakness": "anchor satisfied by the shared cell without naming the version half",
+      "stronger": "anchor `omarchy version` (verified substring of committed SKILL.md)"
+    },
+    {
+      "probe": "monitors rows (.[0])",
+      "weakness": "enumeration-order assumption (loud failure, not silent)",
+      "stronger": "select by name .[] | select(.name==\"DP-1\")"
+    }
+  ],
+  "bounds": {
+    "writes_outside_own_dir": "none",
+    "git_jj_write_commands": "none",
+    "host_state_calls": "none (unit demos + committed-byte reads only)",
+    "tooling_installed": "none needed",
+    "scratch_deleted": "/fast/scratch/hyaku/mado-r77/R77Mutant",
+    "receipts_copied": {
+      "evidence/control-baseline-r77.txt": "60759bd077f18e11d91cf1df558fd367b6fc85e702380230b38336bdea1e3e7b",
+      "evidence/pre-wave-evidence-r77.txt": "3fee114eec29e32ad5bb0abf59baf3d324f6c744eb9e6ffc956f397581564b72"
+    }
+  }
+}

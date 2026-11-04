@@ -1,0 +1,39 @@
+parity receipt: r76 counter docstring mutant-list text-only fix (round-77 D3, seat R77ExecRepairs)
+date=2026-11-04
+lane HEAD=0fa69f41d81275db102bbe08cf5d6a86a5dfe8f7
+counter blob at HEAD=d74c493a92e79d0df83515abd036277a41d97b14
+pre-existing numeric-fix parity (landed at 3e35d0a9): .ufo/waves/round-77/receipts/parity-r76-docstring.txt
+  (cases=15 -> cases=16 and 'fifteen modes' -> 'sixteen modes'; after sha256 e6ce2a48...)
+
+--- before: worktree bytes at HEAD
+sha256=e6ce2a4829d00f675c9845b806ab22d69f162ba61f4555eae7741d814bc7ac65
+copy=/fast/scratch/hyaku/mado-r77/R77ExecRepairs/c1-r76-before.py
+command: python3 -I /fast/scratch/hyaku/mado-r77/R77ExecRepairs/c1-r76-before.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 3588a527eba555a94e497097b0467efc04274c6d --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-76/controls/c1-outcome-cases-r76.json --scratch-root /fast/scratch/hyaku/mado-r77/R77ExecRepairs/parity-before
+rc=0
+contract: MADO_R76_OUTCOME_FIELD: cases=16 correct=16 mutants=4 killed=4 base_killed=0 verdict=TARGET_MET rev=3588a527eba555a94e497097b0467efc04274c6d
+
+--- after: same bytes + docstring lines 26-29 replaced (four frozen mutant names; zero code lines)
+sha256=5984477aa758d2fe562e50c2f8aba1825679448dd5587caac74464524a6a7086
+copy=/fast/scratch/hyaku/mado-r77/R77ExecRepairs/c1-r76-after.py
+command: python3 -I /fast/scratch/hyaku/mado-r77/R77ExecRepairs/c1-r76-after.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 3588a527eba555a94e497097b0467efc04274c6d --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-76/controls/c1-outcome-cases-r76.json --scratch-root /fast/scratch/hyaku/mado-r77/R77ExecRepairs/parity-after
+rc=0
+contract: MADO_R76_OUTCOME_FIELD: cases=16 correct=16 mutants=4 killed=4 base_killed=0 verdict=TARGET_MET rev=3588a527eba555a94e497097b0467efc04274c6d
+
+--- source diff between the two copies (only the docstring block changes)
+--- c1-r76-before.py
++++ c1-r76-after.py
+@@ -26,4 +26,4 @@
+-  outcome-term-dropped   the outcome ignores the challenge echo (round-75's surviving C1-M2)
+-  prefix-match           the echo comparison becomes a prefix test (needs the widened grammar)
+-  first-witness-wins     the first parsed echo wins instead of the last
+-  case-insensitive       the echo comparison folds case (needs the case-changing challenge)
++  outcome-summary-only   the outcome drops the `killed == 2` conjunct
++  outcome-killed-only    the outcome drops the green conjunct
++  outcome-killed-any     `killed >= 1` instead of `killed == 2`
++  outcome-killed-or      green **or** killed 2
+
+--- checks
+contract lines identical: yes
+exit codes identical: 0 / 0
+changed source lines: 4 removed / 4 added, all docstring lines 26-29; no code line touched
+scratch used: /fast/scratch/hyaku/mado-r77/R77ExecRepairs (deleted after the run)

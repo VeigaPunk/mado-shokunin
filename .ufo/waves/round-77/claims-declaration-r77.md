@@ -171,3 +171,23 @@ C1's sourced ground names S457–S462; S464 (gtk-layer-shell v0.10.1 `layer-surf
 client-side auto exclusive zone) was opened in the same round to ground the `NOT_MODELLED`
 margin claim the entry makes, so the round's registry delta is seven mined rows plus one
 rejected (S463), not six. The predicate, target and case set are unchanged.
+
+## Post-freeze repairs (append-only; the freeze pins the predicate, not the bytes)
+
+The freeze fixed the predicate, labels, targets and control sets; it did not freeze the instrument
+bytes. During the wave the instruments were repaired, each with a red/green receipt and no change
+to a predicate, label, target or control: the tool at `0fa69f41` (scale/transform and dynamic
+cross-size refusals), `bbca7469` (mode-preset refusal), `2df46e29` (literal quote fragments and
+the contract's anchor attribution) and `9197405c` (background-layer refusal); the C1 counter at
+`de627316` (the `reserved-wrong-edge` mutant replacement is now a valid dict, so the kill is an
+oracle verdict); the C2 counter at `4a17b31f` (session-env discovery) and `bce906f3` (the matcher
+requires exit 0 — the frozen matcher's rc-blindness is finding F2). The final measurement pins the
+repaired bytes (`receipts/measurement-final-r77.txt`, C1 counter `de627316`, tool `9197405c`, C2
+counter `bce906f3`), and the control sets are byte-identical to the freeze. Readers must pin a
+revision; "frozen" here never means "HEAD".
+
+C2's `anchors=12/12` clause is a pre-loop gate (the counter aborts before running if an anchor is
+missing), so the printed value cannot fall; nine distinct SKILL.md rows carry the twelve cases, and
+`omarchy-version` is bound to the shared `omarchy theme current` / `omarchy version` row. The
+binding claim is that every case's row exists at the measured revision, which the gate checks; the
+counter's printed count is not an independent measurement (reviewer F4).
