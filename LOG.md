@@ -3259,3 +3259,46 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   `files=33466 findings=280`, `waived 49/47`, the r37/r38 socket tables carry 5 and 715 proc rows —
   routed to L0 as an operator history/redaction decision, not repaired here.
 
+
+## Round 68 (2026-11-03) — self-credit control and the guarded gate population
+
+- Claims frozen at `e0727cda15621766c35dcf8b70c211b6531aab45` (declaration
+  `.ufo/waves/round-68/claims-declaration-r68.md`; base `510100c8`): C1 calibration — the control
+  harness must kill its own forged kill credit under three frozen single-point recipes, base 0/3;
+  C2 operability — the standing `quality/check-*.py` gate population must read git objects through
+  an environment carrying `GIT_NO_REPLACE_OBJECTS`, base 1/13, population 20 and 13 readers frozen
+  in the target.
+- Instruments: `quality/counters/c1-r68-landing-controls.py` (successor harness; `--selftest`
+  drives the real `measure()` body with scripted children, 52/52), `c1-r68-selfmutants.py` (three
+  recipes against the candidate and the pinned r67 harness; 26/26 selftest), and
+  `c2-r68-reader-guard.py` (AST census over the gate population plus the eleven-case control set;
+  25/25 selftest). Twelve gates gained the guard: anchor-cover, axis-scores, control-receipts,
+  deliverables, evidence-pointers, freeze-order, index, index-rows, landed-contract,
+  round-outcome-first, session-material, wave-done.
+- Measured at `379e97f884a6cf7ed3ac96068b0165d63495524f`: C1 `selftest=0 killed=3/3 applied=3/3
+  base=0/3 TARGET_MET` rc 0 (base-scored r67 harness survives all three, 47/47); C2
+  `population=20 readers=13 guarded=13 unguarded=0 controls=11/11 TARGET_MET` rc 0. Landing GREEN
+  (nav 80/80, used-by 374 rows missing=0, ledger 113/113, citations 11/11); gate selftest 460/460;
+  CHECK107 rows=8 covered=8. Receipts: `.ufo/waves/round-68/measurement-final-r68.txt`,
+  `measurement-selftests-r68.txt`, `control-baseline-r68.txt`.
+- Two counter defects were caught by attack seats and repaired before landing, each with a
+  red-before receipt: the declared C2 command passed an argument the counter did not accept
+  (`c2-command-erratum-r68.txt`, rc 2 → rc 1) and the C2 verdict did not enforce the frozen
+  population/reader counts, so a verb-deleted gate scored TARGET_MET (`c2-denominator-erratum-r68.txt`,
+  readers=12 TARGET_MET rc 0 → TARGET_MISSED rc 1). Mined as lessons M68-3/M68-4; QUALITY 110 added.
+- Knowledge: `corpus/knowledge/gate-git-read-guards-r68.md` (MADO-R68-1; object-read verb family,
+  the four accepted and three rejected guard constructions, the population boundary, the
+  dominance hazard) with eight S437 evidence rows; one new source S437 (git v2.56.0
+  `git-cat-file.adoc`, tag-pinned, three byte-identical fetches) and one in-place cell change:
+  S436 `used-by` gains the new entry (logged old→new in the lesson Gate). SKILL r68 gate rows,
+  PROVINCE instrument paragraph, QUALITY 110.
+- Wave w1: 12 seats (executor 4, scribe 2, scout 1, connector 1, reviewer 2, critic 1,
+  mutation-tester 1), 4/12 attack, one batch under policy v1 band 8-16; seat reports under
+  `.ufo/waves/round-68/w1/`. The L1 holds the planner seat. No dead seats in the settled set at
+  the time of this entry (results in the wave handoff).
+- Disclosed, not smoothed: RevC1 survivors (drop the `forged_credit` term, credit `mz_rc is None`,
+  remove the hermeticity guard) and multi-edit forgeries; RevC2's value-position over-inclusion
+  and the connector's guard-dominance variant (reads forged bytes while classified guarded;
+  `aux-dominance-r68.txt`). The guard is presence-tested, does not authenticate objects and does
+  not protect an already-rewritten repository. No universal fault-coverage claim.
+- Tooling: none installed or upgraded; no pacman transaction (host pause respected).

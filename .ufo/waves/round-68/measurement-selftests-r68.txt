@@ -1,0 +1,38 @@
+# round-68 selftest battery (measured content 18d692f3)
+
+$ bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+rc=0
+
+$ bash quality/landing-counters.sh --selftest --scratch-root /fast/scratch/hyaku/mado-r68/l1/sel2/land
+SELFTEST ok 62: empty population summary RED
+MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed
+rc=0
+
+$ python3 quality/counters/c1-r68-selfmutants.py --selftest
+MADO_R68_SELFMUTANTS_SELFTEST: 26/26 assertions passed
+rc=0
+
+$ python3 quality/counters/c2-r68-reader-guard.py --selftest
+MADO_R68_READER_GUARD_SELFTEST: 25/25 assertions passed
+rc=0
+
+$ python3 quality/counters/c1-r68-landing-controls.py --selftest --scratch-root /fast/scratch/hyaku/mado-r68/l1/sel2/h68
+MADO_R68_LANDING_CONTROLS_SELFTEST: 52/52 assertions passed
+rc=0
+
+$ python3 quality/counters/c3-r56-used-by.py --selftest ...
+MADO_USED_BY_SELFTEST: 16/16 assertions passed
+rc=0
+
+$ python3 quality/check-tool-ledger.py --selftest --scratch-root /fast/scratch/hyaku/mado-r68/l1/sel2/led
+LEDGER_SELFTEST: 54/54 passed
+rc=0
+
+$ python3 tools/mado-receipt-citecheck.py --selftest --scratch-root /fast/scratch/hyaku/mado-r68/l1/sel2/cite
+MADO_CITECHECK_SELFTEST: 12/12 assertions passed
+rc=0
+
+$ python3 quality/check-wave-done.py --selftest
+check-wave-done.py: --selftest needs --work <dir> (or --scratch-root <dir>, or a TMPDIR) outside /tmp, /var/tmp, /dev/shm and the home directory
+rc=2

@@ -1,0 +1,31 @@
+# round-68 final measurement — measured content 18d692f346298d6a185b7a38190821245e2133a9
+# base 510100c81e6cf63fec6be380c2f2f9c670f32cbc; freeze e0727cda15621766c35dcf8b70c211b6531aab45
+
+$ python3 quality/counters/c1-r68-selfmutants.py --repo . --rev 18d692f346298d6a185b7a38190821245e2133a9 --base-rev 510100c8... --scratch-root DIR
+MADO_R68_SELFTEST_FIXTURE harness=candidate sha256=25470bc432ad3b612f08869052915f331d9a930149b3af6a9bf0e3eb87cf5527 rc=0 assertions=52/52
+MADO_R68_SELF_MUTANT harness=candidate recipe=S1 find='mr_killed = bool(' occurrences=1 recipe_sha256=7bacfa10996bfd24fd56fe0fb05bd61166f822b8ec158903666beac274fd23f8 rc=1 assertions=51/52 applicable=yes killed=yes
+MADO_R68_SELF_MUTANT harness=candidate recipe=S2 find='mz_killed = mz_rc != 0' occurrences=1 recipe_sha256=867b48949240c7ac4623a9551d07c76cd88afb08ca5df3a6618e8fd04d25a7c9 rc=1 assertions=51/52 applicable=yes killed=yes
+MADO_R68_SELF_MUTANT harness=candidate recipe=S3 find='killed = int(mz_killed) + int(mr_killed)' occurrences=1 recipe_sha256=dd284ac4eb6ea60310cdc81b33435554320b3c415e397c2911b2b68757fde7f0 rc=1 assertions=50/52 applicable=yes killed=yes
+MADO_R68_SELFTEST_FIXTURE harness=base sha256=a4376fa739405a213ccd59847620be02bec5fd2a70584aa59dfbc916022d9b58 rc=0 assertions=47/47
+MADO_R68_SELF_MUTANT harness=base recipe=S1 find='mr_killed = bool(' occurrences=1 recipe_sha256=629b1b0386d2b879c619bc40bbd5482359dcba41d733037c38f24fc0cead571c rc=0 assertions=47/47 applicable=yes killed=no
+MADO_R68_SELF_MUTANT harness=base recipe=S2 find='mz_killed = mz_rc != 0' occurrences=1 recipe_sha256=77a277af7fef0d44515112e28dab7d6014c6c8f9a446e72538957fcf7f355d08 rc=0 assertions=47/47 applicable=yes killed=no
+MADO_R68_SELF_MUTANT harness=base recipe=S3 find='killed = int(mz_killed) + int(mr_killed)' occurrences=1 recipe_sha256=933b9c6ee74909f5eb989bb213dc8b3880db2462396c7f87ef063926acdfc9a0 rc=0 assertions=47/47 applicable=yes killed=no
+MADO_R68_BASE_CONTROL survivors=S1,S2,S3 killed=0/3 applied=3
+MADO_R68_SELFMUTANTS: selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET rev=18d692f346298d6a185b7a38190821245e2133a9
+rc=0
+
+$ python3 quality/counters/c2-r68-reader-guard.py --repo . --rev 18d692f346298d6a185b7a38190821245e2133a9 --controls ... --scratch-root DIR
+MADO_R68_READER_GUARD: population=20 readers=13 guarded=13 unguarded=0 controls=11/11 verdict=TARGET_MET rev=18d692f346298d6a185b7a38190821245e2133a9
+rc=0
+
+$ bash quality/landing-counters.sh --repo . --rev 18d692f346298d6a185b7a38190821245e2133a9 --round 68 --scratch-root DIR
+revision=18d692f346298d6a185b7a38190821245e2133a9 indexed=80/80 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+LANDING_LEG nav rc=0
+MADO_USED_BY: rev=18d692f346298d6a185b7a38190821245e2133a9 entries=80 rows=374 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+LANDING_LEG usedby rc=0
+LEDGER: population=113 ledger_rows=113 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=18d692f346298d6a185b7a38190821245e2133a9
+LANDING_LEG ledger rc=0
+MADO_CITECHECK: rev=18d692f346298d6a185b7a38190821245e2133a9 files=1 citations=11 resolved=11 missing=0 skipped_large=0 verdict=TARGET_MET (VERSION r64-v1)
+LANDING_LEG citecheck rc=0
+MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0 ledger=0 citecheck=0 rev=18d692f346298d6a185b7a38190821245e2133a9)
+rc=0

@@ -3636,3 +3636,63 @@ outside the frozen six-case denominator.
 4. The open L0 questions (r57-r60, the L2 floor, the host-recovery pacman pause, the new
    session-material history question) stay operator-owned.
 
+
+## Round 68 — self-credit control and the guarded gate population (2026-11-03, hyaku run 15)
+
+**Outcome: both frozen claims TARGET_MET at the measured content `379e97f884a6cf7ed3ac96068b0165d63495524f`** — the
+control harness kills its own forged kill credit 3/3 (base 0/3), and the standing gate population's
+git object reads are guarded 13/13 (base 1/13). Two counter defects found by the attack seats
+(the declared command's argument set and the unenforced denominator) were repaired before landing,
+each with a red-before receipt. Freeze `e0727cda15621766c35dcf8b70c211b6531aab45`; base
+`510100c81e6cf63fec6be380c2f2f9c670f32cbc`.
+
+Axis posture at round start: every published finite sub-axis sits at its measured maximum, so no
+axis is distinctly lowest (rounds 56-67 posture); the stagnation nudge does not apply (last
+capability r67, gap 0 < N=3). Both claims take new finite denominators, declared in
+`.ufo/waves/round-68/claims-declaration-r68.md#axis-posture` before any candidate data.
+
+| Claim / axis | Counting command | Before -> after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the control harness kills its own forged kill credit | `python3 quality/counters/c1-r68-selfmutants.py --repo . --rev REV --base-rev 510100c81e6cf63fec6be380c2f2f9c670f32cbc --scratch-root DIR` | at `510100c8`: `selftest=absent killed=0/3 applied=0/3 base=0/3` rc 1 (and all three recipes applied to the r67 harness survive its green 47/47 selftest) -> at `379e97f8`: `selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET` rc 0; bounded `10 × killed / 3` 0.0000 -> 10.0000 | improved on the frozen three-recipe set; multi-point forgeries (drop `forged_credit`, credit `mz_rc is None`, remove the hermeticity guard) survive and are named by RevC1 |
+| C2 **operability** — the standing gates read git objects only through a guarded environment | `python3 quality/counters/c2-r68-reader-guard.py --repo . --rev REV --controls .ufo/waves/round-68/controls/c2-controls.json --scratch-root DIR` | at `510100c8`: `population=20 readers=13 guarded=1 unguarded=12 controls=11/11` rc 1 -> at `379e97f8`: `population=20 readers=13 guarded=13 unguarded=0 controls=11/11 verdict=TARGET_MET` rc 0; bounded `10 × guarded / readers` 0.7692 -> 10.0000 | improved on the frozen population; the classifier is presence-tested (no dominance check, no dataflow) and the guard does not authenticate objects — disclosed |
+
+Evidence: `.ufo/waves/round-68/measurement-final-r68.txt` (both counters and the four landing
+legs at the measured content), `measurement-selftests-r68.txt`, `control-baseline-r68.txt`
+(pre-freeze, at `2ca2bec39c42770a3176989f013e8c1cbbdb7df3`), `c2-command-erratum-r68.txt`,
+`c2-denominator-erratum-r68.txt`, `aux-dominance-r68.txt`. The frozen C2 control set is
+`.ufo/waves/round-68/controls/c2-controls.json` (sha256 `b7a1c939e5a715792d2969eb4ca86d8119cd5a72ef930d00d57338c62faf6a91`, 11 cases).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Self-credit-resistant control harness + gate guard census | A harness whose hermetic selftest drives its own measurement body (so forced kill credits are caught), and a census that counts which standing gates construct the replacement guard, refusing comment/docstring/unrelated-dict shapes and enforcing its frozen population | `.ufo/waves/round-68/measurement-final-r68.txt`; `quality/counters/c1-r68-landing-controls.py`, `c1-r68-selfmutants.py`, `c2-r68-reader-guard.py`; `corpus/knowledge/gate-git-read-guards-r68.md` | 68 |
+
+### Harm watch (at the measured content)
+
+- Both claim counters green at `379e97f8`; the same commands at `510100c8` print `TARGET_MISSED` rc 1 (0/3 and 1/13).
+- Standing instrument at `379e97f8`, round-68 scope: `MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0 ledger=0 citecheck=0)`;
+  navigation `indexed=80/80`; used-by `entries=80 rows=374 missing=0`; ledger `population=113 ledger_rows=113 uncovered=0`;
+  citations `11/11` resolved.
+- Selftests: gate 460/460; landing 62/62; C1 counter 26/26; C2 counter 25/25; harness 52/52; used-by 16/16;
+  ledger 54/54; citecheck 12/12; wave-done 62/62.
+- The twelve repaired gates keep argv, stdout, stderr and exit status: behaviour pairs in the seat reports
+  (`w1/R68ExecGate1.md`, `R68ExecGate2.md`, `R68ExecGate3.md`, `R68ExecHazard.md`), reviewer re-runs in
+  `w1/R68RevC2.md` (byte-identical outputs and rc; two invocation errors were reproduced in both versions).
+- Criterion 107 on the new entry: `CHECK107: rows=8 covered=8 miss=0 verdict=OK`.
+- Axis table re-derived at `379e97f8` (`measurement-final-r68.txt` and `quality/check-axis-scores.py`):
+  navigation 80/80; calibration resolved-active 86/86; operability selftest 12/12.
+- No desktop probe, compositor/socket/service write, package transaction, `MANIFEST.json` edit or
+  sibling-lane write. The r67 harness and all earlier counters stay at their pinned revisions; no alias is added.
+
+### Planned (round 69; intent only)
+
+1. Paired-recipe hardening for the C1 harness: multi-point forgeries (decision + oracle, crash-versus-kill
+   credit) as a new frozen set, so the RevC1 survivors G/L/I stop surviving.
+2. The C2 classifier's over-inclusion (value-position key) and the guard-dominance shape: a rule that reads
+   the environment's construction order, or an explicit refusal of the filtered-dict shape — a new predicate,
+   not an edit to the r68 one.
+3. The standing `quality/check-axis-scores.py` publication cadence: the round-68 table closes a staleness open
+   since round 56; keep the publication in the round that changes an instrument.
+4. The open L0 questions (r57-r60, the L2 floor, the host-recovery pacman pause, the r37/r38 session-material
+   history question) stay operator-owned.

@@ -54,6 +54,9 @@ A fix counts only on its named red/green evidence. M68-1's green is the landing 
 and M68-3 are process/reference fixes with their red states at the named revisions, not new scored
 capabilities.
 
+| M68-3: the frozen C2 counting command passed `--scratch-root`, an argument the counter did not accept, so the declared command could not print its contract line (exit 2, "unrecognized arguments"). | stale-premise | `.ufo/waves/round-68/c2-command-erratum-r68.txt` — the counter blob at `e0727cda` exits 2 on the declared argv; `corpus/lessons/round-68.md` was drafted from the counter's docstring, not from a run. | `none` before this round; QUALITY 110(a) now requires the pre-freeze receipt to run the advertised invocation verbatim. | The counter accepts `--scratch-root` for interface parity and its selftest asserts the frozen argument set parses (`MADO_R68_READER_GUARD_SELFTEST: 25/25`); the errata receipt shows red-before `rc=2` and the same command printing `TARGET_MISSED rc=1` after. |
+| M68-4: the C2 counter's verdict did not enforce the frozen denominator, so deleting every quoted object-read verb from one repaired gate scored `readers=12 … TARGET_MET rc=0` — a repair could shrink the population and still pass. | vacuous | `R68RevC2` finding 1 and `.ufo/waves/round-68/c2-denominator-erratum-r68.txt` — the pre-fix counter at `2a39e741` prints `population=20 readers=12 guarded=12 unguarded=0 … TARGET_MET` rc 0 on the verb-deleted fixture. | `none` at freeze; QUALITY 110(b)'s "the frozen sentence and the counter's code are the same sentence" is the rule it violated. | `verdict_met()` now requires `population==20` and `readers==13` beside `unguarded==0` and every control correct; the same fixture reads `TARGET_MISSED rc=1` and the selftest carries five denominator assertions (25/25). |
+
 ## Gate
 
 Admitted: **S437**, scoped to the lane's git object-read census — not a desktop fact. The row was
@@ -92,8 +95,13 @@ byte-identically and audited the entry's twelve cited quotes). The row is an app
   prints nothing unless the object is malformed (line 291) — existence and format validity, not
   provenance or content truth. Flip: a signature/verification sentence in the same file, or a
   lane instrument that pins object bytes to a digest rather than testing presence.
-- Recheck/status/used-by cell changes old→new: **none**. S437 is an append; no existing row's
-  recheck, status or used-by cell is edited this round. The new row's recheck is `90d`.
+- Recheck/status/used-by cell changes old→new: **one**, in place and append-only:
+  `S436` `used-by` old `corpus/lessons/round-67.md,
+  corpus/knowledge/replace-ref-citation-boundaries-r67.md` → new `corpus/lessons/round-67.md,
+  corpus/knowledge/replace-ref-citation-boundaries-r67.md,
+  corpus/knowledge/gate-git-read-guards-r68.md`. The new entry cites S436 for the replacement
+  mechanism itself; the used-by counter (missing=1) caught the missing back-reference before
+  landing. No row's `recheck` or `status` cell is edited this round; S437 is an append.
 
 ## Frontier and scope
 
@@ -253,3 +261,36 @@ integration; the draft's own text is unchanged.
 - Wave settlement counts and the wave-done receipt; the record-landing revision; the harm-watch
   counters (navigation, used-by, ledger, citations).
 - The `--scratch-root` resolution and the exact counter hash at the record landing.
+
+## Landing (L1 integration)
+
+Measured content `379e97f884a6cf7ed3ac96068b0165d63495524f`; measured commands and exit codes in
+`.ufo/waves/round-68/measurement-final-r68.txt`, the selftest battery in
+`measurement-selftests-r68.txt`, the preliminary run at `18d692f3` in
+`measurement-preliminary-r68.txt`.
+
+- C1 at `379e97f8`: `MADO_R68_SELFMUTANTS: selftest=0 killed=3/3 applied=3/3 base=0/3
+  verdict=TARGET_MET rev=379e97f8…` rc 0; candidate harness sha256 `25470bc4…f5527`, selftest
+  52/52; the three mutant diffs printed with their sha256; the base harness (sha256
+  `a4376fa7…9b58`, 47/47) survives all three recipes (`S1,S2,S3 killed=0/3`).
+- C2 at `379e97f8`: `MADO_R68_READER_GUARD: population=20 readers=13 guarded=13 unguarded=0
+  controls=11/11 verdict=TARGET_MET rev=379e97f8…` rc 0; selftest 25/25.
+- Standing instrument at `379e97f8`, round-68 scope: `MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0
+  ledger=0 citecheck=0)`; navigation `indexed=80/80`, used-by `entries=80 rows=374 missing=0`,
+  ledger `population=113 ledger_rows=113 uncovered=0`, citations `11/11` resolved.
+- Selftests: gate `MADO_SELFTEST: 460/460`; landing 62/62; C1 counter 26/26; C2 counter 25/25;
+  harness 52/52; used-by 16/16; ledger 54/54; citecheck 12/12; wave-done 62/62.
+- Criterion 107 on the new entry: `CHECK107: rows=8 covered=8 miss=0 verdict=OK` (eight evidence
+  rows, all S437 + `git-cat-file.adoc:<line>`, `eof=unchecked` — the anchor names no `pin` path).
+- Census exit 0 at both ends; rows 373 → 374 (S437 append; tier histogram shifts by one A); no
+  existing `status`/`recheck` cell changed; S436 `used-by` changed as logged above.
+- Axis publication: this round publishes a fresh axis table (`SCORECARD.md`, round-68 section)
+  re-derived at `379e97f8`: navigation 80/80, calibration resolved-active 86/86, operability
+  selftest 12/12 — closing the navigation staleness (71/71) left since round 56.
+- Disclosed by the attack seats, not smoothed: C1 survivors under multi-point forgeries
+  (`forged_credit` term dropped; `mz_rc is None` credited; the hermeticity guard removable) —
+  RevC1; the C2 classifier's value-position over-inclusion (a key string in a value reads as a
+  guard) and the guard-dominance hazard
+  (`dict(os.environ, GIT_NO_REPLACE_OBJECTS="1")` filtered by `GIT_*` reads forged bytes while
+  classified guarded) — RevC2 and the connector, receipts in `aux-dominance-r68.txt`; and the two
+  counter defects M68-3/M68-4 fixed before landing with red-before receipts.
