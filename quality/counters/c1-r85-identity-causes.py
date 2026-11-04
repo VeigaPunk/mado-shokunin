@@ -11,8 +11,8 @@ namespace duplicates, two live surfaces at one level, and one accept case where 
 differing only in case stay two surfaces. The held r84 tool refuses the right stages but prints
 no cause; the candidate must score 72/72 and kill all 51 enumerated mutations.
 
-Contract: MADO_R85_IDENTITY: cases=61 correct=61 mutants=41 killed=41 base_correct=58/61
-carried=58/58 tool_selftest=p/n verdict=TARGET_MET rev=<hash> tool_sha256=<sha>
+Contract: MADO_R85_IDENTITY: cases=72 correct=72 mutants=51 killed=51 base_correct=62/72
+carried=61/61 tool_selftest=p/n verdict=TARGET_MET rev=<hash> tool_sha256=<sha>
 (rc 0 iff every executable clause holds). Extra surviving cheats remain finite-set limits.
 
 Exit map: 0 target met · 1 target missed · 2 setup error (never a verdict).

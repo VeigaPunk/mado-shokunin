@@ -1,0 +1,158 @@
+{
+  "round": 85,
+  "seat": "R85ExecPins",
+  "freeze_revision": "3905311c75a39c5710413105865c0a1a7dd0116a",
+  "base_revision": "5f174ca48d4f9cf94abf1a8c58b7d6f88733aced",
+  "sources": {
+    "S488": {
+      "title": "POSIX.1-2024 Shell & Utilities \u00a72.9.3 Pipelines (page anchors as 2.9.2 Pipelines, tag_19_09_02 'Exit Status' subsection)",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html",
+      "pinned_file": "fetch/S488.bin",
+      "fetches": [
+        {
+          "n": 1,
+          "http_status": 200,
+          "bytes": 357953,
+          "sha256": "0889867a53fe12508a71e8739ec23ecdddc95e6f67697c98e26acc8ff0ec1acd",
+          "fetched_utc": "2026-11-04T20:06:43Z",
+          "curl": "curl -sSL --max-time 60"
+        },
+        {
+          "n": 2,
+          "http_status": 200,
+          "bytes": 357953,
+          "sha256": "0889867a53fe12508a71e8739ec23ecdddc95e6f67697c98e26acc8ff0ec1acd",
+          "fetched_utc": "2026-11-04T20:06:43Z",
+          "curl": "curl -sSL --max-time 60"
+        }
+      ],
+      "byte_identical_across_fetches": true,
+      "pinned_fetch": 2,
+      "pinned_sha256": "0889867a53fe12508a71e8739ec23ecdddc95e6f67697c98e26acc8ff0ec1acd",
+      "pinned_bytes": 357953,
+      "claims": {
+        "a_pipeline_status_is_last_command": {
+          "grounds": "pipeline exit status = status of last (rightmost) command (pipefail disabled, no leading '!')",
+          "byte_offset_start": 133030,
+          "byte_offset_end": 133104,
+          "quote": "The exit status of the last (rightmost) command specified in the pipeline.",
+          "quote_words": 12,
+          "quote_spans_newline": false,
+          "note": "Table row 'pipefail Enabled=no, Begins with !=no'. POSIX also defines pipefail (enabled case = all-commands derivation), so 'last command' is the default-off rule, not universal."
+        },
+        "b_signal_exit_status": {
+          "grounds": "POSIX: command terminated by signal -> exit status greater than 128 (NOT the literal 128+N form)",
+          "byte_offset_start": 109001,
+          "byte_offset_end": 109128,
+          "quote": "Otherwise, if the command terminated due to the receipt of a signal, the shell shall assign it an exit status greater than 128.",
+          "quote_words": 23,
+          "quote_spans_newline": true,
+          "quote_newline_normalised": "raw bytes contain one '\\n' between 'status' and 'greater'; normalised to a space",
+          "note": "Supports '>128' only. Does not state 128+N. The 128+N wording is in the GNU bash source (S489), which was not retrieved."
+        }
+      }
+    },
+    "S489": {
+      "title": "GNU Bash Reference Manual \u00a73.7.6 Exit Status",
+      "url": "https://www.gnu.org/software/bash/manual/html_node/Exit-Status.html",
+      "pinned_file": null,
+      "pinned_sha256": null,
+      "pinned_bytes": null,
+      "status": "GNU_ENDPOINT_UNREACHABLE; not pinned",
+      "fetches": [
+        {
+          "n": 1,
+          "attempt": "initial pair (2 parallel)",
+          "http_status": "000",
+          "curl_rc": 28,
+          "error": "curl: (28) Connection timed out after 60000 milliseconds",
+          "fetched_utc": "2026-11-04T20:07:41Z"
+        },
+        {
+          "n": 2,
+          "attempt": "initial pair (2 parallel)",
+          "http_status": "000",
+          "curl_rc": 28,
+          "error": "curl: (28) Connection timed out after 60001 milliseconds",
+          "fetched_utc": "2026-11-04T20:07:41Z"
+        },
+        {
+          "n": 3,
+          "attempt": "retry 1 (-4)",
+          "http_status": "000",
+          "curl_rc": 28,
+          "error": "curl: (28) Connection timed out after 60001 milliseconds",
+          "fetched_utc": "2026-11-04T20:08:53Z"
+        },
+        {
+          "n": 4,
+          "attempt": "retry 2 (-4)",
+          "http_status": "000",
+          "curl_rc": 28,
+          "error": "curl: (28) Connection timed out after 60001 milliseconds",
+          "fetched_utc": "2026-11-04T20:09:53Z"
+        },
+        {
+          "n": 5,
+          "attempt": "retry 3 (-4)",
+          "http_status": "000",
+          "curl_rc": 28,
+          "error": "curl: (28) Connection timed out after 60001 milliseconds",
+          "fetched_utc": "2026-11-04T20:10:53Z"
+        }
+      ],
+      "diagnosis": "DNS resolves www.gnu.org to 209.51.188.116 and 2001:470:142:5::116; TCP connect to :443 times out on both addresses. Host-side connect failure, reproduced 5x; S488 from pubs.opengroup.org fetched fine in the same window.",
+      "byte_identical_across_fetches": "not applicable (no bytes retrieved)",
+      "claims": {
+        "a_pipeline_status_is_last_command": "NOT GROUNDED by S489 (not retrieved)",
+        "b_signal_exit_128_plus_N": {
+          "status": "GNU endpoint not retrieved; grounded by S489-alt instead",
+          "byte_offset_start": null,
+          "byte_offset_end": null,
+          "quote": null
+        }
+      }
+    },
+    "S489-alt": {
+      "title": "Bash Reference Manual, 3.7.5 Exit Status (Chet Ramey maintainer copy, Edition 5.3, May 18 2025; L1-supplied alternate)",
+      "url": "https://tiswww.case.edu/php/chet/bash/bashref.html",
+      "pinned_file": "fetch/S489-alt-tiswww.bin",
+      "pinned_sha256": "b91026acffb159bd1e842e3116a95539bf858e2b57cbfa74df9e3a53379177a4",
+      "pinned_bytes": 1040870,
+      "fetches": [
+        {
+          "n": 1,
+          "http_status": 200,
+          "bytes": 1040870,
+          "sha256": "b91026acffb159bd1e842e3116a95539bf858e2b57cbfa74df9e3a53379177a4",
+          "fetched_utc": "2026-11-04T20:14:48Z"
+        },
+        {
+          "n": 2,
+          "http_status": 200,
+          "bytes": 1040870,
+          "sha256": "b91026acffb159bd1e842e3116a95539bf858e2b57cbfa74df9e3a53379177a4",
+          "fetched_utc": "2026-11-04T20:14:51Z"
+        }
+      ],
+      "byte_identical_across_fetches": true,
+      "note": "Section number in this document is 3.7.5 not 3.7.6 (declaration locator differs). The section is the same content.",
+      "claims": {
+        "b_signal_exit_128_plus_N": {
+          "grounds": "command terminated on fatal signal N -> exit status 128+N",
+          "byte_offset_start": 239046,
+          "byte_offset_end": 239200,
+          "quote": "When a command terminates on a fatal signal whose number is N, Bash uses the value 128+N as the exit status.",
+          "quote_words": 21,
+          "quote_spans_newline": true,
+          "quote_note": "raw bytes contain HTML <var> tags and one newline; quote is the tag-stripped text, newline normalised to space"
+        }
+      }
+    }
+  },
+  "rejected": "No quote invented. S489 GNU endpoint unreachable (5 failed attempts). 128+N grounded by S489-alt. POSIX S488 supports only the greater-than-128 form; it does not state 128+N. Pipeline last-command grounded in S488 table row (pipefail off, no !).",
+  "supplementary_not_pinned": {
+    "bash-5.2 bashref.texi (ftp.gnu.org tarball, 10950833 bytes, scratch only, not pinned)": "line 3538-3539: \"When a command terminates on a fatal signal whose number is @var{N}, Bash uses the value 128+@var{N} as the exit status.\"",
+    "purpose": "corroboration only; not citable as the S489 pin"
+  }
+}

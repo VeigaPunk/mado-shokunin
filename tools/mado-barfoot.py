@@ -89,7 +89,7 @@ import re
 import stat
 import sys
 
-VERSION = "r84-v1"
+VERSION = "r85-v1"
 
 MAX_BYTES = 1048576
 

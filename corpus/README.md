@@ -9,6 +9,8 @@ before reusing a live value. A new index row does not close a behavioral gap.
 
 | Note | Holds | Sources |
 |---|---|---|
+| `knowledge/bar-footprint-identity-causes-r85.md` | Exact-string declaration identity and cause-bound refusal witnesses; finite72-case/51-mutant proof, not all-ten-cause certification. | S486; round85 frozen controls and reviews |
+| `knowledge/runbook-status-classes-r85.md` | Guarded numeric status classes0/7/141, POSIX/Bash source distinction and frozen-counter failure; not signal-cause authentication or round admission. | S487/S488/S489; round85 controls and lesson |
 | `knowledge/bar-footprint-namespace-discipline-r84.md` | Ambiguous allocation keys and repeated declaration identities are refused, not guessed; this is the join's grammar, not protocol uniqueness. | S486; round-84 frozen controls |
 | `knowledge/runbook-producer-status-r84.md` | Fifteen guarded pipeline commands and contained producer-status demonstrations; pipeline success is not tray health. | S487; round-84 frozen controls |
 | `knowledge/bar-footprint-surface-band-r83.md` | Second declared surface allocation, finite model observations and independent causal-proof limitations; no round admission claimed. | S481/S464/S470, S484/S485; round83 receipts and attack reports |
@@ -133,6 +135,7 @@ landed [arc synthesis](knowledge/arc-synthesis.md), as recorded in
 
 ## Frontier
 
+- Round85 adds identity refusal causes and documents status-class propagation. Cause-bound witnesses distinguish nine tokens; negative-allocation cause and arbitrary cause authenticity remain open. Runbook frozen C2 fails; four declared survivors and signal/exit ambiguity prevent admission. See [identity causes](knowledge/bar-footprint-identity-causes-r85.md) and [status classes](knowledge/runbook-status-classes-r85.md).
 - Round84 explores declaration-identity ambiguity and pipeline producer-status propagation. See [namespace discipline](knowledge/bar-footprint-namespace-discipline-r84.md) and [producer status](knowledge/runbook-producer-status-r84.md). Live-reply ambiguity and the r83 causal cheats remain open.
 - Round83 extends the allocation map to declared extra surfaces. The finite model is 58/58 versus held 52/58, but independent attacks leave extra-surface allocation-source certification open. See [surface band](knowledge/bar-footprint-surface-band-r83.md); do not treat a repaired counter's green line as causal admission.
 - Round 82 models the class round 81 refused: a declared dynamic band is the client's own allocation ([allocation](knowledge/bar-footprint-allocation-r82.md); row S481 new, S464/S470 held): the zero-size clauses (`set_size` `:128-131`, `configure` `:347-348`) make the client pick its size, gtk-layer-shell sends `current_allocation` as the auto zone, and the join now takes a declared `--allocation` map — the declaration wins when positive, a zero or absent band is refused, and the composition path resolves the bar's band the same way (47 frozen cases, 34 mutants).

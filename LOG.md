@@ -4151,3 +4151,50 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   expired terminal statuses and unverified actual models are disclosed in `seat-metadata-r84.json`.
   Zero replaced seats; ten substantive outputs, no terminal-success inference. Main's WAVE-DONE
   received before any report. No source tree/sibling edit or package operation.
+
+## Round85 — cause-bound identity witnesses and status classes (2026-11-04)
+
+- Claims: C1 coverage of declaration-identity cause witnesses; C2 operability of the runbook's
+  status classes. Motivating evidence: round84 verifier R1–R4, stage-only refusal holes and
+  producer-status/prefix survivors. Freeze `3905311c75a39c5710413105865c0a1a7dd0116a`;
+  successor rows and binding repairs `d7c40e6d1b9a7476f2ff48254d577799ce9901e4`.
+- C1 tool now emits literal cause tokens at identity refusal sites and distinguishes bar,
+  same-level-extra and cross-level-extra namespace repeats without casefolding names.
+  Frozen controls72 cases=61 carried+11 witnesses; counter51 mutants, held tool62/72.
+  Full frozen target72/72,51/51 kills,152/152 selftest is independently re-executed by the
+  lane reviewer (`.ufo/waves/round-85/w1/R85ReviewerC1.md`). Case-only cause-flooding and
+  wrong-negative-allocation outputs expose limits, not full-gate survivors.
+- C2 adds documented contained pipelines with guarded0/7/141 versus unguarded0/0/0.
+  Frozen counter fails setup on declared negative supersessions; its frozen SKILL section
+  has33 rows rather than36. Forward comparison/row/anchor-region/print fixes execute36 rows
+  in sandbox, but four declared mutations survive (33/37). Original claim stays unverified.
+  Controls restored byte-identical to freeze after a discarded forward pattern experiment.
+- Source curation: S488 POSIX2024 section2.9.2 and S489 maintainer Bash5.3 section3.7.5;
+  S490 rejects uniquely inferring signal13 from141 because explicit exit141 is equivalent.
+  GNU endpoint timeouts are not quote absence; maintainer copy was opened independently.
+  Registry422→425; old cells unchanged. Gate/located quotes live in lesson85.
+- Critic and mutation reports retain command-only Markdown binding, special-status bypass,
+  broad carried exemptions, clause-deletion monotonicity and exact-identity case holes.
+  QUALITY140–142 learn these findings; no population/kill-rule revision admits the freeze.
+  Sentinel finds metadata paths and inherited setup/symlink containment limits; mandatory
+  path/census receipts remain unfiltered, no credential disclosure was observed.
+- Two bounded knowledge notes are indexed; registry-home and ledger rows for both new
+  counters repair the observed freeze ledger red156 population/154 registered/uncovered2.
+  SOURCES, lesson, README and SCORECARD records land with the integration commit.
+  No package install, pacman transaction, service/config mutation or sibling write.
+- ONE13-seat v1 wave, five attack seats, one connector; L1 holds planner. Wave completion,
+  final measurements and any dead seats are retained in the final receipts/report. No
+  promotion or capability admission; outside-lane judgment remains the integrator's.
+
+### Round85 corrections (append-only)
+
+The earlier sentence “old cells unchanged” is superseded: S486/S487 used-by cells each
+append the corresponding round85 knowledge note; exact old→new strings are in lesson85
+§Registry changes. No pre-existing status, recheck or opened cell changes.
+Frozen declaration ancestry “nine removed” is false: only `rc-blind` is removed from the29
+r84 C2 mutants;28 retained+9 new=37. Its kill-rule OR differs from executable AND. These are
+declared/instrument disagreements, not repaired frozen predicates.
+The successor's table labels seven specialized status pairs explicitly and corrects sample
+counts, but the counter still authenticates command cells only. Neither Markdown edits nor
+the forward docstring/version corrections cure frozen C2. VERSION is now r85-v1; historical
+freeze carries r84-v1 and remains byte-resolvable.

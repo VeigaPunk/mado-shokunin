@@ -4963,3 +4963,39 @@ Axis table re-derived at the round84 records (final-axis receipt decides agreeme
 navigation 104/104; calibration resolved-active 86/86; operability selftest 12/12, ledger 154/154.
 No capability row is admitted from failed frozen C2. Other axes unchanged within the exercised
 harm-watch scope; no claim of global absence of harm or promotion clearance.
+
+## Round85 — identity causes and producer status classes
+
+Base `5f174ca48d4f9cf94abf1a8c58b7d6f88733aced`; declaration/instrument freeze
+`3905311c75a39c5710413105865c0a1a7dd0116a`; forward binding repair
+`d7c40e6d1b9a7476f2ff48254d577799ce9901e4`.
+Two distinct incremental surfaces: C1 coverage of declaration-identity cause witnesses and
+C2 operability of executable runbook status classes. Lowest-axis ties coverage/operability
+remain; saturation9.0/window3, retirements and promotion are unchanged.
+
+| Claim | Counting command | Before → after and verdict |
+|---|---|---|
+| C1 coverage / cause-bound identity witnesses | `python3 -I quality/counters/c1-r85-identity-causes.py --repo . --rev REV --base-rev 5f174ca48d4f9cf94abf1a8c58b7d6f88733aced --controls .ufo/waves/round-85/controls/c1-cases-r85.json --carried .ufo/waves/round-84/controls/c1-cases-r84.json --scratch-root DIR` | held62/72→freeze72/72,51/51 kills,61/61 carried,152/152 tool selftest; bounded score8.6111→10.0000 (+1.3889). `w1/R85ReviewerC1.md` independently re-executes the complete frozen target at3905311c. Only nine distinct causes are explicitly bound; alloc-negative remains stage-only. No all-ten-cause or arbitrary-cause certification. |
+| C2 operability / producer status classes | `python3 -I quality/counters/c2-r85-status-classes.py --repo . --rev REV --controls .ufo/waves/round-85/controls/c2-cases-r85.json --carried .ufo/waves/round-84/controls/c2-runbook-cases-r84.json --scratch-root DIR` | unguarded contained producers0/0/0→guarded0/7/141; frozen counter exits2 at carried-negatives comparison and lacks36 bound rows. Repaired successor36/36 rows but33/37 kills in L1 sandbox. No C2 numeric upgrade: frozen target unverified; honest stop. |
+
+Evidence paths above are relative to `.ufo/waves/round-85/`. Final committed-revision receipts
+will decide successor observations; sandbox executions do not establish a lane-revision pass.
+Frozen controls are retained unchanged. Forward experiment unanchoring version patterns was
+discarded, not substituted for frozen data. Dropping conjuncts cannot lower an already-perfect
+case score; negative/churn-loop survivors are retained rather than removed from37.
+
+Carry-in R1 yielded new identity witnesses, but cause flooding, prefix/casefold scorer
+weakenings, whitespace identity aliases and signal-like status windows remain finite-oracle
+limits. R2 carried-field enforcement remains too broad (critic report); R3 final hashes bind
+identity, not historical execution chronology; R4 source-pin paths are fully wave-qualified.
+
+No capability row is admitted from this rejected frozen C2. C1 changes diagnostics and
+refusal-edge coverage, not the compositor's geometry prediction or a layer-shell uniqueness law.
+The status/outcome Markdown cells are not authenticated by the command-only binding counter.
+
+Planned next-round intent only: one canonical refusal-record parser with negative observations;
+an independently observable detector for skipped matching clauses; exact carried-field and
+Markdown outcome bindings. Do not rewrite round85 frozen populations.
+
+Axis table re-derived at the round85 publication (final-axis receipt decides agreement):
+navigation 106/106; calibration resolved-active 86/86; operability selftest 12/12, ledger156/156.

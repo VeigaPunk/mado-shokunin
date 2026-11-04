@@ -483,3 +483,12 @@ No config edit, reload, dispatcher, input capture, package transaction, screensh
 mutation or sibling-method ownership follows. Unit health remains tsukuroi's, mutation craft
 tameshi's, and cross-lane orchestration/record tooling kumitate's; this lane owns only these
 applications and evidence. See round84 connector report and the runbook interpretation caption.
+
+**Round85 refinement — same read-only surface.** The layer join's exception metadata gains
+literal identity-cause tokens and distinguishes repeated declaration sites without folding
+namespace case. It still reads supplied files only. Round85 counters extract Git objects or
+execute the same bounded runbook queries plus contained, finite stdout-only producers.
+The numeric0/7/141 pipeline observations do not prove a unique termination cause, producer
+truth, rendered UI or service health. OS diagnosis, reusable testing method and fleet record
+governance remain sibling-owned; source docs support only this desktop-runbook application.
+Frozen C2 failure and successor limitations are retained in lesson85, not province expansion.

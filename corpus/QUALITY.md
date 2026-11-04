@@ -1007,3 +1007,24 @@ The guard and contained failing-producer case are the fix; neither proves produc
 Shown able to fail: `corpus/lessons/round-83-verifier-spotcheck.md` R1 finds four r82/r83 counters
 in the ledger but absent from the registry home. Round84 adds those rows plus its two successors.
 Source: `corpus/lessons/round-84.md` M84-2. Limits: registry completeness does not certify gates.
+
+## Round85 — discriminator and documentation boundaries
+
+**140. A mutant that deletes a conjunct cannot be certified killed solely by a perfect-positive case score.**
+Shown able to fail: `corpus/lessons/round-85.md` and round85 `w1/R85ReviewerC2.md`:
+dropping negative/churn loops still yields36/36. Preserve these survivors; a future detector
+must observe the relevant calls or independently test counter discrimination. Never add a
+contradictory negative that makes the correct implementation fail just to kill the deletion.
+Limits: this criterion rejects an invalid proof; it does not supply a new frozen detector.
+
+**141. Bind a refusal cause at its own record and include a negative observation.**
+Round85 `w1/R85ReviewerC1.md` shows all-cause flooding scores72/72 cases, although the full
+mutation gate rejects that demonstrated tool. Its wrong-negative-allocation cause also
+scores72/72 cases because the carried expectation binds only stage. Source:
+`corpus/lessons/round-85.md`. Distinguish case-score holes from full-gate survivors.
+
+**142. A shell-encoded number is not independent evidence of how a child terminated.**
+Round85 `w1/R85ReviewerC2.md` shows exact141 and signal13 accept the same status.
+Bash documents128+N; POSIX does not mandate that encoding. The lane must not infer the
+converse or advertise unbound Markdown outcome/status cells as authenticated.
+Source: `corpus/lessons/round-85.md`, S488/S489/S490.
