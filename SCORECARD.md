@@ -3728,8 +3728,10 @@ Frozen declaration: `.ufo/waves/round-69/claims-declaration-r69.md`, landed
 `789a87f1a667b43dd759222a2f048bf8f75b43ce`; base `04093b83f73a841117d3b31dbb2a6063f4f2a454`.
 Frozen control set: `.ufo/waves/round-69/controls/c2-controls-r69.json` (11 cases, sha256
 `975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9`). Instruments-repaired
-content: `296ed0d75e361387908cf2dd418d3677f49f94c8`. Measured receipt:
-`.ufo/waves/round-69/measurement-r69.txt`.
+content: `e0e1831aed0b5b983957d2eb1aae4e0f1ebcd630` (the counters as finally repaired after the
+review seats: `296ed0d7` instruments, `e0e1831a` the revised scripted revisions). Measured receipts:
+`.ufo/waves/round-69/measurement-r69.txt` (first measurement) and
+`.ufo/waves/round-69/measurement-final-r69.txt` (final).
 
 Axis posture at round start: every published finite sub-axis sat at its measured maximum
 (navigation 80/80, calibration 86/86, operability 12/12 at `379e97f8`; gate `MADO_SELFTEST:
@@ -3739,15 +3741,16 @@ do-nothing controls miss the target (0/3 and 7/11), so neither is reachable with
 
 | Claim / axis | Counting command (REV is before or the measured content) | Before → after | Verdict |
 |---|---|---|---|
-| C1 **calibration** — the hardened harness kills paired (decision + oracle) forgeries | `python3 quality/counters/c1-r69-paired-recipes.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --scratch-root DIR` | at base: `selftest=absent killed=0/3 applied=0/3 base=0/3 verdict=TARGET_MISSED` rc 1 (r68 harness survives all three: `killed=0/3 applied=3/3`) → at `296ed0d7`: `selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET` rc 0; bounded `10 × killed / 3` 0.0000 → 10.0000 | improved on the frozen three-recipe set; an equivalent recipe is excluded with its probe |
-| C2 **operability** — the guard census requires key position and dominance | `python3 quality/counters/c2-r69-guard-dominance.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --controls .ufo/waves/round-69/controls/c2-controls-r69.json --scratch-root DIR` | held rule at the same frozen set: `controls=7/11` (accepts value-position, dead-branch, uncalled-helper, overwritten-env) → at `296ed0d7`: `population=20 readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0; bounded `10 × guarded / readers` 10.0000 (population 13/13 at both ends — the move is discrimination, not the count) | improved on the frozen eleven-case set; six implementation defects against the frozen sentence repaired red-before |
+| C1 **calibration** — the hardened harness kills paired (decision + oracle) forgeries | `python3 quality/counters/c1-r69-paired-recipes.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --scratch-root DIR` | at base: `selftest=absent killed=0/3 applied=0/3 base=0/3 verdict=TARGET_MISSED` rc 1 (r68 harness survives all three: `killed=0/3 applied=3/3`) → at `e0e1831a`: `selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET` rc 0; bounded `10 × killed / 3` 0.0000 → 10.0000 | improved on the frozen three-recipe set; an equivalent recipe is excluded with its probe |
+| C2 **operability** — the guard census requires key position and dominance | `python3 quality/counters/c2-r69-guard-dominance.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --controls .ufo/waves/round-69/controls/c2-controls-r69.json --scratch-root DIR` | held rule at the same frozen set: `controls=7/11` (accepts value-position, dead-branch, uncalled-helper, overwritten-env) → at `e0e1831a`: `population=20 readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0; bounded `10 × guarded / readers` 10.0000 (population 13/13 at both ends — the move is discrimination, not the count) | improved on the frozen eleven-case set; six implementation defects against the frozen sentence repaired red-before |
 
 **Evidence.** `.ufo/waves/round-69/measurement-r69.txt` (both counters at the measured content),
 `control-baseline-r69.txt` (the two do-nothing controls before freeze),
 `c2-classifier-repair-r69.txt` (pre-fix 7 violations → post-fix 8/8 cases),
 `w1/R69RevC1.md` (the C1 attack: S1–S5, all closed), `w1/R69RevC2.md` (the C2 attack: six bounded
-defects, all closed), `w1/R69CriticClaims/` and `w1/R69MutBattery/` (the critic and mutation
-batteries). Harm watch: `harm-watch-r69.txt` (gate 460/460; landing legs; instrument selftests
+defects, all closed), `w1/R69CriticClaims/` and `w1/R69MutBattery.md` (the critic and mutation batteries; the battery's
+only survivor, the base-rev-ignoring mutant, was closed in `e0e1831a` by separating the scripted
+revisions, and its R69-MUT-R2 residual is disclosed rather than claimed). Harm watch: `harm-watch-r69.txt` (gate 460/460; landing legs; instrument selftests
 – r69 harness 59/59, C1 counter 27/27, C2 counter 40/40, r68 counters 27/27 / 52/52 / 26/26),
 axis table re-derived below, cursor 107 anchor cover on the new entry.
 

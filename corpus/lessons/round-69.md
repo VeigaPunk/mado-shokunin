@@ -7,7 +7,7 @@ frozen declaration: `.ufo/waves/round-69/claims-declaration-r69.md`, `789a87f1a6
 control set: `.ufo/waves/round-69/controls/c2-controls-r69.json`, sha256
 `975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9` (11 cases)
 pre-freeze baseline: `.ufo/waves/round-69/control-baseline-r69.txt`
-measured content: `5fc29ae72e66b9347d576c796ee656aea2fdd04c`
+measured content: `e0e1831aed0b5b983957d2eb1aae4e0f1ebcd630` (first measurement at the instruments commit `5fc29ae72e66b9347d576c796ee656aea2fdd04c`, then `296ed0d7` after the review-driven repairs)
 
 ## Outcome and boundaries
 
@@ -58,7 +58,7 @@ Admitted: **S438**, scoped to the lane's guard grammar — the documented identi
 `--no-replace-objects` flag and the `GIT_NO_REPLACE_OBJECTS` environment.
 
 - Canonical URL: `https://raw.githubusercontent.com/git/git/v2.56.0/Documentation/git.adoc`
-- Access date: 2026-11-03; fetched three times, byte-identical (`sha256`
+- Access date: 2026-11-03; fetched by the L1 once and by the scout seat three times, all four byte-identical (`sha256`
   `050c5330f1a231be22bee3db27c7ef90d8ba22bb7bd6c72c8bab462f6f0a1f79`, 47005 bytes, 1212 lines).
 - Located quote, 14 words, git.adoc:180-181:
   "This is equivalent to exporting the `GIT_NO_REPLACE_OBJECTS` environment variable with any

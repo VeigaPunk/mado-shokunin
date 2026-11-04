@@ -3350,7 +3350,16 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
     (sha256 `9461a059466e723ba0ae88c86dea2fc97eb5f4fdfb15ef6c6646acce69649a73`) is adopted, with
     `r69-c1` scratch dirs and the round-69 limits paragraph. Selftest 27/27 (two assertions pin
     the new refusals).
-- Measured at `296ed0d7` (`measurement-r69.txt`): C1 `selftest=0 killed=3/3 applied=3/3 base=0/3
+- Mutation battery (`R69MutBattery`): nine C1-counter and six C2-counter single-point mutants; every
+  one killed by its counter's own selftest except the base-rev-ignoring C1 mutant (`base_sha = sha`),
+  which survived because the scripted `git show` could not tell the two revisions apart. Closed at
+  `e0e1831a` by separating the scripted revisions (the mutant now dies with the base-absent refusal);
+  the C2 `population_at`/`unguarded` arithmetic findings are disclosed as residuals (the frozen
+  verdict requires `population=20`, `readers=13`, `guarded=13`, so neither can forge a pass).
+- Measured at `e0e1831a` (`measurement-final-r69.txt`): C1 `selftest=0 killed=3/3 applied=3/3
+  base=0/3 verdict=TARGET_MET` rc 0; C2 `population=20 readers=13 guarded=13 unguarded=0
+  controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0. First measurement at `296ed0d7`
+  (`measurement-r69.txt`) reads the same two lines; C1 `selftest=0 killed=3/3 applied=3/3 base=0/3
   verdict=TARGET_MET` rc 0; C2 `population=20 readers=13 guarded=13 unguarded=0 controls=11/11
   base_controls=7/11 verdict=TARGET_MET` rc 0. Before: C1 `selftest=absent … TARGET_MISSED` rc 1;
   C2 the held rule's `7/11`.
