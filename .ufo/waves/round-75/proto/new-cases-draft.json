@@ -1,0 +1,72 @@
+{
+ "schema": "mado-r75-new-cases-draft-v1",
+ "note": "draft before freeze; ordered for appending after the 36 carried r74 cases",
+ "cases": [
+  {
+   "name": "copy-dict-kw-bound",
+   "src": "def run(repo):\n    env = os.environ\n    child = dict(env, GIT_NO_REPLACE_OBJECTS=\"1\")\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=child)\n",
+   "expect_reader": true,
+   "expect_guard": true
+  },
+  {
+   "name": "copy-splat-bound",
+   "src": "def run(repo):\n    env = os.environ\n    child = {**env, \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=child)\n",
+   "expect_reader": true,
+   "expect_guard": true
+  },
+  {
+   "name": "copy-dict-builtin-bound",
+   "src": "def run(repo):\n    child = dict(os.environ, GIT_NO_REPLACE_OBJECTS=\"1\")\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=child)\n",
+   "expect_reader": true,
+   "expect_guard": true
+  },
+  {
+   "name": "copy-dict-literal-base",
+   "src": "def run(repo):\n    base = {\"PATH\": \"/usr/bin\"}\n    child = dict(base, GIT_NO_REPLACE_OBJECTS=\"1\")\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=child)\n",
+   "expect_reader": true,
+   "expect_guard": true
+  },
+  {
+   "name": "copy-dict-no-key",
+   "src": "def run(repo):\n    env = os.environ\n    child = dict(env)\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=child)\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "copy-dict-value-position",
+   "src": "def run(repo):\n    child = dict(os.environ, LABEL=\"GIT_NO_REPLACE_OBJECTS\")\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=child)\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "copy-rebound",
+   "src": "def run(repo):\n    env = os.environ\n    child = dict(env, GIT_NO_REPLACE_OBJECTS=\"1\")\n    child = dict(env)\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=child)\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "del-env-store-cancel",
+   "src": "def run(repo):\n    env = {\"PATH\": \"/usr/bin\"}\n    env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    del env[\"GIT_NO_REPLACE_OBJECTS\"]\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "del-env-literal-cancel",
+   "src": "def run(repo):\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    del env[\"GIT_NO_REPLACE_OBJECTS\"]\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "del-other-key",
+   "src": "def run(repo):\n    env = {\"PATH\": \"/usr/bin\"}\n    env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    del env[\"PATH\"]\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+   "expect_reader": true,
+   "expect_guard": true
+  },
+  {
+   "name": "del-before-store",
+   "src": "def run(repo):\n    env = {\"PATH\": \"/usr/bin\"}\n    del env[\"GIT_NO_REPLACE_OBJECTS\"]\n    env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n",
+   "expect_reader": true,
+   "expect_guard": true
+  }
+ ]
+}

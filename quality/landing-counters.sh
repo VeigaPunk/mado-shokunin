@@ -9,6 +9,15 @@ export GIT_OPTIONAL_LOCKS=0 GIT_NO_REPLACE_OBJECTS=1
 PROG=landing-counters.sh
 N=0 P=0
 fail() { printf '%s: %s\n' "$PROG" "$*" >&2; exit 2; }
+# Round-75: echo a caller-supplied per-run challenge so a harness can authenticate that the run
+# that printed the summary is the run it spawned (the round-74 witness rule, wired into the live
+# chain). A malformed challenge prints nothing; an absent one keeps the round-66..74 output.
+landing_witness() {
+  local nonce=${MADO_LANDING_NONCE:-}
+  [ -n "$nonce" ] || return 0
+  [[ "$nonce" =~ ^[0-9a-fA-F]{16}$ ]] || return 0
+  printf 'MADO_LANDING_WITNESS: %s\n' "$nonce"
+}
 SELF_PATH=$(readlink -f -- "$0") || fail 'cannot resolve own path'
 SELF_DIR=${SELF_PATH%/*}
 USEDBY_SIBLING="$SELF_DIR/counters/c3-r56-used-by.py"
@@ -214,6 +223,7 @@ SHIM
   check 'empty population genuine red' 1 "$rc"
   check 'empty population summary RED' yes "$([[ "$out" == *'MADO_LANDING_COUNTERS: RED (nav=1 '* ]] && printf yes || printf no)"
   printf 'MADO_LANDING_COUNTERS_SELFTEST: %d/%d assertions passed\n' "$P" "$N"
+  landing_witness
   [ "$P" -eq "$N" ]
 }
 REPO= REV= SCRATCH= ROUND= SELFTEST=0
@@ -277,4 +287,5 @@ for leg in nav usedby ledger citecheck; do
   fi
 done
 printf 'MADO_LANDING_COUNTERS: %s (nav=%d usedby=%d ledger=%d citecheck=%d rev=%s)\n' "$verdict" "$nav_rc" "$usedby_rc" "$ledger_rc" "$citecheck_rc" "$REV"
+landing_witness
 exit "$exitcode"

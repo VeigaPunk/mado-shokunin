@@ -1,0 +1,38 @@
+# mado round 75 — pre-freeze do-nothing baseline (committed before any candidate measurement)
+# date: 2026-11-04 (America/Sao_Paulo); base: b149d2ece1a6d75f5738aa8bf4a9493f1a9c7da6
+# C2 command: python3 -I .ufo/waves/round-75/proto/held-r75.py --rev master
+# C2 control: the held round-74 classifier on the frozen 47-case set, plus the successor prototype's census
+
+PY held=/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r74-shapes.py rev=b149d2ece1a6d75f5738aa8bf4a9493f1a9c7da6
+PY case=copy-dict-kw-bound         expect=(True,True) held=(True,False) succ=(True,True) held_correct=False
+PY case=copy-splat-bound           expect=(True,True) held=(True,False) succ=(True,True) held_correct=False
+PY case=copy-dict-builtin-bound    expect=(True,True) held=(True,False) succ=(True,True) held_correct=False
+PY case=copy-dict-literal-base     expect=(True,True) held=(True,False) succ=(True,True) held_correct=False
+PY case=copy-dict-no-key           expect=(True,False) held=(True,False) succ=(True,False) held_correct=True
+PY case=copy-dict-value-position   expect=(True,False) held=(True,False) succ=(True,False) held_correct=True
+PY case=copy-rebound               expect=(True,False) held=(True,False) succ=(True,False) held_correct=True
+PY case=del-env-store-cancel       expect=(True,False) held=(True,True) succ=(True,False) held_correct=False
+PY case=del-env-literal-cancel     expect=(True,False) held=(True,True) succ=(True,False) held_correct=False
+PY case=del-other-key              expect=(True,True) held=(True,True) succ=(True,True) held_correct=True
+PY case=del-before-store           expect=(True,True) held=(True,True) succ=(True,True) held_correct=True
+PY held_correct=41/47 (the do-nothing control's score; the target must be 47/47)
+PY held36_drift=0 []
+PY population held=20 readers=13 guarded=13 | succ=20/13/13
+
+# C1 command: python3 -I .ufo/waves/round-75/proto/held-r75-c1.py /fast/scratch/hyaku/mado-r75/l1/baseline-c1
+# C1 control: the held round-72 harness on the frozen 11 fixture lanes, through the real harness pipeline
+
+PROTO held-r75-c1 rev=b149d2ece1a6d75f5738aa8bf4a9493f1a9c7da6 cases=11 base_harness=quality/counters/c1-r72-landing-controls.py
+PROTO case=right                expect=pass held=pass   correct=yes
+PROTO case=liar-success         expect=pass held=pass   correct=yes
+PROTO case=uppercase-echo       expect=fail held=pass   correct=no
+PROTO case=stale-witness        expect=fail held=pass   correct=no
+PROTO case=absent-witness       expect=fail held=pass   correct=no
+PROTO case=wrong-witness        expect=fail held=pass   correct=no
+PROTO case=last-wins-wrong      expect=fail held=pass   correct=no
+PROTO case=crash                expect=fail held=fail   correct=yes
+PROTO case=zero-denominator     expect=fail held=fail   correct=yes
+PROTO case=mismatch-detail      expect=fail held=fail   correct=yes
+PROTO case=green-mutant         expect=fail held=fail   correct=yes
+PROTO do-nothing control: correct=6/11 (target must be 11/11); its source is the frozen round-72 harness, which cannot echo the per-run challenge
+PROTO verdict do_nothing=TARGET_MISSED
