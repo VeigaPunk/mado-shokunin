@@ -398,3 +398,16 @@ that prints nothing when no challenge is supplied. All read committed bytes and 
 never a config plane, compositor, session, socket or service; the census remains a bounded
 syntactic approximation, and the challenge authenticates the run's echo, not the truth of the
 assertions. Evidence: `corpus/lessons/round-75.md`.
+
+Round 76 (2026-11-04) adds two read-only instrument surfaces inside the lane's own tooling scope,
+not the desktop plane: `quality/counters/c1-r76-landing-controls.py` and `c1-r76-outcome-field.py`
+score the frozen round-72 landing harness's M-Z decision and its contract outcome field over
+sixteen real `bash` fixture modes (four named mutations of the named `outcome_green` rule killed
+4/4; the echo-dropping class recorded unobservable because `killed == 2` already requires the
+echo), and `quality/counters/c2-r76-shapes.py` extends the guard census with an interprocedural
+cancellation (a callee deleting the guard key from the mapping it receives, under the dominance
+test) and a dynamic-key `del` resolved through a same-scope single-binding constant, scoring 59
+frozen cases (59/59 vs the held 55/59) over the unchanged `quality/check-*.py` population
+(20 files, 13 readers, 13 guarded). All three read committed bytes and caller scratch only; no
+config plane, compositor, session, socket or service is touched, and the census remains a bounded
+syntactic approximation. Evidence: `corpus/lessons/round-76.md`.

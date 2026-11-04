@@ -3760,3 +3760,43 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   `mz=` only), C1-M3 (prefix vs equality unobservable at 16 hex), the probabilistic uppercase
   oracle, the unreachable `del-before-store` fixture, concurrent trust of the scratch parent, and
   the frozen C2 receipt's stale "round-73 rule" label.
+
+## Round 76 — the harness's outcome field and two deletion shapes (2026-11-04, hyaku run 15)
+
+- **Claims.** C1 calibration: `quality/counters/c1-r76-outcome-field.py` scores the landing
+  harness's contract **outcome** field (`verdict=`) as well as its kill decision (`mz=`), over
+  sixteen frozen fixture modes; four named mutations of the harness's `outcome_green` rule are
+  killed 4/4 while the held mz-only rule kills 0/4 (`cases=16 correct=16 mutants=4 killed=4
+  base_killed=0`, rc 0, `.ufo/waves/round-76/measurement-c1-r76.txt`). C2 operability:
+  `quality/counters/c2-r76-shapes.py` counts an interprocedural `del` (a callee that deletes the
+  guard key from the mapping it receives, under the dominance test) and a dynamic-key `del` (a
+  same-scope name bound once, earlier, to the guard key or a module constant); fifty-nine frozen
+  cases score 59/59 against the held 55/59, population unchanged 20/13/13/0
+  (`measurement-c2-r76.txt`, rc 0, measured at its instrument's last change `755b339f…` and
+  re-measured identically at `cb713254…`; C1 measured at its instrument's last change
+  `cb713254…`). Freeze v1 `755b339f…`, freeze v2 `cb713254…`, base `c3e0bc5f…`.
+- **Negative result.** The round-75 planned item "kill the echo-dropping outcome mutation" is
+  impossible through `verdict=`: the field is green only when `killed == 2`, and the M-Z kill
+  already requires the echo, so that mutation produces an identical field on every reachable case
+  (measured 16/16 in the v2 receipt kept beside the final one). The claim moves to the four
+  observable outcome-rule mutations (`outcome-summary-only`, `-killed-only`, `-killed-any`,
+  `-killed-or`) with `always-red` as the shape that separates a rule ignoring the green conjunct.
+  Recorded in `corpus/knowledge/outcome-field-r76.md` §2 and lesson M76-2.
+- **Mechanical fixes.** The witness grammar reads 16+ hex so an over-long echo is a parsed
+  mismatch (prefix-vs-equality observable), and the per-run challenge is drawn by rejection
+  sampling until it contains an `a-f` letter, closing round-75 M75-4's probabilistic uppercase
+  oracle; the counter prints `has_letter=yes` per case and the selftest asserts 200 draws.
+- **Mistakes.** Four mined (M76-1 label set modelled `verdict=` as summary-green only; M76-2 the
+  unobservable separator class; M76-3 a control-leg regex anchored to end-of-line reported four
+  mutants as `0/15` without observing a row; M76-4 the fixture template's first colouring of
+  `right`/`green-mutant`), each with evidence, captured-by and a fix that can fail. QUALITY
+  128–131 land from them and from considerthese 2026-10-28 proposal 5.
+- **Registry and gate bookkeeping.** SOURCES 391 → 393 rows (S455 expressions.rst § Calls,
+  S456 simple_stmts.rst § The del statement; S446 re-opened and kept rejected); census exit 0
+  with the two documented W04 duplicate-URL warnings; `quality/tool-ledger.md` 133 → 136 rows;
+  index rows for both new entries.
+- **No-harm.** Gate `bash tools/mado-verify.sh --selftest` unchanged at its bytes (the round
+  touches no gate line); the round-72/73/74/75 instruments, `quality/landing-counters.sh`,
+  `check-tool-ledger.py` and `check-axis-scores.py` keep their base blob ids. No config tree,
+  compositor, service or sibling repo was written; no pacman transaction; no tool installed or
+  upgraded.

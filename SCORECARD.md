@@ -4311,3 +4311,60 @@ probabilistic (`(10/16)^16`), the `del-before-store` fixture would raise `KeyErr
 launch, the loader trusts its scratch parent against concurrency, and the held-generation label in
 the frozen C2 receipt still reads "round-73 rule" (the instrument's message is fixed; the frozen
 receipt keeps its bytes).
+
+## Round 76 — the harness's outcome field and two deletion shapes (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-76/claims-declaration-r76.md`; freeze v1 `755b339f1f6ec18f45b494d40515aecdbe9ceb73`
+(controls + instruments), freeze v2 `cb713254ee9926e036e594312fdc61b57825526b` (label set v3, the
+named `outcome_green` rule and the observable mutant class); base
+`c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf`. Frozen control sets:
+`.ufo/waves/round-76/controls/c1-outcome-cases-r76.json` (v3, 16 cases, sha256 `320f7e6b…`) and
+`c2-cases-r76.json` (59 cases, sha256 `df9e8984…`). Pre-freeze do-nothing control:
+`.ufo/waves/round-76/control-baseline-r76.txt` (held mz-only rule kills 0/4; held round-75
+classifier 55/59). Labels re-derived from the harness's own evidence lines:
+`receipts/label-derivation-r76.txt`. Measured: C1 at `cb713254…` (its instrument's last change), C2 at `755b339f…` (its instrument's last
+change) and re-measured at `cb713254…` with identical counts (receipts `measurement-c1-r76.txt`,
+`measurement-c2-r76.txt`, `measurement-c2-r76-at-cb713254.txt`). Axis posture at round start: every published finite
+sub-axis at its measured maximum under the active rubrics (navigation 93/93, calibration
+resolved-active 86/86, operability selftest 12/12, ledger 133/133; gate `MADO_SELFTEST:
+460/460`); the dormant freshness value (9.6552, host-absent) stays operator-owned and is
+excluded from the tie. The stagnation nudge does not apply (last capability row entered round
+75, window N=3, gap 0). Both claims take new finite denominators and both do-nothing controls
+miss their targets (0/4 and 55/59).
+
+| Claim / axis | Counting command (C1 REV = `cb713254…`, C2 REV = `755b339f…` — each claim is measured at its instrument's last change and re-measured at `cb713254…`) | Before → after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the counter certifies the harness's contract outcome field, not only its kill decision | `python3 -I quality/counters/c1-r76-outcome-field.py --repo . --rev REV --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls .ufo/waves/round-76/controls/c1-outcome-cases-r76.json --scratch-root DIR` | at the base rev the successor is absent; the held mz-only scoring rule cannot read `verdict=` at all and kills 0/4 of the four outcome-rule mutants (`control-baseline-r76.txt`); at `cb713254`: `cases=16 correct=16 mutants=4 killed=4 base_killed=0 verdict=TARGET_MET` rc 0; mutant scores 15/16, 15/16, 15/16, 14/16; bounded `10 × 4/4` → 10.0000 | improved on the frozen sixteen-case set |
+| C2 **operability** — the census counts an interprocedural cancellation and a dynamic-key `del` | `python3 -I quality/counters/c2-r76-shapes.py --repo . --rev REV --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls .ufo/waves/round-76/controls/c2-cases-r76.json --scratch-root DIR` | the held round-75 classifier scores the fifty-nine frozen cases `55/59` (missing exactly `callee-del-literal`, `callee-del-store`, `dynamic-key-del`, `dynamic-key-module-const`; `control-baseline-r76.txt`); at `755b339f` (its instrument's last change): `population=20 readers=13 guarded=13 unguarded=0 controls=59/59 base_controls=55/59 verdict=TARGET_MET` rc 0, and at `cb713254` identical (`measurement-c2-r76-at-cb713254.txt`); bounded `10 × 59/59` → 10.0000 | improved on the frozen fifty-nine-case set |
+| — | coverage / admitted-note reachability (unchanged rubric) | `quality/check-index.py --repo . --rev REV` | 95/95 at the landing tip (93/93 at base) | unchanged (harm watch; two entries indexed) |
+| — | operability / hermetic gate | `bash tools/mado-verify.sh --selftest` | 460/460 both ends; the gate is byte-identical this round | unchanged (harm watch) |
+| — | operability / instrument ledger | `quality/check-tool-ledger.py --repo . --rev REV` | 136 rows, 136 ledger_rows, 0 uncovered at the landing tip (133/133 at base) | improved (three new instruments registered) |
+| — | calibration / held instruments | `git rev-parse <rev>:<path>` | identical blob ids at base and tip for `tools/mado-verify.sh`, `quality/landing-counters.sh`, `quality/check-tool-ledger.py`, `c1-r72/r73/r74/r75-*`, `c2-r73/r74/r75-shapes.py`, `c1-r75-harness-witness.py` | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-76/measurement-c{1,2}-r76.txt` (per-case, per-mutant and contract
+lines), `control-baseline-r76.txt` (the pre-freeze control), `receipts/label-derivation-r76.txt`
+(every label re-derived from the harness's own evidence lines), `census-{start,end}-r76.txt`,
+`controls/`, `proto/`, `fetch/` (three byte-identical fetches per source), `w1-spec.json` /
+`w1-dispatch.json` / `w1-results.json` (the one v1 wave) and `w1/` (seat reports). **Wave
+disclosures** are reported per seat in the round report; a seat whose output is empty is an
+evidence gap, never backfilled (QUALITY 115).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Contract-outcome-field scoring and its observability bound | Score the landing harness's published outcome field (`verdict=`) separately from its kill decision across sixteen real fixture modes, kill four named mutations of the named `outcome_green` rule (15/16, 15/16, 15/16, 14/16) where the held mz-only rule kills none, and state which outcome-rule mutations are unobservable through that field (the echo term, because `killed == 2` already requires the echo) | `.ufo/waves/round-76/measurement-c1-r76.txt`; `quality/counters/c1-r76-landing-controls.py`, `c1-r76-outcome-field.py` | round 76 |
+| Interprocedural and dynamic-key deletion census | Count a guard cancelled by a callee that deletes the key from the mapping it received (under the dominance test) and by a `del` whose key resolves through a same-scope single-binding constant, keeping the population verdict (59/59 vs the held 55/59; 20/13/13/0) | `.ufo/waves/round-76/measurement-c2-r76.txt`; `quality/counters/c2-r76-shapes.py` | round 76 |
+
+### Planned (round 77; intent only)
+
+1. C1's next finite ground: the `outcome_exit` process status versus the published verdict (a
+   run whose exit code disagrees with its own contract row), scored on its own frozen set.
+2. C2's next finite ground: a cancellation through a function *alias* (`drop = remove_key`) and
+   a two-hop callee (`f` calls `g`, `g` deletes), each with negatives; or the attribute flow's
+   interprocedural delete if a reachable shape can be grounded.
+3. The `del` inside a comprehension or lambda (a temporary scope the census does not model).
+4. The remaining `Consider these` proposals (the live-tool table, the missing-day placeholder)
+   stay available for a later round; proposal 5 landed as QUALITY 131 this round.
+5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.

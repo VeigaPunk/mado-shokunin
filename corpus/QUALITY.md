@@ -900,3 +900,42 @@ no-op, so a correct implementation can miss the label through no defect (probabi
 critic's receipt). The frozen label stands and the disclosure is in the entry.
 Limits: the probability bound depends on the challenge's alphabet; a different generator needs
 its own bound.
+
+## Criteria from the round-76 outcome-field and interprocedural census
+
+**128. A frozen case label is re-derived from the scored instrument's own evidence lines
+before it is frozen; the contract row it produces is never the derivation source.** Shown able
+to fail: round 76's label set v1 modelled the harness's `verdict=` as summary-green only, and
+the first measurement scored `correct=12/15`, with `right`, `liar-success` and `green-mutant`
+all disagreeing with their labels; the v3 labels are re-derived from
+`MADO_R76_SELFTEST ... green=` and `MADO_R76_MUTANT M-Z/M-R ... killed=`
+(`.ufo/waves/round-76/receipts/label-derivation-r76.txt`).
+Limits: this governs the derivation source; it does not prove the derivation is right, only
+that it is independent of the counter's own output.
+
+**129. A frozen separator must be reachable through the field it is scored through; a mutation
+that produces an identical field on every reachable case is a negative result, not a control.**
+Shown able to fail: round 76's first successor design scored an echo-dropping outcome mutation
+through `verdict=`, but that field is green only when `killed == 2` and the M-Z kill already
+requires the echo, so the mutant scored 16/16 on every reachable case
+(`corpus/lessons/round-76.md` M76-2); the claim moved to four observable outcome-rule
+mutations and the impossibility is recorded in the entry.
+Limits: reachability is judged against the fixture set built for the claim, not against every
+program the instrument could see.
+
+**130. A control leg that parses no row at all fails loudly instead of reporting a zero
+score.** Shown able to fail: round 76's pre-freeze control anchored its row regex to
+end-of-line while the row carries a trailing `sha256=`, so four mutants scored `0/15` and were
+reported as killed by a rule that had observed nothing; both regexes now search the parsed
+line and the per-mutant score is printed (`corpus/lessons/round-76.md` M76-3).
+Limits: a per-leg score exposes a dead leg; it does not prove the leg measured the intended
+field.
+
+**131. Every quoted number in a round artifact names whether it was re-executed this round or
+evidence-verified from committed bytes.** Shown able to fail: round 76's first measurement
+receipt and the pre-freeze control are both quoted in the lesson and report, and only the
+receipt carries the command that produced it; the report's provenance crosswalk names
+`re-executed` or `evidence-verified` per number, and a number with neither label is a defect.
+Source: `considerthese/2026-10-28.md` proposal 5 (relayed vs re-measured), opened 2026-11-04.
+Limits: this is a labelling bar; it does not judge whether the evidence class is strong enough
+for the claim.
