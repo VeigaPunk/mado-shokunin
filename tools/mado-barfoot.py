@@ -766,11 +766,13 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
                          % (monitor, scale, transform))
     bar = declared_bar(config)
     allocation = dict(allocation or {})
-    known = set([bar["namespace"]] + [surface["namespace"] for surface in extras])
-    unknown = sorted(set(allocation) - known)
+    # only the bar's band is resolved; an entry for any other surface would be accepted and
+    # then silently unused, so it is refused here (the join never guesses which surface it names)
+    resolved = {bar["namespace"]}
+    unknown = sorted(set(allocation) - resolved)
     if unknown:
-        raise Setup("the allocation declaration names %s, which the composition does not "
-                    "carry" % ", ".join(repr(name) for name in unknown))
+        raise Setup("the allocation declaration names %s, which the join does not resolve "
+                    "(only the bar's band is resolved)" % ", ".join(repr(name) for name in unknown))
     static = dict(static or ZERO_STATIC)
     if not output_matches(config, monitor):
         rows = [("RESULT", "monitor=%s box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR"
@@ -961,8 +963,8 @@ def evaluate(config, layers, monitors, monitor=None, static=None, static_source=
     bar = declared_bar(config)
     unknown = sorted(set(allocation) - {bar["namespace"]})
     if unknown:
-        raise Setup("the allocation declaration names %s, which the composition does not "
-                    "carry" % ", ".join(repr(name) for name in unknown))
+        raise Setup("the allocation declaration names %s, which the join does not resolve "
+                    "(only the bar's band is resolved)" % ", ".join(repr(name) for name in unknown))
     static = dict(static or ZERO_STATIC)
     if monitor is None:
         if len(monitors) != 1:
