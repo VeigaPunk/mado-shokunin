@@ -298,6 +298,27 @@ prefix/negative-loop mutants remain disclosed in the lesson, not called repaired
 | `set -o pipefail; sh .ufo/waves/round-85/fixtures/status-exit7.sh \| cat` | 7 (exact) | rc 7 with `MADO_STATUS: exit7` — the producer's own status survives the pipe; rc 0 carrying the same text is not propagation | 1 / 3 |
 | `set -o pipefail; sh .ufo/waves/round-85/fixtures/status-sigpipe.sh \| head -n 1` | 13 → 141 (encoded) | numeric141 with `MADO_STATUS: sigpipe line 0`; explicit exit141 is observationally equivalent | 1 / 3 |
 
+### Executable runbook rows (round 86)
+
+One row per case the round-86 instrument binds (`quality/counters/c2-r86-clause-observations.py`):
+the round-85 section above is carried parsed-equal and this section adds the rows the round
+introduces. Each row is read-only, executed from the lane root by its case, and scored with the
+clause observation — the sample loop, the negative loop and the line-anchor branch must each
+have run for the case to count, so a matcher that silently skips a clause cannot report a pass.
+
+Round 86 adds one row: the border size read as a bare integer under `anchor: line` with an
+unanchored pattern. That is the witness the two round-85 anchor survivors needed — a negative
+sample that carries the value with trailing text (`0 extra`) or a sign (`-1`) is accepted by a
+substring search and refused by the whole-line rule. The value itself is host state (`0` here,
+reported as frozen with churn samples 1 and 2), not a claim about the theme.
+
+Interpretation boundary: an integer read establishes the option's live value only; it says
+nothing about borders being drawn, the theme's intent or the compositor's rendering.
+
+| Command | Status class | Bound outcome | Churn / negative samples |
+|---|---|---|---|
+| `set -o pipefail; hyprctl getoption general:border_size -j \| jq -r .int` | ok | unanchored `[0-9]+` matched against one whole line: a bare non-negative integer | 2 / 3 |
+
 ### Advertised Wayland globals
 
 `python3 tools/mado-globals.py --journal-file <journal>` parses the portal unit's `short-iso` journal (`xdph-PortalManager.cpp:85-88` logs one line per advertised global) into sessions; `--live` runs
