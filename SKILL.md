@@ -228,17 +228,18 @@ mado runs only the read leg (`configerrors`).
 | `hyprctl workspaces -j` / `hyprctl clients -j` | runtime object counts | positive / non-negative integers (round 78; counts change with every window) |
 | `hyprctl layers -j` / `hyprctl monitors -j` as JSON captures | the two captures the bar-footprint join consumes | shape-checked dumps: layers keyed by monitor with levels `0`–`3`, monitors with name, size, `reserved` (four non-negative integers) and scale (round 78) |
 
-### Executable runbook rows (round 80)
+### Executable runbook rows (round 81)
 
-One row per frozen runbook case (`quality/counters/c2-r80-runbook.py`): the command cell is
+One row per frozen runbook case (`quality/counters/c2-r81-runbook.py`): the command cell is
 the exact command the case executes from the lane root, all read-only; the outcome cell is
 the shape its exit status and output must meet; the third cell counts the committed churn
-and negative samples in `.ufo/waves/round-80/controls/c2-runbook-cases-r80.json`. Every row
-was executed on 2026-11-04 (receipt `.ufo/waves/round-80/receipts/measurement-c2-r80.txt`);
+and negative samples in `.ufo/waves/round-81/controls/c2-runbook-cases-r81.json`. Every row
+was executed on 2026-11-04 (receipt `.ufo/waves/round-81/receipts/measurement-c2-r81.txt`);
 a table nobody runs is not a probe. The four `refuse-*` rows execute the lane's own
 read-only join against committed fixtures and bind the refusal stage, not its message; the
-last two rows are round-80's matcher classes (a chord grammar over the keybindings chord
-column, and a state word bound to its exit status).
+last four rows are the round-80 and round-81 matcher classes (a chord grammar over the
+keybindings chord column and a state word bound to its exit status; the action column's
+` → ` separator and entity shaping, and the bar's own `pgrep` state with its exit status).
 
 | Command | Bound outcome | Churn / negative samples |
 |---|---|---|
@@ -266,6 +267,8 @@ column, and a state word bound to its exit status).
 | `omarchy menu keybindings --print` | rc 0, ≥100 lines, every line `^\s*\S.*\s*→\s*\S.*$` | 2 / 5 |
 | `omarchy menu keybindings --print \| cut -c1-35` | chord column: ≥100 chords, each `MODS + KEY` (1–4 distinct words from SUPER/SHIFT/CTRL/ALT) or a bare key, no arrow | 2 / 7 |
 | `systemctl --user is-active hypridle` | one state word from the systemd enum, exit status agreeing with it (`active` ⇔ rc 0) | 3 / 4 |
+| `omarchy menu keybindings --print \| cut -c36-` | action column: ≥100 lines, each ` → ` then a non-empty trimmed action with no second `→` (the `%-35s` padding fixes the separator's column; the payload escapes markup only on some lines, so no entity rule is bound) | 3 / 6 |
+| `pgrep -x waybar` | one or more decimal PIDs in 1..4194304 with rc 0 while the bar runs, empty stdout with rc 1 while it does not — the state is read from the pair, never frozen | 3 / 6 |
 
 ### Advertised Wayland globals
 

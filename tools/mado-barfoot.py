@@ -77,12 +77,13 @@ Exit map: 0 CLEAN · 1 DIFFER · 2 SETUP/ERROR · 3 NOT_FORMED (NO_LAYER/UNMODEL
 
 import argparse
 import json
+import math
 import os
 import re
 import stat
 import sys
 
-VERSION = "r80-v1"
+VERSION = "r81-v1"
 
 MAX_BYTES = 1048576
 
@@ -489,9 +490,26 @@ def anchor_mask(names):
     return mask
 
 
+def std_round(value):
+    """std::round: half away from zero (C++11 26.8/9), not Python's banker's rounding."""
+    return math.floor(value + 0.5) if value >= 0 else math.ceil(value - 0.5)
+
+
+def cbox_round(box):
+    """hyprutils CBox::round (src/math/Box.cpp:51-63, v0.14.0): round the origin first,
+    then round the far edge's distance from it, so an odd overflow past a negative tie
+    keeps the compositor's width."""
+    rx = std_round(box["x"])
+    ry = std_round(box["y"])
+    nw = box["x"] + box["w"] - rx
+    nh = box["y"] + box["h"] - ry
+    return {"x": int(rx), "y": int(ry), "w": int(std_round(nw)), "h": int(std_round(nh))}
+
+
 def arranged_box(spec, bounds):
     """IHyprRenderer::arrangeLayerArray's box arithmetic against a bounds box
-    (Renderer.cpp:2601-2660): desired size, anchors, then margins."""
+    (Renderer.cpp:2606-2660): desired size, anchors, then margins, in doubles.
+    The result is unrounded; the caller applies cbox_round like :2660."""
     m = spec["margins"]
     anchor = spec["anchor"]
     both_h = bool(anchor & ANCHOR["left"]) and bool(anchor & ANCHOR["right"])
@@ -500,23 +518,23 @@ def arranged_box(spec, bounds):
     if w == 0:
         x = bounds["x"]
     elif both_h:
-        x = bounds["x"] + (bounds["w"] - w + 1) // 2  # Hyprland centres in doubles, rounds once
+        x = bounds["x"] + (bounds["w"] / 2.0 - w / 2.0)
     elif anchor & ANCHOR["left"]:
         x = bounds["x"]
     elif anchor & ANCHOR["right"]:
         x = bounds["x"] + bounds["w"] - w
     else:
-        x = bounds["x"] + (bounds["w"] - w + 1) // 2
+        x = bounds["x"] + (bounds["w"] / 2.0 - w / 2.0)
     if h == 0:
         y = bounds["y"]
     elif both_v:
-        y = bounds["y"] + (bounds["h"] - h + 1) // 2
+        y = bounds["y"] + (bounds["h"] / 2.0 - h / 2.0)
     elif anchor & ANCHOR["top"]:
         y = bounds["y"]
     elif anchor & ANCHOR["bottom"]:
         y = bounds["y"] + bounds["h"] - h
     else:
-        y = bounds["y"] + (bounds["h"] - h + 1) // 2
+        y = bounds["y"] + (bounds["h"] / 2.0 - h / 2.0)
     if w == 0:
         x += m["left"]
         w = bounds["w"] - m["left"] - m["right"]
@@ -539,12 +557,48 @@ def arranged_box(spec, bounds):
 
 
 def surface_zone(spec):
-    """The zone the surface requests from the compositor (`exclusive` in the schema)."""
+    """The zone the surface requests from the compositor. An explicit integer is stored
+    verbatim (LayerShell.cpp:100-102). `auto` is gtk-layer-shell's client-side value
+    (layer-surface.c:264-292, v0.10.1): gated on the anchor set being horizontal or
+    vertical but not both, and taken from the allocation's band size plus the unanchored
+    margins of that axis."""
     declared = spec["exclusive"]
-    if declared == "auto":
-        size = spec["height"] if spec["position"] in ("top", "bottom") else spec["width"]
-        return size + spec["margins"][OPPOSITE_EDGE[spec["position"]]]
-    return declared
+    if declared != "auto":
+        return declared
+    anchor = spec["anchor"]
+    horiz = bool(anchor & ANCHOR["left"]) == bool(anchor & ANCHOR["right"])
+    vert = bool(anchor & ANCHOR["top"]) == bool(anchor & ANCHOR["bottom"])
+    if horiz and not vert:
+        if spec["height"] == 0:
+            raise Unmodelled("auto zone on a dynamic height (0) is the client's allocation, "
+                             "not a declared value")
+        zone = spec["height"]
+        if not anchor & ANCHOR["top"]:
+            zone += spec["margins"]["top"]
+        if not anchor & ANCHOR["bottom"]:
+            zone += spec["margins"]["bottom"]
+        return zone
+    if vert and not horiz:
+        if spec["width"] == 0:
+            raise Unmodelled("auto zone on a dynamic width (0) is the client's allocation, "
+                             "not a declared value")
+        zone = spec["width"]
+        if not anchor & ANCHOR["left"]:
+            zone += spec["margins"]["left"]
+        if not anchor & ANCHOR["right"]:
+            zone += spec["margins"]["right"]
+        return zone
+    # gtk-layer-shell sends no zone for a corner, a parallel pair or all four anchors
+    return 0
+
+
+def zone_for_pass(spec):
+    """The zone used to split the two arrange passes; a class the model refuses still
+    has to be ordered, and it is refused at its turn (after the empty-box skip)."""
+    try:
+        return surface_zone(spec)
+    except Unmodelled:
+        return 0
 
 
 def parse_surfaces(raw):
@@ -713,15 +767,14 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
     attribution = {}   # (namespace, edge) -> amount
     invalid_empty = []
     sequence = [i for want in (True, False) for i in order
-                if (surface_zone(surfaces[i]) > 0) == want]
+                if (zone_for_pass(surfaces[i]) > 0) == want]
     for index in sequence:
         spec = surfaces[index]
-        zone = surface_zone(spec)
-        if zone == -1:
+        if spec["exclusive"] == -1:
             bounds = dict(full)
         else:
             bounds = dict(usable)
-        box = arranged_box(spec, bounds)
+        box = cbox_round(arranged_box(spec, bounds))
         if box["w"] <= 0 or box["h"] <= 0:
             # the compositor logs and skips the surface: no box, no zone applied
             rows.append(("SKIP", "monitor=%s level=%d ns=%s box=%d,%d,%d,%d reason=empty"
@@ -730,6 +783,7 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
             boxes.append("SKIP")
             invalid_empty.append(spec["namespace"])
             continue
+        zone = surface_zone(spec)
         rows.append(("DECL", "monitor=%s level=%d ns=%s box=%d,%d,%d,%d anchor=%s zone=%d"
                      % (monitor, spec["level"], spec["namespace"], box["x"], box["y"],
                         box["w"], box["h"], "+".join(spec["anchor_names"]), zone)))
@@ -1342,6 +1396,35 @@ def selftest():
             ok(False, "surfaces refuse %s" % label)
         except (Setup, Unmodelled):
             ok(True, "surfaces refuse %s" % label)
+
+    # r81: CBox::round (hyprutils src/math/Box.cpp:51-63, v0.14.0)
+    ok(cbox_round({"x": -0.5, "y": 363.0, "w": 1001.0, "h": 100.0})
+       == {"x": -1, "y": 363, "w": 1002, "h": 100}, "cbox round negative tie")
+    ok(cbox_round({"x": 399.5, "y": 0.0, "w": 201.0, "h": 26.0})
+       == {"x": 400, "y": 0, "w": 201, "h": 26}, "cbox round positive half")
+    ok(std_round(-0.5) == -1 and std_round(0.5) == 1 and std_round(398.5) == 399,
+       "std round half away from zero")
+
+    # r81: the auto gate (gtk-layer-shell src/layer-surface.c:264-292, v0.10.1)
+    def zone(names, height=100, width=200, margins=None):
+        return surface_zone({
+            "anchor": anchor_mask(names), "height": height, "width": width,
+            "exclusive": "auto",
+            "margins": margins or {s: 0 for s in MARGIN_SIDES}})
+
+    ok(zone(["top", "left", "right"]) == 100, "auto zone on a horizontal band")
+    ok(zone(["left"], width=40, height=0) == 40, "auto zone on a vertical band")
+    ok(zone(["top", "left"]) == 0, "auto zone refused on a corner")
+    ok(zone(["top", "bottom", "left", "right"]) == 0, "auto zone refused on all four anchors")
+    ok(zone(["top", "bottom"]) == 0, "auto zone refused on a parallel pair")
+    ok(zone(["top", "left", "right"],
+            margins={"top": 1, "right": 2, "bottom": 3, "left": 4}) == 103,
+       "auto zone adds the unanchored margins")
+    try:
+        zone(["top", "left", "right"], height=0)
+        ok(False, "a dynamic auto band is refused")
+    except Unmodelled:
+        ok(True, "a dynamic auto band is refused")
 
     print("MADO_BARFOOT_SELFTEST: %d/%d" % (checks, total))
     return 0 if checks == total else 1
