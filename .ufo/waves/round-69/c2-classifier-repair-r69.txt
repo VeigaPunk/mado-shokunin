@@ -1,0 +1,22 @@
+# round-69 C2 classifier repair — red before, green after
+# pre-fix bytes: quality/counters/c2-r69-guard-dominance.py at 6a5cefd252c41c7ff71217da65126fc831f8bc34
+# post-fix bytes: the same path in the worktree at this receipt
+# pre sha256 b6bcec07ffe1849f9ef9a3c1a1e25d94743be6e01e9cae4219ea8045996b673a
+# post sha256 85f9e60a6d177ba1239cf547b25f7c4596b3548fbf7ad444ede556eac44d725a
+
+## attack cases (R69RevC2 shapes, re-derived)
+case                     pre-fix        post-fix       expected       verdict
+dead-inline              (True, True)   (True, False)  (True, False)  post-ok
+producer-overwrite       (True, True)   (True, False)  (True, False)  post-ok
+producer-late            (True, True)   (True, False)  (True, False)  post-ok
+nested-key-value         (True, True)   (True, False)  (True, False)  post-ok
+sibling-scope            (True, True)   (True, False)  (True, False)  post-ok
+onehop-wrong-parameter   (True, True)   (True, False)  (True, False)  post-ok
+dead-else-valid          (True, False)  (True, True)   (True, True)   post-ok
+module-visible-binding   (True, True)   (True, True)   (True, True)   post-ok
+
+pre-fix violations=7  post-fix correct=8/8
+
+## frozen controls and population are unchanged by the repair
+pre : controls=7/11 population=20 readers=13 guarded=13
+post: see measurement-c2-r69.txt (re-run at the repair commit)

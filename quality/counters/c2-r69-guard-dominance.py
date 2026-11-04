@@ -139,6 +139,28 @@ def is_git_argv(node):
     return any(t == "git" for t in texts)
 
 
+def mapping_has_key(node):
+    """True only when KEY is an actual key of this mapping expression.
+
+    A dict literal's own keys count, and a `**` expansion of another mapping literal is
+    followed one level; a `dict(KEY=...)` call counts by its keyword. Descendant dicts that
+    sit inside a *value* are not keys of this mapping (review R69RevC2 finding 3).
+    """
+    if isinstance(node, ast.Dict):
+        for key, value in zip(node.keys, node.values):
+            if key is None:
+                if mapping_has_key(value):
+                    return True
+            elif isinstance(key, ast.Constant) and key.value == KEY \
+                    and not isinstance(key.value, bool):
+                return True
+        return False
+    if isinstance(node, ast.Call):
+        if isinstance(node.func, ast.Name) and node.func.id == "dict":
+            return any(kw.arg == KEY for kw in node.keywords)
+    return False
+
+
 def argv_binding_names(tree):
     out = set()
     for node in ast.walk(tree):
@@ -164,39 +186,66 @@ def call_is_git(call):
     return False
 
 
-def carries_key_keyposition(node):
-    if node is None:
-        return False
-    for n in ast.walk(node):
-        if isinstance(n, ast.Dict):
-            for key in n.keys:
-                if isinstance(key, ast.Constant) and key.value == KEY \
-                        and not isinstance(key.value, bool):
-                    return True
-        if isinstance(n, ast.Call):
-            for kw in n.keywords:
-                if kw.arg == KEY:
-                    return True
-    return False
-
-
 def is_falsey_constant(test):
     return isinstance(test, ast.Constant) and not test.value
 
 
 def false_guarded_lines(node):
+    """Lines of the *body* of a literal-false branch; a live `else` arm stays live."""
     bad = set()
 
     def walk(current):
         for child in ast.iter_child_nodes(current):
-            if isinstance(child, (ast.If, ast.While)) and is_falsey_constant(child.test):
-                for sub in ast.walk(child):
-                    if hasattr(sub, "lineno"):
-                        bad.add(sub.lineno)
+            if isinstance(child, ast.If) and is_falsey_constant(child.test):
+                for stmt in child.body:
+                    for sub in ast.walk(stmt):
+                        if hasattr(sub, "lineno"):
+                            bad.add(sub.lineno)
+            elif isinstance(child, ast.While) and is_falsey_constant(child.test):
+                for stmt in list(child.body) + list(child.orelse):
+                    for sub in ast.walk(stmt):
+                        if hasattr(sub, "lineno"):
+                            bad.add(sub.lineno)
             walk(child)
 
     walk(node)
     return bad
+
+
+def scoped_nodes(scope):
+    """Nodes belonging to this lexical scope only (never a nested def/lambda/class body)."""
+    out = []
+    stack = list(getattr(scope, "body", []))
+    while stack:
+        node = stack.pop()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)):
+            continue
+        out.append(node)
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda,
+                                  ast.ClassDef)):
+                continue
+            stack.append(child)
+    return out
+
+
+def assigned_names(nodes):
+    """Every name this scope binds (any value), so a module binding can be shadowed."""
+    out = set()
+    for node in nodes:
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    out.add(target.id)
+                elif isinstance(target, ast.Subscript) and isinstance(target.value, ast.Name):
+                    out.add(target.value.id)
+        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+            out.add(node.target.id)
+        elif isinstance(node, (ast.For, ast.AsyncFor)) and isinstance(node.target, ast.Name):
+            out.add(node.target.id)
+        elif isinstance(node, ast.withitem) and isinstance(node.optional_vars, ast.Name):
+            out.add(node.optional_vars.id)
+    return out
 
 
 def function_scopes(tree):
@@ -214,150 +263,157 @@ def local_functions(tree):
     return out
 
 
-def param_env_names(fn):
-    names = set()
+def _params(fn):
     a = fn.args
-    for arg in list(a.posonlyargs) + list(a.args) + list(a.kwonlyargs):
-        if env_named(arg.arg):
-            names.add(arg.arg)
-    return names
+    return list(a.posonlyargs) + list(a.args) + list(a.kwonlyargs)
 
 
-def callee_passes_env_to_git(fn):
-    params = param_env_names(fn)
-    if not params:
-        return False
-    for node in ast.walk(fn):
+def callee_passes_param_to_git(fn, pname):
+    """Inside fn, is parameter `pname` the value handed to env= at a git call?"""
+    for node in scoped_nodes(fn):
         if isinstance(node, ast.Call) and call_is_git(node):
             for kw in node.keywords:
                 if kw.arg == "env" and isinstance(kw.value, ast.Name) \
-                        and kw.value.id in params:
+                        and kw.value.id == pname:
                     return True
     return False
 
 
-def usage_lines(scope, name, locals_):
+def _matched_env_params(fn, call, name):
+    """Parameters of fn that the argument carrying `name` binds to (position or keyword)."""
+    bound = []
+    params = _params(fn)
+    for index, arg in enumerate(call.args):
+        if isinstance(arg, ast.Name) and arg.id == name and index < len(params):
+            bound.append(params[index].arg)
+    for kw in call.keywords:
+        if kw.arg and isinstance(kw.value, ast.Name) and kw.value.id == name:
+            bound.append(kw.arg)
+    return [p for p in bound if env_named(p)]
+
+
+def guard_construction_lines(nodes, dead_lines):
+    """name -> set of guard-construction lines in this scope (key position, live lines)."""
+    out = {}
+    for node in nodes:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 \
+                and node.lineno not in dead_lines:
+            target = node.targets[0]
+            if isinstance(target, ast.Name) and env_named(target.id) \
+                    and mapping_has_key(node.value):
+                out.setdefault(target.id, set()).add(node.lineno)
+            if isinstance(target, ast.Subscript) and isinstance(target.ctx, ast.Store):
+                base, key = target.value, target.slice
+                if isinstance(base, ast.Name) and env_named(base.id) \
+                        and isinstance(key, ast.Constant) and key.value == KEY:
+                    out.setdefault(base.id, set()).add(node.lineno)
+        elif isinstance(node, ast.AnnAssign) and node.lineno not in dead_lines:
+            target = node.target
+            if isinstance(target, ast.Name) and env_named(target.id) \
+                    and node.value is not None and mapping_has_key(node.value):
+                out.setdefault(target.id, set()).add(node.lineno)
+        elif isinstance(node, ast.Call) and node.lineno not in dead_lines:
+            if isinstance(node.func, ast.Attribute) \
+                    and node.func.attr in ("update", "setdefault") \
+                    and isinstance(node.func.value, ast.Name) \
+                    and env_named(node.func.value.id) \
+                    and any(kw.arg == KEY for kw in node.keywords):
+                out.setdefault(node.func.value.id, set()).add(node.lineno)
+    return out
+
+
+def producer_calls(nodes, producers):
+    """name -> guard lines produced by assigning a call to a local guard producer."""
+    out = {}
+    for node in nodes:
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if isinstance(target, ast.Name) and env_named(target.id) \
+                and isinstance(node.value, ast.Call) \
+                and isinstance(node.value.func, ast.Name) \
+                and node.value.func.id in producers:
+            out.setdefault(target.id, set()).add(node.lineno)
+    return out
+
+
+def unguarded_rebindings(nodes):
+    out = {}
+    for node in nodes:
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name) and env_named(target.id) \
+                        and not mapping_has_key(node.value):
+                    out.setdefault(target.id, set()).add(node.lineno)
+        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) \
+                and env_named(node.target.id) and node.value is not None \
+                and not mapping_has_key(node.value):
+            out.setdefault(node.target.id, set()).add(node.lineno)
+    return out
+
+
+def usage_lines(nodes, name, locals_):
+    """Lines where `name` (same scope only) is handed to a git launch or a matching helper."""
     lines = set()
-    for node in ast.walk(scope):
+    for node in nodes:
         if not isinstance(node, ast.Call):
             continue
-        handed = False
-        for kw in node.keywords:
-            if kw.arg == "env" and isinstance(kw.value, ast.Name) and kw.value.id == name:
-                handed = True
-        for arg in node.args:
-            if isinstance(arg, ast.Name) and arg.id == name:
-                handed = True
-        if not handed:
-            continue
         if call_is_git(node):
-            lines.add(node.lineno)
+            handed = any(kw.arg == "env" and isinstance(kw.value, ast.Name)
+                         and kw.value.id == name for kw in node.keywords)
+            handed = handed or any(isinstance(arg, ast.Name) and arg.id == name
+                                   for arg in node.args)
+            if handed:
+                lines.add(node.lineno)
             continue
         fn = None
         if isinstance(node.func, ast.Name):
             fn = locals_.get(node.func.id)
         elif isinstance(node.func, ast.Attribute):
             fn = locals_.get(node.func.attr)
-        if fn is not None and callee_passes_env_to_git(fn):
-            lines.add(node.lineno)
+        if fn is None:
+            continue
+        for pname in _matched_env_params(fn, node, name):
+            if callee_passes_param_to_git(fn, pname):
+                lines.add(node.lineno)
+                break
     return lines
 
 
 def guard_producers(tree):
-    """Local functions whose return value is a key-position-carrying env."""
+    """Local functions that RETURN a guard-carrying env (guard before the return, no rebinding)."""
     out = set()
+    dead = false_guarded_lines(tree)
     for fn in ast.walk(tree):
         if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
-        dead = false_guarded_lines(fn)
-        local = set()
-        for node in ast.walk(fn):
-            if isinstance(node, ast.Assign) and len(node.targets) == 1:
-                target = node.targets[0]
-                if isinstance(target, ast.Name) and env_named(target.id) \
-                        and carries_key_keyposition(node.value) \
-                        and node.lineno not in dead:
-                    local.add(target.id)
-                if isinstance(target, ast.Subscript) and isinstance(target.ctx, ast.Store) \
-                        and isinstance(target.value, ast.Name) and env_named(target.value.id) \
-                        and isinstance(target.slice, ast.Constant) \
-                        and target.slice.value == KEY and node.lineno not in dead:
-                    local.add(target.value.id)
-            elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \
-                    and node.func.attr in ("update", "setdefault") \
-                    and isinstance(node.func.value, ast.Name) \
-                    and env_named(node.func.value.id) \
-                    and any(kw.arg == KEY for kw in node.keywords) \
-                    and node.lineno not in dead:
-                local.add(node.func.value.id)
-        for node in ast.walk(fn):
-            if isinstance(node, ast.Return) and node.value is not None:
-                if isinstance(node.value, ast.Name) and node.value.id in local:
-                    out.add(fn.name)
-                elif carries_key_keyposition(node.value):
-                    out.add(fn.name)
+        nodes = scoped_nodes(fn)
+        dead_here = dead | false_guarded_lines(fn)
+        guarded = guard_construction_lines(nodes, dead_here)
+        rebinds = unguarded_rebindings(nodes)
+        for node in nodes:
+            if not isinstance(node, ast.Return) or node.value is None:
+                continue
+            if isinstance(node.value, ast.Name) and node.value.id in guarded:
+                name = node.value.id
+                for guard_line in guarded[name]:
+                    if guard_line < node.lineno and not any(
+                            guard_line < r < node.lineno for r in rebinds.get(name, ())):
+                        out.add(fn.name)
+                        break
+            elif mapping_has_key(node.value):
+                out.add(fn.name)
     return out
 
 
-def guarded_names(scope, dead_lines, producers):
-    out = {}
-    for node in ast.walk(scope):
-        if isinstance(node, ast.Assign) and len(node.targets) == 1:
-            target = node.targets[0]
-            if isinstance(target, ast.Name) and env_named(target.id) \
-                    and carries_key_keyposition(node.value) and node.lineno not in dead_lines:
-                out.setdefault(target.id, set()).add(node.lineno)
-            if isinstance(target, ast.Name) and env_named(target.id) \
-                    and isinstance(node.value, ast.Call) \
-                    and isinstance(node.value.func, ast.Name) \
-                    and node.value.func.id in producers and node.lineno not in dead_lines:
-                out.setdefault(target.id, set()).add(node.lineno)
-            if isinstance(target, ast.Subscript) and isinstance(target.ctx, ast.Store):
-                base, key = target.value, target.slice
-                if isinstance(base, ast.Name) and env_named(base.id) \
-                        and isinstance(key, ast.Constant) and key.value == KEY \
-                        and node.lineno not in dead_lines:
-                    out.setdefault(base.id, set()).add(node.lineno)
-        elif isinstance(node, ast.AnnAssign):
-            target = node.target
-            if isinstance(target, ast.Name) and env_named(target.id) \
-                    and node.value is not None and carries_key_keyposition(node.value) \
-                    and node.lineno not in dead_lines:
-                out.setdefault(target.id, set()).add(node.lineno)
-        elif isinstance(node, ast.Call):
-            if isinstance(node.func, ast.Attribute) \
-                    and node.func.attr in ("update", "setdefault") \
-                    and isinstance(node.func.value, ast.Name) \
-                    and env_named(node.func.value.id) \
-                    and any(kw.arg == KEY for kw in node.keywords) \
-                    and node.lineno not in dead_lines:
-                out.setdefault(node.func.value.id, set()).add(node.lineno)
-    return out
-
-
-def unguarded_rebindings(scope):
-    out = {}
-    for node in ast.walk(scope):
-        if isinstance(node, ast.Assign):
-            for target in node.targets:
-                if isinstance(target, ast.Name) and env_named(target.id) \
-                        and not carries_key_keyposition(node.value):
-                    out.setdefault(target.id, set()).add(node.lineno)
-        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) \
-                and env_named(node.target.id) and node.value is not None \
-                and not carries_key_keyposition(node.value):
-            out.setdefault(node.target.id, set()).add(node.lineno)
-    return out
-
-
-def inline_guarded_call(tree, producers):
+def inline_guarded_call(tree, producers, dead):
     for node in ast.walk(tree):
-        if not isinstance(node, ast.Call):
+        if not isinstance(node, ast.Call) or node.lineno in dead:
             continue
         for kw in node.keywords:
             if kw.arg != "env" or not call_is_git(node):
                 continue
-            if carries_key_keyposition(kw.value):
+            if mapping_has_key(kw.value):
                 return True
             if isinstance(kw.value, ast.Call) and isinstance(kw.value.func, ast.Name) \
                     and kw.value.func.id in producers:
@@ -377,15 +433,29 @@ def has_guard(src):
     dead = false_guarded_lines(tree)
     locals_ = local_functions(tree)
     producers = guard_producers(tree)
-    if inline_guarded_call(tree, producers):
+    if inline_guarded_call(tree, producers, dead):
         return True
+    module_nodes = scoped_nodes(tree)
+    module_binds = guard_construction_lines(module_nodes, dead)
+    for name, lines in producer_calls(module_nodes, producers).items():
+        module_binds.setdefault(name, set()).update(lines)
     for scope in function_scopes(tree):
-        binds = guarded_names(scope, dead, producers)
+        nodes = scoped_nodes(scope)
+        binds = guard_construction_lines(nodes, dead)
+        produced = producer_calls(nodes, producers)
+        for name, lines in produced.items():
+            binds.setdefault(name, set()).update(lines)
+        if scope is not tree:
+            local_names = assigned_names(nodes) | set(binds)
+            for name, lines in module_binds.items():
+                if name not in local_names:
+                    binds = dict(binds)
+                    binds[name] = set(lines)
         if not binds:
             continue
-        rebinds = unguarded_rebindings(scope)
+        rebinds = unguarded_rebindings(nodes)
         for name, guard_lines in binds.items():
-            uses = usage_lines(scope, name, locals_)
+            uses = usage_lines(nodes, name, locals_)
             for guard_line in guard_lines:
                 after = [use for use in uses if use > guard_line]
                 if not after:
@@ -601,6 +671,48 @@ CASES = {
 }
 
 
+REGRESSIONS = {
+    "dead-inline": ('def run(repo):\n    if False:\n'
+                    '        subprocess.run(["git", "-C", repo, "show", "HEAD:a"], '
+                    'env={"GIT_NO_REPLACE_OBJECTS": "1"})\n'
+                    '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], '
+                    'env={"PATH": "/usr/bin"})\n', True, False),
+    "producer-overwrite": ('def git_env():\n    env = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
+                           '    env = {}\n    return env\n\n\n'
+                           'def run(repo):\n    env = git_env()\n'
+                           '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n',
+                           True, False),
+    "producer-late": ('def git_env():\n    env = {}\n    return env\n'
+                      '    env = {"GIT_NO_REPLACE_OBJECTS": "1"}\n\n\n'
+                      'def run(repo):\n    env = git_env()\n'
+                      '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n',
+                      True, False),
+    "nested-key-value": ('def run(repo):\n'
+                         '    env = {"LABEL": {"GIT_NO_REPLACE_OBJECTS": "1"}}\n'
+                         '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n',
+                         True, False),
+    "sibling-scope": ('def never():\n    env = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
+                      '    return env\n\n\ndef run(repo):\n'
+                      '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n',
+                      True, False),
+    "onehop-wrong-parameter": ('def git(repo, other_env, env):\n'
+                               '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], '
+                               'env=other_env)\n\n\ndef run(repo):\n'
+                               '    env = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
+                               '    other_env = {"PATH": "/usr/bin"}\n'
+                               '    return git(repo, other_env, env)\n', True, False),
+    "dead-else-valid": ('def run(repo):\n    if False:\n        env = {"PATH": "/usr/bin"}\n'
+                        '    else:\n        env = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
+                        '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n',
+                        True, True),
+    "module-visible-binding": ('GIT_ENV = {"PATH": "/usr/bin"}\n'
+                               'GIT_ENV["GIT_NO_REPLACE_OBJECTS"] = "1"\n\n\n'
+                               'def head(repo):\n'
+                               '    return subprocess.run(["git", "-C", repo, "show", "HEAD:a"], '
+                               'env=GIT_ENV)\n', True, True),
+}
+
+
 def _selftest_checks(scratch, controls_path):
     checks = []
 
@@ -622,6 +734,9 @@ def _selftest_checks(scratch, controls_path):
          classify('def f(repo):\n    g(["git", "-C", repo, "show", "HEAD:a"], '
                   'labels={"GIT_NO_REPLACE_OBJECTS": "1"})\n')[1] is False)
 
+    for name, (src, reader, guard) in REGRESSIONS.items():
+        want("review regression %s is (%s, %s)" % (name, reader, guard),
+             classify(src) == (reader, guard))
     want("verdict met on the frozen target", verdict_met(20, 13, 13, 0, 11, 7))
     want("verdict requires the frozen population", not verdict_met(19, 13, 13, 0, 11, 7))
     want("verdict requires the frozen reader count", not verdict_met(20, 12, 12, 0, 11, 7))
