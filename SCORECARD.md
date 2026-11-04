@@ -4102,3 +4102,17 @@ whose output is empty is an evidence gap, never backfilled (QUALITY 115).
 
 ### Axis table re-derived at the landing tip (`receipts/harm-watch-r73.txt` and `quality/check-axis-scores.py`):
 navigation 89/89; calibration resolved-active 86/86; operability selftest 12/12, ledger 127/127.
+
+### Review-driven repair (round 73, append-only)
+
+At `84fc266a5bf6db6cf12b6aa6106ad33121f391be` the two counters implement the reviewers' findings
+literally: C1 now resolves `--base-rev`, refuses a base/candidate harness difference and scores the
+held eight-case set with the base harness (red: the old counter printed the contract line for a
+nonexistent base rev; green: exit 2 with `cannot resolve`, rc 0 with the real base). C2 refuses a
+launch whose enclosing function shadows the name, restricts cancellation to bindings that resolve to
+the module, and treats `del os.environ[KEY]` as a cancellation — the reviewers' three fixtures flip
+`(True, True)→(True, False)`, `(True, False)→(True, True)` and `(True, True)→(True, False)`
+(`.ufo/waves/round-73/receipts/repair-r73.txt`). The measurement receipts were re-run at the repair
+commit: both claims `TARGET_MET` with identical counts (`measurement-c{1,2}-r73.txt`), and the frozen
+10-case and 28-case sets score identically before and after. The reviewer's two line-order
+observations stay declared limits (F4).

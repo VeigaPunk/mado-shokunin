@@ -1,0 +1,59 @@
+{
+  "source_revision": "1459cca11fb5d3956a6e9a128217852dd0c28cb9",
+  "source_sha256": "6be2602839ae15995be14e6327cc9e2221e5af07ae67467cbd7878800555dba7",
+  "git_show_rc": 0,
+  "results": [
+    {
+      "name": "global-subscript-positive",
+      "source": "import os\nimport subprocess\nchild_context = dict(os.environ)\ndef enable_object_safety():\n    global child_context\n    child_context[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\nenable_object_safety()\nsubprocess.run([\"git\", \"log\", \"-1\"], env=child_context)\n",
+      "expected": [
+        true,
+        true
+      ],
+      "actual": [
+        true,
+        true
+      ],
+      "agrees": true
+    },
+    {
+      "name": "global-value-negative",
+      "source": "import os\nimport subprocess\nchild_context = dict(os.environ)\ndef annotate_child():\n    global child_context\n    child_context = {\"TRACE_LABEL\": \"GIT_NO_REPLACE_OBJECTS\"}\nannotate_child()\nsubprocess.run([\"git\", \"log\", \"-1\"], env=child_context)\n",
+      "expected": [
+        true,
+        false
+      ],
+      "actual": [
+        true,
+        false
+      ],
+      "agrees": true
+    },
+    {
+      "name": "environ-dict-positive",
+      "source": "import os\nimport subprocess\nos.environ[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\nsubprocess.run([\"git\", \"cat-file\", \"-t\", \"HEAD\"], env=dict(os.environ))\n",
+      "expected": [
+        true,
+        true
+      ],
+      "actual": [
+        true,
+        true
+      ],
+      "agrees": true
+    },
+    {
+      "name": "environ-replaced-negative",
+      "source": "import os\nimport subprocess\nos.environ[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\nos.environ = {\"PATH\": \"/usr/bin\"}\nsubprocess.run([\"git\", \"cat-file\", \"-t\", \"HEAD\"], env={**os.environ})\n",
+      "expected": [
+        true,
+        false
+      ],
+      "actual": [
+        true,
+        false
+      ],
+      "agrees": true
+    }
+  ]
+}

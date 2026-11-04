@@ -1,0 +1,65 @@
+harm-watch-r73.txt — seat R73ExecBattery, mado round 73 wave 1
+date: 2026-11-04
+cwd for every command: /home/vgpnk/Projects/shokunin/mado-shokunin
+instrument commit: 1459cca11fb5d3956a6e9a128217852dd0c28cb9 (verified HEAD at run time via `git rev-parse --short HEAD` -> 1459cca1)
+
+cmd=1 rc=0 output=MADO_SELFTEST: 460/460 assertions passed
+cmd=2 rc=0 output=MADO_INDEX: rev=1459cca11fb5d3956a6e9a128217852dd0c28cb9 indexed=87/87 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+cmd=3 rc=0 output=LEDGER: population=127 ledger_rows=127 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=1459cca11fb5d3956a6e9a128217852dd0c28cb9
+cmd=4 rc=0 output=MADO_AXIS: checked=3 mismatched=0 rev=1459cca11fb5d3956a6e9a128217852dd0c28cb9
+cmd=5 rc=1 output=mado	E11	S449 missing used-by corpus/knowledge/guard-carrier-global-environ-r73.md
+cmd=6 rc=0 output=40db7db86c31a5f3b3a31f9eb1086620ad3d9765
+
+## cmd=4 argv note
+The given flag set was accepted unchanged (rc=0, no usage error):
+  python3 -I quality/check-axis-scores.py --repo . --rev 1459cca11fb5d3956a6e9a128217852dd0c28cb9
+Full output (4 lines): MADO_AXIS_ROW navigation published=87/87 derived=87/87 verdict=MATCH;
+MADO_AXIS_ROW calibration published=86/86 derived=86/86 verdict=MATCH; MADO_AXIS_ROW
+operability published=12/12 derived=12/12 verdict=MATCH; then the MADO_AXIS total quoted above.
+
+## cmd=6 frozen-identity sweep (10 blob ids, argv order; every pair identical)
+quality/counters/c1-r72-landing-controls.py  1459cca1=484c5d7ea738668ad1773b97d7c5ceaf3f2dc3d6  d3f6c9f5=484c5d7ea738668ad1773b97d7c5ceaf3f2dc3d6  IDENTICAL
+quality/counters/c2-r71-shapes.py            1459cca1=6b9c301976be74edbbbacf12dc5ba8efbfc42fe8  d3f6c9f5=6b9c301976be74edbbbacf12dc5ba8efbfc42fe8  IDENTICAL
+quality/counters/c2-r70-carriers.py          1459cca1=9afbbeed3fe03cf29a18eee1c0c5372c0b572aec  d3f6c9f5=9afbbeed3fe03cf29a18eee1c0c5372c0b572aec  IDENTICAL
+tools/mado-verify.sh                         1459cca1=9113c7c05e586328f44ed6822a3d12ff34c47a36  d3f6c9f5=9113c7c05e586328f44ed6822a3d12ff34c47a36  IDENTICAL
+quality/landing-counters.sh                  1459cca1=40db7db86c31a5f3b3a31f9eb1086620ad3d9765  d3f6c9f5=40db7db86c31a5f3b3a31f9eb1086620ad3d9765  IDENTICAL
+
+## cmd=5 rc=1 diagnosis (snapshot of the wave in flight, not a held-surface harm)
+- Exit contract read from the script header (scripts/sources-census.sh lines 12-14): exit 0 =
+  clean or warnings; exit 1 = E/overdue findings; "W-codes ... never change status".
+- The run printed 45 lines: 41x W04 (duplicate url across scopes; pre-existing rows plus the
+  round-73 rows S447-S449, which warn because their URLs already exist in other scopes), 1x W01
+  (S277 tierC mined note), 3x E11 (S447, S448, S449 "missing used-by
+  corpus/knowledge/guard-carrier-global-environ-r73.md"). Exit 1 is caused by the three E11
+  findings only; the 42 W-lines are non-fatal by contract.
+- Rows S447-S449 are NOT at HEAD: `git show HEAD:corpus/SOURCES.md` (HEAD = 1459cca1, dumped
+  and searched) contains no S447/S448/S449 and no guard-carrier-global-environ-r73 reference.
+  They are this round's uncommitted working-tree additions at corpus/SOURCES.md:397-399, backed
+  by the declared 3x byte-identical fetch receipts present under .ufo/waves/round-73/fetch/
+  (Doc_reference_simple_stmts.rst, Doc_library_os.rst, Doc_library_subprocess.rst, x3 each).
+- E11 fired because the used-by target corpus/knowledge/guard-carrier-global-environ-r73.md
+  (the C2 knowledge entry; claims-declaration-r73.md makes "the registry census must exit 0 at
+  round end" a round-end obligation, and w1-dispatch.json assigns the entry to seat
+  R73ScribeEntryC2) did not exist on disk at run time. No E-class line touches any pre-round
+  row; `git status --porcelain` shows the lane's usual in-flight round-73 files only.
+- Out-of-band confirmation cmd=5b (same argv, run after the entry landed on disk as an
+  untracked file): rc=0, last line
+  `mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`;
+  only the W04/W01 warnings remain. The census surface is healed, pending the L1's round-end
+  integration and commit of the working-tree round-73 files.
+
+## Verdict
+No measured surface was harmed by the round: selftest 460/460; index 87/87 missing=0
+dangling=0 duplicates=0; ledger TARGET_MET uncovered=0; axis table 3/3 MATCH; all five frozen
+counter/harness blob pairs identical between the instrument commit and the base. The single
+rc!=0 leg (cmd=5) is the round's own declared in-flight sources-plan rows whose used-by target
+had not yet landed — it validates clean (cmd=5b rc=0) once the declared C2 knowledge entry is
+on disk. It is not damage to a held surface.
+
+## Bounds compliance
+- Writes: only .ufo/waves/round-73/w1/R73ExecBattery/{R73ExecBattery.md,harm-watch-r73.txt};
+  scratch /fast/scratch/hyaku/mado-r73/R73ExecBattery/ created, used for command captures, and
+  deleted after this receipt was written.
+- Git usage read-only: rev-parse, show, status. No git/jj write commands. No subagent dispatch,
+  no background jobs. No tool installs (none needed; pacman untouched). No message to
+  agent://all. No writes outside my write directory and scratch.

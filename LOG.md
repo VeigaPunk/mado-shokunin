@@ -3636,3 +3636,11 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   `uncovered=0`; axis table re-derived; census exit 0; frozen instrument blob ids unchanged
   (`.ufo/waves/round-73/receipts/harm-watch-r73.txt`). No config tree, compositor, service or
   sibling repo was written; no pacman transaction; no tool installed or upgraded.
+- Review-driven repair at `84fc266a` (this entry, appended): C1's `--base-rev` is now resolved and
+  refuses a base/candidate harness difference (red-before: the old counter printed the contract line
+  for `--base-rev NO_SUCH_BASE_R73`, rc 0; green: exit 2 with the reason, rc 0 with the real base) and
+  the usage example names `--controls`; C2 refuses a shadowing launch binding, restricts cancellation
+  to module-resolving bindings and treats `del os.environ[KEY]` as a cancellation — the reviewers'
+  three fixtures flip as named in `.ufo/waves/round-73/receipts/repair-r73.txt`, three regressions pin
+  the repairs, selftests 26/26 and 78/78. Both claims re-measured at the repair commit with identical
+  counts (`measurement-c{1,2}-r73.txt`); no predicate, control label, kill rule or target changed.

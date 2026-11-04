@@ -111,3 +111,26 @@ The three admits are handed over with URLs, dates and quotes above.
 next round's candidate, but nothing from `/home/vgpnk/Projects/shokuknow/merge/mado/` was adopted
 this round: the round's claims are instrument work on the lane's own harness chain, and the
 package's staged entries are domain material for a later assimilation round.
+
+## Addendum — wave review findings and the repair (append-only)
+
+The wave's reviewers found five defects; all are repaired at `84fc266a` with red-before/green-after
+receipts (`.ufo/waves/round-73/receipts/repair-c1-r73.txt`, `repair-r73.txt`), and both claims were
+re-measured at that commit with the same verdicts and counts.
+
+- `R73RevC1` F1: the declaration's §C1 command omitted `--controls` (erratum E1; QUALITY 118). F2:
+  `--base-rev` was displayed, not resolved — the counter now resolves it and refuses a base/candidate
+  harness difference. F3 (informational): N3 is the M2 *family*, not the literal round-72 M2 (which
+  changed `credit()`, not `summary_green()`), and the N2 mutation's raw-prefix behaviour also rejects
+  an indented summary; the declaration names the literal substitution, so the denominator stands.
+- `R73RevC2` F1: a function parameter shadowing the `global` name was credited — refused now. F2: an
+  unrelated local rebinding cancelled a genuine guard — cancellation is now restricted to bindings
+  that resolve to the module. F3: `del os.environ[KEY]` was ignored — a guarded delete now cancels.
+  F4: the line-order approximation is observable in both directions (an uncalled earlier store is
+  creditable; a call before the definition textually is not) and stays a declared limit.
+- Three regressions pin the repairs (`r73-global-parameter-shadow`,
+  `r73-global-unrelated-local-rebind`, `r73-environ-key-deleted`); C2's selftest 75/75 → 78/78,
+  C1's 25/25 → 26/26.
+
+**Wave seat outcomes** (13 launched, 13 settled; per-seat deliverables are listed in the round
+report). All thirteen seats wrote a report or a draft into their own directory; none died.

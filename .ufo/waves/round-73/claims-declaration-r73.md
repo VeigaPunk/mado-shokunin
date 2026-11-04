@@ -119,3 +119,34 @@ with exit 2, the reason on stderr and no contract line
 
 No predicate, counter, kill rule, target, control label or measured value changes; the receipt at
 `1459cca1` used this invocation. Found by the wave's `R73RevC1` seat (F1) before the report.
+
+E2. **Wave-review repairs (both claims re-measured at `84fc266a5bf6db6cf12b6aa6106ad33121f391be`).**
+The wave's `R73RevC1` and `R73RevC2` found five defects, all repaired without touching a frozen
+predicate, control set, case label, kill rule or target; receipts
+`.ufo/waves/round-73/receipts/repair-c1-r73.txt` and `repair-r73.txt`.
+
+- **C1 F2 (provenance):** `--base-rev` was displayed but never resolved. The counter now resolves
+  it, extracts the candidate harness at `--base-rev`, refuses a base/candidate byte difference, and
+  scores the held eight-case set with the base harness (`held_set=8/8`), printing
+  `MADO_R73_BASE_PROVENANCE`. Red: the old counter with `--base-rev NO_SUCH_BASE_R73` printed the
+  contract line, rc 0. Green: the repaired counter exits 2 (`cannot resolve NO_SUCH_BASE_R73`) and
+  rc 0 with the real base.
+- **C1 F1 (usage example):** the module docstring's usage line omitted `--controls`; it now names it
+  and the selftest asserts the docstring carries the flag (26/26).
+- **C2 F1 (scope shadow):** a launch inside a function that binds the name as a parameter or a
+  non-global local was credited as the module binding. The detector now refuses such a launch; the
+  reviewer's `false-global-parameter-shadow.py` flips `(True, True)` → `(True, False)`, pinned as
+  regression `r73-global-parameter-shadow`.
+- **C2 F2 (over-broad cancellation):** any plain rebinding of the name anywhere cancelled the store.
+  Cancellation is now restricted to assignments that resolve to the module binding (module level or
+  another `global`-declaring function); the reviewer's `true-global-unrelated-local-rebind.py` flips
+  `(True, False)` → `(True, True)`, pinned as `r73-global-unrelated-local-rebind`.
+- **C2 F3 (key deletion):** `del os.environ[KEY]` between store and launch was ignored. A guarded
+  delete now cancels the store; `false-environ-key-deleted.py` flips `(True, True)` →
+  `(True, False)`, pinned as `r73-environ-key-deleted`.
+
+C2 selftest 75/75 → 78/78, C1 25/25 → 26/26. Re-measurement at the repair commit: `cases=10
+mutants=4 killed=4 base_killed=2 verdict=TARGET_MET` rc 0 and `population=20 readers=13 guarded=13
+unguarded=0 controls=28/28 base_controls=25/28 verdict=TARGET_MET` rc 0 — the same verdicts and
+counts as at `1459cca1`; the frozen 28-case and 10-case sets score identically before and after the
+repair. The reviewer's two remaining line-order observations (F4) stay declared limits.
