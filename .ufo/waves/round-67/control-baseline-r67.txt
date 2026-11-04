@@ -1,0 +1,20 @@
+# Round-67 pre-freeze control baseline: the do-nothing (pre-r67 tip) instruments scored on the
+# frozen control sets BEFORE the claim declaration is committed. Lane tip at measurement:
+#   0b28ffb4baac9586566d246c3f0986b2bb650a33
+# commands (run from the lane root, 2026-11-03):
+#   python3 -I .ufo/waves/round-67/controls/score-baseline-c1.py --repo . --base 0b28ffb4baac9586566d246c3f0986b2bb650a33 --controls .ufo/waves/round-67/controls/c1-controls.json --scratch-root /fast/scratch/hyaku/mado-r67/prefreeze/c1
+#   python3 -I .ufo/waves/round-67/controls/score-baseline-c2.py --repo . --base 0b28ffb4baac9586566d246c3f0986b2bb650a33 --scratch-root /fast/scratch/hyaku/mado-r67/prefreeze/c2
+# C1 exit=0
+BASELINE_C1 case=genuine accepted=True expect=accept correct=yes :: headings=1 rows=8 groups=8/8 receipts=1 resolved=1 gate=ok
+BASELINE_C1 case=duplicate-heading accepted=False expect=reject correct=yes :: headings=2 rows=8 groups=8/8 receipts=1 resolved=1 gate=ok
+BASELINE_C1 case=row-without-receipt accepted=False expect=reject correct=yes :: headings=1 rows=8 groups=8/8 receipts=1 resolved=1 gate=ok
+BASELINE_C1 case=file-plane-only accepted=False expect=reject correct=yes :: headings=1 rows=8 groups=8/8 receipts=1 resolved=1 gate=missing
+BASELINE_C1 case=unreferenced-live-object accepted=True expect=reject correct=no :: headings=1 rows=8 groups=8/8 receipts=1 resolved=1 gate=ok
+BASELINE_C1 case=live-in-state-cell-only accepted=True expect=reject correct=no :: headings=1 rows=8 groups=8/8 receipts=2 resolved=2 gate=ok
+BASELINE_C1: counter=quality/counters/c1-r66-register.py base=0b28ffb4baac9586566d246c3f0986b2bb650a33 controls=6 correct=4/6
+# C2 exit=1
+BASELINE_C2 base=0b28ffb4baac9586566d246c3f0986b2bb650a33 selftest_rc=0
+BASELINE_C2 zero_citation_case=0 replace_ref_case=0
+BASELINE_C2 usedby_guard=0 ledger_guard=0
+BASELINE_C2 child_env_read=forged guarded_read=real
+BASELINE_C2 killed=0/2 target=2/2 verdict=TARGET_MISSED
