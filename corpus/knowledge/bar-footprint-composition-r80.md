@@ -163,3 +163,22 @@ Three limits the round's own seats surfaced, recorded rather than smoothed:
    dynamic types (`ReservedArea.hpp:5-8`); the join models only the layer-surface type, so a host
    running the debug error bar reserves more than the model accounts for and reads `GT` — which the
    verdict already treats as admissible (band > expected), never as agreement.
+
+## 10. Anchor corrections (append-only; the wave's source seat re-read the pinned bytes)
+
+Two registry anchors written earlier in this round were off, and CORPUS.md rule 2 makes the
+correction a new row, never an in-place rewrite:
+
+- **S476 supersedes S473.** The mask table is `:100-115`, **sixteen** `s/^N,/` rules (`^0,` strips
+  the mask, then fifteen modifier sets through `^77,`), not "twelve" over `:100-120`. The number
+  twelve is the count of *distinct rendered tuples this host's binds produce*, not the table's rule
+  count — a distinction the entry's §6 grammar depends on, since the grammar validates the rendered
+  words, not the mask arithmetic.
+- **S477 supersedes S472.** The empty-box cases are `:39-52` (`c` at `:39`, `d` at `:46`), and the
+  not-contained assertion at `:53-54` proves `ok() == false`; it does not read the zeroed area —
+  that zeroing is the constructor's (`ReservedArea.cpp:20-31`, S459/S466). §5 above relies on the
+  constructor, not on this test, for the zeroing.
+
+The propositions in §§1–8 are unaffected: both corrections are about where a claim lives, not about
+what the compositor does. The entry's `source:` line keeps the original ids for that reason, and
+these two rows carry this path in `used-by`.
