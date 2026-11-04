@@ -320,7 +320,8 @@ def main(argv):
         rc, out, _ = run([sys.executable, "-I", tool_path, "--selftest"], workroot)
         m = re.search(r"MADO_BARFOOT_SELFTEST: (\d+)/(\d+)", out)
         tool_selftest = "%s/%s" % (m.group(1), m.group(2)) if m else "0/0"
-        selftest_ok = rc == 0 and m is not None and m.group(1) == m.group(2)
+        selftest_ok = (rc == 0 and m is not None and int(m.group(1)) > 0
+                       and m.group(1) == m.group(2))
 
         correct, rows = run_cases(tool_path, cases, workroot, "cand")
         for name, crc, box, reserved, band, expected, verdict, ok in rows:

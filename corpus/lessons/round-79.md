@@ -37,7 +37,7 @@ this round at the pinned commit and are byte-identical to earlier pins (`fetch/s
 | S457 | `…/src/render/Renderer.cpp` — `arrangeLayersForMonitor` `:2673-2700` (reset `:2680`, parent `:2682`, add `:2696`) | mined (re-opened, byte-identical) | `const CBox ORIGINAL_USABLE_AREA = PMONITOR->logicalBoxMinusReserved();` | the layer delta is measured against the static-reduced box; not a per-consumer attribution |
 | S458 | `…/src/debug/HyprCtl.cpp` — monitors `reserved` print `:281-282` | mined (re-opened, byte-identical) | `sc<int>(m->m_reservedArea.left()), sc<int>(m->m_reservedArea.top())` | the print order `[left, top, right, bottom]`; not which contributor set a band |
 | S459 | `…/src/desktop/reserved/ReservedArea.cpp` — parent/child ctor `:19-35`, `apply` `:53-60` | mined (re-opened, byte-identical) | `m_initialBottomRight = (parent.pos() + parent.size()) - (child.pos() + child.size());` | the parent/child delta arithmetic; not the sum with the static term |
-| S303 | `…/src/config/legacy/ConfigManager.cpp` — `handleMonitor` `:1299`, `addreserved` `:1319-1341` | mined (re-opened from the committed round-45 pin, not re-fetched this round) | `area = {std::stoi(std::string{ARGS[2]}), std::stoi(std::string{ARGS[5]}), std::stoi(std::string{ARGS[3]}), std::stoi(std::string{ARGS[4]})};` | the written field order TOP, BOTTOM, LEFT, RIGHT and the same-selector rule write; not the apply path |
+| S303 | `…/src/config/legacy/ConfigManager.cpp` — `handleMonitor` `:1299`, `addreserved` `:1319-1341` | mined (byte-identical to the round-45 pin, copied into `fetch/S303.bin`, sha256 `9db68cf4…`, 90963 B) | `area = {std::stoi(std::string{ARGS[2]}), std::stoi(std::string{ARGS[5]}), std::stoi(std::string{ARGS[3]}), std::stoi(std::string{ARGS[4]})};` | the written field order TOP, BOTTOM, LEFT, RIGHT and the same-selector rule write; not the apply path |
 | S460 | `…/protocols/wlr-layer-shell-unstable-v1.xml` — `set_exclusive_zone :152-191`, quote inside `set_margin :193-200` at line 196; sha256 `87e0b9c8…` | mined (re-opened, byte-identical) | `The exclusive zone includes the margin.` | the protocol contract for the zone; not host behaviour |
 | S461 | installed `waybar(5)` 0.15.0 (`S461.txt:91`) | mined (re-opened, byte-identical render) | `Bar position, can be \fBtop\fR, \fBbottom\fR, \fBleft\fR, \fBright\fR.\&` | the declared placement keys; not the compositor's arithmetic |
 | S462 | `…/Waybar/90b209ad…/src/bar.cpp` — the raw URL returned 404 when re-fetched 2026-11-04; the r78 byte-identical pin (sha256 `120eb913…`) is reused | mined (pin reused, not re-fetched) | `gtk_layer_auto_exclusive_zone_enable(gtk_window);` (from the committed pin) | the auto-zone call; the claim does not rest on it this round and the pin is unchanged |
@@ -53,3 +53,17 @@ rests on), reject S467 (same reason as filed).
 
 Seats: 14 in one v1 wave (`w1-spec.json`, `w1-dispatch.json`, `w1.ready`). Findings land here
 as the wave reports; a seat that settles without a report is disclosed, never backfilled.
+
+## Counter self-mutation (wave seat R79MutC1) — named limits
+
+The counter's own checks were mutated one at a time and every one still printed `TARGET_MET` against
+the frozen artifacts: the carried-prefix check, the exact `base_correct`, the anchor-absent branch
+(dead at the freeze), the refusal stage pin, the selftest clause and the band/expected comparison.
+Each was then demonstrated load-bearing with a tamper probe (tampered carried case, base pointed at
+the freeze, a `stage=setup` refusal, a red selftest, a band-only mutant), so the holes are
+*unexercised*, not absent. Two consequences are named limits, not defects smoothed over: (a) the
+counter cannot detect a tampered artifact set — it detects a wrong score over the artifacts it is
+given, and the frozen bytes are the defense; (b) no current tool mutant is separated by `band` or
+`expected` alone, so those fields are printed but not load-bearing in the verdict. The one real
+defect it exposed was `selftest_ok` accepting a `0/0` summary; the counter now requires at least one
+assertion (`int(p) > 0`).

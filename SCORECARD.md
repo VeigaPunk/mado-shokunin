@@ -4593,8 +4593,18 @@ absent mutant anchor as `not killed` (printed `reason=anchor-absent`), so the fi
 command yields a verdict at both ends; the corrected before-state is
 `receipts/control-c1-r79-at-base.txt` (`correct=18 killed=4 TARGET_MISSED`), not the r78
 `--no-mutants` reproduction. **D3** — the r78 frontier bullet's "three re-opened rows" is corrected
-by this round's bullet (S457/S458/S459/S303 re-opened and re-fetched, the r78 frontier line stays
-as the dated record).
+by this round's bullet (S457/S458/S459/S460 re-opened and re-fetched, S303 re-opened from its
+committed round-45 pin and copied into `fetch/S303.bin`; the r78 line stays as the dated record).
+
+Wave-driven repairs and named limits: **R1** (the `addreserved` fall-through, four fixtures) and
+**R2** (layout origin, negative clamp, `desc:`/empty refusal, band overflow, `transform` slot) are
+recorded in the declaration, the entry and lessons M79-6/M79-7; the case set, expectations, mutants
+and target did not move, and the frozen 23/23 at `5eb8f20f` is reproducible only with the frozen
+counter bytes (the successor counter re-cuts two anchors; declaration §"How to re-produce"). The
+counter self-mutation seat showed every internal check is *unexercised* rather than absent (a
+tamper probe demonstrates each load-bearing) — named limit: the counter cannot detect a tampered
+artifact set, and no current mutant is separated by `band`/`expected` alone; the one real defect it
+found (`selftest_ok` accepting `0/0`) is repaired with a `p > 0` floor.
 
 ### Axis table re-derived at the landing tip (`receipts/harm-watch-r79.txt` and `quality/check-axis-scores.py`):
 navigation 98/98; calibration resolved-active 86/86; operability selftest 12/12, ledger 144/144.
