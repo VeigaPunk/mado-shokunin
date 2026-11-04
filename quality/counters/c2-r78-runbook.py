@@ -45,14 +45,16 @@ MUTATIONS = [
      "    if rc != 0:\n        return False\n    text = stdout.rstrip",
      "    if False:\n        return False\n    text = stdout.rstrip"),
     ("int-range-lower-open",
-     "    return lo <= number <= hi",
-     "    return number <= hi"),
+     "        number = int(text)\n        return lo <= number <= hi",
+     "        number = int(text)\n        return number <= hi"),
     ("json-required-ignored",
-     '    for key, kind in schema.get("fields", {}).items():',
-     "    for key, kind in ():"),
+     '    for key, kind in schema.get("fields", {}).items():\n'
+     '        if key not in item or not type_ok(item[key], kind):',
+     '    for key, kind in ():\n'
+     '        if key not in item or not type_ok(item[key], kind):'),
     ("sorted-unique-dropped",
-     "    if parts != sorted(set(parts)):",
-     "    if not parts:"),
+     "        if parts != sorted(set(parts)):\n            return False",
+     "        if not parts:\n            return False"),
     ("empty-accepted",
      '    if kind == "empty":\n        return text == ""',
      '    if kind == "empty":\n        return True'),
@@ -225,6 +227,8 @@ def shape_rule(case, rc, stdout):
 
 
 def held_rule(case, rc, stdout):
+    if "frozen" not in case:
+        return False  # the held r77 table had no row for this capture at all
     return held_matches(case["frozen"], rc, stdout)
 
 

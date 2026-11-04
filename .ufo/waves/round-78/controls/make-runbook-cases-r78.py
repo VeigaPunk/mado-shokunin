@@ -70,7 +70,7 @@ CASES = [
      "kind": "sorted_unique", "value": {"must_include": ["waybar"]},
      "frozen": "wallpaper,waybar",
      "samples": [{"rc": 0, "out": "mako,wallpaper,waybar"},
-                 {"rc": 0, "out": "wallpaper,waybar,walker"}],
+                 {"rc": 0, "out": "walker,wallpaper,waybar"}],
      "negatives": [{"rc": 0, "out": "waybar,wallpaper"},
                    {"rc": 0, "out": "wallpaper,wallpaper,waybar"},
                    {"rc": 0, "out": ""}],
