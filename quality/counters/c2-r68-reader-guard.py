@@ -42,6 +42,8 @@ VERBS = ("show", "cat-file", "ls-tree", "rev-parse", "diff-tree", "log", "merge-
          "for-each-ref")
 VERB_RE = re.compile(r"[\"'](%s)[\"']" % "|".join(re.escape(v) for v in VERBS))
 KEY = "GIT_NO_REPLACE_OBJECTS"
+FROZEN_POPULATION = 20
+FROZEN_READERS = 13
 CONTRACT_RE = re.compile(
     r"MADO_R68_READER_GUARD: population=[0-9]+ readers=[0-9]+ guarded=[0-9]+ "
     r"unguarded=[0-9]+ controls=[0-9]+/[0-9]+ verdict=(?:TARGET_MET|TARGET_MISSED) "
@@ -118,10 +120,19 @@ def has_guard(src):
                     sl = target.slice
                     if isinstance(sl, ast.Constant) and sl.value == KEY:
                         return True
+        elif isinstance(node, ast.AnnAssign):
+            if env_named(node.target) and node.value is not None \
+                    and carries_key(node.value):
+                return True
         elif isinstance(node, ast.Call):
             for kw in node.keywords:
                 if kw.arg == "env" and carries_key(kw.value):
                     return True
+            if (isinstance(node.func, ast.Attribute)
+                    and node.func.attr in ("update", "setdefault")
+                    and env_named(node.func.value)
+                    and any(kw.arg == KEY for kw in node.keywords)):
+                return True
     return False
 
 
@@ -131,6 +142,12 @@ def classify(src):
 
 
 # --------------------------------------------------------------------------------------------- measurement
+def verdict_met(population, readers, unguarded, correct, controls_total):
+    """The frozen target: the population and reader counts are part of it."""
+    return (population == FROZEN_POPULATION and readers == FROZEN_READERS
+            and unguarded == 0 and controls_total > 0 and correct == controls_total)
+
+
 def measure(repo, rev, controls_path):
     if not os.path.isdir(repo):
         raise SetupError("--repo is not a directory: %s" % repo)
@@ -168,8 +185,7 @@ def measure(repo, rev, controls_path):
                   % (case["name"], "yes" if reader else "no", "yes" if guard else "no",
                      "yes" if case["expect_reader"] else "no",
                      "yes" if case["expect_guard"] else "no", "yes" if ok else "no"))
-    met = (readers > 0 and unguarded == 0 and controls_total > 0
-           and correct == controls_total)
+    met = verdict_met(len(population), readers, unguarded, correct, controls_total)
     print("MADO_R68_READER_GUARD: population=%d readers=%d guarded=%d unguarded=%d "
           "controls=%d/%d verdict=%s rev=%s"
           % (len(population), readers, guarded, unguarded, correct, controls_total,
@@ -300,6 +316,19 @@ def _selftest_checks():
     except SystemExit:
         parsed_ok = False
     want("the frozen counting command's argument set parses", parsed_ok)
+    want("verdict requires the frozen population", not verdict_met(19, 13, 0, 11, 11))
+    want("verdict requires the frozen reader count", not verdict_met(20, 12, 0, 11, 11))
+    want("verdict requires no unguarded reader", not verdict_met(20, 13, 1, 11, 11))
+    want("verdict requires every control correct", not verdict_met(20, 13, 0, 10, 11))
+    want("verdict met on the frozen target", verdict_met(20, 13, 0, 11, 11))
+    want("update() keyword with an env-named receiver is a guard",
+         classify('def f(repo):\n    env = {}\n    env.update(GIT_NO_REPLACE_OBJECTS="1")\n'
+                  '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n')
+         == (True, True))
+    want("annotated env binding is a guard",
+         classify('def f(repo):\n    env: dict = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
+                  '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n')
+         == (True, True))
     return checks
 
 

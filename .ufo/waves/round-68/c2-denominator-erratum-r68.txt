@@ -1,0 +1,22 @@
+# round-68 C2 denominator erratum (append-only; declared after R68RevC2 finding 1)
+# The frozen predicate makes population=20 and readers=13 part of the target.
+# Captured 2026-11-03.
+
+# Red before (counter at 2a39e741, reviewer reproduction shape: every quoted object-read verb
+# deleted from one repaired gate):
+$ python3 -I <counter at 2a39e741> --repo <fixture with readers=12> --rev HEAD --controls ...
+MADO_R68_READER_GUARD: population=20 readers=12 guarded=12 unguarded=0 controls=11/11 verdict=TARGET_MET rev=6cf83652d776543a5937a5f39abff48e963872ba
+rc=0
+
+# Fix: verdict_met() now requires population==20 and readers==13
+# (frozen constants), plus unguarded==0 and every control correct; guard detection also honours
+# an annotated env binding and an env.update()/setdefault() keyword, both named by the
+# declaration's guard shapes. Instrument only; predicate unchanged.
+
+$ python3 -I quality/counters/c2-r68-reader-guard.py --repo <same fixture> --rev HEAD --controls ...
+MADO_R68_READER_GUARD: population=20 readers=12 guarded=12 unguarded=0 controls=11/11 verdict=TARGET_MISSED rev=6cf83652d776543a5937a5f39abff48e963872ba
+rc=1
+
+$ python3 -I quality/counters/c2-r68-reader-guard.py --selftest
+MADO_R68_READER_GUARD_SELFTEST: 25/25 assertions passed
+rc=0

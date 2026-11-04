@@ -1,0 +1,26 @@
+# round-68 auxiliary probes (outside both frozen denominators)
+# lane: /home/vgpnk/Projects/shokunin/mado-shokunin; captured 2026-11-03
+# A. hazard probe on the repaired check-axis-scores.py (executor seat receipt)
+#    base bytes at 510100c8 read 'forged bytes'; repaired bytes read 'original bytes'
+#    (R68ExecHazard report .ufo/waves/round-68/w1/R68ExecHazard.md, fixture oids below)
+
+$ git -C <fixture> replace -l  # orig 4b085e39… replaced by forged 59ff15d5…
+
+# B. guard-dominance negative control (connector R68ConnSiblings §0; run by the L1)
+#    repaired check-index.py (purge, then store) reads the real bytes.
+#    A variant that builds the guard inside the dict then filters every GIT_* name
+#    (dict(os.environ, GIT_NO_REPLACE_OBJECTS="1") filtered by startswith("GIT_"))
+#    reads the forged bytes while the census still classifies it guarded=yes.
+
+$ python3 -I quality/counters/c2-r68-reader-guard.py --repo <scratch 20-gate repo> --rev HEAD --controls ...
+MADO_R68_READER_GUARD: population=20 readers=13 guarded=13 unguarded=0 controls=11/11 verdict=TARGET_MET rev=7f94a72e965b97762239d984a018fd6e5433740b  (worktree snapshot, all 12 repairs)
+
+$ python3 - <<PY  # classify the dominance variant source
+(reader, guard) = (True, True)   # census cannot see dominance
+
+repaired            : 'original bytes\n'
+dominance variant   : 'forged bytes\n'
+raw unguarded       : 'forged bytes\n'
+
+# C. execution-site purge check on the dominance shape: the census is presence-only;
+#    the claim's repaired files place the store AFTER the purge (Gate2 drafts, verified).
