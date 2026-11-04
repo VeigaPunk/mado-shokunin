@@ -4641,9 +4641,12 @@ row entered round 79, window N=3).
 lines; `control-c1-r80-at-base.txt`, `control-c2-held-instrument-r80.txt`,
 `control-c2-r80-at-base.txt`, `live-join-r80.txt`, `census-start-r80.txt`, `gate-selftest-r80.txt`),
 `controls/` (frozen sets plus their two generators), `fetch/` (S470–S474 plus `sha256-r80.txt`),
-`w1-spec.json` / `w1-dispatch.json` / `w1.ready` and `w1/` (seat reports). Wave disclosures are
-reported per seat in the round report; an empty seat output is an evidence gap, never backfilled
-(QUALITY 115).
+`w1-spec.json` / `w1-dispatch.json` / `w1.ready` / `w1-results.json` and `w1/` (nine seat
+reports). Wave disclosures are reported per seat in the round report; **five of the fourteen
+seats — both reviewers, the critic, the mutation-tester and the sentinel — settled empty**, so the
+lane's `check-wave-done` gate reads `MISSING` (`receipts/wave-done-r81.txt`) and the claims carry
+no independent reviewer/critic attack this round. An empty seat output is an evidence gap, never
+backfilled (QUALITY 115).
 
 ### Capability demonstrated
 

@@ -4045,6 +4045,12 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   heading moves to `### Executable runbook rows (round 81)` with two new rows and the r80 probe rows
   795–797 followed by the r81 registry rows 798–800. Index 99/99 → 100/100; ledger 146 → 148 rows;
   gate 460/460 unchanged; axis table `mismatched=0`.
+- **Wave.** One v1 wave, 14 seats (`w1-spec.json`, `w1-dispatch.json`, `w1.ready`,
+  `w1.ready.dispatched`). Nine settled with a report and `STATUS: ok`; **five settled empty and
+  wrote nothing** — both reviewers, the critic, the mutation-tester and the sentinel — so the
+  round's claims have no reviewer/critic attack artifact and the lane's own `check-wave-done` gate
+  reads `dispatch-mismatch missing=5`, `verdict=MISSING`, exit 1
+  (`receipts/wave-done-r81.txt`). Disclosed, never backfilled (QUALITY 115).
 - **Live observation.** The host join is CLEAN on today's capture (`receipts/live-join-r81.txt`):
   DP-1 3440x1440, waybar level 2 at `0,0,3440,26`, `band=26 expected=26 CLEAN`; the monitor's
   `description`/`serial`/`make`/`model` fields were redacted before the capture was kept.
