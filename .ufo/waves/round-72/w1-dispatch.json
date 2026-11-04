@@ -1,0 +1,186 @@
+{
+  "schema": "ufo-swarm-wave-dispatch-v1",
+  "wave": "w1",
+  "policy": {
+    "source": "config",
+    "maxLanes": 256,
+    "minLanes": 8,
+    "waveMinLanes": 8,
+    "waveMaxLanes": 16,
+    "declaredMaxLanes": null,
+    "hardCeiling": 256,
+    "rampBatchSize": 5,
+    "rampIntervalMs": 700,
+    "globalRunnerCeiling": 1056
+  },
+  "counts": {
+    "spawn": 13,
+    "resume": 0,
+    "total": 13
+  },
+  "registry": {
+    "schema": "ufo-swarm-registry-v1",
+    "path": ".ufo/waves/round-72/w1/swarm-registry.json",
+    "reportDir": ".ufo/waves/round-72/w1",
+    "members": {
+      "R72ExecC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "R72ExecC2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "R72ExecBattery": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "R72ScribeEntryC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null
+      },
+      "R72ScribeEntryC2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null
+      },
+      "R72ScribeLesson": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null
+      },
+      "R72ScoutSources": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null
+      },
+      "R72ScoutFrontier": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null
+      },
+      "R72RevC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null
+      },
+      "R72RevC2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null
+      },
+      "R72CriticClaims": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null
+      },
+      "R72MutBattery": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null
+      },
+      "R72ConnSiblings": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "connector",
+        "item": null
+      }
+    }
+  },
+  "compaction": {
+    "applied": false,
+    "mechanism": null,
+    "reason": null,
+    "savedBytes": 0,
+    "payloadBytesBefore": 0,
+    "payloadBytesAfter": 0
+  },
+  "taskCall": {
+    "context": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRound mado 72, ONE v1 wave (13 seats). Axes: C1 calibration (the landing kill credit requires\nthe run's own failure detail) and C2 operability (the harness outcome reads the gate's own\nsummary, not its exit status). The L1 holds the planner seat (the validator rejects `planner`\nas a swarm role); no planner is dispatched.\n\nRead FIRST:\n/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/claims-declaration-r72.md\n(the frozen claims, predicates, counting commands, kill rules, targets and limits; base\n`976684a27e99c2508037a60eec415f550f53d70e`, instruments `9bcb4fd5b598844f168230dc05e441721d95b272`).\n\nFrozen receipts already committed (re-read, do not rewrite):\n- measurement-c1-r72.txt / measurement-c2-r72.txt under the same dir (both TARGET_MET).\n- control-baseline-c1-r72.txt (held 6/8) and control-baseline-c2-r72.txt (held 4/8).\n\nHard bounds, every seat:\n- Your ONLY write directory is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/<your name>/.\n  Never edit a committed lane file (production instruments, corpus, SKILL.md, SCORECARD.md,\n  LOG.md, README, SOURCES.md); draft only inside your own dir.\n- Never run git/jj write commands anywhere (no add/commit/push/checkout/stash, no jj mutation);\n  read-only git and `git show`/`ls-tree`/`rev-parse`/`status` are fine. Never write the fleet\n  repo, a sibling lane, `.ufo/state/`, `.ufo/watchdog.log`, `.scratch/`, `scripts/`, `templates/`\n  or MANIFEST.json.\n- Never message `agent://all`; reply only to your L1 (`MadoR72`) or nothing.\n- Scratch: /fast/scratch/hyaku/mado-r72/<your name>/ (create it; pass it explicitly; never use\n  /tmp; delete it before you finish, after copying any receipt you cite into your own dir).\n- Tooling authorization (operator, 2026-10-19): you may install or upgrade a tool that helps this\n  task, first reading /home/vgpnk/.omp/agent/RULES.md (official channels, update-safety gate) and\n  recording tool/version/channel/reason in your report. ALL pacman transactions are PAUSED\n  host-wide this run: install via `uv tool`/`npx`/an official binary in ~/.local/bin, or report\n  that you needed one; never `pacman -Sy/-S/-Syu/-U/-R`, never restart a host service.\n- Read-only host posture: do not probe the compositor, session, services, network services or\n  ~/.config; no live-config writes; no credential material in any file.\n- Every `Report:` trailer path the validator renders is relative to\n  /home/vgpnk/Projects/shokunin/mado-shokunin — write it at\n  /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>. End your final output with one line\n  `Report: <repo-relative path>` naming the file you actually wrote, then a 3-line summary.\n",
+    "tasks": [
+      {
+        "name": "R72ExecC1",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72ExecC1. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72ExecC1/. Scratch: /fast/scratch/hyaku/mado-r72/R72ExecC1/.\n\nIndependently drive claim C1's frozen counting command and report what actually happens.\n\n1. `cd /home/vgpnk/Projects/shokunin/mado-shokunin` and run, with your own scratch dir:\n   `python3 -I quality/counters/c1-r72-summary-credit.py --repo . --rev 9bcb4fd5b598844f168230dc05e441721d95b272 --base-rev 976684a27e99c2508037a60eec415f550f53d70e --scratch-root /fast/scratch/hyaku/mado-r72/R72ExecC1/run`\n2. Run its `--selftest` with the same scratch root, and the held-only prototype\n   `python3 -I .ufo/waves/round-72/proto/held-lanes-r72.py --repo . --rev 976684a27e99c2508037a60eec415f550f53d70e --scratch-root /fast/scratch/hyaku/mado-r72/R72ExecC1/proto`.\n3. Reconcile the three runs with the committed receipts (`measurement-c1-r72.txt`,\n   `control-baseline-c1-r72.txt`): same cases, same verdicts, same base score 6/8? Name every\n   difference, including any rc that disagrees with the contract line.\n4. Read `quality/counters/c1-r72-landing-controls.py`'s `credit()` and state in one paragraph\n   what it does and does not authenticate.\n\nDo not edit anything. Write `<your dir>/R72ExecC1.md` with the exact commands, rc values, last\nlines and your reconciliation.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72ExecC1.md"
+      },
+      {
+        "name": "R72ExecC2",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72ExecC2. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72ExecC2/. Scratch: /fast/scratch/hyaku/mado-r72/R72ExecC2/.\n\nIndependently drive claim C2's frozen counting command and report what actually happens.\n\n1. `cd /home/vgpnk/Projects/shokunin/mado-shokunin` and run:\n   `python3 -I quality/counters/c2-r72-outcome.py --repo . --rev 9bcb4fd5b598844f168230dc05e441721d95b272 --base-rev 976684a27e99c2508037a60eec415f550f53d70e --controls .ufo/waves/round-72/controls/c2-controls-r72.json --scratch-root /fast/scratch/hyaku/mado-r72/R72ExecC2/run`\n2. Run its `--selftest`, and re-derive the held baseline by importing the base harness at\n   `976684a2…` yourself (a python one-liner with importlib is fine; keep it in your dir) and\n   scoring the eight cases against `outcome_verdict(gate_rc, killed)`.\n3. Reconcile with `measurement-c2-r72.txt` and `control-baseline-c2-r72.txt`: same eight cases,\n   same verdicts, base 4/8? Name every difference.\n4. Read the successor's `outcome_verdict`/`summary_green` and state exactly which inputs decide\n   green and which are merely recorded.\n\nDo not edit anything. Write `<your dir>/R72ExecC2.md`.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72ExecC2.md"
+      },
+      {
+        "name": "R72ExecBattery",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72ExecBattery. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72ExecBattery/. Scratch: /fast/scratch/hyaku/mado-r72/R72ExecBattery/.\n\nHarm-watch battery at the instrument commit: prove the round harmed no measured surface.\n\nFrom /home/vgpnk/Projects/shokunin/mado-shokunin, run and record command, rc and last line:\n- `bash tools/mado-verify.sh --selftest` (expect 460/460)\n- `python3 -I quality/check-index.py --repo . --rev master`\n- `python3 -I quality/check-tool-ledger.py --repo . --rev master` (expect the pre-round\n  population; the three new instruments are not yet registered — report the exact uncovered set)\n- `python3 quality/check-axis-scores.py` (and read its usage if flags are needed)\n- `python3 -I tools/mado-verify.sh`-independent: `git diff --stat 976684a27e99c2508037a60eec415f550f53d70e master -- tools/mado-verify.sh quality/landing-counters.sh`\n- byte-identity of the frozen round-71 instruments: `git rev-parse 976684a2:quality/counters/c1-r71-landing-controls.py master:quality/counters/c1-r71-landing-controls.py` (same blob) and the same for c1-r71-real-children.py and c2-r71-shapes.py.\n- `bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado` (census BEFORE the round's appends; expect exit 0 and 380 rows).\n\nDo not edit anything. Write `<your dir>/R72ExecBattery.md` with a table command | rc | last line | verdict.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72ExecBattery.md"
+      },
+      {
+        "name": "R72ScribeEntryC1",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72ScribeEntryC1. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72ScribeEntryC1/. Scratch: /fast/scratch/hyaku/mado-r72/R72ScribeEntryC1/.\n\nDraft the claim-C1 knowledge entry at `<your dir>/draft/corpus/knowledge/summary-credit-own-detail-r72.md`.\n\nGround it on committed bytes only:\n- `.ufo/waves/round-72/claims-declaration-r72.md` § C1 (frozen predicate)\n- `quality/counters/c1-r72-landing-controls.py` (`credit()`, `count_fails()`, `last_summary()`, declared limits in the docstring)\n- `quality/counters/c1-r72-summary-credit.py` and `.ufo/waves/round-72/measurement-c1-r72.txt`\n- the base rule in `quality/counters/c1-r71-landing-controls.py`\n- sources: the scout's fetch receipts under `.ufo/waves/round-72/w1/R72ScoutSources/` when they\n  exist (CPython 3.14.8 `Doc/library/unittest.rst` § `TestResult.wasSuccessful` and\n  `Lib/unittest/main.py`); if the receipts are absent, cite the URLs and mark the provenance\n  `[pending receipt]` and say so.\n\nShape: frontmatter `source:` (cite the S### ids if the scout recorded them, else the URL), `verified-at: 2026-11-04`, `recheck:` (the counting command). Then: the rule in one sentence; a decision table\n(last summary parses × detail count adds up × credit); the two named negatives (bare echo,\nmismatch) and the two tie cases; what the rule does NOT authenticate (a replayed summary with\nmatching detail); the measured numbers with their source file. No count without its command.\nNever write outside your dir.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72ScribeEntryC1.md"
+      },
+      {
+        "name": "R72ScribeEntryC2",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72ScribeEntryC2. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72ScribeEntryC2/. Scratch: /fast/scratch/hyaku/mado-r72/R72ScribeEntryC2/.\n\nDraft the claim-C2 knowledge entry at `<your dir>/draft/corpus/knowledge/outcome-verdict-gate-summary-r72.md`.\n\nGround it on committed bytes only: `.ufo/waves/round-72/claims-declaration-r72.md` § C2,\n`quality/counters/c1-r72-landing-controls.py` (`summary_green`, `outcome_exit`,\n`outcome_verdict`), `quality/counters/c2-r72-outcome.py`,\n`.ufo/waves/round-72/controls/c2-controls-r72.json`,\n`.ufo/waves/round-72/measurement-c2-r72.txt`, and the held rule in\n`quality/counters/c1-r71-landing-controls.py`. Sources: the scout's receipts for CPython 3.14.8\n`Doc/library/unittest.rst` and `Lib/unittest/main.py` when present (a runner's exit derives from\n`wasSuccessful()`, the result object); otherwise cite the URLs and mark `[pending receipt]`.\n\nShape: frontmatter trio; the rule in one sentence; a decision table over\n(summary present/parses, p vs n, killed count) → verdict; the four held-wrong cases and why;\nthe declared limit (summary/status contradiction is scored by the summary by design); the\nmeasured numbers with their file. Never write outside your dir.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72ScribeEntryC2.md"
+      },
+      {
+        "name": "R72ScribeLesson",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72ScribeLesson. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72ScribeLesson/. Scratch: /fast/scratch/hyaku/mado-r72/R72ScribeLesson/.\n\nDraft three artifacts under your dir:\nA) `<your dir>/draft/corpus/lessons/round-72.md` — the round-72 lesson skeleton: header\n(author line for the L1, date, base, instruments, measurement), `## Outcome and boundaries`\n(what the two claims do and do not claim, from the declaration), `## Gate` with one admit block\ntemplate per planned source row (S444 unittest.rst, S445 main.py) and one reject block\n(stdtypes.rst under its real 3.14 path) carrying URL / access date / ≤25-word located quote /\nwhy-it-grounds fields, and `## Mistakes` as a table with the four candidate rows already named\nin `.ufo/waves/round-71/claims-declaration-r71.md`'s plan and\n`corpus/lessons/round-71-verifier-spotcheck.md` (reject row missing; quote word count; results\nstatus field; any misroot the L1 names) — leave evidence cells as `<L1 fills>` where you do not\nhave committed bytes.\nB) `<your dir>/draft/SOURCES-rows.md` — three ready registry rows in the CORPUS.md schema\n(11 columns, no `|` inside a cell): S444 unittest.rst (docs, A), S445 Lib/unittest/main.py\n(code, A), S446 the `rejected` row for `Doc/builtins/stdtypes.rst` with reason + flip.\nC) `<your dir>/draft/QUALITY-criteria.md` — two candidate criteria from this round's own\ndefects (a rule counts only when the round's own fail lines back it; a verdict reads the\nsubject's own report, not its exit status), each with the lesson that produced it and a\n\"shown able to fail\" sentence that names a command.\nRead first: `corpus/SOURCES.md` (row shape and the W04 duplicate-URL family), `corpus/QUALITY.md`\ntail (criteria 114–115 style), `corpus/lessons/round-71.md`. Never edit committed files.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72ScribeLesson.md"
+      },
+      {
+        "name": "R72ScoutSources",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72ScoutSources. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72ScoutSources/. Scratch: /fast/scratch/hyaku/mado-r72/R72ScoutSources/.\n\nOpen every source this round plans to cite, and produce fetch receipts.\n\nFetch each URL three times with `curl -fsSL` into your dir; assert the three bodies are\nbyte-identical; record URL, byte size, sha256, access date 2026-11-04:\n1. https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/unittest.rst\n2. https://raw.githubusercontent.com/python/cpython/v3.14.8/Lib/unittest/main.py\n3. https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/builtins/stdtypes.rst\n   (the real 3.14 path; the round-71 reject cited `Doc/library/stdtypes.rst`, which 404s —\n   record both statuses, with the exact HTTP code).\nThen locate and quote (≤25 words each) with file:line:\n- in (1): the `wasSuccessful` method under § `TestResult` — the sentence that says when it\n  returns True/False; also note how `TextTestRunner`/`TextTestResult` prints a summary if the\n  file documents it.\n- in (2): the line where the module-level runner derives the process exit from\n  `wasSuccessful()` (search `wasSuccessful`); quote it.\n- in (3): the mapping-methods block (`.. method:: update(**kwargs)` / `setdefault`) that the\n  round-71 reject described — quote one line and its line number.\nWrite `<your dir>/receipts.jsonl` (one object per fetch) and `<your dir>/quotes.md` with the\nfive located quotes. Also state, for each of (1)–(3), whether it is the same file the r71\nlesson cited and whether the URL resolves at tag v3.14.8.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72ScoutSources.md"
+      },
+      {
+        "name": "R72ScoutFrontier",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72ScoutFrontier. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72ScoutFrontier/. Scratch: /fast/scratch/hyaku/mado-r72/R72ScoutFrontier/.\n\nFrontier-step reconnaissance for round 72 (read-only).\n\nAt /home/vgpnk/Projects/shokunin/mado-shokunin:\n1. Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado`, record rc and the last line; count registry rows with\n   `grep -cE '^\\|[[:space:]]*S[0-9]{3,}[[:space:]]*\\|' corpus/SOURCES.md` (expect 380 before appends) and list the last five ids.\n2. Id-collision pre-check for the planned S444–S446: extract every `^ {0,3}\\| *S[0-9]{3,}` id\n   from `corpus/SOURCES.md`, confirm none is S444/S445/S446, and prove the 0–3-space guard\n   once on a scratch fixture (copy the registry to your dir, insert an indented `  | S002 |`\n   row, show the narrow column-zero pattern misses it and the 0–3-space pattern catches it).\n3. Coverage-map census: `grep -cE '^\\| `knowledge/[^`]+\\.md`' corpus/README.md` and\n   `ls corpus/knowledge/*.md | wc -l`; the round plans two new entries (starting from 85/85).\n4. Ledger census: `python3 -I quality/check-tool-ledger.py --repo . --rev master` — record\n   population, uncovered and the exact uncovered paths (the three r72 instruments).\n5. Read the last 40 lines of `corpus/README.md` `## Frontier` and name which bullet a round-72\n   entry would extend (the r71 kill-credit bullet).\nReport every command, rc and count; no edits.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72ScoutFrontier.md"
+      },
+      {
+        "name": "R72RevC1",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72RevC1. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72RevC1/. Scratch: /fast/scratch/hyaku/mado-r72/R72RevC1/.\n\nAdversarial review of claim C1 (calibration: the kill credit requires the run's own failure\ndetail). Attack it; do not build it.\n\nRead the declaration § C1, `quality/counters/c1-r72-landing-controls.py` (`credit`,\n`count_fails`, `last_summary`, `measure`), `quality/counters/c1-r72-summary-credit.py`, the\nfrozen controls and the measurement. Then try to break it, in your dir only (copy scripts you\nneed):\n- find a child output shape the new rule credits although no assertion of this run produced the\n  detail (e.g. detail lines from a nested/other run, a fail line printed by the wrapper, a\n  summary whose arithmetic is satisfied by unrelated `SELFTEST FAIL` lines);\n- find a genuine kill the new rule rejects (a real instrument that prints its failures in a\n  different spelling, omits per-assertion lines, or prints the summary before the details);\n- check the carried round-71 expectations still hold for the reason the r71 entry gave;\n- check the counter's base score 6/8 is what the base harness really answers (run it).\nDeliver `<your dir>/R72RevC1.md`: findings F1..Fn with severity, the exact repro command, and\nwhat the frozen sentence says versus what the code does. Classify each finding as\nlimit-already-declared, defect, or false positive. No production edits.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72RevC1.md"
+      },
+      {
+        "name": "R72RevC2",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72RevC2. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72RevC2/. Scratch: /fast/scratch/hyaku/mado-r72/R72RevC2/.\n\nAdversarial review of claim C2 (operability: the outcome verdict reads the gate's summary, not\nits exit status). Attack it; do not build it.\n\nRead declaration § C2, `summary_green`/`outcome_exit`/`outcome_verdict`,\n`quality/counters/c2-r72-outcome.py`, the controls JSON, the measurement, and the base harness's\n`outcome_exit`. Try to break it in your dir:\n- a gate that prints a green summary and then exits 2 for a real setup failure — is MET honest?\n- a gate that prints green then a later failing summary (tie) — does last-wins do what the\n  sentence says?\n- a gate that prints its summary to stderr only, or two summaries on different streams;\n- the `selftest=<p/n|none>` contract field and `summary_fraction()` — does the printed receipt\n  state what actually decided the verdict?\n- whether the counter's `expected_from_summary` duplicates the tested predicate (a\n  same-logic oracle) and what that weakens.\nDeliver `<your dir>/R72RevC2.md`: findings with severity, repro command, the sentence vs the\ncode, and a limit/defect/false-positive classification. No production edits.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72RevC2.md"
+      },
+      {
+        "name": "R72CriticClaims",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72CriticClaims. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72CriticClaims/. Scratch: /fast/scratch/hyaku/mado-r72/R72CriticClaims/.\n\nFalsify both frozen claims without building them. Read the declaration, both counters, both\nreceipts and the held baselines. Answer these, each with the command you ran:\n1. Is either target reachable by a do-nothing control? (e.g. a harness that always answers\n   `mz=fail` or always `TARGET_MISSED` — score it on the frozen control sets; the green cases\n   must reject it. Show the score.)\n2. Does either counter's own scoring agree with the frozen labels for the wrong reason — e.g.\n   does `score()` accept a missing verdict, does `expected_from_summary` in the C2 counter\n   re-implement the predicate it tests (and would a wrong successor still pass), does the C2\n   counter's base leg use the base harness's own function?\n3. Are the before→after numbers in the declaration the same ones the receipts print (8/8 vs\n   6/8; 8/8 vs 4/8), at which revision, and is the measured revision the one that contains the\n   instruments?\n4. Is the claim separable as declared (each counter reads only its own function and control set)?\nDeliver `<your dir>/R72CriticClaims.md` with a verdict line per question and evidence pointers.\nNo production edits.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72CriticClaims.md"
+      },
+      {
+        "name": "R72MutBattery",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72MutBattery. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72MutBattery/. Scratch: /fast/scratch/hyaku/mado-r72/R72MutBattery/.\n\nIndependent mutation testing of the two round-72 instruments (scratch only; never edit lane\nfiles). Copy `quality/counters/c1-r72-landing-controls.py`,\n`quality/counters/c1-r72-summary-credit.py` and `quality/counters/c2-r72-outcome.py` into your\ndir and apply one mutation at a time, re-running the matching counter against the MUTANTS\n(point `--rev` at a scratch git repo that carries the mutants, or run the mutated harness\ndirectly through the counter's `--base-rev`/candidate mechanics). At minimum:\nM1 `credit()` drops the arithmetic check; M2 `credit()` accepts a bare summary; M3\n`summary_green()` drops the `n > 0` guard; M4 `outcome_verdict()` reverts to the exit status;\nM5 the counter's `score()` accepts `None`. For each: does the frozen control set catch it\n(correct < 8 or verdict TARGET_MISSED)? A mutant that still prints TARGET_MET is a real gap —\nname it, with the exact output.\nDeliver `<your dir>/R72MutBattery.md`: mutation | operation | counter output last line | caught?\nand a summary table. Never commit, never touch the lane tree.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72MutBattery.md"
+      },
+      {
+        "name": "R72ConnSiblings",
+        "agent": "connector",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYour name: R72ConnSiblings. Your only write directory: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-72/w1/R72ConnSiblings/. Scratch: /fast/scratch/hyaku/mado-r72/R72ConnSiblings/.\n\nCross-lane pattern scan (read-only; no drafts of production files).\n\n1. Search sibling lanes under /home/vgpnk/Projects/shokunin/*-shokunin (read-only) for the same\n   two doctrines this round lands: a summary-over-exit-status rule and a kill-credit\n   arithmetic/authenticity rule. Useful patterns: `SELFTEST:`, `summary_shows_failure`,\n   `outcome_verdict`, `assertions passed`, `TARGET_MET`, `mz=`/`killed=`. Name the files and\n   lanes; quote one line each. Do not read credentials or session material.\n2. Report whether the two rules exist in another lane in a form this lane should adopt or defer\n   to (adjacency duty: report, never absorb).\n3. Read `considerthese/2026-10-28.md` (operator-authored input; never edit it) and name at most\n   ONE still-unimplemented proposal that fits this round's ground (landing-instrument evidence)\n   — with the proposal's exact words and why it fits; if none fits, say so.\n4. Check `.ufo/waves/round-71/` for any seat artifact that contends the round-72 plan (e.g. a\n   reviewer note on the summary/outcome rules) and quote it.\nDeliver `<your dir>/R72ConnSiblings.md`. No writes outside your dir.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-72/w1/R72ConnSiblings.md"
+      }
+    ]
+  },
+  "resumeSends": [],
+  "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave into multiple task calls (one-swarm-per-wave). Then one hub send per resumeSends entry: hub send --to <entry.resume> --message <entry.message> (entry.name is bookkeeping, not a hub field)."
+}
