@@ -25,13 +25,15 @@ Contract (v1, round 77):
     margin is zero: gtk-layer-shell's auto exclusive zone composes margins in a way this
     tool does not model (named limit), so a margined exclusive bar reports NOT_MODELLED.
   * `reserved` band order is [left, top, right, bottom] (HyprCtl.cpp monitors reply).
-  * Unexpressed and refused, never guessed: a monitor whose scale is not 1 or whose
-    transform is not 0 (the monitors reply carries pixel size, the layer box is logical);
-    a dynamic cross size (a horizontal bar with height 0, or a vertical bar with width 0 —
-    the realised size is the module allocation, not the declaration); list-valued configs
-    and `*` output patterns; multiple bars per config; static monitor `addreserved` bands
-    (the reported band mixes static and layer contributions); `mode` presets that rewrite
-    layer/exclusive at runtime; and any runtime change after the capture.
+  * Refused, never guessed: a monitor whose scale is not 1 or whose transform is not 0 (the
+    monitors reply carries pixel size, the layer box is logical); a dynamic cross size (a
+    horizontal bar with height 0, or a vertical bar with width 0 — the realised size is the
+    module allocation, not the declaration); a list-valued config (multiple bars); `*` or
+    space-bearing output patterns; and a `mode` key (presets rewrite layer and exclusive
+    zone at runtime).
+  * Not modelled and named as a limit: a static `monitor … addreserved` band (the reported
+    band mixes the static reserve with the layer contribution), and any runtime change
+    after the capture.
 
 Exit map: 0 CLEAN · 1 DIFFER · 2 SETUP/ERROR · 3 NOT_FORMED (NO_LAYER/UNMODELLED/NO_BAR).
 """
@@ -229,6 +231,8 @@ def declared_bar(config):
     if layer not in LEVEL:
         raise Unmodelled("layer %r is outside background/bottom/top/overlay" % (layer,))
     namespace = config.get("name") if isinstance(config.get("name"), str) else "waybar"
+    if isinstance(config.get("mode"), str):
+        raise Unmodelled("a mode preset rewrites layer and exclusive zone at runtime")
     exclusive = config.get("exclusive")
     exclusive = exclusive if isinstance(exclusive, bool) else True
     return {

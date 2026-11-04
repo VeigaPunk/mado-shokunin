@@ -32,7 +32,7 @@ All sources were opened 2026-11-04 before their rows were written; bytes under
 | S460 | `wlr-layer-shell-unstable-v1.xml` @ efb5099, enum `:86-90`, `set_exclusive_zone :152-190` | mined | `A positive zone is the distance from the edge in surface-local coordinates to consider exclusive.` | levels and the exclusive-zone contract; it is a contract, not host behaviour |
 | S461 | installed `waybar(5)` 0.15.0, `BAR CONFIGURATION` (page lines 70/91/97/128/189) | mined | `Bar position, can be top, bottom, left, right.` | the declared placement keys and defaults; not what the compositor does with them |
 | S462 | Waybar v0.15.0 `src/bar.cpp` @ 90b209ad, `:178-222`, `:232-233`, `:240`, `:355-361` | mined | `if (mode.exclusive) { gtk_layer_auto_exclusive_zone_enable(gtk_window); }` | margin precedence, namespace, size request, exclusive call; not gtk-layer-shell's internal zone arithmetic |
-| S463 | `https://wayland.app/protocols/wlr-layer-shell-unstable-v1` as served 2026-11-04 (147036 B) | rejected | `wlr-layer-shell-unstable-v1 protocol` (page title) | REJECTED: renders the protocol but pins no protocol/compositor revision, so it cannot ground a versioned 0.56.2 claim. Flip: a commit/tag pin for the rendered protocol. The pinned XML (S460) is the authoritative copy. |
+| S463 | `https://wayland.app/protocols/wlr-layer-shell-unstable-v1` as served 2026-11-04 (147036 B) | rejected | `wlr layer shell protocol` (the page's own title text) | REJECTED: renders the protocol but pins no protocol/compositor revision, so it cannot ground a versioned 0.56.2 claim. Flip: a commit/tag pin for the rendered protocol. The pinned XML (S460) is the authoritative copy. |
 
 ## Notes
 
@@ -91,3 +91,17 @@ All sources were opened 2026-11-04 before their rows were written; bytes under
   critic's scan; it landed at `3e35d0a9` and the final tip is checked in §Landed. Watch items:
   W1 `binds-count`/`monitors-size` are operator-volatile (re-measure after any change); W2 the
   `row=` field prints the anchor, so `omarchy-version` shows the theme row (cosmetic, noted here).
+
+- **R77RevBytes (byte fidelity).** All seven fetch receipts and the live join re-derive
+  byte-identically; C1 15/15 and C2 12/12 reproduce at the tip. Four defects found and fixed:
+  (1) the `mado-r77-barfoot` gate row put `reserved=NOT_MODELLED` under exit 0 while the tool
+  returns `UNMODELLED` rc 3 — the row now maps NOT_MODELLED to exit 3; (2) the tool docstring
+  claimed `mode` presets and static `addreserved` bands are "refused" while no code path refused
+  them — a `mode: hide` config scored CLEAN (receipt `receipts/repair-r77-mode-refusal.txt`:
+  before rc 0 CLEAN, after rc 3 `UNMODELLED`), the docstring now separates refused from
+  not-modelled and a `mode` key is refused; (3) the entry attributed waybar's anchor clearing to
+  Hyprland's branch — it now names `bar.cpp:422-424` for the clearing and `Renderer.cpp:2609-2620`
+  for the centring; (4) the lesson's S463 quote was not literal on the page — the title text is
+  `wlr layer shell protocol`; and the S461 quote is now the exact troff line (`S461.txt:91`), not
+  the rendered reading. The static-`addreserved` limit stays named, not refused: the reply cannot
+  separate static from dynamic reserve, and the docstring says so.

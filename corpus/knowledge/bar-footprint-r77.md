@@ -11,7 +11,7 @@ Lane: mado-shokunin. Round: 77.
 | question | where the answer lives | state |
 |---|---|---|
 | What box does a top-anchored layer surface with a requested height get? | `arrangeLayerArray`: desired size, anchors, margins (`Renderer.cpp:2587-2670`) | OBS (source) |
-| What happens when a bar requests an explicit width? | the both-horizontal-anchors branch clears both anchors and centres the box (`Renderer.cpp:2609-2620`) | OBS (source) |
+| What happens when a bar requests an explicit width? | waybar clears both horizontal anchors (`bar.cpp:422-424`); the both-anchors branch then centres the box (`Renderer.cpp:2609-2620`) | OBS (source) |
 | How does an exclusive zone become a reserved band? | `applyExclusive` adds `exclusive + margin` to the usable box (`Renderer.cpp:2529-2585`, add line :2577); `arrangeLayersForMonitor` stores the parent-minus-child difference (`Renderer.cpp:2696`) | OBS (source) |
 | Which level carries waybar? | level 2 = top in `layers -j` (`HyprCtl.cpp:706`, protocol enum `S460`) | OBS (source) + OBS (host) |
 | In what order does `monitors -j` print `reserved`? | left, top, right, bottom (`HyprCtl.cpp:281-282`) | OBS (source) + OBS (host) |
