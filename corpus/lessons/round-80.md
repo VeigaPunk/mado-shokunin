@@ -129,3 +129,42 @@ re-pointed block) and a probe matrix for each fix's red side. Its finding agains
 shared context sentence (one canonical path first — the r80 wave still produced two root-level
 `<name>.md` reports, `R80ScoutLive.md` and `R80ConnSiblings.md`, from seats that followed the
 runner's trailer); M80-5's green is not yet observable because the wave had not closed.
+
+**R80ScoutModel** (scout; `w1/R80ScoutModel.md`, STATUS not yet read at this append — the report is
+present and its class table is 27 rows). Probed 28 declaration quadruples against the frozen tool and
+the sources. Correct where unpinned: monitor origin `x/y ≠ 0`, static plus a second exclusive
+surface, `exclusive == 0`/`-2` bounds, a lower-level non-exclusive surface, an exclusive surface with
+an empty box, a left/right attribution vector, a non-top bar, a negative anchored margin with a
+positive sum, a same-namespace duplicate (refused, `stage=model`). **Wrong on four reachable
+classes** (recorded as entry §11 / SCORECARD limits, made round 81's ground): the centring formula is
+not `CBox::round` at a negative tie (1001-wide panel on a 1000-wide monitor → tool `x=0`, source
+`-1`/w `1002`); an `auto` zone on a dynamic band size is taken from the declared `0` instead of the
+allocation (`S464:276-280`), so a lone auto/dynamic surface reads `DIFFER` deterministically; `auto`
+on a corner/parallel anchor pair prints a zone gtk never sends (`S464:269-288`); and a declared
+surface without an `exclusive` key defaults to `auto` where the protocol's default is `0`
+(`S460:183`). None of the four touches the frozen thirty-three, and no expectation, mutant or target
+moved.
+
+**R80ScribeEntry** (scribe; `w1/R80ScribeEntry/findings.md`, STATUS: ok). Its draft entry was not
+adopted — the L1 had already landed `corpus/knowledge/bar-footprint-composition-r80.md` — but the
+seat's review found one **real instrument defect**: `evaluate_composition` read
+`boxes[order.index(0)]` while `boxes` is appended in arrangement-sequence order, so the printed
+`box=` field would name another surface's verdict for a non-exclusive bar with an exclusive surface
+sorting after it (reachable, not in the frozen 33; the `verdict` itself stayed correct). Repaired as
+**R1** (`boxes[sequence.index(0)]`), the case set and target unchanged, re-measured at the repair
+commit (`receipts/measurement-c1-r80-at-tip.txt`, tool sha256 `5b9e2930…`). It also caught the C1
+counter's stale docstring contract (`cases=30 … base_correct=23/30` → `33/23`) — repaired in the same
+commit — and six citation errors in the landed entry (the `box.round()` line, the
+`ReservedArea.cpp` ranges, the C1 `source:` line naming the two C2 rows while omitting S464/S458,
+the match-condition span, and §7 item 4's conflation), all now in the entry's §12 errata. Its F4 is
+correct and stays a limit: `preview_scale` has no pin this round, so the entry names it unmodelled
+without asserting a mechanism.
+
+**L1 note on C2's chord grammar (limit, named not fixed).** The row binds
+`omarchy menu keybindings --print | cut -c1-35`, and `printf "%-35s → %s"` pads the chord to 35
+columns; a chord longer than 35 columns (a long keysym under three or four modifiers, e.g.
+`SUPER SHIFT CTRL ALT + XF86AudioRaiseVolume` at 47) is truncated by `cut` and then reads as a
+shorter chord that still parses, so the grammar cannot see that truncation. Today's longest chord on
+this host is 29 columns (`omarchy menu keybindings --print | cut -c1-35` → max 29), so no live
+instance exists; a later round that wants the guard needs a `max_chord_len` field and a truncated-line
+negative, which the frozen set cannot carry without a new round.
