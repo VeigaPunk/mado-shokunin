@@ -267,13 +267,13 @@ method table that census prints, each bound as a shape rather than a frozen valu
 | `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-layer-background/config.json --layers .ufo/waves/round-79/fixtures/refuse-layer-background/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-layer-background/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
 | `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-output-space/config.json --layers .ufo/waves/round-79/fixtures/refuse-output-space/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-output-space/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
 | `omarchy menu keybindings --print` | rc 0, ≥100 lines, every line `^\s*\S.*\s*→\s*\S.*$` | 2 / 5 |
-| `omarchy menu keybindings --print \| cut -c1-35` | chord column: ≥100 chords, each `MODS + KEY` (1–4 distinct words from SUPER/SHIFT/CTRL/ALT) or a bare key, no arrow | 2 / 7 |
+| `omarchy menu keybindings --print \| cut -c1-35` | chord column: ≥100 chords, each `MODS + KEY` (1–4 distinct words from SUPER/SHIFT/CTRL/ALT) or a bare key, no arrow | 2 / 8 |
 | `systemctl --user is-active hypridle` | one state word from the systemd enum, exit status agreeing with it (`active` ⇔ rc 0) | 3 / 4 |
 | `omarchy menu keybindings --print \| cut -c36-` | action column: ≥100 lines, each ` → ` then a non-empty trimmed action with no second `→` (the `%-35s` padding fixes the separator's column; the payload escapes markup only on some lines, so no entity rule is bound) | 3 / 6 |
 | `pgrep -x waybar` | one or more decimal PIDs in 1..4194304 with rc 0 while the bar runs, empty stdout with rc 1 while it does not — the state is read from the pair, never frozen | 3 / 6 |
-| `busctl --user list` | the watcher's bus name owned by a live PID: an `org.kde.StatusNotifierWatcher` line whose PID column is a decimal in 1..4194304, rc 0 | 2 / 4 |
+| `busctl --user list` | the watcher's bus name owned by a live PID: an `org.kde.StatusNotifierWatcher` line whose PID column is a non-zero decimal (the matcher binds a positive decimal; the process-table ceiling is the live read's own bound), rc 0 | 2 / 4 |
 | `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager` | one `org.kde.StatusNotifierWatcher interface` line in the census, rc 0 | 2 / 3 |
-| `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager \| awk '$2=="method"'` | every line `.Name method …`, at least 2 lines, rc 0 | 1 / 3 |
+| `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager \| awk '$2=="method"'` | every line `.Name method …`, at least 2 lines, rc 0 | 2 / 3 |
 
 ### Advertised Wayland globals
 
