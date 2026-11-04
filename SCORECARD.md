@@ -4323,7 +4323,7 @@ named `outcome_green` rule and the observable mutant class); base
 `.ufo/waves/round-76/control-baseline-r76.txt` (historical, v1/v2 set) with the matched
 re-derivation `.ufo/waves/round-76/control-baseline-r76-matched.txt` (held mz-only rule 16/16 on
 `mz` and kills 0/4; held round-75 classifier 55/59). Labels re-derived from the harness's own evidence lines:
-`receipts/label-derivation-r76.txt`. Measured: C1 at `cb713254…` and C2 at `5dade9b3…` (each its instrument's last change), with
+`receipts/label-derivation-r76.txt`. Measured: C1 at `6806b4dc…` and C2 at `5dade9b3…` (each its instrument's last change), with
 identical C2 counts at `755b339f…`/`cb713254…` (receipts `measurement-c1-r76.txt`,
 `measurement-c2-r76-final.txt`, `measurement-c2-r76.txt`, `measurement-c2-r76-at-cb713254.txt`). Axis posture at round start: every published finite
 sub-axis at its measured maximum under the active rubrics (navigation 93/93, calibration
@@ -4333,7 +4333,7 @@ excluded from the tie. The stagnation nudge does not apply (last capability row 
 75, window N=3, gap 0). Both claims take new finite denominators and both do-nothing controls
 miss their targets (0/4 and 55/59).
 
-| Claim / axis | Counting command (C1 REV = `cb713254…`, C2 REV = `5dade9b3…` — each claim is measured at its instrument's last change; intermediate C2 receipts at `755b339f…`/`cb713254…` and the C1 receipt at `cb713254…` show identical counts) | Before → after | Verdict |
+| Claim / axis | Counting command (C1 REV = `6806b4dc…`, C2 REV = `5dade9b3…` — each claim is measured at its instrument's last change; intermediate C2 receipts at `755b339f…`/`6806b4dc…` and the C1 receipt at `6806b4dc…` show identical counts) | Before → after | Verdict |
 |---|---|---|---|
 | C1 **calibration** — the counter certifies the harness's contract outcome field, not only its kill decision | `python3 -I quality/counters/c1-r76-outcome-field.py --repo . --rev REV --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls .ufo/waves/round-76/controls/c1-outcome-cases-r76.json --scratch-root DIR` | at the base rev the successor is absent; the held mz-only scoring rule cannot read `verdict=` at all and kills 0/4 of the four outcome-rule mutants (`control-baseline-r76.txt`); at `cb713254`: `cases=16 correct=16 mutants=4 killed=4 base_killed=0 verdict=TARGET_MET` rc 0; mutant scores 15/16, 15/16, 15/16, 14/16; bounded `10 × 4/4` → 10.0000 | improved on the frozen sixteen-case set |
 | C2 **operability** — the census counts an interprocedural cancellation and a dynamic-key `del` | `python3 -I quality/counters/c2-r76-shapes.py --repo . --rev REV --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls .ufo/waves/round-76/controls/c2-cases-r76.json --scratch-root DIR` | the held round-75 classifier scores the fifty-nine frozen cases `55/59` (missing exactly `callee-del-literal`, `callee-del-store`, `dynamic-key-del`, `dynamic-key-module-const`; `control-baseline-r76.txt`); at `5dade9b3` (its instrument's last change, the D3 parameter-binding repair): `population=20 readers=13 guarded=13 unguarded=0 controls=59/59 base_controls=55/59 verdict=TARGET_MET` rc 0, with identical counts at `755b339f` and `cb713254`; bounded `10 × 59/59` → 10.0000 | improved on the frozen fifty-nine-case set |
