@@ -1,0 +1,19 @@
+# round-75 harm watch at f0cf818d174e467687960228b0561cb822951143 (2026-11-04)
+$ python3 -I quality/check-index.py --repo . --rev f0cf818d174e467687960228b0561cb822951143
+MADO_INDEX: rev=f0cf818d174e467687960228b0561cb822951143 indexed=93/93 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+
+$ python3 -I quality/check-tool-ledger.py --repo . --rev f0cf818d174e467687960228b0561cb822951143
+LEDGER: population=133 ledger_rows=133 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=f0cf818d174e467687960228b0561cb822951143
+
+$ python3 -I quality/check-axis-scores.py --repo . --rev f0cf818d174e467687960228b0561cb822951143
+MADO_AXIS_ROW: axis=navigation published=93/93 derived=93/93 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=f0cf818d174e467687960228b0561cb822951143
+rc=0
+
+$ bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+census rc=0
