@@ -43,7 +43,9 @@ are marked "held"):
          carrying the key (the call treats the mapping's contents as additional keyword
          arguments, so the constructed mapping carries the key);
      (b) *splat through an alias* — one alias hop of that module mapping
-         (`m = GUARD; env = {**os.environ, **m}`) counts as the splat carrier;
+         (`m = GUARD; env = {**os.environ, **m}`) counts as the splat carrier; the alias
+         must be bound exactly once and not rebound between its binding and the splat
+         (R71RevC2 F1);
      (c) *store-through-alias* — the key is stored through a one-hop alias binding of the
          mapping handed to the launch (`staging = e; staging[KEY] = "1"; …, env=e`), whether or
          not the handed name's spelling is env-named, with no rebinding of either name between
@@ -51,7 +53,8 @@ are marked "held"):
      (d) *attribute through a second object* — one object-alias edge
          (`cfg.runner = runner`) bridges a dotted attribute store (`runner.env[KEY] = …`) to a
          dotted use (`env=cfg.runner.env`), with the round-70 store-before-use and
-         no-replacement dominance; only one edge, exact dotted names, no chains.
+         no-replacement dominance; the edge itself must be bound strictly before the call
+         (R71RevC2 F2); only one edge, exact dotted names, no chains.
 
 Frozen controls: 23 cases at `.ufo/waves/round-71/controls/c2-controls-r71.json`, sha256
 `d7814de8815bb0d4146ceed612ddd3e03029763b7cbf769d868a96ce5cefe7df`; the first seventeen are the
@@ -571,15 +574,34 @@ def splat_mapping_names(tree):
 
 
 def splat_aliases(nodes, dead, maps):
-    """One-hop aliases of module splat mappings: alias name -> module mapping name."""
-    out = {}
+    """One-hop aliases of module splat mappings: alias name -> (bind line, rebinding lines).
+
+    Round-71 review (R71RevC2 F1): the first implementation credited `**m` for the first
+    `m = GUARD` binding with no later-rebind check, so an alias rebound before the splat
+    (`m = {"LABEL": "x"}`) carried the dominance bypass. The alias must be bound exactly
+    once, and a plain rebinding of it between the alias binding and the splat line defeats
+    the carrier (a rebinding after the splat is harmless: the contents were already copied).
+    """
+    binds = {}
+    counts = {}
     for node in nodes:
         if isinstance(node, ast.Assign) and len(node.targets) == 1 \
                 and node.lineno not in dead:
             target = node.targets[0]
             if isinstance(target, ast.Name) and isinstance(node.value, ast.Name) \
                     and node.value.id in maps:
-                out.setdefault(target.id, node.value.id)
+                binds.setdefault(target.id, node.lineno)
+                counts[target.id] = counts.get(target.id, 0) + 1
+    rebound = {}
+    for node in nodes:
+        if isinstance(node, ast.Assign) and node.lineno not in dead:
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id in binds:
+                    rebound.setdefault(target.id, set()).add(node.lineno)
+    out = {}
+    for name, line in binds.items():
+        if counts.get(name) == 1:
+            out[name] = (line, rebound.get(name, set()))
     return out
 
 
@@ -635,9 +657,12 @@ def alias_guard_lines(nodes, dead, consts):
     return out
 
 
-def splat_guard_lines(nodes, dead, maps, aliases=frozenset()):
+def splat_guard_lines(nodes, dead, maps, aliases=None):
     """env-named name -> guard lines where a `**module_mapping` (or a one-hop alias of it,
-    round 71) expands into its literal."""
+    round 71) expands into its literal. An alias counts only when it is bound strictly
+    before the splat line and is not rebound in between (R71RevC2 F1)."""
+    if aliases is None:
+        aliases = {}
     out = {}
     for node in nodes:
         if not isinstance(node, ast.Assign) or len(node.targets) != 1 \
@@ -650,6 +675,11 @@ def splat_guard_lines(nodes, dead, maps, aliases=frozenset()):
         for key, value in zip(node.value.keys, node.value.values):
             if key is None and isinstance(value, ast.Name) \
                     and (value.id in maps or value.id in aliases):
+                if value.id in aliases:
+                    bind_line, rebinds = aliases[value.id]
+                    if not (bind_line < node.lineno
+                            and not any(bind_line < r < node.lineno for r in rebinds)):
+                        continue
                 out.setdefault(target.id, set()).add(node.lineno)
                 break
     return out
@@ -689,6 +719,7 @@ def attribute_flow(tree, dead, consts):
         return False
 
     object_edges = {}
+    edge_lines = {}
     edge_counts = {}
     for node in ast.walk(tree):
         if not isinstance(node, ast.Assign) or node.lineno in dead:
@@ -698,21 +729,25 @@ def attribute_flow(tree, dead, consts):
             d = dotted(node.targets[0])
             edge_counts[d] = edge_counts.get(d, 0) + 1
             object_edges.setdefault(d, node.value.id)
+            edge_lines.setdefault(d, node.lineno)
     object_edges = {d: s for d, s in object_edges.items() if edge_counts[d] == 1}
 
-    def resolve(d):
+    def resolve(d, at_line):
         if "." not in d:
             return d
         prefix, last = d.rsplit(".", 1)
-        if prefix in object_edges:
+        # R71RevC2 F2: the bridge must exist at the launch — an edge bound after the
+        # call line resolves nothing (the pre-bound object carries no guarded store).
+        if prefix in object_edges and edge_lines.get(prefix, 1 << 30) < at_line:
             return object_edges[prefix] + "." + last
         return d
 
     # replacements recorded under an edge-resolved name count against the resolved store
-    for d in list(replaced.keys()):
-        r = resolve(d)
+    for d, d_lines in list(replaced.items()):
+        at = min(d_lines) if d_lines else 0
+        r = resolve(d, at)
         if r != d and r in guarded:
-            replaced.setdefault(r, set()).update(replaced[d])
+            replaced.setdefault(r, set()).update(d_lines)
 
     def store_before(d, line):
         for store in guarded.get(d, ()):
@@ -727,7 +762,7 @@ def attribute_flow(tree, dead, consts):
             if kw.arg == "env":
                 d = attr_dotted(kw.value)
                 if d and (store_before(d, node.lineno)
-                          or store_before(resolve(d), node.lineno)):
+                          or store_before(resolve(d, node.lineno), node.lineno)):
                     return True
 
     bind_lines = {}
@@ -738,7 +773,8 @@ def attribute_flow(tree, dead, consts):
         target = node.targets[0]
         d = attr_dotted(node.value)
         if isinstance(target, ast.Name) and env_named(target.id) and d \
-                and (store_before(d, node.lineno) or store_before(resolve(d), node.lineno)):
+                and (store_before(d, node.lineno)
+                     or store_before(resolve(d, node.lineno), node.lineno)):
             bind_lines.setdefault(target.id, set()).add(node.lineno)
     if not bind_lines:
         return False
@@ -848,14 +884,15 @@ def carrier_guard(tree, dead):
     module_binds = {}
     for extra in (subscript_guard_lines(module_nodes, dead, consts),
                   alias_guard_lines(module_nodes, dead, consts),
-                  splat_guard_lines(module_nodes, dead, maps, set(module_aliases))):
+                  splat_guard_lines(module_nodes, dead, maps, module_aliases)):
         for name, lines in extra.items():
             module_binds.setdefault(name, set()).update(lines)
     locals_ = local_functions(tree)
     for scope in function_scopes(tree):
         nodes = scoped_nodes(scope)
         visible = consts if scope is tree else consts - assigned_names(nodes)
-        scope_aliases = set(module_aliases) | set(splat_aliases(nodes, dead, maps))
+        scope_aliases = dict(module_aliases)
+        scope_aliases.update(splat_aliases(nodes, dead, maps))
         binds = {}
         for extra in (subscript_guard_lines(nodes, dead, visible),
                       alias_guard_lines(nodes, dead, visible),
@@ -1169,6 +1206,22 @@ REGRESSIONS = {
         'def run(repo):\n    e = {"PATH": "/usr/bin"}\n    staging = e\n'
         '    staging["GIT_NO_REPLACE_OBJECTS"] = "1"\n    staging = {}\n'
         '    return subprocess.run(["git", "show", "HEAD:a"], env=e)\n', True, False),
+    "r71-splat-alias-rebound-before-splat": (
+        'GUARD = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
+        'def run(repo):\n    m = GUARD\n    m = {"LABEL": "x"}\n'
+        '    env = {**os.environ, **m}\n'
+        '    return subprocess.run(["git", "show", "HEAD:a"], env=env)\n', True, False),
+    "r71-attribute-edge-after-use": (
+        'class Box: pass\n'
+        'cfg = Box()\n'
+        'cfg.runner = Box()\n'
+        'cfg.runner.env = {"PATH": "/usr/bin"}\n'
+        'def run(repo):\n'
+        '    runner = Box()\n'
+        '    runner.env = {}\n'
+        '    runner.env["GIT_NO_REPLACE_OBJECTS"] = "1"\n'
+        '    subprocess.run(["git", "show", "HEAD:a"], env=cfg.runner.env)\n'
+        '    cfg.runner = runner\n', True, False),
     "r71-attribute-edge-replacement-between": (
         'def run(repo):\n    runner.env = {}\n'
         '    runner.env["GIT_NO_REPLACE_OBJECTS"] = "1"\n    cfg.runner = runner\n'
