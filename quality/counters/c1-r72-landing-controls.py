@@ -303,13 +303,31 @@ def last_summary(out):
 
 
 def summary_fraction(out):
-    line = last_summary(out)
+    line = last_parsed_summary(out)
     m = re.search(r"(\d+/\d+)", line)
     return m.group(1) if m else "none"
 
 
 def count_fails(out):
-    return sum(1 for line in out.splitlines() if line.startswith("SELFTEST FAIL"))
+    """The production emitter's own grammar (`SELFTEST FAIL <index>: ...`), not a prefix family.
+
+    `SELFTEST FAILURE: ...` or `SELFTEST FAILED` is a wrapper's log line, not an assertion record.
+    """
+    return sum(1 for line in out.splitlines()
+               if re.match(r"SELFTEST FAIL [0-9]+: ", line))
+
+
+def last_parsed_summary(out):
+    """The LAST summary line that fully parses; a malformed later marker cannot suppress it.
+
+    The frozen sentence says "the last parsed summary": a trailing `MADO_LANDING_COUNTERS_SELFTEST:
+    runner cleanup complete` is not a summary, so it neither wins nor hides the last real one.
+    """
+    for line in reversed(out.splitlines()):
+        if re.fullmatch(r"MADO_LANDING_COUNTERS_SELFTEST: [0-9]+/[0-9]+ assertions passed",
+                        line.strip()):
+            return line.strip()
+    return ""
 
 
 def summary_shows_failure(out):
@@ -334,7 +352,7 @@ def credit(out):
     `SELFTEST FAIL` lines number exactly `n - p`. A bare/replayed summary line, a summary whose
     detail does not add up, a crash and a garbled summary all earn no credit.
     """
-    line = last_summary(out)
+    line = last_parsed_summary(out)
     m = re.fullmatch(r"MADO_LANDING_COUNTERS_SELFTEST: (\d+)/(\d+) assertions passed", line)
     if not m:
         return False
@@ -346,7 +364,7 @@ def credit(out):
 
 def summary_green(out):
     """Round-72 D2: green iff the LAST parsed summary has n > 0 and p == n."""
-    line = last_summary(out)
+    line = last_parsed_summary(out)
     m = re.fullmatch(r"MADO_LANDING_COUNTERS_SELFTEST: (\d+)/(\d+) assertions passed", line)
     if not m:
         return False
@@ -798,6 +816,18 @@ def _scripted_checks(work):
          not credit("SELFTEST FAIL 1: a\nMADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed\n"))
     want("credit: green summary does not",
          not credit("MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed\n"))
+    want("a malformed trailing marker cannot suppress the last parsed summary (RevC1 F1)",
+         credit("SELFTEST FAIL 2: zero citations refused want=1 got=0\n"
+                "MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n"
+                "MADO_LANDING_COUNTERS_SELFTEST: runner cleanup complete\n"))
+    want("summary_green ignores a malformed trailing marker (RevC1 F1)",
+         summary_green("MADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed\n"
+                       "MADO_LANDING_COUNTERS_SELFTEST: garbled\n"))
+    want("failure-token prefix collisions are not fail lines (RevC1 F2)",
+         not credit("SELFTEST FAILURE: wrapper logging only\n"
+                    "MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n"))
+    want("the production fail grammar is counted",
+         count_fails("SELFTEST FAIL 2: a\nSELFTEST FAILURE: b\nSELFTEST FAIL x: c\n") == 1)
     want("credit: zero total does not",
          not credit("MADO_LANDING_COUNTERS_SELFTEST: 0/0 assertions passed\n"))
     want("summary 1/2 shows failure",

@@ -92,8 +92,9 @@ def absolute_scratch(value):
 
 
 def last_summary(out):
+    """The last summary line that fully parses (a malformed later marker cannot suppress it)."""
     for line in reversed(out.splitlines()):
-        if line.startswith("MADO_LANDING_COUNTERS_SELFTEST:"):
+        if SUMMARY_RE.fullmatch(line.strip()):
             return line.strip()
     return ""
 
@@ -264,10 +265,14 @@ def _selftest_checks(work, lane_root):
         want("frozen set keeps a failing summary at exit zero",
              any(c["id"] == "failing-summary-exit0" for c in cases))
 
-    want("last summary wins", last_summary(
+    want("last parsed summary wins", last_summary(
         "MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n"
         "MADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed\n")
         .endswith("2/2 assertions passed"))
+    want("a malformed trailing marker cannot suppress the last parsed summary (RevC1 F1)",
+         last_summary("MADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed\n"
+                      "MADO_LANDING_COUNTERS_SELFTEST: runner cleanup complete\n")
+         .endswith("2/2 assertions passed"))
     want("absent summary is empty", last_summary("boom\n") == "")
     want("green needs p == n and n > 0",
          expected_from_summary("MADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed", 2)
