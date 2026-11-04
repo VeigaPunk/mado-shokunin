@@ -400,8 +400,13 @@ def keyed_names(nodes, consts):
 
 
 def cancelling_functions(tree, consts, dead):
-    """Round-76 D3: local functions that delete the guard key from the mapping they receive."""
-    out = set()
+    """Round-76 D3: local function -> the parameters it deletes the guard key from.
+
+    R76RevC2 P2: the parameter name is retained, not just the function name, so a call only
+    cancels the argument that actually binds to the deleted parameter. A callee that deletes
+    from its second parameter does not cancel a caller's first argument.
+    """
+    out = {}
     for fn in ast.walk(tree):
         if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
@@ -431,12 +436,16 @@ def cancelling_functions(tree, consts, dead):
                         and isinstance(target.value, ast.Name) and target.value.id in params \
                         and key_is_guard(target.slice, consts):
                     if not any(r < node.lineno for r in rebinds.get(target.value.id, ())):
-                        out.add(fn.name)
+                        out.setdefault(fn.name, set()).add(target.value.id)
     return out
 
 
-def call_cancellations(tree, cancelling, dead):
-    """Round-76 D3: name -> call lines where a cancelling callee receives that mapping."""
+def call_cancellations(tree, cancelling, dead, functions):
+    """Round-76 D3: name -> call lines where a cancelling callee deletes THAT argument's key.
+
+    Reviews R76RevC2 P2 and R76Mutant `d3-anyarg`: only the argument bound to the deleted
+    parameter cancels, by position (postonly/positional order) or by keyword name.
+    """
     out = {}
     if not cancelling:
         return out
@@ -445,8 +454,23 @@ def call_cancellations(tree, cancelling, dead):
             continue
         if not isinstance(node.func, ast.Name) or node.func.id not in cancelling:
             continue
-        if node.args and isinstance(node.args[0], ast.Name):
-            out.setdefault(node.args[0].id, set()).add(node.lineno)
+        fn = functions.get(node.func.id)
+        if fn is None:
+            continue
+        params = _params(fn)
+        for pname in cancelling[node.func.id]:
+            value = None
+            for index, param in enumerate(params):
+                if param.arg != pname:
+                    continue
+                if index < len(node.args):
+                    value = node.args[index]
+                break
+            for kw in node.keywords:
+                if kw.arg == pname:
+                    value = kw.value
+            if isinstance(value, ast.Name):
+                out.setdefault(value.id, set()).add(node.lineno)
     return out
 
 
@@ -607,7 +631,8 @@ def has_guard(src):
         if not binds:
             continue
         rebinds = unguarded_rebindings(nodes, maps, dead, consts)
-        for name, lines in call_cancellations(tree, cancelling, dead).items():
+        for name, lines in call_cancellations(tree, cancelling, dead,
+                                             local_functions(tree)).items():
             rebinds.setdefault(name, set()).update(lines)
         for name, guard_lines in binds.items():
             uses = usage_lines(nodes, name, locals_)
@@ -985,7 +1010,7 @@ def carrier_guard(tree, dead):
     consts = const_key_names(tree)
     maps = splat_mapping_names(tree)
     cancelling = cancelling_functions(tree, consts, dead)
-    calls = call_cancellations(tree, cancelling, dead)
+    calls = call_cancellations(tree, cancelling, dead, local_functions(tree))
     if attribute_flow(tree, dead, consts):
         return True
     if alias_store_guard(tree, dead):
