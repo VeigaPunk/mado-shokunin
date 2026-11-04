@@ -72,9 +72,9 @@ MUTATIONS = [
      '    expected = static[edge] + contribution',
      '    expected = contribution'),
     ("static-order-swapped",
-     '            area = dict(zip(STATIC_SIDES, (int(v) for v in values)))',
+     '            area = dict(zip(STATIC_SIDES, (max(0, int(v)) for v in values)))',
      '            area = dict(zip(("bottom", "top", "left", "right"), '
-     '(int(v) for v in values)))'),
+     '(max(0, int(v)) for v in values)))'),
     ("static-first-wins",
      '            slot = area if slot is not None else dict(ZERO_STATIC)',
      '            slot = dict(slot) if slot is not None else dict(ZERO_STATIC)'),

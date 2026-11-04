@@ -57,11 +57,15 @@ Contract (v1, round 77):
     space-bearing or string-`*` output pattern; a negative margin; a `mode` key (presets
     rewrite layer and exclusive zone at runtime); and a `--rules` file carrying a `source =`
     line or a selector outside the literal subset (a sourced file is not followed).
-  * Modelled with the sources: the centred box rounds once (Hyprland computes the centre in
-    doubles and calls `box.round()`, Renderer.cpp:2660); a static reserved area that leaves no
-    usable box is refused; and a bar whose box is not contained in the usable box reserves
-    nothing (CReservedArea's empty short-circuit, ReservedArea.cpp:20-31) — the expected
-    band is then the static band alone.
+  * Modelled with the sources: the usable box starts at the monitor's layout origin
+    (`logicalBox()` is `{position, size}`, Monitor.cpp:1768-1770; the monitors reply prints
+    `x`/`y`); an `addreserved` field is clamped at 0 (`CReservedArea(top, right, bottom, left)`
+    takes `std::max(x, 0.0)`, ReservedArea.cpp:14-15); the centred box rounds once (Hyprland
+    computes the centre in doubles and calls `box.round()`, Renderer.cpp:2660); a static
+    reserved area that leaves no usable box is refused; and a bar whose box is not contained
+    in the usable box — or whose band (extent plus opposite margin) does not fit the usable
+    axis — reserves nothing (CReservedArea's parent/child short-circuit, ReservedArea.cpp:19-30)
+    so the expected band is then the static band alone.
   * Not modelled and named as a limit: a second *layer-surface* consumer whose band is not
     declared statically (the reported band then exceeds `expected` and is reported `GT`,
     never attributed); an output entry naming the xdg-output identifier waybar derives from
@@ -363,6 +367,9 @@ def parse_static_reserve(text, monitor):
             raise Unmodelled("a monitor rule outside the literal subset (line %d)" % number)
         fields = [field.strip() for field in value.split(",")]
         selector = fields[0]
+        if selector == "" or selector.startswith("desc:"):
+            raise Unmodelled("a monitor rule selector %r is outside the literal subset "
+                             "(line %d); it is not matched by name" % (selector, number))
         kind = fields[1] if len(fields) > 1 else ""
         if selector != monitor:
             continue
@@ -373,13 +380,15 @@ def parse_static_reserve(text, monitor):
             if len(values) != 4 or not all(INT_FIELD_RE.fullmatch(v) for v in values):
                 raise Unmodelled("addreserved needs four plain integers, TOP BOTTOM LEFT "
                                  "RIGHT (line %d)" % number)
-            area = dict(zip(STATIC_SIDES, (int(v) for v in values)))
+            # the four-argument constructor clamps each field at 0 (ReservedArea.cpp:14-15)
+            area = dict(zip(STATIC_SIDES, (max(0, int(v)) for v in values)))
             # the handler writes the area into the selector's *existing* rule and returns; with
             # no such rule it falls through to `add(parser.rule())`, and the parser never
             # received the area, so the added rule's reserve is zero (the area is dropped)
             slot = area if slot is not None else dict(ZERO_STATIC)
         elif kind == "transform":
-            slot = dict(slot) if slot is not None else dict(ZERO_STATIC)
+            # the handler copies the first same-selector rule; with none it adds nothing
+            slot = dict(slot) if slot is not None else None
         else:
             # a positional rule replaces the selector's rule only when the line parses:
             # an unknown key drops the whole line before the add (ConfigManager:1351-1379)
@@ -469,6 +478,12 @@ def parse_monitors(raw):
             raise Setup("monitors reply carries a malformed reserved array")
         if not isinstance(item.get("width"), int) or not isinstance(item.get("height"), int):
             raise Setup("monitors reply carries a non-integer size")
+        for axis in ("x", "y"):
+            if axis in item and (not isinstance(item[axis], int)
+                                 or isinstance(item[axis], bool)):
+                raise Setup("monitors reply carries a non-integer %s" % axis)
+        item.setdefault("x", 0)
+        item.setdefault("y", 0)
         monitors[item["name"]] = item
     return monitors
 
@@ -506,7 +521,8 @@ def evaluate(config, layers, monitors, monitor=None, static=None, static_source=
                          "and the layer box is logical, so this join is not modelled"
                          % (monitor, scale, transform))
     mon_w, mon_h = mon["width"], mon["height"]
-    usable = {"x": static["left"], "y": static["top"],
+    # logicalBox() = {position, size}; the usable box starts at the monitor's layout origin
+    usable = {"x": mon.get("x", 0) + static["left"], "y": mon.get("y", 0) + static["top"],
               "w": mon_w - static["left"] - static["right"],
               "h": mon_h - static["top"] - static["bottom"]}
     if usable["w"] <= 0 or usable["h"] <= 0:
@@ -555,6 +571,12 @@ def evaluate(config, layers, monitors, monitor=None, static=None, static_source=
     contained = (box["x"] >= usable["x"] and box["y"] >= usable["y"]
                  and box["x"] + box["w"] <= usable["x"] + usable["w"]
                  and box["y"] + box["h"] <= usable["y"] + usable["h"])
+    # the layer region starts at the usable origin and extends by the band; when that region
+    # leaves the usable box the parent/child constructor returns zeros (ReservedArea.cpp:19-30)
+    # and the monitor reserves nothing for this surface
+    axis_size = usable["h"] if edge in ("top", "bottom") else usable["w"]
+    if extent + bar["margins"][OPPOSITE_EDGE[edge]] > axis_size:
+        contained = False
     # CReservedArea(parent, child) is empty when the child is not contained (S459:19-31);
     # the static band survives either way (CReservedArea::calculate sums static + dynamic)
     contribution = (extent + bar["margins"][OPPOSITE_EDGE[edge]]) if contained else 0
@@ -806,6 +828,42 @@ def selftest():
         ok(False, "empty usable box refused")
     except Unmodelled:
         ok(True, "empty usable box refused")
+
+    # round 79 repair R2 (wave R79ScoutModel A/B/C/D/E): origin, clamp, selectors, band overflow,
+    # transform with no rule
+    origin_mon = {"name": "M2", "width": 1920, "height": 1080, "reserved": [0, 26, 0, 0],
+                  "scale": 1.0, "transform": 0, "x": 1920, "y": 0}
+    v, rc, rows = case({"position": "top", "layer": "top", "height": 26},
+                       {"M2": {"levels": {"0": [], "1": [], "2": [
+                           {"namespace": "waybar", "x": 1920, "y": 0, "w": 1920, "h": 26,
+                            "alpha": 1, "pid": 1}], "3": []}}},
+                       {"M2": origin_mon})
+    ok(v == "CLEAN" and any("box=1920,0,1920,26" in t for _, t in rows),
+       "the monitor's layout origin moves the box")
+    ok(parse_static_reserve("monitor = M1, 1920x1080@100, 0x0, 1\n"
+                            "monitor = M1, addreserved, 0, -30, 0, 0\n", "M1") == ZERO_STATIC,
+       "a negative addreserved field clamps at zero")
+    for label, bad in (
+        ("a desc selector", "monitor = desc:Dell U2720Q, addreserved, 26, 0, 0, 0\n"),
+        ("an empty selector", "monitor = , preferred, auto, auto\n"),
+    ):
+        try:
+            parse_static_reserve(bad, "M1")
+            ok(False, "refused %s" % label)
+        except Unmodelled:
+            ok(True, "refused %s" % label)
+    v, rc, rows = case({"position": "top", "layer": "top", "height": 26,
+                        "margin-top": 4, "margin-bottom": 80},
+                       {"M1": {"levels": {"0": [], "1": [], "2": [
+                           {"namespace": "waybar", "x": 0, "y": 4, "w": 1920, "h": 26,
+                            "alpha": 1, "pid": 1}], "3": []}}},
+                       {"M1": {"name": "M1", "width": 1920, "height": 100,
+                               "reserved": [0, 0, 0, 0], "scale": 1.0, "transform": 0}})
+    ok(v == "CLEAN" and any("reserved=EQ band=0 expected=0" in t for _, t in rows),
+       "a band that overflows the usable box reserves nothing")
+    ok(parse_static_reserve("monitor = M1, transform, 1\n"
+                            "monitor = M1, addreserved, 26, 0, 0, 0\n", "M1") == ZERO_STATIC,
+       "a transform with no rule adds nothing, so the later addreserved drops")
 
     # malformed inputs are setup errors, never verdicts
     with tempfile.TemporaryDirectory() as td:

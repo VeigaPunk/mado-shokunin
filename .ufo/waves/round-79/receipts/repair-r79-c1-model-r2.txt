@@ -1,0 +1,50 @@
+# round 79 repair R2: five model defects the wave scout found (R79ScoutModel §4 A-E)
+# each block: the pre-R2 bytes (post-R1) then the repaired bytes, same fixture, true exit code
+
+## probe A-origin
+--- pre-R2 (exit=1)
+MADO_BARFOOT_STATIC: monitor=M2 top=26 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M2 box=4,30,1912,26 edge=top
+MADO_BARFOOT_RESULT: monitor=M2 box=DIFFER reserved=EQ band=60 expected=60 verdict=DIFFER
+--- repaired (exit=0)
+MADO_BARFOOT_STATIC: monitor=M2 top=26 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M2 box=1924,30,1912,26 edge=top
+MADO_BARFOOT_RESULT: monitor=M2 box=MATCH reserved=EQ band=60 expected=60 verdict=CLEAN
+
+## probe B-negative
+--- pre-R2 (exit=1)
+MADO_BARFOOT_STATIC: monitor=M1 top=0 right=0 bottom=-30 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M1 box=0,1080,1920,30 edge=bottom
+MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=GT band=30 expected=0 verdict=DIFFER
+--- repaired (exit=0)
+MADO_BARFOOT_STATIC: monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M1 box=0,1050,1920,30 edge=bottom
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=30 expected=30 verdict=CLEAN
+
+## probe C-desc
+--- pre-R2 (exit=1)
+MADO_BARFOOT_STATIC: monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M1 box=0,0,1920,26 edge=top
+MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=GT band=52 expected=26 verdict=DIFFER
+--- repaired (exit=3)
+MADO_BARFOOT: ERROR (stage=model a monitor rule selector 'desc:Dell U2720Q' is outside the literal subset (line 1); it is not matched by name)
+
+## probe D-overflow
+--- pre-R2 (exit=1)
+MADO_BARFOOT_STATIC: monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M1 box=0,4,1920,26 edge=top
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=DIFFER band=0 expected=110 verdict=DIFFER
+--- repaired (exit=0)
+MADO_BARFOOT_STATIC: monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M1 box=0,4,1920,26 edge=top
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=0 expected=0 verdict=CLEAN
+
+## probe E-transform-no-rule
+--- pre-R2 (exit=1)
+MADO_BARFOOT_STATIC: monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M1 box=0,26,1920,26 edge=top
+MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=DIFFER band=26 expected=52 verdict=DIFFER
+--- repaired (exit=0)
+MADO_BARFOOT_STATIC: monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M1 box=0,0,1920,26 edge=top
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN

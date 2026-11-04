@@ -64,6 +64,9 @@ field — because a sourced file is not followed and a guessed reserve is worse 
 | static top 26 + `exclusive: false` | `y = 26` | `26 + 26 = 52` printed, `NOT_APPLIED` | `NOT_APPLIED` |
 | two `addreserved` for M1 (10 then 26) + one for M2 (5) | `y = 26` | `26 + 26 = 52` (newest M1 rule; M2's selector never applies) | `EQ` 52 |
 | `addreserved` with no same-selector rule ahead of it | unchanged | `0` + bar (the area is dropped) | as the bar alone (the written area is not applied) |
+| a negative `addreserved` field | unchanged | the field clamps at 0 (`std::max(x, 0.0)`) | as the clamped reserve |
+| a monitor whose layout position is not `0,0` | origin `+ position` | the static term plus the bar band | `EQ` at the new origin |
+| a band that does not fit the usable axis | matches | the static term alone (the layer contributes 0) | `EQ` when the monitor reserves only the static band |
 | static reserve leaves no usable box | — | — | refused `stage=model` |
 | `source =` line in the rules file | — | — | refused `stage=model` |
 
@@ -75,6 +78,24 @@ byte-identically; the twelve mutants are the seven r78 ones plus `static-dropped
 `static-order-swapped`, `static-first-wins`, `static-box-unoffset`, `static-selector-ignored`.
 Each new mutant is separated by at least one of the five cases; the receipt prints the
 per-mutant score.
+
+## §5 Repairs the wave forced (R1, R2)
+
+**R1 (wave seat R79ScribeEntry F1).** The rule walk credited an `addreserved` area with no
+same-selector rule ahead of it; the handler drops it (above). Repaired; the four static fixtures
+now carry the positional rule their expectation presupposes. Receipts
+`repair-r79-c1-fallthrough.txt` (frozen tool `expected=52 DIFFER` vs repaired `expected=26
+CLEAN` on a rules file whose only line is `addreserved`) and `repair-r79-c1-oldfixtures.txt` (the
+pre-repair fixtures score 20/23 against the repaired tool).
+
+**R2 (wave seat R79ScoutModel §4 A–E).** Five more reachable classes were wrong: the monitor's
+layout origin was ignored (`logicalBox()` is `{position, size}`, S465 `:1772-1774`); a negative
+`addreserved` field was not clamped (S466 `:14-15`); a `desc:`/empty selector was silently
+skipped instead of refused (a `desc:` rule matches by description, S465-monitor `:1201-1211`);
+a band that overflows the usable axis was still expected (the parent/child short-circuit returns
+zeros, S459 `:19-30`); and a `transform` with no same-selector rule created a phantom slot.
+All five repaired with a selftest assertion each (44 → 50) and one red/green pair per class in
+`repair-r79-c1-model-r2.txt`; no frozen case, expectation, mutant or target moved.
 
 ## What is not claimed
 

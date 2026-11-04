@@ -161,3 +161,28 @@ landed prose in the lesson, SCORECARD, SKILL registry row and report says "carri
 equality)". Reported here because the frozen text said "byte-identically" and a closure that reads it
 as a byte compare would find the successor file's bytes differ. Source: the L1's own re-read of the counter's
 `cases[:CARRIED] == carried` check while preparing the report; no measurement moved.
+
+## Repair R2 (append-only; after R1, wave seat R79ScoutModel §4 A–E)
+
+Five more reachable model classes were wrong after R1: the monitor's layout origin was ignored
+(`logicalBox()` is `{position, size}`, S465 `:1772-1774`; the monitors reply prints `x`/`y`); a
+negative `addreserved` field was not clamped (S466 `:14-15` takes `std::max(x, 0.0)`); a `desc:` or
+empty selector was silently skipped although the docstring promises a refusal; a band that does not
+fit the usable axis was still expected (the parent/child short-circuit returns zeros, S459 `:19-30`);
+and `transform` with no same-selector rule created a phantom slot. All five repaired with one
+selftest assertion each (44 → 50) and one red/green pair per class in
+`receipts/repair-r79-c1-model-r2.txt`; no frozen case, expectation, mutant or target moved, and the
+twenty-three cases still score 23/23 with twelve mutants killed at the R2 bytes
+(`receipts/measurement-c1-r79-r2.txt`, tool sha256 `241afdd0…`). Named limits: a band overflow on
+the cross axis, and a `desc:` rule for another monitor (the whole join is refused, never guessed).
+
+## How to re-produce the frozen measurement (append-only; wave seat R79ConnSiblings)
+
+The frozen 23/23 at `5eb8f20f` is reproducible only with the frozen counter bytes:
+`git show 5eb8f20f:quality/counters/c1-r79-reserve.py` + `git show
+5eb8f20f:.ufo/waves/round-79/controls/c1-cases-r79.json` + `--rev 5eb8f20f` prints the frozen
+control sha `5f7ebb3c…` and `killed=12 TARGET_MET`. The shipped successor counter re-cuts two mutant
+anchors to the repaired source, so the shipped counter at `--rev 5eb8f20f` prints `killed=10
+TARGET_MISSED` (two anchors absent) — a property of the successor, not a measurement change. The
+counter's printed `tool_sha256=` field is the *extracted* revision's bytes, never the in-tree file's
+hash; at a tip where the working tree equals the measured revision the two are equal.
