@@ -425,3 +425,16 @@ the caller's session environment (read verbs only; stdout only; no host or repo 
 `corpus/knowledge/bar-footprint-r77.md` is documentation of the layer/declared-bar plane; the host join it
 records was captured read-only (2026-11-04). No config tree, compositor state, service or sibling repo is
 written by this round.
+
+**Round-79 refinement (append-only; one read-only input, no new write surface):** `tools/mado-barfoot.py`
+gains an optional `--rules` input — the Hyprland config file that declares the joined monitor's
+`monitor =` rules — from which it derives the static reserved area (`addreserved`, written TOP,
+BOTTOM, LEFT, RIGHT) and composes it under the bar's own band. It reads that one regular file
+(1 MiB cap, symlinks/FIFOs/devices refused, UTF-8 required) and the same three caller-supplied
+artifacts as before; it writes nothing, starts no process and opens no socket. A rules file carrying
+a `source =` line, a `$`-bearing rule or a non-integer `addreserved` field is refused (`stage=model`)
+rather than guessed, as are the four documented refusals the round-79 runbook executes (a `mode`
+preset, a scaled monitor, the `background` layer, a spaced output pattern). The round's record
+instruments (`quality/counters/c1-r79-reserve.py`, `c2-r79-runbook.py`) read committed bytes and
+caller scratch only; the C2 counter executes the lane's read verbs and that read-only join. No
+config tree, compositor, service or sibling repo is written by this round.

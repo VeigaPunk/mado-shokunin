@@ -4530,3 +4530,68 @@ corrected in place to the current tool's exit map and selftest (22/22); the r77 
 received an appended erratum; the forecast `NOT_MODELLED` phrase in the r77 index row was corrected.
 The C1 instrument was repaired after the wave for four scout-found model defects (the output branches, `std::stoi` margin parsing, centring rounding, an overflowing bar); the eighteen cases, seven mutants and 8/18 control are unchanged at the tip, and the selftest tally rose 22/22 → 28/28 (receipt `receipts/repair-r78-tool.txt`). The C2 anchor leg was strengthened from a file-wide substring to a table-row command-cell binding
 after the wave's connector showed a deleted row would still pass, and the shape attack's padded-integer and padded-list samples were refused (selftest 34 → 40 assertions).
+
+## Round 79 — the static reserve under the band and a per-row runbook (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-79/claims-declaration-r79.md`; freeze `5eb8f20f` (tool,
+counters, control sets, fixtures, declaration); base `e4b153dfa4a67ca56f7ec65cb6639082451626a7`.
+Frozen control sets: `.ufo/waves/round-79/controls/c1-cases-r79.json` (23 cases, sha256
+`5f7ebb3c…`, the eighteen r78 cases carried byte-identically) and `c2-runbook-cases-r79.json`
+(22 cases, 22 distinct anchors; the seventeen r78 cases carried with only `skill_anchor`
+re-pointed). Pre-freeze do-nothing controls: the held r78 tool scores `base_correct=18/23` on the
+C1 set (`receipts/control-c1-r79-at-base.txt`); the held r78 runbook instrument cannot score the
+successor set (rc 2, `control set carries 22 cases, frozen target expects 17`) and the held
+fixed-value rule has no frozen value for the five new rows (`control_new=0/5`). Measured at
+`5eb8f20f`. Axis posture at round start: navigation 97/97, calibration resolved-active 86/86,
+operability selftest 12/12, ledger 142/142; gate `MADO_SELFTEST: 460/460`; the dormant freshness
+value (9.6552, host-absent) stays operator-owned and is excluded from the tie. The stagnation
+nudge does not apply (last capability row entered round 78, window N=3).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** — the static `monitor … addreserved` reserve composes with the bar's own band | `python3 -I quality/counters/c1-r79-reserve.py --repo . --rev REV --base-rev e4b153dfa4a67ca56f7ec65cb6639082451626a7 --controls .ufo/waves/round-79/controls/c1-cases-r79.json --carried .ufo/waves/round-78/controls/c1-cases-r78.json --scratch-root DIR` | at the base rev the r78 model has no static term and no `--rules` input: `cases=23 correct=18 mutants=12 killed=4 base_correct=18/23 tool_selftest=28/28 verdict=TARGET_MISSED` rc 1; at `5eb8f20f` (tool `r79-v1`, sha256 `c9aa1391…`): `cases=23 correct=23 mutants=12 killed=12 base_correct=18/23 carried=18/18 tool_selftest=43/43 verdict=TARGET_MET` rc 0; bounded `10 × 23/23` → 10.0000 on this finite set | improved on the frozen twenty-three-case set |
+| C2 **operability** — the runbook executes per-row bindings, four model refusals and the keybindings shape row | `python3 -I quality/counters/c2-r79-runbook.py --repo . --rev REV --controls .ufo/waves/round-79/controls/c2-runbook-cases-r79.json --carried .ufo/waves/round-78/controls/c2-runbook-cases-r78.json --scratch-root DIR` | at the base rev the counter refuses (rc 2, working tree is not the measured revision's bytes) and the held r78 instrument exits 2 on the successor set; at `5eb8f20f`: `cases=22 executed=22 matched=22 shapes=17/17 anchors=22/22 rows=22/22 control_new=0/5 mutants=9 killed=9 verdict=TARGET_MET tree=bound` rc 0 (`control_all=15/22` printed as an observation) | improved |
+| — | coverage / admitted-note reachability (`quality/check-index.py --repo . --rev REV`) | 97/97 at base → 98/98 at the landing tip (one new entry indexed) | improved (index) |
+| — | operability / hermetic gate (`bash tools/mado-verify.sh --selftest`) | 460/460 both ends; the gate is byte-identical this round | unchanged (harm watch) |
+| — | operability / instrument ledger (`quality/check-tool-ledger.py --repo . --rev REV`) | 142 rows at base → 144 rows at the tip, uncovered 0 (two new counters) | improved (ledger) |
+| — | calibration / held instruments (`git rev-parse <rev>:<path>`) | identical blob ids at base and tip for `quality/landing-counters.sh`, `check-tool-ledger.py`, `check-axis-scores.py`, `check-index.py`, `c1-r72…r78-*`, `c2-r73…r78-*`, `tools/mado-verify.sh`; `tools/mado-barfoot.py` changes by design (the C1 instrument) | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-79/receipts/measurement-c{1,2}-r79.txt` (per-case, per-mutant and
+contract lines), `control-c1-r79-at-base.txt`, `control-c2-heled-instrument-at-base.txt`,
+`control-c2-r79-at-base.txt`, `fetch/` (S457–S466 plus `sha256-r79.txt`), `controls/` (frozen
+sets + generators), `fixtures/refuse-{mode,scale,layer-background,output-space}/`, `w1-spec.json`
+/ `w1-dispatch.json` / `w1.ready` and `w1/` (seat reports). Wave disclosures are reported per
+seat in the round report; an empty seat output is an evidence gap, never backfilled (QUALITY 115).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Static-reserve composition over the usable box | Predict a bar's reserved band when the monitor declares `addreserved`: the static reserve plus the bar's own margined contribution, with the box arranged inside the static-reduced usable box, the rule walk (set/replace/copy/newest-wins) and the `source =` refusal; 23/23 against the held r78 model's 18/23, twelve mutants killed | `.ufo/waves/round-79/measurement-c1-r79.txt`; `tools/mado-barfoot.py`, `quality/counters/c1-r79-reserve.py` | round 79 |
+| Per-row executable runbook with refusal shapes | Bind each frozen runbook case to its own SKILL.md row (22 rows, 22 distinct anchors, equality after escaped-pipe unescaping) and execute four documented model refusals plus a shape-bound keybindings row, so a fixed-value binding cannot reach the five new rows (`control_new=0/5`) while a changed bind set still passes | `.ufo/waves/round-79/measurement-c2-r79.txt`; `quality/counters/c2-r79-runbook.py` | round 79 |
+
+### Planned (round 80; intent only)
+
+1. C1's next finite ground: a second *layer-surface* consumer whose band is declared at runtime
+   (a bar plus a second exclusive surface at another level) with the join separating ATTRIBUTED
+   from GT on its own frozen set.
+2. C2's next finite ground: the `omarchy menu keybindings --print` row's per-line grammar (a
+   chord grammar rather than an arrow shape) and the `systemctl --user is-active` row.
+3. Carry the round-78 routed defect 3 (the frontier bullet's re-opened row count) and the round-79
+   wave's repairs into the next append.
+4. `considerthese/2026-10-28.md` proposal 4 (the live-tool table) stays available.
+5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
+
+### Corrections (round 79, append-only)
+
+Round-78 routed defects closed: **D1** — the tool's `VERSION` now says `r79-v1` and every r79 row
+prints the measured selftest tally; the r78 counter's frozen bytes keep their `22/22` contract
+example (rewriting a frozen instrument would break the r78 receipt's sha) and the example is
+recorded as time-bound in `corpus/lessons/round-79.md` M79-3. **D2** — the C1 counter now treats an
+absent mutant anchor as `not killed` (printed `reason=anchor-absent`), so the filed counting
+command yields a verdict at both ends; the corrected before-state is
+`receipts/control-c1-r79-at-base.txt` (`correct=18 killed=4 TARGET_MISSED`), not the r78
+`--no-mutants` reproduction. **D3** — the r78 frontier bullet's "three re-opened rows" is corrected
+by this round's bullet (S457/S458/S459/S303 re-opened and re-fetched, the r78 frontier line stays
+as the dated record).

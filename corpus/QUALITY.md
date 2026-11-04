@@ -973,3 +973,15 @@ its value on a failing command (`receipts/repair-r77-c2-rc-guard.txt`: before `m
 rc=127 and rc=1, after `matched=False`). Source: round-77 mutation-tester finding.
 Limits: the guard makes a failed probe fail; it does not make a passing probe's expected value
 stronger (the mutant's shape-only rows are carried to round 78).
+
+**136. A frozen instrument's self-description is a measurement, not a label: its version constant
+and its printed contract example are re-derived from the measured bytes in the round that measures
+them, and the frozen bytes are never rewritten to make a label true.** Shown able to fail: round 78
+left `tools/mado-barfoot.py` describing itself `r78-v1` while the report called the repaired bytes
+`r78-v2`, and the frozen `quality/counters/c1-r78-margins.py:15` contract example printed
+`tool_selftest=22/22` while the same bytes print `28/28` (round-78 closure D1; round-79
+`receipts/control-c1-r79-at-base.txt` prints `28/28` at those bytes). The fix bumps the living
+tool's constant and prints the measured tally; the frozen counter keeps its bytes and the example is
+recorded as time-bound (round-79 M79-3). Source: `corpus/lessons/round-79.md` M79-3.
+Limits: this is a labelling rule; it does not judge whether the instrument's own checks are strong
+enough, and a frozen instrument's printed example can only be corrected forward, never in place.

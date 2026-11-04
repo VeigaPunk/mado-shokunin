@@ -3896,3 +3896,51 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
 - **Wave.** One v1 wave, 13 seats (4 executors, 2 scribes, 1 scout, 1 connector, 2 reviewers,
   1 critic, 1 mutation-tester, 1 sentinel; attack share 5/13). Seat outcomes are reported in the
   round report; a dead seat stays dead in the evidence.
+
+## Round 79 — the static reserve under the band and a per-row runbook (2026-11-04, hyaku run 15)
+
+- **Claims.** C1 coverage: the static `monitor = NAME, addreserved, TOP, BOTTOM, LEFT, RIGHT`
+  reserve composes with the bar's own band — `tools/mado-barfoot.py` (`r79-v1`) reads the rule walk
+  behind the reserve (`addreserved` sets the same-selector rule, a positional rule replaces it,
+  `transform` copies it, the newest rule wins), arranges the bar inside the static-reduced usable
+  box and forms `expected = static[edge] + extent + opposite margin`; the frozen twenty-three-case
+  set scores `cases=23 correct=23 mutants=12 killed=12 base_correct=18/23 carried=18/18
+  tool_selftest=43/43 TARGET_MET` at `5eb8f20f` (base `e4b153df`), with the held r78 model at 18/23
+  (`receipts/measurement-c1-r79.txt`, `receipts/control-c1-r79-at-base.txt`). C2 operability: the
+  SKILL.md runbook executes per-row bindings — 22 cases on 22 distinct rows, four documented model
+  refusals over committed fixtures (a `mode` preset, a scaled monitor, the `background` layer, a
+  spaced output pattern) and the `omarchy menu keybindings --print` row bound by shape —
+  `cases=22 executed=22 matched=22 shapes=17/17 anchors=22/22 rows=22/22 control_new=0/5 mutants=9
+  killed=9 tree=bound TARGET_MET` at the same revision; the held r78 instrument exits 2 on the
+  successor set (`receipts/measurement-c2-r79.txt`).
+- **Host ground (read-only).** The live join with `--rules ~/.config/hypr/monitors.conf` reports
+  `STATIC … top=0 right=0 bottom=0 left=0 source=rules` (no `addreserved` line in the host tree),
+  box `0,0,3440,26`, `reserved=EQ band=26 expected=26`, `CLEAN` rc 0 — the composition is exercised
+  by the frozen fixtures, not by a host mutation. No config tree, compositor state or service was
+  written; no `addreserved` line was applied.
+- **Sources.** SOURCES 401 → 404 rows: S465 (`src/output/Monitor.cpp`, `setStatic` and
+  `logicalBoxMinusReserved`) and S466 (`src/desktop/reserved/ReservedArea.cpp`, `calculate`'s
+  static-plus-dynamic sum) admitted, both fetched byte-identically at `efb5099…` and byte-equal to
+  earlier pins; S467 (the Hyprland wiki Monitors page) rejected — it documents the line syntax only,
+  not the summation, and the live URL 404s. `used-by` gains the new entry on S303, S457, S458 and
+  S459 (old → new in the lesson). Census exit 0 at both ends.
+- **Mistakes.** Four mined in `corpus/lessons/round-79.md`: M79-1 the round-78 before-command class
+  (closed by the counter's `anchor-absent` path), M79-2 the C2 counter's missing `cwd` and two
+  wrong mutation anchors caught by a sandbox dry run, M79-3 the stale instrument self-description
+  (`r78-v1` / `22/22` examples), M79-4 an unused `churn` key in the first C2 generator that
+  silently did not score a sample.
+- **Registry and gate bookkeeping.** `quality/tool-ledger.md` 142 → 144 rows (two new counters; the
+  `tools/mado-barfoot.py` row now describes `r79-v1`, `--rules` and the r79 selftest);
+  `SKILL.md` gains the `### Executable runbook rows (round 79)` table (22 rows) and two canonical
+  registry rows (`mado-r79-barfoot-reserve`, `mado-r79-runbook`), and the r77 probe row is updated
+  to the r79 generation; index 97 → 98 rows; SCORECARD round-79 block with both axis rows, two
+  capability rows and the round-78 routed-defect closures; `corpus/knowledge/bar-footprint-reserve-r79.md`
+  supersedes the r78 static-`addreserved` limit.
+- **No-harm.** Gate `bash tools/mado-verify.sh --selftest` 460/460 at unchanged bytes; the frozen
+  r72–r78 instruments, `quality/landing-counters.sh`, `check-tool-ledger.py`, `check-axis-scores.py`
+  and `check-index.py` keep their base blob ids; `check-session-material.py` at both ends with none
+  on a round-79 path; axis table re-derived at the landing tip; census exit 0. No pacman
+  transaction; no tool installed or upgraded.
+- **Wave.** One v1 wave, 14 seats (2 scouts, 1 connector, 4 executors, 2 scribes, 2 reviewers,
+  1 critic, 1 mutation-tester, 1 sentinel; attack share 5/14). Seat outcomes are reported in the
+  round report; a dead seat stays dead in the evidence.
