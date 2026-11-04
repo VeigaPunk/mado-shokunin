@@ -132,11 +132,11 @@ there, not re-fetched here.
 | id | claim the row grounds | source | locator |
 |---|---|---|---|
 | K01 | The top-level `git` invocation takes `--no-replace-objects`, so the switch exists at the command layer. | S438 | git.adoc:14 |
-| K02 | The option "Do not use replacement refs to replace Git objects". | S438 | git.adoc:178-179 |
-| K03 | The option "is equivalent to exporting the `GIT_NO_REPLACE_OBJECTS` environment variable with any value" — the documented identity of flag and environment. | S438 | git.adoc:180-181 |
-| K04 | The variable acts on Git when it is "setting and exporting" — the environment the child receives, not a string in the source. | S438 | git.adoc:927-929 |
+| K02 | The option "Do not use replacement refs to replace Git objects". | S438 | git.adoc:179 |
+| K03 | The option "is equivalent to exporting the `GIT_NO_REPLACE_OBJECTS` environment variable with any value" — the documented identity of flag and environment. | S438 | git.adoc:180 |
+| K04 | The variable acts on Git when it is "setting and exporting" — the environment the child receives, not a string in the source. | S438 | git.adoc:928 |
 | K05 | Replacement refs are used "by default by all Git commands" except reachability traversal, which is why a guard is needed at all. | S436 | git-replace.adoc:20 |
-| K06 | A replacement ref is named for the replaced object and redirects reads of it. | S436 | git-replace.adoc:22-24 |
+| K06 | A replacement ref is named for the replaced object and redirects reads of it. | S436 | git-replace.adoc:22 |
 | K07 | The one documented `cat-file` mode that bypasses replacement is `--batch-all-objects`; the census therefore guards the ordinary read forms. | S437 | git-cat-file.adoc:198 |
 | K08 | The object-read verb family is the `cat-file` contents/type/size surface the reader rule keys on. | S437 | git-cat-file.adoc:21 |
 
