@@ -2,7 +2,7 @@
 """mado round 83 — build the frozen C1 case set from the round-82 set plus eight cases.
 
 The forty-seven round-82 cases are carried parsed-equal (this script copies them verbatim);
-the ten new cases exercise the round-83 class: a *second* declared layer surface whose band
+the eleven new cases exercise the round-83 class: a *second* declared layer surface whose band
 axis is dynamic (`height = 0` horizontal, `width = 0` vertical), resolved from the same
 `--allocation` map the bar uses, plus the causal discriminator the round-82 critic routed
 (V7: the live box disagrees with the allocation) and the boolean/zero refusals.
@@ -175,6 +175,17 @@ def new_cases():
         "expect": {"rc": 1, "band": 34, "box": "DIFFER", "boxes": "DIFFER,MATCH",
                    "expected": 34, "attributed": 34, "attr": "0,34,0,0", "gt": "0,34,0,0",
                    "ls": "VALID", "reserved": "EQ", "verdict": "DIFFER"},
+    })
+    # 11. the bar's dynamic band with no entry is refused in the composition path too, on a
+    #     bar whose exclusive zone is disabled (so the auto-zone refusal cannot mask the rule)
+    cases.append({
+        "name": "bar-dyn-band-exclusive-false",
+        "config": {"position": "top", "layer": "top", "height": 0, "exclusive": False},
+        "surfaces": [{"namespace": "panel", "level": 3, "height": 40, "exclusive": 0}],
+        "layers": layers({2: [entry("waybar", 0, 0, W, 34)], 3: [entry("panel", 0, 34, W, 40)]}),
+        "monitors": mon([0, 34, 0, 0]),
+        "monitor": None,
+        "expect": {"error": True, "rc": 3, "stage": "model"},
     })
     return cases
 

@@ -14,7 +14,7 @@ layer-shell protocol's zero-size clause (S481), gtk-layer-shell `layer-surface.c
 (S464) and Hyprland `Renderer.cpp`'s arrange/applyExclusive arithmetic — never from a tool
 run.
 
-Contract: MADO_R83_BARFOOT: cases=57 correct=57 mutants=39 killed=39 base_correct=52/57
+Contract: MADO_R83_BARFOOT: cases=58 correct=58 mutants=38 killed=38 base_correct=52/58
 carried=47/47 tool_selftest=p/n verdict=TARGET_MET rev=<hash> tool_sha256=<sha>
 (rc 0 iff every clause holds).
 
@@ -32,9 +32,9 @@ import subprocess
 import sys
 import tempfile
 
-CASES = 57
+CASES = 58
 CARRIED = 47
-MUTANTS = 39
+MUTANTS = 38
 BASE_EXPECT = 52
 
 MUTATIONS = [
@@ -142,9 +142,6 @@ MUTATIONS = [
     ("alloc-unknown-kept",
      '    unknown = sorted(set(allocation) - {bar["namespace"]})',
      '    unknown = []'),
-    ("alloc-composition-ignored",
-     '    bar_spec[band_axis] = band_of(bar_spec, allocation)',
-     '    bar_spec[band_axis] = bar_spec[band_axis]'),
     ("alloc-width-lost",
      '    width = band_of(bar, allocation) if pos in ("left", "right") else bar["width"]',
      '    width = bar["width"]'),
@@ -155,9 +152,11 @@ MUTATIONS = [
      '    box_verdict = "MATCH" if live_box == box else "DIFFER"',
      '    box_verdict = "MATCH"'),
     ("extra-alloc-ignored",
-     '        if spec[axis] == 0 and spec["namespace"] in allocation:\n'
-     '            spec[axis] = band_of(spec, allocation)',
-     '        if False:\n            spec[axis] = band_of(spec, allocation)'),
+     '        if spec[axis] == 0 and (spec["namespace"] in allocation or spec is bar_spec):',
+     '        if False:'),
+    ("bar-band-no-refusal",
+     '        if spec[axis] == 0 and (spec["namespace"] in allocation or spec is bar_spec):',
+     '        if spec[axis] == 0 and spec["namespace"] in allocation:'),
     ("alloc-resolved-set-bar-only",
      '    resolved = {bar["namespace"]} | {s["namespace"] for s in extras}',
      '    resolved = {bar["namespace"]}'),

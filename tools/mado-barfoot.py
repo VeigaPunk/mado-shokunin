@@ -804,14 +804,13 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
         "exclusiveEdge": 0,
         "order": 0,
     }
-    band_axis = "height" if bar["position"] in ("top", "bottom") else "width"
-    bar_spec[band_axis] = band_of(bar_spec, allocation)
     surfaces = [bar_spec] + [dict(s) for s in extras]
     # every declared surface's own band (round 83): an allocation entry for a dynamic band is
-    # the client's declared allocation, resolved before the arrange order is derived from zones
+    # the client's declared allocation, resolved before the arrange order is derived from zones;
+    # the bar's dynamic band with no entry stays the r82 refusal (its band is never guessed)
     for spec in surfaces:
         axis = "height" if spec["position"] in ("top", "bottom") else "width"
-        if spec[axis] == 0 and spec["namespace"] in allocation:
+        if spec[axis] == 0 and (spec["namespace"] in allocation or spec is bar_spec):
             spec[axis] = band_of(spec, allocation)
     order = sorted(range(len(surfaces)),
                    key=lambda i: (surfaces[i]["level"], -surfaces[i]["order"], i))

@@ -25,16 +25,22 @@ surface's band also shrinks the usable box for later surfaces. The first freeze 
 (`4e48d8e7`) refused the unallocated explicit-zone class and regressed the carried
 `auto-left-dock` case (`correct=54/55`); that is why the freeze now keeps that branch — the
 carried set is the evidence, and the instrument was corrected before any measurement was
-cited.
+cited. Two further corrections followed the same discipline, each before a measurement was
+accepted: the survivors `alloc-composition-ignored` and `box-verdict-blind` (measurement at
+`4208c24a`: `correct=55/55 mutants=38 killed=36`) showed that one resolution site was
+duplicated and that the single-bar reader was unexercised, so the duplicate up-front
+`band_of` call was deleted (dead code, the M82-1 class) and the case set grew the single-bar
+and composition readers plus the two bar-refusal cases. The instrument's own mutations are
+the reason three of these holes were found before the wave ran.
 
 **Frozen control set.** `.ufo/waves/round-83/controls/c1-cases-r83.json`, sha256
-`904d0345110fd08a92acca04901030500c4c5bd585691b9fbe677c963b5a1a7b` — the 47 round-82 cases
-carried parsed-equal plus 10 new: six on the new class (`extra-dyn-band-top`, `-dock`,
-`-bottom`, `-explicit`, `-zero-alloc`, `alloc-two-namespaces`) and four closing round-82
+`e4409dabcf74f32307f14b31afb85091bca7d584771076bdb9a3b336bc9512c4` — the 47 round-82 cases
+carried parsed-equal plus 11 new: six on the new class (`extra-dyn-band-top`, `-dock`,
+`-bottom`, `-explicit`, `-zero-alloc`, `alloc-two-namespaces`) and five closing round-82
 routed gaps — `alloc-live-band-differs` (V7's single-bar discriminator),
-`alloc-live-box-differs-composed` (V7's composition reader), `alloc-bool-refused` (G1), and
-`bar-dyn-band-no-alloc` (the bar's own dynamic-band refusal, which the first freeze's
-measurement showed no case exercised). Generator: `.ufo/waves/round-83/controls/make-c1-cases-r83.py` (no tool run; every
+`alloc-live-box-differs-composed` (V7's composition reader), `alloc-bool-refused` (G1),
+`bar-dyn-band-no-alloc` (the bar's own dynamic-band refusal) and
+`bar-dyn-band-exclusive-false` (the same refusal where the auto zone cannot mask it). Generator: `.ufo/waves/round-83/controls/make-c1-cases-r83.py` (no tool run; every
 expectation derived from S481/S464/S457/S470's arithmetic).
 
 **Counter.** `quality/counters/c1-r83-surface-band.py`.
@@ -49,22 +55,22 @@ python3 -I quality/counters/c1-r83-surface-band.py --repo . --rev REV \
 ```
 
 **Predicate (one sentence, the same in this declaration, the counter's target clause and the
-receipt's label).** Every one of the 57 frozen cases scores correct, every one of the 39 named
-mutants is killed, the held r82 tool at the base scores exactly 52 of 57, the 47 round-82 cases
+receipt's label).** Every one of the 58 frozen cases scores correct, every one of the 38 named
+mutants is killed, the held r82 tool at the base scores exactly 52 of 58, the 47 round-82 cases
 are carried parsed-equal, and the tool selftest is green; only then does the counter print
 `verdict=TARGET_MET` with rc 0.
 
-**Target line.** `MADO_R83_BARFOOT: cases=57 correct=57 mutants=39 killed=39 base_correct=52/57
+**Target line.** `MADO_R83_BARFOOT: cases=58 correct=58 mutants=38 killed=38 base_correct=52/58
 carried=47/47 tool_selftest=136/136 verdict=TARGET_MET rev=<freeze> tool_sha256=<sha>`.
 
 **Kill rule.** Any clause false → `verdict=TARGET_MISSED`, rc 1, reported as an honest stop;
 no clause is edited after the freeze.
 
 **Do-nothing control (pre-freeze receipt).** The held r82 tool extracted at the base scores
-`base_correct=52/57` (`receipts/control-c1-r83-at-base.txt`): the four gap-closure cases pass
+`base_correct=52/58` (`receipts/control-c1-r83-at-base.txt`): the five gap-closure cases pass
 there by design (the r82 model already fixes the bar's band from the allocation, refuses a
 boolean, refuses the bar's dynamic band, and reports a composed DIFFER), and all six new-class
-cases fail. A tree that does nothing cannot reach 57.
+cases fail. A tree that does nothing cannot reach 58.
 
 **Causality (V7, the round-82 critic's routed gap).** `alloc-live-band-differs` supplies
 allocation 34 and a live box of height 40: the model must report `box=DIFFER band=34

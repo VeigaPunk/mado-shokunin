@@ -146,9 +146,10 @@ MUTATIONS = [
      '        # busctl\'s terse boolean: the sign, a space, then the literal word\n'
      '        return re.fullmatch(r"b (true|false)", text) is not None',
      '        return text.startswith("b ")'),
-    ("bool-prefix-blind",
+    ("bool-false-refused",
+     '        # busctl\'s terse boolean: the sign, a space, then the literal word\n'
      '        return re.fullmatch(r"b (true|false)", text) is not None',
-     '        return re.fullmatch(r"(true|false)", text) is not None'),
+     '        return re.fullmatch(r"b (true|true)", text) is not None'),
     ("lines-shape-any-line",
      '        if len(lines) < value.get("min_lines", 1):\n            return False\n'
      '        return all(pattern.match(line) for line in lines)',
