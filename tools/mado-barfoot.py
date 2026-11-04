@@ -22,9 +22,16 @@ Contract (v1, round 77):
     waybar clears both horizontal anchors when the bar declares a width > 1
     (src/bar.cpp:422-424), and the both-anchors branch then centres the box; the same
     holds transposed for vertical bars.
-  * The reserved expectation is formed only when exclusive is true and every margin side
-    is zero: gtk-layer-shell's auto exclusive zone composes margins in a way this
-    tool does not model (named limit), so a margined exclusive bar reports NOT_MODELLED.
+  * The reserved expectation is formed for any non-negative margin. It composes two
+    measured contributors (round 78): gtk-layer-shell's auto zone for a horizontal bar is
+    the allocation (bar height) plus the margin of the *unanchored* edge of that axis
+    (src/layer-surface.c layer_surface_update_auto_exclusive_zone), and Hyprland's
+    applyExclusive adds the anchored edge's margin (src/render/Renderer.cpp:2575-2583).
+    For a top bar both add up to `height + margin.top + margin.bottom`; the transposed
+    rule gives `width + margin.left + margin.right` for a vertical bar, so the expected
+    band is the anchored-edge extent plus the opposite edge's margin. Horizontal margins of
+    a horizontal bar never enter the band (they only move/resize a zero-width box).
+    A negative margin is refused (the band can be voided or extend past the box).
   * `reserved` band order is [left, top, right, bottom] (HyprCtl.cpp monitors reply).
   * Refused, never guessed: a monitor whose scale is not 1 or whose transform is not 0 (the
     monitors reply carries pixel size, the layer box is logical); a dynamic cross size (a
@@ -46,7 +53,7 @@ import re
 import stat
 import sys
 
-VERSION = "r77-v1"
+VERSION = "r78-v1"
 
 MAX_BYTES = 1048576
 
@@ -56,6 +63,10 @@ MARGIN_SIDES = ("top", "right", "bottom", "left")
 
 # HyprCtl.cpp: monitors reply prints m_reservedArea in left, top, right, bottom order.
 RESERVED_INDEX = {"left": 0, "top": 1, "right": 2, "bottom": 3}
+
+# The edge opposite the anchored one on the band axis: gtk-layer-shell's auto zone adds
+# the unanchored edge's margin; Hyprland adds the anchored edge's margin (r78 model).
+OPPOSITE_EDGE = {"top": "bottom", "bottom": "top", "left": "right", "right": "left"}
 
 
 class Setup(Exception):
@@ -238,6 +249,9 @@ def declared_bar(config):
         raise Unmodelled("a mode preset rewrites layer and exclusive zone at runtime")
     exclusive = config.get("exclusive")
     exclusive = exclusive if isinstance(exclusive, bool) else True
+    margins = parse_margins(config)
+    if any(value < 0 for value in margins.values()):
+        raise Unmodelled("a negative margin can void or invert the exclusive band; not modelled")
     return {
         "position": position,
         "layer": layer,
@@ -394,25 +408,22 @@ def evaluate(config, layers, monitors, monitor=None):
     extent = edge_extent(bar, box, mon_w, mon_h)
     edge = bar["position"]
     band = mon["reserved"][RESERVED_INDEX[edge]]
+    expected = extent + bar["margins"][OPPOSITE_EDGE[edge]]
     if not bar["exclusive"]:
         reserved_verdict = "NOT_APPLIED"
-    elif any(bar["margins"][s] != 0 for s in MARGIN_SIDES):
-        reserved_verdict = "NOT_MODELLED"
-    elif band == extent:
+    elif band == expected:
         reserved_verdict = "EQ"
-    elif band > extent:
+    elif band > expected:
         reserved_verdict = "GT"
     else:
         reserved_verdict = "DIFFER"
 
     if box_verdict == "DIFFER" or reserved_verdict == "DIFFER":
         verdict, rc = "DIFFER", 1
-    elif reserved_verdict == "NOT_MODELLED":
-        verdict, rc = "UNMODELLED", 3
     else:
         verdict, rc = "CLEAN", 0
     rows.append(("RESULT", "monitor=%s box=%s reserved=%s band=%d expected=%d verdict=%s"
-                 % (monitor, box_verdict, reserved_verdict, band, extent, verdict)))
+                 % (monitor, box_verdict, reserved_verdict, band, expected, verdict)))
     return verdict, rc, rows
 
 
@@ -492,13 +503,40 @@ def selftest():
     v, rc, _ = case({"position": "top", "layer": "bottom", "height": 26}, layers_top, monitors)
     ok((v, rc) == ("NO_LAYER", 3), "level miss")
 
-    # margins are not modelled for the reserved band
+    # the margined band composes the anchored-edge extent plus the opposite margin
+    v, rc, rows = case({"position": "top", "layer": "top", "height": 26, "margin": "4 0"},
+                       {"M1": {"levels": {"0": [], "1": [], "2": [
+                           {"namespace": "waybar", "x": 0, "y": 4, "w": 3440, "h": 26,
+                            "alpha": 1, "pid": 1}], "3": []}}},
+                       {"M1": {"name": "M1", "width": 3440, "height": 1440, "reserved": [0, 34, 0, 0], "scale": 1.0, "transform": 0}})
+    ok(v == "CLEAN" and any("reserved=EQ band=34 expected=34" in t for _, t in rows), "top margin band eq")
     v, rc, rows = case({"position": "top", "layer": "top", "height": 26, "margin": "4 0"},
                        {"M1": {"levels": {"0": [], "1": [], "2": [
                            {"namespace": "waybar", "x": 0, "y": 4, "w": 3440, "h": 26,
                             "alpha": 1, "pid": 1}], "3": []}}},
                        {"M1": {"name": "M1", "width": 3440, "height": 1440, "reserved": [0, 26, 0, 0], "scale": 1.0, "transform": 0}})
-    ok(v == "UNMODELLED" and any("reserved=NOT_MODELLED" in t for _, t in rows), "margin unmodelled")
+    ok(v == "DIFFER" and rc == 1, "top margin band differ")
+    # a horizontal margin never enters a horizontal bar's vertical band; it only moves the box
+    v, rc, rows = case({"position": "top", "layer": "top", "height": 30, "margin": "4 8"},
+                       {"M1": {"levels": {"0": [], "1": [], "2": [
+                           {"namespace": "waybar", "x": 8, "y": 4, "w": 1904, "h": 30,
+                            "alpha": 1, "pid": 1}], "3": []}}},
+                       {"M1": {"name": "M1", "width": 1920, "height": 1080, "reserved": [0, 38, 0, 0], "scale": 1.0, "transform": 0}})
+    ok(v == "CLEAN" and any("box=MATCH reserved=EQ band=38 expected=38" in t for _, t in rows),
+       "cross-axis margin stays out of the band")
+    # transposed rule: a left bar's band is width + left + right margins
+    v, rc, rows = case({"position": "left", "layer": "top", "width": 40, "margin": 6},
+                       {"M1": {"levels": {"0": [], "1": [], "2": [
+                           {"namespace": "waybar", "x": 6, "y": 6, "w": 40, "h": 1428,
+                            "alpha": 1, "pid": 1}], "3": []}}},
+                       {"M1": {"name": "M1", "width": 3440, "height": 1440, "reserved": [52, 0, 0, 0], "scale": 1.0, "transform": 0}})
+    ok(v == "CLEAN" and any("reserved=EQ band=52 expected=52" in t for _, t in rows), "left margin band eq")
+    # a negative margin is refused, never composed
+    try:
+        declared_bar({"position": "top", "height": 26, "margin": "-2 0"})
+        ok(False, "negative margin refused")
+    except Unmodelled:
+        ok(True, "negative margin refused")
 
     # centred explicit width
     v, rc, rows = case({"position": "top", "layer": "top", "height": 26, "width": 800},

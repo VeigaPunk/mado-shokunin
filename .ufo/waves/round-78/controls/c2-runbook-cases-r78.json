@@ -1,0 +1,520 @@
+{
+ "cases": [
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl version | head -n 1"
+   ],
+   "frozen": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).",
+   "kind": "regex",
+   "name": "version",
+   "negatives": [
+    {
+     "out": "Hyprland (unknown build)",
+     "rc": 0
+    },
+    {
+     "out": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).",
+     "rc": 127
+    }
+   ],
+   "samples": [
+    {
+     "out": "Hyprland 0.58.0 built from branch v0.58.0 at commit 0123456789abcdef clean (tag).",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl version",
+   "value": "^Hyprland [0-9]+\\.[0-9]+\\.[0-9]+ "
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl configerrors"
+   ],
+   "frozen": "",
+   "kind": "empty",
+   "name": "configerrors",
+   "negatives": [
+    {
+     "out": "unknown option general:nope",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 127
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "hyprctl configerrors",
+   "value": null
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl monitors -j | jq -r '.[0] | \"\\(.name) \\(.width)x\\(.height)@\\(.refreshRate)\"'"
+   ],
+   "frozen": "DP-1 3440x1440@99.99700",
+   "kind": "regex",
+   "name": "monitors-size",
+   "negatives": [
+    {
+     "out": "DP-1 3440x1440@",
+     "rc": 0
+    },
+    {
+     "out": "DP-1 3440x1440@60.0x",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "DP-1 3440x1440@120.00000",
+     "rc": 0
+    },
+    {
+     "out": "HDMI-A-1 1920x1080@60.00000",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl monitors",
+   "value": "^\\S+ [1-9][0-9]*x[1-9][0-9]*@[0-9]+(\\.[0-9]+)?$"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl monitors -j | jq -c '.[0].reserved'"
+   ],
+   "frozen": "[0,26,0,0]",
+   "kind": "int4",
+   "name": "monitors-reserved",
+   "negatives": [
+    {
+     "out": "[0,26,0]",
+     "rc": 0
+    },
+    {
+     "out": "[-1,26,0,0]",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "[0,40,0,0]",
+     "rc": 0
+    },
+    {
+     "out": "[8,26,8,26]",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl monitors",
+   "value": null
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl getoption general:gaps_out | head -n 1"
+   ],
+   "frozen": "custom type: 0 0 0 0",
+   "kind": "exact",
+   "name": "gaps-out",
+   "negatives": [
+    {
+     "out": "custom type: 10 10 10 10",
+     "rc": 0
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "hyprctl getoption <key>",
+   "value": "custom type: 0 0 0 0"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl getoption input:kb_layout | head -n 1"
+   ],
+   "frozen": "str: br",
+   "kind": "exact",
+   "name": "kb-layout",
+   "negatives": [
+    {
+     "out": "str: us",
+     "rc": 0
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "hyprctl getoption <key>",
+   "value": "str: br"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl binds -j | jq 'length'"
+   ],
+   "frozen": "192",
+   "kind": "int_range",
+   "name": "binds-count",
+   "negatives": [
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "out": "-3",
+     "rc": 0
+    },
+    {
+     "out": "192",
+     "rc": 127
+    }
+   ],
+   "samples": [
+    {
+     "out": "193",
+     "rc": 0
+    },
+    {
+     "out": "1024",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl binds -j",
+   "value": [
+    1,
+    100000
+   ]
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl layers -j | jq -r '[to_entries[] | .value.levels | to_entries[] | select(.value|length>0) | .value[].namespace] | sort | join(\",\")'"
+   ],
+   "frozen": "wallpaper,waybar",
+   "kind": "sorted_unique",
+   "name": "layers-namespaces",
+   "negatives": [
+    {
+     "out": "waybar,wallpaper",
+     "rc": 0
+    },
+    {
+     "out": "wallpaper,wallpaper,waybar",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "mako,wallpaper,waybar",
+     "rc": 0
+    },
+    {
+     "out": "wallpaper,waybar,walker",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl layers -j",
+   "value": {
+    "must_include": [
+     "waybar"
+    ]
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "pgrep -x waybar | head -n 1"
+   ],
+   "frozen": "1720",
+   "kind": "int_range",
+   "name": "waybar-process",
+   "negatives": [
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 1
+    }
+   ],
+   "samples": [
+    {
+     "out": "20011",
+     "rc": 0
+    },
+    {
+     "out": "999",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "pgrep -a",
+   "value": [
+    1,
+    4194304
+   ]
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "makoctl mode"
+   ],
+   "frozen": "default",
+   "kind": "exact",
+   "name": "mako-mode",
+   "negatives": [
+    {
+     "out": "do-not-disturb",
+     "rc": 0
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "makoctl mode",
+   "value": "default"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "omarchy theme current"
+   ],
+   "frozen": "Matte Black",
+   "kind": "exact",
+   "name": "omarchy-theme",
+   "negatives": [
+    {
+     "out": "Tokyo Night",
+     "rc": 0
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "omarchy theme current",
+   "value": "Matte Black"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "omarchy version"
+   ],
+   "frozen": "3.8.3",
+   "kind": "regex",
+   "name": "omarchy-version",
+   "negatives": [
+    {
+     "out": "3.8",
+     "rc": 0
+    },
+    {
+     "out": "v3.8.3",
+     "rc": 0
+    },
+    {
+     "out": "3.8.3",
+     "rc": 127
+    }
+   ],
+   "samples": [
+    {
+     "out": "3.9.0",
+     "rc": 0
+    },
+    {
+     "out": "3.10.2",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "omarchy version",
+   "value": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl activeworkspace -j | jq -c '{id,name}'"
+   ],
+   "frozen": "{\"id\":1,\"name\":\"1\"}",
+   "kind": "json_object_fields",
+   "name": "active-workspace",
+   "negatives": [
+    {
+     "out": "{\"id\":\"1\",\"name\":\"1\"}",
+     "rc": 0
+    },
+    {
+     "out": "{\"id\":1}",
+     "rc": 0
+    },
+    {
+     "out": "[]",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "{\"id\":3,\"name\":\"3\"}",
+     "rc": 0
+    },
+    {
+     "out": "{\"id\":-99,\"name\":\"special\"}",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl activeworkspace",
+   "value": {
+    "fields": {
+     "id": "int",
+     "name": "str"
+    }
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl layers -j"
+   ],
+   "kind": "levels_dump",
+   "name": "layers-dump",
+   "negatives": [
+    {
+     "out": "{\"DP-1\": {\"levels\": {\"0\": []}}}",
+     "rc": 0
+    },
+    {
+     "out": "[]",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "{\"HDMI-A-1\": {\"levels\": {\"0\": [], \"1\": [], \"2\": [], \"3\": []}}}",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl layers -j",
+   "value": null
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl monitors -j"
+   ],
+   "kind": "array_fields",
+   "name": "monitors-dump",
+   "negatives": [
+    {
+     "out": "[{\"name\": \"DP-1\", \"width\": 3440, \"height\": 1440, \"reserved\": [0, 26, 0], \"scale\": 1.0}]",
+     "rc": 0
+    },
+    {
+     "out": "[{\"name\": \"\", \"width\": 3440, \"height\": 1440, \"reserved\": [0, 26, 0, 0], \"scale\": 1.0}]",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "[{\"name\": \"HDMI-A-1\", \"width\": 1920, \"height\": 1080, \"reserved\": [0, 40, 0, 0], \"scale\": 1.0}]",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl monitors",
+   "value": {
+    "fields": {
+     "height": "positive_int",
+     "name": "str",
+     "reserved": "int4",
+     "scale": "number",
+     "width": "positive_int"
+    },
+    "min_items": 1
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl clients -j | jq 'length'"
+   ],
+   "frozen": "2",
+   "kind": "int_range",
+   "name": "clients-count",
+   "negatives": [
+    {
+     "out": "-1",
+     "rc": 0
+    },
+    {
+     "out": "2",
+     "rc": 127
+    }
+   ],
+   "samples": [
+    {
+     "out": "7",
+     "rc": 0
+    },
+    {
+     "out": "0",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl clients -j",
+   "value": [
+    0,
+    100000
+   ]
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl workspaces -j | jq 'length'"
+   ],
+   "frozen": "2",
+   "kind": "int_range",
+   "name": "workspaces-count",
+   "negatives": [
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "out": "ten",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "12",
+     "rc": 0
+    },
+    {
+     "out": "1",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl workspaces -j",
+   "value": [
+    1,
+    1000
+   ]
+  }
+ ],
+ "protocol": "mado-c2-r78-v1"
+}
