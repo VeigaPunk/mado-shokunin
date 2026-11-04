@@ -2,7 +2,7 @@
 """mado — PRED-C2-r85-v1: execute the runbook rows with per-row bindings and refusal shapes.
 
 The frozen case set binds each case to its own row in the SKILL.md section
-`### Executable runbook rows (round 84)` — the row's command cell must equal the case's
+`### Executable runbook rows (round 85)` — the row's command cell must equal the case's
 command, and each row is bound by exactly one case. A case is correct only when
 
   * its live output meets the row's outcome (exit status included: a failed command is never
@@ -11,28 +11,26 @@ command, and each row is bound by exactly one case. A case is correct only when
   * every committed churn sample still matches (a plausible next-day output), and
   * every committed negative sample does not match (the rule can fail).
 
-The thirty-three round-84 cases retain outcomes, samples and negatives, and every carried case
-gains a declared status class (`ok`), two class-dimension negatives (a text extension, and the
-same text under another status). Three contained fixture rows bind the three status classes the
-round-85 contract separates — ok (0), exact (7) and signal (128+13) — on guarded pipelines whose
-unguarded form reports 0 for all three. The two version rows bind a full-line pattern; the
-counter's regex matcher is line-anchored where a row declares it, so a prefix extension is not
-accepted.
+The33 round84 cases are retained with explicit status metadata and declared supersessions.
+The36-case file remains byte-identical to freeze3905311c; that original instrument failed setup.
+Successor repairs do not retroactively admit it. Three contained fixtures expect guarded
+statuses0,7,141. The last is an expected Bash encoding, not independent proof of signal cause.
+Specialized state/refusal kinds retain their status-pair rules. Known surviving mutations
+remain in the declared37-mutant population; no green claim follows from36 matched rows alone.
 
 The working tree is bound to the measured revision: SKILL.md, `tools/mado-barfoot.py` and every
 refusal fixture must have the same sha256 as the blob at `--rev`, so the executed rows are the
-committed rows. The substantive no-work control is the guard-free producer invocation in
-round-84/receipts/control-c2-r84-unguarded.txt (rc0, expected failure pair does not match).
-This control is one intervention case, not a full unchanged-runbook replay.
+committed rows. The contained control is round85/receipts/control-c2-r85-unguarded.txt:
+without the guard all three fixture pipelines report0. This is an intervention, not a full
+unchanged-runbook replay.
 
-Counting command (round 84):
-  python3 -I quality/counters/c2-r84-runbook.py --repo . --rev REV \
-      --controls .ufo/waves/round-84/controls/c2-runbook-cases-r84.json \
-      --carried .ufo/waves/round-83/controls/c2-runbook-cases-r83.json --scratch-root DIR
+Counting command:
+  python3 -I quality/counters/c2-r85-status-classes.py --repo . --rev REV \
+      --controls .ufo/waves/round-85/controls/c2-cases-r85.json \
+      --carried .ufo/waves/round-84/controls/c2-runbook-cases-r84.json --scratch-root DIR
 
-Contract: MADO_R85_RUNBOOK: cases=33 executed=33 matched=33 shapes=26/26 anchors=33/33
-rows=33/33 superseded=<fifteen names> mutants=29 killed=29 verdict=TARGET_MET rev=<hash>
-tree=bound (rc 0 iff every clause holds).
+Target:cases36/executed36/matched36/shapes26/anchors36/rows36/mutants37/killed37.
+Frozen failures and surviving mutants are retained in corpus/lessons/round-85.md.
 
 Exit map: 0 target met · 1 target missed · 2 setup error (never a verdict).
 The commands are frozen in the committed control set and reviewed at freeze; every one is a
@@ -345,9 +343,9 @@ def json_text(text):
 def status_ok(status, rc):
     """The row's declared producer-status class, bound exactly (round 85).
 
-    `ok` is exit 0; `exact` is one named nonzero code; `signal` is death by that signal, which a
-    POSIX shell reports as 128+N. A class is never "any nonzero": that would collapse a failed
-    producer into a signalled one and both into a clean exit."""
+    `ok` is exit0; `exact` is a named code; `signal` expects the Bash encoding128+N.
+    This status cannot distinguish a signalled child from explicit exit128+N.
+    POSIX does not require this exact encoding."""
     cls = status.get("class")
     if cls == "ok":
         return rc == 0
@@ -727,7 +725,8 @@ def main(argv):
             raise Setup("carried set carries %d cases, frozen target expects %d"
                         % (len(carried_cases), CARRIED))
         for index, case in enumerate(carried_cases):
-            allowed = set(SUPERSEDED.get(case["name"], ())) | {"skill_anchor"}
+            allowed = set(SUPERSEDED.get(case["name"], ())) | {"skill_anchor"} | set(
+                STATUS_FIELDS)
             for key in case:
                 if key in allowed:
                     continue
@@ -800,13 +799,22 @@ def main(argv):
             self_path = os.path.abspath(__file__)
             with open(self_path) as fh:
                 own_source = fh.read()
+            # the declared mutant list is part of this file, so occurrences are counted over the
+            # code region only: an anchor that also appears in the literal is still one rule
+            lit_start = own_source.index("MUTATIONS = [")
+            lit_end = own_source.index("\n]\n", lit_start) + 3
+            body = own_source[:lit_start] + own_source[lit_end:]
             for name, anchor, repl in MUTATIONS:
-                if own_source.count(anchor) != 1:
-                    raise Setup("mutant %s anchor occurs %d times, not once"
-                                % (name, own_source.count(anchor)))
+                hits = body.count(anchor)
+                if hits != 1:
+                    raise Setup("mutant %s anchor occurs %d times, not once" % (name, hits))
+                pos = body.index(anchor)
+                offset = pos if pos < lit_start else pos + (lit_end - lit_start)
+                mutant_source = (own_source[:offset] + repl
+                                 + own_source[offset + len(anchor):])
                 mutant = os.path.join(workroot, "mutant-%s.py" % name)
                 with open(mutant, "w") as fh:
-                    fh.write(own_source.replace(anchor, repl))
+                    fh.write(mutant_source)
                 mrc, mout, merr = run([sys.executable, "-I", mutant, "--repo", repo,
                                        "--rev", args.rev, "--controls", args.controls,
                                        "--carried", args.carried,
@@ -824,7 +832,7 @@ def main(argv):
               "receipt(control-c2-r85-unguarded.txt; the three fixtures unguarded report rc=0 "
               "for producers that exit7 and die by SIGPIPE, so the before-state matches no "
               "non-ok class)" % (",".join(sorted(SUPERSEDED)) or "-",
-                                 len(classes), CASES))
+                                 classes, CASES))
         target = (executed == CASES and matched == CASES and shapes == SHAPES
                   and len(bindings) == CASES
                   and (args.no_mutants or killed == MUTANTS))

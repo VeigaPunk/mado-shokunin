@@ -228,13 +228,13 @@ mado runs only the read leg (`configerrors`).
 | `hyprctl workspaces -j` / `hyprctl clients -j` | runtime object counts | positive / non-negative integers (round 78; counts change with every window) |
 | `hyprctl layers -j` / `hyprctl monitors -j` as JSON captures | the two captures the bar-footprint join consumes | shape-checked dumps: layers keyed by monitor with levels `0`–`3`, monitors with name, size, `reserved` (four non-negative integers) and scale (round 78) |
 
-### Executable runbook rows (round 84)
+### Executable runbook rows (round 85)
 
-One row per frozen runbook case (`quality/counters/c2-r84-runbook.py`): the command cell is
-the exact command the case executes from the lane root, all read-only; the outcome cell is
-the shape its exit status and output must meet; the third cell counts the committed churn
-and negative samples in `.ufo/waves/round-84/controls/c2-runbook-cases-r84.json`. Every row
-is re-executed for the round-84 measurement; a receipt, not this caption, establishes success.
+One row per runbook case (`quality/counters/c2-r85-status-classes.py`): the command cell is
+the exact command the case executes from the lane root, all read-only. Status and outcome
+are separate columns; samples are in `.ufo/waves/round-85/controls/c2-cases-r85.json`.
+The frozen instrument did not verify. These rows document its executable successor,
+not retroactive admission; failures remain in `corpus/lessons/round-85.md`.
 a table nobody runs is not a probe. The four `refuse-*` rows execute the lane's own
 read-only join against committed fixtures and bind the refusal stage, not its message; the
 last nine rows are the matcher classes (rounds 80–83): a chord grammar over the
@@ -253,41 +253,50 @@ registration shapes; unit-state reads establish prerequisites, with OS diagnosis
 tsukuroi. Contained producer fixtures establish status propagation only. None proves rendered UI,
 producer honesty or unit repair; no tameshi/kumitate method or fleet-verifier ownership is acquired.
 
-| Command | Bound outcome | Churn / negative samples |
-|---|---|---|
-| `set -o pipefail; hyprctl version \| head -n 1` | `^Hyprland [0-9]+\.[0-9]+\.[0-9]+ ` | 1 / 2 |
-| `hyprctl configerrors` | empty | 0 / 2 |
-| `set -o pipefail; hyprctl monitors -j \| jq -r '.[0] \| "\(.name) \(.width)x\(.height)@\(.refreshRate)"'` | `^\S+ [1-9][0-9]*x[1-9][0-9]*@[0-9]+(\.[0-9]+)?$` | 2 / 2 |
-| `set -o pipefail; hyprctl monitors -j \| jq -c '.[0].reserved'` | JSON list of four non-negative integers | 2 / 2 |
-| `set -o pipefail; hyprctl getoption general:gaps_out \| head -n 1` | `custom type: 0 0 0 0` | 0 / 1 |
-| `set -o pipefail; hyprctl getoption input:kb_layout \| head -n 1` | `str: br` | 0 / 1 |
-| `set -o pipefail; hyprctl binds -j \| jq 'length'` | bare integer in 1..100000 | 2 / 3 |
-| `set -o pipefail; hyprctl layers -j \| jq -r '[to_entries[] \| .value.levels \| to_entries[] \| select(.value\|length>0) \| .value[].namespace] \| sort \| join(",")'` | sorted comma list, `waybar` included | 2 / 3 |
-| `set -o pipefail; pgrep -x waybar \| head -n 1` | bare integer in 1..4194304 | 2 / 2 |
-| `makoctl mode` | `default` | 0 / 1 |
-| `omarchy theme current` | `Matte Black` | 0 / 1 |
-| `omarchy version` | `^[0-9]+\.[0-9]+\.[0-9]+$` | 2 / 3 |
-| `set -o pipefail; hyprctl activeworkspace -j \| jq -c '{id,name}'` | json object fields (id:int, name:str) | 2 / 3 |
-| `hyprctl layers -j` | layers object, every monitor exactly levels 0–3 | 1 / 2 |
-| `hyprctl monitors -j` | array fields (height:positive_int, name:str, reserved:int4, scale:number, width:positive_int) | 1 / 2 |
-| `set -o pipefail; hyprctl clients -j \| jq 'length'` | bare integer in 0..100000 | 2 / 2 |
-| `set -o pipefail; hyprctl workspaces -j \| jq 'length'` | bare integer in 1..1000 | 2 / 2 |
-| `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-mode/config.json --layers .ufo/waves/round-79/fixtures/refuse-mode/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-mode/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
-| `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-scale/config.json --layers .ufo/waves/round-79/fixtures/refuse-scale/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-scale/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
-| `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-layer-background/config.json --layers .ufo/waves/round-79/fixtures/refuse-layer-background/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-layer-background/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
-| `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-output-space/config.json --layers .ufo/waves/round-79/fixtures/refuse-output-space/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-output-space/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
-| `omarchy menu keybindings --print` | rc 0, ≥100 lines, every line `^\s*\S.*\s*→\s*\S.*$` | 2 / 5 |
-| `set -o pipefail; omarchy menu keybindings --print \| cut -c1-35` | chord column: ≥100 chords, each `MODS + KEY` (1–4 distinct words from SUPER/SHIFT/CTRL/ALT) or a bare key, no arrow | 2 / 8 |
-| `systemctl --user is-active hypridle` | one state word from the systemd enum, exit status agreeing with it (`active` ⇔ rc 0) | 3 / 4 |
-| `set -o pipefail; omarchy menu keybindings --print \| cut -c36-` | action column: ≥100 lines, each ` → ` then a non-empty trimmed action with no second `→` (the `%-35s` padding fixes the separator's column; the payload escapes markup only on some lines, so no entity rule is bound) | 3 / 6 |
-| `pgrep -x waybar` | one or more decimal PIDs in 1..4194304 with rc 0 while the bar runs, empty stdout with rc 1 while it does not — the state is read from the pair, never frozen | 3 / 6 |
-| `busctl --user list` | the watcher's bus name owned by a live PID: an `org.kde.StatusNotifierWatcher` line whose PID column is a non-zero decimal (the matcher binds a positive decimal; the process-table ceiling is the live read's own bound), rc 0 | 2 / 4 |
-| `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager` | one `org.kde.StatusNotifierWatcher interface` line in the census, rc 0 | 2 / 3 |
-| `set -o pipefail; busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager \| awk '$2=="method"'` | every line `.Name method …`, at least 2 lines, rc 0 | 2 / 3 |
-| `set -o pipefail; busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems \| awk '{print NF-2}'` | bare integer in 0..10000 — the registered item count (the array's entry count) | 2 / 4 |
-| `busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered` | `b true` or `b false` — a boolean literal, rc 0 | 2 / 5 |
-| `sh .ufo/waves/round-84/fixtures/pipefail-guard.sh` | `MADO_PIPEFAIL: unguarded=0 guarded=7` (contained producer only) | 1 / 1 |
-| `set -o pipefail; sh .ufo/waves/round-84/fixtures/failing-producer.sh \| cat` | rc 7 with `b true`; rc 0 carrying the same text is not failure propagation | 1 / 2 |
+Round85 adds three contained producers with observed guarded statuses0,7,141.
+Bash documents128+N for fatal signals (S489); POSIX does not require that exact encoding.
+Exit141 cannot distinguish signal13 from explicit exit141. Specialized state/refusal rows
+retain their own status-pair rules. The two version rows request line anchoring; surviving
+prefix/negative-loop mutants remain disclosed in the lesson, not called repaired.
+
+| Command | Status class | Bound outcome | Churn / negative samples |
+|---|---|---|---|
+| `set -o pipefail; hyprctl version \| head -n 1` | ok | `^Hyprland [0-9]+\.[0-9]+\.[0-9]+ ` | 1 / 2 |
+| `hyprctl configerrors` | ok | empty | 0 / 2 |
+| `set -o pipefail; hyprctl monitors -j \| jq -r '.[0] \| "\(.name) \(.width)x\(.height)@\(.refreshRate)"'` | ok | `^\S+ [1-9][0-9]*x[1-9][0-9]*@[0-9]+(\.[0-9]+)?$` | 2 / 2 |
+| `set -o pipefail; hyprctl monitors -j \| jq -c '.[0].reserved'` | ok | JSON list of four non-negative integers | 2 / 2 |
+| `set -o pipefail; hyprctl getoption general:gaps_out \| head -n 1` | ok | `custom type: 0 0 0 0` | 0 / 1 |
+| `set -o pipefail; hyprctl getoption input:kb_layout \| head -n 1` | ok | `str: br` | 0 / 1 |
+| `set -o pipefail; hyprctl binds -j \| jq 'length'` | ok | bare integer in 1..100000 | 2 / 3 |
+| `set -o pipefail; hyprctl layers -j \| jq -r '[to_entries[] \| .value.levels \| to_entries[] \| select(.value\|length>0) \| .value[].namespace] \| sort \| join(",")'` | ok | sorted comma list, `waybar` included | 2 / 3 |
+| `set -o pipefail; pgrep -x waybar \| head -n 1` | ok | bare integer in 1..4194304 | 2 / 2 |
+| `makoctl mode` | ok | `default` | 0 / 1 |
+| `omarchy theme current` | ok | `Matte Black` | 0 / 1 |
+| `omarchy version` | ok | `^[0-9]+\.[0-9]+\.[0-9]+$` | 2 / 3 |
+| `set -o pipefail; hyprctl activeworkspace -j \| jq -c '{id,name}'` | ok | json object fields (id:int, name:str) | 2 / 3 |
+| `hyprctl layers -j` | ok | layers object, every monitor exactly levels 0–3 | 1 / 2 |
+| `hyprctl monitors -j` | ok | array fields (height:positive_int, name:str, reserved:int4, scale:number, width:positive_int) | 1 / 2 |
+| `set -o pipefail; hyprctl clients -j \| jq 'length'` | ok | bare integer in 0..100000 | 2 / 2 |
+| `set -o pipefail; hyprctl workspaces -j \| jq 'length'` | ok | bare integer in 1..1000 | 2 / 2 |
+| `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-mode/config.json --layers .ufo/waves/round-79/fixtures/refuse-mode/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-mode/monitors.json` | ok | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
+| `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-scale/config.json --layers .ufo/waves/round-79/fixtures/refuse-scale/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-scale/monitors.json` | ok | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
+| `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-layer-background/config.json --layers .ufo/waves/round-79/fixtures/refuse-layer-background/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-layer-background/monitors.json` | ok | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
+| `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-output-space/config.json --layers .ufo/waves/round-79/fixtures/refuse-output-space/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-output-space/monitors.json` | ok | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
+| `omarchy menu keybindings --print` | ok | rc 0, ≥100 lines, every line `^\s*\S.*\s*→\s*\S.*$` | 2 / 5 |
+| `set -o pipefail; omarchy menu keybindings --print \| cut -c1-35` | ok | chord column: ≥100 chords, each `MODS + KEY` (1–4 distinct words from SUPER/SHIFT/CTRL/ALT) or a bare key, no arrow | 2 / 8 |
+| `systemctl --user is-active hypridle` | ok | one state word from the systemd enum, exit status agreeing with it (`active` ⇔ rc 0) | 3 / 4 |
+| `set -o pipefail; omarchy menu keybindings --print \| cut -c36-` | ok | action column: ≥100 lines, each ` → ` then a non-empty trimmed action with no second `→` (the `%-35s` padding fixes the separator's column; the payload escapes markup only on some lines, so no entity rule is bound) | 3 / 6 |
+| `pgrep -x waybar` | ok | one or more decimal PIDs in 1..4194304 with rc 0 while the bar runs, empty stdout with rc 1 while it does not — the state is read from the pair, never frozen | 3 / 6 |
+| `busctl --user list` | ok | the watcher's bus name owned by a live PID: an `org.kde.StatusNotifierWatcher` line whose PID column is a non-zero decimal (the matcher binds a positive decimal; the process-table ceiling is the live read's own bound), rc 0 | 2 / 4 |
+| `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager` | ok | one `org.kde.StatusNotifierWatcher interface` line in the census, rc 0 | 2 / 3 |
+| `set -o pipefail; busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager \| awk '$2=="method"'` | ok | every line `.Name method …`, at least 2 lines, rc 0 | 2 / 3 |
+| `set -o pipefail; busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems \| awk '{print NF-2}'` | ok | bare integer in 0..10000 — the registered item count (the array's entry count) | 2 / 4 |
+| `busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered` | ok | `b true` or `b false` — a boolean literal, rc 0 | 2 / 5 |
+| `sh .ufo/waves/round-84/fixtures/pipefail-guard.sh` | ok | `MADO_PIPEFAIL: unguarded=0 guarded=7` (contained producer only) | 1 / 1 |
+| `set -o pipefail; sh .ufo/waves/round-84/fixtures/failing-producer.sh \| cat` | ok | rc 7 with `b true`; rc 0 carrying the same text is not failure propagation | 1 / 2 |
+| `set -o pipefail; sh .ufo/waves/round-85/fixtures/status-ok.sh \| cat` | ok | rc 0 with `MADO_STATUS: ok` — the ordinary success class | 1 / 2 |
+| `set -o pipefail; sh .ufo/waves/round-85/fixtures/status-exit7.sh \| cat` | 7 (exact) | rc 7 with `MADO_STATUS: exit7` — the producer's own status survives the pipe; rc 0 carrying the same text is not propagation | 1 / 3 |
+| `set -o pipefail; sh .ufo/waves/round-85/fixtures/status-sigpipe.sh \| head -n 1` | 13 → 141 (signal) | rc 141 with `MADO_STATUS: sigpipe line 0` — the producer died by SIGPIPE (128+13) after its reader closed | 1 / 3 |
 
 ### Advertised Wayland globals
 
@@ -824,6 +833,8 @@ below retain their original revisions, not current instrument pins.
 | mado-r83-runbook | gate | `python3 -I quality/counters/c2-r83-runbook.py --repo . --rev REV --controls .ufo/waves/round-83/controls/c2-runbook-cases-r83.json --carried .ufo/waves/round-82/controls/c2-runbook-cases-r82.json --scratch-root DIR` | 0 finite target; 1 measured miss; 2 could-not-evaluate; --no-mutants diagnostic | same counter with `--selftest` | `.ufo/waves/round-83/claims-declaration-r83.md`; producer-success interpretation rejected | caller scratch; read-only desktop commands | mado |
 | mado-r84-namespaces | gate | `python3 -I quality/counters/c1-r84-namespaces.py --repo . --rev REV --base-rev 7fd43921294116299dfce1443d56a951b9c81493 --controls .ufo/waves/round-84/controls/c1-cases-r84.json --carried .ufo/waves/round-83/controls/c1-cases-r83.json --scratch-root DIR` | 0 only61/61,41/41 kills,held58/61,carried58/58,green selftest; 1 miss; 2 could-not-evaluate; diagnostic skips are not target proof | same counter with `--selftest` | `.ufo/waves/round-84/claims-declaration-r84.md`; frozen controls and source pins | caller scratch; git reads/extracted tool | mado |
 | mado-r84-runbook | gate | `python3 -I quality/counters/c2-r84-runbook.py --repo . --rev REV --controls .ufo/waves/round-84/controls/c2-runbook-cases-r84.json --carried .ufo/waves/round-83/controls/c2-runbook-cases-r83.json --scratch-root DIR` | 0 only33/33 rows,26/26 shapes,29/29 kills,tree binding; 1 miss; 2 could-not-evaluate; diagnostic skips are not target proof | same counter with `--selftest` | `.ufo/waves/round-84/claims-declaration-r84.md`; raw freeze anchor collision remained a setup failure, forward anchor-only repair disclosed | caller scratch; read-only desktop/contained fixture commands | mado |
+| mado-r85-identity-causes | gate | `python3 -I quality/counters/c1-r85-identity-causes.py --repo . --rev REV --base-rev 5f174ca48d4f9cf94abf1a8c58b7d6f88733aced --controls .ufo/waves/round-85/controls/c1-cases-r85.json --carried .ufo/waves/round-84/controls/c1-cases-r84.json --scratch-root DIR` | 0 finite72/72 and51/51 kills;1 miss;2 setup;diagnostic skips prove no target | same counter with `--selftest` | `.ufo/waves/round-85/claims-declaration-r85.md` | caller scratch,extracted tool | mado |
+| mado-r85-status-classes | gate | `python3 -I quality/counters/c2-r85-status-classes.py --repo . --rev REV --controls .ufo/waves/round-85/controls/c2-cases-r85.json --carried .ufo/waves/round-84/controls/c2-runbook-cases-r84.json --scratch-root DIR` | 0 finite36/36 and37/37 kills;1 miss;2 setup;frozen claim unverified | same counter with `--selftest` | `.ufo/waves/round-85/claims-declaration-r85.md`;lesson retains failures | caller scratch,read-only commands | mado |
 
 Round-16 classifier limit: `plan_safe` means only no blocked declared kind
 and no listed argv[0] basename. It is **not** credential/privacy safety,
