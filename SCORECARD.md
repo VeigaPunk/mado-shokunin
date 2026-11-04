@@ -4471,8 +4471,7 @@ Frozen control sets: `.ufo/waves/round-78/controls/c1-cases-r78.json` (18 cases,
 and `c2-runbook-cases-r78.json` (17 cases, sha256 `f1c75a7d…`). Pre-freeze do-nothing controls:
 the held r77 tool scores `base_correct=8/18` on the C1 set and the held fixed-value runbook rule
 scores `control=5/17` on the C2 set (`receipts/control-baseline-c1-r78.txt`; the C2 control is
-computed over committed fixtures). Measured at `d27c5ff4df9ee7c159bb515987bd4eae160f86e9` (receipts
-`measurement-c{1,2}-r78.txt`), re-run at the landing tip with identical counts. Axis posture at
+computed over committed fixtures). Measured at `35cfa614e2ad5c8398721724e60ee4c9aae4e1eb` (receipt `measurement-final-r78.txt`; the earlier `d27c5ff4` receipts are the same counts on the pre-repair C2 bytes). Axis posture at
 round start: every published finite sub-axis at its measured maximum (navigation 96/96, calibration
 resolved-active 86/86, operability selftest 12/12, ledger 140/140; gate `MADO_SELFTEST: 460/460`);
 the dormant freshness value (9.6552, host-absent) stays operator-owned and is excluded from the tie.
@@ -4480,8 +4479,8 @@ The stagnation nudge does not apply (last capability row entered round 77, windo
 
 | Claim / axis | Counting command | Before → after | Verdict |
 |---|---|---|---|
-| C1 **coverage** — the margined auto exclusive-zone composition becomes a modelled join | `python3 -I quality/counters/c1-r78-margins.py --repo . --rev REV --base-rev f597eccbffefd5fd6bbb01f3511c88bbeaed493c --controls .ufo/waves/round-78/controls/c1-cases-r78.json --scratch-root DIR` | at the base rev the model does not exist (the r77 tool returns `NOT_MODELLED` for any margin); at `d27c5ff4`: `cases=18 correct=18 mutants=7 killed=7 base_correct=8/18 tool_selftest=22/22 verdict=TARGET_MET` rc 0 (r78-v1; the landing tip's r78-v2 reports `tool_selftest=28/28` with the same case, mutant and base counts); the held r77 model scores 8/18 on the same set; bounded `10 × 18/18` → 10.0000 on this finite set | improved on the frozen eighteen-case set |
-| C2 **operability** — the read-only runbook binds its volatile rows by shape and survives committed churn | `python3 -I quality/counters/c2-r78-runbook.py --repo . --rev REV --controls .ufo/waves/round-78/controls/c2-runbook-cases-r78.json --scratch-root DIR` | at the base rev the runbook cannot bind two of the seventeen rows (rc 2); at `d27c5ff4`: `cases=17 executed=17 matched=17 shapes=12/12 anchors=17/17 control=5/17 mutants=5 killed=5 verdict=TARGET_MET` rc 0; the held fixed-value rule scores 5/17 on the same set; bounded `10 × 17/17` → 10.0000 | improved |
+| C1 **coverage** — the margined auto exclusive-zone composition becomes a modelled join | `python3 -I quality/counters/c1-r78-margins.py --repo . --rev REV --base-rev f597eccbffefd5fd6bbb01f3511c88bbeaed493c --controls .ufo/waves/round-78/controls/c1-cases-r78.json --scratch-root DIR` | at the base rev the model does not exist (the r77 tool returns `NOT_MODELLED` for any margin); at `35cfa614` (tool `r78-v2`, sha256 `1bceb514…`, instrument last change `b774f920`/counter `44a36b64`): `cases=18 correct=18 mutants=7 killed=7 base_correct=8/18 tool_selftest=28/28 verdict=TARGET_MET` rc 0 (the frozen `r78-v1` measured `tool_selftest=22/22` at `44a36b64` with the same case, mutant and base counts); the held r77 model scores 8/18 on the same set; bounded `10 × 18/18` → 10.0000 on this finite set | improved on the frozen eighteen-case set |
+| C2 **operability** — the read-only runbook binds its volatile rows by shape and survives committed churn | `python3 -I quality/counters/c2-r78-runbook.py --repo . --rev REV --controls .ufo/waves/round-78/controls/c2-runbook-cases-r78.json --scratch-root DIR` | at the base rev the runbook cannot bind two of the seventeen rows (rc 2); at `35cfa614` (counter last change `aea5409e` for the matcher, `d27c5ff4` for the anchor binding): `cases=17 executed=17 matched=17 shapes=12/12 anchors=17/17 control=5/17 mutants=5 killed=5 verdict=TARGET_MET` rc 0; the held fixed-value rule scores 5/17 on the same set; bounded `10 × 17/17` → 10.0000 | improved |
 | — | coverage / admitted-note reachability (`quality/check-index.py --repo . --rev REV`) | 96/96 at base → 97/97 at the landing tip (one new entry indexed) | improved (index) |
 | — | operability / hermetic gate (`bash tools/mado-verify.sh --selftest`) | 460/460 both ends; the gate is byte-identical this round | unchanged (harm watch) |
 | — | operability / instrument ledger (`quality/check-tool-ledger.py --repo . --rev REV`) | 140 rows at base → 142 rows at the tip, uncovered 0 (two new instruments) | improved (ledger) |
@@ -4521,8 +4520,9 @@ navigation 97/97; calibration resolved-active 86/86; operability selftest 12/12,
 
 ### Corrections (round 78, append-only)
 
-The C1 row above measures at `d27c5ff4`, which carries the same tool bytes (`aac5d41b…`) as the
-freeze; the instrument's last change is `b8508bd9` and the counter's is `44a36b64`. The r77 C1 row's
+The C1 row above measures at `35cfa614`, which carries the r78-v2 tool (`1bceb514…`); the
+instrument's last changes are `b774f920` (tool) and `44a36b64` (counter). The frozen r78-v1 measured
+at `44a36b64` (`aac5d41b…`, selftest 22/22) with the same case, mutant and base counts. The r77 C1 row's
 parenthetical "at `a83e9bee` (its instrument's last change)" is now false in the present tense because
 round 78 changed the same tool path: the r77 measurement stands for the bytes at `a83e9bee`, and the
 row's "last change" phrase is time-bound. The r77 registry row (`SKILL.md`, `mado-r77-barfoot`) was
