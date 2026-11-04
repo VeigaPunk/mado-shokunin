@@ -234,3 +234,12 @@ Six citation errors in §§1–7, corrected here rather than rewritten in place:
    order, which §6 already says.
 
 None of these changes a proposition: each names where a claim lives.
+
+## 13. Boundary label (append-only; wave seat `R80ReviewerC1` §findings)
+
+One label divergence, numbers unaffected: for a composed box that is *exactly* empty (a zone that
+consumes the axis to zero), `CReservedArea`'s `empty()` early return yields four zeros with
+`ok() == true` — the area is VALID but zero — while the tool prints `ls=INVALID`, which it uses for
+both the `empty()` and the not-contained branches. The arithmetic is the same (the whole layer
+reserve is zeroed, the static band survives); only the label is coarser. No frozen case sits on that
+boundary (the `ls-area-invalid` case crosses it into a negative height, the not-contained branch).

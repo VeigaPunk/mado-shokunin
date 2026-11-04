@@ -228,3 +228,29 @@ live in one checkout); named, not a claim defect. **Q3** — C1 is coverage-shap
 operability-shaped, distinct axes; its caveat is adopted in the report: C1's denominator is a new
 diagnostic model-space, so the round must **not** book it as a move of an existing coverage score
 (the U-route 7/7 and rubric-V 6/6 rows are untouched).
+
+**R80ReviewerC1** (reviewer; report recovered from `w1-results.json` into `w1/R80ReviewerC1/`, STATUS:
+ok — the seat settled without writing a file). Verdict: **C1 SUPPORTED as measured; no falsifying
+finding.** It re-ran the counter (`33/33`, `22/22`, `base_correct=23/33`, selftest 60/60) and
+re-derived five cases by hand: `same-level-order` (order-desc sort quoted, 36 + 26 = 62),
+`overlay-compose-top` (26 + 40 = 66), `ls-area-invalid` (the decisive fork: `CBox::empty()` is
+`|w| < ε ∨ |h| < ε` in hyprutils, so the negative-height child takes the *not-contained* branch,
+`m_ok = false`, and the whole layer reserve — the bar's 26 included — is zeroed, static band
+untouched), `empty-box-skip` (the `continue` precedes `applyExclusive`; also live-unreachable because
+the protocol commit guard refuses a zero desired size without both-vertical anchors) and
+`full-box-vs-usable` (`exclusive == -1` arranged on `full_area`). Predicate honesty confirmed: the
+r79 tool has no `--surfaces` argument at the base and cannot emit `boxes`/`attr_ns`/`attributed`,
+which all ten composition cases require, and the 22 mutants are single-anchor by construction
+(`apply_mutation` enforces one occurrence) with ten of them in composition paths. Its three minors:
+the C1 docstring drift (repaired in R1), the S472 span (repaired as S477), and a **boundary-label
+nit** now in entry §11: an *exactly empty* composed box zeroes via the `empty()` early return with
+`ok() == true`, while the tool prints `ls=INVALID` — the numbers agree, the label differs, and no
+frozen case sits on that boundary.
+
+**Dead and partial seats (disclosed, never backfilled).** `R80ExecMutants` settled with a 590-byte
+progress note and no findings (it had located the seven checks and was planning the tamper probes);
+`R80MutC1Counter` settled with a 457-byte progress note, a byte-identical pristine copy of the C1
+counter and a full baseline run (`w1/R80MutC1Counter/baseline.out`, which reproduces the freeze
+measurement verbatim); both died provider-side on the zai 429 path the orchestrator reported, and
+their assignment (the counters' own load-bearing checks) stays open ground — the critic's Q1d and
+the r79 counter-self-mutation limit are the standing record of what that work would test.
