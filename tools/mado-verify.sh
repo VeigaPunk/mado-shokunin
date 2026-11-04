@@ -414,8 +414,12 @@ EOF
 }
 
 selftest() {
-  local T BASH_BIN
-  T=$(mktemp -d /tmp/w5-mado-m52-selftest.XXXXXX) || { echo "cannot mktemp" >&2; exit 2; }
+  local T BASH_BIN SCRATCH_BASE
+  # Round-75 (routed scratch-rule 4): the selftest scratch honours an explicit base or TMPDIR;
+  # /tmp stays only as the default when neither is set.
+  SCRATCH_BASE=${MADO_SELFTEST_SCRATCH:-${TMPDIR:-/tmp}}
+  [ -d "$SCRATCH_BASE" ] || { echo "selftest scratch base is not a directory: $SCRATCH_BASE" >&2; exit 2; }
+  T=$(mktemp -d "$SCRATCH_BASE/w5-mado-m52-selftest.XXXXXX") || { echo "cannot mktemp" >&2; exit 2; }
   BASH_BIN="${BASH:-/bin/bash}"
   local A="$T/clean" B="$T/broken" SANDBOX="$T/nobin"
   local n_pass=0 n_fail=0
@@ -2014,6 +2018,12 @@ MADO_R8_CRAFT_B
 # before/after. PIN_MADO moves 20714096… → 367ff5ec…; TABLE_MADO is unchanged
 # — the re-pin, the tip resolution and every correction lost no kill.
 # Evidence: .ufo/waves/round-19/w1/reports/GateFreshJj.md §3.
+# Round-75 re-cut (routed scratch-rule 4): `selftest()` now derives its scratch base from
+# MADO_SELFTEST_SCRATCH or TMPDIR (default /tmp unchanged). The line sits outside every marker
+# pair, so the derived target moved 367ff5ec… → 49567a0f… (same line count +2/2 and byte count
+# +201) and PIN_MADO follows; TABLE_MADO is unchanged and the mutation sweep re-runs over the new
+# target unchanged. Evidence: .ufo/waves/round-75/receipts/{red-scratch-before,green-scratch-after,
+# green-scratch-valid}.txt.
 #
 # Usage: mado-verify.sh --regression [--keep]
 #   --target/--defects/--suite/--label/--workdir/--timeout/--tail and the
@@ -2027,7 +2037,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='367ff5ec9613701a6bbd90979edcfdd229d9440b824f7edc0a4bfd8d8b784f9e'
+PIN_MADO='49567a0fd1d7d3601cd6111aafcb5aef7a89aaa9d08c6eba65b6439730128249'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'

@@ -29,7 +29,8 @@ Printed receipt (last line, exact):
     MADO_R75_LANDING_CONTROLS: selftest=<p/n|none> mz=<pass|fail> mr=<pass|fail> killed=<n>/2 baseline=0/2 witness=<ok|absent|mismatch> verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
 
 Preceded by the round-72 evidence lines under the `MADO_R75_` prefix, plus one
-`MADO_R75_CHALLENGE` line naming the challenge source (never the value in the contract line).
+`MADO_R75_CHALLENGE` line naming the challenge source (never the value in the contract line
+nor in the child-env evidence line, which redacts it).
 
 Exit map: 0 iff the extracted instrument's own summary is green with the challenge echoed AND
 both frozen defect mutants are killed; 1 iff the measurement ran and the contract was not met;
@@ -212,8 +213,19 @@ def install_rule(mod, nonce):
                 "witness=%s verdict=%s rev=%s"
                 % (summary_fraction(selftest_out), mz, mr, killed, state, verdict, rev))
 
+    base_describe = mod["describe_env"]
+
+    def describe_env(env):
+        # The frozen r72 evidence line prints every non-PATH value; the round-75 child env
+        # carries the live challenge, so the wrapper redacts that one value (the sentinel's
+        # finding at round 75: the challenge is per-run, but a committed log need not carry it).
+        redacted = {k: ("<challenge>" if k == "MADO_LANDING_NONCE" else v)
+                    for k, v in env.items()}
+        return base_describe(redacted)
+
     g["emit"] = emit
     g["child_env"] = child_env
+    g["describe_env"] = describe_env
     g["credit"] = lambda out: credit_with_witness(r72_credit, out, nonce)
     g["summary_green"] = lambda out: green_with_witness(r72_green, out, nonce)
     g["contract_line"] = contract_line

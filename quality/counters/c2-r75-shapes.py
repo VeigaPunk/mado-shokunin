@@ -1448,7 +1448,7 @@ def measure(args):
         base_controls = 0
     else:
         base_controls = score_cases(classify_base, cases, leg="base")
-        emit("MADO_R75_BASE controls=%d/%d (the held round-73 rule must miss the target)"
+        emit("MADO_R75_BASE controls=%d/%d (the held round-74 rule must miss the target)"
              % (base_controls, FROZEN_CONTROLS))
 
     line = contract_line(len(population), readers, guarded, unguarded, controls,
