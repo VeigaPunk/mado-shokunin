@@ -41,7 +41,8 @@ NEW = [
     {
         "name": "static-composed",
         "config": {"position": "top", "layer": "top", "height": 26, "margin": 4},
-        "rules": "monitor = M1, addreserved, 26, 0, 0, 0\n",
+        "rules": "monitor = M1, 3440x1440@100, 0x0, 1\n"
+                  "monitor = M1, addreserved, 26, 0, 0, 0\n",
         "layers": layers((4, 30, 3432, 26)),
         "monitors": [monitor(reserved=(0, 60, 0, 0))],
         "monitor": None,
@@ -51,7 +52,8 @@ NEW = [
     {
         "name": "static-other-edge",
         "config": {"position": "top", "layer": "top", "height": 26},
-        "rules": "monitor = M1, addreserved, 0, 0, 40, 0\n",
+        "rules": "monitor = M1, 3440x1440@100, 0x0, 1\n"
+                  "monitor = M1, addreserved, 0, 0, 40, 0\n",
         "layers": layers((40, 0, 3400, 26)),
         "monitors": [monitor(reserved=(40, 26, 0, 0))],
         "monitor": None,
@@ -61,7 +63,8 @@ NEW = [
     {
         "name": "static-exclusive-false",
         "config": {"position": "top", "layer": "top", "height": 26, "exclusive": False},
-        "rules": "monitor = M1, addreserved, 26, 0, 0, 0\n",
+        "rules": "monitor = M1, 3440x1440@100, 0x0, 1\n"
+                  "monitor = M1, addreserved, 26, 0, 0, 0\n",
         "layers": layers((0, 26, 3440, 26)),
         "monitors": [monitor(reserved=(0, 26, 0, 0))],
         "monitor": None,
@@ -71,11 +74,12 @@ NEW = [
     {
         "name": "static-last-wins",
         "config": {"position": "top", "layer": "top", "height": 26},
-        "rules": ("monitor = M1, addreserved, 10, 0, 0, 0\n"
+        "rules": ("monitor = M1, 3440x1440@100, 0x0, 1\n"
+                  "monitor = M1, addreserved, 10, 0, 0, 0\n"
                   "monitor = M1, addreserved, 26, 0, 0, 0\n"
                   "monitor = M2, addreserved, 5, 0, 0, 0\n"),
         "layers": layers((0, 26, 3440, 26)),
-        "monitors": [monitor(reserved=(0, 52, 0, 0)), monitor("M2", 1920, 1080, (5, 0, 0, 0))],
+        "monitors": [monitor(reserved=(0, 52, 0, 0)), monitor("M2", 1920, 1080, (0, 0, 0, 0))],
         "monitor": "M1",
         "expect": {"rc": 0, "box": "MATCH", "reserved": "EQ", "band": 52,
                    "expected": 52, "verdict": "CLEAN"},

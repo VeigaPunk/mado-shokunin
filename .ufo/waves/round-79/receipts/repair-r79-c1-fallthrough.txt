@@ -1,0 +1,20 @@
+# round 79 C1 repair: the addreserved fall-through (post-freeze, wave-seat R79ScribeEntry F1)
+# fixture: a config whose only M1 rule is `addreserved` (no prior selector rule), live band 26
+
+## frozen tool (5eb8f20f bytes) — it credits the area, the handler drops it
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_STATIC: monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M1 box=0,26,3440,26 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=0,0,3440,26 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=DIFFER band=26 expected=52 verdict=DIFFER
+MADO_BARFOOT: verdict=DIFFER
+exit=1
+
+## repaired tool — the fall-through adds a zero-reserve rule, so expected is the bar alone
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_STATIC: monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=M1 box=0,0,3440,26 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=0,0,3440,26 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+exit=0

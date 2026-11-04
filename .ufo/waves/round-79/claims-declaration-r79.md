@@ -134,6 +134,22 @@ C1, above.
 No seat may rewrite `tools/mado-barfoot.py`, the two counters, the two control sets, the
 fixtures or this declaration. Seats return findings and draft files; the L1 integrates.
 
+## Repair R1 (append-only; after the `5eb8f20f` measurement, wave seat R79ScribeEntry F1)
+
+The frozen run at `5eb8f20f` scored 23/23, but its model credited an `addreserved` area that the
+handler drops when no same-selector rule exists: `handleMonitor` writes the area only into an
+existing rule (`ConfigManager.cpp:1331`) and, with none, falls through to `add(parser.rule())`
+(`:1341`) where the parser holds only the selector (`Parser.cpp:92-101`). The tool was repaired
+(an `addreserved` with no prior rule now leaves a zero reserve; selftest 43 → 44 assertions) and
+the four static fixtures gained the prior positional rule their expectation presupposes; no
+expectation, label, mutant or target moved, and the twenty-three cases score 23/23 on the
+repaired bytes with twelve mutants killed (`receipts/measurement-c1-r79-repair.txt`). The
+pre-repair fixture set scores 20/23 against the repaired tool, so the fixture change is
+load-bearing (`receipts/repair-r79-c1-oldfixtures.txt`). Named limit: the fall-through rule is
+asserted in the tool selftest only — no frozen case covers it, so a mutant that credits it would
+survive. The frozen 23/23 at `5eb8f20f` stands as the measurement of the bytes at that revision;
+the repaired measurement is the one the round reports as the capability.
+
 ## Correction (append-only; wording only, after the `5eb8f20f` measurement)
 
 The C1 section said the eighteen round-78 cases are "carried byte-identically". The counter's check

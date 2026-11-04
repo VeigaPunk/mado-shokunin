@@ -42,7 +42,9 @@ it is `disable`/`disabled`/`addreserved`/`transform` (S303 `:1299`):
   `CReservedArea(top, right, bottom, left)` as `ARGS[2], ARGS[5], ARGS[3], ARGS[4]` (S303
   `:1323`), i.e. the written order is **TOP, BOTTOM, LEFT, RIGHT**. The area is written into
   the first rule with the same selector (`:1331`); if none exists, a default rule for that
-  selector is added carrying it (`:1341`).
+  selector is added (`:1341`) — and that rule never received the area, so its reserve is zero
+  and the written area is dropped. An `addreserved` line is therefore only effective after a
+  same-selector rule (typically the positional `monitor = NAME, WxH@R, x, y` line).
 - `transform`: copies the same-selector rule, so its reserved area survives the copy.
 - `disable`/`disabled`: adds a disabled rule, reserved zero.
 - A positional rule replaces the selector's rule (the manager erases same-selector rules
@@ -61,6 +63,7 @@ field — because a sourced file is not followed and a guessed reserve is worse 
 | static left 40 + top bar h26 | `x = 40`, width `mon_w − 40` | top band `26` (the left reserve is not on this axis) | `EQ` 26 |
 | static top 26 + `exclusive: false` | `y = 26` | `26 + 26 = 52` printed, `NOT_APPLIED` | `NOT_APPLIED` |
 | two `addreserved` for M1 (10 then 26) + one for M2 (5) | `y = 26` | `26 + 26 = 52` (newest M1 rule; M2's selector never applies) | `EQ` 52 |
+| `addreserved` with no same-selector rule ahead of it | unchanged | `0` + bar (the area is dropped) | as the bar alone (the written area is not applied) |
 | static reserve leaves no usable box | — | — | refused `stage=model` |
 | `source =` line in the rules file | — | — | refused `stage=model` |
 
@@ -84,3 +87,7 @@ per-mutant score.
 - The composition is a model over source-read semantics. No `addreserved` line was applied to
   the running compositor in this round; the host join is a read-only prediction against a
   zero static reserve.
+- The fall-through (an `addreserved` with no same-selector rule drops its area) is asserted in
+  the tool's selftest, not in a frozen case: the twenty-three cases all declare a prior rule, so
+  a mutation that credits the fall-through would survive the case set. The wave found and
+  repaired this rule (`receipts/repair-r79-c1-fallthrough.txt`, `repair-r79-c1-oldfixtures.txt`).

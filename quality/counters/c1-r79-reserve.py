@@ -72,13 +72,12 @@ MUTATIONS = [
      '    expected = static[edge] + contribution',
      '    expected = contribution'),
     ("static-order-swapped",
-     '            slot = dict(zip(STATIC_SIDES, (int(v) for v in values)))',
-     '            slot = dict(zip(("bottom", "top", "left", "right"), '
+     '            area = dict(zip(STATIC_SIDES, (int(v) for v in values)))',
+     '            area = dict(zip(("bottom", "top", "left", "right"), '
      '(int(v) for v in values)))'),
     ("static-first-wins",
-     '            slot = dict(zip(STATIC_SIDES, (int(v) for v in values)))',
-     '            slot = dict(slot) if slot is not None else dict(zip(STATIC_SIDES, '
-     '(int(v) for v in values)))'),
+     '            slot = area if slot is not None else dict(ZERO_STATIC)',
+     '            slot = dict(slot) if slot is not None else dict(ZERO_STATIC)'),
     ("static-box-unoffset",
      '    box = {"x": local["x"] + usable["x"], "y": local["y"] + usable["y"],',
      '    box = {"x": local["x"], "y": local["y"],'),

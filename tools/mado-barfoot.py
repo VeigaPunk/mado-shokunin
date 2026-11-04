@@ -46,7 +46,9 @@ Contract (v1, round 77):
     `handleMonitor`: a positional rule or `disable` replaces the selector's rule (reserved
     zero), `addreserved` sets it in line order TOP, BOTTOM, LEFT, RIGHT, `transform`
     copies the rule and keeps its reserved area, and the newest rule for the selector is
-    the static reserve the monitor applies (`Monitor.cpp:654 setStatic`).
+    the static reserve the monitor applies (`Monitor.cpp:654 setStatic`). An `addreserved`
+    line with no same-selector rule ahead of it adds a default rule that never received the
+    area, so its reserve is zero and the written area is dropped.
   * `reserved` band order is [left, top, right, bottom] (HyprCtl.cpp monitors reply).
   * Refused, never guessed: a monitor whose scale is not 1 or whose transform is not 0 (the
     monitors reply carries pixel size, the layer box is logical); a dynamic cross size (a
@@ -371,7 +373,11 @@ def parse_static_reserve(text, monitor):
             if len(values) != 4 or not all(INT_FIELD_RE.fullmatch(v) for v in values):
                 raise Unmodelled("addreserved needs four plain integers, TOP BOTTOM LEFT "
                                  "RIGHT (line %d)" % number)
-            slot = dict(zip(STATIC_SIDES, (int(v) for v in values)))
+            area = dict(zip(STATIC_SIDES, (int(v) for v in values)))
+            # the handler writes the area into the selector's *existing* rule and returns; with
+            # no such rule it falls through to `add(parser.rule())`, and the parser never
+            # received the area, so the added rule's reserve is zero (the area is dropped)
+            slot = area if slot is not None else dict(ZERO_STATIC)
         elif kind == "transform":
             slot = dict(slot) if slot is not None else dict(ZERO_STATIC)
         else:
@@ -728,23 +734,29 @@ def selftest():
     ok(v == "CLEAN" and any("expected=0" in t for _, t in rows), "an overflowing bar reserves nothing")
 
     # round 79: the static `addreserved` band composes under the bar's own contribution
-    ok(parse_static_reserve("monitor = M1, addreserved, 26, 0, 0, 0\n", "M1")
+    ok(parse_static_reserve("monitor = M1, 3440x1440@100, 0x0, 1\n"
+                            "monitor = M1, addreserved, 26, 0, 0, 0\n", "M1")
        == {"top": 26, "right": 0, "bottom": 0, "left": 0},
        "static addreserved parses top bottom left right")
+    ok(parse_static_reserve("monitor = M1, addreserved, 26, 0, 0, 0\n", "M1") == ZERO_STATIC,
+       "an addreserved with no prior selector rule drops its area")
     ok(parse_static_reserve("monitor = M2, addreserved, 5, 0, 0, 0\n", "M1") == ZERO_STATIC,
        "another selector does not reserve")
-    ok(parse_static_reserve("monitor = M1, addreserved, 10, 0, 0, 0\n"
+    ok(parse_static_reserve("monitor = M1, 3440x1440@100, 0x0, 1\n"
+                            "monitor = M1, addreserved, 10, 0, 0, 0\n"
                             "monitor = M1, addreserved, 26, 0, 0, 0\n", "M1")["top"] == 26,
        "the later addreserved wins")
     ok(parse_static_reserve("monitor = M1, addreserved, 26, 0, 0, 0\n"
                             "monitor = M1, 3440x1440@100, 0x0, 1\n", "M1") == ZERO_STATIC,
        "a later positional rule replaces the reserved rule")
-    ok(parse_static_reserve("monitor = M1, addreserved, 26, 0, 0, 0\n"
+    ok(parse_static_reserve("monitor = M1, 3440x1440@100, 0x0, 1\n"
+                            "monitor = M1, addreserved, 26, 0, 0, 0\n"
                             "monitor = M1, 3440x1440, 0x0, 1, sdr_eotf, 1\n", "M1")["top"] == 26,
-       "a dropped rule keeps the reserved area")
+       "a dropped positional rule keeps the reserved area")
     ok(parse_static_reserve("# monitor = M1, addreserved, 99, 0, 0, 0\n", "M1") == ZERO_STATIC,
        "a commented rule is not a rule")
-    ok(parse_static_reserve("monitor = M1, addreserved, 26, 0, 0, 0 # a comment\n", "M1")["top"]
+    ok(parse_static_reserve("monitor = M1, 3440x1440@100, 0x0, 1 # prior\n"
+                            "monitor = M1, addreserved, 26, 0, 0, 0 # a comment\n", "M1")["top"]
        == 26, "a trailing comment is not part of the rule")
     for label, bad in (
         ("bad addreserved field", "monitor = M1, addreserved, x, 0, 0, 0\n"),
