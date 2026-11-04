@@ -4099,7 +4099,9 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   line is `MADO_R82_RUNBOOK: cases=29 … mutants=25`, not the r81 text), R4 (`--selftest` transcripts
   land under `receipts/`), R5 (round-80 D1–D3 erratum named in the report), R6 (the wave's seat counts
   carry a `jq` counting command in the report).
-- **Mistakes.** Three mined into `corpus/lessons/round-82.md`: M82-1 a resolver branch that both
+- **Mistakes.** Two mined into `corpus/lessons/round-82.md`: M82-1 a resolver branch that both
   callers guarded away (the "declaration wins" rule was dead code; the first mutant survived 47/47);
-  M82-2 two mutant anchors drifted under that repair (`reason=anchor-absent`, `killed=32`); M82-3 the
-  freedesktop page naming a different bus name, caught by opening the source before writing its row.
+  M82-2 the freedesktop page naming a different bus name, caught by opening the source before
+  writing its row. The anchor-drift candidate was examined by the lesson seat and **not admitted**:
+  no lane byte carries the `reason=anchor-absent` event (the only such lines are the base control's),
+  and both anchors are present at the freeze.

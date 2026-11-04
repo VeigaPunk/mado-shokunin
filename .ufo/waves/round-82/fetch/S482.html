@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>StatusNotifierWatcher</title>
+
+<link rel="stylesheet" href="../../../style.css" type="text/css" />
+<link rel="stylesheet" href="../../../xorg.css" type="text/css" />
+
+<link rel="stylesheet" href="../../../local.css" type="text/css" />
+
+
+<link rel="alternate" type="application/x-wiki" title="Edit this page" href="//secure.freedesktop.org/write/www/ikiwiki.cgi?do=edit&amp;page=Specifications%2FStatusNotifierItem%2FStatusNotifierWatcher" />
+
+
+
+
+
+</head>
+<body>
+
+<div class="page">
+<div class="pageheader">
+<div class="header">
+<span class="logo"><img src="../../../logo.png" /></span>
+
+
+<form method="get" action="https://www.google.com/search" id="searchform">
+ <div>
+  <input name="sitesearch" value="https://www.freedesktop.org/wiki/" type="hidden" />
+  <input name="q" value="" id="searchbox" size="16" maxlength="255" type="text"
+    placeholder="search" />
+ </div>
+</form>
+
+
+<span class="headerpath">
+<span class="parentlinks">
+
+<a href="../../../">www</a>/ 
+
+<a href="../../">Specifications</a>/ 
+
+<a href="../">StatusNotifierItem</a>/ 
+
+</span>
+<span class="title">
+StatusNotifierWatcher
+
+</span>
+</span>
+</div>
+
+
+<span class="actions">
+<ul>
+
+<li><a href="//secure.freedesktop.org/write/www/ikiwiki.cgi?do=edit&amp;page=Specifications%2FStatusNotifierItem%2FStatusNotifierWatcher" rel="nofollow">Edit</a></li>
+
+
+
+<li><a href="https://cgit.freedesktop.org/wiki/www/log/Specifications/StatusNotifierItem/StatusNotifierWatcher.mdwn">Page History</a></li>
+
+
+<li><a href="https://cgit.freedesktop.org/wiki/www/">Repo Info</a></li>
+
+
+
+
+</ul>
+</span>
+
+
+
+
+
+
+</div>
+
+
+
+<div id="pagebody">
+
+<div id="content">
+<h1 id="statusnotifierwatcher">StatusNotifierWatcher</h1>
+
+<p>There will be a single org.freedesktop.StatusNotifierWatcher service instance registered on the session but at any given time. The StatusNotifierWatcher service is used to keep track of StatusNotifierItem instances, enumerate them and notify when new ones are registered or old ones are unregistered.</p>
+
+<p>It is also used to keep track of org.freedesktop.StatusNotifierHost instances, to have an easy way to know if there is at least one service registered as the visualization host for the status notifier items.</p>
+
+<h2 id="methods">Methods</h2>
+
+<h3 id="registerstatusnotifieritem">RegisterStatusNotifierItem</h3>
+
+<p>VOID org.freedesktop.StatusNotifierWatcher.RegisterStatusNotifierItem (STRING service);</p>
+
+<p>Register a StatusNotifierItem into the StatusNotifierWatcher, in the form of its full name on the session bus, for instance org.freedesktop.StatusNotifierItem-4077-1. A StatusNotifierItem instance must be registered to the watcher in order to be noticed from both the watcher and the StatusNotifierHost instances. If the registered StatusNotifierItem goes away from the session bus, the StatusNotifierWatcher should automatically notice it and remove it from the list of registered services.</p>
+
+<h3 id="registerstatusnotifierhost">RegisterStatusNotifierHost</h3>
+
+<p>VOID org.freedesktop.StatusNotifierWatcher.RegisterStatusNotifierHost (STRING service);</p>
+
+<p>Register a StatusNotifierHost into the StatusNotifierWatcher, in the form of its full name on the session bus, for instance org.freedesktop.StatusNotifierHost-4005. Every NotficationHost instance that intends to display StatusNotifierItem representations should register to StatusNotifierWatcher with this method. The StatusNotifierWatcher should automatically notice if an instance of StatusNotifierHost goes away.</p>
+
+<h2 id="properties">Properties</h2>
+
+<h3 id="registeredstatusnotifieritems">RegisteredStatusNotifierItems</h3>
+
+<p>ARRAY(STRING) org.freedesktop.StatusNotifierWatcher.RegisteredStatusNotifierItems ();</p>
+
+<p>List containing all the registered instances of StatusNotifierItem. All elements of the array should correspond to services actually running on the session bus at the moment of the method call.</p>
+
+<h3 id="isstatusnotifierhostregistered">IsStatusNotifierHostRegistered</h3>
+
+<p>BOOL org.freedesktop.StatusNotifierWatcher.IsStatusNotifierHostRegistered ();</p>
+
+<p>True if at least one StatusNotifierHost has been registered with the Section called RegisterStatusNotifierHost and is currently running. If no StatusNotifierHost are registered and running, all StatusNotifierItem instances should fall back using the Freedesktop System tray specification.</p>
+
+<h3 id="protocolversion">ProtocolVersion</h3>
+
+<p>INT org.freedesktop.StatusNotifierWatcher.ProtocolVersion ();</p>
+
+<p>The version of the protocol the StatusNotifierWatcher instance implements.</p>
+
+<h2 id="signals">SIGNALS</h2>
+
+<h3 id="statusnotifieritemregistered">StatusNotifierItemRegistered</h3>
+
+<p>BOOL org.freedesktop.StatusNotifierWatcher.StatusNotifierItemRegistered (STRING service);</p>
+
+<p>A new StatusNotifierItem has been registered, the argument of the signal is the session bus name of the instance. StatusNotifierHost implementation should listen this signal to know when they should update their representation of the items.</p>
+
+<h3 id="statusnotifieritemunregistered">StatusNotifierItemUnregistered</h3>
+
+<p>BOOL org.freedesktop.StatusNotifierWatcher.StatusNotifierItemUnregistered (STRING service);</p>
+
+<p>A StatusNotifierItem instance has disappeared from the bus, the argument of the signal is the session bus name of the instance. StatusNotifierHost implementation should listen this signal to know when they should update their representation of the items.</p>
+
+<h3 id="statusnotifierhostregistered">StatusNotifierHostRegistered</h3>
+
+<p>BOOL org.freedesktop.StatusNotifierWatcher.StatusNotifierHostRegistered ();</p>
+
+<p>A new StatusNotifierHost has been registered, the StatusNotifierItem instances knows that they can use this protocol instead of the Freedesktop System tray protocol.</p>
+
+</div>
+
+
+
+
+
+</div>
+
+<div id="footer" class="pagefooter">
+
+<div id="pageinfo">
+
+
+
+
+
+
+<div id="backlinks">
+Links:
+
+<a href="../">StatusNotifierItem</a>
+
+
+</div>
+
+
+
+
+
+
+<div class="pagedate">
+Last edited <span class="date">Fri May  7 01:22:37 2021</span>
+<!-- Created <span class="date">Mon Sep  1 13:42:34 2014</span> -->
+</div>
+
+</div>
+
+
+<!-- from www -->
+</div>
+
+</div>
+
+</body>
+</html>

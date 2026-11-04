@@ -4811,3 +4811,36 @@ model refusal, and the composition path resolves the bar's band only. S481 licen
 means, not what waybar sends on this host; S482 licenses the KDE bus name and the register methods,
 while the host's ownership of that name is the live `busctl` read. The wave's probe set and the
 round-83 ground are recorded in `corpus/lessons/round-82.md` and the round report.
+
+### Wave-routed defects (append-only, round 82)
+
+- **G1 (medium), deferred.** `parse_allocation`'s boolean exclusion
+  (`tools/mado-barfoot.py:448`) is exercised by no frozen case: the independent mutation
+  `alloc-bool-accepted` scored 0 failures, and `{"waybar": true}` really parses as an allocation in
+  the mutant while the frozen tool refuses it (rc 2, stage=setup). Fix next round: a 48th case
+  `alloc-bool-refused` (dynamic height, boolean allocation, rc 2 stage=setup).
+- **G2 (medium), deferred.** `matches`' `array_fields` arm accepts a JSON *object* as well as a list
+  (`c2-r82-runbook.py:385-387`), and no frozen case supplies an object-form reply, so the "array" in
+  the row's name is not frozen. Fix next round: one `monitors-dump` negative in object form.
+- **G3 (low), deferred.** A refusal's stage is matched on the string `"ERROR (stage=<stage> "` with the
+  trailing space; dropping that character accepts `stage=modeling`, and all four refusal negatives
+  pin `stage=setup` only. Fix next round: a `stage=modeling` negative.
+- **G4 (info), resolved.** The coordinator's own first sandbox run is recorded as M82-1 in
+  `corpus/lessons/round-82.md` (a resolver branch that both callers guarded away). The
+  anchor-drift candidate was examined by the lesson seat and **not admitted**: no lane byte carries
+  the `reason=anchor-absent` event (the only such lines are the base control's, where absence is the
+  do-nothing control's definition), and both anchors are present at the freeze
+  (`measurement-c1-r82.txt:78,81`).
+- **E1 (erratum, applied at `89acb06c`).** The sentinel's F1 and F2 re-cut the C2 instrument after
+  the freeze, without touching the claim's rule: the three new cases' sample/negative fixtures lost
+  the account name, the real bus addresses, the UID-derived unit and the live PID
+  (`controls/c2-runbook-cases-r82.json` sha256 `f64d7d5d…` → `07599b24…`), and the counter's `run()`
+  pins `TMPDIR` to the caller's scratch root instead of the tree it measures
+  (`c2-r82-runbook.py` sha256 `1e8eb499…` → `a87bceab…`). Case kinds, expectations, the carried
+  twenty-six cases, the predicate and the target are unchanged; the re-cut instrument re-measures to
+  the same contract line at `89acb06c` (`receipts/measurement-c2-r82.txt`,
+  `cases=29 … killed=25 verdict=TARGET_MET tree=bound`). The wave's seats scored the pre-cut bytes;
+  their replays are recorded against them and the erratum is stated in the report.
+- **F1 remainder (low), deferred.** The carried round-81 `waybar-pgrep` case still holds a live PID
+  (`c2-runbook-cases-r82.json:241,934,942,950,956,960`); it is the round-81 frozen case and the
+  carried-unchanged assertion forbids editing it, so a superseding set is the round-83 fix.
