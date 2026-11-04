@@ -1,0 +1,86 @@
+{
+ "lane": "mado",
+ "round": 71,
+ "wave": "w1",
+ "seats": 13,
+ "results": [
+  {
+   "name": "R71ExecC1Real",
+   "agent": "executor",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71ExecC2Shapes",
+   "agent": "executor",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71ExecCadence",
+   "agent": "executor",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71ScribeEntryC1",
+   "agent": "scribe",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71ScribeEntryC2",
+   "agent": "scribe",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71ScribeRowLesson",
+   "agent": "scribe",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71ScoutSources",
+   "agent": "scout",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71ScoutCensus",
+   "agent": "scout",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71RevC1",
+   "agent": "reviewer",
+   "output": "{\n  \"verdict\": \"C1 predicate sound as bounded\",\n  \"report_path\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-71/w1/R71RevC1.md\",\n  \"seat\": \"R71RevC1\",\n  \"revs\": {\n    \"scored\": \"8e78a4ee82f6ccdc951faf531438178a9d12245e\",\n    \"base\": \"c354f4d410b829d985b31560af9202d98655dad0\"\n  },\n  \"sha256_verified\": {\n    \"candidate_harness\": \"f836499594fb4fa8898336b1a47241614bb2b9ddb6f93c369a9e00ece0f185f1\",\n    \"counter\": \"18fb679a7f75322c783ca164ed6a9cf684983b19ef8969409a9bed8ea2742152\",\n    \"base_r70_harness\": \"71a7b6c45b904a734f194be9a8de6cc2eeb5f5ea1922760f908f5637f1d4db58\"\n  },\n  \"evidence\": {\n    \"counter_repro\": \"python3 -I quality/counters/c1-r71-real-children.py --repo . --rev 8e78a4ee\u2026 --base-rev c354f4d4\u2026 --scratch-root <scratch>/counter-run -> rc=0, 'MADO_R71_REAL_CHILDREN: cases=4 correct=4 base_correct=3 verdict=TARGET_MET rev=8e78a4ee\u2026', matches measurement-r71.txt\",\n    \"fixture_modes\": \"all four lane sha256s match frozen receipt; mutated-lane runs: liar-success rc=0 stdout 1/2 -> credit; stderr-genuine rc=1 stderr 1/2 -> credit; liar-kill rc=1 stdout 2/2 -> refuse; crash-stderr rc=2 no summary -> refuse; combined reader is the only 4/4 reader (stdout-only misses stderr-genuine)\",\n    \"base_leg\": \"base_mz=fail for liar-success ONLY; other three pass \u2014 do-nothing control confirmed\",\n    \"function_diff\": \"last_summary/summary_fraction/count_fails/summary_shows_failure/outcome_exit/outcome_verdict byte-identical r70<->r71; sole delta is the conjunct at r70:478 vs r71:486\"\n  },\n  \"findings\": [\n    {\n      \"id\": \"F1\",\n      \"severity\": \"MEDIUM\",\n      \"kind\": \"disclosure\",\n      \"text\": \"Summary-only credit + rc-only selftest leg (outcome_exit, harness:352-354) flips a status-lying instrument with a failing summary from r70 red (TARGET_MISSED rc=1) to r71 green (TARGET_MET rc=0); demonstrated end-to-end on a stale-lane fixture. Same broken-propagation class the claim fixes persists one leg over; harm watch does not name it.\"\n    },\n    {\n      \"id\": \"F2\",\n      \"severity\": \"MEDIUM\",\n      \"kind\": \"disclosure\",\n      \"text\": \"Credit no longer evidences mutation-causality: a lane with canned/stale/echoed failing summary independent of the deleted clause earns the kill (fixture link holds; standing rule does not). Not-claimed 'forged' wording does not literally cover stale/skipped-run.\"\n    },\n    {\n      \"id\": \"F3\",\n      \"severity\": \"LOW\",\n      \"kind\": \"inherited\",\n      \"text\": \"Multi-summary tie-break unspecified by frozen sentence; implementation is last-wins in stdout+stderr order, stderr dominates stdout by position not chronology; both false-credit and lost-kill directions demonstrated; r70-identical, not a regression.\"\n    },\n    {\n      \"id\": \"F4\",\n      \"severity\": \"LOW\",\n      \"kind\": \"docstring\",\n      \"text\": \"harness:327-328 'never on a broken child' contradicted by the credited broken stale child (failed_assertions=0); declaration's frozen sentence makes no such claim, so fidelity holds \u2014 report must not quote it as a property.\"\n    },\n    {\n      \"id\": \"F5\",\n      \"severity\": \"INFO\",\n      \"kind\": \"visibility\",\n      \"text\": \"Counter discards harness process rc (run_harness returns it, measure drops it, real-children:317-318); compliant since declaration keys truth on mz field; child rc stays visible in MADO_R71_MUTANT M-Z evidence line.\"\n    },\n    {\n      \"id\": \"F6\",\n      \"severity\": \"INFO\",\n      \"kind\": \"underdetermination\",\n      \"text\": \"Observed child rc set {0,1,2}; rc-gated credit variants agreeing on it are indistinguishable \u2014 already covered by the counter's own declared limit.\"\n    }\n  ],\n  \"residual_limits_for_round_report\": [\n    \"stale/canned/echoed failing summary earns credit (not literally named by 'forged')\",\n    \"mutation-causality no longer evidenced by credit outside the fixture\",\n    \"verdict red->green flip vs r70 for rc-lying instruments with failing summary\",\n    \"last-wins multi-summary tie-break, stderr-over-stdout by concatenation position\",\n    \"rc-gating variants indistinguishable on rc in {0,1,2}\",\n    \"four modes are not fault coverage; fixture lane is not the real landing instrument (standing)\"\n  ],\n  \"constraints\": {\n    \"writes\": \"only .ufo/waves/round-71/w1/R71RevC1.md; no production path touched; no mutating git/jj anywhere; fixture repos scratch-only with asserted toplevel identity\",\n    \"scratch\": \"/fast/scratch/hyaku/mado-r71/R71RevC1 removed before yield\",\n    \"installs\": \"none; no pacman transaction\"\n  }\n}",
+   "note": null
+  },
+  {
+   "name": "R71RevC2",
+   "agent": "reviewer",
+   "output": "{\n  \"seat\": \"R71RevC2\",\n  \"verdict\": \"C2 predicate UNSOUND as bounded\",\n  \"report\": \".ufo/waves/round-71/w1/R71RevC2.md\",\n  \"reviewed\": {\n    \"scored_rev\": \"8e78a4ee82f6ccdc951faf531438178a9d12245e\",\n    \"base_rev\": \"c354f4d410b829d985b31560af9202d98655dad0\",\n    \"counter_sha256\": \"72a0c2a5a268e70bc2f322be10e26557c2c9a2ae67e3b0d051d26db816c4f1d1\",\n    \"r70_counter_byte_identical_at_base_and_scored\": \"f100008df5bff9055cc601ca85c6b09c6b98a74002430dcee01700af090ee81a\",\n    \"controls_sha256_match\": \"d7814de8815bb0d4146ceed612ddd3e03029763b7cbf769d868a96ce5cefe7df\"\n  },\n  \"findings\": [\n    {\n      \"id\": \"F1\",\n      \"severity\": \"high\",\n      \"shape\": \"(b) splat-through-alias\",\n      \"defect\": \"alias rebinding between alias-binding and splat escapes dominance; splat_aliases (c2-r71-shapes.py:573-583) takes first binding, no rebind check; splat_guard_lines (:638-656) credits unconditionally; r70 says (True,False), r71 (True,True) on runtime-unguarded straight-line source\",\n      \"repro\": \"GUARD={KEY:1}; def run: m=GUARD; m={LABEL:x}; env={**os.environ,**m}; subprocess.run([git...], env=env) -> guard=True vs truth False\"\n    },\n    {\n      \"id\": \"F2\",\n      \"severity\": \"medium\",\n      \"shape\": \"(d) attribute-through-second-object\",\n      \"defect\": \"object-alias edge collected with no order constraint vs the call (attribute_flow c2-r71-shapes.py:694-702); edge after the use bridges an object that is not the handed one; live-launch repro: pre-bound cfg.runner without key, store on runner.env, call env=cfg.runner.env, edge assignment after the call -> r71 (True,True), r70 (True,False)\",\n      \"note\": \"sentence-faithful (sentence constrains store-before-use only) \u2014 gap is in the frozen sentence's dominance clause; edge retarget is defended by count==1 filter\"\n    },\n    {\n      \"id\": \"F3\",\n      \"severity\": \"low\",\n      \"defect\": \"inherited into shape (a): function-scoped global rebind of the module mapping escapes splat_mapping_names bound-once filter (:559-566); verified for r70 {**M} and r71 dict(**M)\",\n      \"note\": \"r70 half is pre-existing scored behavior, doctrine-level (no interprocedural order)\"\n    },\n    {\n      \"id\": \"F4\",\n      \"severity\": \"low\",\n      \"defect\": \"directional resolution: resolve() never applies to store targets (:703-717); cfg.runner.env[KEY]=1 store + plain env=runner.env use not credited; outside the sentence's spelled direction, disclose only\"\n    }\n  ],\n  \"attacks_failed\": [\n    \"value-position mention via alias ({**m} and dict(**m))\",\n    \"nested-key-in-value splat\",\n    \"unrelated second object\",\n    \"module rebind before/after (module-bottom rebind runs at import; conservative reject matches runtime)\",\n    \"dict-splat then env rebind\",\n    \"attribute store after call\",\n    \"edge retarget (count==1 drops edge)\",\n    \"shape (c) rebinding before store (exactly-once bind_counts disqualifies) and between store and call (blockers window)\"\n  ],\n  \"confirmations\": {\n    \"census\": \"population=20 readers=13 guarded=13 unguarded=0 re-derived at scored rev AND tip e137b5a4, rc 0; per-file MADO_R70_READER vs MADO_R71_READER sort-identical over all 20 files (no production reclassification); git diff --name-only 8e78a4ee..e137b5a4 -- quality/ = 0 files\",\n    \"base_leg\": \"base_controls=19/23; correct=no exactly {dict-call-splat, dict-call-splat-object-alias, store-through-alias-two-hop, attribute-second-object}; both negatives correct on base; candidate leg 23/23 zero misses\",\n    \"frozen_integrity\": \"tampered controls refused rc 2 with digest-mismatch message; held r70 controls sha 29947b4c\u2026 carried=yes asserted in-run; selftest 63/63 rc 0; r70 harm at tip: 17/17, 13/17 TARGET_MET rc 0\"\n  },\n  \"residual_limits_to_disclose\": [\n    \"F1/F2 bypasses invisible to the frozen 23-case set (candidate next-set negatives: alias-rebind-before-splat; edge-after-use with pre-bound object)\",\n    \"function-scoped global rebind of module mapping (both splat carriers)\",\n    \"value-agnostic key presence (later keyword/value can neutralize)\",\n    \"method-call mutations (.clear()/.pop()) and non-Assign replacements untracked\",\n    \"cross-method attribute order is source-line order; edge position unordered\",\n    \"alias_store_guard conservative (second binding of handed name disqualifies); deeper chains and non-Name splat operands uncovered\"\n  ],\n  \"commands\": {\n    \"canonical\": \"python3 -I quality/counters/c2-r71-shapes.py --repo . --rev 8e78a4ee\u2026 --base-rev c354f4d4\u2026 --controls .ufo/waves/round-71/controls/c2-controls-r71.json --scratch-root <scratch> (rc 0, TARGET_MET 20/13/13/0 23/23 19/23)\",\n    \"tamper\": \"flipped one expectation -> rc 2 digest refusal\",\n    \"probes\": \"importlib load of committed counter; classify() on 20 adversarial snippets; outputs in scratch (removed)\"\n  },\n  \"scope_discipline\": \"read-only review; no production path written; no git/jj mutation anywhere; no tools installed (pacman pause respected); scratch /fast/scratch/hyaku/mado-r71/R71RevC2 removed (verified absent)\"\n}",
+   "note": null
+  },
+  {
+   "name": "R71CriticClaims",
+   "agent": "critic",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71MutBattery",
+   "agent": "mutation-tester",
+   "output": "",
+   "note": null
+  },
+  {
+   "name": "R71ConnSiblings",
+   "agent": "connector",
+   "output": "",
+   "note": null
+  }
+ ]
+}
