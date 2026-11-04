@@ -153,3 +153,44 @@ re-runs it.
   capture (`outlen=729`, t0 join CLEAN, no t1 field). Their partial evidence is kept, never
   backfilled; the other nine seats returned reports (or, for `R77RevClaims`, a JSON verdict plus
   its report). No seat was replaced.
+
+## Corrections (round 78, append-only, from the round-77 non-author spot-check D1–D13)
+
+- **D1/D2 (the filed r77 report's Sources & frontier).** The report says "393 → 400 rows" and "Rows
+  touched: none". Measured: the registry is **401 rows** at the r77 tip (`grep -cE
+  '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'`), and six rows changed in that round (`S435`, `S441`,
+  `S442`, `S444`, `S448`, `S455`; twelve `used-by` pairs from `a0a8b2a0`, each logged old→new in
+  the `## Registry used-by updates` table above). The r77 lesson's own audit is right; the report's
+  summary lines were stale.
+- **D3 (final instrument revisions).** The SCORECARD's `### Corrections (round 77)` names
+  `de627316` / `2df46e29` / tool sha256 `446d197f…` as final. Measured at the r77 tip:
+  `git log -1 -- tools/mado-barfoot.py` → **`9197405c`** and the tool sha256 is **`e54787b7…`**;
+  `446d197f…` is the tool at `2df46e29` only. The r77 report and the final receipt carry the right
+  values; the SCORECARD sentence is superseded by this note and by the r78 corrections block.
+- **D4 (mistake count).** `LOG.md`'s round-77 entry says "Five mined"; this lesson holds **six**
+  rows (`grep -c '^| M77-'` → 6; M77-6 is the wave-found C2 environment mistake). The r77 report
+  says six and is right.
+- **D6 (M77-2 red half).** The committed `receipts/control-baseline-r77.txt` does not contain the
+  `ERROR (stage=setup …)` section the row cites; only the green half is committed. The red half
+  was a worktree-only run and is not recoverable from the tree; this row's red evidence is
+  therefore restated as **not durable**, and the class fix is the round-78 practice of committing
+  every red run under the wave dir at run time (M78-1/M78-2).
+- **D7 (M77-1/QUALITY 132 red in scratch).** `/fast/scratch/hyaku/mado-r77/census2.txt` was the
+  post-rewrite green census, not the E01 red run; the red state was overwritten in scratch and is
+  not recoverable. The green copy is committed at
+  `.ufo/waves/round-77/receipts/scratch-census2-r77.txt`; the red half is restated as **not
+  durable**, same class fix as D6.
+- **D8 (S460 locator).** The Gate cell and the SOURCES anchor say `set_exclusive_zone :152-190`;
+  the quoted sentence "The exclusive zone includes the margin." is at line **196**, inside
+  `<request name="set_margin"> :193-200`. The quote is verbatim; the locator is corrected here.
+- **D11 (expansion count).** The r77 report's "six mined source rows" undercounts the Gate's seven
+  (`S457`–`S462`, `S464`); seven is the count.
+- **D12 (census classes).** The r77 census output carries both the standing W04 duplicate-URL
+  warnings and one `W01 S277 tierC mined used-by=…` line; "W04 only" is wrong.
+- **D13 (selftest tallies at the last change).** The r77 counters' selftests re-run at the
+  round-78 tip print `MADO_R77_BARFOOT_SELFTEST: 15/15` and `MADO_R77_RUNBOOK_SELFTEST: 9/9`
+  (receipt `.ufo/waves/round-78/receipts/r77-selftests-at-r78-tip.txt`).
+- **D5/D9/D10 (report disclosure, scratch, report rewrite).** D5's missing `R77RevClaims` row and
+  D10's R77 report rewrite are named in the round-78 report's routed-defects section; the r77
+  scratch root is removed (round 78), and the round-78 report is filed once (no rewrite).
+
