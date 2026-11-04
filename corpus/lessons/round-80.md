@@ -168,3 +168,13 @@ shorter chord that still parses, so the grammar cannot see that truncation. Toda
 this host is 29 columns (`omarchy menu keybindings --print | cut -c1-35` → max 29), so no live
 instance exists; a later round that wants the guard needs a `max_chord_len` field and a truncated-line
 negative, which the frozen set cannot carry without a new round.
+
+**L1 repair R2 (C2 grammar).** A live-byte check of the chord column found 41 lines reading
+`SUPER +` (a keycode whose symbol map is empty) in one invocation, none in the next — the
+formatter's keymap resolution is intermittent, and the grammar rejected that shape. Repaired in the
+counter: a line ending ` +` is a chord with an empty key; a *padded* key (`SUPER +  X`), a doubled
+key, a foreign modifier, a numeric mask, a repeated modifier and an arrow still fail, and the
+`chord-key-padded` mutant was re-cut to drop only the strip check. Selftest 80 → 81, no case, sample,
+negative, expectation, mutant or target moved. Named consequence: the row's live answer depends on
+the formatter's `xkbcli compile-keymap` map being populated, which is why the empty-key shape has to
+pass — the old grammar would have failed the row on a host whose keymap cache was cold.

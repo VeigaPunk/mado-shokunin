@@ -178,3 +178,16 @@ unchanged) and the measured `tool_sha256` moves from `c3eb5fbe…` to the value 
 A second, documentation-only repair in the same commit corrects the C1 counter's docstring contract
 line (`cases=30 … base_correct=23/30` → `cases=33 … base_correct=23/33`); no executable constant or
 branch changes.
+
+## Repair R2 (append-only; after R1, L1 check of the C2 row on live bytes)
+
+The `chord_shape` grammar rejected a line the formatter demonstrably produces: when
+`parse_keycodes`' keymap cache has no symbol for a keycode, `parse_bindings` prints the chord as
+`MODS + ` with no key. The L1 observed 41 such lines in one `omarchy menu keybindings --print`
+invocation (the same 193-line reply, `SUPER +` in the chord column) and none in the next, so the
+rendering is intermittent in the formatter's own keymap resolution — a churn class the row must
+tolerate, not a regression. The grammar now treats a line ending ` +` as a chord with an empty key
+(and still refuses a *padded* key, a doubled key, a foreign modifier, a numeric mask, a repeated
+modifier and an arrow in the chord column). No case, sample, negative, expectation, mutant or target
+moves; the counter's selftest gains one assertion (80 → 81) and the re-cut `chord-key-padded` mutant
+drops the strip check only. The frozen `24/24` is re-measured at the repair tip.

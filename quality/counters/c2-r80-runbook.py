@@ -93,8 +93,8 @@ MUTATIONS = [
      '                if any(word not in mods for word in words):\n                    return False',
      '                if False:\n                    return False'),
     ("chord-key-padded",
-     '                if not tail or "+" in tail or tail != tail.strip():\n                    return False',
-     '                if not tail or "+" in tail:\n                    return False'),
+     '                if "+" in tail or tail != tail.strip():\n                    return False',
+     '                if "+" in tail:\n                    return False'),
     ("chord-arrow-blind",
      '            if "→" in line:\n                return False',
      '            if False:\n                return False'),
@@ -294,8 +294,10 @@ def matches(kind, value, rc, stdout):
                 return False
             if "→" in line:
                 return False
-            if " + " in line:
-                head, _, tail = line.rpartition(" + ")
+            probe = line + " " if line.endswith(" +") else line
+            if " + " in probe:
+                head, _, tail = probe.rpartition(" + ")
+                tail = tail.rstrip()
                 words = head.split(" ")
                 if not 1 <= len(words) <= value.get("max_mods", 4):
                     return False
@@ -303,7 +305,7 @@ def matches(kind, value, rc, stdout):
                     return False
                 if len(set(words)) != len(words):
                     return False
-                if not tail or "+" in tail or tail != tail.strip():
+                if "+" in tail or tail != tail.strip():
                     return False
                 chords += 1
             elif "+" in line:
@@ -473,8 +475,10 @@ def selftest():
        "chord shape bare keys")
     ok(not matches("chord_shape", chord, 0, "SUPER + Q\nHYPER + X\nCTRL + D\n"),
        "chord shape refuses a foreign modifier")
-    ok(not matches("chord_shape", chord, 0, "SUPER + Q\nSUPER + \nCTRL + D\n"),
-       "chord shape refuses an empty key")
+    ok(matches("chord_shape", chord, 0, "SUPER + Q\nSUPER +\nCTRL + D\n"),
+       "chord shape accepts an empty key (a keycode with no symbol)")
+    ok(not matches("chord_shape", chord, 0, "SUPER + Q\nSUPER +  X\nCTRL + D\n"),
+       "chord shape refuses a padded key")
     ok(not matches("chord_shape", chord, 0, "SUPER + Q\n64 + RETURN\nCTRL + D\n"),
        "chord shape refuses a numeric mask")
     ok(not matches("chord_shape", chord, 0, "SUPER + Q\nSUPER SUPER + X\nCTRL + D\n"),
