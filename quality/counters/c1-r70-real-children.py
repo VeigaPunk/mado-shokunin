@@ -249,6 +249,7 @@ def extract(repo, sha, path):
 
 
 def run_harness(harness_path, prefix, fx, rev, scratch):
+    os.makedirs(scratch, exist_ok=True)
     argv = [sys.executable or "python3", "-I", harness_path,
             "--repo", fx, "--rev", rev, "--scratch-root", scratch]
     r = subprocess.run(argv, cwd=scratch, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
