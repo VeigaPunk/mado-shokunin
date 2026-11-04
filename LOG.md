@@ -3851,3 +3851,48 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
 - **Wave.** One v1 wave, 12 seats (4 executors, 2 scribes, 1 scout, 1 connector, 1 reviewer,
   1 critic, 1 mutation-tester, 1 revenger; attack share 4/12). Seat outcomes are reported in the
   round report; a dead seat stays dead in the evidence.
+
+## Round 78 — the margined band and a churn-resistant runbook (2026-11-04, hyaku run 15)
+
+- **Claims.** C1 coverage: the margined auto exclusive-zone composition becomes a modelled join —
+  `tools/mado-barfoot.py` (`r78-v1`) forms `expected = extent + margins[opposite edge]` from the two
+  measured contributors (gtk-layer-shell's client auto zone plus Hyprland's anchored-edge margin);
+  the frozen eighteen-case set scores `cases=18 correct=18 mutants=7 killed=7 base_correct=8/18
+  tool_selftest=22/22 TARGET_MET` at `d27c5ff4` (freeze `b8508bd9`, pre-wave amendment `44a36b64`,
+  base `f597eccb`), with the held r77 model at 8/18
+  (`receipts/measurement-c1-r78.txt`, `receipts/control-baseline-c1-r78.txt`). C2 operability: the
+  SKILL.md read-only runbook binds twelve of its seventeen rows by shape and validates the two bar
+  captures as dump rows — `cases=17 executed=17 matched=17 shapes=12/12 anchors=17/17 control=5/17
+  mutants=5 killed=5 TARGET_MET` at the same revision; the held fixed-value rule scores 5/17
+  (`receipts/measurement-c2-r78.txt`).
+- **Host ground (read-only).** The declared zero-margin bar joins CLEAN (DP-1, level 2, box
+  0,0,3440,26, `reserved [0,26,0,0]`); a fixture declaration adding `margin: 4` predicts
+  `box=4,4,3432,26` and band 34 against the live 26 and reports DIFFER, where the r77 tool returned
+  UNMODELLED. Captures `fetch/live-{layers,monitors}-r78.json` (the monitors reply reduced to the
+  fields the join reads), receipt `receipts/live-join-r78.txt`. No config tree, compositor state or
+  service was written.
+- **Sources.** SOURCES stays 401 rows: the seven rows the claims cite (S457–S462, S464) are
+  re-opened with fresh pinned fetches under `.ufo/waves/round-78/fetch/` (six code files
+  byte-identical to the round-77 copies; `waybar(5)` re-rendered), S463 re-confirmed rejected, and
+  their `used-by` cells gain `corpus/knowledge/bar-footprint-margins-r78.md` (eight rows touched
+  old→new, logged in the lesson). Census exit 0 at both ends.
+- **Mistakes.** Eight mined in `corpus/lessons/round-78.md`: M78-1 three impossible margined fixture
+  boxes, M78-2 an unsorted churn sample, M78-3 a monitor serial quoted into a receipt (privacy gate
+  R5), M78-4 the file-wide anchor test the wave connector broke, M78-5 the multi-line ledger row
+  that made the freeze commit ledger-red, M78-6 declaration provenance drift, M78-7 stale
+  present-tense claims in the registry/index/entry, M78-8 the time-bound r77 citation.
+- **Registry and gate bookkeeping.** `quality/tool-ledger.md` 140 → 142 rows (two new counters;
+  the `tools/mado-barfoot.py` row now describes r78-v1 and cites the r78 declaration); `SKILL.md`
+  canonical Gate registry gains `mado-r78-barfoot-margins` and `mado-r78-runbook`, the r77 probe
+  row is corrected to the current tool (22/22, new exit map, both frozen sets), and three
+  read-only probe rows are added (active workspace, object counts, the two captures); index
+  96 → 97 rows; SCORECARD round-78 block with both axis rows and two capability rows.
+- **No-harm.** Gate `bash tools/mado-verify.sh --selftest` 460/460 at unchanged bytes; the frozen
+  r72–r77 instruments, `quality/landing-counters.sh`, `check-tool-ledger.py`, `check-axis-scores.py`
+  and `check-index.py` keep their base blob ids; `check-session-material.py` 291 findings at both
+  base and tip with none on a round-78 path; axis table re-derived at the landing tip; census exit 0.
+  No config tree, compositor, service or sibling repo was written; no pacman transaction; no tool
+  installed or upgraded.
+- **Wave.** One v1 wave, 13 seats (4 executors, 2 scribes, 1 scout, 1 connector, 2 reviewers,
+  1 critic, 1 mutation-tester, 1 sentinel; attack share 5/13). Seat outcomes are reported in the
+  round report; a dead seat stays dead in the evidence.

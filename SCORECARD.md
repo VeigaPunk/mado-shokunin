@@ -4461,3 +4461,69 @@ instrument revisions: C1 counter `de627316`, tool `2df46e29`, tool sha256 `446d1
 receipt is `.ufo/waves/round-77/receipts/measurement-final-r77.txt` and the counts are unchanged
 (`cases=15 correct=15 mutants=5 killed=5 base_correct=8/15 tool_selftest=18/18`). C2's counter last
 changed at `4a17b31f` (session-env discovery), counts unchanged (`12/12`).
+
+## Round 78 — the margined band composition and a churn-resistant runbook (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-78/claims-declaration-r78.md`; freeze `b8508bd9` (tool,
+counters, case sets, declaration); pre-wave amendment `44a36b64` (three fixture boxes and one
+unsorted churn sample, no expectation or target moved); base `f597eccbffefd5fd6bbb01f3511c88bbeaed493c`.
+Frozen control sets: `.ufo/waves/round-78/controls/c1-cases-r78.json` (18 cases, sha256 `99f1d82f…`)
+and `c2-runbook-cases-r78.json` (17 cases, sha256 `f1c75a7d…`). Pre-freeze do-nothing controls:
+the held r77 tool scores `base_correct=8/18` on the C1 set and the held fixed-value runbook rule
+scores `control=5/17` on the C2 set (`receipts/control-baseline-c1-r78.txt`; the C2 control is
+computed over committed fixtures). Measured at `d27c5ff4df9ee7c159bb515987bd4eae160f86e9` (receipts
+`measurement-c{1,2}-r78.txt`), re-run at the landing tip with identical counts. Axis posture at
+round start: every published finite sub-axis at its measured maximum (navigation 96/96, calibration
+resolved-active 86/86, operability selftest 12/12, ledger 140/140; gate `MADO_SELFTEST: 460/460`);
+the dormant freshness value (9.6552, host-absent) stays operator-owned and is excluded from the tie.
+The stagnation nudge does not apply (last capability row entered round 77, window N=3).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** — the margined auto exclusive-zone composition becomes a modelled join | `python3 -I quality/counters/c1-r78-margins.py --repo . --rev REV --base-rev f597eccbffefd5fd6bbb01f3511c88bbeaed493c --controls .ufo/waves/round-78/controls/c1-cases-r78.json --scratch-root DIR` | at the base rev the model does not exist (the r77 tool returns `NOT_MODELLED` for any margin); at `d27c5ff4`: `cases=18 correct=18 mutants=7 killed=7 base_correct=8/18 tool_selftest=22/22 verdict=TARGET_MET` rc 0; the held r77 model scores 8/18 on the same set; bounded `10 × 18/18` → 10.0000 on this finite set | improved on the frozen eighteen-case set |
+| C2 **operability** — the read-only runbook binds its volatile rows by shape and survives committed churn | `python3 -I quality/counters/c2-r78-runbook.py --repo . --rev REV --controls .ufo/waves/round-78/controls/c2-runbook-cases-r78.json --scratch-root DIR` | at the base rev the runbook cannot bind two of the seventeen rows (rc 2); at `d27c5ff4`: `cases=17 executed=17 matched=17 shapes=12/12 anchors=17/17 control=5/17 mutants=5 killed=5 verdict=TARGET_MET` rc 0; the held fixed-value rule scores 5/17 on the same set; bounded `10 × 17/17` → 10.0000 | improved |
+| — | coverage / admitted-note reachability (`quality/check-index.py --repo . --rev REV`) | 96/96 at base → 97/97 at the landing tip (one new entry indexed) | improved (index) |
+| — | operability / hermetic gate (`bash tools/mado-verify.sh --selftest`) | 460/460 both ends; the gate is byte-identical this round | unchanged (harm watch) |
+| — | operability / instrument ledger (`quality/check-tool-ledger.py --repo . --rev REV`) | 140 rows at base → 142 rows at the tip, uncovered 0 (two new instruments) | improved (ledger) |
+| — | calibration / held instruments (`git rev-parse <rev>:<path>`) | identical blob ids at base and tip for `quality/landing-counters.sh`, `check-tool-ledger.py`, `check-axis-scores.py`, `check-index.py`, `c1-r72…r77-*`, `c2-r73…r77-shapes.py`; the r77 tool and the two r77 counters are byte-identical (the r78 tool is a new generation in the same path, described below) | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-78/receipts/measurement-c{1,2}-r78.txt` (per-case, per-mutant and
+contract lines), `control-baseline-c{1,2}-r78.txt`, `live-join-r78.txt` (read-only host captures with
+the monitors reply reduced to the fields the join reads), `census-{start,end}-r78.txt`, `fetch/`
+(seven re-fetched sources plus `sha256-r78.txt`), `controls/` (frozen sets + generators), `w1-spec.json`
+/ `w1-dispatch.json` / `w1-results.json` and `w1/` (seat reports). Wave disclosures are reported per
+seat in the round report; an empty seat output is an evidence gap, never backfilled (QUALITY 115).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Margined auto-zone band composition | Predict a waybar bar's reserved band when margins are non-zero: the client auto zone (allocation plus the unanchored edge's margin) plus the compositor's anchored-edge margin, for all four positions and the three margin forms, with the three round-77 case gaps (right anchor, `layer: bottom`, exclusion-only output) exercised; 18/18 vs the held 8/18, seven mutants killed | `.ufo/waves/round-78/measurement-c1-r78.txt`; `tools/mado-barfoot.py`, `quality/counters/c1-r78-margins.py` | round 78 |
+| Churn-resistant read-only runbook | Execute seventeen `hyprctl`/`omarchy` read rows with twelve shape-bound expectations and committed churn/negative fixtures, so a changed workspace id, pid, refresh rate, bind count or layer set does not break the runbook while a wrong outcome still fails; 17/17 vs the held fixed-value 5/17, five matcher mutants killed | `.ufo/waves/round-78/measurement-c2-r78.txt`; `quality/counters/c2-r78-runbook.py` | round 78 |
+
+### Planned (round 79; intent only)
+
+1. C1's next finite ground: the second exclusive consumer as a composition (a static `addreserved`
+   band or a second exclusive surface with its own level), on its own frozen set.
+2. C2's next finite ground: the four refusal rows as shape cases (a refused `mode`/scale config) and
+   the `omarchy menu keybindings` row, each with its own churn fixtures.
+3. The landed `check-cited-revisions.py` widened to the rows this round moved (a standing probe over
+   SCORECARD's claim citations), with a red/green pair.
+4. `considerthese/2026-10-28.md` proposal 4 (the live-tool table) stays available.
+5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
+
+### Axis table re-derived at the landing tip (`receipts/measurement-final-r78.txt` and `quality/check-axis-scores.py`):
+navigation 97/97; calibration resolved-active 86/86; operability selftest 12/12, ledger 142/142.
+
+### Corrections (round 78, append-only)
+
+The C1 row above measures at `d27c5ff4`, which carries the same tool bytes (`aac5d41b…`) as the
+freeze; the instrument's last change is `b8508bd9` and the counter's is `44a36b64`. The r77 C1 row's
+parenthetical "at `a83e9bee` (its instrument's last change)" is now false in the present tense because
+round 78 changed the same tool path: the r77 measurement stands for the bytes at `a83e9bee`, and the
+row's "last change" phrase is time-bound. The r77 registry row (`SKILL.md`, `mado-r77-barfoot`) was
+corrected in place to the current tool's exit map and selftest (22/22); the r77 knowledge entry
+received an appended erratum; the forecast `NOT_MODELLED` phrase in the r77 index row was corrected.
+The C2 anchor leg was strengthened from a file-wide substring to a table-row command-cell binding
+after the wave's connector showed a deleted row would still pass (selftest 34 → 37 assertions).
