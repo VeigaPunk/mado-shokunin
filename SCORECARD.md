@@ -4323,9 +4323,9 @@ named `outcome_green` rule and the observable mutant class); base
 `.ufo/waves/round-76/control-baseline-r76.txt` (historical, v1/v2 set) with the matched
 re-derivation `.ufo/waves/round-76/control-baseline-r76-matched.txt` (held mz-only rule 16/16 on
 `mz` and kills 0/4; held round-75 classifier 55/59). Labels re-derived from the harness's own evidence lines:
-`receipts/label-derivation-r76.txt`. Measured: C1 at `cb713254…` (its instrument's last change), C2 at `755b339f…` (its instrument's last
-change) and re-measured at `cb713254…` with identical counts (receipts `measurement-c1-r76.txt`,
-`measurement-c2-r76.txt`, `measurement-c2-r76-at-cb713254.txt`). Axis posture at round start: every published finite
+`receipts/label-derivation-r76.txt`. Measured: C1 at `cb713254…` and C2 at `5dade9b3…` (each its instrument's last change), with
+identical C2 counts at `755b339f…`/`cb713254…` (receipts `measurement-c1-r76.txt`,
+`measurement-c2-r76-final.txt`, `measurement-c2-r76.txt`, `measurement-c2-r76-at-cb713254.txt`). Axis posture at round start: every published finite
 sub-axis at its measured maximum under the active rubrics (navigation 93/93, calibration
 resolved-active 86/86, operability selftest 12/12, ledger 133/133; gate `MADO_SELFTEST:
 460/460`); the dormant freshness value (9.6552, host-absent) stays operator-owned and is
@@ -4333,10 +4333,10 @@ excluded from the tie. The stagnation nudge does not apply (last capability row 
 75, window N=3, gap 0). Both claims take new finite denominators and both do-nothing controls
 miss their targets (0/4 and 55/59).
 
-| Claim / axis | Counting command (C1 REV = `cb713254…`, C2 REV = `755b339f…` — each claim is measured at its instrument's last change and re-measured at `cb713254…`) | Before → after | Verdict |
+| Claim / axis | Counting command (C1 REV = `cb713254…`, C2 REV = `5dade9b3…` — each claim is measured at its instrument's last change; intermediate C2 receipts at `755b339f…`/`cb713254…` and the C1 receipt at `cb713254…` show identical counts) | Before → after | Verdict |
 |---|---|---|---|
 | C1 **calibration** — the counter certifies the harness's contract outcome field, not only its kill decision | `python3 -I quality/counters/c1-r76-outcome-field.py --repo . --rev REV --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls .ufo/waves/round-76/controls/c1-outcome-cases-r76.json --scratch-root DIR` | at the base rev the successor is absent; the held mz-only scoring rule cannot read `verdict=` at all and kills 0/4 of the four outcome-rule mutants (`control-baseline-r76.txt`); at `cb713254`: `cases=16 correct=16 mutants=4 killed=4 base_killed=0 verdict=TARGET_MET` rc 0; mutant scores 15/16, 15/16, 15/16, 14/16; bounded `10 × 4/4` → 10.0000 | improved on the frozen sixteen-case set |
-| C2 **operability** — the census counts an interprocedural cancellation and a dynamic-key `del` | `python3 -I quality/counters/c2-r76-shapes.py --repo . --rev REV --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls .ufo/waves/round-76/controls/c2-cases-r76.json --scratch-root DIR` | the held round-75 classifier scores the fifty-nine frozen cases `55/59` (missing exactly `callee-del-literal`, `callee-del-store`, `dynamic-key-del`, `dynamic-key-module-const`; `control-baseline-r76.txt`); at `755b339f` (its instrument's last change): `population=20 readers=13 guarded=13 unguarded=0 controls=59/59 base_controls=55/59 verdict=TARGET_MET` rc 0, and at `cb713254` identical (`measurement-c2-r76-at-cb713254.txt`); bounded `10 × 59/59` → 10.0000 | improved on the frozen fifty-nine-case set |
+| C2 **operability** — the census counts an interprocedural cancellation and a dynamic-key `del` | `python3 -I quality/counters/c2-r76-shapes.py --repo . --rev REV --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls .ufo/waves/round-76/controls/c2-cases-r76.json --scratch-root DIR` | the held round-75 classifier scores the fifty-nine frozen cases `55/59` (missing exactly `callee-del-literal`, `callee-del-store`, `dynamic-key-del`, `dynamic-key-module-const`; `control-baseline-r76.txt`); at `5dade9b3` (its instrument's last change, the D3 parameter-binding repair): `population=20 readers=13 guarded=13 unguarded=0 controls=59/59 base_controls=55/59 verdict=TARGET_MET` rc 0, with identical counts at `755b339f` and `cb713254`; bounded `10 × 59/59` → 10.0000 | improved on the frozen fifty-nine-case set |
 | — | coverage / admitted-note reachability (unchanged rubric) | `quality/check-index.py --repo . --rev REV` | 95/95 at the landing tip (93/93 at base) | unchanged (harm watch; two entries indexed) |
 | — | operability / hermetic gate | `bash tools/mado-verify.sh --selftest` | 460/460 both ends; the gate is byte-identical this round | unchanged (harm watch) |
 | — | operability / instrument ledger | `quality/check-tool-ledger.py --repo . --rev REV` | 136 rows, 136 ledger_rows, 0 uncovered at the landing tip (133/133 at base) | improved (three new instruments registered) |
@@ -4369,3 +4369,19 @@ evidence gap, never backfilled (QUALITY 115).
    stay available for a later round; proposal 5 landed as QUALITY 131 this round.
 5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
    session-material history question) stay operator-owned.
+
+### Review-driven repair (round 76, append-only)
+
+The w1 wave's C2 reviewer and mutation-tester found one behavioural defect in the new D3 rule:
+`cancelling_functions` accepted a delete from *any* parameter while `call_cancellations`
+cancelled the caller's first argument, so a callee deleting from its second parameter would
+cancel the caller's first mapping. Repaired at `5dade9b3` without touching the predicate, the
+control set, the labels or the target: the function table now maps each callee to the parameter
+it deletes, and the call site cancels only the argument bound to that parameter (positionally or
+by keyword). Red-before/green-after: the two-parameter probe flips `False → True` at
+`.ufo/waves/round-76/receipts/repair-r76-c2-d3.txt`; the frozen 59 cases score 59/59 before and
+after (the set has no separator for that broadening — carried as a named gap, with the
+mutation-tester's `grammar16` and `d3-anyarg` survivors).
+
+### Axis table re-derived at the landing tip (`receipts/harm-watch-r76.txt` and `quality/check-axis-scores.py`):
+navigation 95/95; calibration resolved-active 86/86; operability selftest 12/12, ledger 136/136.

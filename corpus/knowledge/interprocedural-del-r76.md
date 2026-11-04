@@ -1,11 +1,11 @@
 # Interprocedural and dynamic-key deletions in the guard census (round 76)
 
 Lane: mado-shokunin. Round 76, claim C2 (operability). Measured instrument:
-`quality/counters/c2-r76-shapes.py`; measured at `755b339f1f6ec18f45b494d40515aecdbe9ceb73` (this instrument's last change), re-measured at
-`cb713254ee9926e036e594312fdc61b57825526b` with identical counts; base
-`c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf`.
-Receipts: `.ufo/waves/round-76/measurement-c2-r76.txt` (re-executed),
-`.ufo/waves/round-76/control-baseline-r76.txt` (pre-freeze control).
+`quality/counters/c2-r76-shapes.py`; measured at `5dade9b3043ca1aab16523ffeb4a177ae9cd9f89` (this instrument's last change, the D3
+parameter-binding repair), with earlier receipts at `755b339f…` and `cb713254…` showing identical
+counts; base `c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf`.
+Receipts: `.ufo/waves/round-76/measurement-c2-r76-final.txt` (re-executed at the repair commit),
+`.ufo/waves/round-76/control-baseline-r76-matched.txt` (matched pre-freeze control).
 
 ## 1. What the census answers
 
@@ -73,8 +73,9 @@ cancel a single real guard.
 
 - Line order is not execution order; the same cross-method approximation the attribute flow
   already declares.
-- The callee is matched by simple call shape (a positional first argument). A function alias,
-  a method call, a `functools.partial`, or a chain of calls is not followed.
+- The callee is matched by name to a local function and the cancellation follows the argument
+  bound to the *deleted parameter* (by position or keyword), never a fixed position; a function
+  alias, a method call, a `functools.partial`, or a chain of calls is not followed.
 - The callee's delete key is a literal or a module constant, not a dynamic key.
 - D3 is modelled in the env-named/subscript carrier flows. The attribute flow
   (`self.env[...]`) and the `os.environ` transport flow keep their own, narrower cancellation
