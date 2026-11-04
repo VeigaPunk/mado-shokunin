@@ -89,7 +89,7 @@ import re
 import stat
 import sys
 
-VERSION = "r83-v1"
+VERSION = "r84-v1"
 
 MAX_BYTES = 1048576
 
@@ -216,13 +216,13 @@ def strip_jsonc(text):
     return re.sub(r",(\s*[}\]])", r"\1", cleaned)
 
 
-def load_json(raw, label):
+def load_json(raw, label, pairs_hook=None):
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
         raise Setup("%s is not UTF-8" % label)
     try:
-        return json.loads(text)
+        return json.loads(text, object_pairs_hook=pairs_hook)
     except json.JSONDecodeError as exc:
         raise Setup("%s is not valid JSON: %s" % (label, exc))
 
@@ -436,12 +436,22 @@ def parse_static_reserve(text, monitor):
     return dict(slot) if slot is not None else dict(ZERO_STATIC)
 
 
+def allocation_pairs(pairs):
+    """Allocation keys identify declared surfaces; silently keeping the last is ambiguous."""
+    out = {}
+    for key, value in pairs:
+        if key in out:
+            raise Setup("the allocation declaration repeats namespace %r" % key)
+        out[key] = value
+    return out
+
+
 def parse_allocation(raw):
     """The `--allocation` declaration: {namespace: band} — the band size the client's own
     surface was allocated on its band axis. It is the only input that can turn a declared
     dynamic band (`height = 0` on a horizontal surface, `width = 0` on a vertical one) into
     a modelled value; nothing is inferred when it is absent."""
-    data = load_json(raw, "allocation")
+    data = load_json(raw, "allocation", pairs_hook=allocation_pairs)
     if not isinstance(data, dict):
         raise Setup("the allocation declaration is not an object of namespace -> band")
     out = {}
@@ -769,6 +779,9 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
                          % (monitor, scale, transform))
     bar = declared_bar(config)
     allocation = dict(allocation or {})
+    names = [bar["namespace"]] + [s["namespace"] for s in extras]
+    if len(names) != len(set(names)):
+        raise Setup("the joined declaration repeats a namespace; one name must identify one surface")
     # every declared surface's band is resolved from this map (round 83): an entry naming a
     # namespace no declared surface carries is refused here, never silently unused
     resolved = {bar["namespace"]} | {s["namespace"] for s in extras}
@@ -1554,6 +1567,19 @@ def selftest():
             ok(False, "allocation refuses %s" % label)
         except Setup:
             ok(True, "allocation refuses %s" % label)
+    try:
+        parse_allocation(b'{"panel": 24, "panel": 40}')
+        ok(False, "allocation refuses repeated namespace keys")
+    except Setup:
+        ok(True, "allocation refuses repeated namespace keys")
+    for names in (("panel", "panel"), ("waybar",)):
+        try:
+            comp(top, {2: [waybar], 3: []}, [0, 26, 0, 0],
+                 [{"namespace": name, "level": 3, "height": 24, "exclusive": 24}
+                  for name in names])
+            ok(False, "joined declaration refuses repeated namespaces")
+        except Setup:
+            ok(True, "joined declaration refuses repeated namespaces")
 
     print("MADO_BARFOOT_SELFTEST: %d/%d" % (checks, total))
     return 0 if checks == total else 1

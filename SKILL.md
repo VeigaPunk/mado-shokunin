@@ -228,13 +228,13 @@ mado runs only the read leg (`configerrors`).
 | `hyprctl workspaces -j` / `hyprctl clients -j` | runtime object counts | positive / non-negative integers (round 78; counts change with every window) |
 | `hyprctl layers -j` / `hyprctl monitors -j` as JSON captures | the two captures the bar-footprint join consumes | shape-checked dumps: layers keyed by monitor with levels `0`–`3`, monitors with name, size, `reserved` (four non-negative integers) and scale (round 78) |
 
-### Executable runbook rows (round 83)
+### Executable runbook rows (round 84)
 
-One row per frozen runbook case (`quality/counters/c2-r83-runbook.py`): the command cell is
+One row per frozen runbook case (`quality/counters/c2-r84-runbook.py`): the command cell is
 the exact command the case executes from the lane root, all read-only; the outcome cell is
 the shape its exit status and output must meet; the third cell counts the committed churn
-and negative samples in `.ufo/waves/round-83/controls/c2-runbook-cases-r83.json`. Every row
-was executed on 2026-11-04 (receipt `.ufo/waves/round-83/receipts/measurement-c2-r83.txt`);
+and negative samples in `.ufo/waves/round-84/controls/c2-runbook-cases-r84.json`. Every row
+is re-executed for the round-84 measurement; a receipt, not this caption, establishes success.
 a table nobody runs is not a probe. The four `refuse-*` rows execute the lane's own
 read-only join against committed fixtures and bind the refusal stage, not its message; the
 last nine rows are the matcher classes (rounds 80–83): a chord grammar over the
@@ -245,40 +245,44 @@ tray's state pair (the registered item count and the host-registered boolean), e
 a shape rather than a frozen value. The two round-83 rows bind S482's property block
 (`RegisteredStatusNotifierItems` is `as`, `IsStatusNotifierHostRegistered` is `b`) to S484's
 terse `as N …` / `b true` output shapes.
+Round 84 supersedes fifteen pipeline commands with explicit `set -o pipefail;` guards.
+Two contained fixture rows demonstrate masking versus propagation; no host producer is made to fail.
 
 | Command | Bound outcome | Churn / negative samples |
 |---|---|---|
-| `hyprctl version \| head -n 1` | `^Hyprland [0-9]+\.[0-9]+\.[0-9]+ ` | 1 / 2 |
+| `set -o pipefail; hyprctl version \| head -n 1` | `^Hyprland [0-9]+\.[0-9]+\.[0-9]+ ` | 1 / 2 |
 | `hyprctl configerrors` | empty | 0 / 2 |
-| `hyprctl monitors -j \| jq -r '.[0] \| "\(.name) \(.width)x\(.height)@\(.refreshRate)"'` | `^\S+ [1-9][0-9]*x[1-9][0-9]*@[0-9]+(\.[0-9]+)?$` | 2 / 2 |
-| `hyprctl monitors -j \| jq -c '.[0].reserved'` | JSON list of four non-negative integers | 2 / 2 |
-| `hyprctl getoption general:gaps_out \| head -n 1` | `custom type: 0 0 0 0` | 0 / 1 |
-| `hyprctl getoption input:kb_layout \| head -n 1` | `str: br` | 0 / 1 |
-| `hyprctl binds -j \| jq 'length'` | bare integer in 1..100000 | 2 / 3 |
-| `hyprctl layers -j \| jq -r '[to_entries[] \| .value.levels \| to_entries[] \| select(.value\|length>0) \| .value[].namespace] \| sort \| join(",")'` | sorted comma list, `waybar` included | 2 / 3 |
-| `pgrep -x waybar \| head -n 1` | bare integer in 1..4194304 | 2 / 2 |
+| `set -o pipefail; hyprctl monitors -j \| jq -r '.[0] \| "\(.name) \(.width)x\(.height)@\(.refreshRate)"'` | `^\S+ [1-9][0-9]*x[1-9][0-9]*@[0-9]+(\.[0-9]+)?$` | 2 / 2 |
+| `set -o pipefail; hyprctl monitors -j \| jq -c '.[0].reserved'` | JSON list of four non-negative integers | 2 / 2 |
+| `set -o pipefail; hyprctl getoption general:gaps_out \| head -n 1` | `custom type: 0 0 0 0` | 0 / 1 |
+| `set -o pipefail; hyprctl getoption input:kb_layout \| head -n 1` | `str: br` | 0 / 1 |
+| `set -o pipefail; hyprctl binds -j \| jq 'length'` | bare integer in 1..100000 | 2 / 3 |
+| `set -o pipefail; hyprctl layers -j \| jq -r '[to_entries[] \| .value.levels \| to_entries[] \| select(.value\|length>0) \| .value[].namespace] \| sort \| join(",")'` | sorted comma list, `waybar` included | 2 / 3 |
+| `set -o pipefail; pgrep -x waybar \| head -n 1` | bare integer in 1..4194304 | 2 / 2 |
 | `makoctl mode` | `default` | 0 / 1 |
 | `omarchy theme current` | `Matte Black` | 0 / 1 |
 | `omarchy version` | `^[0-9]+\.[0-9]+\.[0-9]+$` | 2 / 3 |
-| `hyprctl activeworkspace -j \| jq -c '{id,name}'` | json object fields (id:int, name:str) | 2 / 3 |
+| `set -o pipefail; hyprctl activeworkspace -j \| jq -c '{id,name}'` | json object fields (id:int, name:str) | 2 / 3 |
 | `hyprctl layers -j` | layers object, every monitor exactly levels 0–3 | 1 / 2 |
 | `hyprctl monitors -j` | array fields (height:positive_int, name:str, reserved:int4, scale:number, width:positive_int) | 1 / 2 |
-| `hyprctl clients -j \| jq 'length'` | bare integer in 0..100000 | 2 / 2 |
-| `hyprctl workspaces -j \| jq 'length'` | bare integer in 1..1000 | 2 / 2 |
+| `set -o pipefail; hyprctl clients -j \| jq 'length'` | bare integer in 0..100000 | 2 / 2 |
+| `set -o pipefail; hyprctl workspaces -j \| jq 'length'` | bare integer in 1..1000 | 2 / 2 |
 | `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-mode/config.json --layers .ufo/waves/round-79/fixtures/refuse-mode/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-mode/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
 | `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-scale/config.json --layers .ufo/waves/round-79/fixtures/refuse-scale/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-scale/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
 | `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-layer-background/config.json --layers .ufo/waves/round-79/fixtures/refuse-layer-background/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-layer-background/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
 | `python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-output-space/config.json --layers .ufo/waves/round-79/fixtures/refuse-output-space/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-output-space/monitors.json` | rc 3, `MADO_BARFOOT: ERROR (stage=model …)` | 1 / 3 |
 | `omarchy menu keybindings --print` | rc 0, ≥100 lines, every line `^\s*\S.*\s*→\s*\S.*$` | 2 / 5 |
-| `omarchy menu keybindings --print \| cut -c1-35` | chord column: ≥100 chords, each `MODS + KEY` (1–4 distinct words from SUPER/SHIFT/CTRL/ALT) or a bare key, no arrow | 2 / 8 |
+| `set -o pipefail; omarchy menu keybindings --print \| cut -c1-35` | chord column: ≥100 chords, each `MODS + KEY` (1–4 distinct words from SUPER/SHIFT/CTRL/ALT) or a bare key, no arrow | 2 / 8 |
 | `systemctl --user is-active hypridle` | one state word from the systemd enum, exit status agreeing with it (`active` ⇔ rc 0) | 3 / 4 |
-| `omarchy menu keybindings --print \| cut -c36-` | action column: ≥100 lines, each ` → ` then a non-empty trimmed action with no second `→` (the `%-35s` padding fixes the separator's column; the payload escapes markup only on some lines, so no entity rule is bound) | 3 / 6 |
+| `set -o pipefail; omarchy menu keybindings --print \| cut -c36-` | action column: ≥100 lines, each ` → ` then a non-empty trimmed action with no second `→` (the `%-35s` padding fixes the separator's column; the payload escapes markup only on some lines, so no entity rule is bound) | 3 / 6 |
 | `pgrep -x waybar` | one or more decimal PIDs in 1..4194304 with rc 0 while the bar runs, empty stdout with rc 1 while it does not — the state is read from the pair, never frozen | 3 / 6 |
 | `busctl --user list` | the watcher's bus name owned by a live PID: an `org.kde.StatusNotifierWatcher` line whose PID column is a non-zero decimal (the matcher binds a positive decimal; the process-table ceiling is the live read's own bound), rc 0 | 2 / 4 |
 | `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager` | one `org.kde.StatusNotifierWatcher interface` line in the census, rc 0 | 2 / 3 |
-| `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager \| awk '$2=="method"'` | every line `.Name method …`, at least 2 lines, rc 0 | 2 / 3 |
-| `busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems \| awk '{print NF-2}'` | bare integer in 0..10000 — the registered item count (the array's entry count) | 2 / 4 |
+| `set -o pipefail; busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager \| awk '$2=="method"'` | every line `.Name method …`, at least 2 lines, rc 0 | 2 / 3 |
+| `set -o pipefail; busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems \| awk '{print NF-2}'` | bare integer in 0..10000 — the registered item count (the array's entry count) | 2 / 4 |
 | `busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered` | `b true` or `b false` — a boolean literal, rc 0 | 2 / 5 |
+| `sh .ufo/waves/round-84/fixtures/pipefail-guard.sh` | `MADO_PIPEFAIL: unguarded=0 guarded=7` (contained producer only) | 1 / 1 |
+| `set -o pipefail; sh .ufo/waves/round-84/fixtures/failing-producer.sh \| cat` | rc 7 with `b true`; rc 0 carrying the same text is not failure propagation | 1 / 2 |
 
 ### Advertised Wayland globals
 
