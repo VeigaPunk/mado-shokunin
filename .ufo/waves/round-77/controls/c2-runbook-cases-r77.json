@@ -1,0 +1,101 @@
+{
+ "version": "r77-v1",
+ "description": "SKILL.md read-only probe table, re-executed end-to-end. Each case binds a table row (skill_anchor) to the command it documents; expectations are the outcome the table states, measured 2026-11-04 on this host. Volatile values are shape-checked only and say so in note.",
+ "cases": [
+  {
+   "name": "version",
+   "skill_anchor": "`hyprctl version`",
+   "argv": ["/bin/sh", "-c", "hyprctl version | head -n 1"],
+   "kind": "contains",
+   "value": "Hyprland 0.56.2",
+   "note": "table: version pins"
+  },
+  {
+   "name": "configerrors",
+   "skill_anchor": "`hyprctl configerrors`",
+   "argv": ["/bin/sh", "-c", "hyprctl configerrors"],
+   "kind": "empty",
+   "note": "table: empty = clean"
+  },
+  {
+   "name": "monitors-size",
+   "skill_anchor": "`hyprctl monitors`",
+   "argv": ["/bin/sh", "-c", "hyprctl monitors -j | jq -r '.[0] | \"\\(.name) \\(.width)x\\(.height)@\\(.refreshRate)\"'"],
+   "kind": "exact",
+   "value": "DP-1 3440x1440@99.99700",
+   "note": "table: DP-1 3440x1440@99.997"
+  },
+  {
+   "name": "monitors-reserved",
+   "skill_anchor": "`hyprctl monitors`",
+   "argv": ["/bin/sh", "-c", "hyprctl monitors -j | jq -c '.[0].reserved'"],
+   "kind": "exact",
+   "value": "[0,26,0,0]",
+   "note": "the bar-footprint chain's reserved band; not in the table as a sample, same row"
+  },
+  {
+   "name": "gaps-out",
+   "skill_anchor": "`hyprctl getoption <key>`",
+   "argv": ["/bin/sh", "-c", "hyprctl getoption general:gaps_out | head -n 1"],
+   "kind": "exact",
+   "value": "custom type: 0 0 0 0",
+   "note": "table: gaps_out custom type 0 0 0 0"
+  },
+  {
+   "name": "kb-layout",
+   "skill_anchor": "`hyprctl getoption <key>`",
+   "argv": ["/bin/sh", "-c", "hyprctl getoption input:kb_layout | head -n 1"],
+   "kind": "exact",
+   "value": "str: br",
+   "note": "table: input:kb_layout str: br"
+  },
+  {
+   "name": "binds-count",
+   "skill_anchor": "`hyprctl binds -j`",
+   "argv": ["/bin/sh", "-c", "hyprctl binds -j | jq 'length'"],
+   "kind": "exact",
+   "value": "192",
+   "note": "table: 192 (matches file arithmetic)"
+  },
+  {
+   "name": "layers-namespaces",
+   "skill_anchor": "`hyprctl layers -j`",
+   "argv": ["/bin/sh", "-c", "hyprctl layers -j | jq -r '[to_entries[] | .value.levels | to_entries[] | select(.value|length>0) | .value[].namespace] | sort | join(\",\")'"],
+   "kind": "exact",
+   "value": "wallpaper,waybar",
+   "note": "table: level 0 wallpaper, level 2 waybar"
+  },
+  {
+   "name": "waybar-process",
+   "skill_anchor": "`pgrep -a`",
+   "argv": ["/bin/sh", "-c", "pgrep -x waybar | head -n 1"],
+   "kind": "regex",
+   "value": "^[0-9]+$",
+   "note": "table: waybar runs; the pid is volatile, shape only"
+  },
+  {
+   "name": "mako-mode",
+   "skill_anchor": "`makoctl mode`",
+   "argv": ["/bin/sh", "-c", "makoctl mode"],
+   "kind": "exact",
+   "value": "default",
+   "note": "table: DND state default"
+  },
+  {
+   "name": "omarchy-theme",
+   "skill_anchor": "`omarchy theme current`",
+   "argv": ["/bin/sh", "-c", "omarchy theme current"],
+   "kind": "exact",
+   "value": "Matte Black",
+   "note": "table: Matte Black"
+  },
+  {
+   "name": "omarchy-version",
+   "skill_anchor": "`omarchy theme current`",
+   "argv": ["/bin/sh", "-c", "omarchy version"],
+   "kind": "exact",
+   "value": "3.8.3",
+   "note": "table row: omarchy theme current / omarchy version -> 3.8.3"
+  }
+ ]
+}
