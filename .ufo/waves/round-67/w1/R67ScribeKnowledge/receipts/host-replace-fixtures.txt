@@ -1,0 +1,168 @@
+# host replacement-ref receipt, round 67 scribe (R67ScribeKnowledge)
+# local date 2026-11-03 (UTC at run time: 2026-11-04T00:36:20Z)
+# lane: /home/vgpnk/Projects/shokunin/mado-shokunin . Fixtures under /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge, deleted with the seat scratch.
+# git: git version 2.56.0 at /usr/bin/git
+# doc pin: https://raw.githubusercontent.com/git/git/v2.56.0/Documentation/git-replace.adoc
+# fetch: curl -fsSL -o git-replace.adoc <that URL>; sha256sum -> 3f61be3f0ea0426cf1e075929819b9a6bce240c6955cfd25d99fb2c974640631 (5398 bytes)
+
+## A. blob-level replacement (the C2/R and r55 shape)
+orig_blob=4b085e39db3d2c61b607f5533031cb122d63393b forged_blob=59ff15d5a0f32e6a4954335eb687c9a8c731b28e tree=8b1558a10ecc88a77735311fd0a45130ff7a965a
+replace_ref: refs/replace/4b085e39db3d2c61b607f5533031cb122d63393b 59ff15d5a0f32e6a4954335eb687c9a8c731b28e
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs cat-file -p 4b085e39db3d2c61b607f5533031cb122d63393b
+forged bytes
+[rc=0]
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs show HEAD:f.txt
+forged bytes
+[rc=0]
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs ls-tree HEAD
+100644 blob 4b085e39db3d2c61b607f5533031cb122d63393b	f.txt
+[rc=0]
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs rev-parse HEAD:f.txt
+4b085e39db3d2c61b607f5533031cb122d63393b
+[rc=0]
+$ GIT_NO_REPLACE_OBJECTS=1 git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs cat-file -p 4b085e39db3d2c61b607f5533031cb122d63393b
+original bytes
+[rc=0]
+$ git --no-replace-objects -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs show HEAD:f.txt
+original bytes
+[rc=0]
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs --no-replace-objects show HEAD:f.txt
+original bytes
+[rc=0]
+
+env value forms (same fixture, cat-file -p of the original blob):
+  GIT_NO_REPLACE_OBJECTS=UNSET  -> forged bytes
+  GIT_NO_REPLACE_OBJECTS=1      -> original bytes
+  GIT_NO_REPLACE_OBJECTS=0      -> original bytes
+  GIT_NO_REPLACE_OBJECTS=<empty> -> original bytes
+  GIT_NO_REPLACE_OBJECTS=true   -> original bytes
+  GIT_NO_REPLACE_OBJECTS=false  -> original bytes
+
+config plane (env unset unless shown):
+  -c core.useReplaceRefs=false -> original bytes 
+  -c core.useReplaceRefs=true  -> forged bytes 
+  env=0 + core.useReplaceRefs=true -> original bytes 
+  env=1 + core.useReplaceRefs=true -> original bytes 
+
+enumeration under the guard (the guard ignores, it does not hide):
+$ GIT_NO_REPLACE_OBJECTS=1 git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs for-each-ref refs/replace --format=%(refname) %(objectname)
+refs/replace/4b085e39db3d2c61b607f5533031cb122d63393b 59ff15d5a0f32e6a4954335eb687c9a8c731b28e
+[rc=0]
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs replace -l
+4b085e39db3d2c61b607f5533031cb122d63393b
+[rc=0]
+
+## B. tree-level replacement (mktree with a different blob)
+orig_tree=c3002f5562dfc3944b3d25b1779ff0ac702e300c forged_tree=bf1c406cbe5dccf6d237f7eee2c451ea927f4957 orig_a=17e3475343c4c9b504473a7f0dc1d124cde7fa2a forged_a=114ecba9c2292d2daae26e3d69e37fe469a1ed47
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureB.LW9w ls-tree -r HEAD
+100644 blob 114ecba9c2292d2daae26e3d69e37fe469a1ed47	a.txt
+100644 blob 2fa992c0b8b5c6acd2bdd4fa31de29d29799bdd5	k.txt
+[rc=0]
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureB.LW9w rev-parse HEAD:a.txt
+114ecba9c2292d2daae26e3d69e37fe469a1ed47
+[rc=0]
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureB.LW9w show HEAD:a.txt
+forged
+[rc=0]
+$ GIT_NO_REPLACE_OBJECTS=1 git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureB.LW9w ls-tree -r HEAD
+100644 blob 17e3475343c4c9b504473a7f0dc1d124cde7fa2a	a.txt
+100644 blob 2fa992c0b8b5c6acd2bdd4fa31de29d29799bdd5	k.txt
+[rc=0]
+$ GIT_NO_REPLACE_OBJECTS=1 git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureB.LW9w rev-parse HEAD:a.txt
+17e3475343c4c9b504473a7f0dc1d124cde7fa2a
+[rc=0]
+
+## C. commit-level replacement (commit-tree over a different tree)
+orig_commit=0eed0c5ccd5aba116f7ed9c7809c7a291c398191 forged_commit=4db21c507dc5140e87fbc335a8414294e67e0db3 orig_tree=91ebfad1b126a9d763592729b1fc0ea441dc95bc forged_tree=9540a6541818df23782c2aad929dd19ce02c84d2
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureC.eE16 ls-tree -r HEAD
+100644 blob 114ecba9c2292d2daae26e3d69e37fe469a1ed47	a.txt
+100644 blob bfd7e8caa9fe3c1c4aab4fe704fd03497a6a944b	sub/b.txt
+[rc=0]
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureC.eE16 rev-parse HEAD^{tree}
+9540a6541818df23782c2aad929dd19ce02c84d2
+[rc=0]
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureC.eE16 show HEAD:a.txt
+forged
+[rc=0]
+$ GIT_NO_REPLACE_OBJECTS=1 git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureC.eE16 ls-tree -r HEAD
+100644 blob 17e3475343c4c9b504473a7f0dc1d124cde7fa2a	a.txt
+100644 blob bfd7e8caa9fe3c1c4aab4fe704fd03497a6a944b	sub/b.txt
+[rc=0]
+$ GIT_NO_REPLACE_OBJECTS=1 git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureC.eE16 rev-parse HEAD^{tree}
+91ebfad1b126a9d763592729b1fc0ea441dc95bc
+[rc=0]
+
+## D. name spelling survives (rev-parse of the ref-resolved commit oid)
+$ git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs rev-parse HEAD
+78ae5f1eb330f1fe69a21e46c5c6f74c217825c3
+[rc=0]
+$ GIT_NO_REPLACE_OBJECTS=1 git -C /fast/scratch/hyaku/mado-r67/R67ScribeKnowledge/fixtureA.xtOs rev-parse HEAD
+78ae5f1eb330f1fe69a21e46c5c6f74c217825c3
+[rc=0]
+
+## E. lane census at the freeze revision 061dc329 (read-only git grep over the lane)
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin grep -l -E '(^|[^A-Za-z0-9_-])git([^A-Za-z0-9_-]|$)' 061dc329 -- quality tools | wc -l
+82
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin grep -l -E '(^|[^A-Za-z0-9_-])(show|cat-file)([^A-Za-z0-9_-]|$)' 061dc329 -- quality tools | wc -l
+79
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin grep -l GIT_NO_REPLACE_OBJECTS 061dc329 -- quality tools
+061dc329:quality/counters/c1-r56-autoreload-entry.py
+061dc329:quality/counters/c1-r66-register.py
+061dc329:quality/landing-counters.sh
+
+## F. standing instrument's legs: read shape and guard at 061dc329
+--- quality/landing-counters.sh:6-8,24-28
+6: for git_var in "${!GIT_@}"; do unset "$git_var"; done
+7: # Status must not refresh the lane index; object reads must ignore local replacements.
+8: export GIT_OPTIONAL_LOCKS=0 GIT_NO_REPLACE_OBJECTS=1
+24: rev = os.environ['REV']
+25: def git(*args):
+26:     return subprocess.check_output(['git', *args], text=True)
+27: notes = {p for p in git('ls-tree', '--name-only', rev + ':corpus/knowledge').splitlines() if p.endswith('.md')}
+28: rows = re.findall(r'^\| `knowledge/([^`]+\.md)`', git('show', rev + ':corpus/README.md'), re.M)
+--- quality/counters/c3-r56-used-by.py:59-69,100,121
+59: def git_env(work):
+60:     return {
+61:         "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+62:         "HOME": work,
+63:         "TMPDIR": work,
+64:         "LC_ALL": "C",
+65:         "GIT_CONFIG_NOSYSTEM": "1",
+66:         "GIT_CONFIG_GLOBAL": "/dev/null",
+67:         "GIT_LITERAL_PATHSPECS": "1",
+68:         "GIT_OPTIONAL_LOCKS": "0",
+69:         "GIT_TERMINAL_PROMPT": "0",
+100:         r = self.git(["ls-tree", "-z", self.sha, "--", path])
+121:             r = self.git(["cat-file", "blob", oid.decode("ascii")])
+--- quality/check-tool-ledger.py:79,101-110,145,162
+79: GIT_ENV_KEYS = ("PATH", "SYSTEMROOT")
+101: def git_env(home=None):
+102:     env = {k: os.environ[k] for k in GIT_ENV_KEYS if k in os.environ}
+103:     env.setdefault("PATH", "/usr/bin:/bin")
+104:     env["HOME"] = home or os.environ.get("HOME") or "/nonexistent"
+105:     env["GIT_CONFIG_NOSYSTEM"] = "1"
+106:     env["GIT_CONFIG_GLOBAL"] = os.devnull
+107:     env["GIT_CONFIG_SYSTEM"] = os.devnull
+108:     env["GIT_OPTIONAL_LOCKS"] = "0"
+109:     env["LC_ALL"] = "C"
+110:     return env
+145:     out = run_git(repo, ["ls-tree", "-r", "-z", sha])
+162:         return run_git(repo, ["show", "%s:%s" % (sha, path)])
+--- tools/mado-receipt-citecheck.py:100-101
+100:         out = subprocess.run(
+101:             ["git", "-C", repo, "ls-tree", "-r", "--name-only", rev],
+--- quality/counters/c1-r66-register.py:42-45
+42:     env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+43:     # GIT_NO_REPLACE_OBJECTS keeps rev byte reads exact; planted refs/replace
+44:     # must not rewrite the objects this counter measures.
+45:     env.update(GIT_OPTIONAL_LOCKS="0", GIT_PAGER="cat", LC_ALL="C", GIT_NO_REPLACE_OBJECTS="1")
+--- quality/counters/c1-r65-register.py:84-90
+84: def git(repo, *args):
+85:     """Run a read-only git command in `repo` and return its stdout bytes."""
+86:     cmd = ["git", "-C", repo, "-c", "core.quotepath=false"] + list(args)
+87:     env = dict(os.environ)
+88:     env["GIT_OPTIONAL_LOCKS"] = "0"
+89:     env["LC_ALL"] = "C"
+90:     env["GIT_PAGER"] = "cat"
+
+# fixtures removed with the seat scratch

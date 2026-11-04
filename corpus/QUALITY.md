@@ -634,3 +634,19 @@ missing-sibling controls expose rc-only aggregation. Recheck with
 This harness also requires the committed driver's selftest and real four-leg landing.
 Limits: marker consistency does not authenticate a child, establish source truth or contain
 a malicious child. The finite control set is not universal fault coverage.
+
+## Criterion from the round-67 replacement-ref coverage repair (round 67)
+
+**109. A guard is established only by a control that plants the hazard, at the layer that reads the bytes.**
+A parent-exported environment guard does not reach a child that constructs its own environment: each
+git-reading child must set the guard itself, and a control must plant the hazard (`refs/replace` on a
+blob, tree or commit the child reads) and require the child's verdict unchanged. A guard whose removal
+no committed case detects is untested, and a coverage repair reports the pre-change instrument crediting
+the forged state. Shown able to fail: at `0b28ffb4` the used-by and ledger children build git env
+whitelists without `GIT_NO_REPLACE_OBJECTS` and read a planted replacement (`control-baseline-r67.txt`:
+`usedby_guard=0 ledger_guard=0`, `child_env_read=forged guarded_read=real`, `killed=0/2`); the r67
+control kills both named mutants (`killed=2/2`). Recheck:
+`python3 quality/counters/c2-r67-landing-controls.py --repo . --rev REV --scratch-root DIR`.
+Limits: exactly the named mutants; the guard is presence-tested (`GIT_NO_REPLACE_OBJECTS=0` also
+disables), it does not protect a repository already rewritten, authenticate objects, or prove state
+truth. Ground: `corpus/lessons/round-67.md` M67-2.

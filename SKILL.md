@@ -2768,3 +2768,26 @@ alias is added. The current standing script requires explicit `--round`.
 Explicit citation paths must remain inside the repository so the dirty-tree guard can
 check them consistently; external paths are refused. This is a declared cutover restriction,
 not a claim of compatibility with the r65 script's wider PATH acceptance.
+
+## Round 67 — citation-to-live-object binding and the landing control set
+
+The returned-host register's live receipt must be cited inside a table row's receipt cell before a
+register pass counts; a tree-level live object no row cites is not evidence. The standing landing
+instrument tests the zero-citation refusal it already shipped, and every git-reading child sets
+`GIT_NO_REPLACE_OBJECTS=1` itself — a parent export does not reach a child that builds its own env.
+A planted replacement ref must not move a child's verdict; `GIT_NO_REPLACE_OBJECTS` is presence-tested
+(`0` and empty also disable) and does not protect a repository already rewritten or authenticate
+objects. See `corpus/lessons/round-67.md` and `corpus/knowledge/replace-ref-citation-boundaries-r67.md`.
+
+| name | gate/probe | entry command | verdict map | self-test command / spelling | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|---|
+| mado-r67-register | gate | `python3 quality/counters/c1-r67-register.py --repo . --rev REV --controls .ufo/waves/round-67/controls/c1-controls.json --scratch-root DIR` | 0 clean (`register=accept` and `controls=6/6`); 1 failed; 2 could-not-evaluate | `python3 quality/counters/c1-r67-register.py --selftest` | `.ufo/waves/round-67/claims-declaration-r67.md`; `.ufo/waves/round-67/controls/c1-controls.json`; exact line in `.ufo/waves/round-65/receipts/gate-live-r65.txt` | Git reads only; writes nothing | mado |
+| mado-r67-landing-controls | gate | `python3 quality/counters/c2-r67-landing-controls.py --repo . --rev REV --scratch-root DIR` | 0 clean (`selftest=0` and `killed=2/2`); 1 failed; 2 could-not-evaluate | `python3 quality/counters/c2-r67-landing-controls.py --selftest --scratch-root DIR` | `.ufo/waves/round-67/claims-declaration-r67.md`; mutant recipes in the harness | private caller scratch; git reads; extracted child checks | mado |
+| mado-landing-counters-r67 | gate | `bash quality/landing-counters.sh --repo . --rev REV --round N --scratch-root DIR` | 0 GREEN/clean; 1 RED/failed; 2 ERROR/could-not-evaluate | `bash quality/landing-counters.sh --selftest --scratch-root DIR` | `.ufo/waves/round-67/claims-declaration-r67.md`; child marker rules in script | caller scratch only; no host writes | mado |
+
+The r67 cutover adds one `zero` selftest case to the standing script (a citecheck marker with
+`citations=0` is refused as ERROR, as the shipped contract already required) and gives the three
+git-reading children their own `GIT_NO_REPLACE_OBJECTS=1`. The citecheck tool invoked alone still
+reports `TARGET_MET` at `citations=0`; the refusal binds at the instrument marker layer. The r66
+script keeps its pinned historical revisions; no compatibility alias is added. Default citation
+scope remains `.ufo/waves/round-N/receipts`, external paths stay refused.

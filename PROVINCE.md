@@ -273,6 +273,18 @@ Provenance: every state cell below was re-observed read-only on the returned oma
 
 <!-- r65 register end -->
 
+**Round-67 refinement — no new desktop/write surface.** `quality/counters/c1-r67-register.py`
+requires the returned-host register block to cite the live receipt inside a table row's receipt
+cell (the r66 tree-level check accepted an unreferenced live object) and scores the frozen six-case
+control set; `quality/counters/c2-r67-landing-controls.py` extracts the standing landing instrument
+at a revision, runs its own selftest and kills the two named defect mutants (the zero-citation guard
+clause and a child's `GIT_NO_REPLACE_OBJECTS`). The landing script gains one zero-citation selftest
+case and the git-reading children set the replacement-object guard themselves. These are lane record
+instruments: they do not measure state-cell truth, authenticate children, or protect a repository
+already rewritten. Evidence: `corpus/lessons/round-67.md`,
+`corpus/knowledge/replace-ref-citation-boundaries-r67.md`.
+
+
 **Round-65 refinement (append-only; two record counters, one standing instrument, no new write surface):** the round-65 instruments are `quality/counters/c1-r65-register.py` (reads git objects at `--rev`, checks the register block above; writes nothing), `quality/counters/c2-r65-landing-instrument.py` (a read-only driver that extracts its own four dependencies into scratch and runs `quality/landing-counters.sh`; refuses /tmp-family and symlink scratch roots), and `quality/landing-counters.sh` (four legs: navigation, used-by, ledger, citecheck; each leg rc captured; `MADO_LANDING_COUNTERS: GREEN|RED`). They score the lane’s own record and the receipts it lands; none touches a config plane, a compositor socket or a host service. The omarchy-host freshness and gate-selftest rubrics are re-derived by the committed round-65 gate receipts (`.ufo/waves/round-65/receipts/gate-fileplane-r65.txt`, `gate-live-r65.txt`).
 
 **Round-66 refinement — no new desktop/write surface.** `quality/counters/c1-r66-register.py`
