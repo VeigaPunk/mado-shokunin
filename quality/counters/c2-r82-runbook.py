@@ -149,6 +149,9 @@ SHAPE_KINDS = ("json_object_fields", "array_fields", "int4", "levels_dump", "int
                "is_active", "action_column", "pid_state")
 
 
+SCRATCH_ROOT = None
+
+
 class Setup(Exception):
     pass
 
@@ -167,7 +170,8 @@ def run(argv, cwd, timeout=120):
     env["LC_ALL"] = "C"
     env["LANG"] = "C"
     env["PYTHONDONTWRITEBYTECODE"] = "1"
-    env["TMPDIR"] = cwd
+    # the sentinel's F2: TMPDIR is the caller's scratch root, never the tree being measured
+    env["TMPDIR"] = SCRATCH_ROOT or cwd
     runtime = env.get("XDG_RUNTIME_DIR") or ("/run/user/%d" % os.getuid())
     if os.path.isdir(runtime):
         env.setdefault("XDG_RUNTIME_DIR", runtime)
@@ -629,6 +633,8 @@ def main(argv):
         if not os.path.isdir(args.scratch_root):
             raise Setup("scratch root is not a directory")
         workroot = tempfile.mkdtemp(prefix="c2-r82-", dir=args.scratch_root)
+        global SCRATCH_ROOT
+        SCRATCH_ROOT = workroot
         rev_full = run(["git", "-C", repo, "rev-parse", args.rev], repo)[1].strip()
         if not rev_full:
             raise Setup("cannot resolve --rev %r" % args.rev)

@@ -35,15 +35,15 @@ def case(name, argv, kind, value, anchor, samples, negatives):
 TRAY_OWNER = case(
     "tray-owner", ["busctl", "--user", "list"], "regex",
     r"(?m)^org\.kde\.StatusNotifierWatcher\s+[1-9][0-9]*\s", OWNER,
-    [{"rc": 0, "out": "org.kde.StatusNotifierWatcher                      1720 waybar     "
-                      "vgpnk :1.56 user@1000.service - -\n"},
+    [{"rc": 0, "out": "org.kde.StatusNotifierWatcher                      4242 waybar     "
+                      "user :1.99 user@UID.service - -\n"},
      {"rc": 0, "out": "NAME PID PROCESS USER CONNECTION UNIT SESSION DESCRIPTION\n"
-                      "org.kde.StatusNotifierWatcher 99 waybar vgpnk :1.9 u - -\n"
-                      "org.kde.StatusNotifierHost-99-1 99 waybar vgpnk :1.9 u - -\n"}],
-    [{"rc": 0, "out": "org.kde.StatusNotifierWatcher 0 waybar vgpnk :1.56 u - -\n"},
-     {"rc": 0, "out": "org.kde.StatusNotifierItem-1720-1 1720 waybar vgpnk :1.56 u - -\n"},
-     {"rc": 0, "out": "org.kde.StatusNotifierWatcher - waybar vgpnk :1.56 u - -\n"},
-     {"rc": 1, "out": "org.kde.StatusNotifierWatcher 1720 waybar vgpnk :1.56 u - -\n"}])
+                      "org.kde.StatusNotifierWatcher 99 waybar user :1.98 u - -\n"
+                      "org.kde.StatusNotifierHost-99-1 99 waybar user :1.98 u - -\n"}],
+    [{"rc": 0, "out": "org.kde.StatusNotifierWatcher 0 waybar user :1.99 u - -\n"},
+     {"rc": 0, "out": "org.kde.StatusNotifierItem-4242-1 4242 waybar user :1.99 u - -\n"},
+     {"rc": 0, "out": "org.kde.StatusNotifierWatcher - waybar user :1.99 u - -\n"},
+     {"rc": 1, "out": "org.kde.StatusNotifierWatcher 4242 waybar user :1.99 u - -\n"}])
 
 # 2. the interface census on the watcher's object path names the interface itself; a
 #    property or a method line is not the interface.
