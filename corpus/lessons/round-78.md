@@ -80,3 +80,37 @@ on), reject S463 (same reason as round 77).
   ledger-red freeze (M78-5), the provenance drift (M78-6), and the stale registry/index/entry
   claims (M78-7) — all repaired this round; M78-8 is the time-bound r77 citation, recorded
   append-only in SCORECARD.
+
+- **R78ExecC2Cases (executor).** Re-ran every row live: all seventeen outputs equal their declared
+  values and the contract reproduces at both revs. It flags the row-identity residual (13 distinct
+  anchors for 17 cases; `omarchy theme current`/`omarchy version` still share one row; the two dump
+  anchors pre-existed), the five value-bound rows that a present-day host change would break
+  (`mako-mode`, `omarchy-theme`, `gaps-out`, `kb-layout`, `binds-count`'s exact neighbour), and the
+  environment the counter silently supplies (`HYPRLAND_INSTANCE_SIGNATURE`, `OMARCHY_PATH`, `PATH`,
+  `LC_ALL`, `XDG_RUNTIME_DIR`). All are named as round-79 controls, not hidden.
+- **R78CritClaims (critic).** Both claims are correctly classed (C1 coverage: the base receipt's
+  ten misses are the ungoverned edge classes; C2 operability: the runbook surface); the controls
+  refuse an anchorless hardcode and an accept-everything matcher; the frozen C2 anchor leg was a
+  file-wide substring that a bare-anchor `SKILL.md` satisfied (the wave's `row_bound` repair closes
+  it). It names four next-freeze upgrades (an `expected` key on `exclusive-false`, `stage=model` on
+  the refusal cases, per-case distinct anchors, exact printed values in the rc rule) and rules the
+  post-freeze counter repairs "enforcement alignment" with counts unchanged — recorded in the
+  declaration's critic-disposition block.
+- **R78MutC1 (mutation-tester).** 27 independent mutants, 16 killed, 11 survived with
+  byte-identical stdout on all eighteen cases. The sharp survivor is the centring floor (`S3`),
+  which the scout independently derived and the round repaired as r78-v2 (F2). The other ten are
+  real coverage gaps the frozen set cannot see (3-token CSS margins, vertical centring, overlay,
+  positive output includes, and five refusal branches); the seat's three strongest successor cases
+  are round-79 ground.
+- **R78Sentinel (sentinel).** Instruments are write-contained, network-free and spawn only the
+  declared read verbs. It records: the monitor serial in fourteen pushed revisions (F1; copies
+  redacted, L0 question filed, history rewrite operator-owned); the tool selftest's `/tmp` write
+  (W1; fixed by passing `TMPDIR` into the counter's child env); the full-environment pass-through
+  of the C2 runbook (E1; by design, named); pids/addresses in the layers capture (F2; capture
+  reduced to the fields the join reads); one leftover mutant workroot (H1; removed). Its lineage
+  table confirms the C2 counter's four revisions touch no case, label, mutant, kill rule or target.
+- **R78ExecC1Tool / R78RevC2 (no report at settlement).** Both seats settled without writing their
+  findings file. Their work is not backfilled: the C1 tool's adversarial fixtures are covered in
+  part by the scout's evidence and the mutation tester's 27 probes, and the C2 byte-fidelity review
+  is covered by the critic's and the cases seat's re-runs. The dead seats stay dead in the evidence
+  (the wave results record their status).
