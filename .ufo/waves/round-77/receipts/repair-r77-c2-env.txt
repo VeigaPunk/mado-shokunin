@@ -1,0 +1,30 @@
+repair receipt: c2 runbook env discovery (round-77), date=2026-11-04T05:14:53
+the green run below was executed from a non-session shell with neither HYPRLAND_INSTANCE_SIGNATURE nor OMARCHY_PATH set
+--- red-before (the counter run from a non-session shell, 2026-11-04T05:14:10-03:00):
+MADO_R77_PROBE: name=version ... match=no rc=0 out='HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)'
+MADO_R77_PROBE: name=configerrors ... match=no rc=1 out='HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)'
+MADO_R77_PROBE: name=monitors-size ... match=no rc=5 out=''
+MADO_R77_PROBE: name=monitors-reserved ... match=no rc=5 out=''
+MADO_R77_PROBE: name=gaps-out ... match=no rc=0 out='HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)'
+MADO_R77_PROBE: name=kb-layout ... match=no rc=0 out='HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)'
+MADO_R77_PROBE: name=binds-count ... match=no rc=5 out=''
+MADO_R77_PROBE: name=layers-namespaces ... match=no rc=5 out=''
+MADO_R77_PROBE: name=omarchy-version ... match=no rc=1 out=''
+MADO_R77_RUNBOOK: cases=12 executed=12 matched=3 unexecuted=0 anchors=12/12 verdict=TARGET_MISSED
+
+--- green-after (same shell, same env):
+MADO_R77_PROBE: name=version row=`hyprctl version` match=yes rc=0 out='Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update...'
+MADO_R77_PROBE: name=configerrors row=`hyprctl configerrors` match=yes rc=0 out=''
+MADO_R77_PROBE: name=monitors-size row=`hyprctl monitors` match=yes rc=0 out='DP-1 3440x1440@99.99700'
+MADO_R77_PROBE: name=monitors-reserved row=`hyprctl monitors` match=yes rc=0 out='[0,26,0,0]'
+MADO_R77_PROBE: name=gaps-out row=`hyprctl getoption <key>` match=yes rc=0 out='custom type: 0 0 0 0'
+MADO_R77_PROBE: name=kb-layout row=`hyprctl getoption <key>` match=yes rc=0 out='str: br'
+MADO_R77_PROBE: name=binds-count row=`hyprctl binds -j` match=yes rc=0 out='192'
+MADO_R77_PROBE: name=layers-namespaces row=`hyprctl layers -j` match=yes rc=0 out='wallpaper,waybar'
+MADO_R77_PROBE: name=waybar-process row=`pgrep -a` match=yes rc=0 out='1720'
+MADO_R77_PROBE: name=mako-mode row=`makoctl mode` match=yes rc=0 out='default'
+MADO_R77_PROBE: name=omarchy-theme row=`omarchy theme current` match=yes rc=0 out='Matte Black'
+MADO_R77_PROBE: name=omarchy-version row=`omarchy theme current` match=yes rc=0 out='3.8.3'
+MADO_R77_BASE: executed=0 matched_by_read=12/12 rule=read-the-table
+MADO_R77_RUNBOOK: cases=12 executed=12 matched=12 unexecuted=0 anchors=12/12 verdict=TARGET_MET rev=adf8875ba31c9b9e4a4c33466b872ac7aca28825
+rc=0

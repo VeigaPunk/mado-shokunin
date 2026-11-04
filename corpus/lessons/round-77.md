@@ -69,3 +69,9 @@ All sources were opened 2026-11-04 before their rows were written; bytes under
   decays — is carried to round 78 as the standing-gate move. `considerthese/2026-10-28.md`
   proposal 4 (the live-tool table) is still unimplemented and is deferred to round 78: absorbing
   it would change the ledger grammar and `quality/` bytes after the freeze.
+
+## Mistakes (wave-found, appended)
+
+| id | class | evidence pointer | captured-by | fix (shown able to fail) |
+|---|---|---|---|---|
+| M77-6 | the C2 counter inherited the caller's environment but a non-interactive runner lacks `HYPRLAND_INSTANCE_SIGNATURE` and `OMARCHY_PATH`, so every `hyprctl`/`omarchy` probe failed with "not set" and the runbook scored 3/12 | `.ufo/waves/round-77/receipts/measurement-final-r77.txt` first C2 section (matched=3, "HYPRLAND_INSTANCE_SIGNATURE not set!") versus `receipts/repair-r77-c2-env.txt` (12/12) | the final measurement, run from a non-session shell rather than the session shell the runbook assumes | the counter now discovers the instance from `$XDG_RUNTIME_DIR/hypr/*/.socket.sock` and `OMARCHY_PATH` from the `omarchy` binary's own location, adding them only when absent; the red run is retained and the green run was executed with neither variable set. |

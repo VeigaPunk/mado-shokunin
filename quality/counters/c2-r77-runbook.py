@@ -36,11 +36,51 @@ class Setup(Exception):
     pass
 
 
-def run(argv, timeout=30):
+def session_env():
+    """The caller's environment, completed with the two values a session shell exports.
+
+    The table is a session-shell runbook. A non-interactive caller (a closure runner, a
+    scheduler) may lack HYPRLAND_INSTANCE_SIGNATURE or OMARCHY_PATH; both are discoverable
+    read-only from the runtime directory and the binary's own location. Nothing is guessed:
+    the instance is the runtime directory that owns a .socket.sock, and OMARCHY_PATH is the
+    checkout that owns the omarchy binary.
+    """
     env = dict(os.environ)
     env["LC_ALL"] = "C"
     env["LANG"] = "C"
     env["PYTHONDONTWRITEBYTECODE"] = "1"
+    runtime = env.get("XDG_RUNTIME_DIR") or ("/run/user/%d" % os.getuid())
+    if os.path.isdir(runtime):
+        env.setdefault("XDG_RUNTIME_DIR", runtime)
+    if "HYPRLAND_INSTANCE_SIGNATURE" not in env:
+        base = os.path.join(env.get("XDG_RUNTIME_DIR", ""), "hypr")
+        try:
+            for name in sorted(os.listdir(base)):
+                if os.path.exists(os.path.join(base, name, ".socket.sock")):
+                    env["HYPRLAND_INSTANCE_SIGNATURE"] = name
+                    break
+        except OSError:
+            pass
+    if "OMARCHY_PATH" not in env:
+        candidates = [os.path.expanduser("~/.local/share/omarchy/bin")]
+        candidates += [d for d in env.get("PATH", "").split(":") if d]
+        for directory in candidates:
+            binary = os.path.join(directory, "omarchy")
+            if os.path.isfile(binary) and os.access(binary, os.X_OK):
+                env["OMARCHY_PATH"] = os.path.dirname(directory)
+                break
+    parts = [d for d in env.get("PATH", "").split(":") if d]
+    for directory in ("/usr/local/bin", "/usr/bin", "/bin",
+                      os.path.expanduser("~/.local/bin"),
+                      os.path.expanduser("~/.local/share/omarchy/bin")):
+        if directory not in parts:
+            parts.append(directory)
+    env["PATH"] = ":".join(parts)
+    return env
+
+
+def run(argv, timeout=30):
+    env = session_env()
     try:
         proc = subprocess.run(argv, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                               stdin=subprocess.DEVNULL, timeout=timeout)
