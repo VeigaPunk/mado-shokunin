@@ -119,7 +119,12 @@ output=$(case "$leg" in
     printf 'revision=%s indexed=0/1 missing=1 dangling=0 duplicates=0 coverage=0.0000/10\n' "$FIXTURE_REV" ;;
   usedby) printf 'MADO_USED_BY: rev=%s entries=1 rows=1 missing=%s extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=0 verdict=%s missed=none\n' "$FIXTURE_REV" "$rc" "$verdict" ;;
   ledger) printf 'LEDGER: population=1 ledger_rows=1 uncovered=%s dangling=0 bad_pointer=0 empty_desc=0 verdict=%s rev=%s\n' "$rc" "$verdict" "$FIXTURE_REV" ;;
-  citecheck) printf 'MADO_CITECHECK: rev=%s files=1 citations=1 resolved=%s missing=%s skipped_large=0 verdict=%s\n' "$FIXTURE_REV" "$((1-rc))" "$rc" "$verdict" ;;
+  citecheck)
+    if [ "$TEST_MODE" = zero ]; then
+      printf 'MADO_CITECHECK: rev=%s files=1 citations=0 resolved=0 missing=0 skipped_large=0 verdict=TARGET_MET\n' "$FIXTURE_REV"
+    else
+      printf 'MADO_CITECHECK: rev=%s files=1 citations=1 resolved=%s missing=%s skipped_large=0 verdict=%s\n' "$FIXTURE_REV" "$((1-rc))" "$rc" "$verdict"
+    fi ;;
 esac)
 child_status=$?
 if [ "$leg" = nav ] && [ "$rc" -eq 0 ]; then rc=$child_status; fi
@@ -144,6 +149,27 @@ SHIM
       check "$leg $mode all execution witnesses" $'nav\nusedby\nledger\ncitecheck' "$witness"
     done
   done
+  TEST_LEG=none TEST_MODE=green
+  # A zero-citation citecheck marker at rc 0 must be refused by the marker contract (Error, rc 2).
+  TEST_LEG=citecheck TEST_MODE=zero
+  : >"$WITNESS"
+  out=$(PATH="$SW/shim:$PATH" "${cmd[@]}" 2>&1); rc=$?
+  check 'citecheck zero citations refused' 2 "$rc"
+  witness=$(<"$WITNESS")
+  check 'citecheck zero citations all execution witnesses' $'nav\nusedby\nledger\ncitecheck' "$witness"
+  # The M-Z mutation target must stay present, exactly once, inside the citecheck contract.
+  local guard_count=0 guard_in_marker=0 in_marker=0 scan
+  local guard_needle='[ "$citations" -gt '"0"' ] && '
+  while IFS= read -r scan; do
+    if [[ "$scan" == 'marker_valid() {'* ]]; then in_marker=1; fi
+    if [ "$in_marker" -eq 1 ] && [ "$scan" = '}' ]; then in_marker=0; fi
+    if [[ "$scan" == *"$guard_needle"* ]]; then
+      guard_count=$((guard_count+1))
+      if [ "$in_marker" -eq 1 ]; then guard_in_marker=$((guard_in_marker+1)); fi
+    fi
+  done <"$instrument"
+  check 'zero-citation guard occurs exactly once' 1 "$guard_count"
+  check 'zero-citation guard sits inside marker_valid' 1 "$guard_in_marker"
   TEST_LEG=none TEST_MODE=green
   rm -- "$SW/instrument/quality/counters/c3-r56-used-by.py"
   out=$(PATH="$SW/shim:$PATH" "${cmd[@]}" 2>&1); rc=$?

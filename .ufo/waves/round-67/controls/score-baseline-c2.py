@@ -22,7 +22,9 @@ import subprocess
 import sys
 import tempfile
 
-BASE = "eafd500fa7be76dca59e729435e231a5032cc037"
+BASE = "0b28ffb4baac9586566d246c3f0986b2bb650a33"  # the frozen pre-r67 base; the committed
+# receipt also passes --base explicitly. An earlier draft defaulted to the r65 landing (wrong
+# instrument state); the critic's B7 flagged it and this default now matches the receipt.
 LANE = "quality/landing-counters.sh"
 USEDBY = "quality/counters/c3-r56-used-by.py"
 LEDGER = "quality/check-tool-ledger.py"

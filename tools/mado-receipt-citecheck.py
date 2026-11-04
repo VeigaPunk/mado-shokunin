@@ -100,6 +100,7 @@ def run_check(repo: str, rev: str, paths: list[str]) -> int:
         out = subprocess.run(
             ["git", "-C", repo, "ls-tree", "-r", "--name-only", rev],
             capture_output=True, text=True, check=True,
+            env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"),
         ).stdout
     except (subprocess.CalledProcessError, OSError) as exc:
         detail = getattr(exc, "returncode", type(exc).__name__)
