@@ -243,3 +243,11 @@ layer spaces to be reconciled), neither of which has a case yet.
 source: S481 — wlr-layer-shell `wlr-layer-shell-unstable-v1.xml`, `.ufo/waves/round-82/fetch/S481.xml`, 407 lines, sha256 `87e0b9c837aecd6977f76f3c47d73088b7159871f5d979dc1840f6cadb5e2ed8`, opened 2026-11-04; byte-identical to held S460. Anchors used: `set_size` `:122-137` (zero clause `:128-131`), `configure` `:327-349` (hint `:341-345`, zero clause `:347-348`).
 source: S464 — gtk-layer-shell v0.10.1 `src/layer-surface.c`, `.ufo/waves/round-79/fetch/S464.bin`, held. Anchors used: `:31-57` (the sender zeroes stretched axes, `:33-45`), `:264-295` (auto zone; `:269-272` gate, `:276`/`:282` allocation, `:277-280`/`:283-286` margins, `:289-292` send guard), `:298-315` (size-allocate assignment `:304-310`, send `:312`, zone update `:313`).
 source: S470 — Hyprland 0.56.2 `src/render/Renderer.cpp`, `.ufo/waves/round-80/fetch/S470.bin`, held. Anchors used: `:2531-2533` (exclusive guard), `:2575-2581` (edge match and margin add), `:2607` (`desiredSize`), `:2610-2611`/`:2623-2624`/`:2635-2637`/`:2645-2647` (zero-size and span branches), `:2660` (round), `:2664` (applyExclusive call).
+
+## Round-83 receipt erratum (round-82 spot-check D1)
+
+The live path `measurement-c1-r82.txt` was overwritten after the freeze and no longer records
+the revision in this note's header. Resolve that historical receipt at its cited commit, or use
+`receipts/measurement-c1-r82-at-tip.txt` (rev 57789ab6, tool sha256 prefix 38007528).
+The later live-path receipt records rev 12e6ad57 and tool sha256 prefix 58ef4f6a.
+These are distinct generations, not interchangeable measurement pointers.

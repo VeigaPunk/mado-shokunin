@@ -34,7 +34,7 @@ import tempfile
 
 CASES = 58
 CARRIED = 47
-MUTANTS = 38
+MUTANTS = 39
 BASE_EXPECT = 52
 
 MUTATIONS = [

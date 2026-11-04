@@ -985,3 +985,12 @@ tool's constant and prints the measured tally; the frozen counter keeps its byte
 recorded as time-bound (round-79 M79-3). Source: `corpus/lessons/round-79.md` M79-3.
 Limits: this is a labelling rule; it does not judge whether the instrument's own checks are strong
 enough, and a frozen instrument's printed example can only be corrected forward, never in place.
+
+## Round-83 mutation population lesson
+
+**137. A mutant target equals the actual enumerated mutation list before scoring.**
+Shown able to fail: dbc09269's round83 C1 receipt reports 38 declared mutants and 39 kills,
+so correct=58/58 still yields TARGET_MISSED. Correcting the successor constant to 39 yields
+TARGET_MET with the same tool and cases; the original frozen verdict remains missed.
+Source: `corpus/lessons/round-83.md`, number-drift row. Limits: matching list length does
+not show that each mutation is distinct or load-bearing.

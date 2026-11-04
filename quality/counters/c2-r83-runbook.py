@@ -767,7 +767,8 @@ def main(argv):
                  len(rows), CASES, ",".join(sorted(SUPERSEDED)) or "-",
                  "0" if args.no_mutants else str(MUTANTS),
                  "0" if args.no_mutants else str(killed),
-                 "TARGET_MET" if target else "TARGET_MISSED", rev_full))
+                 ("MUTANTS_SKIPPED" if args.no_mutants else "TARGET_MET")
+                 if target else "TARGET_MISSED", rev_full))
         return 0 if target else 1
     except Setup as exc:
         print("MADO_R83_RUNBOOK: ERROR (stage=setup %s)" % exc)

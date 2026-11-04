@@ -4105,3 +4105,10 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   writing its row. The anchor-drift candidate was examined by the lesson seat and **not admitted**:
   no lane byte carries the `reason=anchor-absent` event (the only such lines are the base control's),
   and both anchors are present at the freeze.
+
+## Round 83 — second-surface allocation and tray state (2026-11-04)
+
+- C1 coverage: tools/mado-barfoot.py now resolves any declared namespace's allocation before arranging exclusive surfaces. Receipt `.ufo/waves/round-83/receipts/measurement-c1-r83.txt` at dbc09269 reports correct=58/58, kills=39 but declared mutants=38: TARGET_MISSED. The clerical constant is repaired forward; no retroactive admission.
+- C2 operability: SKILL.md executable runbook 29→31 rows, including tray items and host-registered boolean; dbc09269 receipt matched=31/31, mutants=27 killed=27, TARGET_MET.
+- Instruments, controls and declaration landed in 4e48d8e7, 4208c24a, aeeb5e54 and dbc09269. Pre-wave red measurements drove repairs; amendments are disclosed, not a clean pre-data freeze.
+- Sources S484/S485 and mistakes/gate: corpus/lessons/round-83.md. Round82 correction: set_size assignment sentence is 128–129; 347–348 is configure. Round82 seat status count is 7 ok/7 defect; census includes W01 S277.

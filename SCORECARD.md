@@ -4883,3 +4883,28 @@ round-83 ground are recorded in `corpus/lessons/round-82.md` and the round repor
 - **V9 (low), open — the critic's flag defect.** `quality/counters/c1-r82-allocation-band.py:405`
   parses `--no-mutants` but the mutant loop at `:468` is unguarded, so the flag does nothing. Not
   exercised by this round's measurements (the default invocation); round 83 guards the loop.
+
+## Round 83 — second-surface band and tray state
+
+Declaration `.ufo/waves/round-83/claims-declaration-r83.md`; base 67dd2b667b72f7f72309340d488b355d543841a5; measured instrument revision dbc09269fe547ab13541e722dd7d2ba33015f348.
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 coverage / second-surface allocation | `python3 -I quality/counters/c1-r83-surface-band.py --repo . --rev REV --base-rev 67dd2b667b72f7f72309340d488b355d543841a5 --controls .ufo/waves/round-83/controls/c1-cases-r83.json --carried .ufo/waves/round-82/controls/c1-cases-r82.json --scratch-root DIR` | held r82 tool 52/58 → 58/58; declared mutant total 38 but observed kills 39, so literal frozen predicate misses | honest stop; no numeric score delta awarded |
+| C2 operability / tray state pair | `python3 -I quality/counters/c2-r83-runbook.py --repo . --rev dbc09269fe547ab13541e722dd7d2ba33015f348 --controls .ufo/waves/round-83/controls/c2-runbook-cases-r83.json --carried .ufo/waves/round-82/controls/c2-runbook-cases-r82.json --scratch-root DIR` | 29 bound rows → 31/31 executed and matched, 26/26 shape rows, 27/27 mutants | measured target met; outside closure pending |
+
+Capability demonstration: second surface allocation runs on the frozen finite set, but no capability row is admitted from the missed C1 predicate. Saturation 9.0/N=3 unchanged. No axis retirement. Lowest-axis ties retain coverage and operability as primary surfaces; no stagnation waiver.
+
+Planned next-round intent only: investigate tray pipeline failure propagation and allocation namespace uniqueness; correct frozen counter bookkeeping before any scoring. Round83 source/gate and carry-in dispositions are in corpus/lessons/round-83.md. Promotion remains outside-lane.
+
+### Settled-wave qualification
+
+The repaired C1 successor prints 39/39 and TARGET_MET against the same 58 tool cases, but
+ReviewerC1's extra-surface live-box substitution and precedence cheats survive; no causal
+admission follows. C2 finite predicate met; ExecC2Live's producer-status masking means the
+strong interpretation is unprovable. Critic's diagnostic TARGET_MET issue is repaired
+forward to MUTANTS_SKIPPED. Both frozen claims remain honestly qualified.
+
+Axis table re-derived at the round83 content tip: navigation 102/102; calibration
+resolved-active 86/86; operability selftest 12/12. Ledger expected 152/152; committed
+harm-watch receipts establish whether this publication matches. No promotion change.

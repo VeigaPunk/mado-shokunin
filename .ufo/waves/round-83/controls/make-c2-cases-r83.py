@@ -36,7 +36,7 @@ def new_cases():
                         {"rc": 0, "out": "0\n"},
                         {"rc": 0, "out": "7\n"}],
             "negatives": [
-                {"rc": 0, "out": 'as 2 ":1.76/StatusNotifierItem" ":1.2804/StatusNotifierItem"\n'},
+                {"rc": 0, "out": 'as 2 ":1.900/StatusNotifierItem" ":1.901/StatusNotifierItem"\n'},
                 {"rc": 0, "out": "-1\n"},
                 {"rc": 0, "out": ""},
                 {"rc": 1, "out": "2\n"},
