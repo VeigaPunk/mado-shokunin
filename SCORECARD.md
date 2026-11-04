@@ -4744,3 +4744,70 @@ four carried cases, which the frozen contract forbids. The client allocation is 
 modelled; the refusal is per-axis; and both libraries are cited at pinned tags (hyprutils `v0.14.0`,
 gtk-layer-shell `v0.10.1`) rather than at versions read off the host. The wave's probe set and the
 round-82 ground are recorded in `corpus/lessons/round-81.md` and the round report.
+
+## Round 82 — the client's own band, and the tray plane in the runbook (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-82/claims-declaration-r82.md`; freeze
+`780c30fcae12d74ce8ab3b871a0888696c2415d9`; base `6ea2386d49318a5f223097c78b5fe79c31b064f8` (lane
+`master` tip at round start, clean). Frozen control sets:
+`.ufo/waves/round-82/controls/c1-cases-r82.json` (47 cases — the thirty-nine round-81 cases carried
+parsed-equal, sha256 `e404bb3f…`) and `c2-runbook-cases-r82.json` (29 cases, sha256 `f64d7d5d…`).
+Pre-freeze do-nothing controls: the held round-81 tool scores
+`cases=47 correct=39 mutants=34 killed=28 base_correct=39/47 verdict=TARGET_MISSED` rc 1
+(`receipts/control-c1-r82-at-base.txt`); the held round-81 runbook instrument exits 2 at the
+round-82 tree (`the runbook section carries 0 command rows, frozen target expects 26`,
+`receipts/control-c2-held-instrument-r82.txt`) and the held fixed-value rule scores `control_new=0/3`
+by construction. Measured at `780c30fc` (receipts `measurement-c{1,2}-r82.txt`). Axis posture at
+round start: navigation 100/100, calibration resolved-active 86/86, operability selftest 12/12,
+ledger 148/148; gate `MADO_SELFTEST: 460/460`. The dormant freshness value (9.6552, host-absent)
+stays operator-owned and is excluded from the tie. The stagnation nudge does not apply (a
+capability row entered round 81; window N=3).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** — the client's own band: a declared dynamic layer band modelled through `--allocation` | `python3 -I quality/counters/c1-r82-allocation-band.py --repo . --rev REV --base-rev 6ea2386d49318a5f223097c78b5fe79c31b064f8 --controls .ufo/waves/round-82/controls/c1-cases-r82.json --carried .ufo/waves/round-81/controls/c1-cases-r81.json --scratch-root DIR` | at the base the held round-81 tool fails all eight new cases: `cases=47 correct=39 mutants=34 killed=28 base_correct=39/47 carried=39/39 tool_selftest=121/121 verdict=TARGET_MISSED` rc 1; at `780c30fc` (tool `r82-v1`, sha256 `38007528…`): `cases=47 correct=47 mutants=34 killed=34 base_correct=39/47 carried=39/39 tool_selftest=133/133 verdict=TARGET_MET` rc 0; bounded `10 × 47/47` → 10.0000 on this finite model | improved |
+| C2 **operability** — the tray plane in the read-only runbook | `python3 -I quality/counters/c2-r82-runbook.py --repo . --rev REV --controls .ufo/waves/round-82/controls/c2-runbook-cases-r82.json --carried .ufo/waves/round-81/controls/c2-runbook-cases-r81.json --scratch-root DIR` | at the base the held round-81 instrument refuses (rc 2, 0 command rows in its section) and the held fixed-value rule has no value for the three new rows; at `780c30fc`: `cases=29 executed=29 matched=29 shapes=24/24 anchors=29/29 rows=29/29 control_new=0/3 mutants=25 killed=25 verdict=TARGET_MET tree=bound` rc 0, with `control_all=15/29` printed as an observation | improved |
+| — | coverage / admitted-note reachability (`python3 -I quality/check-index.py --repo . --rev REV`) | 100/100 at base → 101/101 at the content tip (one new entry indexed) | improved (index) |
+| — | operability / hermetic gate (`bash tools/mado-verify.sh --selftest`) | 460/460 both ends; the gate is byte-identical this round | unchanged (harm watch) |
+| — | operability / instrument ledger (`python3 -I quality/check-tool-ledger.py --repo . --rev REV`) | 148 rows at base → 150 rows at the tip, uncovered 0 (two new counters) | improved (ledger) |
+| — | calibration / held instruments (`git rev-parse <rev>:<path>`) | identical blob ids at base and tip for `quality/landing-counters.sh`, `check-tool-ledger.py`, `check-axis-scores.py`, `check-index.py`, `c1-r72…r81-*`, `c2-r73…r81-*`, `tools/mado-verify.sh`; `tools/mado-barfoot.py` changes by design (the C1 instrument) and the two r82 counters are new | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-82/receipts/` (`measurement-c{1,2}-r82.txt` with per-case and
+per-mutant lines; `control-c1-r82-at-base.txt`, `control-c2-held-instrument-r82.txt`,
+`census-start-r82.txt`, `ledger-r82.txt`, `axis-r82.txt`, `index-r82.txt`, `gate-selftest-r82.txt`),
+`controls/` (frozen sets plus their two generators), `fetch/` (S481/S482 plus `sha256-r82.txt`),
+`w1-spec.json` / `w1-dispatch.json` / `w1.ready` and `w1/` (seat reports). Wave disclosures are
+reported per seat in the round report; an empty seat output is an evidence gap, never backfilled
+(QUALITY 115).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| The client's own band | Model a declared dynamic layer band from a declared `--allocation` map: the band axis resolves declaration → allocation → refusal (a zero or absent band refused, a negative one a setup refusal), the arranged box and gtk-layer-shell's auto zone both use the resolved band, and the composition path reserves the bar's allocated band before later surfaces arrange under it | `.ufo/waves/round-82/receipts/measurement-c1-r82.txt`; `tools/mado-barfoot.py`, `quality/counters/c1-r82-allocation-band.py` | round 82 |
+| The tray plane's runbook rows | Bind the tray plane in the read-only runbook as three shape-bound rows — the `StatusNotifierWatcher`'s owner by live PID, its interface census, and the method table that census prints — each with churn samples and negatives instead of a frozen value | `.ufo/waves/round-82/receipts/measurement-c2-r82.txt`; `quality/counters/c2-r82-runbook.py` | round 82 |
+
+### Planned (round 83; intent only)
+
+1. C1's next finite ground: an extra surface's dynamic band (a `--surfaces` allocation field) and the
+   fractional-scale monitor, both of which need a declaration-grammar change before a case exists.
+2. C2's next finite ground: the tray item count (`RegisteredStatusNotifierItems`) once the host
+   carries an item, or `IsStatusNotifierHostRegistered` as a second state pair.
+3. Carry the round-82 wave's repairs and named limits into the next append.
+4. `considerthese/2026-10-28.md` proposal 4 (the live-tool table) stays available; the 2026-11-04
+   reflection is read before the next round's claims.
+5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
+
+### Axis table re-derived at the landing tip (`receipts/harm-watch-r82.txt` and `quality/check-axis-scores.py`):
+navigation 101/101; calibration resolved-active 86/86; operability selftest 12/12, ledger 150/150.
+
+### Named limits and next-round ground (append-only, round 82)
+
+The allocation is caller-declared, not observed: a wrong declaration is a wrong answer the join
+cannot detect, and only the live join's DECL/LIVE comparison catches it. An extra surface's dynamic
+band stays refused (the `--surfaces` grammar has no allocation field), the fractional scale stays a
+model refusal, and the composition path resolves the bar's band only. S481 licenses what a zero size
+means, not what waybar sends on this host; S482 licenses the KDE bus name and the register methods,
+while the host's ownership of that name is the live `busctl` read. The wave's probe set and the
+round-83 ground are recorded in `corpus/lessons/round-82.md` and the round report.

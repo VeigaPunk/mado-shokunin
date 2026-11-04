@@ -4063,3 +4063,43 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   accepting a padded PID; M81-3 two carried mutant anchors dying `anchor-absent` after the zone moved
   (caught by the anchor-existence check, re-pointed); M81-4 the round-80 `Planned` row's
   `preview_scale` ground — no such symbol exists.
+
+## Round 82 — the client's own band, and the tray plane in the runbook (2026-11-04, hyaku run 15)
+
+- **Claims.** C1 coverage (capability acquisition): the bar-footprint join models the class round 81
+  refused — a declared dynamic band (`height = 0` on a horizontal surface, `width = 0` on a vertical
+  one) — by taking the client's own allocation as a declared input. The layer-shell protocol says a
+  zero size is the client's to pick (S481, `set_size` `:347-348`), gtk-layer-shell sends
+  `current_allocation.height`/`.width` as the auto zone plus the unanchored margins (S464 `:276`/`:282`,
+  held), and Hyprland's arrange pass spans the bounds for a zero desired size — so the band and the
+  arranged box are two different numbers and only the allocation names the first. `tools/mado-barfoot.py`
+  `r82-v1` adds `--allocation {namespace: band}` and one resolver (`band_of`: declaration first,
+  allocation second, a zero or absent band a model refusal, a negative one a setup refusal, an
+  unknown namespace a setup refusal) used by both the single-surface and the composition paths.
+  Frozen set 47 cases (39 carried parsed-equal + 8), 34 mutants, held round-81 tool 39/47 —
+  `cases=47 correct=47 mutants=34 killed=34 base_correct=39/47 carried=39/39 tool_selftest=133/133
+  verdict=TARGET_MET` at `780c30fc` (`receipts/measurement-c1-r82.txt`). C2 operability: the runbook
+  gains the tray plane as three shape-bound rows — the `StatusNotifierWatcher`'s bus-name owner
+  (`busctl --user list`: a line whose PID column is a decimal in 1..4194304), its interface census
+  (`busctl --user introspect … /StatusNotifierWatcher`) and the method table that census prints
+  (`| awk '$2=="method"'`: every line `.Name method`, at least two) — 29 cases / 29 rows / 29 distinct
+  anchors, `control_new=0/3`, 25 matcher mutants killed (`receipts/measurement-c2-r82.txt`).
+- **Sources.** Three rows opened this round: **S481** Hyprland 0.56.2's vendored
+  `protocols/wlr-layer-shell-unstable-v1.xml` (`set_size`, sha256 `87e0b9c8…`, 19326 B), **S482**
+  kstatusnotifieritem `v6.2.0` `src/org.kde.StatusNotifierWatcher.xml` (sha256 `19df7f18…`, 1151 B),
+  and **S483** the freedesktop wiki's watcher page, registered `rejected`: it spells the bus name
+  `org.freedesktop.StatusNotifierWatcher`, which the round's rows would contradict (flip recorded).
+  Census 415 rows at round start (exit 0) → 418 at the content tip (exit 0); no older cell moved.
+- **Instruments.** `tools/mado-barfoot.py` `r81-v1` → `r82-v1` (selftest 121 → 133); the two successors
+  `quality/counters/c1-r82-allocation-band.py` (84/84) and `c2-r82-runbook.py` (90/90); the runbook
+  heading moves to `### Executable runbook rows (round 82)` with three new rows. Index 100/100 →
+  101/101; ledger 148 → 150 rows, uncovered 0; gate 460/460 unchanged; axis table `mismatched=0`.
+- **Repairs of the round-81 closure.** R1 (this wave's attack seats write artifacts or the gap is
+  reported), R2 (round-82 corrections stay in the round-82 section), R3 (the r82 counter's contract
+  line is `MADO_R82_RUNBOOK: cases=29 … mutants=25`, not the r81 text), R4 (`--selftest` transcripts
+  land under `receipts/`), R5 (round-80 D1–D3 erratum named in the report), R6 (the wave's seat counts
+  carry a `jq` counting command in the report).
+- **Mistakes.** Three mined into `corpus/lessons/round-82.md`: M82-1 a resolver branch that both
+  callers guarded away (the "declaration wins" rule was dead code; the first mutant survived 47/47);
+  M82-2 two mutant anchors drifted under that repair (`reason=anchor-absent`, `killed=32`); M82-3 the
+  freedesktop page naming a different bus name, caught by opening the source before writing its row.
