@@ -705,6 +705,15 @@ REGRESSIONS = {
                         '    else:\n        env = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
                         '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n',
                         True, True),
+    "guarded-env-for-a-non-git-call": ('def run(repo):\n'
+                                        '    env = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
+                                        '    subprocess.run(["ls", "-l"], env=env)\n'
+                                        '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"])\n',
+                                        True, False),
+    "git-called-without-env": ('def run(repo):\n'
+                                '    env = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
+                                '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], '
+                                'capture_output=True)\n', True, False),
     "module-visible-binding": ('GIT_ENV = {"PATH": "/usr/bin"}\n'
                                'GIT_ENV["GIT_NO_REPLACE_OBJECTS"] = "1"\n\n\n'
                                'def head(repo):\n'

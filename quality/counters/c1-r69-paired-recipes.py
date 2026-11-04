@@ -235,6 +235,10 @@ def measure(args):
         base_killed, base_applied, _ = mutation_score(base_tree, dec(base), scratch, "base")
         emit("MADO_R69_BASE killed=%d/3 applied=%d/3 (the r68 harness must survive all three)"
              % (base_killed, base_applied))
+        if base_applied != 3:
+            raise SetupError("the do-nothing leg applied only %d/3 recipes at --base-rev %s: "
+                             "a base=0/3 from an unrun leg is not a survivor"
+                             % (base_applied, base_sha))
     line = contract_line(selftest_rc, killed, applied, base_killed, sha)
     if not CONTRACT_RE.fullmatch(line):
         raise SetupError("emitted contract line does not match CONTRACT_RE")
@@ -413,6 +417,11 @@ def _selftest_checks(scratch):
                    "candidate_rc": 0, "mutant_rc": 1, "base_rc": 0}
     want("an absent base harness is a setup refusal, never a pass",
          _raises(SetupError, lambda: _measure_case(scratch, absent_base, sha)))
+    base_short = {"name": "base-short", "candidate": STUB_HARNESS,
+                  "base": STUB_HARNESS.replace("subprocess.run = _no_spawn\n", ""),
+                  "candidate_rc": 0, "mutant_rc": 1, "base_rc": 0}
+    want("a base leg that did not run every recipe is a setup refusal",
+         _raises(SetupError, lambda: _measure_case(scratch, base_short, sha)))
     parsed = build_parser().parse_args(["--repo", ".", "--rev", "HEAD", "--scratch-root", "x"])
     want("--base-rev is not silently defaulted", parsed.base_rev is None)
 

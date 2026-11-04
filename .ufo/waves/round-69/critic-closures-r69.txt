@@ -1,0 +1,28 @@
+# round-69 critic closures — red before, green after
+# source of the red states: .ufo/waves/round-69/w1/R69CriticClaims.md (B1-B11)
+# instrument revisions: 296ed0d7 (attacked) -> the worktree binding this receipt
+
+B2 (base leg applicability not in the verdict):
+  red  : R69CriticClaims probe B at 296ed0d7 -> MADO_R69_BASE killed=0/3 applied=1/3 ... verdict=TARGET_MET rc 0
+  fix  : measure() raises SetupError when base_applied != 3; contract line unchanged
+  green: selftest 28/28 incl. 'a base leg that did not run every recipe is a setup refusal'
+
+B3 (the frozen set does not discriminate the git-launch clause):
+  red  : R69CriticClaims dominance mutant (call_is_git(node) -> if True) scored 11/11 on the frozen cases
+  fix  : two review-regression cases added to the counter's own selftest (not the sha-frozen set):
+         guarded-env-for-a-non-git-call and git-called-without-env must both be (reader, no guard)
+  green: selftest 43/43; the dominance mutant now dies
+         39/41 assertions passed, rc 1 (the two new assertions fail)
+
+B4 (no reader-negative case in the frozen set): the selftest already pins 'git init/add only is not
+  a reader', 'verb without the git token', 'git token without a verb' and 'a broken source is not a
+  guard'; the frozen sha-pinned set is unchanged and the gap is disclosed in the report.
+
+B1 (a substitute harness with no measurement body can score the target): NOT repairable without
+  changing the frozen predicate after data. Disclosed as a limit: the counter scores the committed
+  harness's selftest, not its authorship; the round's harness is the delivered one and its body is
+  the r68 measurement body plus the paired cases (diff in the LOG and the seat report).
+
+B5 (harm watch red at the measured content): true and disclosed. At 296ed0d7 the landing instrument
+  read RED (usedby missing S436/S437) because the registry used-by cells had not yet been updated;
+  the final tip reads GREEN (final-gates-r69.txt). The report carries both states.
