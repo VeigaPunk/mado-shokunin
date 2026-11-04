@@ -4446,3 +4446,6 @@ disclosures are reported per seat in the round report.
    landed as QUALITY 131 in round 76.
 5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
    session-material history question) stay operator-owned.
+
+### Axis table re-derived at the landing tip (`receipts/measurement-final-r77.txt` and `quality/check-axis-scores.py`):
+navigation 96/96; calibration resolved-active 86/86; operability selftest 12/12, ledger 139/139.
