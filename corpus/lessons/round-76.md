@@ -181,3 +181,17 @@ control set, label or target, and both claims are re-measured after the repairs.
   `proto/label-derivation-r76.py` write into a caller-named scratch root with symlink-following
   opens; they are one-shot evidence generators run by the L1, never part of a gate, and the
   limit is carried rather than repaired in-round.
+
+## Corrections (round 77)
+
+- **D4 (count).** The round-76 report says "six mined mistakes"; this lesson holds five rows
+  (M76-1…M76-5), so the measured count is five — `grep -c '^| M76-' corpus/lessons/round-76.md`
+  prints `5`. The report's six is the defect; the lesson and the LOG ("Four mined") also
+  disagreed, and the lesson rows are the source of truth.
+- **D7 (pointer arithmetic).** The round-76 report says the tip commit adds "that receipt and
+  the census"; measured, `git diff --name-status 587b2989 2308e12a` shows only
+  `M .ufo/waves/round-76/receipts/harm-watch-r76.txt` (the census landed at `e160d18e`).
+- **D8 (declaration pointer).** `claims-declaration-r76.md` R2 says every quoted selftest tally
+  is committed "under `.ufo/waves/round-76/receipts/`"; measured, the tallies are at
+  `w1/R76ExecC1/counter-selftest.txt`, `w1/R76ExecC1/harness-selftest.txt` and
+  `w1/R76ScoutChain/probes/ran-selftests.txt` (each with command, stdout and rc).

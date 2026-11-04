@@ -411,3 +411,17 @@ frozen cases (59/59 vs the held 55/59) over the unchanged `quality/check-*.py` p
 (20 files, 13 readers, 13 guarded). All three read committed bytes and caller scratch only; no
 config plane, compositor, session, socket or service is touched, and the census remains a bounded
 syntactic approximation. Evidence: `corpus/lessons/round-76.md`.
+
+**Round-77 refinement (append-only; one read-only tool, two record counters, one knowledge entry; no new write surface):**
+the bar-footprint join is a lane instrument over the layer plane the lane already owns (the bar/launcher
+consumer chain), not a new desktop surface. `tools/mado-barfoot.py` reads only the files its caller names —
+the waybar JSONC config, at most one captured `hyprctl layers -j` reply and one captured
+`hyprctl monitors -j` reply (regular files or stdin, 1 MiB cap, symlinks refused) — and writes nothing; it
+starts no process and opens no socket. Its verdict is a prediction/join over captured bytes, never a
+compositor mutation, and the operator applies any change. `quality/counters/c1-r77-barfoot.py` extracts the
+tool from `--rev` and scores fifteen frozen artifacts in private caller scratch (git reads only; no host
+write); `quality/counters/c2-r77-runbook.py` runs the twelve frozen read verbs of the SKILL.md probe table in
+the caller's session environment (read verbs only; stdout only; no host or repo write). The knowledge entry
+`corpus/knowledge/bar-footprint-r77.md` is documentation of the layer/declared-bar plane; the host join it
+records was captured read-only (2026-11-04). No config tree, compositor state, service or sibling repo is
+written by this round.

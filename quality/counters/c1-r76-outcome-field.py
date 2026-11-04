@@ -35,7 +35,7 @@ reach the target.
 
 Printed receipt (last line, exact):
 
-    MADO_R76_OUTCOME_FIELD: cases=15 correct=15 mutants=4 killed=4 base_killed=0 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
+    MADO_R76_OUTCOME_FIELD: cases=16 correct=16 mutants=4 killed=4 base_killed=0 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
 
 Exit 0 iff cases == 16, correct == 16, mutants == 4, killed == 4 and base_killed == 0; 1 iff the
 measurement ran and missed (an absent candidate prints `correct=absent`); 2 on usage/setup error
@@ -49,7 +49,7 @@ exactly once in the frozen rule snippet), the contract shape and the scratch ref
 Declared limits: the fixture lanes are test doubles, not the production instrument; the mutants
 patch the outcome helper only (the kill path is not mutated, which is the point of
 `base_killed=0`); the challenge authenticates the echo, not the truth of the assertions; the
-fifteen modes are rule separators, not fault coverage.
+sixteen modes are rule separators, not fault coverage.
 """
 import argparse
 import json

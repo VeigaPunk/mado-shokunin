@@ -186,3 +186,15 @@ re-derived for the frozen set and committed as `control-baseline-r76-matched.txt
 historical receipt (both kept, append-only): held mz-only rule `16/16` on `mz` and `killed=0/4`;
 held round-75 classifier `55/59`. The measurement's own `base_killed=0` and `base_controls=55/59`
 agree with it. Recorded as lesson M76-5.
+
+
+## Errata (round 77, append-only; never a re-freeze)
+
+The round-76 declaration above says "a frozen fifteen-case expectation". The frozen set, the
+counter's contract line and the measurement are sixteen cases
+(`cases=16 correct=16 mutants=4 killed=4 base_killed=0` at `3588a527`); the word "fifteen" is a
+stale draft label (round-76 closure D3). The predicate, labels, control set and kill rule are
+unchanged. The pack's executable status is the counter's contract line, not this sentence; a
+docstring-only correction to `quality/counters/c1-r76-outcome-field.py` (the printed example said
+`cases=15`, the limits paragraph said "fifteen modes") lands in round 77 with the parity receipt
+`.ufo/waves/round-77/receipts/parity-r76-docstring.txt` (identical counts before/after).

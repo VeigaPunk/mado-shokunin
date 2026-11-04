@@ -108,3 +108,12 @@ is `controls/c1-outcome-cases-r76.json` (v3, sha256 `320f7e6b…`); a label may 
 through a new round's declaration, never in place.
 
 Sources: S450 (the caller-supplied challenge token and the child's echo). S455 grounds the round's C2/D3 rule and is cited in `corpus/knowledge/interprocedural-del-r76.md`, not here.
+
+## Correction (round 77)
+
+This entry opens without the CORPUS.md provenance trio (round-76 closure defect D1). The fields,
+supplied append-only and re-derived in round 77:
+
+source: S450, S455
+verified-at: 2026-11-04 (the round-76 counts re-derived from committed bytes; the entry's own numbers remain the round-76 receipts)
+recheck: `python3 -I quality/counters/c1-r76-outcome-field.py --repo . --rev 3588a527eba555a94e497097b0467efc04274c6d --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls .ufo/waves/round-76/controls/c1-outcome-cases-r76.json --scratch-root DIR`

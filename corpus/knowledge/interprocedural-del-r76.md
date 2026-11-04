@@ -92,3 +92,12 @@ contract line above are the pass condition. Control set: `controls/c2-cases-r76.
 Sources: S453 (subscription deletion is passed to the primary object), S454 (the copy
 constructor carries keyword pairs), S455 (an argument is placed in the parameter slot), S456
 (deleting an unbound name raises `NameError`).
+
+## Correction (round 77)
+
+This entry opens without the CORPUS.md provenance trio (round-76 closure defect D1). The fields,
+supplied append-only and re-derived in round 77:
+
+source: S453, S454, S455, S456
+verified-at: 2026-11-04 (the round-76 counts re-derived from committed bytes; the entry's own numbers remain the round-76 receipts)
+recheck: `python3 -I quality/counters/c2-r76-shapes.py --repo . --rev 3588a527eba555a94e497097b0467efc04274c6d --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf --controls .ufo/waves/round-76/controls/c2-cases-r76.json --scratch-root DIR`

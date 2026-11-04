@@ -3800,3 +3800,47 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   `check-tool-ledger.py` and `check-axis-scores.py` keep their base blob ids. No config tree,
   compositor, service or sibling repo was written; no pacman transaction; no tool installed or
   upgraded.
+
+## Round 77 — the bar's footprint and an executable runbook (2026-11-04, hyaku run 15)
+
+- **Claims.** C1 coverage: the bar-footprint chain becomes a measured join —
+  `tools/mado-barfoot.py` derives the declared waybar box (position/layer/height/width/margin/
+  exclusive) and joins it to the live layer entry in `hyprctl layers -j` and the monitor's
+  `reserved` band from `hyprctl monitors -j`; a frozen fifteen-case set scores
+  `cases=15 correct=15 mutants=5 killed=5 base_correct=8/15 tool_selftest=18/18 TARGET_MET`
+  at freeze `a83e9bee` (base `aeeef067`), with the live-echo control at 8/15
+  (`receipts/control-baseline-r77.txt`). C2 operability: the SKILL.md read-only probe table
+  executes end-to-end — twelve frozen expectations, each bound to its committed table row,
+  `cases=12 executed=12 matched=12 unexecuted=0 anchors=12/12 TARGET_MET` at the same freeze;
+  the read-the-table control reports `executed=0`.
+- **Host ground (read-only).** DP-1 3440x1440@99.997, waybar at layer level 2, box 0,0,3440,26,
+  reserved `[0,26,0,0]`, usable area y=26..1440; the bar declares `layer top`, `position top`,
+  `height 26`, no margins, exclusive default. Captures `fetch/live-{layers,monitors}-r77.json`
+  (sha256 `46eb2481…` / `e732af34…`); live join `MADO_BARFOOT … verdict=CLEAN`. No config tree,
+  compositor state or service was written.
+- **Sources.** SOURCES 393 → 400 rows: S457–S462 new (Hyprland `Renderer.cpp`, `HyprCtl.cpp`,
+  `ReservedArea.cpp`, the layer-shell XML at efb5099; `waybar(5)` and Waybar 0.15.0 `bar.cpp`),
+  S463 opened and rejected (wayland.app, no revision pin). Census exit 0 with the documented
+  W04 duplicate-URL warnings (S458 shares the HyprCtl.cpp URL with earlier rows).
+- **Mistakes.** Five mined in `corpus/lessons/round-77.md`: M77-1 the 12-field registry row
+  (census E01), M77-2 the counter resolving `--repo .` inside its scratch cwd, M77-3 the carried
+  stale-revision class (r76 D2) with the first fix that can fail, M77-4 my own line-anchor drift
+  before the grep, M77-5 a frozen fixture with an impossible layer size.
+- **Routed defects D1–D8 (round-76 spot-check).** Dispositioned append-only: D1 provenance trios
+  in the two r76 entries; D2 SCORECARD revision correction; D3 declaration errata and the r76
+  counter's docstring text (parity receipt); D4 the mistake count from the lesson rows; D5 this
+  report's Stale-lane line; D6 the three r76 handoff files committed with the freeze; D7/D8 the
+  r76 pointer corrections in the lesson.
+- **Registry and gate bookkeeping.** `quality/tool-ledger.md` 136 → 139 rows; `SKILL.md`
+  canonical Gate registry gains `mado-r77-barfoot` (probe), `mado-r77-barfoot-counter` and
+  `mado-r77-runbook` (gates); index 95 → 96 rows; SCORECARD round-77 block with both axis rows
+  and two capability rows.
+- **No-harm.** Gate `bash tools/mado-verify.sh --selftest` 460/460 at unchanged bytes; the
+  frozen r72–r76 instruments and `quality/landing-counters.sh`, `check-tool-ledger.py`,
+  `check-axis-scores.py` keep their base blob ids (the r76 counter takes a docstring-only
+  correction with a parity run); axis table re-derived at the landing tip; census exit 0. No
+  config tree, compositor, service or sibling repo was written; no pacman transaction; no tool
+  installed or upgraded.
+- **Wave.** One v1 wave, 12 seats (4 executors, 2 scribes, 1 scout, 1 connector, 1 reviewer,
+  1 critic, 1 mutation-tester, 1 revenger; attack share 4/12). Seat outcomes are reported in the
+  round report; a dead seat stays dead in the evidence.

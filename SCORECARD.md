@@ -4389,3 +4389,60 @@ mutation-tester's `grammar16` and `d3-anyarg` survivors).
 
 ### Axis table re-derived at the landing tip (`receipts/harm-watch-r76.txt` and `quality/check-axis-scores.py`):
 navigation 95/95; calibration resolved-active 86/86; operability selftest 12/12, ledger 136/136.
+
+### Corrections (round 77, append-only)
+
+The C2 row above cites `5dade9b3` as its instrument's last change; the measured last change is
+`3588a527` (`git log -1 --format=%H -- quality/counters/c2-r76-shapes.py` prints
+`3588a527eba555a94e497097b0467efc04274c6d`). The counts are unchanged; the revision label was
+stale (round-76 closure D2). The report carries the correct revision.
+
+
+## Round 77 — the bar's footprint and an executable runbook (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-77/claims-declaration-r77.md`; freeze `e4717a1c`
+(instruments + declaration), freeze v2 `a83e9bee` (C1 counter absolute-repo fix), pre-wave
+receipts `94b5afb1`; base `aeeef067bd63672dfc681d6dacc3797f53ffd1f9`. Frozen control sets:
+`.ufo/waves/round-77/controls/c1-cases-r77.json` (15 cases, sha256 `7d6e2b1a…`) and
+`c2-runbook-cases-r77.json` (12 cases, sha256 `597b2302…`). Pre-freeze do-nothing controls:
+the C1 live-echo rule scores `base_correct=8/15`; the C2 read-the-table rule reports
+`executed=0` (`.ufo/waves/round-77/receipts/control-baseline-r77.txt`). Axis posture at round
+start: navigation 95/95, calibration resolved-active 86/86, operability selftest 12/12 (no axis
+distinctly lowest); the dormant freshness value (9.6552, host-absent) stays operator-owned and
+is excluded from the tie. The stagnation nudge does not apply (last capability r76, window N=3).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** — the bar-footprint chain (declared waybar config → live layer box → monitor `reserved`) becomes a measured join | `python3 -I quality/counters/c1-r77-barfoot.py --repo . --rev REV --controls .ufo/waves/round-77/controls/c1-cases-r77.json --scratch-root DIR` | at the base rev the join does not exist (0 layer-plane rows; the live-echo control scores 8/15); at `a83e9bee` (its instrument's last change): `cases=15 correct=15 mutants=5 killed=5 base_correct=8/15 tool_selftest=18/18 verdict=TARGET_MET` rc 0; bounded `10 × 15/15` → 10.0000 on this finite set | improved on the frozen fifteen-case set |
+| C2 **operability** — the SKILL.md read-only probe table executes end-to-end | `python3 -I quality/counters/c2-r77-runbook.py --repo . --rev REV --controls .ufo/waves/round-77/controls/c2-runbook-cases-r77.json` | at the base rev the table is a dated record (0 frozen expectations, 0 batch execution; the read-the-table control reports `executed=0`); at `a83e9bee`: `cases=12 executed=12 matched=12 unexecuted=0 anchors=12/12 verdict=TARGET_MET` rc 0; bounded `10 × 12/12` → 10.0000 | improved |
+| — | coverage / admitted-note reachability (`quality/check-index.py --repo . --rev REV`) | 95/95 at base → 96/96 at the landing tip (one new entry indexed) | improved (index) |
+| — | operability / hermetic gate (`bash tools/mado-verify.sh --selftest`) | 460/460 both ends; the gate is byte-identical this round | unchanged (harm watch) |
+| — | operability / instrument ledger (`quality/check-tool-ledger.py --repo . --rev REV`) | 136 rows at base → 139 rows at the tip, uncovered 0 (three new instruments) | improved (ledger) |
+| — | calibration / held instruments (`git rev-parse <rev>:<path>`) | identical blob ids at base and tip for `tools/mado-verify.sh`, `quality/landing-counters.sh`, `check-tool-ledger.py`, `check-axis-scores.py`, `c1-r72/r73/r74/r75/r76-*`, `c2-r73/r74/r75/r76-shapes.py` (the r76 counter receives a docstring-text-only correction under D3, with a parity receipt; its 16-case counts are unchanged) | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-77/receipts/control-baseline-r77.txt` (per-case, per-mutant,
+base and contract lines at the freeze), `receipts/pre-wave-evidence-r77.txt` (live run, gate,
+census), `fetch/live-{layers,monitors}-r77.json` and `fetch/S457.bin`–`S463.bin` with
+`fetch/sha256-r77.txt`, `controls/` (frozen sets + generator), `w1-spec.json` /
+`w1-dispatch.json` / `w1-results.json` (the one v1 wave) and `w1/` (seat reports). Wave
+disclosures are reported per seat in the round report.
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Bar-footprint join over the compositor layer plane | Predict a waybar bar's layer box from the declaration (position/layer/height/width/margin/exclusive), find the live entry in `hyprctl layers -j`, and separate MATCH from drift against the monitor's `reserved` band on a captured `hyprctl monitors -j`; name what it cannot model (margined auto exclusive zones) | `.ufo/waves/round-77/measurement-final-r77.txt`; `tools/mado-barfoot.py`, `quality/counters/c1-r77-barfoot.py` | round 77 |
+| Executable read-only probe runbook | Run the SKILL.md read-only probe table as one batch: 12 frozen expectations, each bound to its committed table row, with executed/matched/unexecuted reported separately so a table that is only read is not a probe | `.ufo/waves/round-77/measurement-final-r77.txt`; `quality/counters/c2-r77-runbook.py` | round 77 |
+
+### Planned (round 78; intent only)
+
+1. C1's next finite ground: the margined auto exclusive-zone composition (a bar with non-zero
+   edge margins), or a second exclusive consumer on the same edge, on its own frozen set.
+2. C2's next finite ground: the volatile probe rows as shape-checked cases (active workspace,
+   process ids) and the two captured dumps as runbook rows.
+3. The cited-revision check from this round's repair pack, if it lands, promoted to a standing
+   gate in the canonical registry table.
+4. `considerthese/2026-10-28.md` proposal 4 (the live-tool table) stays available; proposal 5
+   landed as QUALITY 131 in round 76.
+5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
