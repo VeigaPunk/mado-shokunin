@@ -41,3 +41,31 @@ All sources were opened 2026-11-04 before their rows were written; bytes under
 - The tool's 15-case score, its five killed mutations and the live-echo control (8/15) are in
   `receipts/control-baseline-r77.txt`; the C2 twelve probes are in the same file.
 - Addenda after the wave (`## Wave findings` and corrections) are appended, never rewritten.
+
+## Wave findings (append-only; written as the seats settle)
+
+- **R77ScoutSources (source reconnaissance).** The scout's anchor table licenses every modelled
+  branch and names the gaps the declaration did not: F1 `monitors[].width/height` are pixel size
+  while the layer box is logical (`HyprCtl.cpp:278` vs `Monitor.cpp:699-700`); F2 the auto branch
+  is unreachable for a horizontal waybar bar because gtk-layer-shell zeroes only a double-anchored
+  dimension; F5 a static `monitor … addreserved` band shifts the origin; F3 `mode` presets rewrite
+  layer/exclusive at runtime; F4 centring rounding differs by 1 px on odd deltas; and its I2
+  derivation shows the auto zone adds the *opposite*-edge margin, so `NOT_MODELLED` must trigger on
+  any margin, not only the edge margin. The first two were behaviourally wrong for reachable
+  configurations and are now **refused** by the tool (`UNMODELLED`, rc 3), with the red/green pair
+  `receipts/repair-r77-tool-refusals.txt` (rc 1 before, rc 3 after for both fixtures); the rest
+  are named in the entry §4. The scout also confirms `layer: bottom` + `exclusive: true` still
+  reserves (source-licensed, case-unexercised) and that `name` is the namespace (code-only; the
+  manual documents only the CSS class).
+- **R77ConnSiblings (cross-lane scan).** No sibling lane claims the layer plane, the bar
+  footprint or the runbook: 0 hits for `hyprctl layers` across 20 sibling repos, and the nearest
+  neighbours (game-dev-2d's `clients -j` window evidence; audio's waybar process names in
+  receipts) do not overlap. It measured the stale-revision-citation class at **nine instances in
+  rounds 68–77**, including the r75→r76 back-to-back repeat, and confirmed the round's fix is the
+  first in-class fix that is executable machinery rather than a one-time re-cite. Its caveat (a)
+  — the check must land with a red/green pair — is now met: `quality/check-cited-revisions.py`
+  lands as a registered probe that reads the r76 row itself: `cited-r76-red-row.txt` → `red` (mismatched=1)
+  and `cited-r76-green-row.txt` → `green` (`receipts/cited-revision-check-r77.txt`, selftest 6/6), and its caveat (b) — an un-wired check
+  decays — is carried to round 78 as the standing-gate move. `considerthese/2026-10-28.md`
+  proposal 4 (the live-tool table) is still unimplemented and is deferred to round 78: absorbing
+  it would change the ledger grammar and `quality/` bytes after the freeze.
