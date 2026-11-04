@@ -298,3 +298,16 @@ check is tree-level: an unreferenced live object can satisfy it; forged state ce
 unmeasured. Existing r65 counter files stay unchanged; the r65 standing script is preserved
 at its historical revisions, while its current path is the r66 cutover. No historical invocation
 is claimed valid against unpinned current bytes. Evidence: `corpus/lessons/round-66.md`.
+
+**Round-68 refinement (append-only; three lane record instruments and twelve gate envs; no new desktop or write surface.)**
+The round adds `quality/counters/c1-r68-landing-controls.py` (a control harness whose `--selftest`
+drives its own measurement body with scripted children), `quality/counters/c1-r68-selfmutants.py`
+(three frozen forced-credit recipes scored against that harness and against the pinned r67
+harness) and `quality/counters/c2-r68-reader-guard.py` (a census of the standing gate population's
+git-object reads and their `GIT_NO_REPLACE_OBJECTS` construction). The population is exactly the
+tracked `quality/check-*.py` set at the scored revision; per-round counters and their pinned
+history are outside it. Twelve of those gates gain a guard key in their own git environment; their
+argv, stdout and exit codes are unchanged. All three instruments read git objects and write only
+caller scratch (the census writes nothing). None touches a config plane, the compositor, a socket
+or a host service, and the census's guard is presence-tested, not interpreted. Evidence:
+`corpus/lessons/round-68.md`.

@@ -17,6 +17,7 @@ Usage: check-landed-contract.py --repo . --frozen-rev REV --frozen <path-in-repo
        [--registered <file>]
 """
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -52,7 +53,8 @@ def main():
     ap.add_argument("--registered", default=None)
     a = ap.parse_args()
     r = subprocess.run(["git", "-C", a.repo, "show", "%s:%s" % (a.frozen_rev, a.frozen)], capture_output=True,
-                       text=True, errors="replace")
+                       text=True, errors="replace",
+                       env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"))
     if r.returncode:
         print("FROZEN-ABSENT %s at %s" % (a.frozen, a.frozen_rev))
         return 2

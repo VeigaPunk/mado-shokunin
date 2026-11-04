@@ -100,7 +100,8 @@ def main(argv):
         args = parser.parse_args(argv)
         os.makedirs(args.work, exist_ok=True)
         env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": args.work,
-               "TMPDIR": args.work, "LC_ALL": "C"}
+               "TMPDIR": args.work, "LC_ALL": "C",
+               "GIT_NO_REPLACE_OBJECTS": "1"}
         registry = parse_registry(git_blob(args.repo, args.rev, args.registry, env).decode("utf-8", "replace"))
         entry_bytes = git_blob(args.repo, args.rev, args.entry, env)
         entry = entry_bytes.decode("utf-8", "replace")

@@ -95,8 +95,10 @@ def compare(published, derived):
 
 
 def git(repo, *args):
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env["GIT_NO_REPLACE_OBJECTS"] = "1"
     return subprocess.run(["git", "-C", repo] + list(args), capture_output=True, text=True,
-                          env={k: v for k, v in os.environ.items() if not k.startswith("GIT_")})
+                          env=env)
 
 
 def show(repo, rev, path):
@@ -116,9 +118,11 @@ def run_script(repo, rev, path, args, timeout=300):
         with open(f, "w", encoding="utf-8") as fh:
             fh.write(src)
         try:
+            env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+            env["GIT_NO_REPLACE_OBJECTS"] = "1"
             p = subprocess.run([sys.executable, "-I", f] + list(args), cwd=repo,
                                capture_output=True, text=True, timeout=timeout,
-                               env={k: v for k, v in os.environ.items() if not k.startswith("GIT_")})
+                               env=env)
         except subprocess.TimeoutExpired:
             return None, "instrument timed out: %s" % path
         return (p.stdout + p.stderr), None

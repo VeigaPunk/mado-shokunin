@@ -46,9 +46,11 @@ ROW_RE = re.compile(r"^\| `knowledge/([^`]+\.md)`", re.M)
 
 
 def _git(repo, *args):
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env["GIT_NO_REPLACE_OBJECTS"] = "1"
     return subprocess.check_output(
         ["git", "-C", repo, *args], text=True, stderr=subprocess.STDOUT,
-        env={k: v for k, v in os.environ.items() if not k.startswith("GIT_")},
+        env=env,
     )
 
 
@@ -278,6 +280,7 @@ def selftest():
                 fh.write(rows)
             env = dict(
                 os.environ,
+                GIT_NO_REPLACE_OBJECTS="1",
                 GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
                 GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t",
             )

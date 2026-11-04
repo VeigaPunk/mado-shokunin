@@ -59,6 +59,7 @@ HEX64 = re.compile(r"^[0-9a-fA-F]{64}$")
 
 def git(repo, *args):
     env = dict(os.environ, GIT_OPTIONAL_LOCKS="0")
+    env["GIT_NO_REPLACE_OBJECTS"] = "1"
     for k in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE"):
         env.pop(k, None)
     p = subprocess.run(["git", "-C", repo] + list(args), capture_output=True, env=env)

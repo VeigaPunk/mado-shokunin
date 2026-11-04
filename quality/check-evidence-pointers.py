@@ -69,6 +69,7 @@ INHERITED_PATHS = (
 # `git -C <repo>` does not override an inherited GIT_DIR / GIT_WORK_TREE, so every git
 # call runs without the caller's GIT_* variables.
 GIT_ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+GIT_ENV["GIT_NO_REPLACE_OBJECTS"] = "1"
 
 
 def die(msg: str) -> None:

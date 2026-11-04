@@ -71,6 +71,7 @@ def read_scorecard(repo, rev):
     p = subprocess.run(
         ["git", "-C", repo, "show", "%s:SCORECARD.md" % rev],
         capture_output=True, text=True,
+        env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"),
     )
     if p.returncode != 0:
         raise SystemExit("git show %s:SCORECARD.md failed: %s" % (rev, p.stderr.strip()[:200]))
@@ -123,7 +124,8 @@ def first_sentence(text):
 
 def exists_at(repo, rev, path):
     p = subprocess.run(["git", "-C", repo, "cat-file", "-e", "%s:%s" % (rev, path)],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True,
+                       env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"))
     return p.returncode == 0
 
 

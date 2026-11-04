@@ -924,6 +924,7 @@ def _git(repo, *args, text=False):
     proc = subprocess.run(
         ["git", "-C", repo, *args],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"),
     )
     if proc.returncode != 0:
         raise GateError(
@@ -980,6 +981,7 @@ def iter_blobs(repo, shas):
             proc = subprocess.Popen(
                 ["git", "-C", repo, "cat-file", "--batch"],
                 stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"),
             )
             try:
                 for requested in shas:

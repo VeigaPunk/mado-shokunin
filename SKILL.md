@@ -2791,3 +2791,25 @@ git-reading children their own `GIT_NO_REPLACE_OBJECTS=1`. The citecheck tool in
 reports `TARGET_MET` at `citations=0`; the refusal binds at the instrument marker layer. The r66
 script keeps its pinned historical revisions; no compatibility alias is added. Default citation
 scope remains `.ufo/waves/round-N/receipts`, external paths stay refused.
+
+## Round 68 — self-credit control and the guarded gate population
+
+The landing control harness no longer credits a kill from untested code: its `--selftest` drives
+the real measurement body with scripted children, so a forced `mr_killed`/`mz_killed`/`killed`
+changes the asserted contract line and the harness's own selftest goes red. Every standing gate
+(`quality/check-*.py`) that reads git objects now constructs `GIT_NO_REPLACE_OBJECTS` in its own
+environment; the census counts the population and refuses a guard that exists only as a comment,
+docstring or unrelated dictionary. A planted `refs/replace` must not move a gate's verdict.
+Presence is tested (the value is not interpreted); the guard does not authenticate objects or
+repair an already-rewritten repository. See `corpus/lessons/round-68.md` and
+`corpus/knowledge/gate-git-read-guards-r68.md`.
+
+| name | gate/probe | entry command | verdict map | self-test command / spelling | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|---|
+| mado-r68-selfmutants | gate | `python3 quality/counters/c1-r68-selfmutants.py --repo . --rev REV --base-rev 510100c81e6cf63fec6be380c2f2f9c670f32cbc --scratch-root DIR` | 0 clean (`selftest=0` and `killed=3/3`); 1 failed; 2 could-not-evaluate | `python3 quality/counters/c1-r68-selfmutants.py --selftest` | `.ufo/waves/round-68/claims-declaration-r68.md`; frozen recipes S1-S3 | private caller scratch; git reads; extracted harness selftests | mado |
+| mado-r68-reader-guard | gate | `python3 quality/counters/c2-r68-reader-guard.py --repo . --rev REV --controls .ufo/waves/round-68/controls/c2-controls.json --scratch-root DIR` | 0 clean (`population=20 readers=13 guarded=13 unguarded=0` and `controls=11/11`); 1 failed; 2 could-not-evaluate | `python3 quality/counters/c2-r68-reader-guard.py --selftest` | `.ufo/waves/round-68/controls/c2-controls.json` (sha256 `b7a1c939e5a715792d2969eb4ca86d8119cd5a72ef930d00d57338c62faf6a91`) | git reads only; writes nothing | mado |
+
+The r67 harness (`quality/counters/c2-r67-landing-controls.py`) keeps its pinned historical role:
+its selftest does not drive the decision body and its three forced-credit mutations survive. The
+r68 harness is the successor; no alias or rewrite is added to the r67 file. The twelve repaired
+gates keep their argv, output and exit status; the guard is the only added behavior.

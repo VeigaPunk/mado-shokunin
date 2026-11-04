@@ -650,3 +650,25 @@ control kills both named mutants (`killed=2/2`). Recheck:
 Limits: exactly the named mutants; the guard is presence-tested (`GIT_NO_REPLACE_OBJECTS=0` also
 disables), it does not protect a repository already rewritten, authenticate objects, or prove state
 truth. Ground: `corpus/lessons/round-67.md` M67-2.
+
+## Criterion from the round-68 freeze and self-credit defects (round 68)
+
+**110. A counter is frozen only after its declared command is run verbatim, and an instrument that
+credits a kill or a pass must have a committed test that drives the decision code.**
+(a) The pre-freeze receipt records the counter's own advertised invocation, character for
+character, against the base revision and its exit status: a command that dies on an argument the
+instrument does not accept (`rc 2`, "unrecognized arguments") is a freeze defect, not a setup
+detail to be worked around in the report. (b) A harness that reports `killed=n/m` or `pass`
+credits it from a decision path; a hermetic test that never executes that path leaves a
+forced-credit mutation green and the credit unevidenced. The test must drive the real body with
+scripted inputs, and the frozen mutation recipes must target the exact committed texts.
+Shown able to fail: the round-68 C2 counter committed at `e0727cda` exits 2 on the declared
+command while the same command prints its contract line after the fix
+(`.ufo/waves/round-68/c2-command-erratum-r68.txt`, red-before `rc=2`); the round-67 harness's
+selftest stays green (47/47) under all three forced-credit recipes while the round-68 harness's
+selftest goes red on each (51/52, 51/52, 50/52; `quality/counters/c1-r68-selfmutants.py`).
+Ground: `corpus/lessons/round-68.md` M68-1 and M68-2.
+Limits: the parity check proves the declared argument set parses, not that the command's
+semantics are right; the scripted cases are stubs, so the test proves the decision code is
+exercised, not that real children behave as scripted. Neither clause covers a counter whose
+measurement is simply false for reasons both tests miss.

@@ -92,7 +92,8 @@ def main(argv=None):
             return 2
         for path in a.report:
             blob = subprocess.run(("git", "-C", a.repo, "show", f"{a.rev}:{path}"),
-                                  capture_output=True, text=True)
+                                  capture_output=True, text=True,
+                                  env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"))
             if blob.returncode != 0:
                 print(f"REPORT_UNRESOLVED rev={a.rev} report={path}")
                 absent += 1
@@ -111,7 +112,8 @@ def main(argv=None):
                 hit = None
                 for c in cands:
                     if subprocess.run(("git", "-C", a.repo, "cat-file", "-e", f"{a.rev}:{c}"),
-                                      capture_output=True).returncode == 0:
+                                      capture_output=True,
+                                      env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1")).returncode == 0:
                         hit = c
                         break
                 if hit:
