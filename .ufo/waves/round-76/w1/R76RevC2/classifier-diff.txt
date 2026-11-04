@@ -1,0 +1,401 @@
+--- held-r75
++++ frozen-r76
+@@ -1,43 +1,45 @@
+ #!/usr/bin/env python3
+-r"""Round-75 C2 counting command: the guard census counts the copy spellings bound to a name and
+-the `del env[KEY]` cancellation (claim C2, round 75).
+-
+-    python3 quality/counters/c2-r75-shapes.py --repo . --rev REV \
+-        --base-rev bd5a971532f37df85a78f6f566dd1e649b79de11 \
+-        --controls .ufo/waves/round-75/controls/c2-cases-r75.json --scratch-root DIR
+-    python3 quality/counters/c2-r75-shapes.py --selftest --scratch-root DIR
+-
+-The successor adds two rule deltas to the round-74 classifier (frozen, never edited):
+-
+-  D1 - a mapping that carries the guard key in key position guards the child whatever the
+-       binding's NAME: ``child = dict(env, GIT_NO_REPLACE_OBJECTS="1")`` or
+-       ``child = {**env, "GIT_NO_REPLACE_OBJECTS": "1"}`` handed as ``env=child`` counts, under
+-       the same dominance test the env-named flow uses (the binding strictly before the launch,
+-       no plain rebinding of the name in between). A copy without the key, a key in value
+-       position, and a rebound copy stay unguarded.
+-  D2 - ``del env[KEY]`` between a guard construction and the launch cancels the store: the key
+-       is removed from the mapping handed to the child (a delete of another key, and a delete
+-       before the store, cancel nothing).
+-
+-The first thirty-six cases are carried byte-identically from the round-74 frozen set
+-(hash-checked); the eleven appended cases are the round-75 carriers and their negatives. The
++r"""Round-76 C2 counting command: the guard census counts an interprocedural cancellation and a
++dynamic-key `del` (claim C2, round 76).
++
++    python3 quality/counters/c2-r76-shapes.py --repo . --rev REV \
++        --base-rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf \
++        --controls .ufo/waves/round-76/controls/c2-cases-r76.json --scratch-root DIR
++    python3 quality/counters/c2-r76-shapes.py --selftest --scratch-root DIR
++
++The successor adds two rule deltas to the round-75 classifier (frozen, never edited):
++
++  D3 - a live `del m[KEY]` inside a local function `f(m)` cancels a guard on the mapping the
++       caller hands to `f(env)`: the same object is mutated, so the key is gone from the mapping
++       the launch passes to the child. A delete in a literal-false branch, a parameter rebound
++       before the delete, a delete of another key, a function never called and a call after the
++       launch cancel nothing.
++  D4 - `del env[k]` where `k` is bound exactly once in the same scope, before the delete, to the
++       guard key (a literal or a module constant) cancels the store, like the literal form. A
++       name bound to another string, a rebound name and a name bound after the delete cancel
++       nothing.
++
++The first forty-seven cases are carried byte-identically from the round-75 frozen set
++(hash-checked); the twelve appended cases are the round-76 carriers and their negatives. The
+ twenty-population census is re-derived at --rev and must keep twenty readers, thirteen guarded,
+-zero unguarded. The do-nothing control is the round-74 classifier extracted at --base-rev and
+-scored on the same forty-seven cases in the same run; it must score exactly 41/47.
++zero unguarded. The do-nothing control is the round-75 classifier extracted at --base-rev and
++scored on the same fifty-nine cases in the same run; it must score exactly 55/59.
+ 
+ Printed receipt (last line, exact):
+ 
+-    MADO_R75_GUARD_SHAPES: population=<n> readers=<n> guarded=<n> unguarded=<n> controls=<n>/47 base_controls=<m>/47 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
+-
+-Exit 0 iff population 20, readers 13, guarded 13, unguarded 0, controls 47 and base_controls 41;
++    MADO_R76_GUARD_SHAPES: population=<n> readers=<n> guarded=<n> unguarded=<n> controls=<n>/59 base_controls=<m>/59 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
++
++Exit 0 iff population 20, readers 13, guarded 13, unguarded 0, controls 59 and base_controls 55;
+ 1 iff the measurement ran and missed (an absent base classifier prints base_controls=0); 2 on
+ usage/setup error with the reason on stderr and no contract line.
+ 
+ Declared limits: line order is not execution order (the same cross-method approximation the
+ attribute flow declares); one object-alias edge and one `os.environ` alias with no chains; the
+ name-neutral binding counts a mapping handed as `env=`, not the truth of its values; `del` is
+-modelled for a literal key in the same scope only; a syntactic approximation that does not
+-interpret values.
++modelled for a literal key, a same-scope single-binding constant name, or a callee that receives
++the mapping and deletes the literal key; the callee is matched by simple call shape (positional
++first argument), never through an alias of the function or a chain of calls; a syntactic
++approximation that does not interpret values.
+ """
+ import argparse
+ import ast
+@@ -50,9 +52,9 @@
+ import subprocess
+ import sys
+ 
+-TOOL = "c2-r75-shapes.py"
+-BASE_COUNTER = "quality/counters/c2-r74-shapes.py"
+-BASE_COUNTER_SHA256 = "eb43e2b6d0fca9ce4e0de8d67473804bfab7d88dac17ba3351123e85c6506277"
++TOOL = "c2-r76-shapes.py"
++BASE_COUNTER = "quality/counters/c2-r75-shapes.py"
++BASE_COUNTER_SHA256 = "0544c0ef9d35e5cd76a0a8090d9f3a89fa0e3bb6acccee6da43bb9a3e864419b"
+ KEY = "GIT_NO_REPLACE_OBJECTS"
+ POPULATION_RE = re.compile(r"^quality/check-[^/]+\.py$")
+ GIT_TOKEN_RE = re.compile(r"[\"']git[\"']")
+@@ -62,16 +64,16 @@
+ FROZEN_POPULATION = 20
+ FROZEN_READERS = 13
+ FROZEN_GUARDED = 13
+-FROZEN_CONTROLS = 47
+-FROZEN_BASE_CONTROLS = 41
+-FROZEN_CONTROLS_SHA = "d99502ba23e969a981a856a06742d8da14e1684850c7ca0e0900cd2dc7767897"
+-HELD_CONTROLS = ".ufo/waves/round-74/controls/c2-cases-r74.json"
+-HELD_CONTROLS_SHA = "4db4cc70d1a8e86876f20a9527cfc7f0c7a344eb6d2655b398443b907b3a73d0"
+-HELD_CASES = 36
++FROZEN_CONTROLS = 59
++FROZEN_BASE_CONTROLS = 55
++FROZEN_CONTROLS_SHA = "df9e89841ed560613d7a05ad50f345b2d6bbf0d8e40a98f51e8b8134492b3948"
++HELD_CONTROLS = ".ufo/waves/round-75/controls/c2-cases-r75.json"
++HELD_CONTROLS_SHA = "d99502ba23e969a981a856a06742d8da14e1684850c7ca0e0900cd2dc7767897"
++HELD_CASES = 47
+ UNSAFE_ROOTS = ("/tmp", "/var/tmp", "/dev/shm")
+ CONTRACT_RE = re.compile(
+-    r"MADO_R75_GUARD_SHAPES: population=[0-9]+ readers=[0-9]+ guarded=[0-9]+ "
+-    r"unguarded=[0-9]+ controls=[0-9]+/47 base_controls=[0-9]+/47 "
++    r"MADO_R76_GUARD_SHAPES: population=[0-9]+ readers=[0-9]+ guarded=[0-9]+ "
++    r"unguarded=[0-9]+ controls=[0-9]+/59 base_controls=[0-9]+/59 "
+     r"verdict=(?:TARGET_MET|TARGET_MISSED) rev=[0-9a-f]{40,64}")
+ 
+ 
+@@ -377,7 +379,78 @@
+     return out
+ 
+ 
+-def unguarded_rebindings(nodes, maps=frozenset(), dead=frozenset()):
++def keyed_names(nodes, consts):
++    """Round-76 D4: names bound exactly once in this scope to the guard key (literal or const)."""
++    binds = {}
++    counts = {}
++    for node in nodes:
++        if isinstance(node, ast.Assign) and len(node.targets) == 1 \
++                and isinstance(node.targets[0], ast.Name):
++            name = node.targets[0].id
++            counts[name] = counts.get(name, 0) + 1
++            if key_is_guard(node.value, consts):
++                binds.setdefault(name, node.lineno)
++        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) \
++                and node.value is not None:
++            name = node.target.id
++            counts[name] = counts.get(name, 0) + 1
++            if key_is_guard(node.value, consts):
++                binds.setdefault(name, node.lineno)
++    return {name: line for name, line in binds.items() if counts.get(name) == 1}
++
++
++def cancelling_functions(tree, consts, dead):
++    """Round-76 D3: local functions that delete the guard key from the mapping they receive."""
++    out = set()
++    for fn in ast.walk(tree):
++        if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
++            continue
++        params = {p.arg for p in _params(fn)}
++        if not params:
++            continue
++        body_dead = dead | false_guarded_lines(fn)
++        nodes = scoped_nodes(fn)
++        rebinds = {}
++        for node in nodes:
++            if getattr(node, "lineno", None) in body_dead:
++                continue
++            if isinstance(node, ast.Assign):
++                targets = node.targets
++            elif isinstance(node, ast.AnnAssign):
++                targets = [node.target]
++            else:
++                continue
++            for target in targets:
++                if isinstance(target, ast.Name) and target.id in params:
++                    rebinds.setdefault(target.id, set()).add(node.lineno)
++        for node in nodes:
++            if not isinstance(node, ast.Delete) or node.lineno in body_dead:
++                continue
++            for target in node.targets:
++                if isinstance(target, ast.Subscript) and isinstance(target.ctx, ast.Del) \
++                        and isinstance(target.value, ast.Name) and target.value.id in params \
++                        and key_is_guard(target.slice, consts):
++                    if not any(r < node.lineno for r in rebinds.get(target.value.id, ())):
++                        out.add(fn.name)
++    return out
++
++
++def call_cancellations(tree, cancelling, dead):
++    """Round-76 D3: name -> call lines where a cancelling callee receives that mapping."""
++    out = {}
++    if not cancelling:
++        return out
++    for node in ast.walk(tree):
++        if not isinstance(node, ast.Call) or node.lineno in dead:
++            continue
++        if not isinstance(node.func, ast.Name) or node.func.id not in cancelling:
++            continue
++        if node.args and isinstance(node.args[0], ast.Name):
++            out.setdefault(node.args[0].id, set()).add(node.lineno)
++    return out
++
++
++def unguarded_rebindings(nodes, maps=frozenset(), dead=frozenset(), consts=frozenset()):
+     out = {}
+     for node in nodes:
+         if isinstance(node, ast.Assign):
+@@ -403,11 +476,17 @@
+                 and node.value is not None and not mapping_has_key(node.value, maps):
+             out.setdefault(node.target.id, set()).add(node.lineno)
+         elif isinstance(node, ast.Delete):
++            # Round-76 D4: the key may be spelled as a name bound exactly once, in this scope,
++            # before the delete, to the guard key; a rebound or differently-valued name cancels
++            # nothing, and a name bound after the delete cannot be the key at the delete.
++            keyed = keyed_names(nodes, consts)
+             for target in node.targets:
+                 if isinstance(target, ast.Subscript) and isinstance(target.ctx, ast.Del) \
+                         and isinstance(target.value, ast.Name) \
+-                        and isinstance(target.slice, ast.Constant) \
+-                        and target.slice.value == KEY:
++                        and (key_is_guard(target.slice, consts)
++                             or (isinstance(target.slice, ast.Name)
++                                 and target.slice.id in keyed
++                                 and keyed[target.slice.id] < node.lineno)):
+                     out.setdefault(target.value.id, set()).add(node.lineno)
+     return out
+ 
+@@ -451,7 +530,7 @@
+         nodes = scoped_nodes(fn)
+         dead_here = dead | false_guarded_lines(fn)
+         guarded = guard_construction_lines(nodes, dead_here, maps)
+-        rebinds = unguarded_rebindings(nodes, maps, dead_here)
++        rebinds = unguarded_rebindings(nodes, maps, dead_here, const_key_names(tree))
+         for node in nodes:
+             if not isinstance(node, ast.Return) or node.value is None:
+                 continue
+@@ -493,6 +572,7 @@
+     ARGV_NAMES = argv_binding_names(tree)
+     dead = false_guarded_lines(tree)
+     consts = const_key_names(tree)
++    cancelling = cancelling_functions(tree, consts, dead)
+     if global_guard(tree, dead, consts):
+         return True
+     if environ_transport_guard(tree, dead, consts):
+@@ -526,7 +606,9 @@
+                     binds[name] = set(lines)
+         if not binds:
+             continue
+-        rebinds = unguarded_rebindings(nodes, maps, dead)
++        rebinds = unguarded_rebindings(nodes, maps, dead, consts)
++        for name, lines in call_cancellations(tree, cancelling, dead).items():
++            rebinds.setdefault(name, set()).update(lines)
+         for name, guard_lines in binds.items():
+             uses = usage_lines(nodes, name, locals_)
+             for guard_line in guard_lines:
+@@ -902,6 +984,8 @@
+     """The round-70 carriers plus the four round-71 shapes, each under the dominance flows."""
+     consts = const_key_names(tree)
+     maps = splat_mapping_names(tree)
++    cancelling = cancelling_functions(tree, consts, dead)
++    calls = call_cancellations(tree, cancelling, dead)
+     if attribute_flow(tree, dead, consts):
+         return True
+     if alias_store_guard(tree, dead):
+@@ -933,7 +1017,9 @@
+                     binds.setdefault(name, set()).update(lines)
+         if not binds:
+             continue
+-        rebinds = unguarded_rebindings(nodes, maps)
++        rebinds = unguarded_rebindings(nodes, maps, dead, consts)
++        for name, lines in calls.items():
++            rebinds.setdefault(name, set()).update(lines)
+         for name, guard_lines in binds.items():
+             uses = usage_lines(nodes, name, locals_)
+             for guard_line in guard_lines:
+@@ -1345,7 +1431,7 @@
+                 or mine["expect_guard"] != case["expect_guard"]:
+             raise SetupError("held case %r is not carried forward byte-identically"
+                              % case["name"])
+-    emit("MADO_R75_HELD_CONTROLS path=%s cases=%d sha256=%s carried=yes"
++    emit("MADO_R76_HELD_CONTROLS path=%s cases=%d sha256=%s carried=yes"
+          % (HELD_CONTROLS, len(held), digest))
+     return len(held)
+ 
+@@ -1378,7 +1464,7 @@
+ def base_classify(repo, base_sha, scratch):
+     data = extract(repo, base_sha, BASE_COUNTER)
+     if data is None:
+-        emit("MADO_R75_BASE_COUNTER path=%s present=no" % BASE_COUNTER)
++        emit("MADO_R76_BASE_COUNTER path=%s present=no" % BASE_COUNTER)
+         return None
+     # R75Sentinel advisory: the held generation is executed in-process, so its bytes are pinned;
+     # an unpinned (possibly hostile) base generation is a setup error, never an import.
+@@ -1391,7 +1477,7 @@
+     with open(path, "wb") as fh:
+         fh.write(data)
+     module = runpy.run_path(path)
+-    emit("MADO_R75_BASE_COUNTER path=%s present=yes sha256=%s" % (BASE_COUNTER, sha256_hex(data)))
++    emit("MADO_R76_BASE_COUNTER path=%s present=yes sha256=%s" % (BASE_COUNTER, sha256_hex(data)))
+     return module["classify"]
+ 
+ 
+@@ -1401,7 +1487,7 @@
+         reader, guard = classify_fn(case["src"])
+         ok = (reader == case["expect_reader"]) and (guard == case["expect_guard"])
+         correct += int(ok)
+-        emit("MADO_R75_CONTROL leg=%s name=%s reader=%s guard=%s expect_reader=%s expect_guard=%s "
++        emit("MADO_R76_CONTROL leg=%s name=%s reader=%s guard=%s expect_reader=%s expect_guard=%s "
+              "correct=%s"
+              % (leg, case["name"], "yes" if reader else "no", "yes" if guard else "no",
+                 "yes" if case["expect_reader"] else "no",
+@@ -1410,7 +1496,7 @@
+ 
+ 
+ def contract_line(population, readers, guarded, unguarded, controls, base_controls, sha):
+-    return ("MADO_R75_GUARD_SHAPES: population=%d readers=%d guarded=%d unguarded=%d "
++    return ("MADO_R76_GUARD_SHAPES: population=%d readers=%d guarded=%d unguarded=%d "
+             "controls=%d/%d base_controls=%d/%d verdict=%s rev=%s"
+             % (population, readers, guarded, unguarded, controls, FROZEN_CONTROLS,
+                base_controls, FROZEN_CONTROLS,
+@@ -1430,7 +1516,7 @@
+     os.makedirs(work)
+ 
+     cases = load_controls(os.path.abspath(args.controls))
+-    emit("MADO_R75_CONTROLS path=%s cases=%d sha256=%s"
++    emit("MADO_R76_CONTROLS path=%s cases=%d sha256=%s"
+          % (os.path.abspath(args.controls), len(cases), FROZEN_CONTROLS_SHA))
+ 
+     sha = rev_parse(repo, args.rev)
+@@ -1450,7 +1536,7 @@
+         if reader:
+             readers += 1
+             guarded += int(guard)
+-        emit("MADO_R75_READER file=%s reader=%s guard=%s"
++        emit("MADO_R76_READER file=%s reader=%s guard=%s"
+              % (path, "yes" if reader else "no", "yes" if guard else "no"))
+     unguarded = readers - guarded
+ 
+@@ -1460,7 +1546,7 @@
+         base_controls = 0
+     else:
+         base_controls = score_cases(classify_base, cases, leg="base")
+-        emit("MADO_R75_BASE controls=%d/%d (the held round-74 rule must miss the target)"
++        emit("MADO_R76_BASE controls=%d/%d (the held round-74 rule must miss the target)"
+              % (base_controls, FROZEN_CONTROLS))
+ 
+     line = contract_line(len(population), readers, guarded, unguarded, controls,
+@@ -1686,7 +1772,7 @@
+          and not POPULATION_RE.match("quality/counters/c2-r70-carriers.py")
+          and not POPULATION_RE.match("quality/check-x/helper.py")
+          and not POPULATION_RE.match("quality/notes.md"))
+-    want("the embedded classification table covers forty-seven cases", len(CASES) == 47)
++    want("the embedded classification table covers forty-seven held cases", len(CASES) == 47)
+     for name, (src, reader, guard) in CASES.items():
+         want("classify %s is (%s, %s)" % (name, reader, guard),
+              classify(src) == (reader, guard))
+@@ -1704,24 +1790,24 @@
+     for name, (src, reader, guard) in REGRESSIONS.items():
+         want("review regression %s is (%s, %s)" % (name, reader, guard),
+              classify(src) == (reader, guard))
+-    want("verdict met on the frozen target", verdict_met(20, 13, 13, 0, 47, 41))
+-    want("verdict requires the frozen population", not verdict_met(19, 13, 13, 0, 47, 41))
+-    want("verdict requires the frozen reader count", not verdict_met(20, 12, 12, 0, 47, 41))
+-    want("verdict requires the frozen guarded count", not verdict_met(20, 13, 12, 1, 47, 41))
+-    want("verdict requires no unguarded reader", not verdict_met(20, 13, 13, 1, 47, 41))
+-    want("verdict requires every control correct", not verdict_met(20, 13, 13, 0, 46, 41))
++    want("verdict met on the frozen target", verdict_met(20, 13, 13, 0, 59, 55))
++    want("verdict requires the frozen population", not verdict_met(19, 13, 13, 0, 59, 55))
++    want("verdict requires the frozen reader count", not verdict_met(20, 12, 12, 0, 59, 55))
++    want("verdict requires the frozen guarded count", not verdict_met(20, 13, 12, 1, 59, 55))
++    want("verdict requires no unguarded reader", not verdict_met(20, 13, 13, 1, 59, 55))
++    want("verdict requires every control correct", not verdict_met(20, 13, 13, 0, 58, 55))
+     want("verdict requires the frozen base-control score",
+-         not verdict_met(20, 13, 13, 0, 47, 47))
+-
+-    good = contract_line(20, 13, 13, 0, 47, 41, "a" * 40)
++         not verdict_met(20, 13, 13, 0, 59, 59))
++
++    good = contract_line(20, 13, 13, 0, 59, 55, "a" * 40)
+     want("the frozen target prints the met line",
+-         good == ("MADO_R75_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 "
+-                  "controls=47/47 base_controls=41/47 verdict=TARGET_MET rev=" + "a" * 40))
++         good == ("MADO_R76_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 "
++                  "controls=59/59 base_controls=55/59 verdict=TARGET_MET rev=" + "a" * 40))
+     want("the target line matches the frozen contract shape",
+          CONTRACT_RE.fullmatch(good) is not None)
+     want("contract line refuses a wrong verdict word",
+          not CONTRACT_RE.fullmatch(
+-             "MADO_R75_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 "
++             "MADO_R76_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 "
+              "controls=36/36 base_controls=32/36 verdict=DONE rev=" + "a" * 40))
+ 
+     frozen = ["--repo", ".", "--rev", "HEAD", "--base-rev", "BASE",
+@@ -1737,7 +1823,7 @@
+     if controls_path:
+         try:
+             cases = load_controls(os.path.abspath(controls_path))
+-            want("the frozen controls file carries 47 cases", len(cases) == 47)
++            want("the frozen controls file carries 59 cases", len(cases) == 59)
+             want("the frozen controls file matches the pinned digest", True)
+         except SetupError:
+             want("the frozen controls file carries 36 cases", False)
+@@ -1788,8 +1874,8 @@
+     passed = sum(1 for _name, ok in checks if ok)
+     for name, ok in checks:
+         if not ok:
+-            print("MADO_R75_GUARD_SHAPES_SELFTEST FAIL: %s" % name)
+-    print("MADO_R75_GUARD_SHAPES_SELFTEST: %d/%d assertions passed" % (passed, len(checks)))
++            print("MADO_R76_GUARD_SHAPES_SELFTEST FAIL: %s" % name)
++    print("MADO_R76_GUARD_SHAPES_SELFTEST: %d/%d assertions passed" % (passed, len(checks)))
+     return 0 if passed == len(checks) else 1
+ 
+ 

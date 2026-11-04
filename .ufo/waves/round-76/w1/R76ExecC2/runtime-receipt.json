@@ -1,0 +1,62 @@
+[
+  {
+    "name": "callee-del-literal",
+    "fixture_root": "/fast/scratch/hyaku/mado-r76/R76ExecC2/callee-del-literal.kniMel",
+    "init_rc": 0,
+    "asserted_toplevel": "/fast/scratch/hyaku/mado-r76/R76ExecC2/callee-del-literal.kniMel",
+    "command": [
+      "python3",
+      "-I",
+      "-c",
+      "import subprocess, sys\nKEY = 'GIT_NO_REPLACE_OBJECTS'\ndef trace(frame, event, arg):\n    if frame.f_code.co_filename == '<fixture>' and event == 'line' and frame.f_code.co_name == 'run':\n        if frame.f_lineno == LAUNCH_LINE:\n            print('AT_LAUNCH key_present=' + str(KEY in frame.f_locals['env']), flush=True)\n    if frame.f_code is subprocess.run.__code__ and event == 'return' and arg is not None:\n        print('GIT_CHILD_RC=' + str(arg.returncode), flush=True)\n    return trace\nLAUNCH_LINE = 6\nSOURCE = 'def drop(m):\\n    del m[\"GIT_NO_REPLACE_OBJECTS\"]\\ndef run(repo):\\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\\n    drop(env)\\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\\n'\nexec(compile(SOURCE, '<fixture>', 'exec'))\nsys.settrace(trace)\nrun('/fast/scratch/hyaku/mado-r76/R76ExecC2/callee-del-literal.kniMel')\nsys.settrace(None)\n"
+    ],
+    "rc": 0,
+    "stdout": "AT_LAUNCH key_present=False\nGIT_CHILD_RC=128\n",
+    "stderr": "fatal: invalid object name 'HEAD'.\n"
+  },
+  {
+    "name": "callee-del-store",
+    "fixture_root": "/fast/scratch/hyaku/mado-r76/R76ExecC2/callee-del-store.U1SEBP",
+    "init_rc": 0,
+    "asserted_toplevel": "/fast/scratch/hyaku/mado-r76/R76ExecC2/callee-del-store.U1SEBP",
+    "command": [
+      "python3",
+      "-I",
+      "-c",
+      "import subprocess, sys\nKEY = 'GIT_NO_REPLACE_OBJECTS'\ndef trace(frame, event, arg):\n    if frame.f_code.co_filename == '<fixture>' and event == 'line' and frame.f_code.co_name == 'run':\n        if frame.f_lineno == LAUNCH_LINE:\n            print('AT_LAUNCH key_present=' + str(KEY in frame.f_locals['env']), flush=True)\n    if frame.f_code is subprocess.run.__code__ and event == 'return' and arg is not None:\n        print('GIT_CHILD_RC=' + str(arg.returncode), flush=True)\n    return trace\nLAUNCH_LINE = 7\nSOURCE = 'def drop(m):\\n    del m[\"GIT_NO_REPLACE_OBJECTS\"]\\ndef run(repo):\\n    env = {\"PATH\": \"/usr/bin\"}\\n    env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\\n    drop(env)\\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\\n'\nexec(compile(SOURCE, '<fixture>', 'exec'))\nsys.settrace(trace)\nrun('/fast/scratch/hyaku/mado-r76/R76ExecC2/callee-del-store.U1SEBP')\nsys.settrace(None)\n"
+    ],
+    "rc": 0,
+    "stdout": "AT_LAUNCH key_present=False\nGIT_CHILD_RC=128\n",
+    "stderr": "fatal: invalid object name 'HEAD'.\n"
+  },
+  {
+    "name": "dynamic-key-del",
+    "fixture_root": "/fast/scratch/hyaku/mado-r76/R76ExecC2/dynamic-key-del.C8VkAE",
+    "init_rc": 0,
+    "asserted_toplevel": "/fast/scratch/hyaku/mado-r76/R76ExecC2/dynamic-key-del.C8VkAE",
+    "command": [
+      "python3",
+      "-I",
+      "-c",
+      "import subprocess, sys\nKEY = 'GIT_NO_REPLACE_OBJECTS'\ndef trace(frame, event, arg):\n    if frame.f_code.co_filename == '<fixture>' and event == 'line' and frame.f_code.co_name == 'run':\n        if frame.f_lineno == LAUNCH_LINE:\n            print('AT_LAUNCH key_present=' + str(KEY in frame.f_locals['env']), flush=True)\n    if frame.f_code is subprocess.run.__code__ and event == 'return' and arg is not None:\n        print('GIT_CHILD_RC=' + str(arg.returncode), flush=True)\n    return trace\nLAUNCH_LINE = 6\nSOURCE = 'def run(repo):\\n    k = \"GIT_NO_REPLACE_OBJECTS\"\\n    env = {\"PATH\": \"/usr/bin\"}\\n    env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\\n    del env[k]\\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\\n'\nexec(compile(SOURCE, '<fixture>', 'exec'))\nsys.settrace(trace)\nrun('/fast/scratch/hyaku/mado-r76/R76ExecC2/dynamic-key-del.C8VkAE')\nsys.settrace(None)\n"
+    ],
+    "rc": 0,
+    "stdout": "AT_LAUNCH key_present=False\nGIT_CHILD_RC=128\n",
+    "stderr": "fatal: invalid object name 'HEAD'.\n"
+  },
+  {
+    "name": "dynamic-key-module-const",
+    "fixture_root": "/fast/scratch/hyaku/mado-r76/R76ExecC2/dynamic-key-module-const.CNqo3T",
+    "init_rc": 0,
+    "asserted_toplevel": "/fast/scratch/hyaku/mado-r76/R76ExecC2/dynamic-key-module-const.CNqo3T",
+    "command": [
+      "python3",
+      "-I",
+      "-c",
+      "import subprocess, sys\nKEY = 'GIT_NO_REPLACE_OBJECTS'\ndef trace(frame, event, arg):\n    if frame.f_code.co_filename == '<fixture>' and event == 'line' and frame.f_code.co_name == 'run':\n        if frame.f_lineno == LAUNCH_LINE:\n            print('AT_LAUNCH key_present=' + str(KEY in frame.f_locals['env']), flush=True)\n    if frame.f_code is subprocess.run.__code__ and event == 'return' and arg is not None:\n        print('GIT_CHILD_RC=' + str(arg.returncode), flush=True)\n    return trace\nLAUNCH_LINE = 5\nSOURCE = 'KEYNAME = \"GIT_NO_REPLACE_OBJECTS\"\\ndef run(repo):\\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\\n    del env[KEYNAME]\\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\\n'\nexec(compile(SOURCE, '<fixture>', 'exec'))\nsys.settrace(trace)\nrun('/fast/scratch/hyaku/mado-r76/R76ExecC2/dynamic-key-module-const.CNqo3T')\nsys.settrace(None)\n"
+    ],
+    "rc": 0,
+    "stdout": "AT_LAUNCH key_present=False\nGIT_CHILD_RC=128\n",
+    "stderr": "fatal: invalid object name 'HEAD'.\n"
+  }
+]

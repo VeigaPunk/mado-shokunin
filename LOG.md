@@ -3772,8 +3772,8 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   guard key from the mapping it receives, under the dominance test) and a dynamic-key `del` (a
   same-scope name bound once, earlier, to the guard key or a module constant); fifty-nine frozen
   cases score 59/59 against the held 55/59, population unchanged 20/13/13/0
-  (`measurement-c2-r76-final.txt`, rc 0, measured at its instrument's last change `5dade9b3…`
-  with identical counts at `755b339f…`/`cb713254…`; C1 at `6806b4dc…`). Freeze v1 `755b339f…`, freeze v2 `cb713254…`, base `c3e0bc5f…`.
+  (`measurement-c2-r76-final.txt`, rc 0, measured at its instrument's last change `3588a527…`
+  with identical counts at `755b339f…`/`cb713254…`; C1 at `3588a527…`). Freeze v1 `755b339f…`, freeze v2 `cb713254…`, base `c3e0bc5f…`.
 - **Negative result.** The round-75 planned item "kill the echo-dropping outcome mutation" is
   impossible through `verdict=`: the field is green only when `killed == 2`, and the M-Z kill
   already requires the echo, so that mutation produces an identical field on every reachable case

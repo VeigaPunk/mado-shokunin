@@ -2,7 +2,7 @@
 
 Lane: mado-shokunin. Round 76, claim C1 (calibration). Measured instrument:
 `quality/counters/c1-r76-outcome-field.py`; measured content
-`6806b4dc8b46fb07e8759983f323267f6b32b763`; base `c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf`.
+`3588a527eba555a94e497097b0467efc04274c6d`; base `c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf`.
 Every number below is a line in `.ufo/waves/round-76/measurement-c1-r76.txt` (re-executed)
 or `.ufo/waves/round-76/receipts/label-derivation-r76.txt` (evidence-verified labels).
 
@@ -103,7 +103,7 @@ every other fixture.
 ## 5. Recheck
 
 Re-run the counting command in `.ufo/waves/round-76/claims-declaration-r76.md` § C1 against
-`6806b4dc…`; exit 0 and the exact contract line above are the pass condition. The label set
+`3588a527…`; exit 0 and the exact contract line above are the pass condition. The label set
 is `controls/c1-outcome-cases-r76.json` (v3, sha256 `320f7e6b…`); a label may only be changed
 through a new round's declaration, never in place.
 

@@ -1,0 +1,19 @@
+Rule: derive mz from M-Z killed=yes/no; derive outcome from SELFTEST green=yes AND both M-Z/M-R killed=yes. No contract row consulted.
+
+case=right rc=0
+MADO_R76_SELFTEST instrument=quality/landing-counters.sh rc=0 summary=2/2 green=yes
+MADO_R76_MUTANT M-Z path=quality/landing-counters.sh clause_count=1 recipe=clause-delete removed='[ "$citations" -gt 0 ] && ' from_sha256=386230d12831e05c86076f7aa04c8e31a080757499c33328b9317431a5f2bc17 rc=0 failed_assertions=1 assertions=1/2 killed=yes sha256=be8b8401e11bc420b5cead37839712f672d576956183fb747573f7b98df934d1
+MADO_R76_MUTANT M-R path=tools/mado-receipt-citecheck.py guard_count=1 recipe=line-delete removed_line='            env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"),\n' from_sha256=3b61fa42b77e9c8065ab05668247c330b537910b06f7209caba7afbd0b102ad0 rc=0 verdict=TARGET_MET missing=0 forged_credit=yes killed=yes sha256=414ca759232a3d31451f86060f4b0ba3382dd151f4bffe797793cb2ced5cee11
+derived_mz=pass derived_verdict=pass frozen_mz=pass frozen_verdict=pass agree=True
+
+case=always-red rc=1
+MADO_R76_SELFTEST instrument=quality/landing-counters.sh rc=0 summary=1/2 green=no
+MADO_R76_MUTANT M-Z path=quality/landing-counters.sh clause_count=1 recipe=clause-delete removed='[ "$citations" -gt 0 ] && ' from_sha256=0b458720e8fb66b270eea75499aeaf25bcb8720ffefbfb7eb6202ea97b399c61 rc=0 failed_assertions=1 assertions=1/2 killed=yes sha256=e177a1f7b9685902b4d4a1c02a53334b63bf6d4872324cf2858d7e66dce0f0e0
+MADO_R76_MUTANT M-R path=tools/mado-receipt-citecheck.py guard_count=1 recipe=line-delete removed_line='            env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"),\n' from_sha256=3b61fa42b77e9c8065ab05668247c330b537910b06f7209caba7afbd0b102ad0 rc=0 verdict=TARGET_MET missing=0 forged_credit=yes killed=yes sha256=414ca759232a3d31451f86060f4b0ba3382dd151f4bffe797793cb2ced5cee11
+derived_mz=pass derived_verdict=fail frozen_mz=pass frozen_verdict=fail agree=True
+
+case=green-absent rc=1
+MADO_R76_SELFTEST instrument=quality/landing-counters.sh rc=0 summary=2/2 green=no
+MADO_R76_MUTANT M-Z path=quality/landing-counters.sh clause_count=1 recipe=clause-delete removed='[ "$citations" -gt 0 ] && ' from_sha256=af55b0759501622b7aad7f8ba0e71066ccb124a8834726cd7a9ad799d19509b0 rc=0 failed_assertions=0 assertions=2/2 killed=no sha256=9d9929c68c11670ef14564ab72e064537d391b22eef41e3dca94746dc24aa802
+MADO_R76_MUTANT M-R path=tools/mado-receipt-citecheck.py guard_count=1 recipe=line-delete removed_line='            env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"),\n' from_sha256=3b61fa42b77e9c8065ab05668247c330b537910b06f7209caba7afbd0b102ad0 rc=0 verdict=TARGET_MET missing=0 forged_credit=yes killed=yes sha256=414ca759232a3d31451f86060f4b0ba3382dd151f4bffe797793cb2ced5cee11
+derived_mz=fail derived_verdict=fail frozen_mz=fail frozen_verdict=fail agree=True

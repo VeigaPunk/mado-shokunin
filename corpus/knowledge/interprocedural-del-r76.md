@@ -1,9 +1,9 @@
 # Interprocedural and dynamic-key deletions in the guard census (round 76)
 
 Lane: mado-shokunin. Round 76, claim C2 (operability). Measured instrument:
-`quality/counters/c2-r76-shapes.py`; measured at `5dade9b3043ca1aab16523ffeb4a177ae9cd9f89` (this instrument's last change, the D3
-parameter-binding repair), with earlier receipts at `755b339f…` and `cb713254…` showing identical
-counts; base `c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf`.
+`quality/counters/c2-r76-shapes.py`; measured at `3588a527eba555a94e497097b0467efc04274c6d` (this instrument's last change: the D3 parameter-binding repair and the allowlisted child
+environment / scope-local cancellation repairs), with earlier receipts at `755b339f…`,
+`cb713254…` and `5dade9b3…` showing identical counts; base `c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf`.
 Receipts: `.ufo/waves/round-76/measurement-c2-r76-final.txt` (re-executed at the repair commit),
 `.ufo/waves/round-76/control-baseline-r76-matched.txt` (matched pre-freeze control).
 

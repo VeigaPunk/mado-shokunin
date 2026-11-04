@@ -1,0 +1,162 @@
+{
+  "module_sha256": "2638d44f8da59fc847a9e17aa894c63b45b11bee4d1536f7ab0b894b02987ef8",
+  "cases": [
+    {
+      "name": "callee-del-literal",
+      "expected": [
+        true,
+        false
+      ],
+      "measured": [
+        true,
+        false
+      ],
+      "agree": true,
+      "src": "def drop(m):\n    del m[\"GIT_NO_REPLACE_OBJECTS\"]\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    drop(env)\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "callee-del-store",
+      "expected": [
+        true,
+        false
+      ],
+      "measured": [
+        true,
+        false
+      ],
+      "agree": true,
+      "src": "def drop(m):\n    del m[\"GIT_NO_REPLACE_OBJECTS\"]\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\"}\n    env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    drop(env)\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "callee-del-param-rebound-live",
+      "expected": [
+        true,
+        true
+      ],
+      "measured": [
+        true,
+        true
+      ],
+      "agree": true,
+      "src": "def drop(m):\n    m = dict(m)\n    del m[\"GIT_NO_REPLACE_OBJECTS\"]\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    drop(env)\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "dynamic-key-del",
+      "expected": [
+        true,
+        false
+      ],
+      "measured": [
+        true,
+        false
+      ],
+      "agree": true,
+      "src": "def run(repo):\n    k = \"GIT_NO_REPLACE_OBJECTS\"\n    env = {\"PATH\": \"/usr/bin\"}\n    env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    del env[k]\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "callee-del-other-key",
+      "expected": [
+        true,
+        true
+      ],
+      "measured": [
+        true,
+        true
+      ],
+      "agree": true,
+      "src": "def drop(m):\n    del m[\"PATH\"]\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    drop(env)\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "callee-del-dead-branch",
+      "expected": [
+        true,
+        true
+      ],
+      "measured": [
+        true,
+        true
+      ],
+      "agree": true,
+      "src": "def drop(m):\n    if False:\n        del m[\"GIT_NO_REPLACE_OBJECTS\"]\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    drop(env)\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "callee-never-called",
+      "expected": [
+        true,
+        true
+      ],
+      "measured": [
+        true,
+        true
+      ],
+      "agree": true,
+      "src": "def drop(m):\n    del m[\"GIT_NO_REPLACE_OBJECTS\"]\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "callee-called-after-launch",
+      "expected": [
+        true,
+        true
+      ],
+      "measured": [
+        true,
+        true
+      ],
+      "agree": true,
+      "src": "def drop(m):\n    del m[\"GIT_NO_REPLACE_OBJECTS\"]\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n    drop(env)\n"
+    },
+    {
+      "name": "callee-del-param-rebound",
+      "expected": [
+        true,
+        true
+      ],
+      "measured": [
+        true,
+        true
+      ],
+      "agree": true,
+      "src": "def drop(m):\n    m = {\"PATH\": \"/usr/bin\"}\n    del m[\"GIT_NO_REPLACE_OBJECTS\"]\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    drop(env)\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "dynamic-key-other",
+      "expected": [
+        true,
+        true
+      ],
+      "measured": [
+        true,
+        true
+      ],
+      "agree": true,
+      "src": "def run(repo):\n    k = \"PATH\"\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    del env[k]\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "dynamic-key-rebound",
+      "expected": [
+        true,
+        true
+      ],
+      "measured": [
+        true,
+        true
+      ],
+      "agree": true,
+      "src": "def run(repo):\n    k = \"GIT_NO_REPLACE_OBJECTS\"\n    k = \"PATH\"\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    del env[k]\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    },
+    {
+      "name": "dynamic-key-module-const",
+      "expected": [
+        true,
+        false
+      ],
+      "measured": [
+        true,
+        false
+      ],
+      "agree": true,
+      "src": "KEYNAME = \"GIT_NO_REPLACE_OBJECTS\"\ndef run(repo):\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    del env[KEYNAME]\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=env)\n"
+    }
+  ],
+  "disagreements": []
+}

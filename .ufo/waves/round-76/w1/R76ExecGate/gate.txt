@@ -1,0 +1,184 @@
+Axes: no-harm (selftest, index, score agreement, immutable blobs); integration completeness (ledger); registry validity (sources).
+Scope: assigned gate commands only; no live host probes.
+Environment: TMPDIR=/fast/scratch/hyaku/mado-r76/R76ExecGate MADO_SELFTEST_SCRATCH=/fast/scratch/hyaku/mado-r76/R76ExecGate PYTHONDONTWRITEBYTECODE=1
+Cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+
+name: selftest
+command: bash tools/mado-verify.sh --selftest
+rc: 0
+output_lines: 1
+--- tail (up to 35 lines; complete output retained in selftest.txt) ---
+MADO_SELFTEST: 460/460 assertions passed
+
+name: index-freeze
+command: python3 -I quality/check-index.py --repo . --rev cb713254ee9926e036e594312fdc61b57825526b
+rc: 0
+output_lines: 1
+--- tail (up to 35 lines; complete output retained in index-freeze.txt) ---
+MADO_INDEX: rev=cb713254ee9926e036e594312fdc61b57825526b indexed=93/93 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+
+name: index-base
+command: python3 -I quality/check-index.py --repo . --rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf
+rc: 0
+output_lines: 1
+--- tail (up to 35 lines; complete output retained in index-base.txt) ---
+MADO_INDEX: rev=c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf indexed=93/93 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+
+name: ledger-freeze
+command: python3 -I quality/check-tool-ledger.py --repo . --rev cb713254ee9926e036e594312fdc61b57825526b
+rc: 1
+output_lines: 4
+--- tail (up to 35 lines; complete output retained in ledger-freeze.txt) ---
+LEDGER-ROW reason=uncovered path=quality/counters/c1-r76-landing-controls.py detail=no-row
+LEDGER-ROW reason=uncovered path=quality/counters/c1-r76-outcome-field.py detail=no-row
+LEDGER-ROW reason=uncovered path=quality/counters/c2-r76-shapes.py detail=no-row
+LEDGER: population=136 ledger_rows=133 uncovered=3 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=cb713254ee9926e036e594312fdc61b57825526b
+
+name: axis-freeze
+command: python3 -I quality/check-axis-scores.py --repo . --rev cb713254ee9926e036e594312fdc61b57825526b
+rc: 0
+output_lines: 4
+--- tail (up to 35 lines; complete output retained in axis-freeze.txt) ---
+MADO_AXIS_ROW: axis=navigation published=93/93 derived=93/93 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=cb713254ee9926e036e594312fdc61b57825526b
+
+name: sources
+command: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+rc: 0
+output_lines: 49
+--- tail (up to 35 lines; complete output retained in sources.txt) ---
+mado	W04	S324 duplicate url raw.githubusercontent.com/hyprwm/hyprlang/v0.6.8/src/config.cpp across scopes
+mado	W04	S326 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/xdg-terminal-exec across scopes
+mado	W04	S327 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/README.md across scopes
+mado	W04	S332 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/rule/matchEngine/RegexMatchEngine.cpp across scopes
+mado	W04	S353 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S354 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/input/InputManager.cpp across scopes
+mado	W04	S364 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+mado	W04	S366 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S368 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S370 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/DispatcherTranslator.cpp across scopes
+mado	W04	S371 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigActions.cpp across scopes
+mado	W04	S373 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+mado	W04	S380 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+mado	W04	S381 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/core/Seat.cpp across scopes
+mado	W04	S382 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+mado	W04	S384 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/values/ConfigValues.cpp across scopes
+mado	W04	S387 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S388 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S389 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S392 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/inotify/ConfigWatcher.cpp across scopes
+mado	W04	S393 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S394 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S395 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S442 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/subprocess.rst across scopes
+mado	W04	S443 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/expressions.rst across scopes
+mado	W04	S447 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S448 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/os.rst across scopes
+mado	W04	S449 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/subprocess.rst across scopes
+mado	W04	S451 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S452 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/os.rst across scopes
+mado	W04	S453 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S454 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/builtins/stdtypes.rst across scopes
+mado	W04	S455 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/expressions.rst across scopes
+mado	W04	S456 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+
+name: ledger-base
+command: python3 -I quality/check-tool-ledger.py --repo . --rev c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf
+rc: 0
+output_lines: 1
+--- tail (up to 35 lines; complete output retained in ledger-base.txt) ---
+LEDGER: population=133 ledger_rows=133 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf
+
+--- Frozen blob comparisons ---
+path: tools/mado-verify.sh
+command: git rev-parse c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf:tools/mado-verify.sh
+rc: 0
+output_lines: 1
+tail: 7956c78781c8da48c951e847a50fc1f53b652c8b
+command: git rev-parse cb713254ee9926e036e594312fdc61b57825526b:tools/mado-verify.sh
+rc: 0
+output_lines: 1
+tail: 7956c78781c8da48c951e847a50fc1f53b652c8b
+identical: true
+
+path: quality/landing-counters.sh
+command: git rev-parse c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf:quality/landing-counters.sh
+rc: 0
+output_lines: 1
+tail: fd579df872b8b318f453e75ba2bc26d2d807cd51
+command: git rev-parse cb713254ee9926e036e594312fdc61b57825526b:quality/landing-counters.sh
+rc: 0
+output_lines: 1
+tail: fd579df872b8b318f453e75ba2bc26d2d807cd51
+identical: true
+
+path: quality/check-tool-ledger.py
+command: git rev-parse c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf:quality/check-tool-ledger.py
+rc: 0
+output_lines: 1
+tail: 2ab958bbfcf71f2a4c94d4da8f7da2eb679fce95
+command: git rev-parse cb713254ee9926e036e594312fdc61b57825526b:quality/check-tool-ledger.py
+rc: 0
+output_lines: 1
+tail: 2ab958bbfcf71f2a4c94d4da8f7da2eb679fce95
+identical: true
+
+path: quality/counters/c1-r75-harness-witness.py
+command: git rev-parse c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf:quality/counters/c1-r75-harness-witness.py
+rc: 0
+output_lines: 1
+tail: 64b9bc906fc2fb0375597eaf31f45e63b7543fe8
+command: git rev-parse cb713254ee9926e036e594312fdc61b57825526b:quality/counters/c1-r75-harness-witness.py
+rc: 0
+output_lines: 1
+tail: 64b9bc906fc2fb0375597eaf31f45e63b7543fe8
+identical: true
+
+path: quality/counters/c1-r75-landing-controls.py
+command: git rev-parse c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf:quality/counters/c1-r75-landing-controls.py
+rc: 0
+output_lines: 1
+tail: d6e0ab0d7018e749ee9529efa8702970b2279729
+command: git rev-parse cb713254ee9926e036e594312fdc61b57825526b:quality/counters/c1-r75-landing-controls.py
+rc: 0
+output_lines: 1
+tail: d6e0ab0d7018e749ee9529efa8702970b2279729
+identical: true
+
+path: quality/counters/c2-r75-shapes.py
+command: git rev-parse c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf:quality/counters/c2-r75-shapes.py
+rc: 0
+output_lines: 1
+tail: 44f20b7696d940ea7e2eeef2e6fce49016f9e162
+command: git rev-parse cb713254ee9926e036e594312fdc61b57825526b:quality/counters/c2-r75-shapes.py
+rc: 0
+output_lines: 1
+tail: 44f20b7696d940ea7e2eeef2e6fce49016f9e162
+identical: true
+
+path: quality/check-axis-scores.py
+command: git rev-parse c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf:quality/check-axis-scores.py
+rc: 0
+output_lines: 1
+tail: 7ae3b8b2b2cfec35171aec278ca88eae776caf0c
+command: git rev-parse cb713254ee9926e036e594312fdc61b57825526b:quality/check-axis-scores.py
+rc: 0
+output_lines: 1
+tail: 7ae3b8b2b2cfec35171aec278ca88eae776caf0c
+identical: true
+
+path: quality/check-index.py
+command: git rev-parse c3e0bc5f10b72964d54d18dc9b0706dc308dd1bf:quality/check-index.py
+rc: 0
+output_lines: 1
+tail: ce58cbdd4a6595efe1de6b2b2782f0368abc5f19
+command: git rev-parse cb713254ee9926e036e594312fdc61b57825526b:quality/check-index.py
+rc: 0
+output_lines: 1
+tail: ce58cbdd4a6595efe1de6b2b2782f0368abc5f19
+identical: true
+
+Finding: freeze ledger has 3 uncovered instruments; all other assigned gate targets met.
