@@ -188,3 +188,20 @@ for the L1; the two entries above are counted by reading `corpus/knowledge/`.
   the reviewers; quoted here as evidence-verified), the census end-run, the outside-lane
   admit/reject spot-check, and any promotion review. No tool was installed; pacman remains paused
   host-wide; no fleet-root, sibling-lane, operator, `.ufo/state/` or MANIFEST file was written.
+
+## L1 settled integration measurements
+
+After Main WAVE-DONE, L1 re-executed at `2b6dd76b65de4dfe701db87db13b7e448b3538ee`:
+C1 target met72/72,51/51 kills,base62/72,carried61/61,152/152 selftest,exit0;
+C2 successor36/36 rows and33/37 kills,target missed,exit1. Frozen C2 still failed setup.
+Exact commands/outputs/exits: `.ufo/waves/round-85/receipts/final-c{1,2}-r85.txt`.
+Final input identity pins: `receipts/final-inputs-r85.json`; identity is not chronology.
+Counter selftests119/119 and106/106, index106/106, ledger156/156 with0 uncovered and0 bad
+pointers, axis checked3/mismatched0, standing gate460/460 and wave1/1/OK all exited0.
+Raw results still have13 null outputs after Main's kernel restart;13 report files exist.
+Actual models and terminal dead-seat counts are unavailable, not inferred from the reports.
+Sources census start422/end425 both exit0; full warning-bearing outputs are retained in
+`receipts/census-{start,end}-r85.txt`. Added tierA3 (mined2,rejected1), two existing used-by
+appends as recorded above. LOG's old-cell wording is corrected append-only in its round85
+corrections. Fleet `after` file has only `== SCORECARD diff base-`; not attributable to mado,
+so left untouched. No owned misroot was identified. Outside-lane admit/reject review pending.

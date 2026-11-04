@@ -4999,3 +4999,19 @@ Markdown outcome bindings. Do not rewrite round85 frozen populations.
 
 Axis table re-derived at the round85 publication (final-axis receipt decides agreement):
 navigation 106/106; calibration resolved-active 86/86; operability selftest 12/12, ledger156/156.
+
+### Round85 final committed-revision measurements
+
+L1 re-executed the complete commands after Main's WAVE-DONE, at
+`2b6dd76b65de4dfe701db87db13b7e448b3538ee`. Receipts under
+`.ufo/waves/round-85/receipts/` retain commands, outputs and exits:
+`final-c1-r85.txt`72/72,51/51 kills,held62/72,carried61/61,152/152,TARGET_MET,exit0;
+`final-c2-r85.txt`36/36,26/26 shapes,37 declared/33 killed,TARGET_MISSED,exit1.
+Frozen C2 remains setup2; no numeric C2 delta or capability admission is awarded.
+`final-index-r85.txt`106/106; `final-ledger-r85.txt`156/156/uncovered0/bad_pointer0;
+`final-axis-r85.txt`checked3/mismatched0; `final-gate-r85.txt`460/460;
+`final-wave-r85.txt`waves1/settled1/OK — all exit0. Raw output telemetry remains null,
+independently of that wave check's OK. Counter selftests119/119 and106/106 exit0.
+Source census422→425, exits0/0. Final input SHA256s are in `final-inputs-r85.json`.
+**Round verdict: honest stop, not admitted.** Other axes are unchanged within the exercised
+harm-watch scope; this does not assert global absence of harm or outside-lane promotion.

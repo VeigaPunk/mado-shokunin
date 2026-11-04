@@ -4206,3 +4206,12 @@ files exist. Do not fill those nulls or infer terminal success/dead counts from 
 Configured scout/scribe routes currently use m_mim, contrary to the prompt's m_mim-off note;
 operator-owned routing was neither edited nor overridden. This is disclosed conformance
 drift, not an inferred change of the seats' captured routes.
+
+Final L1 re-executions at `2b6dd76b65de4dfe701db87db13b7e448b3538ee`, after WAVE-DONE:
+C1 target met72/72,51/51 kills; C2 successor36/36 but33/37 kills,target missed.
+Frozen C2 remains setup2; **round honest stop, not admitted**. Exact commands and pins:
+round85 `receipts/final-c{1,2}-r85.txt`, `final-inputs-r85.json`. Counter selftests119/119,
+106/106; index106/106; ledger156/156/uncovered0/bad_pointer0 (repairs freeze red); axis3/0;
+standing selftest460/460; wave1/1/OK all exit0. Census422→425, exits0/0 with warnings
+unfiltered. Final fleet misroot sweep leaves unassignable `after` and all sibling/operator
+files untouched. No owned misroot, installs, replacements or new L0 question.
