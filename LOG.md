@@ -3315,3 +3315,53 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   a runtime hazard receipt) and B7 records that the scored harness is the L1's instrument,
   committed 8 s after the dispatch marker. No frozen predicate changed; the claims re-measured
   green after the fixes (C1 selftest 27/27, C2 26/26).
+
+### Round 69 — the paired-recipe control harness and the guard-dominance census (2026-11-03, hyaku run 15)
+
+- Two frozen claims, declared before any candidate data: C1 calibration (the hardened control
+  harness kills paired decision+oracle forgeries; three frozen recipes R1 crash-≠-kill, R2
+  unparseable-≠-kill, R3 spawn-guard-itself) and C2 operability (the guard census requires the
+  key in key position and requires it to reach a git launch by one of three dominance flows).
+  Declaration and control set landed at the freeze `789a87f1a667b43dd759222a2f048bf8f75b43ce`;
+  base `04093b83f73a841117d3b31dbb2a6063f4f2a454`.
+- Pre-freeze do-nothing controls, committed in the freeze: the r68 harness under the same three
+  recipes survives 0/3 kills; the r68 classifier scores `7/11` on the frozen eleven cases.
+  Receipt `.ufo/waves/round-69/control-baseline-r69.txt` (includes the recipe-L equivalence
+  probe: `mz_killed = mz_rc != 0 or mz_rc is None` is an equivalent mutant).
+- Wave w1: one v1 wave, 12 seats under `ufo-wave-policy.json` band 8–16 — executor 4, scribe 2,
+  scout 1, connector 1, reviewer 2, critic 1, mutation-tester 1; 4/12 attack (33 %); the L1 holds
+  the planner seat (the validator rejects a planner role). Spec `.ufo/waves/round-69/w1-spec.json`,
+  validated dispatch `.ufo/waves/round-69/w1-dispatch.json` (`spawn=12`), ready
+  `98bff016d0ef151aceedf03d75239b81c9f6eeed`. Seat reports under `.ufo/waves/round-69/w1/`.
+- Instruments at `5fc29ae7`: `quality/counters/c1-r69-landing-controls.py` (r68 body, paired
+  selftest), `quality/counters/c1-r69-paired-recipes.py`, `quality/counters/c2-r69-guard-dominance.py`.
+- Attack outcomes, both closed before landing (no predicate changed):
+  - `R69RevC2` found six bounded defects against the frozen C2 sentence (dead inline construction,
+    producer overwrite/late guard, nested key in value, sibling-scope leakage, one-hop parameter
+    mismatch, dead-else false negative). Repaired at `6d21f535492f74dfef538eecb303486a1588c1be`;
+    receipt `c2-classifier-repair-r69.txt` (pre-fix 7 violations → post-fix 8/8 cases; frozen
+    controls and the 20/13/13 population unchanged; selftest 40/40 with the six cases pinned).
+  - `R69RevC1` found S1 (an absent base harness read `base=0/3` and printed TARGET_MET), S2 (no
+    compile gate before crediting a kill), S3 (a hung child crashed with no contract line),
+    S4 (stale `r68` self-description and scratch-dir names), S5 (`--base-rev` silently defaulted).
+    Repaired at `296ed0d75e361387908cf2dd418d3677f49f94c8`: the base harness is required and its
+    absence is a setup error; mutants are `py_compile`-checked before a kill is credited; the main
+    body catches `OSError`/`SubprocessError` and exits 2 with a reason; the seat's harness draft
+    (sha256 `9461a059466e723ba0ae88c86dea2fc97eb5f4fdfb15ef6c6646acce69649a73`) is adopted, with
+    `r69-c1` scratch dirs and the round-69 limits paragraph. Selftest 27/27 (two assertions pin
+    the new refusals).
+- Measured at `296ed0d7` (`measurement-r69.txt`): C1 `selftest=0 killed=3/3 applied=3/3 base=0/3
+  verdict=TARGET_MET` rc 0; C2 `population=20 readers=13 guarded=13 unguarded=0 controls=11/11
+  base_controls=7/11 verdict=TARGET_MET` rc 0. Before: C1 `selftest=absent … TARGET_MISSED` rc 1;
+  C2 the held rule's `7/11`.
+- Knowledge: `corpus/knowledge/gate-guard-dominance-r69.md` (MADO-R69-1; key position, the three
+  dominance flows, the four rejected shapes, the 20-file population by guard shape, the limits)
+  with eight evidence rows S438/S436/S437; one new source **S438** (git v2.56.0 `git.adoc`,
+  tag-pinned, fetched three times byte-identically) and the entry's index row + Frontier bullet.
+  QUALITY 111 (a frozen recipe must change a printed observable; a guard must be a key that reaches
+  the read) and the lesson's M69-1/M69-2/M69-3. SKILL gains the two gate rows; PROVINCE its
+  round-69 instrument paragraph; `quality/tool-ledger.md` gains the three rows.
+- Harm watch: `MADO_SELFTEST: 460/460` rc 0; axis table 3/3 MATCH at the records; landing counters
+  GREEN with explicit citecheck paths (the first run's `rc 2` was a setup default, logged as
+  M69-3); r68 counters keep their pinned bytes and selftests (27/27, 52/52, 26/26).
+- Tooling: none installed or upgraded; no pacman transaction (host pause respected).

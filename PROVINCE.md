@@ -311,3 +311,16 @@ argv, stdout and exit codes are unchanged. All three instruments read git object
 caller scratch (the census writes nothing). None touches a config plane, the compositor, a socket
 or a host service, and the census's guard is presence-tested, not interpreted. Evidence:
 `corpus/lessons/round-68.md`.
+
+**Round-69 refinement (append-only; three lane record instruments and one gate population unchanged; no new desktop or write surface.)**
+The round adds `quality/counters/c1-r69-landing-controls.py` (the round-68 harness successor: its `--selftest`
+drives the real measurement body with scripted children and pairs each decision with its oracle),
+`quality/counters/c1-r69-paired-recipes.py` (three frozen paired recipes scored against that harness and against
+the pinned r68 harness at the base revision) and `quality/counters/c2-r69-guard-dominance.py` (the guard census,
+now requiring key position and dominance: the guarded environment must reach a `git` launch by an inline `env=`,
+an env-named binding or local producer with no intervening unguarded rebinding, or a one-hop argument matched to
+the callee's env-named parameter). The population is unchanged: exactly the tracked `quality/check-*.py` set at
+the scored revision (20 files, 13 readers, 13 guarded). All three instruments read git objects and write only
+caller scratch (the census writes nothing). None touches a config plane, the compositor, a socket or a host
+service, and the dominance rule is a bounded syntactic approximation, not a runtime proof. Evidence:
+`corpus/lessons/round-69.md`.

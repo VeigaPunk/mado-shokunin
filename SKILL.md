@@ -2808,6 +2808,15 @@ repair an already-rewritten repository. See `corpus/lessons/round-68.md` and
 |---|---|---|---|---|---|---|---|
 | mado-r68-selfmutants | gate | `python3 quality/counters/c1-r68-selfmutants.py --repo . --rev REV --base-rev 510100c81e6cf63fec6be380c2f2f9c670f32cbc --scratch-root DIR` | 0 clean (`selftest=0` and `killed=3/3`); 1 failed; 2 could-not-evaluate | `python3 quality/counters/c1-r68-selfmutants.py --selftest` | `.ufo/waves/round-68/claims-declaration-r68.md`; frozen recipes S1-S3 | private caller scratch; git reads; extracted harness selftests | mado |
 | mado-r68-reader-guard | gate | `python3 quality/counters/c2-r68-reader-guard.py --repo . --rev REV --controls .ufo/waves/round-68/controls/c2-controls.json --scratch-root DIR` | 0 clean (`population=20 readers=13 guarded=13 unguarded=0` and `controls=11/11`); 1 failed; 2 could-not-evaluate | `python3 quality/counters/c2-r68-reader-guard.py --selftest` | `.ufo/waves/round-68/controls/c2-controls.json` (sha256 `b7a1c939e5a715792d2969eb4ca86d8119cd5a72ef930d00d57338c62faf6a91`) | git reads only; writes nothing | mado |
+| mado-r69-paired-recipes | gate | `python3 quality/counters/c1-r69-paired-recipes.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --scratch-root DIR` | 0 clean (`selftest=0 killed=3/3 applied=3/3 base=0/3`); 1 failed; 2 could-not-evaluate | `python3 quality/counters/c1-r69-paired-recipes.py --selftest` | `.ufo/waves/round-69/claims-declaration-r69.md`; frozen paired recipes R1-R3 | private caller scratch; git reads; extracted harness selftests; mutant bytes compile-checked before a kill is credited | mado |
+| mado-r69-guard-dominance | gate | `python3 quality/counters/c2-r69-guard-dominance.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --controls .ufo/waves/round-69/controls/c2-controls-r69.json --scratch-root DIR` | 0 clean (`population=20 readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11`); 1 failed; 2 could-not-evaluate | `python3 quality/counters/c2-r69-guard-dominance.py --selftest --controls .ufo/waves/round-69/controls/c2-controls-r69.json` | `.ufo/waves/round-69/controls/c2-controls-r69.json` (sha256 `975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9`) | git reads only; writes nothing | mado |
+
+
+The round-69 rule supersedes the round-68 guard rule without rewriting it: the r68 census counts a
+mention, the r69 census counts a key that reaches the read (inline `env=`, env-named binding or local
+producer with no intervening rebinding, one-hop argument matched to the callee's env-named parameter),
+and the base leg scores the r68 rule on the same frozen cases at `7/11` so the delta is visible in one
+receipt. The r68 counters keep their pinned historical role and no alias is added.
 
 The r67 harness (`quality/counters/c2-r67-landing-controls.py`) keeps its pinned historical role:
 its selftest does not drive the decision body and its three forced-credit mutations survive. The

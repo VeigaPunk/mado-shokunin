@@ -3721,3 +3721,62 @@ Final re-measurement (closing note): both counters re-ran green at
 27/27; C2 `guarded=13/13 controls=11/11` selftest 26/26), landing GREEN, axis table `checked=3
 mismatched=0`; wave w1 settled `seats=12 dispatched=12 settled=12 verdict=OK`
 (`.ufo/waves/round-68/measurement-final-r68.txt`, `wave-done-r68.txt`).
+
+## Round 69 — paired-recipe control harness and guard dominance (2026-11-03, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-69/claims-declaration-r69.md`, landed
+`789a87f1a667b43dd759222a2f048bf8f75b43ce`; base `04093b83f73a841117d3b31dbb2a6063f4f2a454`.
+Frozen control set: `.ufo/waves/round-69/controls/c2-controls-r69.json` (11 cases, sha256
+`975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9`). Instruments-repaired
+content: `296ed0d75e361387908cf2dd418d3677f49f94c8`. Measured receipt:
+`.ufo/waves/round-69/measurement-r69.txt`.
+
+Axis posture at round start: every published finite sub-axis sat at its measured maximum
+(navigation 80/80, calibration 86/86, operability 12/12 at `379e97f8`; gate `MADO_SELFTEST:
+460/460`), so no axis is distinctly lowest (rounds 56–68 posture); the stagnation nudge does not
+apply (last capability r68, window N=3, gap 0). Both claims take new finite denominators and both
+do-nothing controls miss the target (0/3 and 7/11), so neither is reachable without the work.
+
+| Claim / axis | Counting command (REV is before or the measured content) | Before → after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the hardened harness kills paired (decision + oracle) forgeries | `python3 quality/counters/c1-r69-paired-recipes.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --scratch-root DIR` | at base: `selftest=absent killed=0/3 applied=0/3 base=0/3 verdict=TARGET_MISSED` rc 1 (r68 harness survives all three: `killed=0/3 applied=3/3`) → at `296ed0d7`: `selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET` rc 0; bounded `10 × killed / 3` 0.0000 → 10.0000 | improved on the frozen three-recipe set; an equivalent recipe is excluded with its probe |
+| C2 **operability** — the guard census requires key position and dominance | `python3 quality/counters/c2-r69-guard-dominance.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --controls .ufo/waves/round-69/controls/c2-controls-r69.json --scratch-root DIR` | held rule at the same frozen set: `controls=7/11` (accepts value-position, dead-branch, uncalled-helper, overwritten-env) → at `296ed0d7`: `population=20 readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0; bounded `10 × guarded / readers` 10.0000 (population 13/13 at both ends — the move is discrimination, not the count) | improved on the frozen eleven-case set; six implementation defects against the frozen sentence repaired red-before |
+
+**Evidence.** `.ufo/waves/round-69/measurement-r69.txt` (both counters at the measured content),
+`control-baseline-r69.txt` (the two do-nothing controls before freeze),
+`c2-classifier-repair-r69.txt` (pre-fix 7 violations → post-fix 8/8 cases),
+`w1/R69RevC1.md` (the C1 attack: S1–S5, all closed), `w1/R69RevC2.md` (the C2 attack: six bounded
+defects, all closed), `w1/R69CriticClaims/` and `w1/R69MutBattery/` (the critic and mutation
+batteries). Harm watch: `harm-watch-r69.txt` (gate 460/460; landing legs; instrument selftests
+– r69 harness 59/59, C1 counter 27/27, C2 counter 40/40, r68 counters 27/27 / 52/52 / 26/26),
+axis table re-derived below, cursor 107 anchor cover on the new entry.
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Paired-recipe control harness + guard-dominance census | Kill a forced-credit forgery only when a *paired* oracle is removed (crash ≠ kill, unparseable ≠ kill, the spawn guard itself), and score a gate's `GIT_NO_REPLACE_OBJECTS` construction for key position and dominance over a frozen eleven-case set while the held rule's 7/11 base leg stays visible in the same line | `.ufo/waves/round-69/measurement-r69.txt`; `quality/counters/c1-r69-paired-recipes.py`, `c2-r69-guard-dominance.py`; `corpus/knowledge/gate-guard-dominance-r69.md` | 69 |
+
+### Limits and conformance
+
+The recipes are three named ones, not a fault-coverage claim; the dominance rule is a bounded
+syntactic approximation (one module, one hop, no alias/attribute/container flow, no
+path-sensitivity beyond a literal-false branch, value not interpreted); the census reads committed
+source text, not runtime wiring; the guard does not authenticate objects or repair a rewritten
+repository. The round-68 reviewer's recipe L is an equivalent mutant and is excluded with its
+probe (lesson M69-1), not silently dropped. Curation: SOURCES 374 → 375 rows (one new A/docs/mined
+S438, no existing cell changed); the new entry cites S438/S436/S437 with locators. Round shape: one
+v1 wave, seat counts and dead seats in the report. Outside-lane closure owns admission, the
+trade/no-harm judgment and promotion.
+
+### Planned (round 70; intent only)
+
+1. C1-R1/R2/R3 stay frozen; the next hardening is the *real-children* leg (a crash of a real
+   child, not a scripted one) under a new predicate.
+2. The C2 dominance rule's next finite set: alias and attribute-carried envs, `**{KEY: …}` splats,
+   and literal-name `KEY` constants — a new control set, not an edit of this one.
+3. The open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
+
+### Axis table re-derived at the round-69 records (`measurement-r69.txt` and `quality/check-axis-scores.py`):
+navigation 81/81; calibration resolved-active 86/86; operability selftest 12/12.

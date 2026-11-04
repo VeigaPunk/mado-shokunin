@@ -672,3 +672,30 @@ Limits: the parity check proves the declared argument set parses, not that the c
 semantics are right; the scripted cases are stubs, so the test proves the decision code is
 exercised, not that real children behave as scripted. Neither clause covers a counter whose
 measurement is simply false for reasons both tests miss.
+
+## Criterion from the round-69 equivalence and dominance defects (round 69)
+
+**111. A frozen defect recipe must change a printed observable, and a guard mention is not a
+guard unless it is a key that reaches the read.**
+(a) Before a mutation recipe enters a frozen denominator, its mutant is run against a scripted
+case of the scored instrument and must change the printed line; a recipe whose mutant prints an
+identical line is an *equivalent* mutant, is excluded from the denominator, and the exclusion is
+recorded with the probe. (b) A guard census counts a key only in *key position* of an environment
+mapping and only when that environment reaches the launched child (inline `env=`, an env-named
+binding or local producer used at the call with no intervening unguarded rebinding, or a one-hop
+argument bound to the callee's env-named parameter); a value-position string, a dead-branch
+construction, an uncalled helper and an overwritten environment are not guards.
+Shown able to fail: the round-68 reviewer's recipe **L** (`mz_killed = mz_rc != 0` →
+`or mz_rc is None`) is an equivalent mutant — the text sits after `mz_rc = r.returncode`
+(`quality/counters/c1-r68-landing-controls.py:435,439`), and the mutant keeps a green 59/59
+selftest (`.ufo/waves/round-69/control-baseline-r69.txt` § L probe). The round-68 classifier
+accepts `{"LABEL": "GIT_NO_REPLACE_OBJECTS"}` and three dead/unused constructions, scoring
+`controls=7/11` on the frozen set while the round-69 rule scores `11/11` (`control-baseline-r69.txt`
+§ C2); six implementation defects against the same frozen sentence were repaired red-before to
+green-after in `.ufo/waves/round-69/c2-classifier-repair-r69.txt` (7 pre-fix violations, 8/8
+post-fix cases).
+Ground: `corpus/lessons/round-69.md` M69-1 and M69-2.
+Limits: the scripted-case probe proves the recipe changes a synthetic line, not that a real
+detector would catch the defect; the dominance rule is a bounded syntactic approximation (one
+module, one hop, no alias/attribute/container flow, no path-sensitivity beyond a literal-false
+branch) and does not interpret the guard's value.
