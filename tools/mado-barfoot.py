@@ -52,8 +52,11 @@ Contract (v1, round 77):
   * `reserved` band order is [left, top, right, bottom] (HyprCtl.cpp monitors reply).
   * Refused, never guessed: a monitor whose scale is not 1 or whose transform is not 0 (the
     monitors reply carries pixel size, the layer box is logical); a dynamic cross size (a
-    horizontal bar with height 0, or a vertical bar with width 0 — the realised size is the
-    module allocation, not the declaration); a list-valued config (multiple bars); a
+    horizontal bar with height 0, or a vertical bar with width 0) unless `--allocation`
+    declares the client's own band for that namespace, in which case the allocation is the
+    band (both the arranged box and gtk-layer-shell's auto zone, layer-surface.c:276/282)
+    and a zero or absent allocation is refused, never guessed; a list-valued config
+    (multiple bars); a
     space-bearing or string-`*` output pattern; a negative margin; a `mode` key (presets
     rewrite layer and exclusive zone at runtime); and a `--rules` file carrying a `source =`
     line or a selector outside the literal subset (a sourced file is not followed).
@@ -83,7 +86,7 @@ import re
 import stat
 import sys
 
-VERSION = "r81-v1"
+VERSION = "r82-v1"
 
 MAX_BYTES = 1048576
 
@@ -430,37 +433,76 @@ def parse_static_reserve(text, monitor):
     return dict(slot) if slot is not None else dict(ZERO_STATIC)
 
 
-def declared_box(bar, mon_w, mon_h):
+def parse_allocation(raw):
+    """The `--allocation` declaration: {namespace: band} — the band size the client's own
+    surface was allocated on its band axis. It is the only input that can turn a declared
+    dynamic band (`height = 0` on a horizontal surface, `width = 0` on a vertical one) into
+    a modelled value; nothing is inferred when it is absent."""
+    data = load_json(raw, "allocation")
+    if not isinstance(data, dict):
+        raise Setup("the allocation declaration is not an object of namespace -> band")
+    out = {}
+    for name, value in data.items():
+        if not isinstance(name, str) or not name:
+            raise Setup("the allocation declaration carries an empty namespace")
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise Setup("the allocation for %r is not an integer" % name)
+        if value < 0:
+            raise Setup("the allocation for %r is negative" % name)
+        out[name] = value
+    return out
+
+
+def band_of(spec, allocation):
+    """The band size on the surface's band axis: the declared value when it is positive,
+    else the client's allocation for that namespace. A zero or absent allocation is a
+    refusal, never a guessed band."""
+    axis = "height" if spec["position"] in ("top", "bottom") else "width"
+    if spec[axis] > 0:
+        return spec[axis]
+    band = allocation.get(spec["namespace"])
+    if band is None:
+        raise Unmodelled("%s %r has a dynamic %s (0) and no --allocation entry: the band "
+                         "is the client's allocation, not a declared value"
+                         % (spec["namespace"], spec["position"], axis))
+    if band <= 0:
+        raise Unmodelled("%s %r was allocated a %d %s band; a zero band reserves nothing"
+                         % (spec["namespace"], spec["position"], band, axis))
+    return band
+
+
+def declared_box(bar, mon_w, mon_h, allocation=None):
     """Hyprland 0.56.2 arrangeLayerArray: desired size, anchors, margins."""
     m = bar["margins"]
     pos = bar["position"]
-    if pos in ("top", "bottom") and bar["height"] == 0:
-        raise Unmodelled("dynamic height on a horizontal bar is the module allocation, not a declared value")
-    if pos in ("left", "right") and bar["width"] == 0:
-        raise Unmodelled("dynamic width on a vertical bar is the module allocation, not a declared value")
+    allocation = allocation or {}
+    # the band axis always resolves through band_of: the declaration wins when it is
+    # positive, the client's allocation fills the dynamic case, and neither is guessed
+    height = band_of(bar, allocation) if pos in ("top", "bottom") else bar["height"]
+    width = band_of(bar, allocation) if pos in ("left", "right") else bar["width"]
     if pos in ("top", "bottom"):
-        if bar["width"] > 1:
-            w = bar["width"]
+        if width > 1:
+            w = width
             x = (mon_w - w + 1) // 2  # Hyprland centres in doubles and rounds once (:2660)
         else:
             w = mon_w - m["left"] - m["right"]
             x = m["left"]
-        if bar["height"] > 0:
-            h = bar["height"]
+        if height > 0:
+            h = height
             y = m["top"] if pos == "top" else mon_h - h - m["bottom"]
         else:
             # zero desired height: the auto-height branch spans the usable box
             h = mon_h - m["top"] - m["bottom"]
             y = m["top"]
     else:
-        if bar["height"] > 1:
-            h = bar["height"]
+        if height > 1:
+            h = height
             y = (mon_h - h + 1) // 2  # Hyprland centres in doubles and rounds once (:2660)
         else:
             h = mon_h - m["top"] - m["bottom"]
             y = m["top"]
-        if bar["width"] > 0:
-            w = bar["width"]
+        if width > 0:
+            w = width
             x = m["left"] if pos == "left" else mon_w - w - m["right"]
         else:
             w = mon_w - m["left"] - m["right"]
@@ -703,7 +745,8 @@ def contains_box(parent, child):
             and child["y"] + child["h"] <= parent["y"] + parent["h"])
 
 
-def evaluate_composition(config, layers, monitors, monitor, static, static_source, extras):
+def evaluate_composition(config, layers, monitors, monitor, static, static_source, extras,
+                         allocation=None):
     """The composition model: every declared layer surface is arranged in level order
     against the *running* usable box; each exclusive surface's shrink is attributed."""
     if monitor is None:
@@ -722,6 +765,12 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
                          "and the layer box is logical, so this join is not modelled"
                          % (monitor, scale, transform))
     bar = declared_bar(config)
+    allocation = dict(allocation or {})
+    known = set([bar["namespace"]] + [surface["namespace"] for surface in extras])
+    unknown = sorted(set(allocation) - known)
+    if unknown:
+        raise Setup("the allocation declaration names %s, which the composition does not "
+                    "carry" % ", ".join(repr(name) for name in unknown))
     static = dict(static or ZERO_STATIC)
     if not output_matches(config, monitor):
         rows = [("RESULT", "monitor=%s box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR"
@@ -750,6 +799,8 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
         "exclusiveEdge": 0,
         "order": 0,
     }
+    band_axis = "height" if bar["position"] in ("top", "bottom") else "width"
+    bar_spec[band_axis] = band_of(bar_spec, allocation)
     surfaces = [bar_spec] + [dict(s) for s in extras]
     order = sorted(range(len(surfaces)),
                    key=lambda i: (surfaces[i]["level"], -surfaces[i]["order"], i))
@@ -902,11 +953,16 @@ def find_layer(layers, monitor, level, namespace):
 
 
 def evaluate(config, layers, monitors, monitor=None, static=None, static_source="none",
-             surfaces=None):
+             surfaces=None, allocation=None):
+    allocation = dict(allocation or {})
     if surfaces:
         return evaluate_composition(config, layers, monitors, monitor, static, static_source,
-                                    surfaces)
+                                    surfaces, allocation)
     bar = declared_bar(config)
+    unknown = sorted(set(allocation) - {bar["namespace"]})
+    if unknown:
+        raise Setup("the allocation declaration names %s, which the composition does not "
+                    "carry" % ", ".join(repr(name) for name in unknown))
     static = dict(static or ZERO_STATIC)
     if monitor is None:
         if len(monitors) != 1:
@@ -945,7 +1001,7 @@ def evaluate(config, layers, monitors, monitor=None, static=None, static_source=
         rows.append(("RESULT", "monitor=%s box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR" % monitor))
         return "NO_BAR", 3, rows
 
-    local = declared_box(bar, usable["w"], usable["h"])
+    local = declared_box(bar, usable["w"], usable["h"], allocation)
     box = {"x": local["x"] + usable["x"], "y": local["y"] + usable["y"],
            "w": local["w"], "h": local["h"]}
     rows.append(("DECL", "monitor=%s box=%d,%d,%d,%d edge=%s"
@@ -1426,6 +1482,43 @@ def selftest():
     except Unmodelled:
         ok(True, "a dynamic auto band is refused")
 
+    # r82: the client allocation is a declared input (S481: a zero width/height is the
+    # client's own size), so a dynamic band becomes a modelled box and a zero or absent
+    # allocation stays a refusal
+    for pos, band, want in (("top", 34, {"x": 0, "y": 0, "w": 3440, "h": 34}),
+                            ("bottom", 30, {"x": 0, "y": 1410, "w": 3440, "h": 30}),
+                            ("left", 60, {"x": 0, "y": 0, "w": 60, "h": 1440}),
+                            ("right", 50, {"x": 3390, "y": 0, "w": 50, "h": 1440})):
+        spec = {"namespace": "waybar", "position": pos, "height": 0, "width": 0,
+                "margins": {s: 0 for s in MARGIN_SIDES}}
+        ok(declared_box(spec, 3440, 1440, {"waybar": band}) == want,
+           "declared box from the allocation on a %s surface" % pos)
+    ok(declared_box({"namespace": "waybar", "position": "top", "height": 26, "width": 0,
+                     "margins": {s: 0 for s in MARGIN_SIDES}}, 3440, 1440,
+                    {"waybar": 34})["h"] == 26,
+       "a declared band is not overridden by the allocation")
+    try:
+        band_of({"namespace": "w", "position": "top", "height": 0, "width": 0}, {})
+        ok(False, "a dynamic band with no allocation is refused")
+    except Unmodelled:
+        ok(True, "a dynamic band with no allocation is refused")
+    try:
+        band_of({"namespace": "w", "position": "top", "height": 0, "width": 0}, {"w": 0})
+        ok(False, "a zero allocation is refused")
+    except Unmodelled:
+        ok(True, "a zero allocation is refused")
+    ok(band_of({"namespace": "w", "position": "left", "height": 0, "width": 70},
+               {"w": 9}) == 70, "the vertical band axis is the width")
+    ok(parse_allocation(b'{"waybar": 34}') == {"waybar": 34}, "allocation parses")
+    for label, raw in (("a negative band", b'{"w": -1}'),
+                       ("a non-integer band", b'{"w": "x"}'),
+                       ("a non-object", b'[34]')):
+        try:
+            parse_allocation(raw)
+            ok(False, "allocation refuses %s" % label)
+        except Setup:
+            ok(True, "allocation refuses %s" % label)
+
     print("MADO_BARFOOT_SELFTEST: %d/%d" % (checks, total))
     return 0 if checks == total else 1
 
@@ -1438,12 +1531,13 @@ def main(argv):
     ap.add_argument("--monitor")
     ap.add_argument("--rules")
     ap.add_argument("--surfaces")
+    ap.add_argument("--allocation")
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args(argv)
     if args.selftest:
         return selftest()
     if not (args.config and args.layers and args.monitors):
-        print("MADO_BARFOOT: ERROR (usage: --config PATH --layers PATH|- --monitors PATH|- [--rules PATH] [--surfaces PATH])")
+        print("MADO_BARFOOT: ERROR (usage: --config PATH --layers PATH|- --monitors PATH|- [--rules PATH] [--surfaces PATH] [--allocation PATH|-])")
         return 2
     try:
         config = load_jsonc(read_bytes(args.config), "config")
@@ -1467,8 +1561,11 @@ def main(argv):
             surfaces = parse_surfaces(read_bytes(args.surfaces, stdin_ok=True))
             if not surfaces:
                 raise Setup("the surfaces declaration is empty")
+        allocation = None
+        if args.allocation:
+            allocation = parse_allocation(read_bytes(args.allocation, stdin_ok=True))
         verdict, rc, rows = evaluate(config, layers, monitors, monitor, static, static_source,
-                                     surfaces)
+                                     surfaces, allocation)
         emit(rows, verdict)
         return rc
     except Unmodelled as exc:

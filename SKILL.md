@@ -228,18 +228,20 @@ mado runs only the read leg (`configerrors`).
 | `hyprctl workspaces -j` / `hyprctl clients -j` | runtime object counts | positive / non-negative integers (round 78; counts change with every window) |
 | `hyprctl layers -j` / `hyprctl monitors -j` as JSON captures | the two captures the bar-footprint join consumes | shape-checked dumps: layers keyed by monitor with levels `0`–`3`, monitors with name, size, `reserved` (four non-negative integers) and scale (round 78) |
 
-### Executable runbook rows (round 81)
+### Executable runbook rows (round 82)
 
-One row per frozen runbook case (`quality/counters/c2-r81-runbook.py`): the command cell is
+One row per frozen runbook case (`quality/counters/c2-r82-runbook.py`): the command cell is
 the exact command the case executes from the lane root, all read-only; the outcome cell is
 the shape its exit status and output must meet; the third cell counts the committed churn
-and negative samples in `.ufo/waves/round-81/controls/c2-runbook-cases-r81.json`. Every row
-was executed on 2026-11-04 (receipt `.ufo/waves/round-81/receipts/measurement-c2-r81.txt`);
+and negative samples in `.ufo/waves/round-82/controls/c2-runbook-cases-r82.json`. Every row
+was executed on 2026-11-04 (receipt `.ufo/waves/round-82/receipts/measurement-c2-r82.txt`);
 a table nobody runs is not a probe. The four `refuse-*` rows execute the lane's own
 read-only join against committed fixtures and bind the refusal stage, not its message; the
-last four rows are the round-80 and round-81 matcher classes (a chord grammar over the
-keybindings chord column and a state word bound to its exit status; the action column's
-` → ` separator and entity shaping, and the bar's own `pgrep` state with its exit status).
+last seven rows are the matcher classes (rounds 80–82): a chord grammar over the
+keybindings chord column and a state word bound to its exit status, the action column's
+` → ` separator and entity shaping, the bar's own `pgrep` state with its exit status, and
+the tray plane — the `StatusNotifierWatcher`'s bus-name owner, its interface census and the
+method table that census prints, each bound as a shape rather than a frozen value.
 
 | Command | Bound outcome | Churn / negative samples |
 |---|---|---|
@@ -269,6 +271,9 @@ keybindings chord column and a state word bound to its exit status; the action c
 | `systemctl --user is-active hypridle` | one state word from the systemd enum, exit status agreeing with it (`active` ⇔ rc 0) | 3 / 4 |
 | `omarchy menu keybindings --print \| cut -c36-` | action column: ≥100 lines, each ` → ` then a non-empty trimmed action with no second `→` (the `%-35s` padding fixes the separator's column; the payload escapes markup only on some lines, so no entity rule is bound) | 3 / 6 |
 | `pgrep -x waybar` | one or more decimal PIDs in 1..4194304 with rc 0 while the bar runs, empty stdout with rc 1 while it does not — the state is read from the pair, never frozen | 3 / 6 |
+| `busctl --user list` | the watcher's bus name owned by a live PID: an `org.kde.StatusNotifierWatcher` line whose PID column is a decimal in 1..4194304, rc 0 | 2 / 4 |
+| `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager` | one `org.kde.StatusNotifierWatcher interface` line in the census, rc 0 | 2 / 3 |
+| `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager \| awk '$2=="method"'` | every line `.Name method …`, at least 2 lines, rc 0 | 1 / 3 |
 
 ### Advertised Wayland globals
 
