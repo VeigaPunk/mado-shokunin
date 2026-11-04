@@ -52,6 +52,7 @@ import sys
 
 TOOL = "c2-r75-shapes.py"
 BASE_COUNTER = "quality/counters/c2-r74-shapes.py"
+BASE_COUNTER_SHA256 = "eb43e2b6d0fca9ce4e0de8d67473804bfab7d88dac17ba3351123e85c6506277"
 KEY = "GIT_NO_REPLACE_OBJECTS"
 POPULATION_RE = re.compile(r"^quality/check-[^/]+\.py$")
 GIT_TOKEN_RE = re.compile(r"[\"']git[\"']")
@@ -136,6 +137,8 @@ def absolute_scratch(value):
     if link is not None:
         raise UsageError("--scratch-root has a symlinked component: %s" % link)
     norm = os.path.normcase(root)
+    if norm == os.sep:
+        raise UsageError("--scratch-root must not be the filesystem root")
     for unsafe in UNSAFE_ROOTS:
         if norm == unsafe or norm.startswith(unsafe + os.sep):
             raise UsageError("--scratch-root under %s is refused" % unsafe)
@@ -1377,6 +1380,12 @@ def base_classify(repo, base_sha, scratch):
     if data is None:
         emit("MADO_R75_BASE_COUNTER path=%s present=no" % BASE_COUNTER)
         return None
+    # R75Sentinel advisory: the held generation is executed in-process, so its bytes are pinned;
+    # an unpinned (possibly hostile) base generation is a setup error, never an import.
+    digest = sha256_hex(data)
+    if digest != BASE_COUNTER_SHA256:
+        raise SetupError("held generation %s sha256 %s does not match the pinned %s"
+                         % (BASE_COUNTER, digest, BASE_COUNTER_SHA256))
     path = os.path.join(scratch, "base-counter.py")
     os.makedirs(scratch, exist_ok=True)
     with open(path, "wb") as fh:

@@ -51,6 +51,7 @@ import re
 import runpy
 import secrets
 import sys
+import tempfile
 
 TOOL = "c1-r75-landing-controls.py"
 R72 = "quality/counters/c1-r72-landing-controls.py"
@@ -166,8 +167,12 @@ def load_generation(args, scratch):
         raise SetupError("--repo is not a directory: %s" % args.repo)
     if not args.rev:
         raise SetupError("--rev is required")
-    home = os.path.join(scratch, "gen-home")
-    os.makedirs(home, exist_ok=True)
+    # R75Sentinel P2: the generation and its home live in a private unpredictable directory
+    # beneath the validated scratch root, so a pre-populated shared tree cannot seed a symlink
+    # the check-then-open path would follow.
+    private = tempfile.mkdtemp(prefix="r75-c1-gen-", dir=scratch)
+    home = os.path.join(private, "gen-home")
+    os.makedirs(home)
     env = git_env(home)
     r = subprocess.run(["git", "-C", repo, "rev-parse", "--verify", args.rev + "^{commit}"],
                        env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=300)
@@ -183,9 +188,9 @@ def load_generation(args, scratch):
     if digest != R72_SHA256:
         raise SetupError("frozen generation %s sha256 %s does not match the round-75 pin %s"
                          % (R72, digest, R72_SHA256))
-    path = os.path.join(scratch, "generation", "c1-r72-landing-controls.py")
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "wb") as fh:
+    path = os.path.join(private, "c1-r72-landing-controls.py")
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, "wb") as fh:
         fh.write(data)
     return sha, digest, runpy.run_path(path)
 
