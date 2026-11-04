@@ -719,6 +719,11 @@ def _selftest_checks(scratch, controls_path):
     def want(name, cond):
         checks.append((name, bool(cond)))
 
+    want("the population regex accepts only top-level quality/check-*.py",
+         bool(POPULATION_RE.match("quality/check-index.py"))
+         and not POPULATION_RE.match("quality/counters/c2-r69-guard-dominance.py")
+         and not POPULATION_RE.match("quality/check-x/helper.py")
+         and not POPULATION_RE.match("quality/notes.md"))
     want("the embedded classification table covers eleven cases", len(CASES) == 11)
     for name, (src, reader, guard) in CASES.items():
         want("classify %s is (%s, %s)" % (name, reader, guard),
