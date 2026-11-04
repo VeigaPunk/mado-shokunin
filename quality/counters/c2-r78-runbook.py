@@ -245,6 +245,22 @@ def observed(kind, rc, stdout):
     return "rc=%d out=%r" % (rc, text)
 
 
+def row_bound(skill, anchor):
+    """True when a Markdown table row's command cell (first cell) carries the anchor.
+
+    A file-wide substring test survives deletion of the row it names; the declaration says
+    the cases are bound to their committed table rows, so the check reads the row.
+    """
+    for line in skill.splitlines():
+        stripped = line.lstrip()
+        if not stripped.startswith("|"):
+            continue
+        cells = stripped.split("|")
+        if len(cells) >= 3 and anchor in cells[1]:
+            return True
+    return False
+
+
 def git_show(repo, rev, path):
     proc = subprocess.run(["git", "-C", repo, "show", rev + ":" + path],
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -309,6 +325,12 @@ def selftest():
         ok(False, "unknown kind refused")
     except Setup:
         ok(True, "unknown kind refused")
+    ok(row_bound("| `hyprctl version` | pins | sample |", "hyprctl version"),
+       "row binding accepts the command cell")
+    ok(not row_bound("prose says hyprctl version", "hyprctl version"),
+       "row binding refuses prose")
+    ok(not row_bound("| `other` | hyprctl version |", "hyprctl version"),
+       "row binding refuses a non-command cell")
     sample = {"kind": "int_range", "value": [1, 10], "frozen": "5",
               "samples": [{"rc": 0, "out": "7"}],
               "negatives": [{"rc": 0, "out": "0"}]}
@@ -368,8 +390,8 @@ def main(argv):
                         % (len(shape_cases), SHAPES))
         defects = []
         for case in cases:
-            if case["skill_anchor"] not in skill:
-                defects.append("anchor %r for %s not in SKILL.md at %s"
+            if not row_bound(skill, case["skill_anchor"]):
+                defects.append("anchor %r for %s not in a SKILL.md table row at %s"
                                % (case["skill_anchor"], case["name"], rev_full[:12]))
         if defects:
             raise Setup("; ".join(defects))

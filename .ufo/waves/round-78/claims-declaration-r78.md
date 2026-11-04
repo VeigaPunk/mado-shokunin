@@ -100,3 +100,19 @@ No live compositor state is mutated; the runbook executes read verbs only. The m
 does not cover a static `monitor … addreserved` band, a scaled/transformed monitor, a dynamic
 cross size, centring rounding, negative margins (refused) or which process set a zone. The
 runbook's live values remain a point sample of this host at measurement time.
+
+## Provenance notes (append-only, round 78)
+
+- The generators are `.ufo/waves/round-78/controls/make-cases-r78.py` and
+  `.ufo/waves/round-78/controls/make-runbook-cases-r78.py` — paths under this lane's
+  `.ufo/waves/round-78/controls/`, never a lane-root `controls/`.
+- The source fetches landed at `fa6f3fda`: six code files plus the `waybar(5)` render and
+  `sha256-r78.txt`, byte-identical to the round-77 copies for the three the r77 set also carries.
+- "Bound to their committed `SKILL.md` table rows" means the anchor must occur in a table row's
+  command cell; the counter refuses a file-wide substring, and its selftest pins a row-deleted
+  regression (strengthened after the wave's connector finding).
+- The two counters were first measured at `b8508bd9` (C1 `correct=15/18` from three fixture boxes,
+  C2 `matched=16/17` from one unsorted churn sample); the pre-wave amendment `44a36b64` fixed
+  exactly those fixtures, moving no expectation, label, mutant, kill rule or target. The receipts
+  cited by the round are those at `44a36b64` and later, and the final measurement commit is named
+  in the report.

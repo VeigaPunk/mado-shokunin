@@ -68,3 +68,14 @@ INF: the usable area of DP-1 is 3440 x 1414, starting at y = 26 (the band is the
 ## Sources
 
 S457, S458, S459, S460, S461, S462, S464 in [SOURCES](../SOURCES.md). S463 (wayland.app) was opened and rejected: it renders the protocol without a revision pin, so the pinned XML is the authoritative copy.
+
+## Erratum (round 78, append-only)
+
+This entry records the r77 instrument (`tools/mado-barfoot.py`, `VERSION r77-v1`) at the revision it
+was measured (`a83e9bee`; later r77 repairs up to `de627316`). From round 78 the tracked tool is
+`r78-v1`: it composes the margined band instead of returning `NOT_MODELLED`, refuses a negative
+margin, and its selftest is 22/22. The sentences "the reserved expectation is formed only when
+`exclusive` is true and every margin side is zero", "a margined exclusive bar reports `NOT_MODELLED`"
+(§3) and "with any non-zero margin the reserved expectation is `NOT_MODELLED`" (§4) describe the r77
+bytes only and are superseded by [the margined band entry](bar-footprint-margins-r78.md). The r77
+frozen set and its counter stay as they were; `mado-r77-barfoot-counter` scores them.
