@@ -384,6 +384,7 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
 | S434 | Microsoft Learn — DISPLAYCONFIG_2DREGION structure (wingdi.h) - https://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-displayconfig_2dregion | docs | A | the documented point/offset type behind the signal structure's activeSize/totalSize members the tool reads (cx/cy UINT32 pair) | § Description + § Syntax @ ms.date 2018-12-05 (git_commit 9267262487657894a8af112d7165006fed5035a7; updated_at 2024-02-22); opened 2026-11-01 | "The DISPLAYCONFIG_2DREGION structure represents a point or an offset in a two-dimensional space." | mined | 2026-11-01 | 180d | corpus/knowledge/windows-displayconfig-r63.md, corpus/lessons/round-63.md |
 | S435 | GNU Bash 5.3 official release manual — https://www.gnu.org/software/bash/manual/html_node/Exit-Status.html | docs | A | documented exit-status vocabulary supporting the round-66 C2 distinction between ordinary red and execution failure; not row truth or child invocation | Bash Reference Manual 5.3 §3.7.5 Exit Status; release doc/bashref.texi:3902-3906,3911-3916,3925-3928 (release tarball sha256 0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba); HTML rendering opened 2026-11-03 | Zero is the shell success convention; 126 and 127 distinguish execution failures and 128+N fatal signals. The lane separately requires child markers as policy, not proof of truth or honest invocation. | mined | 2026-11-03 | on-release | corpus/lessons/round-66.md |
 | S436 | git v2.56.0 Documentation — git-replace.adoc — https://raw.githubusercontent.com/git/git/v2.56.0/Documentation/git-replace.adoc | docs | A | lane-instrument object reads: what a refs/replace entry rewrites on git 2.56.0 (blob, tree and commit levels) and how a git child reads the real objects | DESCRIPTION + BUGS + CAVEATS, git-replace.adoc:20,22-24,26-27,29,31-32,34-36,38-39,55-56,151-153 @ tag v2.56.0 (git 2.56.0 host; fetched 2026-11-03, sha256 3f61be3f0ea0426cf1e075929819b9a6bce240c6955cfd25d99fb2c974640631, 5398 bytes) | "Replacement references will be used by default by all Git commands except those doing reachability traversal (prune, pack transfer and fsck)."; the replace ref is named for the replaced object with the replacement oid as content; --no-replace-objects and GIT_NO_REPLACE_OBJECTS make a command read the real objects | mined | 2026-11-03 | on-release | corpus/lessons/round-67.md, corpus/knowledge/replace-ref-citation-boundaries-r67.md |
+| S437 | git v2.56.0 Documentation — git-cat-file.adoc — https://raw.githubusercontent.com/git/git/v2.56.0/Documentation/git-cat-file.adoc | docs | A | mado lane tooling: the git object-read contract the round-68 C2 reader census keys on (contents, type and size of named objects, batch naming via rev-parse) and the one documented mode that bypasses replacement | NAME + DESCRIPTION + OPTIONS + --batch-all-objects + BATCH OUTPUT, git-cat-file.adoc:6,21-22,27-28,40-41,44-45,50-51,55,198-199,295-296,303-304 @ tag v2.56.0 (git 2.56.0 host; fetched 2026-11-03, sha256 6c32dbda8c2106be08bda471592db50b5afaf185de32f2e513e80d802b4a95b2, 16099 bytes) | "Output the contents or other properties such as size, type or delta information of one or more objects"; batch input is named "as if it were fed to linkgit:git-rev-parse[1]"; only --batch-all-objects is "presented as-is, without respecting the "replace" mechanism", bounding where the census vocabulary's reads can be redirected | mined | 2026-11-03 | 90d | corpus/lessons/round-68.md,corpus/knowledge/gate-git-read-guards-r68.md |
 
 ## Paths
 
@@ -820,3 +821,18 @@ screened 2, included 1 (S435, Bash), excluded 1 from this round's append
 as false). Stop: one primary source suffices for the bounded rc vocabulary.
 No source establishes row truth or authentic child invocation. No existing
 status, recheck, used-by or opened cell changed.
+
+## Round 68 — bounded object-read source sweep (2026-11-03)
+
+Question: which documented git command names the object-load read the lane's gate census turns
+on, and does that document state how replacement refs interact with it? Searched the git v2.56.0
+documentation tree at the tag (`raw.githubusercontent.com/git/git/v2.56.0/Documentation/`), one
+file opened in full (`git-cat-file.adoc`), plus the tag check `git ls-remote
+https://github.com/git/git 'v2.56.0' 'v2.56.0^{}'` (tag object `2478544319491bbd2a42cc57a83e3d2f4730a280`,
+peeled commit `a018953688f1b10bddf91bff8747068f5f4746a4`) and the host `git --version` →
+`git version 2.56.0`. Identified 1 candidate, screened 1, included 1 (S437), excluded 0: the
+sweep was bounded to the one document the census vocabulary needs, so nothing was opened and
+rejected as a row. Stop: S436 already holds the replacement semantics at the same tag; one
+object-read document completes the pair. The held row `core.useReplaceRefs` rejection (r67)
+was not re-opened. No row asserts desktop behavior, and no credential material was read or
+written.
