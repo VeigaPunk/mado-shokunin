@@ -1,0 +1,94 @@
+# mado round-71 final harm-watch battery at the landing tip
+# tip: $(git rev-parse HEAD) below; every command run verbatim at that revision
+TIP=$(git -C /home/vgpnk/Projects/shokunin/mado-shokunin rev-parse --verify HEAD)
+tip=443cbd50ed22386ee01caf90e0bb88f8f7c2ae1c
+
+## bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+rc=0
+
+## python3 quality/check-axis-scores.py
+MADO_AXIS_ROW: axis=navigation published=85/85 derived=85/85 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=443cbd50ed22386ee01caf90e0bb88f8f7c2ae1c
+rc=0
+
+## python3 quality/check-index.py --repo . --rev HEAD
+MADO_INDEX: rev=HEAD indexed=85/85 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+
+## python3 quality/check-tool-ledger.py --repo . --rev HEAD
+LEDGER: population=122 ledger_rows=122 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=443cbd50ed22386ee01caf90e0bb88f8f7c2ae1c
+rc=0
+
+## frozen round-70 counters at the tip
+c1-r70-real-children.py: usage: --scratch-root is not a directory: /fast/scratch/hyaku/mado-r71/l1/final/r70c1
+rc=0
+c2-r70-carriers.py: --scratch-root is not a directory: /fast/scratch/hyaku/mado-r71/l1/final/r70c2
+rc=0
+
+## round-71 counters at the tip
+c1-r71-real-children.py: usage: --scratch-root is not a directory: /fast/scratch/hyaku/mado-r71/l1/final/r71c1
+rc=0
+c2-r71-shapes.py: --scratch-root is not a directory: /fast/scratch/hyaku/mado-r71/l1/final/r71c2
+rc=0
+-- leg nav --
+revision=443cbd50ed22386ee01caf90e0bb88f8f7c2ae1c indexed=85/85 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+LANDING_LEG nav rc=0
+-- leg usedby --
+MADO_USED_BY: rev=443cbd50ed22386ee01caf90e0bb88f8f7c2ae1c entries=85 rows=380 missing=5 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MISSED missed=missing
+LANDING_LEG usedby rc=1
+-- leg ledger --
+LEDGER: population=122 ledger_rows=122 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=443cbd50ed22386ee01caf90e0bb88f8f7c2ae1c
+LANDING_LEG ledger rc=0
+-- leg citecheck --
+CITECHECK resolved: .ufo/waves/round-70/controls/c2-controls-r70.json (from 1 site(s))
+CITECHECK resolved: .ufo/waves/round-71/controls/c2-controls-r71.json (from 1 site(s))
+CITECHECK resolved: quality/check-anchor-cover.py (from 1 site(s))
+CITECHECK resolved: quality/check-axis-scores.py (from 1 site(s))
+CITECHECK resolved: quality/check-control-receipts.py (from 1 site(s))
+CITECHECK resolved: quality/check-counter-discrimination.py (from 1 site(s))
+CITECHECK resolved: quality/check-deliverables.py (from 1 site(s))
+CITECHECK resolved: quality/check-evidence-pointers.py (from 1 site(s))
+CITECHECK resolved: quality/check-freeze-order.py (from 1 site(s))
+CITECHECK resolved: quality/check-index-rows.py (from 1 site(s))
+CITECHECK resolved: quality/check-index.py (from 1 site(s))
+CITECHECK resolved: quality/check-landed-contract.py (from 1 site(s))
+CITECHECK resolved: quality/check-locators.py (from 1 site(s))
+CITECHECK resolved: quality/check-population.py (from 1 site(s))
+CITECHECK resolved: quality/check-r38-discrimination.py (from 1 site(s))
+CITECHECK resolved: quality/check-r55-controls.py (from 1 site(s))
+CITECHECK resolved: quality/check-r56-controls.py (from 1 site(s))
+CITECHECK resolved: quality/check-round-outcome-first.py (from 1 site(s))
+CITECHECK resolved: quality/check-session-material.py (from 1 site(s))
+CITECHECK resolved: quality/check-state-cite.py (from 1 site(s))
+CITECHECK resolved: quality/check-tool-ledger.py (from 1 site(s))
+CITECHECK resolved: quality/check-wave-done.py (from 1 site(s))
+CITECHECK resolved: quality/counters/c1-r70-landing-controls.py (from 1 site(s))
+CITECHECK resolved: quality/counters/c1-r71-landing-controls.py (from 1 site(s))
+CITECHECK resolved: quality/counters/c1-r71-real-children.py (from 1 site(s))
+CITECHECK resolved: quality/counters/c2-r70-carriers.py (from 1 site(s))
+CITECHECK resolved: quality/counters/c2-r71-shapes.py (from 1 site(s))
+CITECHECK resolved: quality/landing-counters.sh (from 1 site(s))
+MADO_CITECHECK: rev=443cbd50ed22386ee01caf90e0bb88f8f7c2ae1c files=5 citations=28 resolved=28 missing=0 skipped_large=0 verdict=TARGET_MET (VERSION r64-v1)
+LANDING_LEG citecheck rc=0
+MADO_LANDING_COUNTERS: RED (nav=0 usedby=1 ledger=0 citecheck=0 rev=443cbd50ed22386ee01caf90e0bb88f8f7c2ae1c)
+rc=1
+
+## Final re-run at the landing tip 9b2f1bce94a6ab4b7e629a716bd561f6e65cf9f5
+
+(The earlier "round-71 counters at the tip" section above shows two setup errors: the scratch
+directories did not exist yet and the counters refuse to create them mid-run — M70-1's class,
+caught before any receipt was produced; the corrected runs below create the directories first.)
+
+- python3 -I quality/counters/c3-r56-used-by.py --repo . --rev HEAD --work <scratch>/ub3
+  -> MADO_USED_BY: rev=HEAD entries=85 rows=380 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none (rc 0; the five used-by reverse links landed at 9b2f1bce)
+- python3 -I quality/counters/c1-r71-real-children.py --repo . --rev HEAD --base-rev c354f4d4... --scratch-root <scratch>/r71c1
+  -> MADO_R71_REAL_CHILDREN: cases=4 correct=4 base_correct=3 verdict=TARGET_MET rev=9b2f1bce... (rc 0)
+- python3 -I quality/counters/c2-r71-shapes.py --repo . --rev HEAD --base-rev c354f4d4... --controls .ufo/waves/round-71/controls/c2-controls-r71.json --scratch-root <scratch>/r71c2
+  -> MADO_R71_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 controls=23/23 base_controls=19/23 verdict=TARGET_MET rev=9b2f1bce... (rc 0)
+- bash quality/landing-counters.sh --repo . --rev HEAD --round 71 --scratch-root <scratch>/lc-green2
+  -> MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0 ledger=0 citecheck=0 rev=9b2f1bce...) (rc 0; the DEFAULT citecheck path resolves the committed receipts dir — the M71-2 repair verified end to end)
+- python3 quality/check-axis-scores.py at 443cbd50: MADO_AXIS: checked=3 mismatched=0 (unchanged at this tip; the same three rows re-derived)
+- bash tools/mado-verify.sh --selftest at 443cbd50: MADO_SELFTEST: 460/460 assertions passed, rc 0 (gate bytes unchanged at this tip)
