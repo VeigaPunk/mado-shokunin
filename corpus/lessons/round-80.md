@@ -99,3 +99,33 @@ ten manifest entries, the files named at `.ufo/reports/round-79/mado.md:211` and
 The seat also named the limit I keep: the runner's `Report:` trailer and the seat brief's
 `w1/<name>/findings.md` are two paths by construction (two r80 seats followed the trailer), so
 M80-5's fix is "one canonical path *first*", not "one path exists".
+
+**Seat-copy redaction (security duty, applied by the L1).** `w1/R80ScoutLive/monitors.json` was the
+seat's raw `hyprctl monitors -j` capture and carried the monitor's EDID-shaped `description` and
+`serial` under the r78 L0 question's R5 rule; the L1 replaced `description`, `serial`, `make` and
+`model` with `<redacted: …>` before committing the seat report, and the lane receipt
+(`receipts/live-join-r80.txt`) never printed those fields. The join reads name/size/`reserved`/
+scale/transform only, so the redaction costs no evidence. `grep -rn 508AZFMF7323` over the round-80
+files prints nothing.
+
+**R80ExecC1Run** (executor; `w1/R80ExecC1Run/findings.md`, STATUS: ok). Ran the C1 counting command
+verbatim at the freeze (rc 0, `TARGET_MET`), then re-derived `overlay-compose-top`,
+`same-level-order` and `ls-area-invalid` by hand from `S470.bin` (four-band arithmetic with the
+running-usable-box shifts) without reading the tool's code, built the three fixtures from the frozen
+set and ran the tool on them: **every field AGREE** (`band`/`expected`/`attributed`/`attr`/`boxes`/
+`ls`), and both selftests green (`tools/mado-barfoot.py --selftest` 111/111, the C1 counter 60/60).
+
+**R80ScribeSources** (scribe; report at `w1/R80ScribeSources.md` plus `sources-rows-r80.md`,
+STATUS: ok). Drafted the six rows and verified all six quotes against the fetch bytes; its **F1** is
+the one substantive catch — the committed S473 anchor said the mask table runs `:100-120` and holds
+"the twelve masks", while the bytes hold sixteen `s/^N,/` rules over `:100-115`; F2 corrected S472's
+empty-case span to `:39-52`. Both became supersede rows S476/S477 (this lesson's M80-6) and the
+committed Gate cells now point at them. F3 named the expected W04 warnings for S470/S477.
+
+**R80ScribeLesson** (scribe; `w1/R80ScribeLesson/{findings.md,mistakes-r80.md}`, STATUS: ok). Its
+draft carries the five routed defects with byte-exact evidence pointers (folded into this lesson's
+re-pointed block) and a probe matrix for each fix's red side. Its finding against the landed lesson:
+12 of 14 r80 task bodies name the canonical `findings.md` path explicitly while 2 carry only the
+shared context sentence (one canonical path first — the r80 wave still produced two root-level
+`<name>.md` reports, `R80ScoutLive.md` and `R80ConnSiblings.md`, from seats that followed the
+runner's trailer); M80-5's green is not yet observable because the wave had not closed.
