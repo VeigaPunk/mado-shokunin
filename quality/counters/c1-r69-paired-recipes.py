@@ -162,6 +162,13 @@ def mutation_score(tree, source, scratch, label):
         mutant = source.replace(old, new, 1)
         path = os.path.join(tree, "mut-%s-%s.py" % (label, name))
         write_file(path, mutant.encode("utf-8"))
+        compile_run = run([sys.executable, "-I", "-m", "py_compile", path], timeout=300)
+        if compile_run.returncode != 0:
+            emit("MADO_R69_MUTANT label=%s recipe=%s occurrences=1 compiles=no killed=no "
+                 "note=a syntax break is not a semantic kill" % (label, name))
+            detail["compiles"] = False
+            details.append(detail)
+            continue
         rc, out = candidate_selftest(path, os.path.join(scratch, "st-%s-%s" % (label, name)))
         detail.update({"applied": True, "rc": rc, "killed": rc != 0,
                        "sha256": sha256_hex(mutant.encode("utf-8"))})
@@ -218,8 +225,8 @@ def measure(args):
     base = extract(repo, base_sha, BASE_PATH)
     if base is None:
         emit("MADO_R69_EXTRACT path=%s present=no sha256=absent" % BASE_PATH)
-        base_killed = 0
-        base_applied = 0
+        raise SetupError("the base harness %s is absent at --base-rev %s: the do-nothing leg "
+                         "cannot be run, so no verdict is claimed" % (BASE_PATH, base_sha))
     else:
         emit("MADO_R69_EXTRACT path=%s present=yes bytes=%d sha256=%s"
              % (BASE_PATH, len(base), sha256_hex(base)))
@@ -250,6 +257,8 @@ STUB_HARNESS = (
 
 def _scripted_run(case, sha):
     """Stand-in for `run`: answers every argv the measurement issues, spawns nothing."""
+    state = {"compiles": 0}
+
     def fake(argv, cwd=None, timeout=900):
         a = [str(x) for x in argv]
         out = b""
@@ -277,7 +286,10 @@ def _scripted_run(case, sha):
                 rc = 1
         elif os.path.basename(a[0]).startswith("python"):
             joined = " ".join(a)
-            if "/base/" in joined:
+            if "py_compile" in a:
+                rc = case.get("compile_rc", 0) if state["compiles"] == 0 else 0
+                state["compiles"] += 1
+            elif "/base/" in joined:
                 rc = case["base_rc"]
             elif "mut-" in joined:
                 rc = case["mutant_rc"]
@@ -375,9 +387,16 @@ def _selftest_checks(scratch):
                    "verdict=TARGET_MISSED rev=" + sha))
     want("red path exits 1", rc6 == 1)
 
+    broken = {"name": "compile-red", "candidate": STUB_HARNESS, "base": STUB_HARNESS,
+              "candidate_rc": 0, "mutant_rc": 1, "base_rc": 0, "compile_rc": 1}
+    rc7, line7 = _measure_case(scratch, broken, sha)
+    want("a mutant that does not compile is not credited as a kill",
+         line7 == ("MADO_R69_PAIRED_RECIPES: selftest=0 killed=2/3 applied=3/3 base=0/3 "
+                   "verdict=TARGET_MISSED rev=" + sha))
+    want("compile-red path exits 1", rc7 == 1)
     want("every scripted contract line matches the frozen shape",
          all(CONTRACT_RE.fullmatch(x) is not None
-             for x in (line, line2, line3, line4, line5, line6)))
+             for x in (line, line2, line3, line4, line5, line6, line7)))
     want("contract line refuses a wrong verdict word",
          not CONTRACT_RE.fullmatch(
              "MADO_R69_PAIRED_RECIPES: selftest=0 killed=3/3 applied=3/3 base=0/3 "
@@ -387,6 +406,12 @@ def _selftest_checks(scratch):
     want("verdict requires every recipe applied", not verdict_met(0, 3, 2, 0))
     want("verdict requires the base leg to survive", not verdict_met(0, 3, 3, 1))
     want("verdict met on the frozen target", verdict_met(0, 3, 3, 0))
+    absent_base = {"name": "absent-base", "candidate": STUB_HARNESS, "base": None,
+                   "candidate_rc": 0, "mutant_rc": 1, "base_rc": 0}
+    want("an absent base harness is a setup refusal, never a pass",
+         _raises(SetupError, lambda: _measure_case(scratch, absent_base, sha)))
+    parsed = build_parser().parse_args(["--repo", ".", "--rev", "HEAD", "--scratch-root", "x"])
+    want("--base-rev is not silently defaulted", parsed.base_rev is None)
 
     frozen = ["--repo", ".", "--rev", "HEAD", "--base-rev", "BASE",
               "--scratch-root", "/scratch/dir"]
@@ -455,14 +480,17 @@ def main(argv):
         scratch = absolute_scratch(args.scratch_root)
         if args.selftest:
             return selftest(scratch)
-        if not args.repo or not args.rev:
-            raise UsageError("--repo and --rev are required")
+        if not args.repo or not args.rev or not args.base_rev:
+            raise UsageError("--repo, --rev and --base-rev are required")
         return measure(args)
     except UsageError as exc:
         sys.stderr.write("%s: %s\n" % (TOOL, exc))
         return 2
     except SetupError as exc:
         sys.stderr.write("%s: %s\n" % (TOOL, exc))
+        return 2
+    except (OSError, subprocess.SubprocessError) as exc:
+        sys.stderr.write("%s: setup failure: %s\n" % (TOOL, exc))
         return 2
 
 

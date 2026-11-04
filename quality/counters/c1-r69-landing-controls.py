@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-r"""Round-68 C1 control harness: the standing landing instrument and its git-reading
-children, measured against the two frozen defect controls (claim C1, attempt 1).
+r"""Round-69 C1 control harness: the standing landing instrument and its git-reading
+children, measured against the two frozen defect controls (claim C1, round 69).
 
     python3 quality/counters/c1-r69-landing-controls.py --repo . --rev REV --scratch-root DIR
     python3 quality/counters/c1-r69-landing-controls.py --selftest --scratch-root DIR
 
-Exit 0 iff the extracted instrument's own --selftest is rc 0 AND both frozen defect
-mutants are killed (2/2); 1 otherwise; 2 on setup/usage error (reason on stderr).
+Exit map: 0 iff the extracted instrument's own --selftest is rc 0 AND both frozen defect
+mutants are killed (2/2); 1 iff the measurement ran and the contract was not met (red
+selftest or a surviving mutant); 2 on usage/setup error - reason on stderr, no contract
+line printed.
 
 What one measurement does (every write stays under the caller-declared scratch root):
 
-  extract  the four instrument files at --rev into <scratch>/r68-c1/tree/ with a scrubbed
+  extract  the four instrument files at --rev into <scratch>/r69-c1/tree/ with a scrubbed
            git env carrying GIT_OPTIONAL_LOCKS=0 and GIT_NO_REPLACE_OBJECTS=1, so a planted
            replacement in the source repo cannot forge the extracted bytes:
              quality/landing-counters.sh
@@ -21,7 +23,7 @@ What one measurement does (every write stays under the caller-declared scratch r
   M-Z      copy the tree, delete the exact frozen zero-citation guard clause
            `[ "$citations" -gt 0 ] && ` once (asserting exactly one occurrence first; the
            mutant must still pass `bash -n`), and re-run `--selftest`: the mutation is killed
-           iff that selftest exits nonzero (the candidate's new zero-citation case must go red).
+           iff that selftest exits nonzero (the instrument's zero-citation case must go red).
   M-R      build a scratch fixture repo whose real tree lacks `corpus/cited.md` while a receipt
            in the worktree cites it, then plant a `refs/replace` ref on the root tree so the
            path appears; copy the extracted citecheck child, delete the exact
@@ -39,8 +41,19 @@ Printed receipt (last line, exact):
 Preceded by one `MADO_R69_*` evidence line per extraction, mutant (with its sha256), R-control
 leg, and the exact environment handed to the child under test. Mutant bytes are never claimed
 killed when the recipe was inapplicable: a missing guard yields `recipe=none killed=no`, and
-the unverified leg is named. `--selftest` is hermetic: it spawns nothing (asserted by patching
-subprocess.run), touches only <scratch-root>, and refuses /tmp-family or symlinked roots.
+the unverified leg is named.
+
+Selftest: `--selftest` is hermetic - it spawns nothing, touches only <scratch-root>, and
+refuses /tmp-family or symlinked roots. It drives the real `measure()` body with scripted
+children (git, bash and python answered in-process) so the kill-credit decisions and the
+printed contract line are exercised without a child. On top of that it asserts the hermetic
+spawn guard is installed for the check body, and that an attempted spawn under it raises.
+
+Declared limits: the paired assertions cover two hazards of the kill-credit logic only - a
+crashing M-R child (rc 2, no MADO_CITECHECK marker) is not a kill, and an M-Z run whose
+combined output carries no `MADO_LANDING_COUNTERS_SELFTEST:` summary is not a kill. Both use
+scripted stand-ins; the harness claims nothing about real children in those positions, and
+the real-children leg stays the harm-watch leg.
 """
 import argparse
 import contextlib
@@ -344,8 +357,8 @@ def build_r_fixture(work, home):
     write_file(os.path.join(d, receipt_rel, "a.txt"), b"cites corpus/cited.md\n")
     write_file(os.path.join(d, "keep.txt"), b"keep\n")
     git("add", "-A")
-    git("-c", "user.name=r68-c1", "-c", "user.email=r68-c1@example.invalid",
-        "-c", "commit.gpgsign=false", "commit", "-qm", "r68-c1 replacement-ref fixture")
+    git("-c", "user.name=r69-c1", "-c", "user.email=r69-c1@example.invalid",
+        "-c", "commit.gpgsign=false", "commit", "-qm", "r69-c1 replacement-ref fixture")
     rev = git("rev-parse", "HEAD").stdout.decode("ascii", "replace").strip()
     if not re.fullmatch(r"[0-9a-f]{40,64}", rev):
         raise SetupError("fixture revision is malformed")
@@ -390,7 +403,7 @@ def measure(args):
     repo = os.path.abspath(args.repo)
     if not os.path.isdir(repo):
         raise SetupError("--repo is not a directory: %s" % repo)
-    work = os.path.join(scratch, "r68-c1")
+    work = os.path.join(scratch, "r69-c1")
     shutil.rmtree(work, ignore_errors=True)
     home = os.path.join(work, "home")
     os.makedirs(home)
@@ -826,7 +839,7 @@ def selftest_main(scratch_arg):
     except UsageError as exc:
         sys.stderr.write("%s: %s\n" % (TOOL, exc))
         return 2
-    work = os.path.join(scratch, "r68-c1-selftest")
+    work = os.path.join(scratch, "r69-c1-selftest")
     shutil.rmtree(work, ignore_errors=True)
     os.makedirs(work)
     try:
