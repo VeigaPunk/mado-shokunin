@@ -36,27 +36,40 @@ python3 -I quality/counters/c1-r76-outcome-field.py --repo . --rev REV \
   --scratch-root <scratch>
 ```
 
-**Frozen case set.** `.ufo/waves/round-76/controls/c1-outcome-cases-r76.json`, sha256
-`ff97505f7cce829e3e15d356fd4305a39825d47997e4dac20be034931da7fc40`, fifteen real
-`bash` fixture lanes, one per mode, each labelled with `expect_mz` and `expect_verdict`.
-The four green modes are the outcome-rule separators; `green-mutant` is the case where
-the outcome field is not redundant with `mz` (`mz=fail`, `verdict=pass`).
+**Frozen case set.** `.ufo/waves/round-76/controls/c1-outcome-cases-r76.json`, label set
+**v3**, sha256 `320f7e6b54e71776f2d5b179b9a8b09ee9185886e2aeb045af0ecc9171cc77ea`, sixteen
+real `bash` fixture lanes, one per mode, each labelled with `expect_mz` and
+`expect_verdict`. **Label correction, disclosed:** v1 (sha `ff97505f…`) modelled the
+harness's `verdict=` as summary-green only; v2 (sha `5a91d69e…`) corrected that but kept
+an echo-dropping mutation that the harness makes unobservable; both were replaced
+**before any seat scored and before the final measurement**, each case's label is
+re-derived from the harness's own `MADO_R76_SELFTEST` and `MADO_R76_MUTANT M-Z/M-R`
+evidence lines in `receipts/label-derivation-r76.txt` (never from the contract row), and
+the miss each version found is recorded in `corpus/lessons/round-76.md` as M76-1/M76-2.
 
-**Frozen mutants** (anchored at `green_with_witness`'s single return line):
+**Negative result carried into the claim.** The round-75 plan's first item was "score the
+outcome field, so the echo-dropping mutant dies". It cannot: `verdict=` is green only
+when `killed == 2`, and the M-Z kill already requires the echo, so an outcome rule that
+drops the echo produces the same field on every reachable case. The successor therefore
+scores the *observable* outcome-rule class: the `killed` conjunct and the green conjunct
+of the published field.
+
+**Frozen mutants** (anchored at the single return line of the harness's named
+`outcome_green(...)` rule, which the contract line calls):
 
 | mutant | rule change | separator case |
 |---|---|---|
-| `outcome-term-dropped` | the outcome ignores the echo | `green-absent` |
-| `prefix-match` | echo equality becomes a prefix test | `green-overlong` |
-| `first-witness-wins` | the first parsed echo wins | `green-last-wrong` |
-| `case-insensitive` | the echo comparison folds case | `green-uppercase` |
+| `outcome-summary-only` | the outcome drops the `killed == 2` conjunct | `green-absent` (green, killed 1) |
+| `outcome-killed-only` | the outcome drops the green conjunct | `always-red` (red, killed 2) |
+| `outcome-killed-any` | `killed >= 1` instead of `killed == 2` | `green-mutant` (green, killed 1) |
+| `outcome-killed-or` | green **or** killed 2 | `always-red` |
 
 **Kill rule (frozen).** A mutant is killed iff its two-field score is below fifteen. The
 **do-nothing control** is the held round-75 scoring rule, which reads `mz=` only: a
 mutant is base-killed iff its mz-only score is below fifteen.
 
 **Target (frozen).** Exit 0 and `verdict=TARGET_MET` iff
-`cases=15 correct=15 mutants=4 killed=4 base_killed=0`. Exit 1 iff measured and missed;
+`cases=16 correct=16 mutants=4 killed=4 base_killed=0`. Exit 1 iff measured and missed;
 2 on usage/setup error.
 
 **Grammar and challenge (frozen, in the successor harness).** G1: the witness grammar
@@ -67,9 +80,11 @@ G2: the per-run challenge is drawn by rejection sampling until it contains at le
 oracle; closes M75-4).
 
 **Declared limits.** The mutants patch the outcome helper only, so the kill path stays
-correct by construction — that is exactly why the held rule cannot see them. The
-fifteen modes are rule separators, not fault coverage; the challenge authenticates the
-echo, not the truth of the assertions.
+correct by construction — that is exactly why the held rule cannot see them. An
+echo-dropping outcome mutation is unobservable through `verdict=` (see the negative
+result above), so the certificate covers the published field's `killed` and green
+conjuncts, not the echo term. The sixteen cases are rule separators, not fault coverage;
+the challenge authenticates the echo, not the truth of the assertions.
 
 ## C2 — operability: the census counts an interprocedural cancellation and a dynamic key
 

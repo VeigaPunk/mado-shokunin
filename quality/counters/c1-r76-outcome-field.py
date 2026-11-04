@@ -42,7 +42,7 @@ with the reason on stderr and no contract line.
 
 Selftest: `--selftest` is hermetic - it spawns nothing, touches only <scratch-root>, and checks
 the fixture template (one frozen zero-citation clause, one mode placeholder, `marker_valid`
-present), the fifteen frozen modes and both expectation columns, the four mutant anchors (each
+present), the sixteen frozen cases and both expectation columns, the four mutant anchors (each
 exactly once in the frozen rule snippet), the contract shape and the scratch refusals.
 
 Declared limits: the fixture lanes are test doubles, not the production instrument; the mutants
@@ -65,37 +65,30 @@ R72 = "quality/counters/c1-r72-landing-controls.py"
 USEDBY = "quality/counters/c3-r56-used-by.py"
 LEDGER = "quality/check-tool-ledger.py"
 CITECHECK = "tools/mado-receipt-citecheck.py"
-FROZEN_CASES = 15
-FROZEN_CORRECT = 15
+FROZEN_CASES = 16
+FROZEN_CORRECT = 16
 FROZEN_MUTANTS = 4
 FROZEN_KILLED = 4
 FROZEN_BASE_KILLED = 0
-CONTROLS_SHA = "ff97505f7cce829e3e15d356fd4305a39825d47997e4dac20be034931da7fc40"
+CONTROLS_SHA = "320f7e6b54e71776f2d5b179b9a8b09ee9185886e2aeb045af0ecc9171cc77ea"
 UNSAFE_ROOTS = ("/tmp", "/var/tmp", "/dev/shm")
 Z_CLAUSE = b'[ "$citations" -gt 0 ] && '
-RULE_SNIPPET = '''def green_with_witness(r72_green, out, nonce):
-    return bool(r72_green(out)) and last_witness(out) == nonce
+RULE_SNIPPET = '''def outcome_green(r72_green, selftest_out, nonce, killed):
+    return bool(green_with_witness(r72_green, selftest_out, nonce)) and killed == 2
 '''
 MUTANTS = (
-    ("outcome-term-dropped",
-     "    return bool(r72_green(out)) and last_witness(out) == nonce\n",
-     "    return bool(r72_green(out))\n"),
-    ("prefix-match",
-     "    return bool(r72_green(out)) and last_witness(out) == nonce\n",
-     "    return bool(r72_green(out)) and (last_witness(out) or \"\").startswith(nonce)\n"),
-    ("first-witness-wins",
-     "    return bool(r72_green(out)) and last_witness(out) == nonce\n",
-     "    got = None\n"
-     "    for line in out.splitlines():\n"
-     "        m = WITNESS_RE.fullmatch(line.strip())\n"
-     "        if m:\n"
-     "            got = m.group(1)\n"
-     "            break\n"
-     "    return bool(r72_green(out)) and got == nonce\n"),
-    ("case-insensitive",
-     "    return bool(r72_green(out)) and last_witness(out) == nonce\n",
-     "    got = last_witness(out)\n"
-     "    return bool(r72_green(out)) and got is not None and got.lower() == nonce.lower()\n"),
+    ("outcome-summary-only",
+     "    return bool(green_with_witness(r72_green, selftest_out, nonce)) and killed == 2\n",
+     "    return bool(green_with_witness(r72_green, selftest_out, nonce))\n"),
+    ("outcome-killed-only",
+     "    return bool(green_with_witness(r72_green, selftest_out, nonce)) and killed == 2\n",
+     "    return killed == 2\n"),
+    ("outcome-killed-any",
+     "    return bool(green_with_witness(r72_green, selftest_out, nonce)) and killed == 2\n",
+     "    return bool(green_with_witness(r72_green, selftest_out, nonce)) and killed >= 1\n"),
+    ("outcome-killed-or",
+     "    return bool(green_with_witness(r72_green, selftest_out, nonce)) and killed == 2\n",
+     "    return bool(green_with_witness(r72_green, selftest_out, nonce)) or killed == 2\n"),
 )
 CAND_RE = re.compile(
     r"MADO_R76_LANDING_CONTROLS: selftest=(?:[0-9]+/[0-9]+|none) mz=(pass|fail) mr=(?:pass|fail) "
@@ -103,7 +96,7 @@ CAND_RE = re.compile(
     r"verdict=(TARGET_MET|TARGET_MISSED) rev=[0-9a-f]{40,64}")
 CONTROLS_LINE = re.compile(r"MADO_R76_CHALLENGE source=[^\n]* has_letter=yes ")
 CONTRACT_RE = re.compile(
-    r"MADO_R76_OUTCOME_FIELD: cases=15 correct=(?:absent|[0-9]{1,2}) mutants=[0-9]{1,2} "
+    r"MADO_R76_OUTCOME_FIELD: cases=16 correct=(?:absent|[0-9]{1,2}) mutants=[0-9]{1,2} "
     r"killed=[0-9]{1,2} base_killed=[0-9]{1,2} "
     r"verdict=(?:TARGET_MET|TARGET_MISSED) rev=[0-9a-f]{40,64}")
 
@@ -121,14 +114,14 @@ marker_valid() {
 witness_echo() {
   local nonce=${MADO_LANDING_NONCE:-}
   case "$MODE" in
-    green-overlong)
+    green-overlong|overlong)
       [ -n "$nonce" ] && printf 'MADO_LANDING_WITNESS: %s00\\n' "$nonce" ;;
     green-last-wrong)
       [ -n "$nonce" ] && printf 'MADO_LANDING_WITNESS: %s\\n' "$nonce"
       printf 'MADO_LANDING_WITNESS: 0123456789abcdef\\n' ;;
     uppercase|green-uppercase)
       [ -n "$nonce" ] && printf 'MADO_LANDING_WITNESS: %s\\n' "$(printf '%s' "$nonce" | tr 'a-f' 'A-F')" ;;
-    right|liar-success|green-mutant|zero-denominator|mismatch-detail)
+    right|liar-success|always-red|green-mutant|zero-denominator|mismatch-detail)
       [ -n "$nonce" ] && printf 'MADO_LANDING_WITNESS: %s\\n' "$nonce" ;;
     stale) printf 'MADO_LANDING_WITNESS: 0123456789abcdef\\n' ;;
     wrong) printf 'MADO_LANDING_WITNESS: ffffffffffffffff\\n' ;;
@@ -144,6 +137,9 @@ report() {
     crash) exit 1 ;;
     green-mutant|green-absent|green-overlong|green-last-wrong|green-uppercase)
       printf 'MADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed\\n' ;;
+    always-red)
+      printf 'SELFTEST FAIL 1: the frozen arithmetic always reports this failure\\n'
+      printf 'MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\\n' ;;
     zero-denominator) printf 'MADO_LANDING_COUNTERS_SELFTEST: 0/0 assertions passed\\n' ;;
     mismatch-detail)
       printf 'SELFTEST FAIL 1: detail line one\\n'
@@ -429,30 +425,33 @@ def selftest(scratch):
     want("every template line is quoted safely",
          '"@MODE@"' not in LANE_TEMPLATE and LANE_TEMPLATE.endswith("report\n"))
 
-    modes = ["right", "liar-success", "green-mutant", "green-absent", "green-overlong",
-             "green-last-wrong", "green-uppercase", "uppercase", "stale", "absent", "wrong",
-             "last-wrong", "crash", "zero-denominator", "mismatch-detail"]
-    want("the frozen mode list is the fifteen separators",
-         all(m in LANE_TEMPLATE for m in modes) and len(modes) == 15)
-    want("the case count is fifteen", FROZEN_CASES == 15)
+    modes = ["right", "liar-success", "always-red", "green-mutant", "green-absent",
+             "green-overlong", "green-last-wrong", "green-uppercase", "uppercase", "stale",
+             "absent", "overlong", "wrong", "last-wrong", "crash", "zero-denominator",
+             "mismatch-detail"]
+    want("the frozen mode list is the seventeen fixture modes",
+         all(m in LANE_TEMPLATE for m in modes) and len(modes) == 17)
+    want("the case count is sixteen", FROZEN_CASES == 16)
     want("the kill targets are four and the base target zero",
          FROZEN_KILLED == 4 and FROZEN_BASE_KILLED == 0 and FROZEN_MUTANTS == len(MUTANTS))
     want("each mutant anchor occurs exactly once in the frozen rule snippet",
          all(RULE_SNIPPET.count(old) == 1 for _name, old, _new in MUTANTS))
     want("each mutant replacement differs from its anchor",
          all(old != new for _name, old, new in MUTANTS))
-    good = ("MADO_R76_OUTCOME_FIELD: cases=15 correct=15 mutants=4 killed=4 base_killed=0 "
+    good = ("MADO_R76_OUTCOME_FIELD: cases=16 correct=16 mutants=4 killed=4 base_killed=0 "
             "verdict=TARGET_MET rev=" + "a" * 40)
     want("the contract shape accepts the met line", CONTRACT_RE.fullmatch(good) is not None)
     want("the contract shape accepts an absent candidate",
-         CONTRACT_RE.fullmatch(good.replace("correct=15", "correct=absent")) is not None)
+         CONTRACT_RE.fullmatch(good.replace("correct=16", "correct=absent")) is not None)
     want("the contract shape refuses a wrong verdict word",
          CONTRACT_RE.fullmatch(good.replace("TARGET_MET", "DONE")) is None)
     want("the candidate row carries both scored fields", CAND_RE.fullmatch(
         "MADO_R76_LANDING_CONTROLS: selftest=2/2 mz=fail mr=pass killed=2/2 baseline=0/2 "
         "witness=ok verdict=TARGET_MET rev=" + "a" * 40) is not None)
     want("an over-long echo parses as a mismatch in the fixture lane",
-         "green-overlong)" in LANE_TEMPLATE and "%s00" in LANE_TEMPLATE)
+         "green-overlong|overlong)" in LANE_TEMPLATE and "%s00" in LANE_TEMPLATE)
+    want("the always-red mode keeps the M-Z kill while the summary stays red",
+         "always-red)" in LANE_TEMPLATE and "always reports this failure" in LANE_TEMPLATE)
 
     for bad in ("/tmp/x", "/var/tmp/x", "/dev/shm/x"):
         try:

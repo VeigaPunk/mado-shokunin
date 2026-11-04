@@ -138,6 +138,14 @@ def green_with_witness(r72_green, out, nonce):
     return bool(r72_green(out)) and last_witness(out) == nonce
 
 
+def outcome_green(r72_green, selftest_out, nonce, killed):
+    """The frozen outcome sentence: green iff the extracted instrument is green, the per-run
+    challenge was echoed, and both baseline mutants were killed. The single anchor the round-76
+    counter mutates: the `killed == 2` conjunct is what makes an echo-dropping mutation
+    unobservable through this field (the M-Z kill already requires the echo)."""
+    return bool(green_with_witness(r72_green, selftest_out, nonce)) and killed == 2
+
+
 def credit_with_witness(r72_credit, out, nonce):
     return bool(r72_credit(out)) and last_witness(out) == nonce
 
@@ -219,8 +227,8 @@ def install_rule(mod, nonce):
 
     def contract_line(selftest_out, mz, mr, killed, rev):
         state = witness_state(selftest_out, nonce)
-        verdict = "TARGET_MET" if green_with_witness(r72_green, selftest_out, nonce) \
-            and killed == 2 else "TARGET_MISSED"
+        verdict = "TARGET_MET" if outcome_green(r72_green, selftest_out, nonce, killed) \
+            else "TARGET_MISSED"
         return ("MADO_R76_LANDING_CONTROLS: selftest=%s mz=%s mr=%s killed=%d/2 baseline=0/2 "
                 "witness=%s verdict=%s rev=%s"
                 % (summary_fraction(selftest_out), mz, mr, killed, state, verdict, rev))
@@ -313,7 +321,7 @@ def selftest(scratch):
          not credit_with_witness(_r72_credit, fail_out + "SELFTEST FAIL 3: c\nMADO_LANDING_WITNESS: "
                                   + nonce + "\n", nonce))
 
-    want("the green outcome needs the echo",
+    want("the green outcome needs the echo and both kills",
          green_with_witness(_r72_green, green_out + "MADO_LANDING_WITNESS: " + nonce + "\n", nonce)
          and not green_with_witness(_r72_green, green_out, nonce))
     want("the prefix move rewrites only evidence lines",
