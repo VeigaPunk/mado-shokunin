@@ -18,9 +18,10 @@ Contract (v1, round 77):
     margin-<side> and CSS-form margin strings; exclusive; name; output (exact names and
     `!name` exclusions only).
   * Hyprland's arrange rule (src/render/Renderer.cpp arrangeLayerArray/@ efb5099):
-    a zero desired width extends across the usable box minus horizontal margins; a
-    non-zero desired width clears both horizontal anchors and centres the box; the
-    same holds transposed for vertical bars.
+    a zero desired width extends across the usable box minus horizontal margins;
+    waybar clears both horizontal anchors when the bar declares a width > 1
+    (src/bar.cpp:422-424), and the both-anchors branch then centres the box; the same
+    holds transposed for vertical bars.
   * The reserved expectation is formed only when exclusive is true and the bar's edge
     margin is zero: gtk-layer-shell's auto exclusive zone composes margins in a way this
     tool does not model (named limit), so a margined exclusive bar reports NOT_MODELLED.

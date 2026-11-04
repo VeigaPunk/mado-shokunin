@@ -27,11 +27,11 @@ All sources were opened 2026-11-04 before their rows were written; bytes under
 | row | source and locator | status | quote (≤25 words) | what it licenses / does not |
 |---|---|---|---|---|
 | S457 | Hyprland v0.56.2 `src/render/Renderer.cpp` @ efb5099, `arrangeLayerArray :2587-2670`, `applyExclusive :2529-2585`, `arrangeLayersForMonitor :2673-2700` | mined | `box.width = bounds.width - (PSTATE->margin.left + PSTATE->margin.right);` | the box/anchors/margin rule and the `exclusive + margin` add; it does not license a statement about a margined auto-zone composition |
-| S458 | Hyprland v0.56.2 `src/debug/HyprCtl.cpp` @ efb5099, `layersRequest :647-700`, `reserved` template `:253`, print `:281-282`, command `:2010` | mined | `sc<int>(m->m_reservedArea.left()), sc<int>(m->m_reservedArea.top()), sc<int>(m->m_reservedArea.right()), sc<int>(m->m_reservedArea.bottom())` | the reply shape and the reserved order; it does not say which surface set the zone |
+| S458 | Hyprland v0.56.2 `src/debug/HyprCtl.cpp` @ efb5099, `layersRequest :647-700`, `reserved` template `:253`, print `:281-282`, command `:2010` | mined | `sc<int>(m->m_reservedArea.left()), sc<int>(m->m_reservedArea.top())` | the reply shape and the reserved order; it does not say which surface set the zone |
 | S459 | Hyprland v0.56.2 `src/desktop/reserved/ReservedArea.cpp` @ efb5099, `:19-35`, `:53-60` | mined | `m_initialBottomRight = (parent.pos() + parent.size()) - (child.pos() + child.size());` | the parent/child band; it does not license a per-consumer attribution |
-| S460 | `wlr-layer-shell-unstable-v1.xml` @ efb5099, enum `:86-90`, `set_exclusive_zone :152-190` | mined | `A positive zone is the distance from the edge in surface-local coordinates to consider exclusive.` | levels and the exclusive-zone contract; it is a contract, not host behaviour |
+| S460 | `wlr-layer-shell-unstable-v1.xml` @ efb5099, enum `:86-90`, `set_exclusive_zone :152-190` | mined | `A positive zone is the distance from the edge in surface-local` | levels and the exclusive-zone contract; it is a contract, not host behaviour |
 | S461 | installed `waybar(5)` 0.15.0, `BAR CONFIGURATION` (page lines 70/91/97/128/189) | mined | `Bar position, can be top, bottom, left, right.` | the declared placement keys and defaults; not what the compositor does with them |
-| S462 | Waybar v0.15.0 `src/bar.cpp` @ 90b209ad, `:178-222`, `:232-233`, `:240`, `:355-361` | mined | `if (mode.exclusive) { gtk_layer_auto_exclusive_zone_enable(gtk_window); }` | margin precedence, namespace, size request, exclusive call; not gtk-layer-shell's internal zone arithmetic |
+| S462 | Waybar v0.15.0 `src/bar.cpp` @ 90b209ad, `:178-222`, `:232-233`, `:240`, `:355-361` | mined | `gtk_layer_auto_exclusive_zone_enable(gtk_window);` | margin precedence, namespace, size request, exclusive call; not gtk-layer-shell's internal zone arithmetic |
 | S463 | `https://wayland.app/protocols/wlr-layer-shell-unstable-v1` as served 2026-11-04 (147036 B) | rejected | `wlr layer shell protocol` (the page's own title text) | REJECTED: renders the protocol but pins no protocol/compositor revision, so it cannot ground a versioned 0.56.2 claim. Flip: a commit/tag pin for the rendered protocol. The pinned XML (S460) is the authoritative copy. |
 
 ## Notes
@@ -102,6 +102,6 @@ All sources were opened 2026-11-04 before their rows were written; bytes under
   not-modelled and a `mode` key is refused; (3) the entry attributed waybar's anchor clearing to
   Hyprland's branch — it now names `bar.cpp:422-424` for the clearing and `Renderer.cpp:2609-2620`
   for the centring; (4) the lesson's S463 quote was not literal on the page — the title text is
-  `wlr layer shell protocol`; and the S461 quote is now the exact troff line (`S461.txt:91`), not
-  the rendered reading. The static-`addreserved` limit stays named, not refused: the reply cannot
+  `wlr layer shell protocol`; and the S458/S460/S462/S461 quotes are now single-line literal fragments of the stored
+  bytes (`S461.txt:91` for the troff line), not whitespace-normalized readings. The static-`addreserved` limit stays named, not refused: the reply cannot
   separate static from dynamic reserve, and the docstring says so.
