@@ -51,11 +51,13 @@ Contract (v1, round 77):
     area, so its reserve is zero and the written area is dropped.
   * `reserved` band order is [left, top, right, bottom] (HyprCtl.cpp monitors reply).
   * Refused, never guessed: a monitor whose scale is not 1 or whose transform is not 0 (the
-    monitors reply carries pixel size, the layer box is logical); a dynamic cross size (a
-    horizontal bar with height 0, or a vertical bar with width 0) unless `--allocation`
+    monitors reply carries pixel size, the layer box is logical); a dynamic band (a
+    horizontal surface with height 0, or a vertical one with width 0) unless `--allocation`
     declares the client's own band for that namespace, in which case the allocation is the
     band (both the arranged box and gtk-layer-shell's auto zone, layer-surface.c:276/282)
-    and a zero or absent allocation is refused, never guessed; a list-valued config
+    and a zero or absent allocation is refused, never guessed (round 83: this holds for
+    every declared surface, not only the bar, and a dynamic band with no entry is refused
+    at the surface's turn, after the empty-box skip); a list-valued config
     (multiple bars); a
     space-bearing or string-`*` output pattern; a negative margin; a `mode` key (presets
     rewrite layer and exclusive zone at runtime); and a `--rules` file carrying a `source =`
@@ -86,7 +88,7 @@ import re
 import stat
 import sys
 
-VERSION = "r82-v1"
+VERSION = "r83-v1"
 
 MAX_BYTES = 1048576
 
@@ -766,13 +768,13 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
                          % (monitor, scale, transform))
     bar = declared_bar(config)
     allocation = dict(allocation or {})
-    # only the bar's band is resolved; an entry for any other surface would be accepted and
-    # then silently unused, so it is refused here (the join never guesses which surface it names)
-    resolved = {bar["namespace"]}
+    # every declared surface's band is resolved from this map (round 83): an entry naming a
+    # namespace no declared surface carries is refused here, never silently unused
+    resolved = {bar["namespace"]} | {s["namespace"] for s in extras}
     unknown = sorted(set(allocation) - resolved)
     if unknown:
-        raise Setup("the allocation declaration names %s, which the join does not resolve "
-                    "(only the bar's band is resolved)" % ", ".join(repr(name) for name in unknown))
+        raise Setup("the allocation declaration names %s, which no declared surface carries"
+                    % ", ".join(repr(name) for name in unknown))
     static = dict(static or ZERO_STATIC)
     if not output_matches(config, monitor):
         rows = [("RESULT", "monitor=%s box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR"
@@ -804,6 +806,12 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
     band_axis = "height" if bar["position"] in ("top", "bottom") else "width"
     bar_spec[band_axis] = band_of(bar_spec, allocation)
     surfaces = [bar_spec] + [dict(s) for s in extras]
+    # every declared surface's own band (round 83): an allocation entry for a dynamic band is
+    # the client's declared allocation, resolved before the arrange order is derived from zones
+    for spec in surfaces:
+        axis = "height" if spec["position"] in ("top", "bottom") else "width"
+        if spec[axis] == 0 and spec["namespace"] in allocation:
+            spec[axis] = band_of(spec, allocation)
     order = sorted(range(len(surfaces)),
                    key=lambda i: (surfaces[i]["level"], -surfaces[i]["order"], i))
     rows = [("CONFIG", "pos=%s layer=%s level=%d ns=%s height=%d width=%d margins=%d,%d,%d,%d "
@@ -823,6 +831,8 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
                 if (zone_for_pass(surfaces[i]) > 0) == want]
     for index in sequence:
         spec = surfaces[index]
+        axis = "height" if spec["position"] in ("top", "bottom") else "width"
+        dynamic = spec[axis] == 0
         if spec["exclusive"] == -1:
             bounds = dict(full)
         else:
@@ -836,6 +846,12 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
             boxes.append("SKIP")
             invalid_empty.append(spec["namespace"])
             continue
+        if dynamic:
+            # no declaration for this surface's namespace: the band is the client's
+            # allocation, not a value this join can guess (the empty-box skip ran first)
+            raise Unmodelled("%s %r has a dynamic %s (0) and no --allocation entry: the band "
+                             "is the client's allocation, not a declared value"
+                             % (spec["namespace"], spec["position"], axis))
         zone = surface_zone(spec)
         rows.append(("DECL", "monitor=%s level=%d ns=%s box=%d,%d,%d,%d anchor=%s zone=%d"
                      % (monitor, spec["level"], spec["namespace"], box["x"], box["y"],
@@ -1360,14 +1376,14 @@ def selftest():
                        "arranged_box = declared_box %s %dx%d m%d" % (pos, width, height,
                                                                      margin))
 
-    def comp(config, level_entries, reserved, extras, static=None):
+    def comp(config, level_entries, reserved, extras, static=None, allocation=None):
         layers = {"M1": {"levels": dict((str(i), []) for i in range(4))}}
         for level, entries in level_entries.items():
             layers["M1"]["levels"][str(level)] = entries
         mon = {"name": "M1", "width": 1000, "height": 800, "reserved": reserved,
                "scale": 1, "transform": 0}
         return evaluate(config, layers, {"M1": mon}, "M1", static, "rules",
-                        parse_surfaces(json.dumps(list(extras)).encode()))
+                        parse_surfaces(json.dumps(list(extras)).encode()), allocation)
 
     def line(verdict_rows, prefix):
         return [text for kind, text in verdict_rows if kind == prefix]
@@ -1512,6 +1528,31 @@ def selftest():
     ok(band_of({"namespace": "w", "position": "left", "height": 0, "width": 70},
                {"w": 9}) == 70, "the vertical band axis is the width")
     ok(parse_allocation(b'{"waybar": 34}') == {"waybar": 34}, "allocation parses")
+
+    # r83: every declared surface's band axis resolves from the same map, at its own turn
+    v, rc, rows = comp({"position": "top", "layer": "top", "height": 26},
+                       {2: [waybar], 3: [{"namespace": "panel", "x": 0, "y": 26,
+                                          "w": 1000, "h": 40}]},
+                       [0, 66, 0, 0],
+                       [{"namespace": "panel", "level": 3, "height": 0, "exclusive": "auto"}],
+                       allocation={"panel": 40})
+    ok((v, rc) == ("CLEAN", 0)
+       and any("ns=panel box=0,26,1000,40 anchor=top+left+right zone=40" in text
+               for text in line(rows, "DECL")),
+       "a declared surface's dynamic band resolves from the allocation")
+    try:
+        comp({"position": "top", "layer": "top", "height": 26},
+             {2: [waybar], 3: [{"namespace": "panel", "x": 0, "y": 26, "w": 1000, "h": 40}]},
+             [0, 26, 0, 0],
+             [{"namespace": "panel", "level": 3, "height": 0, "exclusive": 40}])
+        ok(False, "a declared surface's dynamic band with no allocation is refused")
+    except Unmodelled:
+        ok(True, "a declared surface's dynamic band with no allocation is refused")
+    try:
+        comp(top, {2: [waybar], 3: []}, [0, 26, 0, 0], [], allocation={"nope": 3})
+        ok(False, "an allocation naming no declared surface is refused")
+    except Setup:
+        ok(True, "an allocation naming no declared surface is refused")
     for label, raw in (("a negative band", b'{"w": -1}'),
                        ("a non-integer band", b'{"w": "x"}'),
                        ("a non-object", b'[34]')):

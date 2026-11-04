@@ -228,20 +228,23 @@ mado runs only the read leg (`configerrors`).
 | `hyprctl workspaces -j` / `hyprctl clients -j` | runtime object counts | positive / non-negative integers (round 78; counts change with every window) |
 | `hyprctl layers -j` / `hyprctl monitors -j` as JSON captures | the two captures the bar-footprint join consumes | shape-checked dumps: layers keyed by monitor with levels `0`–`3`, monitors with name, size, `reserved` (four non-negative integers) and scale (round 78) |
 
-### Executable runbook rows (round 82)
+### Executable runbook rows (round 83)
 
-One row per frozen runbook case (`quality/counters/c2-r82-runbook.py`): the command cell is
+One row per frozen runbook case (`quality/counters/c2-r83-runbook.py`): the command cell is
 the exact command the case executes from the lane root, all read-only; the outcome cell is
 the shape its exit status and output must meet; the third cell counts the committed churn
-and negative samples in `.ufo/waves/round-82/controls/c2-runbook-cases-r82.json`. Every row
-was executed on 2026-11-04 (receipt `.ufo/waves/round-82/receipts/measurement-c2-r82.txt`);
+and negative samples in `.ufo/waves/round-83/controls/c2-runbook-cases-r83.json`. Every row
+was executed on 2026-11-04 (receipt `.ufo/waves/round-83/receipts/measurement-c2-r83.txt`);
 a table nobody runs is not a probe. The four `refuse-*` rows execute the lane's own
 read-only join against committed fixtures and bind the refusal stage, not its message; the
-last seven rows are the matcher classes (rounds 80–82): a chord grammar over the
+last nine rows are the matcher classes (rounds 80–83): a chord grammar over the
 keybindings chord column and a state word bound to its exit status, the action column's
-` → ` separator and entity shaping, the bar's own `pgrep` state with its exit status, and
-the tray plane — the `StatusNotifierWatcher`'s bus-name owner, its interface census and the
-method table that census prints, each bound as a shape rather than a frozen value.
+` → ` separator and entity shaping, the bar's own `pgrep` state with its exit status, the
+tray plane's `StatusNotifierWatcher` owner, interface census and method table, and the
+tray's state pair (the registered item count and the host-registered boolean), each bound as
+a shape rather than a frozen value. The two round-83 rows bind S482's property block
+(`RegisteredStatusNotifierItems` is `as`, `IsStatusNotifierHostRegistered` is `b`) to S484's
+terse `as N …` / `b true` output shapes.
 
 | Command | Bound outcome | Churn / negative samples |
 |---|---|---|
@@ -274,6 +277,8 @@ method table that census prints, each bound as a shape rather than a frozen valu
 | `busctl --user list` | the watcher's bus name owned by a live PID: an `org.kde.StatusNotifierWatcher` line whose PID column is a non-zero decimal (the matcher binds a positive decimal; the process-table ceiling is the live read's own bound), rc 0 | 2 / 4 |
 | `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager` | one `org.kde.StatusNotifierWatcher interface` line in the census, rc 0 | 2 / 3 |
 | `busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager \| awk '$2=="method"'` | every line `.Name method …`, at least 2 lines, rc 0 | 2 / 3 |
+| `busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems \| awk '{print NF-2}'` | bare integer in 0..10000 — the registered item count (the array's entry count) | 2 / 4 |
+| `busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered` | `b true` or `b false` — a boolean literal, rc 0 | 2 / 5 |
 
 ### Advertised Wayland globals
 
