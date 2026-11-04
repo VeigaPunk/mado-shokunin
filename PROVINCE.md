@@ -380,3 +380,21 @@ launch at `env=cfg.runner.env` or the reverse) and a one-hop `os.environ` alias 
 three read committed bytes and caller scratch, never a config plane, compositor, session, socket or
 service; the census remains a bounded syntactic approximation (line order not execution order, one
 alias edge, no chain, no value interpretation). Evidence: `corpus/lessons/round-74.md`.
+
+The round-75 generation moves the same two instruments one surface further, still read-only.
+`quality/counters/c1-r75-landing-controls.py` loads the frozen round-72 harness from the measured
+repository under a sha256 pin (`b6108c86…`), draws one `secrets.token_hex(8)` challenge per run,
+hands it to the child in `MADO_LANDING_NONCE` (the child-env evidence line redacts the value), and
+credits the M-Z kill and the outcome green only when the child's last parsed
+`MADO_LANDING_WITNESS: <16 hex>` equals it; the extraction, the instrument selftest, the M-Z clause
+deletion and the M-R pair are the frozen round-72 code. `quality/counters/c1-r75-harness-witness.py`
+scores eleven real `bash` fixture lanes through that pipeline (11/11 vs the held 6/11).
+`quality/counters/c2-r75-shapes.py` adds a name-neutral keyed-mapping rule (a mapping carrying the
+guard key in key position bound to any simple name and handed as `env=`, under the dominance test)
+and a literal-key `del env[KEY]` cancellation between the guard construction and the launch,
+scoring 47 frozen cases (47/47 vs 41/47) over the unchanged `quality/check-*.py` population
+(20 files, 13 readers, 13 guarded); `quality/landing-counters.sh` adds a nonce-gated witness echo
+that prints nothing when no challenge is supplied. All read committed bytes and caller scratch,
+never a config plane, compositor, session, socket or service; the census remains a bounded
+syntactic approximation, and the challenge authenticates the run's echo, not the truth of the
+assertions. Evidence: `corpus/lessons/round-75.md`.

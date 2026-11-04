@@ -4211,3 +4211,103 @@ rebinding false accept (`01_rebound_same`), the generic env-named flow's `del en
 `dict(env, KEY=…)` / `{**env, KEY=…}` copy spellings, and three mutants the frozen sets do not
 separate (`C1-M4` fail-count check, `C2-M3` arbitrary-Name alias source, `C2-M4` alias delete
 cancellation) — round-75 ground.
+
+## Round 75 — the harness's own witness and two next carrier shapes (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-75/claims-declaration-r75.md`, landed with the instruments
+at `def73656c94f0e88bd671cfb4a65124338261722`; base `b149d2ece1a6d75f5738aa8bf4a9493f1a9c7da6`.
+Frozen control sets: `.ufo/waves/round-75/controls/c1-harness-cases-r75.json` (11 cases, sha256
+`f1e851a9…`) and `c2-cases-r75.json` (47 cases, sha256 `d99502ba…`). Pre-freeze do-nothing
+receipt: `.ufo/waves/round-75/control-baseline-r75.txt` (held credit 6/11; held classifier
+41/47). Measured at `a3c886634a4eaa9fa39cd6865c5e8b052c83c2cb` for C1 (its instrument's last
+change) and `4527fcae6a8619e890172ca0a616ae8a3e20fd87` for C2 (its instrument's last change)
+(receipts `.ufo/waves/round-75/measurement-c{1,2}-r75-final.txt`). Axis posture at round start:
+every published finite sub-axis at its measured maximum under the active rubrics (navigation
+91/91, calibration resolved-active 86/86, operability selftest 12/12, ledger 130/130; gate
+`MADO_SELFTEST: 460/460`); the dormant freshness value (9.6552, host-absent) stays
+operator-owned and is excluded from the tie, as the round's critic restated. The stagnation nudge
+does not apply (last capability row entered round 74, window N=3, gap 0). Both claims take new
+finite denominators.
+
+| Claim / axis | Counting command (REV = `a3c88663…` for C1, `4527fcae…` for C2) | Before → after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the landing harness credits the M-Z kill and greens the outcome only on the run's own echo of its per-run challenge | `python3 -I quality/counters/c1-r75-harness-witness.py --repo . --rev REV --base-rev b149d2ece1a6d75f5738aa8bf4a9493f1a9c7da6 --controls .ufo/waves/round-75/controls/c1-harness-cases-r75.json --scratch-root DIR` | held round-72 harness on the eleven frozen fixture modes `base_correct=6/11` (its five misses are the witness separators); at `a3c88663`: `cases=11 correct=11 base_correct=6 verdict=TARGET_MET` rc 0; bounded `10 × correct / 11` → 10.0000 | improved on the frozen eleven-mode set |
+| C2 **operability** — the guard census counts key-carrying copies bound to any name and treats a literal-key delete as a cancellation | `python3 -I quality/counters/c2-r75-shapes.py --repo . --rev REV --base-rev b149d2ece1a6d75f5738aa8bf4a9493f1a9c7da6 --controls .ufo/waves/round-75/controls/c2-cases-r75.json --scratch-root DIR` | held round-74 classifier `base_controls=41/47` (missing the four copy positives and the two delete cancellations); at `4527fcae`: `population=20 readers=13 guarded=13 unguarded=0 controls=47/47 base_controls=41/47 verdict=TARGET_MET` rc 0; bounded 10.0000 | improved on the frozen forty-seven-case set |
+| — | coverage / admitted-note reachability (unchanged rubric) | `quality/check-index.py --repo . --rev REV` | 93/93 at the landing tip (91/91 at base) | unchanged (harm watch; two entries indexed) |
+| — | operability / hermetic gate | `bash tools/mado-verify.sh --selftest` | 460/460 both ends; the gate itself is the declared round-75 amendment (TMPDIR scratch) with `PIN_MADO` re-cut `367ff5ec…` → `49567a0f…` | unchanged count, amended bytes |
+| — | operability / instrument ledger | `quality/check-tool-ledger.py --repo . --rev REV` | 133 rows, 133 ledger_rows, 0 uncovered at the landing tip (130/130 at base) | improved (three new instruments registered) |
+| — | calibration / held instruments | `git rev-parse <rev>:<path>` | `c2-r74-shapes.py` and the round-72/73 instruments keep their base blob ids; the round-75 generations are new files | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-75/measurement-c{1,2}-r75-final.txt`, `control-baseline-r75.txt`,
+`census-{start,end}-r75.txt`, `receipts/{red-scratch-before,green-scratch-after,green-scratch-valid,gate-selftest-r75,harness-real-r75,absent-candidate-r75}.txt`,
+`fetch/` (three byte-identical fetches per source), `w1-spec.json`/`w1-dispatch.json` (the one v1
+wave, 13 seats) and `w1-results.json`. **Wave disclosures** are reported per seat in the round
+report; a seat whose output is empty is an evidence gap, never backfilled (QUALITY 115).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Witness-authenticated harness generation | Drive the frozen landing harness only after the extracted instrument's own echo of a per-run `secrets.token_hex(8)` challenge matches, on eleven real `bash` fixture modes through the actual extraction/M-Z pipeline (11/11 vs the held 6/11) | `.ufo/waves/round-75/measurement-c1-r75-final.txt`; `quality/counters/c1-r75-landing-controls.py`, `c1-r75-harness-witness.py` | round 75 |
+| Name-neutral keyed copies + literal-key cancellation in the guard census | Count a guard key carried by a binding of any name handed as `env=` (`dict(env, KEY="1")`, `{**env, KEY: "1"}`) under the dominance test, and cancel a guard on a literal-key `del env[KEY]` between construction and launch (47/47 vs the held 41/47; population unchanged 20/13/13/0) | `.ufo/waves/round-75/measurement-c2-r75-final.txt`; `quality/counters/c2-r75-shapes.py` | round 75 |
+
+### Planned (round 76; intent only)
+
+1. C1's next finite ground: a successor predicate that scores the **outcome field** (the current
+   counter reads `mz=` only — the mutant that drops the outcome's witness term survives, and the
+   critic named the gap) and a deterministic `uppercase-echo` oracle.
+2. C1's surviving mutant C1-M3: an over-long-echo lane with a widened witness grammar (prefix vs
+   equality is currently unobservable because the grammar caps at 16 hex).
+3. C2's next finite ground: an interprocedural cancellation (a `del` in a callee that receives the
+   mapping) and a dynamic-key `del`, each with its own negatives; the `del-before-store` fixture is
+   re-shaped as `key-present → del → store` in a successor set, not the frozen one.
+4. The connector's provenance crosswalk (generation/receipt/evidence-mode/remaining-limit) into
+   both round-75 entries.
+5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
+
+### Axis table re-derived at the landing tip (`receipts/harm-watch-r75.txt` and `quality/check-axis-scores.py`):
+navigation 93/93; calibration resolved-active 86/86; operability selftest 12/12, ledger 133/133.
+
+### Review-driven repair (round 75, append-only)
+
+The wave's reviewers, critic, mutation-tester and sentinel found ten defects; the instruments and
+the gate were repaired without touching a frozen predicate, control set, case label, kill rule or
+target. Commits: `e3e29bb4` (C2 `env=`-only usage and dead-branch deletes), `f75afbf6`/`4527fcae`
+(private loader directory, pinned held generation, root refusal, scratch-root creation),
+`b545bea9` (gate scratch and `PIN_MADO` re-cut), `a3c88663` (absent-candidate contract).
+
+- **C2 positional usage (`R75RevC2` P1).** `usage_lines` credited a mapping handed
+  *positionally* to a git launch; the frozen sentence says `env=`. Repaired; the reviewer's
+  probe flips `(True, True)→(True, False)`.
+- **C2 dead-branch delete (`R75RevC2` P1).** `unguarded_rebindings` had no dead-line set, so a
+  `del` inside `if False:` cancelled a live guard. Repaired; the probe flips
+  `(True, False)→(True, True)` while a live delete still cancels.
+- **C1 challenge disclosure (`R75Sentinel` P2).** The frozen `describe_env` printed every child
+  env value, including the live nonce. The wrapper now redacts that one key; the real-lane
+  receipt shows `MADO_LANDING_NONCE=<challenge>` and the contract line never carries a value.
+- **C1 loader path (`R75Sentinel` P2).** The generation was written into a fixed path under the
+  scratch root; it now lives in a private unpredictable `mkdtemp` directory with an
+  `O_NOFOLLOW` write.
+- **C2 unpinned base generation (`R75Sentinel` advisory).** The held classifier is executed in
+  process; it is now extracted under a pinned sha256 (`eb43e2b6…`) and refused otherwise.
+- **C2 root scratch (`R75Sentinel` advisory).** `absolute_scratch` now refuses `/` like the C1
+  pair.
+- **C1 absent candidate (`R75RevC1` P2).** The frozen contract promised `correct=absent`/rc 1;
+  the counter returned a setup error. Repaired; `receipts/absent-candidate-r75.txt` shows
+  `cases=11 correct=absent base_correct=6 verdict=TARGET_MISSED` rc 1.
+- **Carried gate scratch (`R75ExecGate`/sentinel).** `tools/mado-verify.sh` now derives its
+  selftest scratch from `MADO_SELFTEST_SCRATCH`/`TMPDIR` (default `/tmp` unchanged), with a
+  red-before receipt (TMPDIR ignored, 460/460) and two green receipts (460/460 with a valid
+  base; refusal with a missing one).
+- **Stale registry tally and class (`R75ExecGate`, round-74 closure D1/D5).** `SKILL.md`'s
+  `mado-r74-witness-rule` row now prints 23/23 and is classed `probe`.
+- **Duplicate mode (`R75Critic` advisory).** `right` and `liar-success` are rule-visible
+  duplicates; the entry and report say ten distinct behaviours, eleven modes.
+
+**Carried, not repaired this round** (declared limits): C1-M2 survives (the counter scores `mz=`
+only), C1-M3 survives (prefix vs equality unobservable at 16 hex), the `uppercase-echo` oracle is
+probabilistic (`(10/16)^16`), the `del-before-store` fixture would raise `KeyError` before any
+launch, the loader trusts its scratch parent against concurrency, and the held-generation label in
+the frozen C2 receipt still reads "round-73 rule" (the instrument's message is fixed; the frozen
+receipt keeps its bytes).

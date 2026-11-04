@@ -3706,3 +3706,57 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   fixtures flip as named in `SCORECARD.md` § Review-driven repair. Carried limits: the held
   attribute flow's root-name rebinding, the generic `del` gap, the two copy spellings, and the
   three mutants the frozen sets do not separate (C1-M4, C2-M3, C2-M4).
+
+## Round 75 — the harness's own witness and two next carrier shapes (2026-11-04, hyaku run 15)
+
+Base `b149d2ece1a6d75f5738aa8bf4a9493f1a9c7da6`; frozen declaration and instruments
+`def73656c94f0e88bd671cfb4a65124338261722`; final measured content C1 `a3c88663…`, C2
+`4527fcae…`. One v1 wave of 13 seats (executor 3, scribe 2, scout 2, reviewer 2, critic 1,
+mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead seats).
+
+- **C1 (calibration): witness credit wired into the landing harness.** The held round-72 harness
+  credited the M-Z kill on arithmetic alone (6/11 on the frozen fixture modes). The successor
+  `c1-r75-landing-controls.py` loads the frozen generation under a sha256 pin, draws one
+  `secrets.token_hex(8)` challenge per run, hands it in `MADO_LANDING_NONCE`, and credits the kill
+  and the outcome green only on the child's last parsed `MADO_LANDING_WITNESS: <16 hex>` echo;
+  `c1-r75-harness-witness.py` scores eleven real `bash` fixture lanes through the actual pipeline:
+  `cases=11 correct=11 base_correct=6 verdict=TARGET_MET` (bounded 10.0000 vs held 5.4545).
+  `quality/landing-counters.sh` echoes a well-formed challenge (62/62 selftest unchanged).
+- **C2 (operability): name-neutral keyed copies and literal-key delete.** `c2-r75-shapes.py` adds
+  the two deltas on S453/S454 ground; `population=20 readers=13 guarded=13 unguarded=0
+  controls=47/47 base_controls=41/47 verdict=TARGET_MET` (bounded 10.0000 vs held 8.7234).
+- **Sources & frontier.** Registry 389 → 391 rows: S453 (`simple_stmts.rst` § del, 13-word quote
+  at :468-469) and S454 (`builtins/stdtypes.rst` `dict(mapping, **kwargs)`, 21-word quote at
+  :5350-5352), both `mined`, both different-scope W04 repetitions and neither a supersession; the
+  S446 reject is re-opened with its quote count corrected 23 → 21 (round-74 D3). Census: round
+  start (base mirror) exit 0, round end exit 0 (receipts `census-{start,end}-r75.txt`). Two
+  knowledge entries admitted (`harness-witness-credit-r75.md`, `guard-carrier-copy-del-r75.md`);
+  index 91 → 93.
+- **Both claims measured against the do-nothing controls:** held 6/11 and 41/47, both below the
+  targets; receipts `control-baseline-r75.txt` (pre-freeze) and `measurement-c{1,2}-r75-final.txt`.
+- **Mistakes mined (7, `corpus/lessons/round-75.md` `## Mistakes`):** the declaration's
+  self-contradictory no-harm line (M75-1), the hardening change that made the C1 counter score 0/11
+  while its selftest passed (M75-2), the unreachable `del-before-store` fixture (M75-3), the
+  probabilistic uppercase oracle (M75-4), the carried 21/21 stale tally (M75-5), the carried
+  unlanded selftest receipts (M75-6) and the declaration's stale 12-seat planning line (M75-7).
+  Four QUALITY criteria land from them (124–127).
+- **Registry and gate bookkeeping.** `quality/tool-ledger.md` 130 → 133 rows; the `SKILL.md` Gate
+  registry gains three rows (`mado-r75-harness-witness`, `mado-r75-landing-controls`,
+  `mado-r75-guard-shapes`) and the `mado-r74-witness-rule` row is corrected 21/21 → 23/23 and
+  reclassed `probe` (round-74 closure D1/D5).
+- **No-harm and the one declared amendment.** Gate `MADO_SELFTEST: 460/460` at the amended bytes;
+  the amendment honours `MADO_SELFTEST_SCRATCH`/`TMPDIR` (red-before: TMPDIR ignored at 460/460;
+  green: refusal for a missing base, 460/460 for a valid one) and `PIN_MADO` is re-cut
+  `367ff5ec…` → `49567a0f…`. Index 93/93; ledger 133/133 `uncovered=0`; axis table re-derived;
+  census exit 0; `c2-r74-shapes.py` and the round-72/73 instruments keep their base blob ids. No
+  config tree, compositor, service or sibling repo was written; no pacman transaction; no tool
+  installed or upgraded.
+- **Review-driven repair at `e3e29bb4`, `f75afbf6`, `4527fcae`, `b545bea9`, `a3c88663`** (this
+  entry, appended): C2 counts `env=` only and skips dead-branch deletes; C1's loader writes into a
+  private `O_NOFOLLOW` generation dir and creates the validated scratch root first; the held C2
+  generation is pinned before execution and `/` is refused as scratch; the C1 child-env evidence
+  redacts the live challenge; the gate scratch honours TMPDIR (pin re-cut); the C1 counter honours
+  the absent-candidate contract (`correct=absent`, rc 1). Carried limits: C1-M2 (the counter scores
+  `mz=` only), C1-M3 (prefix vs equality unobservable at 16 hex), the probabilistic uppercase
+  oracle, the unreachable `del-before-store` fixture, concurrent trust of the scratch parent, and
+  the frozen C2 receipt's stale "round-73 rule" label.
