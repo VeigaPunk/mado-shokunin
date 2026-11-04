@@ -44,7 +44,7 @@ Conformance defects (status-neutral; none bars admission):
    claims”) is in the tree but absent from the report's Landed-changes table and from the LOG
    round-68 entry; the receipt it carries is cited (`predicate-binding-r68.txt`) in the wave
    receipts only.
-4. **Prompt route map.** The §6 run-15 map (“ONLY reviewer uses `@m_z_fl`… ”) is the operator's
+4. **Prompt route map.** The §6 run-15 map (“ONLY reviewer uses `@m_zfl`… ”) is the operator's
    amendment; `MISSION.md:53-65` role-class buckets are explicitly advisory and the prompt binds
    routing to the host table, so no binding conflict; the lane repo hardcodes no model alias. The
    run-13 “mado stays on SECURITY HOLD” line is superseded by the run-15 preamble (“supersedes the
