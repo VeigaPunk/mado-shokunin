@@ -3695,3 +3695,14 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   ids unchanged. No config tree, compositor, service or sibling repo was written; no pacman
   transaction; no tool installed or upgraded. Routed defect: `tools/mado-verify.sh:418` hardcodes a
   `/tmp` selftest scratch (scratch rule 4, next round's frozen-counter amendment).
+
+- Review-driven repair at `4cfa5ddc` (this entry, appended): C1's witness grammar widened to the
+  frozen "<16 hex>" with a byte-exact comparison and two new rule cases, and the counter now draws
+  a fresh challenge per child; C2 refuses a launch whose parameter shadows the alias, counts
+  `AnnAssign` bindings, and requires the alias edge to exist before the store; all three
+  instruments refuse a scratch path with a symlinked component; the C2 selftest writes its tampered
+  file with `O_NOFOLLOW`; the C1 child environment is allowlisted. Both claims re-measured at the
+  repair commit with identical counts (`measurement-c{1,2}-r74-final.txt`), and the reviewers'
+  fixtures flip as named in `SCORECARD.md` § Review-driven repair. Carried limits: the held
+  attribute flow's root-name rebinding, the generic `del` gap, the two copy spellings, and the
+  three mutants the frozen sets do not separate (C1-M4, C2-M3, C2-M4).

@@ -4169,3 +4169,45 @@ backfilled (QUALITY 115).
    as a frozen-counter amendment.
 5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
    session-material history question) stay operator-owned.
+
+### Axis table re-derived at the landing tip (`receipts/harm-watch-r74.txt` and `quality/check-axis-scores.py`):
+navigation 91/91; calibration resolved-active 86/86; operability selftest 12/12, ledger 130/130.
+
+### Review-driven repair (round 74, append-only)
+
+The wave's reviewers, critic, mutation-tester and sentinel found eight defects; the instruments
+were repaired at `4cfa5ddc8f884385e79d4348f01c748447a50e7e` without touching a frozen predicate,
+control set, case label, kill rule or target, and both claims were re-measured at that commit with
+identical counts (`measurement-c{1,2}-r74-final.txt`).
+
+- **C1 grammar (`R74RevC1` P2-1).** The rule accepted only `[0-9a-f]{16}` while the frozen
+  sentence says "<16 hex>"; a valid lowercase witness followed by an uppercase wrong witness was
+  silently ignored. The grammar is now `[0-9a-fA-F]{16}` with a byte-exact comparison (a
+  caller-supplied uppercase challenge matches an uppercase echo; a lowercase challenge does not),
+  and two cases pin it (`uppercase-challenge-witness` accept, `valid-then-uppercase-wrong` reject);
+  the rule selftest is 23/23.
+- **C1 challenge freshness (`R74RevC1` P2-2).** The counter drew one challenge for all twelve
+  children; it now draws a fresh `secrets.token_hex(8)` per case and prints one
+  `MADO_R74_CHALLENGE case=<name>` line each.
+- **C2 parameter shadow (`R74RevC2` P1).** A launch inside a function whose parameter shadows the
+  alias name was credited; the alias carriers are now scope-aware and refuse it
+  (`08_parameter_shadow` flips `(True, True)→(True, False)`).
+- **C2 annotated bindings (`R74RevC2` P2).** `AnnAssign` bindings were invisible to the
+  exactly-once/rebinding tables; `binding_nodes` now counts both forms (`16_environ_annotated`
+  flips `(True, True)→(True, False)`, `15_annotated_cross` `(True, True)→(True, False)`).
+- **C2 alias binding time (`R74RevC2` P2).** An alias edge used before it was bound was accepted;
+  the store side must now be bound before the store and the call side before the launch
+  (`13_late_alias` flips `(True, True)→(True, False)`).
+- **Scratch symlink ancestors (`R74Sentinel` D1).** All three instruments now refuse a scratch
+  path with any symlinked component, not only a symlinked final component.
+- **Selftest no-follow (`R74Sentinel` D2).** The C2 selftest's tampered-controls file is created
+  with `O_NOFOLLOW|O_CREAT|O_TRUNC`, so a pre-existing symlink cannot redirect the write.
+- **Child environment (`R74Sentinel` D3).** The C1 counter's bash children now get an allowlisted
+  environment (`PATH`, `LC_ALL`, `PYTHONDONTWRITEBYTECODE`, `MADO_LANDING_NONCE`), so `BASH_ENV`
+  and loader overrides in the caller's environment cannot run before the frozen fixture.
+
+**Carried, not repaired this round** (declared limits): the held attribute flow's root-name
+rebinding false accept (`01_rebound_same`), the generic env-named flow's `del env[KEY]` gap, the
+`dict(env, KEY=…)` / `{**env, KEY=…}` copy spellings, and three mutants the frozen sets do not
+separate (`C1-M4` fail-count check, `C2-M3` arbitrary-Name alias source, `C2-M4` alias delete
+cancellation) — round-75 ground.
