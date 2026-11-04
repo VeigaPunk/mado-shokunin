@@ -40,7 +40,7 @@ The join (`tools/mado-barfoot.py`, receipt `.ufo/waves/round-77/receipts/pre-wav
     MADO_BARFOOT_LIVE: monitor=DP-1 level=2 ns=waybar box=0,0,3440,26 entries=1
     MADO_BARFOOT_RESULT: monitor=DP-1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
 
-INF: the usable area of DP-1 is 3440 x 1414, starting at y = 26 (the band is the bar's own height; the reserved array's other sides are zero). UNK: which process set the top layer's exclusive zone is not read — the layer entry carries `namespace` and `pid`, not the zone; the join names the namespace, not the request. The `wallpaper` surface at level 0 has no reserved contribution because the host's band matches the bar's height exactly; a level-0 surface with a positive exclusive zone would add to the band and the tool would report `reserved=GT`.
+INF: the usable area of DP-1 is 3440 x 1414, starting at y = 26 (the band is the bar's own height; the reserved array's other sides are zero). UNK: which process set the top layer's exclusive zone is not read — the layer entry carries `namespace` and `pid`, not the zone; the join names the namespace, not the request. The `wallpaper` surface at level 0 has no reserved contribution because the host's band matches the bar's height exactly; a level-0 surface with a positive exclusive zone would add to the band and the tool would report `reserved=GT` (the exclusive pass is level-agnostic).
 
 ## §3 The tool contract
 
@@ -48,10 +48,15 @@ INF: the usable area of DP-1 is 3440 x 1414, starting at y = 26 (the band is the
 
 ## §4 What the model does not cover
 
-- **Margined exclusive bars.** When the bar's edge margin is non-zero and `exclusive` is true, the reserved expectation is `NOT_MODELLED`: gtk-layer-shell's auto exclusive zone composes margins in a way this entry does not measure. The box itself is still modelled.
-- **List-valued configs, `*`/`!` output patterns beyond exact names, transforms, multiple bars per config, and layer-rule effects** are refused or named, never guessed.
+- **Margined exclusive bars (any margin, not only the edge one).** gtk-layer-shell 0.10.1's auto zone is the allocation plus the margins on the *unanchored* edges (`gls:src/layer-surface.c:264-288`), and Hyprland then adds the anchored edge's margin (`Renderer.cpp:2575`), so `band - extent` is the opposite-edge margin. With any non-zero margin the reserved expectation is `NOT_MODELLED`; the box itself is still modelled.
+- **Scaled or transformed monitors.** `hyprctl monitors -j` prints `width`/`height` from `m_pixelSize` (`HyprCtl.cpp:278`) while every layer box is logical (`m_size = pixelSize / scale`), so a scale-2 output would overstate the declared box. The tool refuses a monitor whose `scale` is not 1 or whose `transform` is not 0 (`UNMODELLED`, exit 3).
+- **Dynamic cross size.** A horizontal bar with `height` unset (or 0) gets the module allocation, not a declared value; the tool refuses rather than computing the whole usable height (`UNMODELLED`).
+- **Static `monitor … addreserved` bands.** The reported band mixes the static reserve with the layer contribution (`logicalBoxMinusReserved()`), and the tool assumes a zero static reserve; a static band is a named, unmodelled case.
+- **`mode` presets.** `mode: hide|invisible|overlay` rewrites layer and exclusive zone at runtime (`bar.cpp:326-361`); the model reads the raw `layer`/`exclusive` keys.
+- **Centring rounding.** Floor division vs Hyprland's round-after-double differs by 1 px on odd deltas.
+- **Level not exercised by the frozen set.** `layer: bottom` with `exclusive: true` still reserves (`arrangeLayersForMonitor` runs the exclusive pass over every level), but no frozen case declares bottom; the claim is source-licensed and case-unexercised.
 - **Runtime after the capture:** a layer mapped or destroyed after the dump is outside the join; only a fresh capture sees it.
-- **Who set the zone:** the reply has no exclusive-zone field; the namespace is evidence of the surface, not of the request.
+- **Who set the zone:** the reply has no exclusive-zone field (`HyprCtl.cpp:671-682`); the namespace is evidence of the surface, not of the request.
 
 ## Evidence
 

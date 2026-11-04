@@ -25,9 +25,13 @@ Contract (v1, round 77):
     margin is zero: gtk-layer-shell's auto exclusive zone composes margins in a way this
     tool does not model (named limit), so a margined exclusive bar reports NOT_MODELLED.
   * `reserved` band order is [left, top, right, bottom] (HyprCtl.cpp monitors reply).
-  * Unexpressed: monitor transforms/scales are not re-derived (hyprctl reports the
-    logical box), dynamic (width 0) and list-valued outputs, multiple bars per config,
-    layer-rule effects, and any runtime change after the capture.
+  * Unexpressed and refused, never guessed: a monitor whose scale is not 1 or whose
+    transform is not 0 (the monitors reply carries pixel size, the layer box is logical);
+    a dynamic cross size (a horizontal bar with height 0, or a vertical bar with width 0 —
+    the realised size is the module allocation, not the declaration); list-valued configs
+    and `*` output patterns; multiple bars per config; static monitor `addreserved` bands
+    (the reported band mixes static and layer contributions); `mode` presets that rewrite
+    layer/exclusive at runtime; and any runtime change after the capture.
 
 Exit map: 0 CLEAN · 1 DIFFER · 2 SETUP/ERROR · 3 NOT_FORMED (NO_LAYER/UNMODELLED/NO_BAR).
 """
@@ -243,6 +247,10 @@ def declared_box(bar, mon_w, mon_h):
     """Hyprland 0.56.2 arrangeLayerArray: desired size, anchors, margins."""
     m = bar["margins"]
     pos = bar["position"]
+    if pos in ("top", "bottom") and bar["height"] == 0:
+        raise Unmodelled("dynamic height on a horizontal bar is the module allocation, not a declared value")
+    if pos in ("left", "right") and bar["width"] == 0:
+        raise Unmodelled("dynamic width on a vertical bar is the module allocation, not a declared value")
     if pos in ("top", "bottom"):
         if bar["width"] > 1:
             w = bar["width"]
@@ -338,6 +346,11 @@ def evaluate(config, layers, monitors, monitor=None):
     if monitor not in layers:
         raise Setup("monitor %r is not in the layers reply" % monitor)
     mon = monitors[monitor]
+    scale, transform = mon.get("scale"), mon.get("transform")
+    if scale not in (1, 1.0) or transform not in (0, 0.0):
+        raise Unmodelled("monitor %s has scale/transform %r/%r; the reply carries pixel size "
+                         "and the layer box is logical, so this join is not modelled"
+                         % (monitor, scale, transform))
     mon_w, mon_h = mon["width"], mon["height"]
 
     rows = [("CONFIG", "pos=%s layer=%s level=%d ns=%s height=%d width=%d margins=%d,%d,%d,%d exclusive=%s"
@@ -418,7 +431,7 @@ def selftest():
     def case(config, layers, monitors, monitor=None):
         return evaluate(config, layers, monitors, monitor)
 
-    mon = {"name": "M1", "width": 3440, "height": 1440, "reserved": [0, 26, 0, 0]}
+    mon = {"name": "M1", "width": 3440, "height": 1440, "reserved": [0, 26, 0, 0], "scale": 1.0, "transform": 0}
     monitors = {"M1": mon}
     layers_top = {"M1": {"levels": {"0": [], "1": [], "2": [
         {"namespace": "waybar", "x": 0, "y": 0, "w": 3440, "h": 26, "alpha": 1, "pid": 1}], "3": []}}}
@@ -439,7 +452,7 @@ def selftest():
     ok(load_jsonc(b'{ // x\n "a": 1, /* y */ }', "t") == {"a": 1}, "jsonc strip")
 
     # bottom bar box
-    mon_b = {"name": "M1", "width": 1920, "height": 1080, "reserved": [0, 0, 0, 30]}
+    mon_b = {"name": "M1", "width": 1920, "height": 1080, "reserved": [0, 0, 0, 30], "scale": 1.0, "transform": 0}
     layers_b = {"M1": {"levels": {"0": [], "1": [], "2": [
         {"namespace": "waybar", "x": 0, "y": 1050, "w": 1920, "h": 30, "alpha": 1, "pid": 1}], "3": []}}}
     v, rc, _ = case({"position": "bottom", "layer": "top", "height": 30}, layers_b, {"M1": mon_b})
@@ -448,24 +461,24 @@ def selftest():
     # exclusive false -> NOT_APPLIED
     v, rc, rows = case({"position": "top", "layer": "top", "height": 26, "exclusive": False},
                        layers_top, {"M1": {"name": "M1", "width": 3440, "height": 1440,
-                                           "reserved": [0, 0, 0, 0]}})
+                                           "reserved": [0, 0, 0, 0], "scale": 1.0, "transform": 0}})
     ok(v == "CLEAN" and any("reserved=NOT_APPLIED" in t for _, t in rows), "exclusive false")
 
     # drift in the live box
     layers_drift = {"M1": {"levels": {"0": [], "1": [], "2": [
         {"namespace": "waybar", "x": 0, "y": 0, "w": 3440, "h": 28, "alpha": 1, "pid": 1}], "3": []}}}
     v, rc, _ = case(base, layers_drift, {"M1": {"name": "M1", "width": 3440, "height": 1440,
-                                                "reserved": [0, 28, 0, 0]}})
+                                                "reserved": [0, 28, 0, 0], "scale": 1.0, "transform": 0}})
     ok((v, rc) == ("DIFFER", 1), "box drift differ")
 
     # reserved smaller than the footprint
     v, rc, _ = case(base, layers_top, {"M1": {"name": "M1", "width": 3440, "height": 1440,
-                                              "reserved": [0, 0, 0, 0]}})
+                                              "reserved": [0, 0, 0, 0], "scale": 1.0, "transform": 0}})
     ok((v, rc) == ("DIFFER", 1), "reserved differ")
 
     # reserved greater than the footprint is admissible
     v, rc, rows = case(base, layers_top, {"M1": {"name": "M1", "width": 3440, "height": 1440,
-                                                 "reserved": [0, 40, 0, 0]}})
+                                                 "reserved": [0, 40, 0, 0], "scale": 1.0, "transform": 0}})
     ok(v == "CLEAN" and any("reserved=GT" in t for _, t in rows), "reserved gt")
 
     # declared level has no entry
@@ -477,7 +490,7 @@ def selftest():
                        {"M1": {"levels": {"0": [], "1": [], "2": [
                            {"namespace": "waybar", "x": 0, "y": 4, "w": 3440, "h": 26,
                             "alpha": 1, "pid": 1}], "3": []}}},
-                       {"M1": {"name": "M1", "width": 3440, "height": 1440, "reserved": [0, 26, 0, 0]}})
+                       {"M1": {"name": "M1", "width": 3440, "height": 1440, "reserved": [0, 26, 0, 0], "scale": 1.0, "transform": 0}})
     ok(v == "UNMODELLED" and any("reserved=NOT_MODELLED" in t for _, t in rows), "margin unmodelled")
 
     # centred explicit width
