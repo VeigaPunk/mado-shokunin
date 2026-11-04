@@ -1,0 +1,62 @@
+{
+  "comment": {
+    "source": "# GIT_NO_REPLACE_OBJECTS\nenv={}\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": false
+  },
+  "docstring": {
+    "source": "\"\"\"GIT_NO_REPLACE_OBJECTS\"\"\"\nenv={}\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": false
+  },
+  "unrelated_dict": {
+    "source": "labels={\"GIT_NO_REPLACE_OBJECTS\":\"1\"}\nsubprocess.run([\"git\",\"show\",\"HEAD:a\"],env=labels)",
+    "reader": true,
+    "guard": false
+  },
+  "dead_branch": {
+    "source": "env={}\nif False:\n env[\"GIT_NO_REPLACE_OBJECTS\"]=\"1\"\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": true
+  },
+  "uncalled_helper": {
+    "source": "def unused():\n env={\"GIT_NO_REPLACE_OBJECTS\":\"1\"}\nenv={}\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": true
+  },
+  "overwritten": {
+    "source": "env={\"GIT_NO_REPLACE_OBJECTS\":\"1\"}\nenv={}\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": true
+  },
+  "value_not_key": {
+    "source": "env={\"LABEL\":\"GIT_NO_REPLACE_OBJECTS\"}\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": true
+  },
+  "empty_guard": {
+    "source": "env={\"GIT_NO_REPLACE_OBJECTS\":\"\"}\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": true
+  },
+  "computed_real_guard": {
+    "source": "env={}\nenv[\"GIT_NO_\" + \"REPLACE_OBJECTS\"]=\"1\"\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": false
+  },
+  "annotated_real_guard": {
+    "source": "env: dict = {\"GIT_NO_REPLACE_OBJECTS\":\"1\"}\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": false
+  },
+  "update_real_guard": {
+    "source": "env={}\nenv.update(GIT_NO_REPLACE_OBJECTS=\"1\")\nsubprocess.run([\"git\", \"show\", \"HEAD:a\"], env=env)\n",
+    "reader": true,
+    "guard": false
+  },
+  "shell_reader": {
+    "source": "subprocess.run(\"git show HEAD:a\",shell=True)",
+    "reader": false,
+    "guard": false
+  }
+}
