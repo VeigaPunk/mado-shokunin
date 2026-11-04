@@ -1,0 +1,142 @@
+{
+  "rule_sha256": "6a6d77f4ad6777a01c49fa0c4e46a7d510e4f525c71a0c4c3f6280bb01394516",
+  "fixtures": 15,
+  "agreements": 13,
+  "results": [
+    {
+      "name": "witness-after-summary",
+      "stdout": "SELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\nMADO_LANDING_WITNESS: a1b2c3d4e5f60718\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "accept",
+      "frozen": "accept",
+      "agrees": true
+    },
+    {
+      "name": "stderr-only-witness",
+      "stdout": "SELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718\n",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "accept",
+      "frozen": "accept",
+      "agrees": true
+    },
+    {
+      "name": "two-summaries-green-then-failing",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718\nMADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "accept",
+      "frozen": "accept",
+      "agrees": true
+    },
+    {
+      "name": "witness-trailing-spaces",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718   \nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "accept",
+      "frozen": "accept",
+      "agrees": true
+    },
+    {
+      "name": "witness-crlf",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718\r\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "accept",
+      "frozen": "accept",
+      "agrees": true
+    },
+    {
+      "name": "uppercase-witness-lowercase-challenge",
+      "stdout": "MADO_LANDING_WITNESS: A1B2C3D4E5F60718\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "reject",
+      "frozen": "reject",
+      "agrees": true
+    },
+    {
+      "name": "uppercase-witness-matching-challenge",
+      "stdout": "MADO_LANDING_WITNESS: A1B2C3D4E5F60718\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "A1B2C3D4E5F60718",
+      "actual": "reject",
+      "frozen": "accept",
+      "agrees": false
+    },
+    {
+      "name": "seventeen-hex-witness",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f607180\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "reject",
+      "frozen": "reject",
+      "agrees": true
+    },
+    {
+      "name": "passed-greater-than-total",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718\nMADO_LANDING_COUNTERS_SELFTEST: 3/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "reject",
+      "frozen": "reject",
+      "agrees": true
+    },
+    {
+      "name": "captured-genuine-detail-stale-witness",
+      "stdout": "MADO_LANDING_WITNESS: 0123456789abcdef\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "reject",
+      "frozen": "reject",
+      "agrees": true
+    },
+    {
+      "name": "valid-then-uppercase-wrong-witness",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718\nMADO_LANDING_WITNESS: DEADBEEFDEADBEEF\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "accept",
+      "frozen": "reject",
+      "agrees": false
+    },
+    {
+      "name": "valid-then-seventeen-hex-witness",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718\nMADO_LANDING_WITNESS: 0123456789abcdef0\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "accept",
+      "frozen": "accept",
+      "agrees": true
+    },
+    {
+      "name": "last-valid-witness-wrong",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718\nMADO_LANDING_WITNESS: 0123456789abcdef\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "reject",
+      "frozen": "reject",
+      "agrees": true
+    },
+    {
+      "name": "same-nonce-child-A",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "accept",
+      "frozen": "accept",
+      "agrees": true
+    },
+    {
+      "name": "same-nonce-child-B",
+      "stdout": "MADO_LANDING_WITNESS: a1b2c3d4e5f60718\nSELFTEST FAIL 1: genuine arithmetic detail want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": "",
+      "nonce": "a1b2c3d4e5f60718",
+      "actual": "accept",
+      "frozen": "accept",
+      "agrees": true
+    }
+  ]
+}

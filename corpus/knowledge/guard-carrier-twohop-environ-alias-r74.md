@@ -16,8 +16,8 @@ Two sourced sentences define the carriers this round adds:
 
 | row | sentence (located) | what it grounds |
 |---|---|---|
-| S451 | "If the target is an attribute reference: The primary expression in the reference is evaluated. It should yield an object with assignable attributes" (`Doc/reference/simple_stmts.rst:160-162`) | `r.env[KEY] = "1"` evaluates `r` first: an alias of the object carries the store at the alias's dotted path, so `r.env` and `cfg.runner.env` name the same mapping when `r = cfg.runner` |
-| S452 | "This mapping may be used to modify the environment as well as query the environment." (`Doc/library/os.rst:196-197`) | the environ mapping itself is the mutation surface; a one-hop alias of it (`env = os.environ`) carries the key store into a later copy of that alias |
+| S451 | "If the target is an attribute reference: The primary expression in the reference is evaluated. It should yield an object with assignable attributes" (`Doc/reference/simple_stmts.rst:160-162`, 23 words) | `r.env[KEY] = "1"` evaluates `r` first: an alias of the object carries the store at the alias's dotted path, so `r.env` and `cfg.runner.env` name the same mapping when `r = cfg.runner` |
+| S452 | "This mapping may be used to modify the environment as well as query the environment." (`Doc/library/os.rst:196-197`, 15 words) | the environ mapping itself is the mutation surface; a one-hop alias of it (`env = os.environ`) carries the key store into a later copy of that alias |
 
 S452 also corrects the round-73 record: S448's anchor cell recorded
 `2d0f2892676e1cf9f0d8e61c63a2e70a86f0e0a5cdb6b06dd7b7d2c9b8b88a4e`; the fetched bytes hash to

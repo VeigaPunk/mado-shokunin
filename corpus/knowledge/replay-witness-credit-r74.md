@@ -22,7 +22,7 @@ an earlier run carries an earlier challenge, so it cannot pass.
 
 The witness's shape is sourced: CPython 3.14.8 `secrets.token_hex` returns "a random text string,
 in hexadecimal. The string has *nbytes* random bytes, each byte converted to two hex digits."
-(`Doc/library/secrets.rst:80-81`, row S450) — 8 bytes give the 16 hex characters the grammar
+(`Doc/library/secrets.rst:80-81`, row S450, 20 words) — 8 bytes give the 16 hex characters the grammar
 matches, and a captured block cannot contain the current challenge.
 
 ## 2. The rule, frozen

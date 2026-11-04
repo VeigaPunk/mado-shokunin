@@ -111,6 +111,22 @@ def sha256_hex(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def _symlink_component(path):
+    """The first symlinked component of an absolute path, else None (R74Sentinel D1)."""
+    parts = []
+    current = os.path.abspath(path)
+    while True:
+        parts.append(current)
+        parent = os.path.dirname(current)
+        if parent == current:
+            break
+        current = parent
+    for part in reversed(parts):
+        if os.path.islink(part):
+            return part
+    return None
+
+
 def absolute_scratch(value):
     if not value:
         raise UsageError("--scratch-root is required")
@@ -119,6 +135,9 @@ def absolute_scratch(value):
         raise UsageError("--scratch-root is not a directory: %s" % value)
     if os.path.islink(os.path.abspath(value)):
         raise UsageError("--scratch-root must not be a symlink")
+    link = _symlink_component(value)
+    if link is not None:
+        raise UsageError("--scratch-root has a symlinked component: %s" % link)
     norm = os.path.normcase(root)
     for unsafe in UNSAFE_ROOTS:
         if norm == unsafe or norm.startswith(unsafe + os.sep):
@@ -1674,7 +1693,12 @@ def _selftest_checks(scratch, controls_path):
             want("the frozen controls file matches the pinned digest", False)
     os.makedirs(scratch, exist_ok=True)
     tampered = os.path.join(scratch, "controls-tampered.json")
-    with open(tampered, "w", encoding="utf-8") as fh:
+    try:
+        os.unlink(tampered)
+    except FileNotFoundError:
+        pass
+    fd = os.open(tampered, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as fh:
         fh.write(json.dumps({"cases": []}))
     want("a controls file with the wrong digest is refused",
          _raises(SetupError, lambda: load_controls(tampered)))

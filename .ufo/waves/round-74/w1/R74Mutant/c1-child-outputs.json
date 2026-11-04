@@ -1,0 +1,89 @@
+{
+  "nonce": "da9279a9102bf969",
+  "cases": [
+    {
+      "name": "liar-success",
+      "expect": "pass",
+      "rc": 0,
+      "stdout": "SELFTEST ok 1: one citation resolves\nSELFTEST FAIL 2: zero citations refused want=1 got=0\nMADO_LANDING_WITNESS: da9279a9102bf969\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "stderr-genuine",
+      "expect": "pass",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nSELFTEST FAIL 2: zero citations refused want=1 got=0\n",
+      "stderr": "MADO_LANDING_WITNESS: da9279a9102bf969\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n"
+    },
+    {
+      "name": "liar-kill",
+      "expect": "fail",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nSELFTEST ok 2: citation arithmetic holds\nMADO_LANDING_WITNESS: da9279a9102bf969\nMADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "crash-stderr",
+      "expect": "fail",
+      "rc": 2,
+      "stdout": "SELFTEST ok 1: one citation resolves\n",
+      "stderr": "fatal: assertion harness collapsed before any summary\n"
+    },
+    {
+      "name": "bare-failing",
+      "expect": "fail",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nMADO_LANDING_COUNTERS_SELFTEST: 0/2 assertions passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "mismatch-detail",
+      "expect": "fail",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nSELFTEST FAIL 2: a want=1 got=0\nSELFTEST FAIL 3: b want=1 got=0\nSELFTEST FAIL 4: c want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 0/2 assertions passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "last-wins-pass",
+      "expect": "fail",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nSELFTEST FAIL 2: zero citations refused want=1 got=0\nMADO_LANDING_WITNESS: da9279a9102bf969\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\nMADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "last-wins-fail",
+      "expect": "pass",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nMADO_LANDING_WITNESS: da9279a9102bf969\nMADO_LANDING_COUNTERS_SELFTEST: 2/2 assertions passed\nSELFTEST FAIL 9: zero citations refused want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "replay-captured",
+      "expect": "fail",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nMADO_LANDING_WITNESS: 0123456789abcdef\nSELFTEST FAIL 9: zero citations refused want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "replay-no-witness",
+      "expect": "fail",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nSELFTEST FAIL 9: zero citations refused want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "witness-mismatch",
+      "expect": "fail",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nMADO_LANDING_WITNESS: deadbeefdeadbeef\nSELFTEST FAIL 9: zero citations refused want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "witness-last-wins",
+      "expect": "fail",
+      "rc": 1,
+      "stdout": "SELFTEST ok 1: one citation resolves\nMADO_LANDING_WITNESS: da9279a9102bf969\nMADO_LANDING_WITNESS: deadbeefdeadbeef\nSELFTEST FAIL 9: zero citations refused want=1 got=0\nMADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed\n",
+      "stderr": ""
+    }
+  ]
+}

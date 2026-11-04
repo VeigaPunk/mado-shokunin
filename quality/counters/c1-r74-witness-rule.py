@@ -84,6 +84,22 @@ def credit(out, nonce):
     return token is not None and token == nonce
 
 
+def _symlink_component(path):
+    """The first symlinked component of an absolute path, else None (R74Sentinel D1)."""
+    parts = []
+    current = os.path.abspath(path)
+    while True:
+        parts.append(current)
+        parent = os.path.dirname(current)
+        if parent == current:
+            break
+        current = parent
+    for part in reversed(parts):
+        if os.path.islink(part):
+            return part
+    return None
+
+
 def absolute_scratch(value):
     if not value:
         raise UsageError("--scratch-root is required")
@@ -92,6 +108,9 @@ def absolute_scratch(value):
         raise UsageError("--scratch-root is not a directory: %s" % value)
     if os.path.islink(os.path.abspath(value)):
         raise UsageError("--scratch-root must not be a symlink")
+    link = _symlink_component(value)
+    if link is not None:
+        raise UsageError("--scratch-root has a symlinked component: %s" % link)
     norm = os.path.normcase(root)
     for unsafe in UNSAFE_ROOTS:
         if norm == unsafe or norm.startswith(unsafe + os.sep):

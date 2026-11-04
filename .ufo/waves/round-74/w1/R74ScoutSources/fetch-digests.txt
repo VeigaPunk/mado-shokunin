@@ -1,0 +1,38 @@
+# fetch determinism receipt — seat R74ScoutSources, round 74, 2026-11-04
+# cmd: for t in 1 2 3; do (cd t$t && curl -sS --max-time 60|90 -o <name> <url>); done
+
+2d0f2892676e1cf9547be2bd94cfe2a6221dddea82d52cb2475d4a3d819b2ae5  /fast/scratch/hyaku/mado-r74/R74ScoutSources/t1/os.rst
+289ff11e32dc6023446b1e8e0853635a9c19be200cb7df76f50a029993890659  /fast/scratch/hyaku/mado-r74/R74ScoutSources/t1/secrets.rst
+d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc  /fast/scratch/hyaku/mado-r74/R74ScoutSources/t1/simple_stmts.rst
+2d0f2892676e1cf9547be2bd94cfe2a6221dddea82d52cb2475d4a3d819b2ae5  /fast/scratch/hyaku/mado-r74/R74ScoutSources/t2/os.rst
+289ff11e32dc6023446b1e8e0853635a9c19be200cb7df76f50a029993890659  /fast/scratch/hyaku/mado-r74/R74ScoutSources/t2/secrets.rst
+d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc  /fast/scratch/hyaku/mado-r74/R74ScoutSources/t2/simple_stmts.rst
+2d0f2892676e1cf9547be2bd94cfe2a6221dddea82d52cb2475d4a3d819b2ae5  /fast/scratch/hyaku/mado-r74/R74ScoutSources/t3/os.rst
+289ff11e32dc6023446b1e8e0853635a9c19be200cb7df76f50a029993890659  /fast/scratch/hyaku/mado-r74/R74ScoutSources/t3/secrets.rst
+d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc  /fast/scratch/hyaku/mado-r74/R74ScoutSources/t3/simple_stmts.rst
+
+208655 /fast/scratch/hyaku/mado-r74/R74ScoutSources/t1/os.rst
+  6305 /fast/scratch/hyaku/mado-r74/R74ScoutSources/t1/secrets.rst
+ 41375 /fast/scratch/hyaku/mado-r74/R74ScoutSources/t1/simple_stmts.rst
+208655 /fast/scratch/hyaku/mado-r74/R74ScoutSources/t2/os.rst
+  6305 /fast/scratch/hyaku/mado-r74/R74ScoutSources/t2/secrets.rst
+ 41375 /fast/scratch/hyaku/mado-r74/R74ScoutSources/t2/simple_stmts.rst
+208655 /fast/scratch/hyaku/mado-r74/R74ScoutSources/t3/os.rst
+  6305 /fast/scratch/hyaku/mado-r74/R74ScoutSources/t3/secrets.rst
+ 41375 /fast/scratch/hyaku/mado-r74/R74ScoutSources/t3/simple_stmts.rst
+769005 total
+
+cmp OK   t1/secrets.rst == fetch/secrets.rst.1
+cmp OK   t2/secrets.rst == fetch/secrets.rst.2
+cmp OK   t3/secrets.rst == fetch/secrets.rst.3
+cmp OK   t1/simple_stmts.rst == fetch/simple_stmts.rst.1
+cmp OK   t2/simple_stmts.rst == fetch/simple_stmts.rst.2
+cmp OK   t3/simple_stmts.rst == fetch/simple_stmts.rst.3
+cmp OK   t1/os.rst == fetch/os.rst.1
+cmp OK   t2/os.rst == fetch/os.rst.2
+cmp OK   t3/os.rst == fetch/os.rst.3
+
+# http codes (independent fourth fetch per URL)
+200 6305  https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/secrets.rst
+200 41375  https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst
+200 208655  https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/os.rst
