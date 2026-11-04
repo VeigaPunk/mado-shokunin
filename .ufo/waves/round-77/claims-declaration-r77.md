@@ -163,3 +163,8 @@ expectation is the frozen case value rather than a sample the row prints: `monit
 (the probes row documents the command, not the band value) and `waybar-process` (the row's pid is
 volatile; the case shape-checks `^[0-9]+$`, as the named limits already say). The instrument,
 predicate, target and case set are unchanged. Source: the wave critic's F1.
+
+C1's sourced ground names S457–S462; S464 (gtk-layer-shell v0.10.1 `layer-surface.c`, the
+client-side auto exclusive zone) was opened in the same round to ground the `NOT_MODELLED`
+margin claim the entry makes, so the round's registry delta is seven mined rows plus one
+rejected (S463), not six. The predicate, target and case set are unchanged.

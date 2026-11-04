@@ -3823,7 +3823,7 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   `height 26`, no margins, exclusive default. Captures `fetch/live-{layers,monitors}-r77.json`
   (sha256 `46eb2481…` / `e732af34…`); live join `MADO_BARFOOT … verdict=CLEAN`. No config tree,
   compositor state or service was written.
-- **Sources.** SOURCES 393 → 400 rows: S457–S462 new (Hyprland `Renderer.cpp`, `HyprCtl.cpp`,
+- **Sources.** SOURCES 393 → 401 rows: S457–S462 and S464 new (Hyprland `Renderer.cpp`, `HyprCtl.cpp`,
   `ReservedArea.cpp`, the layer-shell XML at efb5099; `waybar(5)` and Waybar 0.15.0 `bar.cpp`),
   S463 opened and rejected (wayland.app, no revision pin). Census exit 0 with the documented
   W04 duplicate-URL warnings (S458 shares the HyprCtl.cpp URL with earlier rows).

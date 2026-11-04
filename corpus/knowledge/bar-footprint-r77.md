@@ -1,6 +1,6 @@
 # The bar's footprint: declared waybar config → live layer box → monitor reserved band
 
-source: S457 Hyprland v0.56.2 src/render/Renderer.cpp @ efb5099 (arrangeLayerArray, applyExclusive, arrangeLayersForMonitor); S458 src/debug/HyprCtl.cpp @ efb5099 (layers request, monitors reserved print); S459 src/desktop/reserved/ReservedArea.cpp @ efb5099 (parent/child band); S460 protocols/wlr-layer-shell-unstable-v1.xml @ efb5099 (levels, exclusive zone); S461 waybar(5) 0.15.0 (position, layer, height, width, margin, exclusive); S462 Waybar v0.15.0 src/bar.cpp (margin precedence, namespace, size request, exclusive zone)
+source: S457 Hyprland v0.56.2 src/render/Renderer.cpp @ efb5099 (arrangeLayerArray, applyExclusive, arrangeLayersForMonitor); S458 src/debug/HyprCtl.cpp @ efb5099 (layers request, monitors reserved print); S459 src/desktop/reserved/ReservedArea.cpp @ efb5099 (parent/child band); S460 protocols/wlr-layer-shell-unstable-v1.xml @ efb5099 (levels, exclusive zone); S461 waybar(5) 0.15.0 (position, layer, height, width, margin, exclusive); S462 Waybar v0.15.0 src/bar.cpp (margin precedence, namespace, size request, exclusive zone); S464 gtk-layer-shell v0.10.1 src/layer-surface.c (auto exclusive zone)
 verified-at: 2026-11-04 (schema and host join re-measured; fetch receipts `.ufo/waves/round-77/fetch/S457.bin` … `S462.bin`, sha256 in `fetch/sha256-r77.txt`)
 recheck: on-release (Hyprland after v0.56.2 or Waybar after 0.15.0); 180d otherwise — re-pin the six files, re-capture `hyprctl layers -j` and `hyprctl monitors -j`, re-run `tools/mado-barfoot.py`
 ground: what sets a waybar bar's position and size on this compositor, what the monitor's `reserved` band owes to that surface, and which part of the chain `hyprctl layers` cannot show
@@ -20,7 +20,7 @@ Lane: mado-shokunin. Round: 77.
 
 ## §1 The chain, link by link
 
-**1. Declaration.** waybar 0.15.0 reads `position` (top/bottom/left/right, default top), `layer` (top or bottom, default bottom), `height`/`width` (requested sizes, blank = dynamic), `margin` (CSS format: 1/2/3/4 integers) or `margin-<side>` (integers), and `exclusive` (bool, default true). Source S461 (`BAR CONFIGURATION`, lines 70/91/97/128/189 of the installed page) and S462 (`bar.cpp:178-222`, `:232-233`, `:240`, `:355-361`). The per-side form wins when any `margin-<side>` is an integer; otherwise a `margin` string is read in CSS order; otherwise an integer `margin` sets all four sides (`bar.cpp:178-222`). The layer namespace is the config's `name`, else `waybar` (`bar.cpp:232-233`).
+**1. Declaration.** waybar 0.15.0 reads `position` (top/bottom/left/right, default top), `layer` (top or bottom, default bottom), `height`/`width` (requested sizes, blank = dynamic), `margin` (CSS format: 1/2/3/4 integers) or `margin-<side>` (integers), and `exclusive` (bool, default true). Source S461 (`BAR CONFIGURATION`; headings at rendered lines 64/85/93/124/183, their text at 70/91/97/128/189) and S462 (`bar.cpp:178-222`, `:232-233`, `:240`, `:355-361`). The per-side form wins when any `margin-<side>` is an integer; otherwise a `margin` string is read in CSS order; otherwise an integer `margin` sets all four sides (`bar.cpp:178-222`). The layer namespace is the config's `name`, else `waybar` (`bar.cpp:232-233`).
 
 **2. Size request and anchors.** The bar requests `(width, height)` as its desired size (`bar.cpp:240`); a horizontal bar with an explicit width > 1 clears both horizontal anchors, and a vertical bar with an explicit height > 1 clears both vertical anchors (`bar.cpp:419-426`). The compositor then places the surface.
 
@@ -48,7 +48,7 @@ INF: the usable area of DP-1 is 3440 x 1414, starting at y = 26 (the band is the
 
 ## §4 What the model does not cover
 
-- **Margined exclusive bars (any margin, not only the edge one).** gtk-layer-shell 0.10.1's auto zone is the allocation plus the margins on the *unanchored* edges (`gls:src/layer-surface.c:264-288`), and Hyprland then adds the anchored edge's margin (`Renderer.cpp:2575`), so `band - extent` is the opposite-edge margin. With any non-zero margin the reserved expectation is `NOT_MODELLED`; the box itself is still modelled.
+- **Margined exclusive bars (any margin, not only the edge one).** gtk-layer-shell 0.10.1's auto zone is the allocation plus the margins on the *unanchored* edges (S464, `layer-surface.c:264-292`: `new_exclusive_zone += self->margins[GTK_LAYER_SHELL_EDGE_BOTTOM];`), and Hyprland then adds the anchored edge's margin (S457, `Renderer.cpp:2575`), so `band - extent` is the opposite-edge margin. With any non-zero margin the reserved expectation is `NOT_MODELLED`; the box itself is still modelled.
 - **Scaled or transformed monitors.** `hyprctl monitors -j` prints `width`/`height` from `m_pixelSize` (`HyprCtl.cpp:278`) while every layer box is logical (`m_size = pixelSize / scale`), so a scale-2 output would overstate the declared box. The tool refuses a monitor whose `scale` is not 1 or whose `transform` is not 0 (`UNMODELLED`, exit 3).
 - **Dynamic cross size.** A horizontal bar with `height` unset (or 0) gets the module allocation, not a declared value; the tool refuses rather than computing the whole usable height (`UNMODELLED`).
 - **Static `monitor … addreserved` bands.** The reported band mixes the static reserve with the layer contribution (`logicalBoxMinusReserved()`), and the tool assumes a zero static reserve; a static band is a named, unmodelled case.
@@ -67,4 +67,4 @@ INF: the usable area of DP-1 is 3440 x 1414, starting at y = 26 (the band is the
 
 ## Sources
 
-S457, S458, S459, S460, S461, S462 in [SOURCES](../SOURCES.md). S463 (wayland.app) was opened and rejected: it renders the protocol without a revision pin, so the pinned XML is the authoritative copy.
+S457, S458, S459, S460, S461, S462, S464 in [SOURCES](../SOURCES.md). S463 (wayland.app) was opened and rejected: it renders the protocol without a revision pin, so the pinned XML is the authoritative copy.

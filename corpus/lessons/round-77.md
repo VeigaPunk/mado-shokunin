@@ -32,6 +32,7 @@ All sources were opened 2026-11-04 before their rows were written; bytes under
 | S460 | `wlr-layer-shell-unstable-v1.xml` @ efb5099, enum `:86-90`, `set_exclusive_zone :152-190` | mined | `A positive zone is the distance from the edge in surface-local` | levels and the exclusive-zone contract; it is a contract, not host behaviour |
 | S461 | installed `waybar(5)` 0.15.0, `BAR CONFIGURATION` (page lines 70/91/97/128/189) | mined | `Bar position, can be top, bottom, left, right.` | the declared placement keys and defaults; not what the compositor does with them |
 | S462 | Waybar v0.15.0 `src/bar.cpp` @ 90b209ad, `:178-222`, `:232-233`, `:240`, `:355-361` | mined | `gtk_layer_auto_exclusive_zone_enable(gtk_window);` | margin precedence, namespace, size request, exclusive call; not gtk-layer-shell's internal zone arithmetic |
+| S464 | gtk-layer-shell v0.10.1 `src/layer-surface.c` @ v0.10.1, auto-zone :264-292 | mined | `new_exclusive_zone += self->margins[GTK_LAYER_SHELL_EDGE_BOTTOM];` | the client-side auto zone adds the opposite-edge margin; it does not prove Hyprland's side of the addition (S457) |
 | S463 | `https://wayland.app/protocols/wlr-layer-shell-unstable-v1` as served 2026-11-04 (147036 B) | rejected | `wlr layer shell protocol` (the page's own title text) | REJECTED: renders the protocol but pins no protocol/compositor revision, so it cannot ground a versioned 0.56.2 claim. Flip: a commit/tag pin for the rendered protocol. The pinned XML (S460) is the authoritative copy. |
 
 ## Notes
