@@ -1,0 +1,18 @@
+# R69ScribeEntry — supplementary README index row validated in a scratch fixture
+# The row is NOT committed; the fixture ($S/fixture2.XXXX) holds only the draft note,
+# the draft index row inside a `| Note | Holds | Sources |` table, the S436 row read at
+# 04093b83, a proposed S438 row, and copies of the control baseline + frozen declaration
+# (the two backticked slash-paths in the row's Sources cell).
+
+$ python3 quality/check-index.py --root "$D2"
+MADO_INDEX: root=... indexed=1/1 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+check_index_rc=0
+
+$ python3 quality/check-index-rows.py --root "$D2"
+MADO_INDEX_ROWS: root=... rows=1 errors=0 warns=0
+check_index_rows_rc=0
+
+# What this proves: the row carries three non-empty cells and sits inside the coverage map;
+# every S### in it resolves at the fixture revision; both backticked slash-paths exist.
+# What it does NOT prove: that the row text matches the note semantically (a WARN-level
+# review item), or the lane's own counts once the row is pasted.

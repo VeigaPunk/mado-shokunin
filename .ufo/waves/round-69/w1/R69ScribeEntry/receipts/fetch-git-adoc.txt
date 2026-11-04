@@ -1,0 +1,41 @@
+# R69ScribeEntry — S438 fetch receipt
+# date: 2026-11-03; host git: git version 2.56.0
+# scratch: /fast/scratch/hyaku/mado-r69/R69ScribeEntry (removed before yield)
+# read-only: no lane file written by these commands
+
+$ curl -sSfL -o git.adoc https://raw.githubusercontent.com/git/git/v2.56.0/Documentation/git.adoc
+rc=0
+$ sha256sum git.adoc
+050c5330f1a231be22bee3db27c7ef90d8ba22bb7bd6c72c8bab462f6f0a1f79  git.adoc
+$ wc -l -c git.adoc
+ 1212 47005 git.adoc
+
+$ curl -sSfL -o git.adoc.2 -w 'http_code=%{http_code}\n' https://raw.githubusercontent.com/git/git/v2.56.0/Documentation/git.adoc
+http_code=200
+curl_rc=0
+$ sha256sum git.adoc.2
+050c5330f1a231be22bee3db27c7ef90d8ba22bb7bd6c72c8bab462f6f0a1f79  git.adoc.2
+$ cmp git.adoc git.adoc.2 && echo byte-identical
+byte-identical
+
+## located quote 1 — OPTIONS, --no-replace-objects (1-based lines 178-182)
+178: --no-replace-objects::
+179: \tDo not use replacement refs to replace Git objects.
+180: \tThis is equivalent to exporting the `GIT_NO_REPLACE_OBJECTS`
+181: \tenvironment variable with any value.
+182: \tSee linkgit:git-replace[1] for more information.
+(+ context: 176 "\t directory." ends --bare; 177 blank; 183 blank; 184 --no-lazy-fetch::)
+
+## located quote 2 — ENVIRONMENT, GIT_NO_REPLACE_OBJECTS (1-based lines 927-929)
+925: \tredaction.
+926: (blank)
+927: `GIT_NO_REPLACE_OBJECTS`::
+928: \tSetting and exporting this environment variable tells Git to
+929: \tignore replacement refs and do not replace Git objects.
+930: (blank)
+931: `GIT_LITERAL_PATHSPECS`::
+
+## anchor form this draft relies on (S438 cell 6)
+OPTIONS + ENVIRONMENT, git.adoc:178-182,927-929 @ tag v2.56.0
+  (no `pin <path>`: the adoc is not in the lane tree, so check-107 reads eof=unchecked;
+   r67 states the same convention in corpus/knowledge/replace-ref-citation-boundaries-r67.md:164-167)

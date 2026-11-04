@@ -1,0 +1,28 @@
+# R69ScribeEntry — criterion-107 dry run over the draft in a scratch fixture
+# The draft is NOT committed, so the check is run against a throwaway git repo
+# ($S/fixture.XXXX, mktemp -d; toplevel asserted equal before the first commit),
+# never against the lane.
+
+$ D=$(mktemp -d "$S/fixture.XXXX"); git -C "$D" init -q
+$ [ "$(git -C "$D" rev-parse --show-toplevel)" = "$D" ] && echo toplevel-ok
+toplevel-ok
+# fixture contents: corpus/knowledge/gate-guard-dominance-r69.md = this draft
+#                   corpus/SOURCES.md = header + the real S436 row (read at 04093b83)
+#                                       + a proposed S438 row (see below)
+$ git -C "$D" -c user.name=R69ScribeEntry -c user.email=r69@example.invalid add -A
+$ git -C "$D" -c user.name=R69ScribeEntry -c user.email=r69@example.invalid commit -q -m "fixture"
+$ python3 quality/check-anchor-cover.py --repo "$D" --rev HEAD \
+    --entry corpus/knowledge/gate-guard-dominance-r69.md --work "$S/anchor-work"
+
+ANCHOR_COVER: row=K01 sid=S438 line=180 name=git.adoc locators=178-182,927-929 eof=unchecked verdict=OK
+ANCHOR_COVER: row=K02 sid=S438 line=928 name=git.adoc locators=178-182,927-929 eof=unchecked verdict=OK
+ANCHOR_COVER: row=K03 sid=S436 line=34 name=git-replace.adoc locators=20,22-24,26-27,29,31-32,34-36,38-39,55-56,151-153 eof=unchecked verdict=OK
+CHECK107: rows=3 covered=3 miss=0 verdict=OK
+check_rc=0
+
+## S438 cell 6 used in the fixture (must be what the row seat lands, or wider)
+OPTIONS + ENVIRONMENT, git.adoc:178-182,927-929 @ tag v2.56.0 (git 2.56.0 host; fetched 2026-11-03, sha256 050c5330f1a231be22bee3db27c7ef90d8ba22bb7bd6c72c8bab462f6f0a1f79, 47005 bytes)
+
+# Required: the anchor covers line 180 (the --no-replace-objects equivalence sentence) and
+# line 928 (the "Setting and exporting" sentence); no `pin <path>` (the file is not in the
+# lane tree; a pin would make the check read the lane blob and fail with "absent").

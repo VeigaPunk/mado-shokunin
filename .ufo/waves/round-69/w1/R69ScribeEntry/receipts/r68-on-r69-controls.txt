@@ -1,0 +1,46 @@
+# R69ScribeEntry — round-68 classifier scored on the frozen round-69 control set
+# cwd: /fast/scratch/hyaku/mado-r69/R69ScribeEntry (read-only against the lane)
+# scratch root: $S/r68
+
+$ python3 /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r68-reader-guard.py \
+    --repo /home/vgpnk/Projects/shokunin/mado-shokunin \
+    --rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 \
+    --controls /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/controls/c2-controls-r69.json \
+    --scratch-root "$S/r68"
+
+MADO_R68_READER file=quality/check-anchor-cover.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-axis-scores.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-control-receipts.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-counter-discrimination.py reader=no guard=no
+MADO_R68_READER file=quality/check-deliverables.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-evidence-pointers.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-freeze-order.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-index-rows.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-index.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-landed-contract.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-locators.py reader=no guard=no
+MADO_R68_READER file=quality/check-population.py reader=no guard=no
+MADO_R68_READER file=quality/check-r38-discrimination.py reader=no guard=no
+MADO_R68_READER file=quality/check-r55-controls.py reader=no guard=no
+MADO_R68_READER file=quality/check-r56-controls.py reader=no guard=no
+MADO_R68_READER file=quality/check-round-outcome-first.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-session-material.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-state-cite.py reader=no guard=no
+MADO_R68_READER file=quality/check-tool-ledger.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-wave-done.py reader=yes guard=yes
+MADO_R68_CONTROL name=guarded-inline reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=value-position-only reader=yes guard=yes expect_reader=yes expect_guard=no correct=no
+MADO_R68_CONTROL name=dead-branch-only reader=yes guard=yes expect_reader=yes expect_guard=no correct=no
+MADO_R68_CONTROL name=uncalled-helper reader=yes guard=yes expect_reader=yes expect_guard=no correct=no
+MADO_R68_CONTROL name=overwritten-env reader=yes guard=yes expect_reader=yes expect_guard=no correct=no
+MADO_R68_CONTROL name=update-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=subscript-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=module-constant reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=producer-helper reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=argv-name-flow reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=mention-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R68_READER_GUARD: population=20 readers=13 guarded=13 unguarded=0 controls=7/11 verdict=TARGET_MISSED rev=04093b83f73a841117d3b31dbb2a6063f4f2a454
+rc=1
+
+# matches the pre-freeze receipt: .ufo/waves/round-69/control-baseline-r69.txt:45
+#   MADO_R69_C2_BASE: controls=7/11 verdict=TARGET_MISSED

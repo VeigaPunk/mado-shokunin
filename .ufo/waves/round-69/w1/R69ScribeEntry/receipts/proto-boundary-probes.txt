@@ -1,0 +1,51 @@
+# R69ScribeEntry — prototype boundary probes (NOT frozen cases)
+# imports the committed prototype .ufo/waves/round-69/proto/c2-classify.proto.py
+# cwd: /fast/scratch/hyaku/mado-r69/R69ScribeEntry; every snippet is scratch text
+
+$ python3 probe.py
+one-hop-argument-env             classify=(True, True)
+one-hop-argv-parameter           classify=(True, True)
+rebind-after-first-use           classify=(True, True)
+value-position                   classify=(True, False)
+inline-dict-keyword              classify=(True, True)
+mutating-call-not-env-named      classify=(True, False)
+late-key-after-use               classify=(True, False)
+false-branch-true-key            classify=(True, False)
+rc=0
+
+## snippet bodies (classify=(reader, guard))
+one-hop-argument-env: flow (c) — caller passes guarded `env` positionally to a local helper
+  whose own `subprocess.run(["git", ...], env=env)` uses the env-named parameter:
+    def run_git(repo, env):
+        return subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)
+    def head(repo):
+        env = {"PATH": "/usr/bin"}
+        env["GIT_NO_REPLACE_OBJECTS"] = "1"
+        return run_git(repo, env)
+  -> True: flow (c) is implemented; no frozen case isolates it.
+
+one-hop-argv-parameter: helper receives the argv by name from its caller and the caller's
+  argument list carries the literal argv:
+    def run_git(repo, cmd, env):
+        return subprocess.run(cmd, env=env)
+    def head(repo):
+        env = {"PATH": "/usr/bin"}
+        env["GIT_NO_REPLACE_OBJECTS"] = "1"
+        return run_git(repo, ["git", "-C", repo, "show", "HEAD:a"], env)
+  -> True: call_is_git accepts a call whose arguments contain a literal git argv, so a
+     wrapper call is scored as the launch even when its own subprocess argv is a parameter.
+
+rebind-after-first-use: guarded env used at one call, rebound plain, used at a second:
+  -> True: dominance is existential per file (first guarded use is enough); the second,
+     unguarded launch does not unset the verdict.
+
+late-key-after-use: store performed after the call:
+  -> False: the key must exist before the use.
+
+mutating-call-not-env-named: `dict.update(env, GIT_NO_REPLACE_OBJECTS="1")`
+  -> False: only the method form on an env-named receiver counts; dict.update(env, ...) is invisible.
+
+value-position: `{"PATH": "/usr/bin", "LABEL": "GIT_NO_REPLACE_OBJECTS"}`
+  -> False: key position required.
+
+false-branch-true-key: store inside `if False:` -> False; inline dict keyword -> True.

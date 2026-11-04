@@ -1,0 +1,182 @@
+COMMAND python3 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/w1/R69RevC2/attacks.py
+EXIT 0
+COUNTER /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/proto/c2-classify.proto.py sha256=0a1e1ff609ef562e3ffe3c0566e1bb20e2466b1ba70c7498750d36e6e0f47803
+CONTROLS_SHA256 975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9
+OLD_FUNCTIONS ['SetupError', 'UsageError', '_selftest_checks', 'build_parser', 'classify', 'git', 'git_env', 'has_guard', 'is_reader', 'main', 'measure', 'run', 'selftest', 'verdict_met']
+ATTACK filtered-conditional verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+env = {k: v for k, v in os.environ.items() if k != "GIT_"}
+if enabled:
+    env["GIT_NO_REPLACE_OBJECTS"] = "1"
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+ATTACK attribute-env verdict=(True, False)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+self.env = {}
+self.env["GIT_NO_REPLACE_OBJECTS"] = "1"
+subprocess.run(["git", "show", "HEAD:a"], env=self.env)
+SOURCE_END
+ATTACK alias-env verdict=(True, False)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+env = {"GIT_NO_REPLACE_OBJECTS": "1"}
+e = env
+subprocess.run(["git", "show", "HEAD:a"], env=e)
+SOURCE_END
+ATTACK late-guard verdict=(True, False)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+env = {}
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+env["GIT_NO_REPLACE_OBJECTS"] = "1"
+SOURCE_END
+ATTACK except-other-env verdict=(True, False)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+env = {}
+try:
+    env["GIT_NO_REPLACE_OBJECTS"] = "1"
+except Exception:
+    env = {"PATH": "/usr/bin"}
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+ATTACK closure-env verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+def outer():
+    env = {"GIT_NO_REPLACE_OBJECTS": "1"}
+    def inner():
+        subprocess.run(["git", "show", "HEAD:a"], env=env)
+    return inner()
+SOURCE_END
+ATTACK splat-env verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+env = {**{"GIT_NO_REPLACE_OBJECTS": "1"}}
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+ATTACK cross-module verdict=(True, False)
+SOURCE_BEGIN
+from producer import git_env
+import subprocess
+env = git_env()
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+ATTACK dead-inline verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+if False:
+    subprocess.run(["git", "show", "HEAD:a"], env={"GIT_NO_REPLACE_OBJECTS": "1"})
+SOURCE_END
+ATTACK producer-overwrite verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+def git_env():
+    env = {"GIT_NO_REPLACE_OBJECTS": "1"}
+    env = {}
+    return env
+env = git_env()
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+ATTACK producer-late verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+def git_env():
+    env = {}
+    return env
+    env["GIT_NO_REPLACE_OBJECTS"] = "1"
+env = git_env()
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+ATTACK sibling-scope verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+def never():
+    env = {"GIT_NO_REPLACE_OBJECTS": "1"}
+def run():
+    subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+ATTACK nested-key-value verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+env = {"LABEL": {"GIT_NO_REPLACE_OBJECTS": "1"}}
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+ATTACK onehop-wrong-parameter verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+def launch(env, other_env):
+    subprocess.run(["git", "show", "HEAD:a"], env=other_env)
+env = {"GIT_NO_REPLACE_OBJECTS": "1"}
+launch(env, {})
+SOURCE_END
+ATTACK dead-else-valid verdict=(True, False)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+if False:
+    pass
+else:
+    env = {"GIT_NO_REPLACE_OBJECTS": "1"}
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+ATTACK producer-direct verdict=(True, True)
+SOURCE_BEGIN
+import os, subprocess
+KEY = "GIT_NO_REPLACE_OBJECTS"
+def git_env():
+    return {"GIT_NO_REPLACE_OBJECTS": "1"}
+env = git_env()
+subprocess.run(["git", "show", "HEAD:a"], env=env)
+SOURCE_END
+SECOND_MODULE producer.py
+def git_env():
+    return {"GIT_NO_REPLACE_OBJECTS": "1"}
+CONTROL guarded-inline prototype=(True, True) r68=(True, True)
+CONTROL value-position-only prototype=(True, False) r68=(True, True)
+CONTROL dead-branch-only prototype=(True, False) r68=(True, True)
+CONTROL uncalled-helper prototype=(True, False) r68=(True, True)
+CONTROL overwritten-env prototype=(True, False) r68=(True, True)
+CONTROL update-guard prototype=(True, True) r68=(True, True)
+CONTROL subscript-guard prototype=(True, True) r68=(True, True)
+CONTROL module-constant prototype=(True, True) r68=(True, True)
+CONTROL producer-helper prototype=(True, True) r68=(True, True)
+CONTROL argv-name-flow prototype=(True, True) r68=(True, True)
+CONTROL mention-only prototype=(True, False) r68=(True, False)
+FILE quality/check-anchor-cover.py verdict=(True, True) without_onehop=(True, False) without_producer=(True, True)
+FILE quality/check-axis-scores.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, True)
+FILE quality/check-control-receipts.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, True)
+FILE quality/check-counter-discrimination.py verdict=(False, False) without_onehop=(False, False) without_producer=(False, False)
+FILE quality/check-deliverables.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, True)
+FILE quality/check-evidence-pointers.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, True)
+FILE quality/check-freeze-order.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, False)
+FILE quality/check-index-rows.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, True)
+FILE quality/check-index.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, True)
+FILE quality/check-landed-contract.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, True)
+FILE quality/check-locators.py verdict=(False, False) without_onehop=(False, False) without_producer=(False, False)
+FILE quality/check-population.py verdict=(False, False) without_onehop=(False, False) without_producer=(False, False)
+FILE quality/check-r38-discrimination.py verdict=(False, False) without_onehop=(False, False) without_producer=(False, False)
+FILE quality/check-r55-controls.py verdict=(False, False) without_onehop=(False, False) without_producer=(False, False)
+FILE quality/check-r56-controls.py verdict=(False, False) without_onehop=(False, False) without_producer=(False, False)
+FILE quality/check-round-outcome-first.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, True)
+FILE quality/check-session-material.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, True)
+FILE quality/check-state-cite.py verdict=(False, False) without_onehop=(False, False) without_producer=(False, False)
+FILE quality/check-tool-ledger.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, False)
+FILE quality/check-wave-done.py verdict=(True, True) without_onehop=(True, True) without_producer=(True, False)
+TOTAL population=20 readers=13 guarded=13 unguarded=0
+SCRATCH_REMOVED True

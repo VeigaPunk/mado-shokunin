@@ -1,0 +1,157 @@
+# round-69 seat R69ExecCadence — harm-watch and publication-cadence battery
+# date: 2026-11-03 (America/Sao_Paulo)
+# lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+# base: 04093b83f73a841117d3b31dbb2a6063f4f2a454
+# scratch: /fast/scratch/hyaku/mado-r69/R69ExecCadence (removed before yield)
+# scope: read-only; no production draft, no lane write outside this seat dir and the seat report.
+# Every command below ran with cwd = the lane repo; python3 is the host python (3.14).
+
+## 1. published-axis staleness at the base revision
+$ python3 quality/check-axis-scores.py --repo . --rev 04093b83f73a841117d3b31dbb2a6063f4f2a454
+MADO_AXIS_ROW: axis=navigation published=80/80 derived=80/80 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=04093b83f73a841117d3b31dbb2a6063f4f2a454
+rc=0
+
+Publication parsed by the gate (last of 17 `Axis table re-derived at` markers in SCORECARD.md at base):
+  SCORECARD.md:3683-3684 — "Axis table re-derived at `379e97f8` ... navigation 80/80;
+  calibration resolved-active 86/86; operability selftest 12/12."
+Verdict: NOT STALE at the base revision. All three published fractions equal the re-derived ones.
+
+Same gate at the round-69 freeze commit (HEAD = 98bff016d0ef151aceedf03d75239b81c9f6eeed):
+$ python3 quality/check-axis-scores.py --repo . --rev 98bff016d0ef151aceedf03d75239b81c9f6eeed
+MADO_AXIS_ROW: axis=navigation published=80/80 derived=80/80 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=98bff016d0ef151aceedf03d75239b81c9f6eeed
+rc=0
+(base..HEAD = the eight round-69 freeze files only: claims declaration, control baseline,
+control JSON, make-spec, two prototypes, dispatch and spec; no knowledge entry yet.)
+
+### which rows would change (fixture measurement, scratch-repo only)
+The round lands `corpus/knowledge/gate-guard-dominance-r69.md`; navigation counts knowledge
+notes and their `corpus/README.md` rows. Probe in a throwaway git fixture at HEAD's tree
+(`git init` in $S/sim.XXXX, toplevel asserted = fixture, one probe note + one probe README row,
+committed with -c user.name/-c user.email):
+$ python3 quality/check-index.py --repo $D --rev HEAD
+MADO_INDEX: rev=HEAD indexed=81/81 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+$ python3 quality/check-axis-scores.py --repo $D --rev HEAD
+MADO_AXIS_ROW: axis=navigation published=80/80 derived=81/81 verdict=STALE
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=1 rev=b3b6cf8e10e5112195dfed585facdf990e0a3a15
+rc=1
+So: navigation 80/80 -> 81/81 must be re-published in the round-69 records commit (round-68
+plan item 3). Calibration 86/86 and operability 12/12 do not move from this round's work:
+no dispatched seat writes a QUALITY criterion line (R69ScribeEntry only reads criterion 107),
+and neither `quality/check-index.py` nor `.ufo/waves/round-31/c2/count.py` is in any seat's
+write scope. If the entry lands without its README row the landing leg reads
+`missing=1` (rc 1) instead; either way the base publication is stale after the entry lands.
+
+## 2. landing counters at the base revision
+$ bash quality/landing-counters.sh --repo . --rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 \
+    --round 68 --scratch-root /fast/scratch/hyaku/mado-r69/R69ExecCadence/landing
+-- leg nav --
+revision=04093b83f73a841117d3b31dbb2a6063f4f2a454 indexed=80/80 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+LANDING_LEG nav rc=0
+-- leg usedby --
+MADO_USED_BY: rev=04093b83f73a841117d3b31dbb2a6063f4f2a454 entries=80 rows=374 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+LANDING_LEG usedby rc=0
+-- leg ledger --
+LEDGER: population=113 ledger_rows=113 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=04093b83f73a841117d3b31dbb2a6063f4f2a454
+LANDING_LEG ledger rc=0
+-- leg citecheck --
+MADO_CITECHECK: rev=04093b83f73a841117d3b31dbb2a6063f4f2a454 files=1 citations=11 resolved=11 missing=0 skipped_large=0 verdict=TARGET_MET (VERSION r64-v1)
+LANDING_LEG citecheck rc=0
+MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0 ledger=0 citecheck=0 rev=04093b83f73a841117d3b31dbb2a6063f4f2a454)
+rc=0
+leg rcs: nav=0 usedby=0 ledger=0 citecheck=0; overall rc=0. CITECHECK rows resolved (11/11):
+aux-dominance-r68.txt, c2-command-erratum-r68.txt, c2-denominator-erratum-r68.txt,
+control-baseline-r68.txt, controls/c2-controls.json, corpus/knowledge/gate-git-read-guards-r68.md,
+corpus/lessons/round-68.md, counters/c1-r68-landing-controls.py, counters/c1-r68-selfmutants.py,
+counters/c2-r68-reader-guard.py, quality/landing-counters.sh.
+
+## 3. hermetic config-plane gate
+$ bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+rc=0
+The tool creates its own prefix-guarded /tmp/w5-mado-m52-selftest.* fixture (hardcoded in the
+instrument); `ls -d /tmp/w5-mado-m52-selftest.*` counted 0 before and 0 after the run.
+
+## 4. selftests of the instruments this round must not harm
+$ python3 quality/counters/c1-r68-selfmutants.py --selftest --scratch-root $S/st/selfmut
+MADO_R68_SELFMUTANTS_SELFTEST: 27/27 assertions passed
+rc=0
+$ python3 quality/counters/c1-r68-landing-controls.py --selftest --scratch-root $S/st/controls
+MADO_R68_LANDING_CONTROLS_SELFTEST: 52/52 assertions passed
+rc=0
+$ python3 quality/counters/c2-r68-reader-guard.py --selftest --scratch-root $S/st/reader
+MADO_R68_READER_GUARD_SELFTEST: 26/26 assertions passed
+rc=0
+$ python3 quality/check-wave-done.py --selftest --scratch-root $S/st/wavedone
+MADO_WAVE_DONE_SELFTEST: 62/62 passed
+rc=0
+$ python3 quality/check-tool-ledger.py --selftest --scratch-root $S/st/tooledger
+LEDGER_SELFTEST: 54/54 passed
+rc=0
+$ python3 tools/mado-receipt-citecheck.py --selftest --scratch-root $S/st/citecheck
+MADO_CITECHECK_SELFTEST: 12/12 assertions passed
+rc=0
+($S = /fast/scratch/hyaku/mado-r69/R69ExecCadence; all six support --scratch-root, none unsupported.)
+
+## 5. criterion-107 anchor cover on the round-68 entry
+$ python3 quality/check-anchor-cover.py --repo . --rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 \
+    --entry corpus/knowledge/gate-git-read-guards-r68.md --work $S/anchor
+ANCHOR_COVER: row=K01 sid=S437 line=6 name=git-cat-file.adoc locators=6,21-22,27-28,40-41,44-45,50-51,55,198-199,295-296,303-304 eof=unchecked verdict=OK
+... (K02..K08 identical row shape, each verdict=OK)
+CHECK107: rows=8 covered=8 miss=0 verdict=OK
+rc=0
+The tool emits no `entries=` field; its summary tokens are rows/covered/miss/verdict.
+
+## 6. three contract gates at the base revision
+$ python3 quality/check-evidence-pointers.py --repo . --rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --branch master
+PRED-PTR-r36-v1 rev=04093b83f73a841117d3b31dbb2a6063f4f2a454 pointers_r35=8 dangling_r35=2 dangling_r35_closed=1 pointers_r36=35 dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok verdict=TARGET_MET
+tip_axis: quality/receipts/axis-2a65350a4df2a31985ed37e90df90325348a8820.txt@2a65350a4df2a31985ed37e90df90325348a8820
+rc=0
+
+$ python3 quality/check-landed-contract.py --repo . \
+    --frozen-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 \
+    --frozen tools/mado-terminal.py --landed tools/mado-terminal.py
+CHECK96: frozen=9 landed=9 added=0 removed=0 unregistered=0 verdict=OK
+rc=0
+Pair chosen because the docstring advertises only placeholders and no round-69 tool contract
+exists; `tools/mado-terminal.py` is the lane's contract-bearing docstring (9 out-of-contract
+items). Landed bytes == base blob (git diff --quiet rc 0; sha256
+143820476403085d2ee71c1f12529efd8206ed24914703698e3584611d189f34 both sides).
+
+$ R=$(git ls-tree --name-only 04093b83f73a841117d3b31dbb2a6063f4f2a454:.ufo/waves/round-68/w1 | grep '\.md$' | sed 's|^|.ufo/waves/round-68/w1/|')   # 12 seat reports
+$ python3 quality/check-deliverables.py --repo . --rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --report $R
+DECLARATION report=.ufo/waves/round-68/w1/R68ExecGate1.md named=.ufo/waves/round-68/w1/R68ExecGate1/R68ExecGate1/draft/quality/check-anchor-cover.py grammar=section status=ABSENT
+DECLARATION report=.ufo/waves/round-68/w1/R68ExecGate1.md named=.ufo/waves/round-68/w1/R68ExecGate1/R68ExecGate1/draft/quality/check-control-receipts.py grammar=section status=ABSENT
+DECLARATION report=.ufo/waves/round-68/w1/R68ExecGate1.md named=.ufo/waves/round-68/w1/R68ExecGate1/R68ExecGate1/draft/quality/check-deliverables.py grammar=section status=ABSENT
+CHECK101: reports=12 declared=4 exists=1 absent=3 undeclared=11 verdict=FAIL
+rc=1
+Same with `--require-declaration`: CHECK101: reports=12 declared=4 exists=1 absent=3 undeclared=11 verdict=FAIL, rc=1.
+Cause (pre-existing at base, not round-69 harm):
+- R68ExecGate1's `## Deliverables` bullets are seat-name-relative (`R68ExecGate1/draft/...`),
+  so the resolver prepends the seat dir again (`.ufo/waves/round-68/w1/R68ExecGate1/R68ExecGate1/...`);
+  the three draft blobs DO exist at base under `.ufo/waves/round-68/w1/R68ExecGate1/draft/quality/`
+  (git cat-file -e: all three EXISTS). The criterion-101 grammar wants seat-dir-relative bullets.
+- 11 of the 12 round-68 seat reports carry no `Report:` trailer (only R68ExecGate1.md does), so
+  they read UNDECLARED; without --require-declaration the verdict is still FAIL (3 absent).
+
+## summary
+GREEN at base: axis gate (3/3 MATCH, rc 0); landing counters (GREEN, 4/4 legs rc 0); hermetic
+gate (460/460, rc 0); all six instrument selftests (27/27, 52/52, 26/26, 62/62, 54/54, 12/12,
+rc 0); criterion-107 anchor cover (rows=8 covered=8 miss=0, rc 0); evidence pointers (TARGET_MET,
+rc 0); landed contract on the mado-terminal pair (OK, rc 0).
+RED at base for reasons predating round 69: check-deliverables over the 12 round-68 seat reports
+(rc 1: 3 ABSENT from seat-name-prefixed bullets, 11 UNDECLARED for missing trailers).
+L1 must re-run at the measured content: `bash quality/landing-counters.sh --repo . --rev <measured>
+--round 69 --scratch-root <scratch>` and `python3 quality/check-axis-scores.py --repo . --rev
+<measured>`; the navigation row must be re-published 80/80 -> 81/81 in the round-69 records
+commit (fixture probe: published 80/80 vs derived 81/81 => STALE, rc 1).
+
+# scratch: /fast/scratch/hyaku/mado-r69/R69ExecCadence removed (rm -rf rc 0, verified absent)

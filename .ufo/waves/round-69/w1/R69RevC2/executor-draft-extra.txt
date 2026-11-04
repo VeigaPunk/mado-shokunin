@@ -1,0 +1,23 @@
+chained-overwrite (True, True)
+SOURCE_BEGIN
+env={"GIT_NO_REPLACE_OBJECTS":"1"}
+env=other={}
+subprocess.run(["git","show"],env=env)
+SOURCE_END
+onehop-param-overwrite (True, True)
+SOURCE_BEGIN
+def launch(env):
+    env={}
+    subprocess.run(["git","show"],env=env)
+env={"GIT_NO_REPLACE_OBJECTS":"1"}
+launch(env)
+SOURCE_END
+dead-producer-return (True, True)
+SOURCE_BEGIN
+def git_env():
+    env={}
+    return env
+    return {"GIT_NO_REPLACE_OBJECTS":"1"}
+env=git_env()
+subprocess.run(["git","show"],env=env)
+SOURCE_END
