@@ -1,0 +1,22 @@
+# round-68 C2 counter — frozen-command erratum (append-only record)
+# captured 2026-11-03 by the L1 after R68ExecHazard reported it; the frozen declaration is not edited.
+
+The frozen C2 counting command passes --scratch-root, but the counter committed at e0727cda
+(quality/counters/c2-r68-reader-guard.py, sha256 8eb99a63e324fce18eda824d7aefa48d72650ff6abb7c4afa45def9191ce880e) had no such argument:
+
+$ python3 -I <counter at e0727cda> --repo . --rev 510100c8... --controls ... --scratch-root DIR
+usage: committed-c2.py [-h] [--repo REPO] [--rev REV] [--controls CONTROLS]
+                       [--selftest]
+committed-c2.py: error: unrecognized arguments: --scratch-root /fast/scratch/hyaku/mado-r68/l1/c2base
+rc=2
+
+# Fix (instrument only; predicate unchanged): the counter accepts --scratch-root for interface
+# parity (it writes nothing) and its selftest now asserts the frozen argument set parses.
+
+$ python3 -I quality/counters/c2-r68-reader-guard.py --repo . --rev 510100c8... --controls ... --scratch-root DIR
+MADO_R68_READER_GUARD: population=20 readers=13 guarded=1 unguarded=12 controls=11/11 verdict=TARGET_MISSED rev=510100c81e6cf63fec6be380c2f2f9c670f32cbc
+rc=1
+
+$ python3 -I quality/counters/c2-r68-reader-guard.py --selftest
+MADO_R68_READER_GUARD_SELFTEST: 18/18 assertions passed
+rc=0

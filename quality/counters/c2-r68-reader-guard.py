@@ -6,6 +6,9 @@ environment (claim C2, attempt 1).
         --scratch-root DIR
     python3 quality/counters/c2-r68-reader-guard.py --selftest --scratch-root DIR
 
+`--scratch-root` is accepted for interface parity with the lane's counters and is not used:
+this counter reads git objects and writes nothing.
+
 Population: every tracked file whose path matches `quality/check-*.py` at --rev (the
 lane's standing gates, enumerated from git objects, never the worktree).
 
@@ -289,6 +292,14 @@ def _selftest_checks():
     want("guard inside a non-env call keyword is not a guard",
          classify('def f(repo):\n    g(["git", "-C", repo, "show", "HEAD:a"], '
                   'labels={"GIT_NO_REPLACE_OBJECTS": "1"})\n')[1] is False)
+    frozen = ["--repo", ".", "--rev", "HEAD", "--controls", "cases.json",
+              "--scratch-root", "/scratch/dir"]
+    try:
+        parsed = build_parser().parse_args(frozen)
+        parsed_ok = parsed.scratch_root == "/scratch/dir" and parsed.controls == "cases.json"
+    except SystemExit:
+        parsed_ok = False
+    want("the frozen counting command's argument set parses", parsed_ok)
     return checks
 
 
@@ -320,13 +331,18 @@ def selftest():
 
 
 # --------------------------------------------------------------------------------------------- cli
-def main(argv=None):
+def build_parser():
     ap = argparse.ArgumentParser(add_help=True)
     ap.add_argument("--repo")
     ap.add_argument("--rev")
     ap.add_argument("--controls")
+    ap.add_argument("--scratch-root")
     ap.add_argument("--selftest", action="store_true")
-    args = ap.parse_args(argv)
+    return ap
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
     try:
         if args.selftest:
             return selftest()
