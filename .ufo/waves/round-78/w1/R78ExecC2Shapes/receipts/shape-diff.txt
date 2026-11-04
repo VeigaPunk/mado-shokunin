@@ -1,0 +1,100 @@
+MADO_C2_SHAPE: case=version kind=regex role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='Hyprland 0.58.0 built from branch v0.58.0 at commit 0123456789abcdef clean (tag).' note=
+MADO_C2_SHAPE: case=version kind=regex role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='Hyprland 0.57.0 built from branch main at commit f00fba1 clean (none).' note=churn next release
+MADO_C2_SHAPE: case=version kind=regex role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='Hyprland (unknown build)' note=
+MADO_C2_SHAPE: case=version kind=regex role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).' note=
+MADO_C2_SHAPE: case=version kind=regex role=negative verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='Hyprland 0.56.2 not reachable (socket missing)' note=c8 rc0 error line inside the accepted regex shape
+MADO_C2_SHAPE: case=configerrors kind=empty role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='unknown option general:nope' note=
+MADO_C2_SHAPE: case=configerrors kind=empty role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='' note=
+MADO_C2_SHAPE: case=configerrors kind=empty role=negative verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='\n' note=c8 rc0 newline-only output; rstrip(chr(10)) eats every trailing newline
+MADO_C2_SHAPE: case=configerrors kind=empty role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='failed to load config: syntax error' note=c8 rc0 error text
+MADO_C2_SHAPE: case=monitors-size kind=regex role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='DP-1 3440x1440@120.00000' note=
+MADO_C2_SHAPE: case=monitors-size kind=regex role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='HDMI-A-1 1920x1080@60.00000' note=
+MADO_C2_SHAPE: case=monitors-size kind=regex role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='DP-3 640x480@59.94000' note=churn second output, float rate
+MADO_C2_SHAPE: case=monitors-size kind=regex role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='DP-1 3440x1440@' note=
+MADO_C2_SHAPE: case=monitors-size kind=regex role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='DP-1 3440x1440@60.0x' note=
+MADO_C2_SHAPE: case=monitors-size kind=regex role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='jq: error (at <stdin>:0): Cannot index null with "name"' note=c8 rc0 jq error text from a failed upstream dump
+MADO_C2_SHAPE: case=monitors-reserved kind=int4 role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='[0,40,0,0]' note=
+MADO_C2_SHAPE: case=monitors-reserved kind=int4 role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='[8,26,8,26]' note=
+MADO_C2_SHAPE: case=monitors-reserved kind=int4 role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='[0,26,0,26]' note=churn right-anchored band
+MADO_C2_SHAPE: case=monitors-reserved kind=int4 role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='[0,26,0]' note=
+MADO_C2_SHAPE: case=monitors-reserved kind=int4 role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=committed out='[-1,26,0,0]' note=
+MADO_C2_SHAPE: case=monitors-reserved kind=int4 role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='[0,26.5,0,0]' note=c3 float where int asserted (element)
+MADO_C2_SHAPE: case=monitors-reserved kind=int4 role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=attack out='[0,true,0,0]' note=c1 JSON bool where int asserted; bool is an int subclass
+MADO_C2_SHAPE: case=monitors-reserved kind=int4 role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='["0","26","0","0"]' note=c2 numeric strings as elements
+MADO_C2_SHAPE: case=monitors-reserved kind=int4 role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='null' note=c1 valid JSON of unexpected type
+MADO_C2_SHAPE: case=gaps-out kind=exact role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='custom type: 10 10 10 10' note=
+MADO_C2_SHAPE: case=gaps-out kind=exact role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='custom type: 0 0 0 0 ' note=c7 trailing-space padded value against exact row
+MADO_C2_SHAPE: case=kb-layout kind=exact role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='str: us' note=
+MADO_C2_SHAPE: case=kb-layout kind=exact role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='str:  br' note=c7 double-space padded value against exact row
+MADO_C2_SHAPE: case=binds-count kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='193' note=
+MADO_C2_SHAPE: case=binds-count kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='1024' note=
+MADO_C2_SHAPE: case=binds-count kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out=' 193' note=c7 whitespace-padded integer (leading space)
+MADO_C2_SHAPE: case=binds-count kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='0' note=
+MADO_C2_SHAPE: case=binds-count kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='-3' note=
+MADO_C2_SHAPE: case=binds-count kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='192' note=
+MADO_C2_SHAPE: case=binds-count kind=int_range role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=attack out='+193' note=c7 explicit-sign integer; int() accepts, fullmatch refuses
+MADO_C2_SHAPE: case=binds-count kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='jq: error (at <stdin>:0): null (null) has no length' note=c8 rc0 error text
+MADO_C2_SHAPE: case=layers-namespaces kind=sorted_unique role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='mako,wallpaper,waybar' note=
+MADO_C2_SHAPE: case=layers-namespaces kind=sorted_unique role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='walker,wallpaper,waybar' note=
+MADO_C2_SHAPE: case=layers-namespaces kind=sorted_unique role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out=' walker,wallpaper,waybar' note=c7 leading-space padded CSV entry
+MADO_C2_SHAPE: case=layers-namespaces kind=sorted_unique role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=committed out='waybar,wallpaper' note=
+MADO_C2_SHAPE: case=layers-namespaces kind=sorted_unique role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=committed out='wallpaper,wallpaper,waybar' note=
+MADO_C2_SHAPE: case=layers-namespaces kind=sorted_unique role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='' note=
+MADO_C2_SHAPE: case=layers-namespaces kind=sorted_unique role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=attack out='wallpaper,waybar,waybar' note=c5 duplicated list entry (tail)
+MADO_C2_SHAPE: case=layers-namespaces kind=sorted_unique role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=attack out='waybar,waybar' note=c5 duplicated single entry
+MADO_C2_SHAPE: case=waybar-process kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='20011' note=
+MADO_C2_SHAPE: case=waybar-process kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='999' note=
+MADO_C2_SHAPE: case=waybar-process kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='4194304' note=churn upper boundary of the declared pid range
+MADO_C2_SHAPE: case=waybar-process kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='0' note=
+MADO_C2_SHAPE: case=waybar-process kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='' note=
+MADO_C2_SHAPE: case=waybar-process kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='-5' note=c6 negative pid
+MADO_C2_SHAPE: case=waybar-process kind=int_range role=negative verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='1720 ' note=c7 trailing-space padded pid
+MADO_C2_SHAPE: case=mako-mode kind=exact role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='do-not-disturb' note=
+MADO_C2_SHAPE: case=mako-mode kind=exact role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out="Couldn't connect: bus absent" note=c8 rc0 error text against exact row
+MADO_C2_SHAPE: case=omarchy-theme kind=exact role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='Tokyo Night' note=
+MADO_C2_SHAPE: case=omarchy-theme kind=exact role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='error: theme dir missing' note=c8 rc0 error text against exact row
+MADO_C2_SHAPE: case=omarchy-version kind=regex role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='3.9.0' note=
+MADO_C2_SHAPE: case=omarchy-version kind=regex role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='3.10.2' note=
+MADO_C2_SHAPE: case=omarchy-version kind=regex role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='3.9.0' note=churn bump (committed has one; this is a duplicate guard)
+MADO_C2_SHAPE: case=omarchy-version kind=regex role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='3.8' note=
+MADO_C2_SHAPE: case=omarchy-version kind=regex role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='v3.8.3' note=
+MADO_C2_SHAPE: case=omarchy-version kind=regex role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='3.8.3' note=
+MADO_C2_SHAPE: case=omarchy-version kind=regex role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='3.8.3\nnot installed' note=c8 rc0 error appended after a version line
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='{"id":3,"name":"3"}' note=
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='{"id":-99,"name":"special"}' note=
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='{"id":2,"name":"2"}' note=churn switched workspace
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=committed out='{"id":"1","name":"1"}' note=
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='{"id":1}' note=
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='[]' note=
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='"1"' note=c1 valid JSON string where object asserted
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='[{"id":1,"name":"1"}]' note=c1 valid JSON array where object asserted
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=attack out='{"id":1.5,"name":"1"}' note=c3 float where int asserted
+MADO_C2_SHAPE: case=active-workspace kind=json_object_fields role=negative verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='{"id":1,"name":"1","extra":null}' note=c1 object with an unmodelled extra field
+MADO_C2_SHAPE: case=layers-dump kind=levels_dump role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='{"HDMI-A-1": {"levels": {"0": [], "1": [], "2": [], "3": []}}}' note=
+MADO_C2_SHAPE: case=layers-dump kind=levels_dump role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='{"DP-1": {"levels": {"0": [{"namespace": "wallpaper"}], "1": [], "2": [{"namespace": "waybar"}], "3": []}}}' note=churn same monitor reshaped
+MADO_C2_SHAPE: case=layers-dump kind=levels_dump role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=committed out='{"DP-1": {"levels": {"0": []}}}' note=
+MADO_C2_SHAPE: case=layers-dump kind=levels_dump role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='[]' note=
+MADO_C2_SHAPE: case=layers-dump kind=levels_dump role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=attack out='{"DP-1": []}' note=c1 valid JSON monitor value of unexpected type
+MADO_C2_SHAPE: case=layers-dump kind=levels_dump role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='{}' note=c4 empty object where a monitor entry is required
+MADO_C2_SHAPE: case=layers-dump kind=levels_dump role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=attack out='{"DP-1": {"levels": {"0": [], "1": [], "2": []}}}' note=c1 levels object missing level 3
+MADO_C2_SHAPE: case=monitors-dump kind=array_fields role=churn verdict=R78_ONLY r78=1 naive=0 src=committed out='[{"name": "HDMI-A-1", "width": 1920, "height": 1080, "reserved": [0, 40, 0, 0], "scale": 1.0}]' note=
+MADO_C2_SHAPE: case=monitors-dump kind=array_fields role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='[{"name": "DP-1", "width": 3440, "height": 1440, "reserved": [0, 26, 0], "scale": 1.0}]' note=
+MADO_C2_SHAPE: case=monitors-dump kind=array_fields role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='[{"name": "", "width": 3440, "height": 1440, "reserved": [0, 26, 0, 0], "scale": 1.0}]' note=
+MADO_C2_SHAPE: case=monitors-dump kind=array_fields role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='[]' note=c4 empty array where min_items 1 required
+MADO_C2_SHAPE: case=monitors-dump kind=array_fields role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='{"name": "DP-1", "width": 3440, "height": 1440, "reserved": [0, 26, 0, 0], "scale": 1.0}' note=c1 valid JSON object where array asserted
+MADO_C2_SHAPE: case=monitors-dump kind=array_fields role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='[{"name": "DP-1", "width": 3440.0, "height": 1440, "reserved": [0, 26, 0, 0], "scale": 1.0}]' note=c3 float where int asserted
+MADO_C2_SHAPE: case=clients-count kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='7' note=
+MADO_C2_SHAPE: case=clients-count kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='0' note=
+MADO_C2_SHAPE: case=clients-count kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='0' note=churn zero clients; also what jq prints when the upstream dump is empty
+MADO_C2_SHAPE: case=clients-count kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='-1' note=
+MADO_C2_SHAPE: case=clients-count kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='2' note=
+MADO_C2_SHAPE: case=clients-count kind=int_range role=negative verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='\t3' note=c7 tab-padded integer
+MADO_C2_SHAPE: case=clients-count kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=attack out='jq: error (at <stdin>:0): null (null) has no length' note=c8 rc0 error text
+MADO_C2_SHAPE: case=workspaces-count kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='12' note=
+MADO_C2_SHAPE: case=workspaces-count kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=committed out='1' note=
+MADO_C2_SHAPE: case=workspaces-count kind=int_range role=churn verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out='1000' note=churn upper boundary of the declared range
+MADO_C2_SHAPE: case=workspaces-count kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='0' note=
+MADO_C2_SHAPE: case=workspaces-count kind=int_range role=negative verdict=BOTH_REJECT r78=0 naive=0 src=committed out='ten' note=
+MADO_C2_SHAPE: case=workspaces-count kind=int_range role=negative verdict=BOTH_ACCEPT r78=1 naive=1 src=attack out=' 7' note=c7 leading-space padded integer
+MADO_C2_SHAPE: case=workspaces-count kind=int_range role=negative verdict=NAIVE_ONLY r78=0 naive=1 src=attack out='1_000' note=c7 underscore-grouped integer; int() accepts it
+MADO_C2_SHAPE_SUM: samples=99 both_accept=37 both_reject=48 r78_only=1 naive_only=13 negatives_accepted_by_r78=6

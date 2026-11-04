@@ -1,0 +1,24 @@
+MADO_R78_PROBE: name=version row=hyprctl version kind=regex match=yes rc=0 out='Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clea...'
+MADO_R78_PROBE: name=configerrors row=hyprctl configerrors kind=empty match=yes rc=0 out=''
+MADO_R78_PROBE: name=monitors-size row=hyprctl monitors kind=regex match=yes rc=0 out='DP-1 3440x1440@99.99700'
+MADO_R78_PROBE: name=monitors-reserved row=hyprctl monitors kind=int4 match=yes rc=0 json-bytes=11
+MADO_R78_PROBE: name=gaps-out row=hyprctl getoption <key> kind=exact match=yes rc=0 out='custom type: 0 0 0 0'
+MADO_R78_PROBE: name=kb-layout row=hyprctl getoption <key> kind=exact match=yes rc=0 out='str: br'
+MADO_R78_PROBE: name=binds-count row=hyprctl binds -j kind=int_range match=yes rc=0 out='192'
+MADO_R78_PROBE: name=layers-namespaces row=hyprctl layers -j kind=sorted_unique match=yes rc=0 out='wallpaper,waybar'
+MADO_R78_PROBE: name=waybar-process row=pgrep -a kind=int_range match=yes rc=0 out='1720'
+MADO_R78_PROBE: name=mako-mode row=makoctl mode kind=exact match=yes rc=0 out='default'
+MADO_R78_PROBE: name=omarchy-theme row=omarchy theme current kind=exact match=yes rc=0 out='Matte Black'
+MADO_R78_PROBE: name=omarchy-version row=omarchy version kind=regex match=yes rc=0 out='3.8.3'
+MADO_R78_PROBE: name=active-workspace row=hyprctl activeworkspace kind=json_object_fields match=yes rc=0 json-bytes=20
+MADO_R78_PROBE: name=layers-dump row=hyprctl layers -j kind=levels_dump match=yes rc=0 json-bytes=748
+MADO_R78_PROBE: name=monitors-dump row=hyprctl monitors kind=array_fields match=yes rc=0 json-bytes=1339
+MADO_R78_PROBE: name=clients-count row=hyprctl clients -j kind=int_range match=yes rc=0 out='2'
+MADO_R78_PROBE: name=workspaces-count row=hyprctl workspaces -j kind=int_range match=yes rc=0 out='2'
+MADO_R78_MUTANT: name=rc-blind matched=12/17 killed=yes
+MADO_R78_MUTANT: name=int-range-lower-open matched=13/17 killed=yes
+MADO_R78_MUTANT: name=json-required-ignored matched=15/17 killed=yes
+MADO_R78_MUTANT: name=sorted-unique-dropped matched=16/17 killed=yes
+MADO_R78_MUTANT: name=empty-accepted matched=16/17 killed=yes
+MADO_R78_CONTROL: held-correct=5/17 rule=fixed-value(held-r77-row-binding)
+MADO_R78_RUNBOOK: cases=17 executed=17 matched=17 shapes=12/12 anchors=17/17 control=5/17 mutants=5 killed=5 verdict=TARGET_MET rev=d27c5ff4df9ee7c159bb515987bd4eae160f86e9

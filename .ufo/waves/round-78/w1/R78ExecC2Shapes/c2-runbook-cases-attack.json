@@ -1,0 +1,802 @@
+{
+ "cases": [
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl version | head -n 1"
+   ],
+   "frozen": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).",
+   "kind": "regex",
+   "name": "version",
+   "negatives": [
+    {
+     "out": "Hyprland (unknown build)",
+     "rc": 0
+    },
+    {
+     "out": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": "Hyprland 0.56.2 not reachable (socket missing)",
+     "attack": "R78ExecC2Shapes",
+     "note": "c8 rc0 error line inside the accepted regex shape"
+    }
+   ],
+   "samples": [
+    {
+     "out": "Hyprland 0.58.0 built from branch v0.58.0 at commit 0123456789abcdef clean (tag).",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "Hyprland 0.57.0 built from branch main at commit f00fba1 clean (none).",
+     "attack": "R78ExecC2Shapes",
+     "note": "churn next release"
+    }
+   ],
+   "skill_anchor": "hyprctl version",
+   "value": "^Hyprland [0-9]+\\.[0-9]+\\.[0-9]+ ",
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl configerrors"
+   ],
+   "frozen": "",
+   "kind": "empty",
+   "name": "configerrors",
+   "negatives": [
+    {
+     "out": "unknown option general:nope",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": "\n",
+     "attack": "R78ExecC2Shapes",
+     "note": "c8 rc0 newline-only output; rstrip(chr(10)) eats every trailing newline"
+    },
+    {
+     "rc": 0,
+     "out": "failed to load config: syntax error",
+     "attack": "R78ExecC2Shapes",
+     "note": "c8 rc0 error text"
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "hyprctl configerrors",
+   "value": null,
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl monitors -j | jq -r '.[0] | \"\\(.name) \\(.width)x\\(.height)@\\(.refreshRate)\"'"
+   ],
+   "frozen": "DP-1 3440x1440@99.99700",
+   "kind": "regex",
+   "name": "monitors-size",
+   "negatives": [
+    {
+     "out": "DP-1 3440x1440@",
+     "rc": 0
+    },
+    {
+     "out": "DP-1 3440x1440@60.0x",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "jq: error (at <stdin>:0): Cannot index null with \"name\"",
+     "attack": "R78ExecC2Shapes",
+     "note": "c8 rc0 jq error text from a failed upstream dump"
+    }
+   ],
+   "samples": [
+    {
+     "out": "DP-1 3440x1440@120.00000",
+     "rc": 0
+    },
+    {
+     "out": "HDMI-A-1 1920x1080@60.00000",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "DP-3 640x480@59.94000",
+     "attack": "R78ExecC2Shapes",
+     "note": "churn second output, float rate"
+    }
+   ],
+   "skill_anchor": "hyprctl monitors",
+   "value": "^\\S+ [1-9][0-9]*x[1-9][0-9]*@[0-9]+(\\.[0-9]+)?$",
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl monitors -j | jq -c '.[0].reserved'"
+   ],
+   "frozen": "[0,26,0,0]",
+   "kind": "int4",
+   "name": "monitors-reserved",
+   "negatives": [
+    {
+     "out": "[0,26,0]",
+     "rc": 0
+    },
+    {
+     "out": "[-1,26,0,0]",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "[0,26.5,0,0]",
+     "attack": "R78ExecC2Shapes",
+     "note": "c3 float where int asserted (element)"
+    },
+    {
+     "rc": 0,
+     "out": "[0,true,0,0]",
+     "attack": "R78ExecC2Shapes",
+     "note": "c1 JSON bool where int asserted; bool is an int subclass"
+    },
+    {
+     "rc": 0,
+     "out": "[\"0\",\"26\",\"0\",\"0\"]",
+     "attack": "R78ExecC2Shapes",
+     "note": "c2 numeric strings as elements"
+    },
+    {
+     "rc": 0,
+     "out": "null",
+     "attack": "R78ExecC2Shapes",
+     "note": "c1 valid JSON of unexpected type"
+    }
+   ],
+   "samples": [
+    {
+     "out": "[0,40,0,0]",
+     "rc": 0
+    },
+    {
+     "out": "[8,26,8,26]",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "[0,26,0,26]",
+     "attack": "R78ExecC2Shapes",
+     "note": "churn right-anchored band"
+    }
+   ],
+   "skill_anchor": "hyprctl monitors",
+   "value": null,
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl getoption general:gaps_out | head -n 1"
+   ],
+   "frozen": "custom type: 0 0 0 0",
+   "kind": "exact",
+   "name": "gaps-out",
+   "negatives": [
+    {
+     "out": "custom type: 10 10 10 10",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "custom type: 0 0 0 0 ",
+     "attack": "R78ExecC2Shapes",
+     "note": "c7 trailing-space padded value against exact row"
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "hyprctl getoption <key>",
+   "value": "custom type: 0 0 0 0",
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl getoption input:kb_layout | head -n 1"
+   ],
+   "frozen": "str: br",
+   "kind": "exact",
+   "name": "kb-layout",
+   "negatives": [
+    {
+     "out": "str: us",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "str:  br",
+     "attack": "R78ExecC2Shapes",
+     "note": "c7 double-space padded value against exact row"
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "hyprctl getoption <key>",
+   "value": "str: br",
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl binds -j | jq 'length'"
+   ],
+   "frozen": "192",
+   "kind": "int_range",
+   "name": "binds-count",
+   "negatives": [
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "out": "-3",
+     "rc": 0
+    },
+    {
+     "out": "192",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": "+193",
+     "attack": "R78ExecC2Shapes",
+     "note": "c7 explicit-sign integer; int() accepts, fullmatch refuses"
+    },
+    {
+     "rc": 0,
+     "out": "jq: error (at <stdin>:0): null (null) has no length",
+     "attack": "R78ExecC2Shapes",
+     "note": "c8 rc0 error text"
+    }
+   ],
+   "samples": [
+    {
+     "out": "193",
+     "rc": 0
+    },
+    {
+     "out": "1024",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": " 193",
+     "attack": "R78ExecC2Shapes",
+     "note": "c7 whitespace-padded integer (leading space)"
+    }
+   ],
+   "skill_anchor": "hyprctl binds -j",
+   "value": [
+    1,
+    100000
+   ],
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl layers -j | jq -r '[to_entries[] | .value.levels | to_entries[] | select(.value|length>0) | .value[].namespace] | sort | join(\",\")'"
+   ],
+   "frozen": "wallpaper,waybar",
+   "kind": "sorted_unique",
+   "name": "layers-namespaces",
+   "negatives": [
+    {
+     "out": "waybar,wallpaper",
+     "rc": 0
+    },
+    {
+     "out": "wallpaper,wallpaper,waybar",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "wallpaper,waybar,waybar",
+     "attack": "R78ExecC2Shapes",
+     "note": "c5 duplicated list entry (tail)"
+    },
+    {
+     "rc": 0,
+     "out": "waybar,waybar",
+     "attack": "R78ExecC2Shapes",
+     "note": "c5 duplicated single entry"
+    }
+   ],
+   "samples": [
+    {
+     "out": "mako,wallpaper,waybar",
+     "rc": 0
+    },
+    {
+     "out": "walker,wallpaper,waybar",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": " walker,wallpaper,waybar",
+     "attack": "R78ExecC2Shapes",
+     "note": "c7 leading-space padded CSV entry"
+    }
+   ],
+   "skill_anchor": "hyprctl layers -j",
+   "value": {
+    "must_include": [
+     "waybar"
+    ]
+   },
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "pgrep -x waybar | head -n 1"
+   ],
+   "frozen": "1720",
+   "kind": "int_range",
+   "name": "waybar-process",
+   "negatives": [
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 1
+    },
+    {
+     "rc": 0,
+     "out": "-5",
+     "attack": "R78ExecC2Shapes",
+     "note": "c6 negative pid"
+    },
+    {
+     "rc": 0,
+     "out": "1720 ",
+     "attack": "R78ExecC2Shapes",
+     "note": "c7 trailing-space padded pid"
+    }
+   ],
+   "samples": [
+    {
+     "out": "20011",
+     "rc": 0
+    },
+    {
+     "out": "999",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "4194304",
+     "attack": "R78ExecC2Shapes",
+     "note": "churn upper boundary of the declared pid range"
+    }
+   ],
+   "skill_anchor": "pgrep -a",
+   "value": [
+    1,
+    4194304
+   ],
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "makoctl mode"
+   ],
+   "frozen": "default",
+   "kind": "exact",
+   "name": "mako-mode",
+   "negatives": [
+    {
+     "out": "do-not-disturb",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "Couldn't connect: bus absent",
+     "attack": "R78ExecC2Shapes",
+     "note": "c8 rc0 error text against exact row"
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "makoctl mode",
+   "value": "default",
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "omarchy theme current"
+   ],
+   "frozen": "Matte Black",
+   "kind": "exact",
+   "name": "omarchy-theme",
+   "negatives": [
+    {
+     "out": "Tokyo Night",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "error: theme dir missing",
+     "attack": "R78ExecC2Shapes",
+     "note": "c8 rc0 error text against exact row"
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "omarchy theme current",
+   "value": "Matte Black",
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "omarchy version"
+   ],
+   "frozen": "3.8.3",
+   "kind": "regex",
+   "name": "omarchy-version",
+   "negatives": [
+    {
+     "out": "3.8",
+     "rc": 0
+    },
+    {
+     "out": "v3.8.3",
+     "rc": 0
+    },
+    {
+     "out": "3.8.3",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": "3.8.3\nnot installed",
+     "attack": "R78ExecC2Shapes",
+     "note": "c8 rc0 error appended after a version line"
+    }
+   ],
+   "samples": [
+    {
+     "out": "3.9.0",
+     "rc": 0
+    },
+    {
+     "out": "3.10.2",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "3.9.0",
+     "attack": "R78ExecC2Shapes",
+     "note": "churn bump (committed has one; this is a duplicate guard)"
+    }
+   ],
+   "skill_anchor": "omarchy version",
+   "value": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl activeworkspace -j | jq -c '{id,name}'"
+   ],
+   "frozen": "{\"id\":1,\"name\":\"1\"}",
+   "kind": "json_object_fields",
+   "name": "active-workspace",
+   "negatives": [
+    {
+     "out": "{\"id\":\"1\",\"name\":\"1\"}",
+     "rc": 0
+    },
+    {
+     "out": "{\"id\":1}",
+     "rc": 0
+    },
+    {
+     "out": "[]",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "\"1\"",
+     "attack": "R78ExecC2Shapes",
+     "note": "c1 valid JSON string where object asserted"
+    },
+    {
+     "rc": 0,
+     "out": "[{\"id\":1,\"name\":\"1\"}]",
+     "attack": "R78ExecC2Shapes",
+     "note": "c1 valid JSON array where object asserted"
+    },
+    {
+     "rc": 0,
+     "out": "{\"id\":1.5,\"name\":\"1\"}",
+     "attack": "R78ExecC2Shapes",
+     "note": "c3 float where int asserted"
+    },
+    {
+     "rc": 0,
+     "out": "{\"id\":1,\"name\":\"1\",\"extra\":null}",
+     "attack": "R78ExecC2Shapes",
+     "note": "c1 object with an unmodelled extra field"
+    }
+   ],
+   "samples": [
+    {
+     "out": "{\"id\":3,\"name\":\"3\"}",
+     "rc": 0
+    },
+    {
+     "out": "{\"id\":-99,\"name\":\"special\"}",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "{\"id\":2,\"name\":\"2\"}",
+     "attack": "R78ExecC2Shapes",
+     "note": "churn switched workspace"
+    }
+   ],
+   "skill_anchor": "hyprctl activeworkspace",
+   "value": {
+    "fields": {
+     "id": "int",
+     "name": "str"
+    }
+   },
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl layers -j"
+   ],
+   "kind": "levels_dump",
+   "name": "layers-dump",
+   "negatives": [
+    {
+     "out": "{\"DP-1\": {\"levels\": {\"0\": []}}}",
+     "rc": 0
+    },
+    {
+     "out": "[]",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "{\"DP-1\": []}",
+     "attack": "R78ExecC2Shapes",
+     "note": "c1 valid JSON monitor value of unexpected type"
+    },
+    {
+     "rc": 0,
+     "out": "{}",
+     "attack": "R78ExecC2Shapes",
+     "note": "c4 empty object where a monitor entry is required"
+    },
+    {
+     "rc": 0,
+     "out": "{\"DP-1\": {\"levels\": {\"0\": [], \"1\": [], \"2\": []}}}",
+     "attack": "R78ExecC2Shapes",
+     "note": "c1 levels object missing level 3"
+    }
+   ],
+   "samples": [
+    {
+     "out": "{\"HDMI-A-1\": {\"levels\": {\"0\": [], \"1\": [], \"2\": [], \"3\": []}}}",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "{\"DP-1\": {\"levels\": {\"0\": [{\"namespace\": \"wallpaper\"}], \"1\": [], \"2\": [{\"namespace\": \"waybar\"}], \"3\": []}}}",
+     "attack": "R78ExecC2Shapes",
+     "note": "churn same monitor reshaped"
+    }
+   ],
+   "skill_anchor": "hyprctl layers -j",
+   "value": null,
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl monitors -j"
+   ],
+   "kind": "array_fields",
+   "name": "monitors-dump",
+   "negatives": [
+    {
+     "out": "[{\"name\": \"DP-1\", \"width\": 3440, \"height\": 1440, \"reserved\": [0, 26, 0], \"scale\": 1.0}]",
+     "rc": 0
+    },
+    {
+     "out": "[{\"name\": \"\", \"width\": 3440, \"height\": 1440, \"reserved\": [0, 26, 0, 0], \"scale\": 1.0}]",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "[]",
+     "attack": "R78ExecC2Shapes",
+     "note": "c4 empty array where min_items 1 required"
+    },
+    {
+     "rc": 0,
+     "out": "{\"name\": \"DP-1\", \"width\": 3440, \"height\": 1440, \"reserved\": [0, 26, 0, 0], \"scale\": 1.0}",
+     "attack": "R78ExecC2Shapes",
+     "note": "c1 valid JSON object where array asserted"
+    },
+    {
+     "rc": 0,
+     "out": "[{\"name\": \"DP-1\", \"width\": 3440.0, \"height\": 1440, \"reserved\": [0, 26, 0, 0], \"scale\": 1.0}]",
+     "attack": "R78ExecC2Shapes",
+     "note": "c3 float where int asserted"
+    }
+   ],
+   "samples": [
+    {
+     "out": "[{\"name\": \"HDMI-A-1\", \"width\": 1920, \"height\": 1080, \"reserved\": [0, 40, 0, 0], \"scale\": 1.0}]",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl monitors",
+   "value": {
+    "fields": {
+     "height": "positive_int",
+     "name": "str",
+     "reserved": "int4",
+     "scale": "number",
+     "width": "positive_int"
+    },
+    "min_items": 1
+   },
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl clients -j | jq 'length'"
+   ],
+   "frozen": "2",
+   "kind": "int_range",
+   "name": "clients-count",
+   "negatives": [
+    {
+     "out": "-1",
+     "rc": 0
+    },
+    {
+     "out": "2",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": "\t3",
+     "attack": "R78ExecC2Shapes",
+     "note": "c7 tab-padded integer"
+    },
+    {
+     "rc": 0,
+     "out": "jq: error (at <stdin>:0): null (null) has no length",
+     "attack": "R78ExecC2Shapes",
+     "note": "c8 rc0 error text"
+    }
+   ],
+   "samples": [
+    {
+     "out": "7",
+     "rc": 0
+    },
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "0",
+     "attack": "R78ExecC2Shapes",
+     "note": "churn zero clients; also what jq prints when the upstream dump is empty"
+    }
+   ],
+   "skill_anchor": "hyprctl clients -j",
+   "value": [
+    0,
+    100000
+   ],
+   "attack_review": "R78ExecC2Shapes"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl workspaces -j | jq 'length'"
+   ],
+   "frozen": "2",
+   "kind": "int_range",
+   "name": "workspaces-count",
+   "negatives": [
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "out": "ten",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": " 7",
+     "attack": "R78ExecC2Shapes",
+     "note": "c7 leading-space padded integer"
+    },
+    {
+     "rc": 0,
+     "out": "1_000",
+     "attack": "R78ExecC2Shapes",
+     "note": "c7 underscore-grouped integer; int() accepts it"
+    }
+   ],
+   "samples": [
+    {
+     "out": "12",
+     "rc": 0
+    },
+    {
+     "out": "1",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "1000",
+     "attack": "R78ExecC2Shapes",
+     "note": "churn upper boundary of the declared range"
+    }
+   ],
+   "skill_anchor": "hyprctl workspaces -j",
+   "value": [
+    1,
+    1000
+   ],
+   "attack_review": "R78ExecC2Shapes"
+  }
+ ],
+ "protocol": "mado-c2-r78-v1+attack-R78ExecC2Shapes",
+ "attack_note": "frozen 17 cases extended by seat R78ExecC2Shapes with labelled churn and negative samples (categories c1-c8); not the frozen contract"
+}

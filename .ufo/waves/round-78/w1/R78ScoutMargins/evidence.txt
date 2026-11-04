@@ -1,0 +1,242 @@
+evidence: tools/mado-barfoot.py r78-v1 sha256 aac5d41b923711e174c6d62bb24da5a2b53abf7c938bfc5b68816929a12009c0
+each block: fixture -> rc + RESULT/ERROR line; argv = python3 -I tools/mado-barfoot.py --config config.json --layers layers.json --monitors monitors.json [--monitor M1]
+
+== anchor table ==
+## A1-top-auto-width-no-margin
+config   {"position":"top","layer":"top","height":26}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,26,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+  rc=0
+
+## A2-top-margin-int
+config   {"position":"top","layer":"top","height":30,"margin":4}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,38,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":4,"y":4,"w":3432,"h":30,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=30 width=0 margins=4,4,4,4 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=38 expected=38 verdict=CLEAN
+  rc=0
+
+## A3-top-margin-css-2
+config   {"position":"top","layer":"top","height":30,"margin":"4 8"}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,38,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":8,"y":4,"w":3424,"h":30,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=30 width=0 margins=4,8,4,8 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=38 expected=38 verdict=CLEAN
+  rc=0
+
+## A4-top-per-side
+config   {"position":"top","layer":"top","height":30,"margin-top":10,"margin-bottom":2}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,42,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":10,"w":3440,"h":30,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=30 width=0 margins=10,0,2,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=42 expected=42 verdict=CLEAN
+  rc=0
+
+## A5-bottom-margin
+config   {"position":"bottom","layer":"top","height":30,"margin":8}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,0,0,46],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":8,"y":1402,"w":3424,"h":30,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=bottom layer=top level=2 ns=waybar height=30 width=0 margins=8,8,8,8 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=46 expected=46 verdict=CLEAN
+  rc=0
+
+## A6-left-margin
+config   {"position":"left","layer":"top","width":40,"margin":6}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[52,0,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":6,"y":6,"w":40,"h":1428,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=left layer=top level=2 ns=waybar height=0 width=40 margins=6,6,6,6 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=52 expected=52 verdict=CLEAN
+  rc=0
+
+## A7-right-margin
+config   {"position":"right","layer":"top","width":36,"margin":5}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,0,46,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":3399,"y":5,"w":36,"h":1430,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=right layer=top level=2 ns=waybar height=0 width=36 margins=5,5,5,5 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=46 expected=46 verdict=CLEAN
+  rc=0
+
+## A8-right-zero-margin
+config   {"position":"right","layer":"top","width":40}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,0,40,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":3400,"y":0,"w":40,"h":1440,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=right layer=top level=2 ns=waybar height=0 width=40 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=40 expected=40 verdict=CLEAN
+  rc=0
+
+## A9-layer-bottom
+config   {"position":"top","layer":"bottom","height":28}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,28,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":28,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=bottom level=1 ns=waybar height=28 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=28 expected=28 verdict=CLEAN
+  rc=0
+
+## A10-output-exclude-other
+config   {"position":"top","layer":"top","height":24,"output":"!M2"}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,24,0,0],"scale":1.0,"transform":0},{"name":"M2","width":1920,"height":1080,"reserved":[0,0,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":24,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=24 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=24 expected=24 verdict=CLEAN
+  rc=0
+
+## A11-output-excluded
+config   {"position":"top","layer":"top","height":26,"output":"!M1"}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,0,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR
+  rc=3
+
+## A12-width-and-margin
+config   {"position":"top","layer":"top","height":26,"width":800,"margin":4}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,34,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":1320,"y":4,"w":800,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=800 margins=4,4,4,4 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=34 expected=34 verdict=CLEAN
+  rc=0
+
+## A13-exclusive-false
+config   {"position":"top","layer":"top","height":26,"exclusive":false}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,0,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=false
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=NOT_APPLIED band=0 expected=26 verdict=CLEAN
+  rc=0
+
+## A14-overlay-layer
+config   {"position":"top","layer":"overlay","height":26,"margin":4}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,34,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":4,"y":4,"w":3432,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=overlay level=3 ns=waybar height=26 width=0 margins=4,4,4,4 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=34 expected=34 verdict=CLEAN
+  rc=0
+
+== divergences ==
+## D1-output-array-pure-exclusion
+config   {"position":"top","layer":"top","height":26,"output":["!M2"]}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,26,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+  rc=0
+
+## D2-output-array-include-then-exclude
+config   {"position":"top","layer":"top","height":26,"output":["M1","!M1"]}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,26,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR
+  rc=3
+
+## D3-output-empty-string
+config   {"position":"top","layer":"top","height":26,"output":""}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,26,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR
+  rc=3
+
+## D4-centring-odd-width
+config   {"position":"top","layer":"top","height":26,"width":801}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,26,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":1320,"y":0,"w":801,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=801 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=EQ band=26 expected=26 verdict=DIFFER
+  rc=1
+
+## D5-margin-px-suffix
+config   {"position":"top","layer":"top","height":26,"margin":"4px 0"}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,34,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":4,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=GT band=34 expected=26 verdict=DIFFER
+  rc=1
+
+## D5b-margin-real-token
+config   {"position":"top","layer":"top","height":26,"margin":"4.0"}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,34,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":4,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=GT band=34 expected=26 verdict=DIFFER
+  rc=1
+
+## D6-negative-opposite-margin
+config   {"position":"top","layer":"top","height":26,"margin-bottom":-4}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,22,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT: ERROR (stage=model a negative margin can void or invert the exclusive band; not modelled)
+  rc=3
+
+== named limits, observed ==
+## B1-static-addreserved-14
+config   {"position":"top","layer":"top","height":26}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,40,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":14,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=GT band=40 expected=26 verdict=DIFFER
+  rc=1
+
+## B2-scale-1.5
+config   {"position":"top","layer":"top","height":26}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,26,0,0],"scale":1.5,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT: ERROR (stage=model monitor M1 has scale/transform 1.5/0; the reply carries pixel size and the layer box is logical, so this join is not modelled)
+  rc=3
+
+## B3-transform-1
+config   {"position":"top","layer":"top","height":26}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,26,0,0],"scale":1.0,"transform":1}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT: ERROR (stage=model monitor M1 has scale/transform 1.0/1; the reply carries pixel size and the layer box is logical, so this join is not modelled)
+  rc=3
+
+## B4-dynamic-height
+config   {"position":"top","layer":"top","height":0}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,26,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":3440,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT: ERROR (stage=model dynamic height on a horizontal bar is the module allocation, not a declared value)
+  rc=3
+
+## C1-bar-taller-than-monitor
+config   {"position":"top","layer":"top","height":120}
+monitors [{"name":"M1","width":1920,"height":100,"reserved":[0,0,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":0,"w":1920,"h":120,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=120 width=0 margins=0,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=DIFFER band=0 expected=120 verdict=DIFFER
+  rc=1
+
+## C2-margin-pushes-past-edge
+config   {"position":"top","layer":"top","height":26,"margin-top":80}
+monitors [{"name":"M1","width":1920,"height":100,"reserved":[0,0,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":0,"y":80,"w":1920,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=80,0,0,0 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=DIFFER band=0 expected=106 verdict=DIFFER
+  rc=1
+
+## A15-second-consumer-arranged-first
+config   {"position":"top","layer":"top","height":26,"margin":4}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,60,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":4,"y":30,"w":3432,"h":26,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=4,4,4,4 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=GT band=60 expected=34 verdict=DIFFER
+  rc=1
+
+## A6b-left-explicit-height
+config   {"position":"left","layer":"top","width":40,"height":1000,"margin":6}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[52,0,0,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":6,"y":220,"w":40,"h":1000,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=left layer=top level=2 ns=waybar height=1000 width=40 margins=6,6,6,6 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=52 expected=52 verdict=CLEAN
+  rc=0
+
+## A7b-right-explicit-height
+config   {"position":"right","layer":"top","width":36,"height":1000,"margin":5}
+monitors [{"name":"M1","width":3440,"height":1440,"reserved":[0,0,46,0],"scale":1.0,"transform":0}]
+live     [{"namespace":"waybar","x":3399,"y":220,"w":36,"h":1000,"alpha":1.0,"pid":4242}]
+  MADO_BARFOOT_CONFIG: pos=right layer=top level=2 ns=waybar height=1000 width=36 margins=5,5,5,5 exclusive=true
+  MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=46 expected=46 verdict=CLEAN
+  rc=0
+
