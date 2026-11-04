@@ -4844,3 +4844,22 @@ round-83 ground are recorded in `corpus/lessons/round-82.md` and the round repor
 - **F1 remainder (low), deferred.** The carried round-81 `waybar-pgrep` case still holds a live PID
   (`c2-runbook-cases-r82.json:241,934,942,950,956,960`); it is the round-81 frozen case and the
   carried-unchanged assertion forbids editing it, so a superseding set is the round-83 fix.
+- **E2 (erratum, applied at `12e6ad57`).** The reviewer's finding: an `--allocation` entry naming a
+  surface whose band the join does not resolve was accepted and then silently unused (a false
+  DIFFER). It is now a setup refusal ("only the bar's band is resolved") in both paths; the tool
+  sha256 moves `38007528…` → `58ef4f6a…` and both claims re-measure to the same contract lines at
+  `12e6ad57` (`receipts/measurement-c{1,2}-r82.txt`).
+- **V1 (medium), deferred.** The C1 mutation list does not cover the vertical band branch
+  (`band_of` for left/right, `tools/mado-barfoot.py:482`); the reviewer's own mutant
+  (`width = bar["width"]`) dies on exactly `alloc-dyn-width-dock`, so the case is live and the list
+  is short by one. Round 83: add the mutant (the counter's `MUTANTS` moves 34 → 35).
+- **V3 (low), fixed at `df6c613d`.** Two runbook count cells were false — `tray-methods` `1 / 3` →
+  `2 / 3` and the carried `keybindings-chords` `2 / 7` → `2 / 8` — and `tray-owner`'s documented
+  outcome claimed a PID ceiling (`1..4194304`) the matcher does not enforce; the row now says
+  "non-zero decimal" and names the live read's own bound.
+- **V4 (low), fixed.** The `--selftest` transcripts now land under `receipts/`
+  (`tool-selftest-r82.txt` 133/133, `c1-counter-selftest-r82.txt` 84/84,
+  `c2-counter-selftest-r82.txt` 90/90), as the round-81 R4 repair asked.
+- **V5/V6 (info), disclosed.** The frozen declaration's S481 locator (`:116-123`) and its pre-erratum
+  C2 controls sha (`f64d7d5d…`) no longer resolve to the corrected bytes; both are disclosed in the
+  report and the lesson rather than rewritten under the freeze.

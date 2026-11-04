@@ -118,3 +118,11 @@ rather than the measured tree (counter sha256 `1e8eb499…` → `a87bceab…`). 
 carried case, predicate or target moved; the contract line is identical at the new revision. The
 carried round-81 `waybar-pgrep` case still carries a live PID and cannot be edited under the
 carried-unchanged assertion — a superseding set is the round-83 fix.
+
+E2 — at `12e6ad57` the reviewer's finding was applied: an `--allocation` entry for a surface the
+join does not resolve is now a setup refusal instead of an accepted-and-inert entry (tool sha256
+`38007528…` → `58ef4f6a…`), and both claims re-measure to the same contract lines at `12e6ad57`.
+The runbook's count cells were corrected at `df6c613d` (`tray-methods` 1/3 → 2/3, the carried
+`keybindings-chords` 2/7 → 2/8) and `tray-owner`'s PID wording no longer claims a ceiling the
+matcher does not enforce; the `--selftest` transcripts now sit under `receipts/`. The frozen
+declaration's S481 locator and its pre-erratum controls sha are disclosed, not rewritten.
