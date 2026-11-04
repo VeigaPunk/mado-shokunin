@@ -1,0 +1,20 @@
+R75ScoutSources — requested-path absence receipt (round 75, w1)
+url: https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/stdtypes.rst
+command: curl -sS -f -L --max-time 60 -o <body> <url>
+
+attempt1 rc=22 size=0 body=''   (curl: (22) The requested URL returned error: 404)
+attempt2 rc=22 size=0 body=''   (curl: (22) The requested URL returned error: 404)
+attempt3 rc=22 size=0 body=''   (curl: (22) The requested URL returned error: 404)
+
+without -f (status probe, informational only, same 14-byte body three times):
+attempt1 http=404 size=14
+attempt2 http=404 size=14
+attempt3 http=404 size=14
+
+verdict: the requested path does not exist at tag v3.14.8. This is the same result
+  SOURCES.md:396 (row S446) records for the round-71 citation ("the round-71 citation
+  Doc/library/stdtypes.rst returned HTTP 404 on all three attempts") and restates at
+  SOURCES.md:865. The measured substitute for the same document is
+  https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/builtins/stdtypes.rst
+  (248201 B, sha256 5a6951b72ecc630a87f45a650fc11c186cfeb4251bedd1ea28f45bcb3116e8e1,
+  three byte-identical fetches -> fetch-digests.txt entry [2]).

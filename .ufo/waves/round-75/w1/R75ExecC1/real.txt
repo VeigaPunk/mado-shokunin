@@ -1,0 +1,14 @@
+MADO_R75_CHALLENGE source=secrets.token_hex(8) length=16 generation_sha256=b6108c86e8e03befce50256e2381ec08f199a1ab7fe192aeedef70459c45857d rev=def73656c94f0e88bd671cfb4a65124338261722
+MADO_R75_EXTRACT path=quality/landing-counters.sh bytes=16165 sha256=b0612f111f3b676ffe42694c19802a34a623cc22076f32cf0ab750b803c73f1f
+MADO_R75_EXTRACT path=quality/counters/c3-r56-used-by.py bytes=21326 sha256=f54423eb8ab24eeb5a8cd51f2d38408fe02054797ba841c3940cde28d3903b3f
+MADO_R75_EXTRACT path=quality/check-tool-ledger.py bytes=40636 sha256=1c96c4cfd69ad97fbfc9174c9fe4d27b1d157df69cbcbc2451067f1374febdfb
+MADO_R75_EXTRACT path=tools/mado-receipt-citecheck.py bytes=10822 sha256=3b61fa42b77e9c8065ab05668247c330b537910b06f7209caba7afbd0b102ad0
+MADO_R75_EXTRACT rev=def73656c94f0e88bd671cfb4a65124338261722 files=4
+MADO_R75_SELFTEST instrument=quality/landing-counters.sh rc=0 summary=62/62 green=yes
+MADO_R75_MUTANT M-Z path=quality/landing-counters.sh clause_count=1 recipe=clause-delete removed='[ "$citations" -gt 0 ] && ' from_sha256=b0612f111f3b676ffe42694c19802a34a623cc22076f32cf0ab750b803c73f1f rc=1 failed_assertions=3 assertions=59/62 killed=yes sha256=6d1a73b14c6e17cedf5cd6399fe58de246591682cb3a3518a2c7163711738216
+MADO_R75_GUARDS citecheck=1 usedby=1 ledger=1
+MADO_R75_R_CONTROL fixture_rev=b2ace7c1e9d9dac0ebeaa276ca40e6d7bd0d99c6 real_tree=a82978be5fa20eb69fee0a6fbe51a99c37bc6a3e forged_tree=1b37d99db3872339180cf844ef9a05a3737bfb71 forged_visible=yes guarded_visible=no
+MADO_R75_CHILD_ENV no_replace_objects=absent keys=GIT_CONFIG_GLOBAL,GIT_CONFIG_NOSYSTEM,GIT_CONFIG_SYSTEM,GIT_TERMINAL_PROMPT,HOME,LC_ALL,MADO_LANDING_NONCE,PATH,TMPDIR GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_SYSTEM=/dev/null GIT_TERMINAL_PROMPT=0 HOME=/fast/scratch/hyaku/mado-r75/R75ExecC1/real/r72-c1/home LC_ALL=C MADO_LANDING_NONCE=edfbce65b456d5b3 PATH=/home/vgpnk/.local/share/mise/installs/node/latest/bin...(22 dirs) TMPDIR=/fast/scratch/hyaku/mado-r75/R75ExecC1/real/r72-c1/home
+MADO_R75_R_CHILD role=unmutated rc=1 verdict=TARGET_MISSED missing=1 control=green
+MADO_R75_MUTANT M-R path=tools/mado-receipt-citecheck.py guard_count=1 recipe=line-delete removed_line='            env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1"),\n' from_sha256=3b61fa42b77e9c8065ab05668247c330b537910b06f7209caba7afbd0b102ad0 rc=0 verdict=TARGET_MET missing=0 forged_credit=yes killed=yes sha256=414ca759232a3d31451f86060f4b0ba3382dd151f4bffe797793cb2ced5cee11
+MADO_R75_LANDING_CONTROLS: selftest=62/62 mz=pass mr=pass killed=2/2 baseline=0/2 witness=ok verdict=TARGET_MET rev=def73656c94f0e88bd671cfb4a65124338261722

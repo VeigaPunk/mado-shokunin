@@ -1,0 +1,40 @@
+R75ScoutSources — located quotes (round 75, w1)
+line numbers are 1-based against the fetched bytes at tag v3.14.8.
+
+A. Doc/reference/simple_stmts.rst, § The ``del`` statement
+   section head: :439 '.. _del:'   :441 'The :keyword:`!del` statement'   :442 '======='
+   grammar:      :450 'del_stmt: "del" `target_list`'
+   span:         :468-469
+   raw:
+     468: Deletion of attribute references and subscriptions is passed to the
+     469: primary object involved; deletion of a slicing is in general equivalent to
+   quote (markup stripped; the span contains no RST inline markup -> verbatim):
+     "Deletion of attribute references and subscriptions is passed to the primary object involved"
+   word count: 13
+     $ python3 -c 'q="Deletion of attribute references and subscriptions is passed to the primary object involved"; print(len(q.split()))'
+     13
+   adjacent, not quoted: :461-464 (deletion of a *name* -> NameError when unbound) and
+     :469-471 (slicing deletion equivalent to assigning an empty slice, determined by the
+     sliced object) — both are why the C2 rule is scoped to a literal key in the same scope.
+
+B. Doc/builtins/stdtypes.rst, dict(mapping, **kwargs)
+   signatures:   :5325 '.. class:: dict(**kwargs)'
+                 :5326 '           dict(mapping, /, **kwargs)'
+                 :5327 '           dict(iterable, /, **kwargs)'
+   span:         :5350-5352
+   raw:
+    5350:    If keyword arguments are given, the keyword arguments and their values are
+    5351:    added to the dictionary created from the positional argument.  If a key
+    5352:    being added is already present, the value from the keyword argument
+   quote (markup stripped; the span contains no RST inline markup -> verbatim, indentation
+   removed):
+     "If keyword arguments are given, the keyword arguments and their values are added to the
+      dictionary created from the positional argument"
+   word count: 21
+     $ python3 -c 'q="If keyword arguments are given, the keyword arguments and their values are added to the dictionary created from the positional argument"; print(len(q.split()))'
+     21
+   adjacent, not quoted: :5340-5348 (positional mapping copied via __getitem__ per key),
+     :5352-5353 (keyword value replaces the positional value for an existing key).
+
+markup scan (both spans): no ``double backticks``, no :role:`…`, no *emphasis*, no [ref]_ —
+  re.findall(r'[:`*\[\]_]{2,}|:[a-z]+:`|\*[^*]+\*', seg) -> [] for each span.

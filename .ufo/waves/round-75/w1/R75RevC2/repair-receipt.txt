@@ -1,0 +1,21 @@
+Repair revision e3e29bb4bf0456f768c9839562d2db3437605b83; independent import of git-extracted committed file.
+positional-metadata: actual=(True, False) expected=(True, False) match=True
+def wrapper(argv, metadata):
+    return subprocess.run(argv)
+def run():
+    child = dict(GIT_NO_REPLACE_OBJECTS="1")
+    wrapper(["git", "show", "HEAD:a"], child)
+
+dead-delete: actual=(True, True) expected=(True, True) match=True
+def run():
+    env = dict(GIT_NO_REPLACE_OBJECTS="1")
+    if False:
+        del env["GIT_NO_REPLACE_OBJECTS"]
+    subprocess.run(["git", "show", "HEAD:a"], env=env)
+
+live-delete: actual=(True, False) expected=(True, False) match=True
+def run():
+    env = dict(GIT_NO_REPLACE_OBJECTS="1")
+    del env["GIT_NO_REPLACE_OBJECTS"]
+    subprocess.run(["git", "show", "HEAD:a"], env=env)
+

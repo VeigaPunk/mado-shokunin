@@ -1,0 +1,328 @@
+--- held-r74
++++ frozen-r75
+@@ -1,46 +1,43 @@
+ #!/usr/bin/env python3
+-r"""Round-74 C2 counting command: the guard census counts the two-hop object alias and the
+-one-hop alias of the process environment (claim C2, round 74).
+-
+-    python3 quality/counters/c2-r74-shapes.py --repo . --rev REV --base-rev BASE \
+-        --controls .ufo/waves/round-74/controls/c2-cases-r74.json --scratch-root DIR
+-    python3 quality/counters/c2-r74-shapes.py --selftest [--controls <frozen file>] --scratch-root DIR
+-
+-Population: every tracked `quality/check-[^/]+\.py` file at --rev, read through a scrubbed git
+-environment. Reader: a `git` token plus one of the frozen object-read verbs (the round-68 rule,
+-unchanged). The round-69 key-position and dominance clauses, the four round-70 carriers, the
+-four round-71 carriers and the two round-73 carriers are carried in force and marked "held" in
+-the classifier.
+-
+-Round-74 shapes (each still subject to the dominance test):
+-
+-  A. *two-hop object alias* — a plain name is bound exactly once to a dotted path (``r =
+-     cfg.runner``) and the guard key is stored at ``r.env[KEY]`` while a git launch hands the
+-     other spelling (``env=cfg.runner.env``), or the store is at ``cfg.runner.env[KEY]`` and the
+-     launch hands ``env=r.env``. Both spellings canonicalise to the same dotted path; the store
+-     must sit strictly before the launch and no replacement of that path may sit in between.
+-  B. *environment alias* — ``env = os.environ`` and ``env[KEY] = "1"`` before a git launch whose
+-     ``env=`` is the alias itself, ``dict(alias)`` or ``{**alias}``. A rebinding of the alias, or
+-     a store after the launch, is not a guard.
+-
+-Frozen controls: 36 cases at `.ufo/waves/round-74/controls/c2-cases-r74.json`, sha256
+-`4db4cc70d1a8e86876f20a9527cfc7f0c7a344eb6d2655b398443b907b3a73d0`; the first 28 are the
+-round-73 set carried forward and the counter asserts, at --rev, that
+-`.ufo/waves/round-73/controls/c2-cases-r73.json` still hashes to `65e94644…` and carries the
+-same 28 cases byte-for-byte. The base leg extracts the round-73 counter
+-`quality/counters/c2-r73-shapes.py` at --base-rev and scores the same 36 cases with its
+-`classify`; the do-nothing control scores 32/36, missing exactly the four round-74 positives.
++r"""Round-75 C2 counting command: the guard census counts the copy spellings bound to a name and
++the `del env[KEY]` cancellation (claim C2, round 75).
++
++    python3 quality/counters/c2-r75-shapes.py --repo . --rev REV \
++        --base-rev bd5a971532f37df85a78f6f566dd1e649b79de11 \
++        --controls .ufo/waves/round-75/controls/c2-cases-r75.json --scratch-root DIR
++    python3 quality/counters/c2-r75-shapes.py --selftest --scratch-root DIR
++
++The successor adds two rule deltas to the round-74 classifier (frozen, never edited):
++
++  D1 - a mapping that carries the guard key in key position guards the child whatever the
++       binding's NAME: ``child = dict(env, GIT_NO_REPLACE_OBJECTS="1")`` or
++       ``child = {**env, "GIT_NO_REPLACE_OBJECTS": "1"}`` handed as ``env=child`` counts, under
++       the same dominance test the env-named flow uses (the binding strictly before the launch,
++       no plain rebinding of the name in between). A copy without the key, a key in value
++       position, and a rebound copy stay unguarded.
++  D2 - ``del env[KEY]`` between a guard construction and the launch cancels the store: the key
++       is removed from the mapping handed to the child (a delete of another key, and a delete
++       before the store, cancel nothing).
++
++The first thirty-six cases are carried byte-identically from the round-74 frozen set
++(hash-checked); the eleven appended cases are the round-75 carriers and their negatives. The
++twenty-population census is re-derived at --rev and must keep twenty readers, thirteen guarded,
++zero unguarded. The do-nothing control is the round-74 classifier extracted at --base-rev and
++scored on the same forty-seven cases in the same run; it must score exactly 41/47.
+ 
+ Printed receipt (last line, exact):
+ 
+-    MADO_R74_GUARD_SHAPES: population=<n> readers=<n> guarded=<n> unguarded=<n> controls=<n>/36 base_controls=<n>/36 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
+-
+-Exit 0 iff population == 20, readers == 13, guarded == 13, unguarded == 0, controls == 36 and
+-base_controls == 32; 1 otherwise; 2 on setup/usage error. Every write stays under the
+-caller-declared scratch root. Declared limits: line order is not execution order (the same
+-cross-method approximation the attribute flow declares), one object-alias edge and one
+-`os.environ` alias with no chains, the generic env-named flow's `del env[KEY]` cancellation is
+-still unmodelled; a syntactic approximation that does not interpret values.
++    MADO_R75_GUARD_SHAPES: population=<n> readers=<n> guarded=<n> unguarded=<n> controls=<n>/47 base_controls=<m>/47 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
++
++Exit 0 iff population 20, readers 13, guarded 13, unguarded 0, controls 47 and base_controls 41;
++1 iff the measurement ran and missed (an absent base classifier prints base_controls=0); 2 on
++usage/setup error with the reason on stderr and no contract line.
++
++Declared limits: line order is not execution order (the same cross-method approximation the
++attribute flow declares); one object-alias edge and one `os.environ` alias with no chains; the
++name-neutral binding counts a mapping handed as `env=`, not the truth of its values; `del` is
++modelled for a literal key in the same scope only; a syntactic approximation that does not
++interpret values.
+ """
+ import argparse
+ import ast
+@@ -53,8 +50,8 @@
+ import subprocess
+ import sys
+ 
+-TOOL = "c2-r74-shapes.py"
+-BASE_COUNTER = "quality/counters/c2-r73-shapes.py"
++TOOL = "c2-r75-shapes.py"
++BASE_COUNTER = "quality/counters/c2-r74-shapes.py"
+ KEY = "GIT_NO_REPLACE_OBJECTS"
+ POPULATION_RE = re.compile(r"^quality/check-[^/]+\.py$")
+ GIT_TOKEN_RE = re.compile(r"[\"']git[\"']")
+@@ -64,16 +61,16 @@
+ FROZEN_POPULATION = 20
+ FROZEN_READERS = 13
+ FROZEN_GUARDED = 13
+-FROZEN_CONTROLS = 36
+-FROZEN_BASE_CONTROLS = 32
+-FROZEN_CONTROLS_SHA = "4db4cc70d1a8e86876f20a9527cfc7f0c7a344eb6d2655b398443b907b3a73d0"
+-HELD_CONTROLS = ".ufo/waves/round-73/controls/c2-cases-r73.json"
+-HELD_CONTROLS_SHA = "65e9464450d58f803ca626f7b7ce6bc4712f46710ac5707602601cee9ecf230d"
+-HELD_CASES = 28
++FROZEN_CONTROLS = 47
++FROZEN_BASE_CONTROLS = 41
++FROZEN_CONTROLS_SHA = "d99502ba23e969a981a856a06742d8da14e1684850c7ca0e0900cd2dc7767897"
++HELD_CONTROLS = ".ufo/waves/round-74/controls/c2-cases-r74.json"
++HELD_CONTROLS_SHA = "4db4cc70d1a8e86876f20a9527cfc7f0c7a344eb6d2655b398443b907b3a73d0"
++HELD_CASES = 36
+ UNSAFE_ROOTS = ("/tmp", "/var/tmp", "/dev/shm")
+ CONTRACT_RE = re.compile(
+-    r"MADO_R74_GUARD_SHAPES: population=[0-9]+ readers=[0-9]+ guarded=[0-9]+ "
+-    r"unguarded=[0-9]+ controls=[0-9]+/36 base_controls=[0-9]+/36 "
++    r"MADO_R75_GUARD_SHAPES: population=[0-9]+ readers=[0-9]+ guarded=[0-9]+ "
++    r"unguarded=[0-9]+ controls=[0-9]+/47 base_controls=[0-9]+/47 "
+     r"verdict=(?:TARGET_MET|TARGET_MISSED) rev=[0-9a-f]{40,64}")
+ 
+ 
+@@ -346,6 +343,19 @@
+                     and env_named(node.func.value.id) \
+                     and any(kw.arg == KEY for kw in node.keywords):
+                 out.setdefault(node.func.value.id, set()).add(node.lineno)
++    # Round-75 D1: a mapping that carries the key in key position guards the child whatever the
++    # binding's name; the dominance test below decides whether the binding reaches the launch.
++    for node in nodes:
++        if isinstance(node, ast.Assign) and len(node.targets) == 1 \
++                and node.lineno not in dead_lines:
++            target = node.targets[0]
++            if isinstance(target, ast.Name) and mapping_has_key(node.value, maps):
++                out.setdefault(target.id, set()).add(node.lineno)
++        elif isinstance(node, ast.AnnAssign) and node.lineno not in dead_lines:
++            target = node.target
++            if isinstance(target, ast.Name) and node.value is not None \
++                    and mapping_has_key(node.value, maps):
++                out.setdefault(target.id, set()).add(node.lineno)
+     return out
+ 
+ 
+@@ -376,6 +386,24 @@
+                 and env_named(node.target.id) and node.value is not None \
+                 and not mapping_has_key(node.value, maps):
+             out.setdefault(node.target.id, set()).add(node.lineno)
++    # Round-75: the dominance test follows every simple name the census can bind (D1 makes the
++    # guard binding name-neutral), so a plain rebinding cancels a guard whatever the name; and a
++    # `del env[KEY]` removes the key the guard stored, so it cancels too (literal key, same scope).
++    for node in nodes:
++        if isinstance(node, ast.Assign):
++            for target in node.targets:
++                if isinstance(target, ast.Name) and not mapping_has_key(node.value, maps):
++                    out.setdefault(target.id, set()).add(node.lineno)
++        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) \
++                and node.value is not None and not mapping_has_key(node.value, maps):
++            out.setdefault(node.target.id, set()).add(node.lineno)
++        elif isinstance(node, ast.Delete):
++            for target in node.targets:
++                if isinstance(target, ast.Subscript) and isinstance(target.ctx, ast.Del) \
++                        and isinstance(target.value, ast.Name) \
++                        and isinstance(target.slice, ast.Constant) \
++                        and target.slice.value == KEY:
++                    out.setdefault(target.value.id, set()).add(node.lineno)
+     return out
+ 
+ 
+@@ -1311,7 +1339,7 @@
+                 or mine["expect_guard"] != case["expect_guard"]:
+             raise SetupError("held case %r is not carried forward byte-identically"
+                              % case["name"])
+-    emit("MADO_R74_HELD_CONTROLS path=%s cases=%d sha256=%s carried=yes"
++    emit("MADO_R75_HELD_CONTROLS path=%s cases=%d sha256=%s carried=yes"
+          % (HELD_CONTROLS, len(held), digest))
+     return len(held)
+ 
+@@ -1344,14 +1372,14 @@
+ def base_classify(repo, base_sha, scratch):
+     data = extract(repo, base_sha, BASE_COUNTER)
+     if data is None:
+-        emit("MADO_R74_BASE_COUNTER path=%s present=no" % BASE_COUNTER)
++        emit("MADO_R75_BASE_COUNTER path=%s present=no" % BASE_COUNTER)
+         return None
+     path = os.path.join(scratch, "base-counter.py")
+     os.makedirs(scratch, exist_ok=True)
+     with open(path, "wb") as fh:
+         fh.write(data)
+     module = runpy.run_path(path)
+-    emit("MADO_R74_BASE_COUNTER path=%s present=yes sha256=%s" % (BASE_COUNTER, sha256_hex(data)))
++    emit("MADO_R75_BASE_COUNTER path=%s present=yes sha256=%s" % (BASE_COUNTER, sha256_hex(data)))
+     return module["classify"]
+ 
+ 
+@@ -1361,7 +1389,7 @@
+         reader, guard = classify_fn(case["src"])
+         ok = (reader == case["expect_reader"]) and (guard == case["expect_guard"])
+         correct += int(ok)
+-        emit("MADO_R74_CONTROL leg=%s name=%s reader=%s guard=%s expect_reader=%s expect_guard=%s "
++        emit("MADO_R75_CONTROL leg=%s name=%s reader=%s guard=%s expect_reader=%s expect_guard=%s "
+              "correct=%s"
+              % (leg, case["name"], "yes" if reader else "no", "yes" if guard else "no",
+                 "yes" if case["expect_reader"] else "no",
+@@ -1370,7 +1398,7 @@
+ 
+ 
+ def contract_line(population, readers, guarded, unguarded, controls, base_controls, sha):
+-    return ("MADO_R74_GUARD_SHAPES: population=%d readers=%d guarded=%d unguarded=%d "
++    return ("MADO_R75_GUARD_SHAPES: population=%d readers=%d guarded=%d unguarded=%d "
+             "controls=%d/%d base_controls=%d/%d verdict=%s rev=%s"
+             % (population, readers, guarded, unguarded, controls, FROZEN_CONTROLS,
+                base_controls, FROZEN_CONTROLS,
+@@ -1384,13 +1412,13 @@
+     if not os.path.isdir(repo):
+         raise SetupError("--repo is not a directory: %s" % args.repo)
+     scratch = absolute_scratch(args.scratch_root)
+-    work = os.path.join(scratch, "r73-c2-shapes")
++    work = os.path.join(scratch, "r75-c2-shapes")
+     if os.path.isdir(work):
+         shutil.rmtree(work)
+     os.makedirs(work)
+ 
+     cases = load_controls(os.path.abspath(args.controls))
+-    emit("MADO_R74_CONTROLS path=%s cases=%d sha256=%s"
++    emit("MADO_R75_CONTROLS path=%s cases=%d sha256=%s"
+          % (os.path.abspath(args.controls), len(cases), FROZEN_CONTROLS_SHA))
+ 
+     sha = rev_parse(repo, args.rev)
+@@ -1410,7 +1438,7 @@
+         if reader:
+             readers += 1
+             guarded += int(guard)
+-        emit("MADO_R74_READER file=%s reader=%s guard=%s"
++        emit("MADO_R75_READER file=%s reader=%s guard=%s"
+              % (path, "yes" if reader else "no", "yes" if guard else "no"))
+     unguarded = readers - guarded
+ 
+@@ -1420,7 +1448,7 @@
+         base_controls = 0
+     else:
+         base_controls = score_cases(classify_base, cases, leg="base")
+-        emit("MADO_R74_BASE controls=%d/%d (the held round-73 rule must miss the target)"
++        emit("MADO_R75_BASE controls=%d/%d (the held round-73 rule must miss the target)"
+              % (base_controls, FROZEN_CONTROLS))
+ 
+     line = contract_line(len(population), readers, guarded, unguarded, controls,
+@@ -1470,6 +1498,17 @@
+     'twohop-attr-store-replaced': ('def run(repo):\n    r = cfg.runner\n    r.env["GIT_NO_REPLACE_OBJECTS"] = "1"\n    r.env = {"PATH": "/usr/bin"}\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=r.env)\n', True, False),
+     'environ-alias-no-store': ('def run(repo):\n    env = os.environ\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n', True, False),
+     'environ-alias-rebound': ('def run(repo):\n    env = os.environ\n    env = {"PATH": "/usr/bin"}\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n', True, False),
++    'copy-dict-kw-bound': ('def run(repo):\n    env = os.environ\n    child = dict(env, GIT_NO_REPLACE_OBJECTS="1")\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=child)\n', True, True),
++    'copy-splat-bound': ('def run(repo):\n    env = os.environ\n    child = {**env, "GIT_NO_REPLACE_OBJECTS": "1"}\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=child)\n', True, True),
++    'copy-dict-builtin-bound': ('def run(repo):\n    child = dict(os.environ, GIT_NO_REPLACE_OBJECTS="1")\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=child)\n', True, True),
++    'copy-dict-literal-base': ('def run(repo):\n    base = {"PATH": "/usr/bin"}\n    child = dict(base, GIT_NO_REPLACE_OBJECTS="1")\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=child)\n', True, True),
++    'copy-dict-no-key': ('def run(repo):\n    env = os.environ\n    child = dict(env)\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=child)\n', True, False),
++    'copy-dict-value-position': ('def run(repo):\n    child = dict(os.environ, LABEL="GIT_NO_REPLACE_OBJECTS")\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=child)\n', True, False),
++    'copy-rebound': ('def run(repo):\n    env = os.environ\n    child = dict(env, GIT_NO_REPLACE_OBJECTS="1")\n    child = dict(env)\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=child)\n', True, False),
++    'del-env-store-cancel': ('def run(repo):\n    env = {"PATH": "/usr/bin"}\n    env["GIT_NO_REPLACE_OBJECTS"] = "1"\n    del env["GIT_NO_REPLACE_OBJECTS"]\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n', True, False),
++    'del-env-literal-cancel': ('def run(repo):\n    env = {"PATH": "/usr/bin", "GIT_NO_REPLACE_OBJECTS": "1"}\n    del env["GIT_NO_REPLACE_OBJECTS"]\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n', True, False),
++    'del-other-key': ('def run(repo):\n    env = {"PATH": "/usr/bin"}\n    env["GIT_NO_REPLACE_OBJECTS"] = "1"\n    del env["PATH"]\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n', True, True),
++    'del-before-store': ('def run(repo):\n    env = {"PATH": "/usr/bin"}\n    del env["GIT_NO_REPLACE_OBJECTS"]\n    env["GIT_NO_REPLACE_OBJECTS"] = "1"\n    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], env=env)\n', True, True),
+ }
+ 
+ 
+@@ -1635,7 +1674,7 @@
+          and not POPULATION_RE.match("quality/counters/c2-r70-carriers.py")
+          and not POPULATION_RE.match("quality/check-x/helper.py")
+          and not POPULATION_RE.match("quality/notes.md"))
+-    want("the embedded classification table covers thirty-six cases", len(CASES) == 36)
++    want("the embedded classification table covers forty-seven cases", len(CASES) == 47)
+     for name, (src, reader, guard) in CASES.items():
+         want("classify %s is (%s, %s)" % (name, reader, guard),
+              classify(src) == (reader, guard))
+@@ -1653,24 +1692,24 @@
+     for name, (src, reader, guard) in REGRESSIONS.items():
+         want("review regression %s is (%s, %s)" % (name, reader, guard),
+              classify(src) == (reader, guard))
+-    want("verdict met on the frozen target", verdict_met(20, 13, 13, 0, 36, 32))
+-    want("verdict requires the frozen population", not verdict_met(19, 13, 13, 0, 36, 32))
+-    want("verdict requires the frozen reader count", not verdict_met(20, 12, 12, 0, 36, 32))
+-    want("verdict requires the frozen guarded count", not verdict_met(20, 13, 12, 1, 36, 32))
+-    want("verdict requires no unguarded reader", not verdict_met(20, 13, 13, 1, 36, 32))
+-    want("verdict requires every control correct", not verdict_met(20, 13, 13, 0, 35, 32))
++    want("verdict met on the frozen target", verdict_met(20, 13, 13, 0, 47, 41))
++    want("verdict requires the frozen population", not verdict_met(19, 13, 13, 0, 47, 41))
++    want("verdict requires the frozen reader count", not verdict_met(20, 12, 12, 0, 47, 41))
++    want("verdict requires the frozen guarded count", not verdict_met(20, 13, 12, 1, 47, 41))
++    want("verdict requires no unguarded reader", not verdict_met(20, 13, 13, 1, 47, 41))
++    want("verdict requires every control correct", not verdict_met(20, 13, 13, 0, 46, 41))
+     want("verdict requires the frozen base-control score",
+-         not verdict_met(20, 13, 13, 0, 36, 36))
+-
+-    good = contract_line(20, 13, 13, 0, 36, 32, "a" * 40)
++         not verdict_met(20, 13, 13, 0, 47, 47))
++
++    good = contract_line(20, 13, 13, 0, 47, 41, "a" * 40)
+     want("the frozen target prints the met line",
+-         good == ("MADO_R74_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 "
+-                  "controls=36/36 base_controls=32/36 verdict=TARGET_MET rev=" + "a" * 40))
++         good == ("MADO_R75_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 "
++                  "controls=47/47 base_controls=41/47 verdict=TARGET_MET rev=" + "a" * 40))
+     want("the target line matches the frozen contract shape",
+          CONTRACT_RE.fullmatch(good) is not None)
+     want("contract line refuses a wrong verdict word",
+          not CONTRACT_RE.fullmatch(
+-             "MADO_R74_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 "
++             "MADO_R75_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 "
+              "controls=36/36 base_controls=32/36 verdict=DONE rev=" + "a" * 40))
+ 
+     frozen = ["--repo", ".", "--rev", "HEAD", "--base-rev", "BASE",
+@@ -1686,7 +1725,7 @@
+     if controls_path:
+         try:
+             cases = load_controls(os.path.abspath(controls_path))
+-            want("the frozen controls file carries 36 cases", len(cases) == 36)
++            want("the frozen controls file carries 47 cases", len(cases) == 47)
+             want("the frozen controls file matches the pinned digest", True)
+         except SetupError:
+             want("the frozen controls file carries 36 cases", False)
+@@ -1737,8 +1776,8 @@
+     passed = sum(1 for _name, ok in checks if ok)
+     for name, ok in checks:
+         if not ok:
+-            print("MADO_R74_GUARD_SHAPES_SELFTEST FAIL: %s" % name)
+-    print("MADO_R74_GUARD_SHAPES_SELFTEST: %d/%d assertions passed" % (passed, len(checks)))
++            print("MADO_R75_GUARD_SHAPES_SELFTEST FAIL: %s" % name)
++    print("MADO_R75_GUARD_SHAPES_SELFTEST: %d/%d assertions passed" % (passed, len(checks)))
+     return 0 if passed == len(checks) else 1
+ 
+ 

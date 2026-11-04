@@ -1,0 +1,26 @@
+INDEPENDENT_RUNTIME copy-dict-kw-bound [{'has_env': True, 'key': '1'}]
+INDEPENDENT_RUNTIME copy-splat-bound [{'has_env': True, 'key': '1'}]
+INDEPENDENT_RUNTIME copy-dict-value-position [{'has_env': True, 'key': None}]
+INDEPENDENT_RUNTIME del-env-literal-cancel [{'has_env': True, 'key': None}]
+PROBE env-dead-delete held=(True, True) successor=(True, False) runtime=[{'has_env': True, 'key': '1'}]
+def run():
+    env = dict(GIT_NO_REPLACE_OBJECTS="1")
+    if False:
+        del env["GIT_NO_REPLACE_OBJECTS"]
+    subprocess.run(["git", "show", "HEAD:a"], env=env)
+
+PROBE environ-unrelated-param-delete held=(True, False) successor=(True, False) runtime=[{'has_env': True, 'key': '1'}]
+def run():
+    env = os.environ
+    env["GIT_NO_REPLACE_OBJECTS"] = "1"
+    def unrelated(env):
+        del env["GIT_NO_REPLACE_OBJECTS"]
+    subprocess.run(["git", "show", "HEAD:a"], env=dict(env))
+
+PROBE guarded-helper-metadata held=(True, False) successor=(True, True) runtime=[{'has_env': False, 'key': None}]
+def wrapper(argv, metadata):
+    return subprocess.run(argv)
+def run():
+    child = dict(GIT_NO_REPLACE_OBJECTS="1")
+    wrapper(["git", "show", "HEAD:a"], child)
+

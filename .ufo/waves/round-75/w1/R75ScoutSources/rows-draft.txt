@@ -1,0 +1,38 @@
+R75ScoutSources — draft registry rows for L1 append (round 75, w1)
+Target: corpus/SOURCES.md registry table (header at :11, `| id | source | kind | tier | scope |
+anchor | teaches | status | opened | recheck | used-by |`).
+Next free ids observed this round: **S453**, **S454** (highest held id is S452; no S453/S454
+exists — `grep -o '| S45[0-9] '` returns exactly S450 S451 S452).
+These are DRAFTS. I did not write corpus/SOURCES.md (lane bound); the L1 appends after the
+duplicate-id / duplicate-URL census.
+
+--- duplicate-URL classification (read from corpus/SOURCES.md:502-509) -------------------
+"The maintained census already recognizes a `supersedes S###` marker for the same-URL error;
+different-scope repetitions can remain non-failing W04 warnings. ... URL collisions are a
+merge-review trigger, not a source-volume or rejection-quota signal."
+=> Neither draft row carries `supersedes`: both are different-scope repetitions of documents
+   already held (simple_stmts.rst ← S440/S447/S451; builtins/stdtypes.rst ← S446), so each
+   raises a NON-FAILING W04 warning. Adding `supersedes` would convert it into the same-URL
+   error and is wrong here — no held row is being replaced.
+
+--- S453 ---------------------------------------------------------------------------------
+| S453 | CPython v3.14.8 language reference — simple_stmts.rst (the `del` statement, subscription deletion) — https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst | docs | A | mado lane tooling: deletion of a subscription is passed to the primary object, so `del env[KEY]` mutates the mapping that a later copy or `env=` launch hands to the child; grounds the round-75 C2 rule that a literal-key delete between the guard construction and the launch is a cancellation (round-75 C2) | § The ``del`` statement, simple_stmts.rst:468-469 @ tag v3.14.8 (tag object 992560c2cc62d47b308cec662feb485456847931, peeled commit 8e6e75d9102e39bed2a2b279203a396741180f12; fetched 2026-11-04 three times, byte-identical: sha256 d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc, 41375 bytes — the digest S440/S447/S451 already record for this document) | "Deletion of attribute references and subscriptions is passed to the primary object involved" — 13 words; the deletion reaches the mapping itself, not a name binding, and `:461-464` shows name deletion is the different case (NameError when unbound), which is why the rule is scoped to a literal key in the same scope | mined | 2026-11-04 | 180d | .ufo/waves/round-75/claims-declaration-r75.md § C2 |
+
+--- S454 ---------------------------------------------------------------------------------
+| S454 | CPython v3.14.8 library reference — stdtypes, the `dict(mapping, **kwargs)` constructor — https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/builtins/stdtypes.rst | docs | A | mado lane tooling: a `dict(mapping, **kwargs)` copy carries the keyword pairs, so `child = dict(env, KEY="1")` is a new mapping that holds the guard key in key position (round-75 C2); S446's document at a separate scope (the constructor signature and argument paragraph, not the mapping methods) | § Mapping Types --- dict, the `dict(mapping, /, **kwargs)` signatures and argument paragraph, Doc/builtins/stdtypes.rst:5325-5327,5350-5352 @ tag v3.14.8 (fetched 2026-11-04 three times, byte-identical: sha256 5a6951b72ecc630a87f45a650fc11c186cfeb4251bedd1ea28f45bcb3116e8e1, 248201 bytes — S446's recorded digest; the requested `Doc/library/stdtypes.rst` returned HTTP 404 on three attempts, rc 22, the 404 S446 already records) | "If keyword arguments are given, the keyword arguments and their values are added to the dictionary created from the positional argument" — 21 words; the keyword pair lands in the new mapping, and `:5352-5353` makes a later same-key copy re-assert rather than drop the key | mined | 2026-11-04 | 180d | .ufo/waves/round-75/claims-declaration-r75.md § C2 |
+
+--- mechanics for the L1 ------------------------------------------------------------------
+* Do NOT add a `pin <path>` token to either anchor cell. `quality/check-anchor-cover.py`
+  (`PIN` = `(?:^|\s)pin\s+([^\s]+)`, then `git_blob(--rev, <path>)`) would try to resolve
+  `Doc/reference/simple_stmts.rst` / `Doc/builtins/stdtypes.rst` inside the mado repo and raise
+  SetupError (rc 2). Held external-doc rows (S440-S452) carry no `pin` token for the same reason.
+* Anchor basenames are what criterion 107 matches against the report's sid: the report row for
+  S453 must name `simple_stmts.rst:<line>` and for S454 `stdtypes.rst:<line>`; the locator
+  ranges 468-469 and 5350-5352 are what I verified above, so a report block whose covered line
+  falls outside them will read MISS reason=no-cover.
+* Both rows are `mined` (they ground a shipped rule and a claim this round); recheck 180d matches
+  the cadence S446 and the round-74 doc rows take.
+* Fetch receipts: raw triples were kept only in my scratch and deleted on exit; the digests and
+  commands in `fetch-digests.txt` / `fetch-404.txt` re-derive from the pinned tag (proven
+  byte-identical three times). `.ufo/waves/round-75/fetch/` is empty and is the L1's to populate
+  — I could not write it under my lane bound.
