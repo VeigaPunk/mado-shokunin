@@ -786,15 +786,15 @@ def base_classify(repo, base_sha, scratch):
     return module["classify"]
 
 
-def score_cases(classify_fn, cases):
+def score_cases(classify_fn, cases, leg="candidate"):
     correct = 0
     for case in cases:
         reader, guard = classify_fn(case["src"])
         ok = (reader == case["expect_reader"]) and (guard == case["expect_guard"])
         correct += int(ok)
-        emit("MADO_R70_CONTROL name=%s reader=%s guard=%s expect_reader=%s expect_guard=%s "
+        emit("MADO_R70_CONTROL leg=%s name=%s reader=%s guard=%s expect_reader=%s expect_guard=%s "
              "correct=%s"
-             % (case["name"], "yes" if reader else "no", "yes" if guard else "no",
+             % (leg, case["name"], "yes" if reader else "no", "yes" if guard else "no",
                 "yes" if case["expect_reader"] else "no",
                 "yes" if case["expect_guard"] else "no", "yes" if ok else "no"))
     return correct
@@ -850,7 +850,7 @@ def measure(args):
     if classify_base is None:
         base_controls = 0
     else:
-        base_controls = score_cases(classify_base, cases)
+        base_controls = score_cases(classify_base, cases, leg="base")
         emit("MADO_R70_BASE controls=%d/%d (the round-68 rule must miss the target)"
              % (base_controls, FROZEN_CONTROLS))
 
