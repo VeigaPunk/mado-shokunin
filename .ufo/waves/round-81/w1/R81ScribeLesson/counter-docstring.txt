@@ -1,0 +1,19 @@
+$ grep -n "cases=24\|PRED-C2-r79-v1\|round 79\|round-78\|twenty-two" quality/counters/c2-r81-runbook.py
+2:"""mado — PRED-C2-r79-v1: execute the runbook rows with per-row bindings and refusal shapes.
+5:`### Executable runbook rows (round 79)` — the row's command cell must equal the case's
+6:command, and each row is bound by exactly one case (the round-78 table bound three cases to
+15:The seventeen round-78 cases are carried with their command, expectation, churn and negative
+22:committed rows. The held round-78 rule — rc 0 and the output equal to one frozen value — is
+24:construction (the printed `control_all` is an observation over all twenty-two cases, never a
+27:Counting command (round 79):
+30:      --carried .ufo/waves/round-78/controls/c2-runbook-cases-r78.json --scratch-root DIR
+32:Contract: MADO_R81_RUNBOOK: cases=24 executed=24 matched=24 shapes=19/19 anchors=24/24
+$ sed -n "51,54p" quality/counters/c2-r81-runbook.py
+CASES = 26
+CARRIED = 24
+SHAPES = 21
+MUTANTS = 23
+$ git show 0e2ccd2a:quality/counters/c2-r81-runbook.py | sha256sum
+1bc9ca40a47aa05baa0ff59fc689595bdcecaa282d997ab3f9e38d340e01681f  -
+$ grep -n "MADO_R81_RUNBOOK:" .ufo/waves/round-81/receipts/measurement-c2-r81.txt
+52:MADO_R81_RUNBOOK: cases=26 executed=26 matched=26 shapes=21/21 anchors=26/26 rows=26/26 control_new=0/2 mutants=23 killed=23 verdict=TARGET_MET rev=0e2ccd2a8692825cac534f57246053b276be9f13 tree=bound

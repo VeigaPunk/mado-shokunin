@@ -1,0 +1,19 @@
+$ grep -n "cut -c36-|cut -c1-35|^| .pgrep -x waybar" mado-shokunin/SKILL.md
+156:| Bar runtime facts (running? mapped? tray? module text) | hyprctl live + consumer-side probe | `hyprctl -j layers` (namespace `waybar`, pid, geometry); `pgrep -x waybar`; tray via `busctl --user get-property fr.arouillard.waybar /StatusNotifierWatcher …`; indicator scripts probe process/mako mode (`RUN`, e.g. `idle.sh:3`) | `[OBS]` (MADO-R3-1 §1/§2.3); module text without an IPC verb → `[UNK]` |
+254:| `pgrep -x waybar \| head -n 1` | bare integer in 1..4194304 | 2 / 2 |
+268:| `omarchy menu keybindings --print \| cut -c1-35` | chord column: ≥100 chords, each `MODS + KEY` (1–4 distinct words from SUPER/SHIFT/CTRL/ALT) or a bare key, no arrow | 2 / 7 |
+270:| `omarchy menu keybindings --print \| cut -c36-` | action column: ≥100 lines, each ` → ` then a non-empty trimmed action with no second `→` (the `%-35s` padding fixes the separator's column; the payload escapes markup only on some lines, so no entity rule is bound) | 3 / 6 |
+271:| `pgrep -x waybar` | one or more decimal PIDs in 1..4194304 with rc 0 while the bar runs, empty stdout with rc 1 while it does not — the state is read from the pair, never frozen | 3 / 6 |
+
+$ python3 - (frozen control names/kinds for the two grounds)
+c2-runbook-cases-r81.json cases= 26
+   waybar-process kind= int_range argv= ['/bin/sh', '-c', 'pgrep -x waybar | head -n 1'] anchor= pgrep -x waybar | head -n 1
+   keybindings-actions kind= action_column argv= ['/bin/sh', '-c', 'omarchy menu keybindings --print | cut -c36-'] anchor= omarchy menu keybindings --print | cut -c36-
+   waybar-pgrep kind= pid_state argv= ['/bin/sh', '-c', 'pgrep -x waybar'] anchor= pgrep -x waybar
+c1-cases-r81.json cases= 39
+   overflow-tie-negative -> {"attr": "0,26,0,0", "attr_ns": {"waybar": "top:26"}, "attributed": 26, "band": 26, "box": "MATCH", "boxes": "MATCH,MATCH", "expected": 26, "gt": "0,26,0,0", "ls": "VALID", "rc": 0, "reserved": "EQ", 
+   auto-dynamic-band-refused -> {"error": true, "rc": 3, "stage": "model"}
+   auto-corner-edge -> {"attr": "0,26,0,0", "attr_ns": {"waybar": "top:26"}, "attributed": 26, "band": 26, "box": "MATCH", "boxes": "MATCH,MATCH", "expected": 26, "gt": "0,26,0,0", "ls": "VALID", "rc": 0, "reserved": "EQ", 
+   auto-all-four-edge -> {"attr": "0,26,0,0", "attr_ns": {"waybar": "top:26"}, "attributed": 26, "band": 26, "box": "MATCH", "boxes": "MATCH,MATCH", "expected": 26, "gt": "0,26,0,0", "ls": "VALID", "rc": 0, "reserved": "EQ", 
+   auto-parallel-edge -> {"attr": "0,26,0,0", "attr_ns": {"waybar": "top:26"}, "attributed": 26, "band": 26, "box": "MATCH", "boxes": "MATCH,MATCH", "expected": 26, "gt": "0,26,0,0", "ls": "VALID", "rc": 0, "reserved": "EQ", 
+   auto-left-dock -> {"attr": "40,26,0,0", "attr_ns": {"dock": "left:40", "waybar": "top:26"}, "attributed": 26, "band": 26, "box": "MATCH", "boxes": "MATCH,MATCH", "expected": 26, "gt": "0,26,0,0", "ls": "VALID", "rc": 0

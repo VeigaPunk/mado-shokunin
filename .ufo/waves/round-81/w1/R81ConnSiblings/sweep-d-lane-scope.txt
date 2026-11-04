@@ -1,0 +1,49 @@
+$ for lane in *-shokunin/ (minus mado): grep -rniE "<four families>" $lane --include=*.md --include=*.py --include=*.sh --include=*.mjs | grep -v /\.ufo/
+audio-shokunin/corpus/live/r88-boundary/scripts/r88b_probe.py:7:Never touches sibling objects; kills only its own pids (pgrep -x r88b_hog / recorded pids).
+audio-shokunin/reports/round-77/r77-verifier.md:439:`pgrep -x pw-record` (or `-f` plus a `/proc/<pid>/exe` check) would measure
+audio-shokunin/reports/round-88/r88-boundary.md:348:with `pgrep -x r88b_hog`, which matches `comm` (`yes`), not `argv[0]` — so it found none,
+game-dev-2d-shokunin/corpus/live/r96-scout/run_loadtest.sh:38:echo "own_hogs_killed=$(echo $pids | wc -w) own_hogs_remaining=$own_left host_yes_remaining=$(pgrep -x yes | wc -l)" | tee -a runs/loadtest/loadtest-summary.txt
+game-dev-2d-shokunin/corpus/live/r99-boundary/run_matrix.sh:53:host_yes() { pgrep -x yes | wc -l; }
+game-dev-2d-shokunin/reports/round-73/r73-boundary.md:273:processes (`pgrep -x sleep` clean after the runs).
+game-dev-2d-shokunin/reports/round-88/r88-fold.md:125:| hogs | all killed at exit (`pgrep -x yes` = 0 for mine; a later 12-hog set belongs to another seat, PPID 1612189) |
+game-dev-2d-shokunin/reports/round-89/r89-boundary.md:305:  the logs). At report time `pgrep -x yes` = 32 again — those belong to a **concurrent lane's
+game-dev-2d-shokunin/reports/round-102/mutations/r102-crit1-attack.sh:179:pgrep -x zenity | while read -r z; do kill -9 "$z" && echo "[D] pruned orphan zenity pid=$z"; done
+game-dev-3d-shokunin/reports/round-97/r97-boundary.md:402:- `pgrep -x yes` → **0**; no `r97-boundary` godot process and no driver process
+game-dev-3d-shokunin/reports/round-97/r97-verifier.md:13:lane; `pgrep -x yes` 48–60). **No `lsp` device is exposed to this seat's
+kama-shokunin/corpus/lessons/round-64.md:33:3. **scope (host-state rule)** · the freeze/brief rule "the refusal's pid set equals the counter's pgrep set" cannot hold: `other_pids_seen` is a ~21 s polling-window union (`.ufo/waves/round-64/b/X10EnvIdleProbe.md`, runs 1 and 3 not subsets) · captured-by KQ105 only in part · fix: the rule implemented in `tools/round64-c2-counter.py` (exit 2, receipt error, `host_idle.ok` false, every pid in both `pgrep -x` snapshots inside `other_pids_seen`) and disclosed in AMENDMENT 1b; KQ114.
+kama-shokunin/tools/round64-c2-counter.py:264:    """Live llama-server pids (`pgrep -x llama-server`), zombies dropped
+mori-shokunin/corpus/knowledge/watchdog-identity-r31.md:26:| a process's comm equals `shokunin-watchd` | any thread can set its own name with PR_SET_NAME from a caller-supplied value of up to 16 bytes including the terminating null byte; a forged python process matched `pgrep -x shokunin-watchd` on this host (LiveArgvProbe (c)) | not-identity | S169, S172 |
+mori-shokunin/SKILL.md:790:| a process's name or comm equals `shokunin-watchd` | nothing about identity: any thread can set its own 16-byte name with PR_SET_NAME, and a forged process matched `pgrep -x` on this host | that the process is the fleet watchdog | Round31 `corpus/knowledge/watchdog-identity-r31.md` row 6; S169, S172 |
+tabi-shokunin/corpus/knowledge/cdp-evidence-patterns.md:198:  — first-hand `curl` exit 7 each; `pgrep -x chromium`/`node`/`python3` empty.
+tabi-shokunin/corpus/knowledge/webbridge-daemon-disposition.md:73:- `ss -ltn | grep :10086` → **NO-LISTENER-10086**; `pgrep -x
+tabi-shokunin/corpus/knowledge/webbridge-daemon-disposition.md:193:`pgrep -x kimi-webbridge`, `ls -la ~/.kimi-webbridge/ ~/.kimi-webbridge/logs/`,
+tabi-shokunin/corpus/knowledge/hygiene-sweep-r4.md:35:+ `awk`, and `pgrep -x`) to avoid the args-self-match incident
+tabi-shokunin/corpus/knowledge/hygiene-sweep-r4.md:79:- `pgrep -x chromium|chrome|headless_shell` → none; `pgrep -x node` →
+tabi-shokunin/corpus/knowledge/webbridge-revival-assessment.md:88:  `pgrep -x kimi-webbridge` → none; full `ss -ltn` shows only system
+tabi-shokunin/corpus/knowledge/webbridge-revival-assessment.md:260:  `pgrep -x kimi-webbridge` → none; `cat ~/.kimi-webbridge/daemon.pid` →
+tabi-shokunin/corpus/knowledge/webbridge-revival-assessment.md:278:`pgrep -x kimi-webbridge`; `ls -la ~/.kimi-webbridge/ ~/.kimi-webbridge/logs/`;
+tabi-shokunin/corpus/knowledge/packet-readiness-r7.md:1:<!-- corpus entry — tabi-shokunin round 7 (2026-10-14), lane B7-3 (plan: plans/round-7.plan.md; assignment: the readiness note — the approval packet's evidence classes audited against the current corpus; every claim class checked for an actual landed note; gaps named). Method (read-only; values re-derived 2026-10-14T18:20–18:27Z; post-write re-check E1): the packet read whole; `sha256sum` over `corpus/knowledge/*.md` (14), `SKILL.md`, the substrate trio, the packet; `git show <rev>:<path> | sha256sum` for the pin history (`282fc6d`, `bc4b7d5`, HEAD); per-class claim markers grep-verified against the current revisions; archive spot re-hash (`sha256sum -c MANIFEST.txt` ×3 groups); host reads (`chromium --version`, `pacman -Q chromium`, `ss -ltn`, `pgrep -x kimi-webbridge`, `ls -la ~/.kimi-webbridge/` — shape-only), and a read-only `.ufo/l0-questions.md` read. No browser launched; no external site; no scratch dir written (every command's value is recorded in-place); `identity.json` never content-read. Write scope: this file only — LOG entry (AGENTS.md:3), corpus/README coverage row and the commit are the integrating round's. Audited document: `corpus/handoffs/operator-approval-request.md` — an audit of an anchor document, never of the notes it cites; nothing anywhere was edited. -->
+tabi-shokunin/corpus/knowledge/packet-readiness-r7.md:66:[observation] The packet's §1 bridge read ("not even currently executable") still holds: `ss -ltn` → 0 listeners on 10086; `pgrep -x kimi-webbridge` → none; `~/.kimi-webbridge/` shape: `daemon.pid` 8 B, `daemon.addr` 16 B, mtime 10:46 — the recorded post-shutdown pattern (`webbridge-daemon-disposition.md` §10).
+tabi-shokunin/corpus/evidence/w4-t4-3-sweep/procs.sh:11:echo "## pgrep -x exact"
+tabi-shokunin/corpus/evidence/w4-t4-3-sweep/procs.sh:12:for n in chromium chrome chrome_crashpad headless_shell chromium-browser; do printf '%-20s: ' "$n"; pgrep -x "$n" | tr '\n' ' '; echo; done
+tabi-shokunin/corpus/evidence/w4-t4-3-sweep/procs.sh:15:pgrep -x node | tr '\n' ' '; echo "(empty = none)"
+tabi-shokunin/corpus/evidence/w4-erb-b-append-proof/pre2/cdp-evidence-patterns.md:198:  — first-hand `curl` exit 7 each; `pgrep -x chromium`/`node`/`python3` empty.
+tabi-shokunin/corpus/evidence/w4-erb-b-append-proof/pre2/webbridge-daemon-disposition.md:73:- `ss -ltn | grep :10086` → **NO-LISTENER-10086**; `pgrep -x
+tabi-shokunin/corpus/evidence/w4-erb-b-append-proof/pre2/webbridge-daemon-disposition.md:193:`pgrep -x kimi-webbridge`, `ls -la ~/.kimi-webbridge/ ~/.kimi-webbridge/logs/`,
+tabi-shokunin/corpus/evidence/w4-erb-b-append-proof/pre/webbridge-daemon-disposition.md:73:- `ss -ltn | grep :10086` → **NO-LISTENER-10086**; `pgrep -x
+tabi-shokunin/corpus/evidence/w4-erb-b-append-proof/pre/webbridge-daemon-disposition.md:193:`pgrep -x kimi-webbridge`, `ls -la ~/.kimi-webbridge/ ~/.kimi-webbridge/logs/`,
+tabi-shokunin/corpus/evidence/w11-ver-b11-poll/verify_closeout.sh:30:echo "port10086 listeners: $(ss -ltn 2>/dev/null | grep -c 10086) ; webbridge procs: $(pgrep -x kimi-webbridge | wc -l) ; chromium: $(pgrep -c chromium)"
+tabi-shokunin/plans/round-4-record-draft.md:155:  `pgrep -x kimi-webbridge` → none (exit 1); `/proc/3934817` absent;
+tabi-shokunin/plans/round-7.plan.md:24:- Daemon: no listener on 10086 (`ss -ltn`), no process (`pgrep -x
+tabi-shokunin/plans/round-8.plan.md:32:- Daemon: no listener on 10086 (`ss -ltn`), no process (`pgrep -x
+tabi-shokunin/plans/round-7-record-draft.md:226:  (grep exit 1); `pgrep -x kimi-webbridge` → **none** (exit 1); `~/.kimi-webbridge/`
+tabi-shokunin/plans/round-9.plan.md:31:- Daemon: no listener on 10086 (`ss -ltn` → 0 matches), no process (`pgrep -x
+tabi-shokunin/plans/round-8-record-draft.md:259:  (grep exit 1); `pgrep -x kimi-webbridge` → **none** (exit 1);
+tabi-shokunin/plans/round-10.plan.md:54:  (`pgrep -x kimi-webbridge` → none); pointer files stale (`daemon.pid` 8 B,
+tabi-shokunin/plans/round-9-record-draft.md:310:  10086** (grep rc 1); `pgrep -x kimi-webbridge` → **none** (rc 1);
+tabi-shokunin/plans/round-11.plan.md:91:  (`pgrep -x kimi-webbridge` → 0); pointer files stale (`daemon.pid` 8 B,
+tabi-shokunin/plans/round-10-record-draft.md:325:  rc 1); `pgrep -x kimi-webbridge` → **none** (rc 1); `~/.kimi-webbridge/`
+tabi-shokunin/plans/completion-evidence.md:101:  (`ss -ltn | grep 10086` → empty); `pgrep -x kimi-webbridge` → rc=1 (no
+tabi-shokunin/plans/completion-evidence.md:209:ss -ltn | grep 10086; pgrep -x kimi-webbridge; pgrep -c chromium; pgrep -c brave
+tabi-shokunin/SKILL.md:1343:| daemon | no listener on 10086 (`→ 0`); no `kimi-webbridge` process (`→ 0`); `daemon.pid` 8 B / `daemon.addr` 16 B, mtime `10:46` — revival `carried-unasked`, nothing owed to stop | `ss -ltn | grep -c 10086; pgrep -x kimi-webbridge | wc -l` |
+--- end of lane-source sweep (nothing above this marker = no hits) ---

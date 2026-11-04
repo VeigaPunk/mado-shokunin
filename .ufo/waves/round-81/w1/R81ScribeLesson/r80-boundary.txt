@@ -1,0 +1,20 @@
+$ sed -n "186,200p" corpus/knowledge/bar-footprint-composition-r80.md
+## 11. Reachable classes the frozen set does not pin, and where the model is wrong
+
+Wave seat `R80ScoutModel` built 28 probe quadruples against the frozen tool and the sources; four
+classes are wrong, all outside the frozen 33's declared shapes. They are recorded here because a
+named wrong answer is a limit, not a truth, and because they are round 81's finite ground:
+
+1. **Centring past a negative tie (1 px).** `arranged_box` uses r79's integer formula
+   `(bounds.size - size + 1) // 2`, which equals `CBox::round`'s result only when the tie's absolute
+   coordinate is non-negative. A 1001-wide panel with both horizontal anchors on a 1000-wide monitor
+   at the layout origin gives `-0.5` in the source (`round` → `-1`, width `1002`) and `0` in the
+   tool. Needs `w > bounds.w` **and** a negative absolute tie; every frozen box fits its bounds.
+2. **`auto` zone on a dynamic band size.** gtk-layer-shell's auto zone is the surface's *allocation*
+   plus the unanchored margin (`S464:276-280`); the tool computes it from the declared size, so a
+   `height = 0` auto surface gets `zone = 0`, no `ATTR` row, and `expected` short by the whole band.
+   For a lone such surface the band then collapses to zero and the join reads `DIFFER`
+$ git show dd4f844c:tools/mado-barfoot.py | sed -n "503p"
+        x = bounds["x"] + (bounds["w"] - w + 1) // 2  # Hyprland centres in doubles, rounds once
+$ git show dd4f844c:tools/mado-barfoot.py | sed -n "513p"
+        y = bounds["y"] + (bounds["h"] - h + 1) // 2
