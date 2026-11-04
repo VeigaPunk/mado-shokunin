@@ -3801,6 +3801,11 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   compositor, service or sibling repo was written; no pacman transaction; no tool installed or
   upgraded.
 
+  Correction (round 77, append-only): the round-76 entry above says "Four mined"; the lesson's
+  `## Mistakes` table holds five rows (M76-1…M76-5) — `grep -c '^| M76-' corpus/lessons/round-76.md`
+  prints `5`. The count defect is dispositioned in `corpus/lessons/round-76.md` `## Corrections
+  (round 77)` (round-76 closure D4).
+
 ## Round 77 — the bar's footprint and an executable runbook (2026-11-04, hyaku run 15)
 
 - **Claims.** C1 coverage: the bar-footprint chain becomes a measured join —

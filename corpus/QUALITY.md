@@ -939,3 +939,29 @@ receipt carries the command that produced it; the report's provenance crosswalk 
 Source: `considerthese/2026-10-28.md` proposal 5 (relayed vs re-measured), opened 2026-11-04.
 Limits: this is a labelling bar; it does not judge whether the evidence class is strong enough
 for the claim.
+
+**132. A registry row carries the table's own column count, and the append is gated by the
+table's census, never by the shape of the row above it by eye.** Shown able to fail: round 77's
+first two append batches wrote a 12-field row (a separate quote column) into the 11-column
+registry and the frozen census flagged `E01 fields=12` on every new row
+(`/fast/scratch/hyaku/mado-r77/census2.txt`); rewriting the rows with the quote in `teaches` and
+re-running the census exited 0. Source: round-77 M77-1.
+Limits: the census checks the row shape and id/status vocabulary; it cannot tell whether the
+quote supports the lesson the row claims.
+
+**133. A join across two reply planes names the unit and the space each plane reports before it
+compares them.** Shown able to fail: round 77's bar-footprint join treated `hyprctl monitors -j`
+`width`/`height` (pixel size) as the logical box that layer geometry uses; a scale-2 fixture
+produced a false `box=DIFFER` until the tool refused any monitor whose `scale` is not 1 or whose
+`transform` is not 0 (`receipts/repair-r77-tool-refusals.txt`, rc 1 before → rc 3 after). Source:
+round-77 wave scout F1.
+Limits: the refusal keeps the join honest on unscaled hosts; it does not model scaled or
+transformed outputs.
+
+**134. A frozen fixture's geometry must be internally consistent with the monitor it declares,
+or the case scores the fixture's impossibility instead of the instrument.** Shown able to fail:
+round 77's `left-vertical` case paired a 40x1440 live layer with a 1080-high monitor, so the
+correct tool reported `DIFFER` and the case scored `correct=no` until the fixture was corrected
+to 40x1080 (round-77 M77-5). Source: round-77 lesson M77-5.
+Limits: consistency catches impossible sizes; a wrong-but-possible value still needs a source
+derivation.
