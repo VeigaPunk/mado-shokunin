@@ -7,7 +7,7 @@ reported, not fixed (not my path)**.
 
 ## Blocker — landed S439 anchor does not cover its own quoted sentence
 
-`corpus/SOURCES.md:389` (L1, uncommitted working tree) lands S439 with anchor
+`corpus/SOURCES.md:389` (L1; committed at HEAD `40709300`) lands S439 with anchor
 `§ Dictionary displays, expressions.rst:509-512` while its quote cell is the dict-unpacking
 sentence at **514-517**. Lines 509-512 are the `.. index::` directive. My entry's pins name the
 lines the quoted sentences occupy, so `quality/check-anchor-cover.py` fails on three of five
@@ -41,6 +41,10 @@ because 509-512 is the index block and would cite the wrong line.
 
 Report: `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-70/w1/R70ScribeEntryC2.md`.
 No other lane path was written; the worktree was not mutated, staged, committed or checked out.
+
+State at yield: HEAD `40709300` carries the entry at `921098ab…` (working tree clean) and this
+report's previous revision at `8b13a9bf…`. The current report revision differs only in the
+blocker paragraph's committed-versus-uncommitted wording and is left for the L1 to commit.
 
 ## What the draft contains
 

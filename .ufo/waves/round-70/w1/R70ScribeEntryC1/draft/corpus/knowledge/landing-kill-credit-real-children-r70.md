@@ -220,8 +220,9 @@ rows above carry the sentences the rule actually joins on.
   `0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba` (matches the registry
   anchor's recorded tarball digest); `doc/bashref.texi` sha256
   `f3d37d57a1061e24d266051de9bd47ffa43dc86584afea11576c535ad2be32d5`, 415804 bytes, 11553 lines.
-  The registry anchor cites :3902-3906,3911-3916,3925-3928; the zero/nonzero sentence actually
-  begins at :3905 in these bytes (the range covers its head, not its first line).
+  The registry anchor cites :3902-3906,3911-3916,3925-3928; the zero/nonzero sentence begins
+  at :3905 and its trailing clause at :3907-3909, so this entry quotes 3905-3909 (the registry
+  range covers the sentence's first two lines, not its last clause).
 - Line pins checked against those bytes: `returncode` block subprocess.html:359-366 (sentences
   at 362-363 and 364-365), `Popen.returncode` block 1169-1181, `getstatusoutput` examples
   1743-1753.
