@@ -173,7 +173,9 @@ and `transform` with no same-selector rule created a phantom slot. All five repa
 selftest assertion each (44 → 50) and one red/green pair per class in
 `receipts/repair-r79-c1-model-r2.txt`; no frozen case, expectation, mutant or target moved, and the
 twenty-three cases still score 23/23 with twelve mutants killed at the R2 bytes
-(`receipts/measurement-c1-r79-r2.txt`, tool sha256 `241afdd0…`). Named limits: a band overflow on
+(`receipts/measurement-c1-r79-r2.txt`; the tool sha256 the receipt prints is the measured
+revision's bytes — `241afdd0…` at the first R2 run, `67c6bedd…` after the R2 docstring edit that
+followed it; the counter line names the sha, so cite the receipt's value). Named limits: a band overflow on
 the cross axis, and a `desc:` rule for another monitor (the whole join is refused, never guessed).
 
 ## How to re-produce the frozen measurement (append-only; wave seat R79ConnSiblings)

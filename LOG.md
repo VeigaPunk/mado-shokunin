@@ -3905,8 +3905,8 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   `transform` copies it, the newest rule wins), arranges the bar inside the static-reduced usable
   box and forms `expected = static[edge] + extent + opposite margin`; the frozen twenty-three-case
   set scores `cases=23 correct=23 mutants=12 killed=12 base_correct=18/23 carried=18/18
-  tool_selftest=44/44 TARGET_MET` at `d6be05ef` after repair R1 (the frozen run at `5eb8f20f`
-  printed the same counts on the pre-repair bytes; base `e4b153df`), with the held r78 model at 18/23
+  tool_selftest=50/50 TARGET_MET` at `cf5f09b9` after repairs R1 and R2 (the frozen run at
+  `5eb8f20f` printed the same counts on the pre-repair bytes; base `e4b153df`), with the held r78 model at 18/23
   (`receipts/measurement-c1-r79.txt`, `receipts/control-c1-r79-at-base.txt`). C2 operability: the
   SKILL.md runbook executes per-row bindings — 22 cases on 22 distinct rows, four documented model
   refusals over committed fixtures (a `mode` preset, a scaled monitor, the `background` layer, a
@@ -3925,14 +3925,15 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   earlier pins; S467 (the Hyprland wiki Monitors page) rejected — it documents the line syntax only,
   not the summation, and the live URL 404s. `used-by` gains the new entry on S303, S457, S458 and
   S459 (old → new in the lesson). Census exit 0 at both ends.
-- **Mistakes.** Six mined in `corpus/lessons/round-79.md`: M79-1 the round-78 before-command class
+- **Mistakes.** Seven mined in `corpus/lessons/round-79.md`: M79-1 the round-78 before-command class
   (closed by the counter's `anchor-absent` path), M79-2 the C2 counter's missing `cwd` and two
   wrong mutation anchors caught by a sandbox dry run, M79-3 the stale instrument self-description
   (`r78-v1` / `22/22` examples), M79-4 an unused `churn` key in the first C2 generator that
   silently did not score a sample, M79-5 the fetch manifest's self-referential last line, M79-6 the
-  `addreserved` fall-through model and the four fixtures that encoded it (repair R1, found by the
-  wave's source re-derivation; the tool gained a drop assertion and the case set still scores
-  23/23 with twelve mutants).
+  `addreserved` fall-through model and the four fixtures that encoded it (repair R1), M79-7 five
+  more reachable model classes (repair R2: origin, clamp, selector refusal, band overflow,
+  transform slot) — the tool gained six assertions (43 → 50) and the case set still scores 23/23
+  with twelve mutants.
 - **Registry and gate bookkeeping.** `quality/tool-ledger.md` 142 → 144 rows (two new counters; the
   `tools/mado-barfoot.py` row now describes `r79-v1`, `--rules` and the r79 selftest);
   `SKILL.md` gains the `### Executable runbook rows (round 79)` table (22 rows) and two canonical
