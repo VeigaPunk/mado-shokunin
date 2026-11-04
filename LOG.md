@@ -3583,3 +3583,10 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   frozen eight-case sets re-scored identically (`re-measure-r72.txt`: 8/8 vs 6/8 and 8/8 vs
   4/8). The declaration carries an append-only erratum naming the stream-precedence limit and
   the finite-set statements; no predicate, control or target changed.
+- Wave settlement (this entry, appended): all 13 seats settled with delivered files — the two
+  reviewers (`R72RevC1`, `R72RevC2`), the critic and the mutation battery delivered real
+  attacks; their findings drove the `4f598cfd` repair and the declaration erratum. The mutation
+  battery's survivors are disclosed, not hidden: GAP-1 (`summary_green()` without the `n > 0`
+  guard survives both frozen sets — no zero-denominator case) and GAP-2 (the counters'
+  `score()` None-guard is vacuous on these sets — no absent candidate). Both become round-73
+  controls under a new frozen denominator, never a widening of this round's.

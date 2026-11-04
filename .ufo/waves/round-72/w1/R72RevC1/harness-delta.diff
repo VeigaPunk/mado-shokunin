@@ -1,0 +1,508 @@
+--- base-r71
++++ candidate-r72
+@@ -1,78 +1,70 @@
+ #!/usr/bin/env python3
+-r"""Round-71 C1 control harness (successor to the frozen round-70 harness): the standing
+-landing instrument and its git-reading children, measured against the two frozen defect
+-controls, with the M-Z kill-credit moved fully onto the parsed failed assertion.
+-
+-Difference from `quality/counters/c1-r70-landing-controls.py`, which stays byte-frozen and
+-is not edited: the round-70 line credits an M-Z mutant only when its selftest exits nonzero
+-AND its summary reports a failure (`mz_killed = mz_rc != 0 and summary_shows_failure`),
+-so a lane whose assertions genuinely fail but whose exit status is 0 (broken status
+-propagation) escapes as a survivor. This harness credits M-Z whenever the child's own
+-`MADO_LANDING_COUNTERS_SELFTEST: <p>/<n> assertions passed` summary parses AND reports
+-`p < n`, whatever the exit status (`mz_killed = summary_shows_failure`); the exit status
+-stays visible in the evidence line. A crash (no summary) or a garbled summary still earns
+-no credit. Everything else (extraction, M-R, evidence lines, selftest) is the round-70 body.
+-
+-    python3 quality/counters/c1-r71-landing-controls.py --repo . --rev REV --scratch-root DIR
+-    python3 quality/counters/c1-r71-landing-controls.py --selftest --scratch-root DIR
+-
+-Exit map: 0 iff the extracted instrument's own --selftest is rc 0 AND both frozen defect
+-mutants are killed (2/2); 1 iff the measurement ran and the contract was not met (red
+-selftest or a surviving mutant); 2 on usage/setup error - reason on stderr, no contract
+-line printed.
++r"""Round-72 C1/C2 successor harness (round-71 generation plus two disjoint rule deltas).
++
++The lane's harness chain is one file per round: `c1-r68` -> `c1-r69` -> `c1-r70` -> `c1-r71`
++-> this file. The frozen generations are never edited; each successor differs only where its
++round's claim says it does.
++
++Delta D1 (round-72 C1, calibration) - the M-Z kill credit. The round-71 line credits any
++parsed `MADO_LANDING_COUNTERS_SELFTEST: <p>/<n> assertions passed` with `p < n`. That credits
++a summary line no assertion of this run produced (a bare echo) and a summary whose failure
++count is not backed by the run's own `SELFTEST FAIL` lines. This file's `credit(out)` requires
++the LAST parsed summary to report `p < n` with `n > 0` AND the run's own `SELFTEST FAIL` lines
++to number exactly `n - p`. Both captured streams are read, as in round 71.
++
++Delta D2 (round-72 C2, operability) - the contract outcome. The round-71 line greens the run
++whenever the extracted instrument's `--selftest` exits 0 (`outcome_exit(selftest_rc, killed)`),
++whatever its summary says. This file's `outcome_exit`/`outcome_verdict` read the LAST parsed
++`MADO_LANDING_COUNTERS_SELFTEST: <p>/<n>` summary of that run: green iff `n > 0` and `p == n`;
++a missing or garbled summary is not green; the kill count still requires 2/2. The exit status
++is printed as evidence and no longer gates the outcome.
++
++    python3 quality/counters/c1-r72-landing-controls.py --repo . --rev REV --scratch-root DIR
++    python3 quality/counters/c1-r72-landing-controls.py --selftest --scratch-root DIR
++
++Exit map: 0 iff the extracted instrument's own summary is green AND both frozen defect mutants
++are killed (2/2); 1 iff the measurement ran and the contract was not met; 2 on usage/setup error
++- reason on stderr, no contract line printed.
+ 
+ What one measurement does (every write stays under the caller-declared scratch root):
+ 
+-  extract  the four instrument files at --rev into <scratch>/r71-c1/tree/ with a scrubbed
+-           git env carrying GIT_OPTIONAL_LOCKS=0 and GIT_NO_REPLACE_OBJECTS=1, so a planted
+-           replacement in the source repo cannot forge the extracted bytes:
++  extract  the four instrument files at --rev into <scratch>/r72-c1/tree/ with a scrubbed git
++           env carrying GIT_OPTIONAL_LOCKS=0 and GIT_NO_REPLACE_OBJECTS=1:
+              quality/landing-counters.sh
+              quality/counters/c3-r56-used-by.py
+              quality/check-tool-ledger.py
+              tools/mado-receipt-citecheck.py
+-  selftest run the extracted landing instrument `--selftest`: the candidate is expected green.
++  selftest run the extracted landing instrument `--selftest`; its last summary is scored, not
++           its exit status (D2).
+   M-Z      copy the tree, delete the exact frozen zero-citation guard clause
+            `[ "$citations" -gt 0 ] && ` once (asserting exactly one occurrence first; the
+            mutant must still pass `bash -n`), and re-run `--selftest`: the mutation is killed
+-           iff that selftest's output carries a parseable
+-           `MADO_LANDING_COUNTERS_SELFTEST: <p>/<n> assertions passed` summary with p < n
+-           (the instrument's zero-citation case must go red, not merely break), whatever the
+-           child's exit status (round-71 rule).
+-  M-R      build a scratch fixture repo whose real tree lacks `corpus/cited.md` while a receipt
+-           in the worktree cites it, then plant a `refs/replace` ref on the root tree so the
+-           path appears; copy the extracted citecheck child, delete the exact
+-           GIT_NO_REPLACE_OBJECTS guard line (asserting exactly one occurrence first; a
+-           token-rename fallback is used only when the line cannot be deleted without breaking
+-           the file), and run both children on the same fixture with an env that carries NO
+-           GIT_NO_REPLACE_OBJECTS (all inherited GIT_* scrubbed): the unmutated child must read
+-           the real tree (rc 1, TARGET_MISSED, missing=1) and the mutant must credit the forged
+-           tree (rc 0, TARGET_MET) - that pair is the kill.
++           iff `credit()` accepts that output (D1).
++  M-R      the round-69/70/71 replacement-ref pair, unchanged: the unmutated child must read
++           the real tree (rc 1, TARGET_MISSED, missing=1) and the guard-removed mutant must
++           credit the forged tree (rc 0, TARGET_MET).
+ 
+ Printed receipt (last line, exact):
+ 
+-    MADO_R71_LANDING_CONTROLS: selftest=<rc> mz=<pass|fail> mr=<pass|fail> killed=<n>/2 baseline=0/2 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
+-
+-Preceded by one `MADO_R71_*` evidence line per extraction, mutant (with its sha256), R-control
++    MADO_R72_LANDING_CONTROLS: selftest=<p/n|none> mz=<pass|fail> mr=<pass|fail> killed=<n>/2 baseline=0/2 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
++
++Preceded by one `MADO_R72_*` evidence line per extraction, mutant (with its sha256), R-control
+ leg, and the exact environment handed to the child under test. Mutant bytes are never claimed
+-killed when the recipe was inapplicable: a missing guard yields `recipe=none killed=no`, and
+-the unverified leg is named.
++killed when the recipe was inapplicable: a missing guard yields `recipe=none killed=no`.
+ 
+ Selftest: `--selftest` is hermetic - it spawns nothing, touches only <scratch-root>, and
+ refuses /tmp-family or symlinked roots. It drives the real `measure()` body with scripted
+-children (git, bash and python answered in-process) so the kill-credit decisions and the
+-printed contract line are exercised without a child. On top of that it asserts the hermetic
+-spawn guard is installed for the check body, and that an attempted spawn under it raises.
+-
+-Declared limits: the M-Z credit requires a parsed failed-assertion summary, so a child
+-that crashes, is missing, or prints a garbled summary earns no credit; a child that reports
+-a failure is credited whatever its exit status, because the exit status cannot carry the
+-assertion result (one status, many causes). The paired assertion still covers the crashing
+-M-R child (rc 2, no MADO_CITECHECK marker). Those selftest cases use scripted stand-ins.
+-The real-children evidence lives in the round's counting command
+-(`quality/counters/c1-r71-real-children.py`), which runs a real `bash` fixture lane in four
+-states; this harness claims nothing by itself about real children. A forged failing summary
+-is byte-indistinguishable from a genuine one: the rule reads the child's own report, it does
+-not authenticate it.
++children (git, bash and python answered in-process) so both rules and the printed contract line
++are exercised without a child, and asserts each rule's own decision table.
++
++Declared limits: the credit rule reads the child's own report, it does not authenticate it - a
++captured summary replayed with its own matching detail lines remains byte-indistinguishable
++from a genuine run; the arithmetic check bounds the summary to the run's own fail lines, not to
++the truth of those lines. A crash, a missing child or a garbled summary earns no credit, and a
++green summary with a nonzero exit (or a failing summary with exit 0) is scored by the summary -
++the exit status cannot carry the assertion result (held ground S441/S435/S444/S445). The
++scripted selftest cases use stand-ins; the real-child evidence lives in the round counters
++`quality/counters/c1-r72-summary-credit.py` and `quality/counters/c2-r72-outcome.py`.
+ """
+ import argparse
+ import contextlib
+@@ -84,7 +76,7 @@
+ import subprocess
+ import sys
+ 
+-TOOL = "c1-r71-landing-controls.py"
++TOOL = "c1-r72-landing-controls.py"
+ LANE = "quality/landing-counters.sh"
+ USEDBY = "quality/counters/c3-r56-used-by.py"
+ LEDGER = "quality/check-tool-ledger.py"
+@@ -103,7 +95,7 @@
+     "GIT_TERMINAL_PROMPT",
+ )
+ CONTRACT_RE = re.compile(
+-    r"MADO_R71_LANDING_CONTROLS: selftest=[0-9]+ mz=(?:pass|fail) mr=(?:pass|fail) "
++    r"MADO_R72_LANDING_CONTROLS: selftest=(?:[0-9]+/[0-9]+|none) mz=(?:pass|fail) mr=(?:pass|fail) "
+     r"killed=[0-2]/2 baseline=0/2 verdict=(?:TARGET_MET|TARGET_MISSED) rev=[0-9a-f]{40,64}"
+ )
+ 
+@@ -335,6 +327,33 @@
+     return total > 0 and passed < total
+ 
+ 
++def credit(out):
++    """Round-72 D1: the kill is credited on the run's own failed assertions, not a summary line.
++
++    True iff the LAST parsed summary reports `p < n` with `n > 0` AND the run's own
++    `SELFTEST FAIL` lines number exactly `n - p`. A bare/replayed summary line, a summary whose
++    detail does not add up, a crash and a garbled summary all earn no credit.
++    """
++    line = last_summary(out)
++    m = re.fullmatch(r"MADO_LANDING_COUNTERS_SELFTEST: (\d+)/(\d+) assertions passed", line)
++    if not m:
++        return False
++    passed, total = int(m.group(1)), int(m.group(2))
++    if total <= 0 or passed >= total:
++        return False
++    return count_fails(out) == total - passed
++
++
++def summary_green(out):
++    """Round-72 D2: green iff the LAST parsed summary has n > 0 and p == n."""
++    line = last_summary(out)
++    m = re.fullmatch(r"MADO_LANDING_COUNTERS_SELFTEST: (\d+)/(\d+) assertions passed", line)
++    if not m:
++        return False
++    passed, total = int(m.group(1)), int(m.group(2))
++    return total > 0 and passed == total
++
++
+ def describe_env(env):
+     """Exact key set and values of the child env, PATH summarized (host PATH is long noise)."""
+     parts = ["no_replace_objects=%s"
+@@ -349,18 +368,18 @@
+     return " ".join(parts)
+ 
+ 
+-def outcome_exit(selftest_rc, killed):
+-    return 0 if selftest_rc == 0 and killed == 2 else 1
+-
+-
+-def outcome_verdict(selftest_rc, killed):
+-    return "TARGET_MET" if selftest_rc == 0 and killed == 2 else "TARGET_MISSED"
+-
+-
+-def contract_line(selftest_rc, mz, mr, killed, rev):
+-    return ("MADO_R71_LANDING_CONTROLS: selftest=%d mz=%s mr=%s killed=%d/2 baseline=%s "
+-            "verdict=%s rev=%s" % (selftest_rc, mz, mr, killed, BASELINE,
+-                                   outcome_verdict(selftest_rc, killed), rev))
++def outcome_exit(selftest_out, killed):
++    return 0 if summary_green(selftest_out) and killed == 2 else 1
++
++
++def outcome_verdict(selftest_out, killed):
++    return "TARGET_MET" if summary_green(selftest_out) and killed == 2 else "TARGET_MISSED"
++
++
++def contract_line(selftest_out, mz, mr, killed, rev):
++    return ("MADO_R72_LANDING_CONTROLS: selftest=%s mz=%s mr=%s killed=%d/2 baseline=%s "
++            "verdict=%s rev=%s" % (summary_fraction(selftest_out), mz, mr, killed, BASELINE,
++                                   outcome_verdict(selftest_out, killed), rev))
+ 
+ 
+ # --------------------------------------------------------------------------------------------- R fixture
+@@ -437,7 +456,7 @@
+     repo = os.path.abspath(args.repo)
+     if not os.path.isdir(repo):
+         raise SetupError("--repo is not a directory: %s" % repo)
+-    work = os.path.join(scratch, "r71-c1")
++    work = os.path.join(scratch, "r72-c1")
+     shutil.rmtree(work, ignore_errors=True)
+     home = os.path.join(work, "home")
+     os.makedirs(home)
+@@ -445,16 +464,18 @@
+     tree = os.path.join(work, "tree")
+     files = extract(repo, sha, tree, home)
+     for rel in EXTRACT:
+-        emit("MADO_R71_EXTRACT path=%s bytes=%d sha256=%s"
++        emit("MADO_R72_EXTRACT path=%s bytes=%d sha256=%s"
+              % (rel, len(files[rel]), sha256_hex(files[rel])))
+-    emit("MADO_R71_EXTRACT rev=%s files=%d" % (sha, len(files)))
++    emit("MADO_R72_EXTRACT rev=%s files=%d" % (sha, len(files)))
+ 
+     # --- extracted instrument's own selftest -----------------------------------------------------
+     r = run(["bash", os.path.join(tree, LANE), "--selftest",
+              "--scratch-root", os.path.join(work, "st")], env=child_env(home), cwd=work, timeout=900)
+     selftest_rc = r.returncode
+-    emit("MADO_R71_SELFTEST instrument=%s rc=%d assertions=%s"
+-         % (LANE, selftest_rc, summary_fraction(dec(r.stdout) + dec(r.stderr))))
++    selftest_out = dec(r.stdout) + dec(r.stderr)
++    emit("MADO_R72_SELFTEST instrument=%s rc=%d summary=%s green=%s"
++         % (LANE, selftest_rc, summary_fraction(selftest_out),
++            "yes" if summary_green(selftest_out) else "no"))
+ 
+     # --- M-Z: zero-citation guard clause deleted -------------------------------------------------
+     clause_count = files[Z_PATH].count(Z_CLAUSE)
+@@ -483,10 +504,10 @@
+         mz_out = dec(r.stdout) + dec(r.stderr)
+         mz_fails = count_fails(mz_out)
+         mz_summary = summary_fraction(mz_out)
+-        mz_killed = bool(summary_shows_failure(mz_out))
++        mz_killed = bool(credit(mz_out))
+     except RecipeError as exc:
+         mz_note = str(exc)
+-    emit("MADO_R71_MUTANT M-Z path=%s clause_count=%d recipe=%s removed=%s from_sha256=%s "
++    emit("MADO_R72_MUTANT M-Z path=%s clause_count=%d recipe=%s removed=%s from_sha256=%s "
+          "rc=%s failed_assertions=%s assertions=%s killed=%s sha256=%s%s"
+          % (Z_PATH, clause_count, mz_recipe,
+             repr(Z_CLAUSE.decode("ascii")) if mz_recipe != "none" else "none",
+@@ -498,19 +519,19 @@
+     # --- M-R: replacement-ref guard removed from the citecheck child ----------------------------
+     # Bound target is the citecheck child (L1 steering 2026-11-03): its explicit env constructor
+     # is the guard, and the tree-replacement fixture exercises exactly its `ls-tree` read.
+-    emit("MADO_R71_GUARDS citecheck=%d usedby=%d ledger=%d"
++    emit("MADO_R72_GUARDS citecheck=%d usedby=%d ledger=%d"
+          % (files[CITECHECK].count(R_TOKEN), files[USEDBY].count(R_TOKEN),
+             files[LEDGER].count(R_TOKEN)))
+     guard_count = files[R_PATH].count(R_TOKEN)
+     fixture = build_r_fixture(work, home)
+-    emit("MADO_R71_R_CONTROL fixture_rev=%s real_tree=%s forged_tree=%s "
++    emit("MADO_R72_R_CONTROL fixture_rev=%s real_tree=%s forged_tree=%s "
+          "forged_visible=yes guarded_visible=no"
+          % (fixture["rev"], fixture["real_tree"], fixture["forged_tree"]))
+     cenv = child_env(home)
+-    emit("MADO_R71_CHILD_ENV %s" % describe_env(cenv))
++    emit("MADO_R72_CHILD_ENV %s" % describe_env(cenv))
+     unmutated = run_r_child(os.path.join(tree, R_PATH), fixture, work, home)
+     u_ok = control_ok(unmutated["rc"], unmutated["marker"])
+-    emit("MADO_R71_R_CHILD role=unmutated rc=%d verdict=%s missing=%s control=%s"
++    emit("MADO_R72_R_CHILD role=unmutated rc=%d verdict=%s missing=%s control=%s"
+          % (unmutated["rc"],
+             unmutated["marker"][0] if unmutated["marker"] else "none",
+             unmutated["marker"][1] if unmutated["marker"] else "-",
+@@ -541,7 +562,7 @@
+             mr_note = str(exc)
+     else:
+         mr_note = "guard absent at rev (count=%d): recipe not applicable" % guard_count
+-    emit("MADO_R71_MUTANT M-R path=%s guard_count=%d recipe=%s removed_line=%s "
++    emit("MADO_R72_MUTANT M-R path=%s guard_count=%d recipe=%s removed_line=%s "
+          "from_sha256=%s rc=%s verdict=%s missing=%s forged_credit=%s killed=%s sha256=%s%s"
+          % (R_PATH, guard_count, mr_recipe, mr_removed, sha256_hex(files[R_PATH]),
+             "-" if mr_rc is None else mr_rc,
+@@ -552,9 +573,9 @@
+             (" note=%s" % mr_note) if mr_note else ""))
+ 
+     killed = int(mz_killed) + int(mr_killed)
+-    emit(contract_line(selftest_rc, "pass" if mz_killed else "fail",
++    emit(contract_line(selftest_out, "pass" if mz_killed else "fail",
+                        "pass" if mr_killed else "fail", killed, sha))
+-    return outcome_exit(selftest_rc, killed)
++    return outcome_exit(selftest_out, killed)
+ 
+ 
+ # --------------------------------------------------------------------------------------------- selftest
+@@ -617,13 +638,12 @@
+             elif any(t.endswith("landing-counters.sh") for t in a):
+                 if "/mz/" in " ".join(a):
+                     rc = case["mz_rc"]
+-                    out = case.get("mz_stdout",
+-                                   b"MADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed\n")
++                    out = case.get("mz_stdout", MZ_FAIL_TWO)
+                 else:
+                     out = b"MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed\n"
+             else:
+                 rc = case["mz_rc"]
+-                out = b"MADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed\n"
++                out = MZ_FAIL_TWO
+         elif os.path.basename(a[0]).startswith("python"):
+             if "/mr/" in " ".join(a):
+                 marker = case.get("child_marker")
+@@ -653,10 +673,13 @@
+     finally:
+         globals()["run"] = saved
+     lines = [ln for ln in buf.getvalue().splitlines()
+-             if ln.startswith("MADO_R71_LANDING_CONTROLS:")]
++             if ln.startswith("MADO_R72_LANDING_CONTROLS:")]
+     return rc, (lines[-1] if lines else "none")
+ 
+ 
++MZ_FAIL_TWO = (b"SELFTEST FAIL 2: a want=1 got=0\n"
++               b"SELFTEST FAIL 5: b want=1 got=0\n"
++               b"MADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed\n")
+ MET_MARKER = ("MADO_CITECHECK: rev=%s files=1 citations=1 resolved=1 missing=0 "
+               "skipped_large=0 verdict=TARGET_MET (VERSION r64-v1)")
+ MISSED_MARKER = ("MADO_CITECHECK: rev=%s files=1 citations=1 resolved=0 missing=1 "
+@@ -674,7 +697,7 @@
+     met = {"name": "both-killed", "mz_rc": 1, "child_rc": 0, "child_marker": MET_MARKER}
+     rc, line = _measure_case(work, met, sha)
+     want("scripted both-killed prints the met line",
+-         line == ("MADO_R71_LANDING_CONTROLS: selftest=0 mz=pass mr=pass killed=2/2 "
++         line == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=pass mr=pass killed=2/2 "
+                   "baseline=0/2 verdict=TARGET_MET rev=" + sha))
+     want("scripted both-killed exits 0", rc == 0)
+ 
+@@ -683,7 +706,7 @@
+             "child_rc": 1, "child_marker": MISSED_MARKER}
+     rc2, line2 = _measure_case(work, none, sha)
+     want("scripted none-killed prints the miss line",
+-         line2 == ("MADO_R71_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
++         line2 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=fail mr=fail killed=0/2 "
+                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
+     want("scripted none-killed exits 1", rc2 == 1)
+     want("both scripted lines match the frozen contract shape",
+@@ -692,7 +715,7 @@
+     crash = {"name": "mr-crash", "mz_rc": 1, "child_rc": 2, "child_marker": None}
+     rc3, line3 = _measure_case(work, crash, sha)
+     want("a crashing M-R child is not a kill (decision + oracle pair)",
+-         line3 == ("MADO_R71_LANDING_CONTROLS: selftest=0 mz=pass mr=fail killed=1/2 "
++         line3 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=pass mr=fail killed=1/2 "
+                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
+     want("mr-crash exits 1", rc3 == 1)
+ 
+@@ -701,7 +724,7 @@
+             "child_rc": 1, "child_marker": MISSED_MARKER}
+     rc4, line4 = _measure_case(work, mute, sha)
+     want("an M-Z run with no assertion summary is not a kill",
+-         line4 == ("MADO_R71_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
++         line4 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=fail mr=fail killed=0/2 "
+                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
+     want("mz-unparseable exits 1", rc4 == 1)
+     want("paired scripted lines match the frozen contract shape",
+@@ -712,7 +735,7 @@
+                "child_rc": 1, "child_marker": MISSED_MARKER}
+     rc5, line5 = _measure_case(work, crashed, sha)
+     want("a crashing M-Z child is not a kill (a parsed failed assertion is required)",
+-         line5 == ("MADO_R71_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
++         line5 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=fail mr=fail killed=0/2 "
+                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
+     want("mz-crash exits 1", rc5 == 1)
+ 
+@@ -721,19 +744,62 @@
+                "child_rc": 1, "child_marker": MISSED_MARKER}
+     rc6, line6 = _measure_case(work, allpass, sha)
+     want("an M-Z run whose summary reports no failure is not a kill",
+-         line6 == ("MADO_R71_LANDING_CONTROLS: selftest=0 mz=fail mr=fail killed=0/2 "
++         line6 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=fail mr=fail killed=0/2 "
+                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
+     want("mz-allpass exits 1", rc6 == 1)
+ 
+-    liar = {"name": "mz-liar-success", "mz_rc": 0,
+-            "mz_stdout": b"MADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed\n",
++    liar = {"name": "mz-liar-success", "mz_rc": 0, "mz_stdout": MZ_FAIL_TWO,
+             "child_rc": 1, "child_marker": MISSED_MARKER}
+     rc7, line7 = _measure_case(work, liar, sha)
+     want("an M-Z run whose summary reports a failure is a kill even at exit 0 (round-71 rule)",
+-         line7 == ("MADO_R71_LANDING_CONTROLS: selftest=0 mz=pass mr=fail killed=1/2 "
++         line7 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=pass mr=fail killed=1/2 "
+                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
+     want("mz-liar-success exits 1", rc7 == 1)
+ 
++    bare = {"name": "mz-bare-echo", "mz_rc": 0,
++            "mz_stdout": b"MADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed\n",
++            "child_rc": 1, "child_marker": MISSED_MARKER}
++    rc8, line8 = _measure_case(work, bare, sha)
++    want("a bare failing summary with no run detail is not a kill (D1)",
++         line8 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=fail mr=fail killed=0/2 "
++                   "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
++    mismatch = {"name": "mz-mismatch", "mz_rc": 0,
++                "mz_stdout": (b"SELFTEST FAIL 1: a\nSELFTEST FAIL 2: b\nSELFTEST FAIL 3: c\n"
++                              b"MADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed\n"),
++                "child_rc": 1, "child_marker": MISSED_MARKER}
++    rc9, line9 = _measure_case(work, mismatch, sha)
++    want("a summary whose fail lines do not add up is not a kill (D1)",
++         line9 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=fail mr=fail killed=0/2 "
++                   "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
++    lastpass = {"name": "mz-last-wins-pass", "mz_rc": 0,
++                "mz_stdout": (MZ_FAIL_TWO +
++                              b"MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed\n"),
++                "child_rc": 1, "child_marker": MISSED_MARKER}
++    rc10, line10 = _measure_case(work, lastpass, sha)
++    want("the last summary wins over an earlier failing one (D1)",
++         line10 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=fail mr=fail killed=0/2 "
++                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
++    lastfail = {"name": "mz-last-wins-fail", "mz_rc": 1,
++                "mz_stdout": (b"MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed\n"
++                              b"SELFTEST FAIL 9: zero citations refused want=1 got=0\n"
++                              b"MADO_LANDING_COUNTERS_SELFTEST: 61/62 assertions passed\n"),
++                "child_rc": 1, "child_marker": MISSED_MARKER}
++    rc11, line11 = _measure_case(work, lastfail, sha)
++    want("the last summary wins and its own detail earns the kill (D1)",
++         line11 == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=pass mr=fail killed=1/2 "
++                    "baseline=0/2 verdict=TARGET_MISSED rev=" + sha))
++    want("the D1 scripted lines keep the frozen contract shape",
++         all(CONTRACT_RE.fullmatch(x) is not None for x in (line8, line9, line10, line11)))
++    want("credit: consistent failure earns it",
++         credit(MZ_FAIL_TWO.decode()))
++    want("credit: bare summary does not",
++         not credit("MADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed\n"))
++    want("credit: mismatch does not",
++         not credit("SELFTEST FAIL 1: a\nMADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed\n"))
++    want("credit: green summary does not",
++         not credit("MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed\n"))
++    want("credit: zero total does not",
++         not credit("MADO_LANDING_COUNTERS_SELFTEST: 0/0 assertions passed\n"))
+     want("summary 1/2 shows failure",
+          summary_shows_failure("MADO_LANDING_COUNTERS_SELFTEST: 1/2 assertions passed"))
+     want("summary 2/2 shows no failure",
+@@ -803,20 +869,30 @@
+     want("forged credit is rc0 + TARGET_MET + missing=0",
+          forged_credit(0, ("TARGET_MET", 0)) and not forged_credit(1, ("TARGET_MISSED", 1)))
+ 
+-    want("exit zero only on green selftest and 2/2", outcome_exit(0, 2) == 0)
+-    want("one kill is a miss", outcome_exit(0, 1) == 1)
+-    want("red selftest is a miss", outcome_exit(1, 2) == 1)
+-    want("verdict met only on green 2/2",
+-         outcome_verdict(0, 2) == "TARGET_MET"
+-         and outcome_verdict(0, 1) == "TARGET_MISSED"
+-         and outcome_verdict(2, 2) == "TARGET_MISSED")
+-
+-    line = contract_line(0, "pass", "pass", 2, "a" * 40)
++    green = "MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed"
++    failed = "MADO_LANDING_COUNTERS_SELFTEST: 60/62 assertions passed"
++    want("D2: exit zero only on a green summary and 2/2", outcome_exit(green, 2) == 0)
++    want("D2: one kill is a miss", outcome_exit(green, 1) == 1)
++    want("D2: a failing summary is a miss whatever the status",
++         outcome_exit(failed, 2) == 1)
++    want("D2: no summary is a miss", outcome_exit("boom\n", 2) == 1)
++    want("D2: a garbled summary is a miss",
++         outcome_exit("MADO_LANDING_COUNTERS_SELFTEST: x/2 assertions passed", 2) == 1)
++    want("D2: zero-total is a miss",
++         outcome_exit("MADO_LANDING_COUNTERS_SELFTEST: 0/0 assertions passed", 2) == 1)
++    want("D2: verdict met only on a green 2/2",
++         outcome_verdict(green, 2) == "TARGET_MET"
++         and outcome_verdict(green, 1) == "TARGET_MISSED"
++         and outcome_verdict(failed, 2) == "TARGET_MISSED")
++
++    line = contract_line("MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed",
++                         "pass", "pass", 2, "a" * 40)
+     want("contract line matches the frozen shape",
+          CONTRACT_RE.fullmatch(line) is not None and " baseline=0/2 " in line)
+     want("contract line reports the miss",
+-         contract_line(0, "pass", "fail", 1, "a" * 40)
+-         == ("MADO_R71_LANDING_CONTROLS: selftest=0 mz=pass mr=fail killed=1/2 "
++         contract_line("MADO_LANDING_COUNTERS_SELFTEST: 62/62 assertions passed",
++                       "pass", "fail", 1, "a" * 40)
++         == ("MADO_R72_LANDING_CONTROLS: selftest=62/62 mz=pass mr=fail killed=1/2 "
+              "baseline=0/2 verdict=TARGET_MISSED rev=" + "a" * 40))
+ 
+     want("scratch accepts its own real directory", absolute_scratch(work) == os.path.normpath(work))
+@@ -900,8 +976,8 @@
+     passed = sum(1 for _name, ok in checks if ok)
+     for name, ok in checks:
+         if not ok:
+-            print("MADO_R71_SELFTEST FAIL: %s" % name)
+-    print("MADO_R71_LANDING_CONTROLS_SELFTEST: %d/%d assertions passed" % (passed, len(checks)))
++            print("MADO_R72_SELFTEST FAIL: %s" % name)
++    print("MADO_R72_LANDING_CONTROLS_SELFTEST: %d/%d assertions passed" % (passed, len(checks)))
+     return 0 if passed == len(checks) else 1
+ 
+ 
+@@ -911,7 +987,7 @@
+     except UsageError as exc:
+         sys.stderr.write("%s: %s\n" % (TOOL, exc))
+         return 2
+-    work = os.path.join(scratch, "r71-c1-selftest")
++    work = os.path.join(scratch, "r72-c1-selftest")
+     shutil.rmtree(work, ignore_errors=True)
+     os.makedirs(work)
+     try:

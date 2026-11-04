@@ -121,3 +121,13 @@ chronological last; separate pipes cannot be interleaved after the fact. `Critic
 Counterexample A stands as a **finite-set statement**: the C2 eight cases carry no
 zero-denominator case (the successor's `total > 0` guard is selftest-covered, not frozen-set
 covered), and a later round adds those controls under a new denominator.
+
+### Mutation evidence for the finite-set statement (append-only)
+
+`R72MutBattery` mutated the successors in its own copies: dropping the credit arithmetic (M1) and
+relaxing the comparison (M2) are caught by C1's frozen modes (6/8 and 7/8 → `TARGET_MISSED`);
+reverting the outcome to the kill count alone (M4) is caught by C2 (3/8). Dropping the
+`n > 0` guard (M3) is **not** caught by C2's frozen eight (8/8) — it is caught only by the
+harness selftest's zero-total case, which is the finite-set blind spot `CriticClaims`
+Counterexample A predicted. Those controls (zero denominator, valid-then-garbled tail) are
+round-73 ground under a new frozen denominator; this round does not widen its set.
