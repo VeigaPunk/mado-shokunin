@@ -864,3 +864,39 @@ Shown able to fail: round 73's criteria 118–119 landed in the root `QUALITY.md
 following `corpus/README.md`'s pointer found the bar ending at 117 (round-73 closure D4);
 `grep -c '^118\.' corpus/QUALITY.md` printed 0 before the round-74 append and 1 after.
 Limits: this governs placement; it does not judge a criterion's content.
+
+## Criteria from the round-75 harness wiring and repairs
+
+**124. A freeze declaration's no-harm list and its routed-defect dispositions are checked against
+each other before the freeze: an instrument named as byte-identical cannot be the instrument the
+same round amends.** Shown able to fail: round 75 named `tools/mado-verify.sh` in both the
+no-harm list and the D5 disposition; the report and SCORECARD declare the amendment and the
+`PIN_MADO` re-cut (`367ff5ec…` → `49567a0f…`) rather than claiming byte-identity, and the gate is
+re-measured 460/460 at the amended bytes (`corpus/lessons/round-75.md` M75-1).
+Limits: the check compares two declarations; it does not judge whether the amendment is worth
+making.
+
+**125. A change to a scored instrument is exercised through the claim's counter before a receipt
+is filed; a passing instrument selftest is not evidence the pipeline runs.** Shown able to fail:
+round 75's hardening change (a private `mkdtemp` generation directory) ran before the validated
+scratch root existed, so the C1 counter scored `correct=0/11` at `f75afbf6…` while the selftest
+passed 20/20; the fix plus a counter run at `4527fcae…` restored `correct=11/11`
+(`corpus/lessons/round-75.md` M75-2).
+Limits: one counter run proves the pipeline for that content and those fixtures, not every
+caller.
+
+**126. A frozen fixture whose source cannot execute as written is labelled a syntactic-ordering
+case in the entry, and the successor shape must initialise the state it deletes.** Shown able to
+fail: round 75's `del-before-store` case deletes a key its mapping never had (`KeyError` before
+any launch), so the label pins the ordering rule, not a reachable runtime state; the case is not
+re-cut and the limit is stated (`corpus/lessons/round-75.md` M75-3).
+Limits: this governs labelling; it does not require every fixture to be a runnable program.
+
+**127. A frozen separator must be deterministically reachable by the rule it separates; a
+probabilistic oracle is disclosed with its probability.** Shown able to fail: round 75's
+`uppercase-echo` separator accepts a challenge that is all decimal digits, where uppercasing is a
+no-op, so a correct implementation can miss the label through no defect (probability
+`(10/16)^16 ≈ 5.4e-4`; the deterministic challenge `1234567890123456` reproduces the miss in the
+critic's receipt). The frozen label stands and the disclosure is in the entry.
+Limits: the probability bound depends on the challenge's alphabet; a different generator needs
+its own bound.
