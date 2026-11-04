@@ -4536,7 +4536,7 @@ after the wave's connector showed a deleted row would still pass, and the shape 
 Frozen declaration: `.ufo/waves/round-79/claims-declaration-r79.md`; freeze `5eb8f20f` (tool,
 counters, control sets, fixtures, declaration); base `e4b153dfa4a67ca56f7ec65cb6639082451626a7`.
 Frozen control sets: `.ufo/waves/round-79/controls/c1-cases-r79.json` (23 cases, sha256
-`5f7ebb3c…`, the eighteen r78 cases carried byte-identically) and `c2-runbook-cases-r79.json`
+`5f7ebb3c…`, the eighteen r78 cases carried unchanged (parsed equality)) and `c2-runbook-cases-r79.json`
 (22 cases, 22 distinct anchors; the seventeen r78 cases carried with only `skill_anchor`
 re-pointed). Pre-freeze do-nothing controls: the held r78 tool scores `base_correct=18/23` on the
 C1 set (`receipts/control-c1-r79-at-base.txt`); the held r78 runbook instrument cannot score the
@@ -4595,3 +4595,6 @@ command yields a verdict at both ends; the corrected before-state is
 `--no-mutants` reproduction. **D3** — the r78 frontier bullet's "three re-opened rows" is corrected
 by this round's bullet (S457/S458/S459/S303 re-opened and re-fetched, the r78 frontier line stays
 as the dated record).
+
+### Axis table re-derived at the landing tip (`receipts/harm-watch-r79.txt` and `quality/check-axis-scores.py`):
+navigation 98/98; calibration resolved-active 86/86; operability selftest 12/12, ledger 144/144.

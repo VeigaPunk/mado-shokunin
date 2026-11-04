@@ -41,7 +41,7 @@ python3 -I quality/counters/c1-r79-reserve.py --repo . \
 ```
 
 **Frozen set.** `.ufo/waves/round-79/controls/c1-cases-r79.json`: 23 cases — the eighteen
-round-78 cases carried byte-identically (the counter asserts the prefix) plus five new:
+round-78 cases carried unchanged (the counter asserts the parsed prefix equals the round-78 set field-for-field) plus five new:
 `static-composed` (static 26 + margined bar 34 = 60, EQ), `static-other-edge` (static left 40
 moves the box, not the top band), `static-exclusive-false` (would-be band printed as
 `static + bar`, `NOT_APPLIED`), `static-last-wins` (two `addreserved` for M1, one for M2; the
@@ -133,3 +133,15 @@ C1, above.
 
 No seat may rewrite `tools/mado-barfoot.py`, the two counters, the two control sets, the
 fixtures or this declaration. Seats return findings and draft files; the L1 integrates.
+
+## Correction (append-only; wording only, after the `5eb8f20f` measurement)
+
+The C1 section said the eighteen round-78 cases are "carried byte-identically". The counter's check
+is parsed equality: `cases[:18]` equals the round-78 set field-for-field (the generator re-serializes
+the parsed cases, so the JSON text differs in key order and indentation while every value, including
+every expectation, churn sample and negative sample, is identical). The predicate, counter, kill rule
+and target are unchanged — `carried=18/18` means eighteen cases equal field-for-field — and the
+landed prose in the lesson, SCORECARD, SKILL registry row and report says "carried unchanged (parsed
+equality)". Reported here because the frozen text said "byte-identically" and a closure that reads it
+as a byte compare would find the successor file's bytes differ. Source: the L1's own re-read of the counter's
+`cases[:CARRIED] == carried` check while preparing the report; no measurement moved.

@@ -1,0 +1,15 @@
+# round 79 live join, read-only, 2026-11-04
+# captures: hyprctl layers -j / hyprctl monitors -j written to the caller scratch; only the tool stdout is quoted
+
+## command: --rules ~/.config/hypr/monitors.conf (the file declaring the monitor rule)
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_STATIC: monitor=DP-1 top=0 right=0 bottom=0 left=0 source=rules
+MADO_BARFOOT_DECL: monitor=DP-1 box=0,0,3440,26 edge=top
+MADO_BARFOOT_LIVE: monitor=DP-1 level=2 ns=waybar box=0,0,3440,26 entries=1
+MADO_BARFOOT_RESULT: monitor=DP-1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+exit=0
+
+## command: --rules ~/.config/hypr/hyprland.conf (the orchestrator, which carries source = lines)
+MADO_BARFOOT: ERROR (stage=model the rules file carries a `source =` line (line 4); a sourced file is not followed, so the static reserve is unknown)
+exit=3
