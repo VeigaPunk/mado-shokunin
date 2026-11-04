@@ -1,0 +1,23 @@
+# round-68 predicate-literal binding check (L1, because the critic seat had not settled at record time)
+# Declaration: .ufo/waves/round-68/claims-declaration-r68.md at e0727cda
+
+$ sed -n '99,101p;60,64p' .ufo/waves/round-68/claims-declaration-r68.md
+
+  | id | find (exact text) | replace |
+  |---|---|---|
+  | S1 | `mr_killed = bool(` | `mr_killed = True or bool(` |
+  | S2 | `mz_killed = mz_rc != 0` | `mz_killed = True` |
+  | S3 | `killed = int(mz_killed) + int(mr_killed)` | `killed = 2` |
+
+
+```
+MADO_R68_READER_GUARD: population=20 readers=13 guarded=13 unguarded=0 controls=11/11 verdict=TARGET_MET rev=<REV>
+
+# Measured lines at 379e97f8 (measurement-final-r68.txt)
+MADO_R68_SELFMUTANTS: selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET rev=379e97f884a6cf7ed3ac96068b0165d63495524f
+MADO_R68_READER_GUARD: population=20 readers=13 guarded=13 unguarded=0 controls=11/11 verdict=TARGET_MET rev=379e97f884a6cf7ed3ac96068b0165d63495524f
+
+# Field-by-field:
+C1 selftest=0 killed=3/3 applied=3/3 -> matches the frozen After sentence
+C2 population=20 readers=13 guarded=13 unguarded=0 controls=11/11 -> matches the frozen After sentence
+# The counters' CONTRACT_RE patterns are asserted by their own selftests (26/26 and 25/25).
