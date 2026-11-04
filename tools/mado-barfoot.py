@@ -142,11 +142,22 @@ INT_FIELD_RE = re.compile(r"-?[0-9]{1,6}")
 
 
 class Setup(Exception):
-    """Caller-side setup error (unreadable input, bad JSON, refused path)."""
+    """Caller-side setup error (unreadable input, bad JSON, refused path).
+
+    `cause` is the machine-readable identity of the refusal class this round's counter binds
+    (round 85); an empty cause means the site is not part of the frozen cause vocabulary."""
+
+    def __init__(self, message, cause=""):
+        Exception.__init__(self, message)
+        self.cause = cause
 
 
 class Unmodelled(Exception):
     """A declaration this tool's model does not cover; never guessed."""
+
+    def __init__(self, message, cause=""):
+        Exception.__init__(self, message)
+        self.cause = cause
 
 
 def read_bytes(path, stdin_ok=False):
@@ -437,11 +448,13 @@ def parse_static_reserve(text, monitor):
 
 
 def allocation_pairs(pairs):
-    """Allocation keys identify declared surfaces; silently keeping the last is ambiguous."""
+    """Allocation keys identify declared surfaces; silently keeping the last is ambiguous.
+    The refusal binds every duplicate shape — adjacent, interleaved and equal-valued."""
     out = {}
     for key, value in pairs:
         if key in out:
-            raise Setup("the allocation declaration repeats namespace %r" % key)
+            raise Setup("the allocation declaration repeats namespace %r" % key,
+                        "alloc-duplicate-key")
         out[key] = value
     return out
 
@@ -453,15 +466,18 @@ def parse_allocation(raw):
     a modelled value; nothing is inferred when it is absent."""
     data = load_json(raw, "allocation", pairs_hook=allocation_pairs)
     if not isinstance(data, dict):
-        raise Setup("the allocation declaration is not an object of namespace -> band")
+        raise Setup("the allocation declaration is not an object of namespace -> band",
+                    "alloc-not-object")
     out = {}
     for name, value in data.items():
         if not isinstance(name, str) or not name:
-            raise Setup("the allocation declaration carries an empty namespace")
+            raise Setup("the allocation declaration carries an empty namespace",
+                        "alloc-empty-namespace")
         if not isinstance(value, int) or isinstance(value, bool):
-            raise Setup("the allocation for %r is not an integer" % name)
+            raise Setup("the allocation for %r is not an integer" % name,
+                        "alloc-non-integer")
         if value < 0:
-            raise Setup("the allocation for %r is negative" % name)
+            raise Setup("the allocation for %r is negative" % name, "alloc-negative")
         out[name] = value
     return out
 
@@ -779,16 +795,34 @@ def evaluate_composition(config, layers, monitors, monitor, static, static_sourc
                          % (monitor, scale, transform))
     bar = declared_bar(config)
     allocation = dict(allocation or {})
-    names = [bar["namespace"]] + [s["namespace"] for s in extras]
-    if len(names) != len(set(names)):
-        raise Setup("the joined declaration repeats a namespace; one name must identify one surface")
+    # A repeated name collapses two surfaces into one entry in every later join, so each shape
+    # is refused with its own cause: the bar against an extra surface, two extras at one level,
+    # and two extras whose levels differ are different declaration defects (round 85).
+    seen = {bar["namespace"]: ("bar", bar["level"])}
+    for spec in extras:
+        name = spec["namespace"]
+        if name in seen:
+            site, level = seen[name]
+            if site == "bar":
+                raise Setup("the joined declaration repeats the bar's namespace %r; one name "
+                            "must identify one surface" % name, "namespace-duplicate-bar")
+            if level != spec["level"]:
+                raise Setup("the joined declaration repeats namespace %r at levels %r and %r; "
+                            "one name must identify one surface"
+                            % (name, level, spec["level"]),
+                            "namespace-duplicate-cross-level")
+            raise Setup("the joined declaration repeats namespace %r at level %r; one name "
+                        "must identify one surface" % (name, spec["level"]),
+                        "namespace-duplicate-surface")
+        seen[name] = ("surface", spec["level"])
     # every declared surface's band is resolved from this map (round 83): an entry naming a
     # namespace no declared surface carries is refused here, never silently unused
     resolved = {bar["namespace"]} | {s["namespace"] for s in extras}
     unknown = sorted(set(allocation) - resolved)
     if unknown:
         raise Setup("the allocation declaration names %s, which no declared surface carries"
-                    % ", ".join(repr(name) for name in unknown))
+                    % ", ".join(repr(name) for name in unknown),
+                    "alloc-unknown-namespace")
     static = dict(static or ZERO_STATIC)
     if not output_matches(config, monitor):
         rows = [("RESULT", "monitor=%s box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR"
@@ -971,7 +1005,7 @@ def find_layer(layers, monitor, level, namespace):
     hits = [e for e in entries if isinstance(e, dict) and e.get("namespace") == namespace]
     if len(hits) > 1:
         raise Unmodelled("more than one %r layer on monitor %s level %d"
-                         % (namespace, monitor, level))
+                         % (namespace, monitor, level), "live-duplicate-surface")
     return hits[0] if hits else None
 
 
@@ -985,7 +1019,8 @@ def evaluate(config, layers, monitors, monitor=None, static=None, static_source=
     unknown = sorted(set(allocation) - {bar["namespace"]})
     if unknown:
         raise Setup("the allocation declaration names %s, which the join does not resolve "
-                    "(only the bar's band is resolved)" % ", ".join(repr(name) for name in unknown))
+                    "(only the bar's band is resolved)" % ", ".join(repr(name) for name in unknown),
+                    "alloc-unknown-namespace")
     static = dict(static or ZERO_STATIC)
     if monitor is None:
         if len(monitors) != 1:
@@ -1581,8 +1616,58 @@ def selftest():
         except Setup:
             ok(True, "joined declaration refuses repeated namespaces")
 
+    # round 85: every identity refusal carries its own machine-readable cause, and names that
+    # differ only in case stay two distinct surfaces (the join never folds them)
+    def cause_of(fn, *args, **kwargs):
+        try:
+            fn(*args, **kwargs)
+        except (Setup, Unmodelled) as exc:
+            return getattr(exc, "cause", "")
+        return None
+
+    ok(cause_of(parse_allocation, b'{"panel": 24, "panel": 24}') == "alloc-duplicate-key",
+       "equal-valued duplicate keys carry alloc-duplicate-key")
+    ok(cause_of(parse_allocation, b'{"panel": 24, "dock": 40, "panel": 40}') == "alloc-duplicate-key",
+       "interleaved duplicate keys carry alloc-duplicate-key")
+    ok(cause_of(parse_allocation, b'[34]') == "alloc-not-object", "non-object carries its cause")
+    ok(cause_of(parse_allocation, b'{"w": "x"}') == "alloc-non-integer",
+       "non-integer band carries its cause")
+    ok(cause_of(parse_allocation, b'{"w": -1}') == "alloc-negative",
+       "negative band carries its cause")
+    ok(cause_of(parse_allocation, b'{"": 3}') == "alloc-empty-namespace",
+       "empty namespace carries its cause")
+    ok(cause_of(comp, top, {2: [waybar]}, [0, 26, 0, 0], [], allocation={"nope": 3})
+       == "alloc-unknown-namespace", "an allocation naming no declared surface carries its cause")
+    ok(cause_of(comp, top, {2: [waybar]}, [0, 66, 0, 0],
+                [{"namespace": "waybar", "level": 3, "height": 24, "exclusive": 24}])
+       == "namespace-duplicate-bar", "an extra surface named like the bar carries its cause")
+    ok(cause_of(comp, top, {2: [waybar]}, [0, 66, 0, 0],
+                [{"namespace": "panel", "level": 3, "height": 24, "exclusive": 24},
+                 {"namespace": "panel", "level": 3, "height": 20, "exclusive": 20}])
+       == "namespace-duplicate-surface", "two extras at one level carry their cause")
+    ok(cause_of(comp, top, {2: [waybar]}, [0, 66, 0, 0],
+                [{"namespace": "panel", "level": 3, "height": 24, "exclusive": 24},
+                 {"namespace": "panel", "level": 2, "height": 20, "exclusive": 20}])
+       == "namespace-duplicate-cross-level", "two extras at different levels carry their cause")
+    ok(cause_of(find_layer, {"M1": {"levels": {"2": [
+        {"namespace": "waybar"}, {"namespace": "waybar"}]}}}, "M1", 2, "waybar")
+       == "live-duplicate-surface", "two live surfaces at one level carry their cause")
+    v, rc, _ = comp(top, {2: [waybar], 3: [{"namespace": "Waybar", "x": 0, "y": 26,
+                                            "w": 1000, "h": 40}]},
+                    [0, 66, 0, 0],
+                    [{"namespace": "Waybar", "level": 3, "height": 40, "exclusive": 40}])
+    ok((v, rc) == ("CLEAN", 0), "names differing only in case stay two distinct surfaces")
+    ok(cause_tag(Setup("x", "alloc-negative")) == " cause=alloc-negative"
+       and cause_tag(Setup("x")) == "", "the error line prints a cause only where declared")
+
     print("MADO_BARFOOT_SELFTEST: %d/%d" % (checks, total))
     return 0 if checks == total else 1
+
+
+def cause_tag(exc):
+    """The machine-readable cause token, or an empty string where none is declared."""
+    cause = getattr(exc, "cause", "")
+    return (" cause=%s" % cause) if cause else ""
 
 
 def main(argv):
@@ -1631,10 +1716,10 @@ def main(argv):
         emit(rows, verdict)
         return rc
     except Unmodelled as exc:
-        print("MADO_BARFOOT: ERROR (stage=model %s)" % exc)
+        print("MADO_BARFOOT: ERROR (stage=model%s %s)" % (cause_tag(exc), exc))
         return 3
     except Setup as exc:
-        print("MADO_BARFOOT: ERROR (stage=setup %s)" % exc)
+        print("MADO_BARFOOT: ERROR (stage=setup%s %s)" % (cause_tag(exc), exc))
         return 2
 
 

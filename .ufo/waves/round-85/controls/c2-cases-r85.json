@@ -1,0 +1,1639 @@
+{
+ "lane": "mado",
+ "round": 85,
+ "cases": [
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl version | head -n 1"
+   ],
+   "frozen": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).",
+   "kind": "regex",
+   "name": "version",
+   "negatives": [
+    {
+     "out": "Hyprland (unknown build)",
+     "rc": 0
+    },
+    {
+     "out": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs). trailing"
+    },
+    {
+     "rc": 3,
+     "out": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs)."
+    },
+    {
+     "rc": 0,
+     "out": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs). EXTRA"
+    }
+   ],
+   "samples": [
+    {
+     "out": "Hyprland 0.58.0 built from branch v0.58.0 at commit 0123456789abcdef clean (tag).",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; hyprctl version | head -n 1",
+   "value": "^Hyprland [0-9]+\\.[0-9]+\\.[0-9]+ built from branch \\S+ at commit [0-9a-f]{7,40} clean \\([^)]*\\)\\.$",
+   "status": {
+    "class": "ok"
+   },
+   "anchor": "line"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl configerrors"
+   ],
+   "frozen": "",
+   "kind": "empty",
+   "name": "configerrors",
+   "negatives": [
+    {
+     "out": "unknown option general:nope",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": " trailing"
+    },
+    {
+     "rc": 3,
+     "out": ""
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "hyprctl configerrors",
+   "value": null,
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl monitors -j | jq -r '.[0] | \"\\(.name) \\(.width)x\\(.height)@\\(.refreshRate)\"'"
+   ],
+   "frozen": "DP-1 3440x1440@99.99700",
+   "kind": "regex",
+   "name": "monitors-size",
+   "negatives": [
+    {
+     "out": "DP-1 3440x1440@",
+     "rc": 0
+    },
+    {
+     "out": "DP-1 3440x1440@60.0x",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "DP-1 3440x1440@99.99700 trailing"
+    },
+    {
+     "rc": 3,
+     "out": "DP-1 3440x1440@99.99700"
+    }
+   ],
+   "samples": [
+    {
+     "out": "DP-1 3440x1440@120.00000",
+     "rc": 0
+    },
+    {
+     "out": "HDMI-A-1 1920x1080@60.00000",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; hyprctl monitors -j | jq -r '.[0] | \"\\(.name) \\(.width)x\\(.height)@\\(.refreshRate)\"'",
+   "value": "^\\S+ [1-9][0-9]*x[1-9][0-9]*@[0-9]+(\\.[0-9]+)?$",
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl monitors -j | jq -c '.[0].reserved'"
+   ],
+   "frozen": "[0,26,0,0]",
+   "kind": "int4",
+   "name": "monitors-reserved",
+   "negatives": [
+    {
+     "out": "[0,26,0]",
+     "rc": 0
+    },
+    {
+     "out": "[-1,26,0,0]",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "[0,26,0,0] trailing"
+    },
+    {
+     "rc": 3,
+     "out": "[0,26,0,0]"
+    }
+   ],
+   "samples": [
+    {
+     "out": "[0,40,0,0]",
+     "rc": 0
+    },
+    {
+     "out": "[8,26,8,26]",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; hyprctl monitors -j | jq -c '.[0].reserved'",
+   "value": null,
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl getoption general:gaps_out | head -n 1"
+   ],
+   "frozen": "custom type: 0 0 0 0",
+   "kind": "exact",
+   "name": "gaps-out",
+   "negatives": [
+    {
+     "out": "custom type: 10 10 10 10",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "custom type: 0 0 0 0 trailing"
+    },
+    {
+     "rc": 3,
+     "out": "custom type: 0 0 0 0"
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "set -o pipefail; hyprctl getoption general:gaps_out | head -n 1",
+   "value": "custom type: 0 0 0 0",
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl getoption input:kb_layout | head -n 1"
+   ],
+   "frozen": "str: br",
+   "kind": "exact",
+   "name": "kb-layout",
+   "negatives": [
+    {
+     "out": "str: us",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "str: br trailing"
+    },
+    {
+     "rc": 3,
+     "out": "str: br"
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "set -o pipefail; hyprctl getoption input:kb_layout | head -n 1",
+   "value": "str: br",
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl binds -j | jq 'length'"
+   ],
+   "frozen": "192",
+   "kind": "int_range",
+   "name": "binds-count",
+   "negatives": [
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "out": "-3",
+     "rc": 0
+    },
+    {
+     "out": "192",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": "192 trailing"
+    },
+    {
+     "rc": 3,
+     "out": "192"
+    }
+   ],
+   "samples": [
+    {
+     "out": "193",
+     "rc": 0
+    },
+    {
+     "out": "1024",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; hyprctl binds -j | jq 'length'",
+   "value": [
+    1,
+    100000
+   ],
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl layers -j | jq -r '[to_entries[] | .value.levels | to_entries[] | select(.value|length>0) | .value[].namespace] | sort | join(\",\")'"
+   ],
+   "frozen": "wallpaper,waybar",
+   "kind": "sorted_unique",
+   "name": "layers-namespaces",
+   "negatives": [
+    {
+     "out": "waybar,wallpaper",
+     "rc": 0
+    },
+    {
+     "out": "wallpaper,wallpaper,waybar",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "wallpaper,waybar trailing"
+    },
+    {
+     "rc": 3,
+     "out": "wallpaper,waybar"
+    }
+   ],
+   "samples": [
+    {
+     "out": "mako,wallpaper,waybar",
+     "rc": 0
+    },
+    {
+     "out": "walker,wallpaper,waybar",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; hyprctl layers -j | jq -r '[to_entries[] | .value.levels | to_entries[] | select(.value|length>0) | .value[].namespace] | sort | join(\",\")'",
+   "value": {
+    "must_include": [
+     "waybar"
+    ]
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; pgrep -x waybar | head -n 1"
+   ],
+   "frozen": "1720",
+   "kind": "int_range",
+   "name": "waybar-process",
+   "negatives": [
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 1
+    },
+    {
+     "rc": 0,
+     "out": "1720 trailing"
+    },
+    {
+     "rc": 3,
+     "out": "1720"
+    }
+   ],
+   "samples": [
+    {
+     "out": "20011",
+     "rc": 0
+    },
+    {
+     "out": "999",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; pgrep -x waybar | head -n 1",
+   "value": [
+    1,
+    4194304
+   ],
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "makoctl mode"
+   ],
+   "frozen": "default",
+   "kind": "exact",
+   "name": "mako-mode",
+   "negatives": [
+    {
+     "out": "do-not-disturb",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "default trailing"
+    },
+    {
+     "rc": 3,
+     "out": "default"
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "makoctl mode",
+   "value": "default",
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "omarchy theme current"
+   ],
+   "frozen": "Matte Black",
+   "kind": "exact",
+   "name": "omarchy-theme",
+   "negatives": [
+    {
+     "out": "Tokyo Night",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "Matte Black trailing"
+    },
+    {
+     "rc": 3,
+     "out": "Matte Black"
+    }
+   ],
+   "samples": [],
+   "skill_anchor": "omarchy theme current",
+   "value": "Matte Black",
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "omarchy version"
+   ],
+   "frozen": "3.8.3",
+   "kind": "regex",
+   "name": "omarchy-version",
+   "negatives": [
+    {
+     "out": "3.8",
+     "rc": 0
+    },
+    {
+     "out": "v3.8.3",
+     "rc": 0
+    },
+    {
+     "out": "3.8.3",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": "3.8.3 trailing"
+    },
+    {
+     "rc": 3,
+     "out": "3.8.3"
+    },
+    {
+     "rc": 0,
+     "out": "3.8.3 EXTRA"
+    }
+   ],
+   "samples": [
+    {
+     "out": "3.9.0",
+     "rc": 0
+    },
+    {
+     "out": "3.10.2",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "omarchy version",
+   "value": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+   "status": {
+    "class": "ok"
+   },
+   "anchor": "line"
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl activeworkspace -j | jq -c '{id,name}'"
+   ],
+   "frozen": "{\"id\":1,\"name\":\"1\"}",
+   "kind": "json_object_fields",
+   "name": "active-workspace",
+   "negatives": [
+    {
+     "out": "{\"id\":\"1\",\"name\":\"1\"}",
+     "rc": 0
+    },
+    {
+     "out": "{\"id\":1}",
+     "rc": 0
+    },
+    {
+     "out": "[]",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "{\"id\":1,\"name\":\"1\"} trailing"
+    },
+    {
+     "rc": 3,
+     "out": "{\"id\":1,\"name\":\"1\"}"
+    }
+   ],
+   "samples": [
+    {
+     "out": "{\"id\":3,\"name\":\"3\"}",
+     "rc": 0
+    },
+    {
+     "out": "{\"id\":-99,\"name\":\"special\"}",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; hyprctl activeworkspace -j | jq -c '{id,name}'",
+   "value": {
+    "fields": {
+     "id": "int",
+     "name": "str"
+    }
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl layers -j"
+   ],
+   "kind": "levels_dump",
+   "name": "layers-dump",
+   "negatives": [
+    {
+     "out": "{\"DP-1\": {\"levels\": {\"0\": []}}}",
+     "rc": 0
+    },
+    {
+     "out": "[]",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "{\"HDMI-A-1\": {\"levels\": {\"0\": [], \"1\": [], \"2\": [], \"3\": []}}}",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl layers -j",
+   "value": null,
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "hyprctl monitors -j"
+   ],
+   "kind": "array_fields",
+   "name": "monitors-dump",
+   "negatives": [
+    {
+     "out": "[{\"name\": \"DP-1\", \"width\": 3440, \"height\": 1440, \"reserved\": [0, 26, 0], \"scale\": 1.0}]",
+     "rc": 0
+    },
+    {
+     "out": "[{\"name\": \"\", \"width\": 3440, \"height\": 1440, \"reserved\": [0, 26, 0, 0], \"scale\": 1.0}]",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "[{\"name\": \"HDMI-A-1\", \"width\": 1920, \"height\": 1080, \"reserved\": [0, 40, 0, 0], \"scale\": 1.0}]",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "hyprctl monitors -j",
+   "value": {
+    "fields": {
+     "height": "positive_int",
+     "name": "str",
+     "reserved": "int4",
+     "scale": "number",
+     "width": "positive_int"
+    },
+    "min_items": 1
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl clients -j | jq 'length'"
+   ],
+   "frozen": "2",
+   "kind": "int_range",
+   "name": "clients-count",
+   "negatives": [
+    {
+     "out": "-1",
+     "rc": 0
+    },
+    {
+     "out": "2",
+     "rc": 127
+    },
+    {
+     "rc": 0,
+     "out": "2 trailing"
+    },
+    {
+     "rc": 3,
+     "out": "2"
+    }
+   ],
+   "samples": [
+    {
+     "out": "7",
+     "rc": 0
+    },
+    {
+     "out": "0",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; hyprctl clients -j | jq 'length'",
+   "value": [
+    0,
+    100000
+   ],
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; hyprctl workspaces -j | jq 'length'"
+   ],
+   "frozen": "2",
+   "kind": "int_range",
+   "name": "workspaces-count",
+   "negatives": [
+    {
+     "out": "0",
+     "rc": 0
+    },
+    {
+     "out": "ten",
+     "rc": 0
+    },
+    {
+     "rc": 0,
+     "out": "2 trailing"
+    },
+    {
+     "rc": 3,
+     "out": "2"
+    }
+   ],
+   "samples": [
+    {
+     "out": "12",
+     "rc": 0
+    },
+    {
+     "out": "1",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; hyprctl workspaces -j | jq 'length'",
+   "value": [
+    1,
+    1000
+   ],
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "tools/mado-barfoot.py",
+    "--config",
+    ".ufo/waves/round-79/fixtures/refuse-mode/config.json",
+    "--layers",
+    ".ufo/waves/round-79/fixtures/refuse-mode/layers.json",
+    "--monitors",
+    ".ufo/waves/round-79/fixtures/refuse-mode/monitors.json"
+   ],
+   "fixtures": [
+    ".ufo/waves/round-79/fixtures/refuse-mode/config.json",
+    ".ufo/waves/round-79/fixtures/refuse-mode/layers.json",
+    ".ufo/waves/round-79/fixtures/refuse-mode/monitors.json"
+   ],
+   "kind": "refusal",
+   "name": "refuse-mode",
+   "negatives": [
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=model a mode preset rewrites layer and exclusive zone at runtime)\n",
+     "rc": 2
+    },
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=setup unreadable path)\n",
+     "rc": 3
+    },
+    {
+     "out": "MADO_BARFOOT: verdict=CLEAN\n",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=model a different reason here)\n",
+     "rc": 3
+    }
+   ],
+   "skill_anchor": "python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-mode/config.json --layers .ufo/waves/round-79/fixtures/refuse-mode/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-mode/monitors.json",
+   "tool": "tools/mado-barfoot.py",
+   "value": {
+    "rc": 3,
+    "stage": "model"
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "tools/mado-barfoot.py",
+    "--config",
+    ".ufo/waves/round-79/fixtures/refuse-scale/config.json",
+    "--layers",
+    ".ufo/waves/round-79/fixtures/refuse-scale/layers.json",
+    "--monitors",
+    ".ufo/waves/round-79/fixtures/refuse-scale/monitors.json"
+   ],
+   "fixtures": [
+    ".ufo/waves/round-79/fixtures/refuse-scale/config.json",
+    ".ufo/waves/round-79/fixtures/refuse-scale/layers.json",
+    ".ufo/waves/round-79/fixtures/refuse-scale/monitors.json"
+   ],
+   "kind": "refusal",
+   "name": "refuse-scale",
+   "negatives": [
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=model the reply carries pixel size and the layer box is logical)\n",
+     "rc": 2
+    },
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=setup unreadable path)\n",
+     "rc": 3
+    },
+    {
+     "out": "MADO_BARFOOT: verdict=CLEAN\n",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=model a different reason here)\n",
+     "rc": 3
+    }
+   ],
+   "skill_anchor": "python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-scale/config.json --layers .ufo/waves/round-79/fixtures/refuse-scale/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-scale/monitors.json",
+   "tool": "tools/mado-barfoot.py",
+   "value": {
+    "rc": 3,
+    "stage": "model"
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "tools/mado-barfoot.py",
+    "--config",
+    ".ufo/waves/round-79/fixtures/refuse-layer-background/config.json",
+    "--layers",
+    ".ufo/waves/round-79/fixtures/refuse-layer-background/layers.json",
+    "--monitors",
+    ".ufo/waves/round-79/fixtures/refuse-layer-background/monitors.json"
+   ],
+   "fixtures": [
+    ".ufo/waves/round-79/fixtures/refuse-layer-background/config.json",
+    ".ufo/waves/round-79/fixtures/refuse-layer-background/layers.json",
+    ".ufo/waves/round-79/fixtures/refuse-layer-background/monitors.json"
+   ],
+   "kind": "refusal",
+   "name": "refuse-layer-background",
+   "negatives": [
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=model waybar's presets never select the background layer)\n",
+     "rc": 2
+    },
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=setup unreadable path)\n",
+     "rc": 3
+    },
+    {
+     "out": "MADO_BARFOOT: verdict=CLEAN\n",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=model a different reason here)\n",
+     "rc": 3
+    }
+   ],
+   "skill_anchor": "python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-layer-background/config.json --layers .ufo/waves/round-79/fixtures/refuse-layer-background/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-layer-background/monitors.json",
+   "tool": "tools/mado-barfoot.py",
+   "value": {
+    "rc": 3,
+    "stage": "model"
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "tools/mado-barfoot.py",
+    "--config",
+    ".ufo/waves/round-79/fixtures/refuse-output-space/config.json",
+    "--layers",
+    ".ufo/waves/round-79/fixtures/refuse-output-space/layers.json",
+    "--monitors",
+    ".ufo/waves/round-79/fixtures/refuse-output-space/monitors.json"
+   ],
+   "fixtures": [
+    ".ufo/waves/round-79/fixtures/refuse-output-space/config.json",
+    ".ufo/waves/round-79/fixtures/refuse-output-space/layers.json",
+    ".ufo/waves/round-79/fixtures/refuse-output-space/monitors.json"
+   ],
+   "kind": "refusal",
+   "name": "refuse-output-space",
+   "negatives": [
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=model outside the modelled subset)\n",
+     "rc": 2
+    },
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=setup unreadable path)\n",
+     "rc": 3
+    },
+    {
+     "out": "MADO_BARFOOT: verdict=CLEAN\n",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "MADO_BARFOOT: ERROR (stage=model a different reason here)\n",
+     "rc": 3
+    }
+   ],
+   "skill_anchor": "python3 -I tools/mado-barfoot.py --config .ufo/waves/round-79/fixtures/refuse-output-space/config.json --layers .ufo/waves/round-79/fixtures/refuse-output-space/layers.json --monitors .ufo/waves/round-79/fixtures/refuse-output-space/monitors.json",
+   "tool": "tools/mado-barfoot.py",
+   "value": {
+    "rc": 3,
+    "stage": "model"
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "omarchy menu keybindings --print"
+   ],
+   "kind": "lines_shape",
+   "name": "omarchy-menu-keybindings",
+   "negatives": [
+    {
+     "out": "",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + RETURN \u2192 Terminal\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + A00 \u2192 Action\nSUPER + A01 \u2192 Action\nSUPER + A02 \u2192 Action\nSUPER + A03 \u2192 Action\nSUPER + A04 \u2192 Action\nSUPER + A05 \u2192 Action\nSUPER + A06 \u2192 Action\nSUPER + A07 \u2192 Action\nSUPER + A08 \u2192 Action\nSUPER + A09 \u2192 Action\nSUPER + A10 \u2192 Action\nSUPER + A11 \u2192 Action\nSUPER + A12 \u2192 Action\nSUPER + A13 \u2192 Action\nSUPER + A14 \u2192 Action\nSUPER + A15 \u2192 Action\nSUPER + A16 \u2192 Action\nSUPER + A17 \u2192 Action\nSUPER + A18 \u2192 Action\nSUPER + A19 \u2192 Action\nSUPER + A20 \u2192 Action\nSUPER + A21 \u2192 Action\nSUPER + A22 \u2192 Action\nSUPER + A23 \u2192 Action\nSUPER + A24 \u2192 Action\nSUPER + A25 \u2192 Action\nSUPER + A26 \u2192 Action\nSUPER + A27 \u2192 Action\nSUPER + A28 \u2192 Action\nSUPER + A29 \u2192 Action\nSUPER + A30 \u2192 Action\nSUPER + A31 \u2192 Action\nSUPER + A32 \u2192 Action\nSUPER + A33 \u2192 Action\nSUPER + A34 \u2192 Action\nSUPER + A35 \u2192 Action\nSUPER + A36 \u2192 Action\nSUPER + A37 \u2192 Action\nSUPER + A38 \u2192 Action\nSUPER + A39 \u2192 Action\nSUPER + A40 \u2192 Action\nSUPER + A41 \u2192 Action\nSUPER + A42 \u2192 Action\nSUPER + A43 \u2192 Action\nSUPER + A44 \u2192 Action\nSUPER + A45 \u2192 Action\nSUPER + A46 \u2192 Action\nSUPER + A47 \u2192 Action\nSUPER + A48 \u2192 Action\nSUPER + A49 \u2192 Action\nSUPER + A50 \u2192 Action\nSUPER + A51 \u2192 Action\nSUPER + A52 \u2192 Action\nSUPER + A53 \u2192 Action\nSUPER + A54 \u2192 Action\nSUPER + A55 \u2192 Action\nSUPER + A56 \u2192 Action\nSUPER + A57 \u2192 Action\nSUPER + A58 \u2192 Action\nSUPER + A59 \u2192 Action\nSUPER + A60 \u2192 Action\nSUPER + A61 \u2192 Action\nSUPER + A62 \u2192 Action\nSUPER + A63 \u2192 Action\nSUPER + A64 \u2192 Action\nSUPER + A65 \u2192 Action\nSUPER + A66 \u2192 Action\nSUPER + A67 \u2192 Action\nSUPER + A68 \u2192 Action\nSUPER + A69 \u2192 Action\nSUPER + A70 \u2192 Action\nSUPER + A71 \u2192 Action\nSUPER + A72 \u2192 Action\nSUPER + A73 \u2192 Action\nSUPER + A74 \u2192 Action\nSUPER + A75 \u2192 Action\nSUPER + A76 \u2192 Action\nSUPER + A77 \u2192 Action\nSUPER + A78 \u2192 Action\nSUPER + A79 \u2192 Action\nSUPER + A80 \u2192 Action\nSUPER + A81 \u2192 Action\nSUPER + A82 \u2192 Action\nSUPER + A83 \u2192 Action\nSUPER + A84 \u2192 Action\nSUPER + A85 \u2192 Action\nSUPER + A86 \u2192 Action\nSUPER + A87 \u2192 Action\nSUPER + A88 \u2192 Action\nSUPER + A89 \u2192 Action\nSUPER + A90 \u2192 Action\nSUPER + A91 \u2192 Action\nSUPER + A92 \u2192 Action\nSUPER + A93 \u2192 Action\nSUPER + A94 \u2192 Action\nSUPER + A95 \u2192 Action\nSUPER + A96 \u2192 Action\nSUPER + A97 \u2192 Action\nSUPER + A98 \u2192 Action\nSUPER + A99 \u2192 Action\nSUPER + A100 \u2192 Action\nSUPER + A101 \u2192 Action\nSUPER + A102 \u2192 Action\nSUPER + A103 \u2192 Action\nSUPER + A104 \u2192 Action\nSUPER + A105 \u2192 Action\nSUPER + A106 \u2192 Action\nSUPER + A107 \u2192 Action\nSUPER + A108 \u2192 Action\nSUPER + A109 \u2192 Action\nSUPER + A110 \u2192 Action\nSUPER + A111 \u2192 Action\nSUPER + A112 \u2192 Action\nSUPER + A113 \u2192 Action\nSUPER + A114 \u2192 Action\nSUPER + A115 \u2192 Action\nSUPER + A116 \u2192 Action\nSUPER + A117 \u2192 Action\nSUPER + A118 \u2192 Action\nSUPER + A119 \u2192 Action\n",
+     "rc": 1
+    },
+    {
+     "out": "SUPER + A00 \u2192 Action\nSUPER + A01 \u2192 Action\nSUPER + A02 \u2192 Action\nSUPER + A03 \u2192 Action\nSUPER + A04 \u2192 Action\nSUPER + A05 \u2192 Action\nSUPER + A06 \u2192 Action\nSUPER + A07 \u2192 Action\nSUPER + A08 \u2192 Action\nSUPER + A09 \u2192 Action\nSUPER + A10 \u2192 Action\nSUPER + A11 \u2192 Action\nSUPER + A12 \u2192 Action\nSUPER + A13 \u2192 Action\nSUPER + A14 \u2192 Action\nSUPER + A15 \u2192 Action\nSUPER + A16 \u2192 Action\nSUPER + A17 \u2192 Action\nSUPER + A18 \u2192 Action\nSUPER + A19 \u2192 Action\nSUPER + A20 \u2192 Action\nSUPER + A21 \u2192 Action\nSUPER + A22 \u2192 Action\nSUPER + A23 \u2192 Action\nSUPER + A24 \u2192 Action\nSUPER + A25 \u2192 Action\nSUPER + A26 \u2192 Action\nSUPER + A27 \u2192 Action\nSUPER + A28 \u2192 Action\nSUPER + A29 \u2192 Action\nSUPER + A30 \u2192 Action\nSUPER + A31 \u2192 Action\nSUPER + A32 \u2192 Action\nSUPER + A33 \u2192 Action\nSUPER + A34 \u2192 Action\nSUPER + A35 \u2192 Action\nSUPER + A36 \u2192 Action\nSUPER + A37 \u2192 Action\nSUPER + A38 \u2192 Action\nSUPER + A39 \u2192 Action\nSUPER + A40 \u2192 Action\nSUPER + A41 \u2192 Action\nSUPER + A42 \u2192 Action\nSUPER + A43 \u2192 Action\nSUPER + A44 \u2192 Action\nSUPER + A45 \u2192 Action\nSUPER + A46 \u2192 Action\nSUPER + A47 \u2192 Action\nSUPER + A48 \u2192 Action\nSUPER + A49 \u2192 Action\nSUPER + A50 \u2192 Action\nSUPER + A51 \u2192 Action\nSUPER + A52 \u2192 Action\nSUPER + A53 \u2192 Action\nSUPER + A54 \u2192 Action\nSUPER + A55 \u2192 Action\nSUPER + A56 \u2192 Action\nSUPER + A57 \u2192 Action\nSUPER + A58 \u2192 Action\nSUPER + A59 \u2192 Action\nSUPER + A60 \u2192 Action\nSUPER + A61 \u2192 Action\nSUPER + A62 \u2192 Action\nSUPER + A63 \u2192 Action\nSUPER + A64 \u2192 Action\nSUPER + A65 \u2192 Action\nSUPER + A66 \u2192 Action\nSUPER + A67 \u2192 Action\nSUPER + A68 \u2192 Action\nSUPER + A69 \u2192 Action\nSUPER + A70 \u2192 Action\nSUPER + A71 \u2192 Action\nSUPER + A72 \u2192 Action\nSUPER + A73 \u2192 Action\nSUPER + A74 \u2192 Action\nSUPER + A75 \u2192 Action\nSUPER + A76 \u2192 Action\nSUPER + A77 \u2192 Action\nSUPER + A78 \u2192 Action\nSUPER + A79 \u2192 Action\nSUPER + A80 \u2192 Action\nSUPER + A81 \u2192 Action\nSUPER + A82 \u2192 Action\nSUPER + A83 \u2192 Action\nSUPER + A84 \u2192 Action\nSUPER + A85 \u2192 Action\nSUPER + A86 \u2192 Action\nSUPER + A87 \u2192 Action\nSUPER + A88 \u2192 Action\nSUPER + A89 \u2192 Action\nSUPER + A90 \u2192 Action\nSUPER + A91 \u2192 Action\nSUPER + A92 \u2192 Action\nSUPER + A93 \u2192 Action\nSUPER + A94 \u2192 Action\nSUPER + A95 \u2192 Action\nSUPER + A96 \u2192 Action\nSUPER + A97 \u2192 Action\nSUPER + B \u2192 Action\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + A00 \u2192 \nSUPER + A01 \u2192 \nSUPER + A02 \u2192 \nSUPER + A03 \u2192 \nSUPER + A04 \u2192 \nSUPER + A05 \u2192 \nSUPER + A06 \u2192 \nSUPER + A07 \u2192 \nSUPER + A08 \u2192 \nSUPER + A09 \u2192 \nSUPER + A10 \u2192 \nSUPER + A11 \u2192 \nSUPER + A12 \u2192 \nSUPER + A13 \u2192 \nSUPER + A14 \u2192 \nSUPER + A15 \u2192 \nSUPER + A16 \u2192 \nSUPER + A17 \u2192 \nSUPER + A18 \u2192 \nSUPER + A19 \u2192 \nSUPER + A20 \u2192 \nSUPER + A21 \u2192 \nSUPER + A22 \u2192 \nSUPER + A23 \u2192 \nSUPER + A24 \u2192 \nSUPER + A25 \u2192 \nSUPER + A26 \u2192 \nSUPER + A27 \u2192 \nSUPER + A28 \u2192 \nSUPER + A29 \u2192 \nSUPER + A30 \u2192 \nSUPER + A31 \u2192 \nSUPER + A32 \u2192 \nSUPER + A33 \u2192 \nSUPER + A34 \u2192 \nSUPER + A35 \u2192 \nSUPER + A36 \u2192 \nSUPER + A37 \u2192 \nSUPER + A38 \u2192 \nSUPER + A39 \u2192 \nSUPER + A40 \u2192 \nSUPER + A41 \u2192 \nSUPER + A42 \u2192 \nSUPER + A43 \u2192 \nSUPER + A44 \u2192 \nSUPER + A45 \u2192 \nSUPER + A46 \u2192 \nSUPER + A47 \u2192 \nSUPER + A48 \u2192 \nSUPER + A49 \u2192 \nSUPER + A50 \u2192 \nSUPER + A51 \u2192 \nSUPER + A52 \u2192 \nSUPER + A53 \u2192 \nSUPER + A54 \u2192 \nSUPER + A55 \u2192 \nSUPER + A56 \u2192 \nSUPER + A57 \u2192 \nSUPER + A58 \u2192 \nSUPER + A59 \u2192 \nSUPER + A60 \u2192 \nSUPER + A61 \u2192 \nSUPER + A62 \u2192 \nSUPER + A63 \u2192 \nSUPER + A64 \u2192 \nSUPER + A65 \u2192 \nSUPER + A66 \u2192 \nSUPER + A67 \u2192 \nSUPER + A68 \u2192 \nSUPER + A69 \u2192 \nSUPER + A70 \u2192 \nSUPER + A71 \u2192 \nSUPER + A72 \u2192 \nSUPER + A73 \u2192 \nSUPER + A74 \u2192 \nSUPER + A75 \u2192 \nSUPER + A76 \u2192 \nSUPER + A77 \u2192 \nSUPER + A78 \u2192 \nSUPER + A79 \u2192 \nSUPER + A80 \u2192 \nSUPER + A81 \u2192 \nSUPER + A82 \u2192 \nSUPER + A83 \u2192 \nSUPER + A84 \u2192 \nSUPER + A85 \u2192 \nSUPER + A86 \u2192 \nSUPER + A87 \u2192 \nSUPER + A88 \u2192 \nSUPER + A89 \u2192 \nSUPER + A90 \u2192 \nSUPER + A91 \u2192 \nSUPER + A92 \u2192 \nSUPER + A93 \u2192 \nSUPER + A94 \u2192 \nSUPER + A95 \u2192 \nSUPER + A96 \u2192 \nSUPER + A97 \u2192 \nSUPER + A98 \u2192 \nSUPER + A99 \u2192 \nSUPER + A100 \u2192 \nSUPER + A101 \u2192 \nSUPER + A102 \u2192 \nSUPER + A103 \u2192 \nSUPER + A104 \u2192 \nSUPER + A105 \u2192 \nSUPER + A106 \u2192 \nSUPER + A107 \u2192 \nSUPER + A108 \u2192 \nSUPER + A109 \u2192 \nSUPER + A110 \u2192 \nSUPER + A111 \u2192 \nSUPER + A112 \u2192 \nSUPER + A113 \u2192 \nSUPER + A114 \u2192 \nSUPER + A115 \u2192 \nSUPER + A116 \u2192 \nSUPER + A117 \u2192 \nSUPER + A118 \u2192 \nSUPER + A119 \u2192 \n",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "SUPER + A00                              \u2192 Action 0\nSUPER + A01                              \u2192 Action 1\nSUPER + A02                              \u2192 Action 2\nSUPER + A03                              \u2192 Action 3\nSUPER + A04                              \u2192 Action 4\nSUPER + A05                              \u2192 Action 5\nSUPER + A06                              \u2192 Action 6\nSUPER + A07                              \u2192 Action 7\nSUPER + A08                              \u2192 Action 8\nSUPER + A09                              \u2192 Action 9\nSUPER + A10                              \u2192 Action 10\nSUPER + A11                              \u2192 Action 11\nSUPER + A12                              \u2192 Action 12\nSUPER + A13                              \u2192 Action 13\nSUPER + A14                              \u2192 Action 14\nSUPER + A15                              \u2192 Action 15\nSUPER + A16                              \u2192 Action 16\nSUPER + A17                              \u2192 Action 17\nSUPER + A18                              \u2192 Action 18\nSUPER + A19                              \u2192 Action 19\nSUPER + A20                              \u2192 Action 20\nSUPER + A21                              \u2192 Action 21\nSUPER + A22                              \u2192 Action 22\nSUPER + A23                              \u2192 Action 23\nSUPER + A24                              \u2192 Action 24\nSUPER + A25                              \u2192 Action 25\nSUPER + A26                              \u2192 Action 26\nSUPER + A27                              \u2192 Action 27\nSUPER + A28                              \u2192 Action 28\nSUPER + A29                              \u2192 Action 29\nSUPER + A30                              \u2192 Action 30\nSUPER + A31                              \u2192 Action 31\nSUPER + A32                              \u2192 Action 32\nSUPER + A33                              \u2192 Action 33\nSUPER + A34                              \u2192 Action 34\nSUPER + A35                              \u2192 Action 35\nSUPER + A36                              \u2192 Action 36\nSUPER + A37                              \u2192 Action 37\nSUPER + A38                              \u2192 Action 38\nSUPER + A39                              \u2192 Action 39\nSUPER + A40                              \u2192 Action 40\nSUPER + A41                              \u2192 Action 41\nSUPER + A42                              \u2192 Action 42\nSUPER + A43                              \u2192 Action 43\nSUPER + A44                              \u2192 Action 44\nSUPER + A45                              \u2192 Action 45\nSUPER + A46                              \u2192 Action 46\nSUPER + A47                              \u2192 Action 47\nSUPER + A48                              \u2192 Action 48\nSUPER + A49                              \u2192 Action 49\nSUPER + A50                              \u2192 Action 50\nSUPER + A51                              \u2192 Action 51\nSUPER + A52                              \u2192 Action 52\nSUPER + A53                              \u2192 Action 53\nSUPER + A54                              \u2192 Action 54\nSUPER + A55                              \u2192 Action 55\nSUPER + A56                              \u2192 Action 56\nSUPER + A57                              \u2192 Action 57\nSUPER + A58                              \u2192 Action 58\nSUPER + A59                              \u2192 Action 59\nSUPER + A60                              \u2192 Action 60\nSUPER + A61                              \u2192 Action 61\nSUPER + A62                              \u2192 Action 62\nSUPER + A63                              \u2192 Action 63\nSUPER + A64                              \u2192 Action 64\nSUPER + A65                              \u2192 Action 65\nSUPER + A66                              \u2192 Action 66\nSUPER + A67                              \u2192 Action 67\nSUPER + A68                              \u2192 Action 68\nSUPER + A69                              \u2192 Action 69\nSUPER + A70                              \u2192 Action 70\nSUPER + A71                              \u2192 Action 71\nSUPER + A72                              \u2192 Action 72\nSUPER + A73                              \u2192 Action 73\nSUPER + A74                              \u2192 Action 74\nSUPER + A75                              \u2192 Action 75\nSUPER + A76                              \u2192 Action 76\nSUPER + A77                              \u2192 Action 77\nSUPER + A78                              \u2192 Action 78\nSUPER + A79                              \u2192 Action 79\nSUPER + A80                              \u2192 Action 80\nSUPER + A81                              \u2192 Action 81\nSUPER + A82                              \u2192 Action 82\nSUPER + A83                              \u2192 Action 83\nSUPER + A84                              \u2192 Action 84\nSUPER + A85                              \u2192 Action 85\nSUPER + A86                              \u2192 Action 86\nSUPER + A87                              \u2192 Action 87\nSUPER + A88                              \u2192 Action 88\nSUPER + A89                              \u2192 Action 89\nSUPER + A90                              \u2192 Action 90\nSUPER + A91                              \u2192 Action 91\nSUPER + A92                              \u2192 Action 92\nSUPER + A93                              \u2192 Action 93\nSUPER + A94                              \u2192 Action 94\nSUPER + A95                              \u2192 Action 95\nSUPER + A96                              \u2192 Action 96\nSUPER + A97                              \u2192 Action 97\nSUPER + A98                              \u2192 Action 98\nSUPER + A99                              \u2192 Action 99\nSUPER + A100                              \u2192 Action 100\nSUPER + A101                              \u2192 Action 101\nSUPER + A102                              \u2192 Action 102\nSUPER + A103                              \u2192 Action 103\nSUPER + A104                              \u2192 Action 104\nSUPER + A105                              \u2192 Action 105\nSUPER + A106                              \u2192 Action 106\nSUPER + A107                              \u2192 Action 107\nSUPER + A108                              \u2192 Action 108\nSUPER + A109                              \u2192 Action 109\nSUPER + A110                              \u2192 Action 110\nSUPER + A111                              \u2192 Action 111\nSUPER + A112                              \u2192 Action 112\nSUPER + A113                              \u2192 Action 113\nSUPER + A114                              \u2192 Action 114\nSUPER + A115                              \u2192 Action 115\nSUPER + A116                              \u2192 Action 116\nSUPER + A117                              \u2192 Action 117\nSUPER + A118                              \u2192 Action 118\nSUPER + A119                              \u2192 Action 119\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER SHIFT + F00                        \u2192 Rebound action\nSUPER SHIFT + F01                        \u2192 Rebound action\nSUPER SHIFT + F02                        \u2192 Rebound action\nSUPER SHIFT + F03                        \u2192 Rebound action\nSUPER SHIFT + F04                        \u2192 Rebound action\nSUPER SHIFT + F05                        \u2192 Rebound action\nSUPER SHIFT + F06                        \u2192 Rebound action\nSUPER SHIFT + F07                        \u2192 Rebound action\nSUPER SHIFT + F08                        \u2192 Rebound action\nSUPER SHIFT + F09                        \u2192 Rebound action\nSUPER SHIFT + F10                        \u2192 Rebound action\nSUPER SHIFT + F11                        \u2192 Rebound action\nSUPER SHIFT + F12                        \u2192 Rebound action\nSUPER SHIFT + F13                        \u2192 Rebound action\nSUPER SHIFT + F14                        \u2192 Rebound action\nSUPER SHIFT + F15                        \u2192 Rebound action\nSUPER SHIFT + F16                        \u2192 Rebound action\nSUPER SHIFT + F17                        \u2192 Rebound action\nSUPER SHIFT + F18                        \u2192 Rebound action\nSUPER SHIFT + F19                        \u2192 Rebound action\nSUPER SHIFT + F20                        \u2192 Rebound action\nSUPER SHIFT + F21                        \u2192 Rebound action\nSUPER SHIFT + F22                        \u2192 Rebound action\nSUPER SHIFT + F23                        \u2192 Rebound action\nSUPER SHIFT + F24                        \u2192 Rebound action\nSUPER SHIFT + F25                        \u2192 Rebound action\nSUPER SHIFT + F26                        \u2192 Rebound action\nSUPER SHIFT + F27                        \u2192 Rebound action\nSUPER SHIFT + F28                        \u2192 Rebound action\nSUPER SHIFT + F29                        \u2192 Rebound action\nSUPER SHIFT + F30                        \u2192 Rebound action\nSUPER SHIFT + F31                        \u2192 Rebound action\nSUPER SHIFT + F32                        \u2192 Rebound action\nSUPER SHIFT + F33                        \u2192 Rebound action\nSUPER SHIFT + F34                        \u2192 Rebound action\nSUPER SHIFT + F35                        \u2192 Rebound action\nSUPER SHIFT + F36                        \u2192 Rebound action\nSUPER SHIFT + F37                        \u2192 Rebound action\nSUPER SHIFT + F38                        \u2192 Rebound action\nSUPER SHIFT + F39                        \u2192 Rebound action\nSUPER SHIFT + F40                        \u2192 Rebound action\nSUPER SHIFT + F41                        \u2192 Rebound action\nSUPER SHIFT + F42                        \u2192 Rebound action\nSUPER SHIFT + F43                        \u2192 Rebound action\nSUPER SHIFT + F44                        \u2192 Rebound action\nSUPER SHIFT + F45                        \u2192 Rebound action\nSUPER SHIFT + F46                        \u2192 Rebound action\nSUPER SHIFT + F47                        \u2192 Rebound action\nSUPER SHIFT + F48                        \u2192 Rebound action\nSUPER SHIFT + F49                        \u2192 Rebound action\nSUPER SHIFT + F50                        \u2192 Rebound action\nSUPER SHIFT + F51                        \u2192 Rebound action\nSUPER SHIFT + F52                        \u2192 Rebound action\nSUPER SHIFT + F53                        \u2192 Rebound action\nSUPER SHIFT + F54                        \u2192 Rebound action\nSUPER SHIFT + F55                        \u2192 Rebound action\nSUPER SHIFT + F56                        \u2192 Rebound action\nSUPER SHIFT + F57                        \u2192 Rebound action\nSUPER SHIFT + F58                        \u2192 Rebound action\nSUPER SHIFT + F59                        \u2192 Rebound action\nSUPER SHIFT + F60                        \u2192 Rebound action\nSUPER SHIFT + F61                        \u2192 Rebound action\nSUPER SHIFT + F62                        \u2192 Rebound action\nSUPER SHIFT + F63                        \u2192 Rebound action\nSUPER SHIFT + F64                        \u2192 Rebound action\nSUPER SHIFT + F65                        \u2192 Rebound action\nSUPER SHIFT + F66                        \u2192 Rebound action\nSUPER SHIFT + F67                        \u2192 Rebound action\nSUPER SHIFT + F68                        \u2192 Rebound action\nSUPER SHIFT + F69                        \u2192 Rebound action\nSUPER SHIFT + F70                        \u2192 Rebound action\nSUPER SHIFT + F71                        \u2192 Rebound action\nSUPER SHIFT + F72                        \u2192 Rebound action\nSUPER SHIFT + F73                        \u2192 Rebound action\nSUPER SHIFT + F74                        \u2192 Rebound action\nSUPER SHIFT + F75                        \u2192 Rebound action\nSUPER SHIFT + F76                        \u2192 Rebound action\nSUPER SHIFT + F77                        \u2192 Rebound action\nSUPER SHIFT + F78                        \u2192 Rebound action\nSUPER SHIFT + F79                        \u2192 Rebound action\nSUPER SHIFT + F80                        \u2192 Rebound action\nSUPER SHIFT + F81                        \u2192 Rebound action\nSUPER SHIFT + F82                        \u2192 Rebound action\nSUPER SHIFT + F83                        \u2192 Rebound action\nSUPER SHIFT + F84                        \u2192 Rebound action\nSUPER SHIFT + F85                        \u2192 Rebound action\nSUPER SHIFT + F86                        \u2192 Rebound action\nSUPER SHIFT + F87                        \u2192 Rebound action\nSUPER SHIFT + F88                        \u2192 Rebound action\nSUPER SHIFT + F89                        \u2192 Rebound action\nSUPER SHIFT + F90                        \u2192 Rebound action\nSUPER SHIFT + F91                        \u2192 Rebound action\nSUPER SHIFT + F92                        \u2192 Rebound action\nSUPER SHIFT + F93                        \u2192 Rebound action\nSUPER SHIFT + F94                        \u2192 Rebound action\nSUPER SHIFT + F95                        \u2192 Rebound action\nSUPER SHIFT + F96                        \u2192 Rebound action\nSUPER SHIFT + F97                        \u2192 Rebound action\nSUPER SHIFT + F98                        \u2192 Rebound action\nSUPER SHIFT + F99                        \u2192 Rebound action\nSUPER SHIFT + F100                        \u2192 Rebound action\nSUPER SHIFT + F101                        \u2192 Rebound action\nSUPER SHIFT + F102                        \u2192 Rebound action\nSUPER SHIFT + F103                        \u2192 Rebound action\nSUPER SHIFT + F104                        \u2192 Rebound action\nSUPER SHIFT + F105                        \u2192 Rebound action\nSUPER SHIFT + F106                        \u2192 Rebound action\nSUPER SHIFT + F107                        \u2192 Rebound action\nSUPER SHIFT + F108                        \u2192 Rebound action\nSUPER SHIFT + F109                        \u2192 Rebound action\nSUPER SHIFT + F110                        \u2192 Rebound action\nSUPER SHIFT + F111                        \u2192 Rebound action\nSUPER SHIFT + F112                        \u2192 Rebound action\nSUPER SHIFT + F113                        \u2192 Rebound action\nSUPER SHIFT + F114                        \u2192 Rebound action\nSUPER SHIFT + F115                        \u2192 Rebound action\nSUPER SHIFT + F116                        \u2192 Rebound action\nSUPER SHIFT + F117                        \u2192 Rebound action\nSUPER SHIFT + F118                        \u2192 Rebound action\nSUPER SHIFT + F119                        \u2192 Rebound action\nSUPER SHIFT + F120                        \u2192 Rebound action\nSUPER SHIFT + F121                        \u2192 Rebound action\nSUPER SHIFT + F122                        \u2192 Rebound action\nSUPER SHIFT + F123                        \u2192 Rebound action\nSUPER SHIFT + F124                        \u2192 Rebound action\nSUPER SHIFT + F125                        \u2192 Rebound action\nSUPER SHIFT + F126                        \u2192 Rebound action\nSUPER SHIFT + F127                        \u2192 Rebound action\nSUPER SHIFT + F128                        \u2192 Rebound action\nSUPER SHIFT + F129                        \u2192 Rebound action\n",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "omarchy menu keybindings --print",
+   "value": {
+    "min_lines": 100,
+    "regex": "^\\s*\\S.*\\s*\u2192\\s*\\S.*$"
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; omarchy menu keybindings --print | cut -c1-35"
+   ],
+   "kind": "chord_shape",
+   "name": "keybindings-chords",
+   "negatives": [
+    {
+     "out": "SUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nHYPER + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER +  X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + Q\nCOPILOT KEY\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nXF86AudioMute\nSUPER CTRL + T\nALT + TAB\nXF86MonBrightnessUp\nSUPER + Q\nSUPER + W\nF9\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nPRINT\nALT + TAB\nSHIFT + F1\nswitch:on:Lid Switch\nSUPER + W\nSUPER SHIFT + E\nswitch:off:Lid Switch\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nCOPILOT KEY\nSHIFT + F1\nSUPER + Q\nXF86AudioMute\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nXF86MonBrightnessUp\nSUPER CTRL + T\nALT + TAB\nF9\nSUPER + Q\nSUPER + W\nPRINT\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nswitch:on:Lid Switch\nALT + TAB\nSHIFT + F1\nswitch:off:Lid Switch\nSUPER + W\nSUPER SHIFT + E\nCOPILOT KEY\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nXF86AudioMute\nSHIFT + F1\nSUPER + Q\nXF86MonBrightnessUp\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nF9\nSUPER CTRL + T\nALT + TAB\nPRINT\nSUPER + Q\nSUPER + W\nswitch:on:Lid Switch\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nswitch:off:Lid Switch\nALT + TAB\nSHIFT + F1\nCOPILOT KEY\nSUPER + W\nSUPER SHIFT + E\nXF86AudioMute\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nXF86MonBrightnessUp\nSHIFT + F1\nSUPER + Q\nF9\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nPRINT\nSUPER CTRL + T\nALT + TAB\nswitch:on:Lid Switch\nSUPER + Q\nSUPER + W\nswitch:off:Lid Switch\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nCOPILOT KEY\nALT + TAB\nSHIFT + F1\nXF86AudioMute\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\n64 + RETURN\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SUPER + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER + X \u2192 Y\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER + X + Y\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\n",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "SUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\n",
+     "rc": 0
+    },
+    {
+     "out": "SUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\nSUPER SHIFT CTRL ALT + X\nSUPER CTRL + T\nALT + TAB\nSHIFT + F1\nSUPER + Q\nSUPER + W\nSUPER SHIFT + E\nCTRL ALT + BACKSPACE\n",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; omarchy menu keybindings --print | cut -c1-35",
+   "value": {
+    "max_mods": 4,
+    "min_chords": 100,
+    "min_lines": 100,
+    "mods": [
+     "ALT",
+     "CTRL",
+     "SHIFT",
+     "SUPER"
+    ]
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "systemctl --user is-active hypridle"
+   ],
+   "kind": "is_active",
+   "name": "hypridle-is-active",
+   "negatives": [
+    {
+     "out": "inactive\n",
+     "rc": 0
+    },
+    {
+     "out": "active\n",
+     "rc": 3
+    },
+    {
+     "out": "bogus\n",
+     "rc": 3
+    },
+    {
+     "out": "\n",
+     "rc": 3
+    }
+   ],
+   "samples": [
+    {
+     "out": "active\n",
+     "rc": 0
+    },
+    {
+     "out": "activating\n",
+     "rc": 3
+    },
+    {
+     "out": "inactive\n",
+     "rc": 3
+    }
+   ],
+   "skill_anchor": "systemctl --user is-active hypridle",
+   "value": {
+    "enum": [
+     "active",
+     "activating",
+     "deactivating",
+     "failed",
+     "inactive",
+     "reloading",
+     "unknown"
+    ]
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; omarchy menu keybindings --print | cut -c36-"
+   ],
+   "kind": "action_column",
+   "name": "keybindings-actions",
+   "negatives": [
+    {
+     "out": " \u2192 Action 0\n \u2192 Action 1\n \u2192 Action 2\n \u2192 Action 3\n \u2192 Action 4\n \u2192 Action 5\n \u2192 Action 6\n \u2192 Action 7\n \u2192 Action 8\n \u2192 Action 9\n \u2192 Action 10\n \u2192 Action 11\n \u2192 Action 12\n \u2192 Action 13\n \u2192 Action 14\n \u2192 Action 15\n \u2192 Action 16\n \u2192 Action 17\n \u2192 Action 18\n \u2192 Action 19\n \u2192 Action 20\n \u2192 Action 21\n \u2192 Action 22\n \u2192 Action 23\n \u2192 Action 24\n \u2192 Action 25\n \u2192 Action 26\n \u2192 Action 27\n \u2192 Action 28\n \u2192 Action 29\n \u2192 Action 30\n \u2192 Action 31\n \u2192 Action 32\n \u2192 Action 33\n \u2192 Action 34\n \u2192 Action 35\n \u2192 Action 36\n \u2192 Action 37\n \u2192 Action 38\n \u2192 Action 39\n \u2192 Action 40\n \u2192 Action 41\n \u2192 Action 42\n \u2192 Action 43\n \u2192 Action 44\n \u2192 Action 45\n \u2192 Action 46\n \u2192 Action 47\n \u2192 Action 48\n \u2192 Action 49\n\u2192 Action 50\n \u2192 Action 51\n \u2192 Action 52\n \u2192 Action 53\n \u2192 Action 54\n \u2192 Action 55\n \u2192 Action 56\n \u2192 Action 57\n \u2192 Action 58\n \u2192 Action 59\n \u2192 Action 60\n \u2192 Action 61\n \u2192 Action 62\n \u2192 Action 63\n \u2192 Action 64\n \u2192 Action 65\n \u2192 Action 66\n \u2192 Action 67\n \u2192 Action 68\n \u2192 Action 69\n \u2192 Action 70\n \u2192 Action 71\n \u2192 Action 72\n \u2192 Action 73\n \u2192 Action 74\n \u2192 Action 75\n \u2192 Action 76\n \u2192 Action 77\n \u2192 Action 78\n \u2192 Action 79\n \u2192 Action 80\n \u2192 Action 81\n \u2192 Action 82\n \u2192 Action 83\n \u2192 Action 84\n \u2192 Action 85\n \u2192 Action 86\n \u2192 Action 87\n \u2192 Action 88\n \u2192 Action 89\n \u2192 Action 90\n \u2192 Action 91\n \u2192 Action 92\n \u2192 Action 93\n \u2192 Action 94\n \u2192 Action 95\n \u2192 Action 96\n \u2192 Action 97\n \u2192 Action 98\n \u2192 Action 99\n",
+     "rc": 0
+    },
+    {
+     "out": " \u2192 Action 0\n \u2192 Action 1\n \u2192 Action 2\n \u2192 Action 3\n \u2192 Action 4\n \u2192 Action 5\n \u2192 Action 6\n \u2192 Action 7\n \u2192 Action 8\n \u2192 Action 9\n \u2192 Action 10\n \u2192 Action 11\n \u2192 Action 12\n \u2192 Action 13\n \u2192 Action 14\n \u2192 Action 15\n \u2192 Action 16\n \u2192 Action 17\n \u2192 Action 18\n \u2192 Action 19\n \u2192 Action 20\n \u2192 Action 21\n \u2192 Action 22\n \u2192 Action 23\n \u2192 Action 24\n \u2192 Action 25\n \u2192 Action 26\n \u2192 Action 27\n \u2192 Action 28\n \u2192 Action 29\n \u2192 Action 30\n \u2192 Action 31\n \u2192 Action 32\n \u2192 Action 33\n \u2192 Action 34\n \u2192 Action 35\n \u2192 Action 36\n \u2192 Action 37\n \u2192 Action 38\n \u2192 Action 39\n \u2192 Action 40\n \u2192 Action 41\n \u2192 Action 42\n \u2192 Action 43\n \u2192 Action 44\n \u2192 Action 45\n \u2192 Action 46\n \u2192 Action 47\n \u2192 Action 48\n \u2192 Action 49\n \u2192 \n \u2192 Action 51\n \u2192 Action 52\n \u2192 Action 53\n \u2192 Action 54\n \u2192 Action 55\n \u2192 Action 56\n \u2192 Action 57\n \u2192 Action 58\n \u2192 Action 59\n \u2192 Action 60\n \u2192 Action 61\n \u2192 Action 62\n \u2192 Action 63\n \u2192 Action 64\n \u2192 Action 65\n \u2192 Action 66\n \u2192 Action 67\n \u2192 Action 68\n \u2192 Action 69\n \u2192 Action 70\n \u2192 Action 71\n \u2192 Action 72\n \u2192 Action 73\n \u2192 Action 74\n \u2192 Action 75\n \u2192 Action 76\n \u2192 Action 77\n \u2192 Action 78\n \u2192 Action 79\n \u2192 Action 80\n \u2192 Action 81\n \u2192 Action 82\n \u2192 Action 83\n \u2192 Action 84\n \u2192 Action 85\n \u2192 Action 86\n \u2192 Action 87\n \u2192 Action 88\n \u2192 Action 89\n \u2192 Action 90\n \u2192 Action 91\n \u2192 Action 92\n \u2192 Action 93\n \u2192 Action 94\n \u2192 Action 95\n \u2192 Action 96\n \u2192 Action 97\n \u2192 Action 98\n \u2192 Action 99\n",
+     "rc": 0
+    },
+    {
+     "out": " \u2192 Action 0\n \u2192 Action 1\n \u2192 Action 2\n \u2192 Action 3\n \u2192 Action 4\n \u2192 Action 5\n \u2192 Action 6\n \u2192 Action 7\n \u2192 Action 8\n \u2192 Action 9\n \u2192 Action 10\n \u2192 Action 11\n \u2192 Action 12\n \u2192 Action 13\n \u2192 Action 14\n \u2192 Action 15\n \u2192 Action 16\n \u2192 Action 17\n \u2192 Action 18\n \u2192 Action 19\n \u2192 Action 20\n \u2192 Action 21\n \u2192 Action 22\n \u2192 Action 23\n \u2192 Action 24\n \u2192 Action 25\n \u2192 Action 26\n \u2192 Action 27\n \u2192 Action 28\n \u2192 Action 29\n \u2192 Action 30\n \u2192 Action 31\n \u2192 Action 32\n \u2192 Action 33\n \u2192 Action 34\n \u2192 Action 35\n \u2192 Action 36\n \u2192 Action 37\n \u2192 Action 38\n \u2192 Action 39\n \u2192 Action 40\n \u2192 Action 41\n \u2192 Action 42\n \u2192 Action 43\n \u2192 Action 44\n \u2192 Action 45\n \u2192 Action 46\n \u2192 Action 47\n \u2192 Action 48\n \u2192 Action 49\n \u2192 Action 50 \n \u2192 Action 51\n \u2192 Action 52\n \u2192 Action 53\n \u2192 Action 54\n \u2192 Action 55\n \u2192 Action 56\n \u2192 Action 57\n \u2192 Action 58\n \u2192 Action 59\n \u2192 Action 60\n \u2192 Action 61\n \u2192 Action 62\n \u2192 Action 63\n \u2192 Action 64\n \u2192 Action 65\n \u2192 Action 66\n \u2192 Action 67\n \u2192 Action 68\n \u2192 Action 69\n \u2192 Action 70\n \u2192 Action 71\n \u2192 Action 72\n \u2192 Action 73\n \u2192 Action 74\n \u2192 Action 75\n \u2192 Action 76\n \u2192 Action 77\n \u2192 Action 78\n \u2192 Action 79\n \u2192 Action 80\n \u2192 Action 81\n \u2192 Action 82\n \u2192 Action 83\n \u2192 Action 84\n \u2192 Action 85\n \u2192 Action 86\n \u2192 Action 87\n \u2192 Action 88\n \u2192 Action 89\n \u2192 Action 90\n \u2192 Action 91\n \u2192 Action 92\n \u2192 Action 93\n \u2192 Action 94\n \u2192 Action 95\n \u2192 Action 96\n \u2192 Action 97\n \u2192 Action 98\n \u2192 Action 99\n",
+     "rc": 0
+    },
+    {
+     "out": " \u2192 Action 0\n \u2192 Action 1\n \u2192 Action 2\n \u2192 Action 3\n \u2192 Action 4\n \u2192 Action 5\n \u2192 Action 6\n \u2192 Action 7\n \u2192 Action 8\n \u2192 Action 9\n \u2192 Action 10\n \u2192 Action 11\n \u2192 Action 12\n \u2192 Action 13\n \u2192 Action 14\n \u2192 Action 15\n \u2192 Action 16\n \u2192 Action 17\n \u2192 Action 18\n \u2192 Action 19\n \u2192 Action 20\n \u2192 Action 21\n \u2192 Action 22\n \u2192 Action 23\n \u2192 Action 24\n \u2192 Action 25\n \u2192 Action 26\n \u2192 Action 27\n \u2192 Action 28\n \u2192 Action 29\n \u2192 Action 30\n \u2192 Action 31\n \u2192 Action 32\n \u2192 Action 33\n \u2192 Action 34\n \u2192 Action 35\n \u2192 Action 36\n \u2192 Action 37\n \u2192 Action 38\n \u2192 Action 39\n \u2192 Action 40\n \u2192 Action 41\n \u2192 Action 42\n \u2192 Action 43\n \u2192 Action 44\n \u2192 Action 45\n \u2192 Action 46\n \u2192 Action 47\n \u2192 Action 48\n \u2192 Action 49\n \u2192 Action 50 \u2192 tail\n \u2192 Action 51\n \u2192 Action 52\n \u2192 Action 53\n \u2192 Action 54\n \u2192 Action 55\n \u2192 Action 56\n \u2192 Action 57\n \u2192 Action 58\n \u2192 Action 59\n \u2192 Action 60\n \u2192 Action 61\n \u2192 Action 62\n \u2192 Action 63\n \u2192 Action 64\n \u2192 Action 65\n \u2192 Action 66\n \u2192 Action 67\n \u2192 Action 68\n \u2192 Action 69\n \u2192 Action 70\n \u2192 Action 71\n \u2192 Action 72\n \u2192 Action 73\n \u2192 Action 74\n \u2192 Action 75\n \u2192 Action 76\n \u2192 Action 77\n \u2192 Action 78\n \u2192 Action 79\n \u2192 Action 80\n \u2192 Action 81\n \u2192 Action 82\n \u2192 Action 83\n \u2192 Action 84\n \u2192 Action 85\n \u2192 Action 86\n \u2192 Action 87\n \u2192 Action 88\n \u2192 Action 89\n \u2192 Action 90\n \u2192 Action 91\n \u2192 Action 92\n \u2192 Action 93\n \u2192 Action 94\n \u2192 Action 95\n \u2192 Action 96\n \u2192 Action 97\n \u2192 Action 98\n \u2192 Action 99\n",
+     "rc": 0
+    },
+    {
+     "out": " \u2192 Action 0\n \u2192 Action 1\n \u2192 Action 2\n \u2192 Action 3\n \u2192 Action 4\n \u2192 Action 5\n \u2192 Action 6\n \u2192 Action 7\n \u2192 Action 8\n \u2192 Action 9\n \u2192 Action 10\n \u2192 Action 11\n \u2192 Action 12\n \u2192 Action 13\n \u2192 Action 14\n \u2192 Action 15\n \u2192 Action 16\n \u2192 Action 17\n \u2192 Action 18\n \u2192 Action 19\n \u2192 Action 20\n \u2192 Action 21\n \u2192 Action 22\n \u2192 Action 23\n \u2192 Action 24\n \u2192 Action 25\n \u2192 Action 26\n \u2192 Action 27\n \u2192 Action 28\n \u2192 Action 29\n \u2192 Action 30\n \u2192 Action 31\n \u2192 Action 32\n \u2192 Action 33\n \u2192 Action 34\n \u2192 Action 35\n \u2192 Action 36\n \u2192 Action 37\n \u2192 Action 38\n \u2192 Action 39\n \u2192 Action 40\n \u2192 Action 41\n \u2192 Action 42\n \u2192 Action 43\n \u2192 Action 44\n \u2192 Action 45\n \u2192 Action 46\n \u2192 Action 47\n \u2192 Action 48\n \u2192 Action 49\n \u2192 Action 50\n \u2192 Action 51\n \u2192 Action 52\n \u2192 Action 53\n \u2192 Action 54\n \u2192 Action 55\n \u2192 Action 56\n \u2192 Action 57\n \u2192 Action 58\n \u2192 Action 59\n \u2192 Action 60\n \u2192 Action 61\n \u2192 Action 62\n \u2192 Action 63\n \u2192 Action 64\n \u2192 Action 65\n \u2192 Action 66\n \u2192 Action 67\n \u2192 Action 68\n \u2192 Action 69\n \u2192 Action 70\n \u2192 Action 71\n \u2192 Action 72\n \u2192 Action 73\n \u2192 Action 74\n \u2192 Action 75\n \u2192 Action 76\n \u2192 Action 77\n \u2192 Action 78\n \u2192 Action 79\n \u2192 Action 80\n \u2192 Action 81\n \u2192 Action 82\n \u2192 Action 83\n \u2192 Action 84\n \u2192 Action 85\n \u2192 Action 86\n \u2192 Action 87\n \u2192 Action 88\n \u2192 Action 89\n \u2192 Action 90\n \u2192 Action 91\n \u2192 Action 92\n \u2192 Action 93\n \u2192 Action 94\n \u2192 Action 95\n \u2192 Action 96\n \u2192 Action 97\n \u2192 Action 98\n",
+     "rc": 0
+    },
+    {
+     "out": " \u2192 Action 0\n \u2192 Action 1\n \u2192 Action 2\n \u2192 Action 3\n \u2192 Action 4\n \u2192 Action 5\n \u2192 Action 6\n \u2192 Action 7\n \u2192 Action 8\n \u2192 Action 9\n \u2192 Action 10\n \u2192 Action 11\n \u2192 Action 12\n \u2192 Action 13\n \u2192 Action 14\n \u2192 Action 15\n \u2192 Action 16\n \u2192 Action 17\n \u2192 Action 18\n \u2192 Action 19\n \u2192 Action 20\n \u2192 Action 21\n \u2192 Action 22\n \u2192 Action 23\n \u2192 Action 24\n \u2192 Action 25\n \u2192 Action 26\n \u2192 Action 27\n \u2192 Action 28\n \u2192 Action 29\n \u2192 Action 30\n \u2192 Action 31\n \u2192 Action 32\n \u2192 Action 33\n \u2192 Action 34\n \u2192 Action 35\n \u2192 Action 36\n \u2192 Action 37\n \u2192 Action 38\n \u2192 Action 39\n \u2192 Action 40\n \u2192 Action 41\n \u2192 Action 42\n \u2192 Action 43\n \u2192 Action 44\n \u2192 Action 45\n \u2192 Action 46\n \u2192 Action 47\n \u2192 Action 48\n \u2192 Action 49\n \u2192 Action 50\n \u2192 Action 51\n \u2192 Action 52\n \u2192 Action 53\n \u2192 Action 54\n \u2192 Action 55\n \u2192 Action 56\n \u2192 Action 57\n \u2192 Action 58\n \u2192 Action 59\n \u2192 Action 60\n \u2192 Action 61\n \u2192 Action 62\n \u2192 Action 63\n \u2192 Action 64\n \u2192 Action 65\n \u2192 Action 66\n \u2192 Action 67\n \u2192 Action 68\n \u2192 Action 69\n \u2192 Action 70\n \u2192 Action 71\n \u2192 Action 72\n \u2192 Action 73\n \u2192 Action 74\n \u2192 Action 75\n \u2192 Action 76\n \u2192 Action 77\n \u2192 Action 78\n \u2192 Action 79\n \u2192 Action 80\n \u2192 Action 81\n \u2192 Action 82\n \u2192 Action 83\n \u2192 Action 84\n \u2192 Action 85\n \u2192 Action 86\n \u2192 Action 87\n \u2192 Action 88\n \u2192 Action 89\n \u2192 Action 90\n \u2192 Action 91\n \u2192 Action 92\n \u2192 Action 93\n \u2192 Action 94\n \u2192 Action 95\n \u2192 Action 96\n \u2192 Action 97\n \u2192 Action 98\n \u2192 Action 99\n",
+     "rc": 1
+    }
+   ],
+   "samples": [
+    {
+     "out": " \u2192 Action 0\n \u2192 Action 1\n \u2192 Action 2\n \u2192 Action 3\n \u2192 Action 4\n \u2192 Action 5\n \u2192 Action 6\n \u2192 Action 7\n \u2192 Action 8\n \u2192 Action 9\n \u2192 Action 10\n \u2192 Action 11\n \u2192 Action 12\n \u2192 Action 13\n \u2192 Action 14\n \u2192 Action 15\n \u2192 Action 16\n \u2192 Action 17\n \u2192 Action 18\n \u2192 Action 19\n \u2192 Action 20\n \u2192 Action 21\n \u2192 Action 22\n \u2192 Action 23\n \u2192 Action 24\n \u2192 Action 25\n \u2192 Action 26\n \u2192 Action 27\n \u2192 Action 28\n \u2192 Action 29\n \u2192 Action 30\n \u2192 Action 31\n \u2192 Action 32\n \u2192 Action 33\n \u2192 Action 34\n \u2192 Action 35\n \u2192 Action 36\n \u2192 Action 37\n \u2192 Action 38\n \u2192 Action 39\n \u2192 Action 40\n \u2192 Action 41\n \u2192 Action 42\n \u2192 Action 43\n \u2192 Action 44\n \u2192 Action 45\n \u2192 Action 46\n \u2192 Action 47\n \u2192 Action 48\n \u2192 Action 49\n \u2192 Action 50\n \u2192 Action 51\n \u2192 Action 52\n \u2192 Action 53\n \u2192 Action 54\n \u2192 Action 55\n \u2192 Action 56\n \u2192 Action 57\n \u2192 Action 58\n \u2192 Action 59\n \u2192 Action 60\n \u2192 Action 61\n \u2192 Action 62\n \u2192 Action 63\n \u2192 Action 64\n \u2192 Action 65\n \u2192 Action 66\n \u2192 Action 67\n \u2192 Action 68\n \u2192 Action 69\n \u2192 Action 70\n \u2192 Action 71\n \u2192 Action 72\n \u2192 Action 73\n \u2192 Action 74\n \u2192 Action 75\n \u2192 Action 76\n \u2192 Action 77\n \u2192 Action 78\n \u2192 Action 79\n \u2192 Action 80\n \u2192 Action 81\n \u2192 Action 82\n \u2192 Action 83\n \u2192 Action 84\n \u2192 Action 85\n \u2192 Action 86\n \u2192 Action 87\n \u2192 Action 88\n \u2192 Action 89\n \u2192 Action 90\n \u2192 Action 91\n \u2192 Action 92\n \u2192 Action 93\n \u2192 Action 94\n \u2192 Action 95\n \u2192 Action 96\n \u2192 Action 97\n \u2192 Action 98\n \u2192 Action 99\n",
+     "rc": 0
+    },
+    {
+     "out": " \u2192 Pop window out (float & pin)\n \u2192 Action 1\n \u2192 Action 2\n \u2192 Action 3\n \u2192 Action 4\n \u2192 Action 5\n \u2192 Action 6\n \u2192 Action 7\n \u2192 Action 8\n \u2192 Action 9\n \u2192 Action 10\n \u2192 Action 11\n \u2192 Action 12\n \u2192 Action 13\n \u2192 Action 14\n \u2192 Action 15\n \u2192 Action 16\n \u2192 Action 17\n \u2192 Action 18\n \u2192 Action 19\n \u2192 Action 20\n \u2192 Action 21\n \u2192 Action 22\n \u2192 Action 23\n \u2192 Action 24\n \u2192 Action 25\n \u2192 Action 26\n \u2192 Action 27\n \u2192 Action 28\n \u2192 Action 29\n \u2192 Action 30\n \u2192 Action 31\n \u2192 Action 32\n \u2192 Action 33\n \u2192 Action 34\n \u2192 Action 35\n \u2192 Action 36\n \u2192 Action 37\n \u2192 Action 38\n \u2192 Action 39\n \u2192 Action 40\n \u2192 Action 41\n \u2192 Action 42\n \u2192 Action 43\n \u2192 Action 44\n \u2192 Action 45\n \u2192 Action 46\n \u2192 Action 47\n \u2192 Action 48\n \u2192 Action 49\n \u2192 Action 50\n \u2192 Action 51\n \u2192 Action 52\n \u2192 Action 53\n \u2192 Action 54\n \u2192 Action 55\n \u2192 Action 56\n \u2192 Action 57\n \u2192 Action 58\n \u2192 Action 59\n \u2192 Action 60\n \u2192 Action 61\n \u2192 Action 62\n \u2192 Action 63\n \u2192 Action 64\n \u2192 Action 65\n \u2192 Action 66\n \u2192 Action 67\n \u2192 Action 68\n \u2192 Action 69\n \u2192 Action 70\n \u2192 Action 71\n \u2192 Action 72\n \u2192 Action 73\n \u2192 Action 74\n \u2192 Action 75\n \u2192 Action 76\n \u2192 Action 77\n \u2192 Action 78\n \u2192 Action 79\n \u2192 Action 80\n \u2192 Action 81\n \u2192 Action 82\n \u2192 Action 83\n \u2192 Action 84\n \u2192 Action 85\n \u2192 Action 86\n \u2192 Action 87\n \u2192 Action 88\n \u2192 Action 89\n \u2192 Action 90\n \u2192 Action 91\n \u2192 Action 92\n \u2192 Action 93\n \u2192 Action 94\n \u2192 Action 95\n \u2192 Action 96\n \u2192 Action 97\n \u2192 Action 98\n \u2192 Action 99\n",
+     "rc": 0
+    },
+    {
+     "out": " \u2192 Terminal &amp;&amp; log\n \u2192 Action 1\n \u2192 Action 2\n \u2192 Action 3\n \u2192 Action 4\n \u2192 Action 5\n \u2192 Action 6\n \u2192 Action 7\n \u2192 Action 8\n \u2192 Action 9\n \u2192 Action 10\n \u2192 Action 11\n \u2192 Action 12\n \u2192 Action 13\n \u2192 Action 14\n \u2192 Action 15\n \u2192 Action 16\n \u2192 Action 17\n \u2192 Action 18\n \u2192 Action 19\n \u2192 Action 20\n \u2192 Action 21\n \u2192 Action 22\n \u2192 Action 23\n \u2192 Action 24\n \u2192 Action 25\n \u2192 Action 26\n \u2192 Action 27\n \u2192 Action 28\n \u2192 Action 29\n \u2192 Action 30\n \u2192 Action 31\n \u2192 Action 32\n \u2192 Action 33\n \u2192 Action 34\n \u2192 Action 35\n \u2192 Action 36\n \u2192 Action 37\n \u2192 Action 38\n \u2192 Action 39\n \u2192 Action 40\n \u2192 Action 41\n \u2192 Action 42\n \u2192 Action 43\n \u2192 Action 44\n \u2192 Action 45\n \u2192 Action 46\n \u2192 Action 47\n \u2192 Action 48\n \u2192 Action 49\n \u2192 Action 50\n \u2192 Action 51\n \u2192 Action 52\n \u2192 Action 53\n \u2192 Action 54\n \u2192 Action 55\n \u2192 Action 56\n \u2192 Action 57\n \u2192 Action 58\n \u2192 Action 59\n \u2192 Action 60\n \u2192 Action 61\n \u2192 Action 62\n \u2192 Action 63\n \u2192 Action 64\n \u2192 Action 65\n \u2192 Action 66\n \u2192 Action 67\n \u2192 Action 68\n \u2192 Action 69\n \u2192 Action 70\n \u2192 Action 71\n \u2192 Action 72\n \u2192 Action 73\n \u2192 Action 74\n \u2192 Action 75\n \u2192 Action 76\n \u2192 Action 77\n \u2192 Action 78\n \u2192 Action 79\n \u2192 Action 80\n \u2192 Action 81\n \u2192 Action 82\n \u2192 Action 83\n \u2192 Action 84\n \u2192 Action 85\n \u2192 Action 86\n \u2192 Action 87\n \u2192 Action 88\n \u2192 Action 89\n \u2192 Action 90\n \u2192 Action 91\n \u2192 Action 92\n \u2192 Action 93\n \u2192 Action 94\n \u2192 Action 95\n \u2192 Action 96\n \u2192 Action 97\n \u2192 Action 98\n \u2192 Action 99\n",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; omarchy menu keybindings --print | cut -c36-",
+   "value": {
+    "min_lines": 100,
+    "prefix": " \u2192 "
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "pgrep -x waybar"
+   ],
+   "kind": "pid_state",
+   "name": "waybar-pgrep",
+   "negatives": [
+    {
+     "out": "",
+     "rc": 0
+    },
+    {
+     "out": "4242\n",
+     "rc": 1
+    },
+    {
+     "out": "0\n",
+     "rc": 0
+    },
+    {
+     "out": " 4242\n",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 2
+    },
+    {
+     "out": "4242x\n",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "4242\n",
+     "rc": 0
+    },
+    {
+     "out": "4242\n1721\n",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 1
+    }
+   ],
+   "skill_anchor": "pgrep -x waybar",
+   "value": {},
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "busctl",
+    "--user",
+    "list"
+   ],
+   "kind": "regex",
+   "name": "tray-owner",
+   "negatives": [
+    {
+     "out": "org.kde.StatusNotifierWatcher 0 waybar user :1.99 u - -\n",
+     "rc": 0
+    },
+    {
+     "out": "org.kde.StatusNotifierItem-4242-1 4242 waybar user :1.99 u - -\n",
+     "rc": 0
+    },
+    {
+     "out": "org.kde.StatusNotifierWatcher - waybar user :1.99 u - -\n",
+     "rc": 0
+    },
+    {
+     "out": "org.kde.StatusNotifierWatcher 4242 waybar user :1.99 u - -\n",
+     "rc": 1
+    }
+   ],
+   "samples": [
+    {
+     "out": "org.kde.StatusNotifierWatcher                      4242 waybar     user :1.99 user@UID.service - -\n",
+     "rc": 0
+    },
+    {
+     "out": "NAME PID PROCESS USER CONNECTION UNIT SESSION DESCRIPTION\norg.kde.StatusNotifierWatcher 99 waybar user :1.98 u - -\norg.kde.StatusNotifierHost-99-1 99 waybar user :1.98 u - -\n",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "busctl --user list",
+   "value": "(?m)^org\\.kde\\.StatusNotifierWatcher\\s+[1-9][0-9]*\\s",
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "busctl",
+    "--user",
+    "introspect",
+    "org.kde.StatusNotifierWatcher",
+    "/StatusNotifierWatcher",
+    "--no-pager"
+   ],
+   "kind": "regex",
+   "name": "tray-interface",
+   "negatives": [
+    {
+     "out": "org.kde.StatusNotifierWatcher property - - -\n",
+     "rc": 0
+    },
+    {
+     "out": ".RegisterStatusNotifierItem method s - -\n",
+     "rc": 0
+    },
+    {
+     "out": "org.kde.StatusNotifierWatcher interface - - -\n",
+     "rc": 2
+    }
+   ],
+   "samples": [
+    {
+     "out": "NAME TYPE SIGNATURE RESULT/VALUE FLAGS\norg.freedesktop.DBus.Introspectable interface - - -\norg.kde.StatusNotifierWatcher       interface - - -\n",
+     "rc": 0
+    },
+    {
+     "out": "org.kde.StatusNotifierWatcher interface - - -\n",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager",
+   "value": "(?m)^org\\.kde\\.StatusNotifierWatcher\\s+interface\\s",
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager | awk '$2==\"method\"'"
+   ],
+   "kind": "lines_shape",
+   "name": "tray-methods",
+   "negatives": [
+    {
+     "out": ".RegisterStatusNotifierItem method s - -\norg.kde.StatusNotifierWatcher interface - - -\n",
+     "rc": 0
+    },
+    {
+     "out": ".RegisterStatusNotifierItem method s - -\n",
+     "rc": 0
+    },
+    {
+     "out": ".A method s - -\n.B method s - -\n",
+     "rc": 1
+    }
+   ],
+   "samples": [
+    {
+     "out": ".RegisterStatusNotifierHost method s - -\n.RegisterStatusNotifierItem method s - -\n",
+     "rc": 0
+    },
+    {
+     "out": ".Introspect method - s -\n.GetAll method s a{sv} -\n.RegisterStatusNotifierItem method s - -\n",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; busctl --user introspect org.kde.StatusNotifierWatcher /StatusNotifierWatcher --no-pager | awk '$2==\"method\"'",
+   "value": {
+    "min_lines": 2,
+    "regex": "^\\.[A-Za-z]+\\s+method\\s+"
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems | awk '{print NF-2}'"
+   ],
+   "kind": "int_range",
+   "name": "tray-items",
+   "negatives": [
+    {
+     "out": "as 2 \":1.900/StatusNotifierItem\" \":1.901/StatusNotifierItem\"\n",
+     "rc": 0
+    },
+    {
+     "out": "-1\n",
+     "rc": 0
+    },
+    {
+     "out": "",
+     "rc": 0
+    },
+    {
+     "out": "2\n",
+     "rc": 1
+    }
+   ],
+   "samples": [
+    {
+     "out": "2\n",
+     "rc": 0
+    },
+    {
+     "out": "0\n",
+     "rc": 0
+    },
+    {
+     "out": "7\n",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "set -o pipefail; busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems | awk '{print NF-2}'",
+   "value": [
+    0,
+    10000
+   ],
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered"
+   ],
+   "kind": "bool_property",
+   "name": "tray-host-registered",
+   "negatives": [
+    {
+     "out": "b yes\n",
+     "rc": 0
+    },
+    {
+     "out": "true\n",
+     "rc": 0
+    },
+    {
+     "out": "b trueish\n",
+     "rc": 0
+    },
+    {
+     "out": "b TRUE\n",
+     "rc": 0
+    },
+    {
+     "out": "b true\n",
+     "rc": 1
+    }
+   ],
+   "samples": [
+    {
+     "out": "b true\n",
+     "rc": 0
+    },
+    {
+     "out": "b false\n",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered",
+   "value": {},
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "sh .ufo/waves/round-84/fixtures/pipefail-guard.sh"
+   ],
+   "fixtures": [
+    ".ufo/waves/round-84/fixtures/pipefail-guard.sh"
+   ],
+   "kind": "exact",
+   "name": "pipefail-demonstration",
+   "negatives": [
+    {
+     "out": "MADO_PIPEFAIL: unguarded=0 guarded=0\n",
+     "rc": 0
+    }
+   ],
+   "samples": [
+    {
+     "out": "MADO_PIPEFAIL: unguarded=0 guarded=7\n",
+     "rc": 0
+    }
+   ],
+   "skill_anchor": "sh .ufo/waves/round-84/fixtures/pipefail-guard.sh",
+   "value": "MADO_PIPEFAIL: unguarded=0 guarded=7",
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; sh .ufo/waves/round-84/fixtures/failing-producer.sh | cat"
+   ],
+   "fixtures": [
+    ".ufo/waves/round-84/fixtures/failing-producer.sh"
+   ],
+   "kind": "producer_failure",
+   "name": "producer-failure-propagated",
+   "negatives": [
+    {
+     "out": "b true\n",
+     "rc": 0
+    },
+    {
+     "out": "b false\n",
+     "rc": 7
+    }
+   ],
+   "samples": [
+    {
+     "out": "b true\n",
+     "rc": 7
+    }
+   ],
+   "skill_anchor": "set -o pipefail; sh .ufo/waves/round-84/fixtures/failing-producer.sh | cat",
+   "value": {
+    "rc": 7,
+    "text": "b true"
+   },
+   "status": {
+    "class": "ok"
+   }
+  },
+  {
+   "name": "status-ok-contained",
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; sh .ufo/waves/round-85/fixtures/status-ok.sh | cat"
+   ],
+   "skill_anchor": "set -o pipefail; sh .ufo/waves/round-85/fixtures/status-ok.sh | cat",
+   "kind": "exact",
+   "value": "MADO_STATUS: ok",
+   "frozen": "MADO_STATUS: ok",
+   "status": {
+    "class": "ok"
+   },
+   "samples": [
+    {
+     "rc": 0,
+     "out": "MADO_STATUS: ok\n"
+    }
+   ],
+   "negatives": [
+    {
+     "rc": 7,
+     "out": "MADO_STATUS: ok\n"
+    },
+    {
+     "rc": 141,
+     "out": "MADO_STATUS: ok\n"
+    }
+   ],
+   "fixtures": [
+    ".ufo/waves/round-85/fixtures/status-ok.sh"
+   ]
+  },
+  {
+   "name": "status-exit7-contained",
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; sh .ufo/waves/round-85/fixtures/status-exit7.sh | cat"
+   ],
+   "skill_anchor": "set -o pipefail; sh .ufo/waves/round-85/fixtures/status-exit7.sh | cat",
+   "kind": "exact",
+   "value": "MADO_STATUS: exit7",
+   "frozen": "MADO_STATUS: exit7",
+   "status": {
+    "class": "exact",
+    "code": 7
+   },
+   "samples": [
+    {
+     "rc": 7,
+     "out": "MADO_STATUS: exit7\n"
+    }
+   ],
+   "negatives": [
+    {
+     "rc": 0,
+     "out": "MADO_STATUS: exit7\n"
+    },
+    {
+     "rc": 141,
+     "out": "MADO_STATUS: exit7\n"
+    },
+    {
+     "rc": 7,
+     "out": "MADO_STATUS: exit7 trailing\n"
+    }
+   ],
+   "fixtures": [
+    ".ufo/waves/round-85/fixtures/status-exit7.sh"
+   ]
+  },
+  {
+   "name": "status-sigpipe-contained",
+   "argv": [
+    "/bin/sh",
+    "-c",
+    "set -o pipefail; sh .ufo/waves/round-85/fixtures/status-sigpipe.sh | head -n 1"
+   ],
+   "skill_anchor": "set -o pipefail; sh .ufo/waves/round-85/fixtures/status-sigpipe.sh | head -n 1",
+   "kind": "exact",
+   "value": "MADO_STATUS: sigpipe line 0",
+   "frozen": "MADO_STATUS: sigpipe line 0",
+   "status": {
+    "class": "signal",
+    "signal": 13
+   },
+   "samples": [
+    {
+     "rc": 141,
+     "out": "MADO_STATUS: sigpipe line 0\n"
+    }
+   ],
+   "negatives": [
+    {
+     "rc": 0,
+     "out": "MADO_STATUS: sigpipe line 0\n"
+    },
+    {
+     "rc": 7,
+     "out": "MADO_STATUS: sigpipe line 0\n"
+    },
+    {
+     "rc": 128,
+     "out": "MADO_STATUS: sigpipe line 0\n"
+    }
+   ],
+   "fixtures": [
+    ".ufo/waves/round-85/fixtures/status-sigpipe.sh"
+   ]
+  }
+ ],
+ "superseded": [
+  "version",
+  "monitors-size",
+  "monitors-reserved",
+  "gaps-out",
+  "kb-layout",
+  "binds-count",
+  "layers-namespaces",
+  "waybar-process",
+  "active-workspace",
+  "clients-count",
+  "workspaces-count",
+  "keybindings-chords",
+  "keybindings-actions",
+  "tray-methods",
+  "tray-items"
+ ],
+ "status_added": [
+  "version",
+  "configerrors",
+  "monitors-size",
+  "monitors-reserved",
+  "gaps-out",
+  "kb-layout",
+  "binds-count",
+  "layers-namespaces",
+  "waybar-process",
+  "mako-mode",
+  "omarchy-theme",
+  "omarchy-version",
+  "active-workspace",
+  "layers-dump",
+  "monitors-dump",
+  "clients-count",
+  "workspaces-count",
+  "refuse-mode",
+  "refuse-scale",
+  "refuse-layer-background",
+  "refuse-output-space",
+  "omarchy-menu-keybindings",
+  "keybindings-chords",
+  "hypridle-is-active",
+  "keybindings-actions",
+  "waybar-pgrep",
+  "tray-owner",
+  "tray-interface",
+  "tray-methods",
+  "tray-items",
+  "tray-host-registered",
+  "pipefail-demonstration",
+  "producer-failure-propagated"
+ ],
+ "value_superseded": [
+  "omarchy-version",
+  "version"
+ ],
+ "cases_added": [
+  "status-ok-contained",
+  "status-exit7-contained",
+  "status-sigpipe-contained"
+ ]
+}

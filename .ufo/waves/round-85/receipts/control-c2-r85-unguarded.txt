@@ -1,0 +1,9 @@
+# round-85 C2 no-work control: the three contained producers WITHOUT the pipefail guard.
+# A counter that accepted any nonzero status, or that read only the last command's status,
+# would meet the exact/signal rows; the control shows the unguarded pipeline reports 0 for all three.
+unguarded: cmd=sh .ufo/waves/round-85/fixtures/status-ok.sh | cat rc=0 stdout-bytes=15
+guarded:   cmd=sh .ufo/waves/round-85/fixtures/status-ok.sh | cat rc=0 stdout-bytes=15
+unguarded: cmd=sh .ufo/waves/round-85/fixtures/status-exit7.sh | cat rc=0 stdout-bytes=18
+guarded:   cmd=sh .ufo/waves/round-85/fixtures/status-exit7.sh | cat rc=7 stdout-bytes=18
+unguarded: cmd=sh .ufo/waves/round-85/fixtures/status-sigpipe.sh | head -n 1 rc=0 stdout-bytes=27
+guarded:   cmd=sh .ufo/waves/round-85/fixtures/status-sigpipe.sh | head -n 1 rc=141 stdout-bytes=27
