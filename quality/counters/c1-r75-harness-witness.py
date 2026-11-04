@@ -279,27 +279,35 @@ def measure(args):
 
     sha = resolve_rev(repo, args.rev, env)
     base_sha = resolve_rev(repo, args.base_rev, env)
-    cand_bytes = extract(repo, sha, CAND, env)
+    # The frozen contract promises a measured miss, not a setup error, when the candidate
+    # harness is absent (R75RevC1 P2): an absent candidate prints `correct=absent`, rc 1.
+    r = git(repo, ["show", "%s:%s" % (sha, CAND)], env)
+    cand_bytes = r.stdout if r.returncode == 0 else None
     base_bytes = extract(repo, base_sha, BASE, env)
     lane_files = {path: extract(repo, sha, path, env)
                   for path in (USEDBY, LEDGER, CITECHECK, R72)}
     print("MADO_R75_HARNESS path=%s sha256=%s rev=%s"
-          % (CAND, sha256_hex(cand_bytes), sha), flush=True)
+          % (CAND, sha256_hex(cand_bytes) if cand_bytes is not None else "absent", sha),
+          flush=True)
     print("MADO_R75_BASE_HARNESS path=%s sha256=%s rev=%s"
           % (BASE, sha256_hex(base_bytes), base_sha), flush=True)
-    cand_path = os.path.join(work, "candidate.py")
+    cand_path = os.path.join(work, "candidate.py") if cand_bytes is not None else None
     base_path = os.path.join(work, "base.py")
-    with open(cand_path, "wb") as fh:
-        fh.write(cand_bytes)
+    if cand_path is not None:
+        with open(cand_path, "wb") as fh:
+            fh.write(cand_bytes)
     with open(base_path, "wb") as fh:
         fh.write(base_bytes)
 
     correct = base_correct = 0
     for case in cases:
         fixture = make_fixture(work, case, lane_files, env)
-        cand = harness_run(cand_path, fixture, os.path.join(work, "cand", case["name"]), env)
+        if cand_path is not None:
+            cand = harness_run(cand_path, fixture, os.path.join(work, "cand", case["name"]), env)
+            cand_out = dec(cand.stdout) + dec(cand.stderr)
+        else:
+            cand_out = ""
         base = harness_run(base_path, fixture, os.path.join(work, "base", case["name"]), env)
-        cand_out = dec(cand.stdout) + dec(cand.stderr)
         base_out = dec(base.stdout) + dec(base.stderr)
         cand_decision = parse_decision(cand_out, CAND_RE)
         base_decision = parse_decision(base_out, BASE_RE)
@@ -313,8 +321,9 @@ def measure(args):
                  cand_decision if cand_decision else "absent",
                  base_decision if base_decision else "absent",
                  "yes" if ok_cand else "no"), flush=True)
+    correct_field = "absent" if cand_path is None else str(correct)
     line = ("MADO_R75_HARNESS_WITNESS: cases=%d correct=%s base_correct=%d verdict=%s rev=%s"
-            % (len(cases), correct, base_correct,
+            % (len(cases), correct_field, base_correct,
                "TARGET_MET" if (len(cases) == FROZEN_CASES and correct == FROZEN_CORRECT
                                 and base_correct == FROZEN_BASE_CORRECT) else "TARGET_MISSED",
                sha))
