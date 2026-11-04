@@ -1,0 +1,51 @@
+# mado round 70 harm watch (2026-11-04), rev 71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab
+
+## tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+rc=0
+
+## r69 frozen pair counter at the round-70 tip (must stay TARGET_MET)
+MADO_R69_PAIRED_RECIPES: selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET rev=71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab
+rc=0
+
+## landing instrument, round-70 committed artifacts
+LANDING_LEG citecheck rc=0
+MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0 ledger=0 citecheck=0 rev=71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab)
+rc=0
+
+## landing instrument, pre-existing round-69 evidence dir (red for pre-existing reasons; the 5 missing citations are listed)
+LANDING_LEG nav rc=0
+LANDING_LEG usedby rc=0
+LEDGER: population=119 ledger_rows=119 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab
+LANDING_LEG ledger rc=0
+CITECHECK MISSING: .ufo/waves/round-68/w1/R68ExecGate1/R68ExecGate1/draft/quality/check-anchor-cover.py (from /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/w1/R69ExecCadence/cadence-r69.txt)
+CITECHECK MISSING: .ufo/waves/round-68/w1/R68ExecGate1/R68ExecGate1/draft/quality/check-control-receipts.py (from /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/w1/R69ExecCadence/cadence-r69.txt)
+CITECHECK MISSING: .ufo/waves/round-68/w1/R68ExecGate1/R68ExecGate1/draft/quality/check-deliverables.py (from /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/w1/R69ExecCadence/cadence-r69.txt)
+CITECHECK MISSING: corpus/cited.md (from /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/proto/c1-r69-landing-controls.proto.py, /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/w1/R69ExecHarness/draft/quality/counters/c1-r69-landing-controls.py)
+CITECHECK MISSING: tools/tsukuroi-census.sh (from /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-69/w1/R69ConnSiblings.md)
+MADO_CITECHECK: rev=71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab files=65 citations=88 resolved=83 missing=5 skipped_large=0 verdict=TARGET_MISSED (VERSION r64-v1)
+LANDING_LEG citecheck rc=1
+MADO_LANDING_COUNTERS: RED (nav=0 usedby=0 ledger=0 citecheck=1 rev=71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab)
+
+## axis table
+MADO_AXIS_ROW: axis=navigation published=81/81 derived=81/81 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=86/86 derived=86/86 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab
+
+## instrument selftests
+$ python3 -I quality/counters/c1-r70-landing-controls.py --selftest --scratch-root /fast/scratch/hyaku/mado-r70/l1/t1
+MADO_R70_LANDING_CONTROLS_SELFTEST: 68/68 assertions passed
+rc=0
+$ python3 -I quality/counters/c1-r70-real-children.py --selftest --scratch-root /fast/scratch/hyaku/mado-r70/l1/t2
+MADO_R70_REAL_CHILDREN_SELFTEST: 26/26 assertions passed
+rc=0
+$ python3 -I quality/counters/c2-r70-carriers.py --selftest --controls .ufo/waves/round-70/controls/c2-controls-r70.json --scratch-root /fast/scratch/hyaku/mado-r70/l1/t3
+MADO_R70_GUARD_CARRIERS_SELFTEST: 49/49 assertions passed
+rc=0
+$ python3 -I quality/counters/c2-r69-guard-dominance.py --selftest --controls .ufo/waves/round-69/controls/c2-controls-r69.json --scratch-root /fast/scratch/hyaku/mado-r70/l1/t4
+MADO_R69_GUARD_DOMINANCE_SELFTEST: 43/43 assertions passed
+rc=0
+$ python3 -I quality/counters/c1-r69-landing-controls.py --selftest --scratch-root /fast/scratch/hyaku/mado-r70/l1/t5
+MADO_R69_LANDING_CONTROLS_SELFTEST: 59/59 assertions passed
+rc=0
