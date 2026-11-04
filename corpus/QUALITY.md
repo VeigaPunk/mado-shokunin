@@ -769,3 +769,34 @@ reported as a gap, not silently treated as verification.
 Limits: the results file's `status` field reflects settlement, not deliverables; a report
 path named in the output can still point at an unwritten file, so (b)'s per-seat check is the
 binding half; this criterion does not retroactively resurrect round-71's missing seats.
+
+## Criteria from the round-72 instrument-rule work (round 72)
+
+**116. A credit rule counts a subject's own failure only when the subject's own detail backs
+its summary, and the round ships the control in which the held rule credits what it must not.**
+(a) A landing/counting rule that credits a child on a summary line must require the failure
+detail the child itself printed (the `SELFTEST FAIL` count, the failed-assertion rows) to agree
+with that summary; a bare, replayed or mismatched summary line earns no credit unless the rule's
+declared limit says why not. (b) The round that changes such a rule carries a pre-freeze
+red-before receipt: the held rule scored on the new control set, crediting at least one shape
+the frozen predicate refuses.
+Shown able to fail: round 72's held round-71 harness credits `bare-failing` and
+`mismatch-detail` on the eight-mode set (`correct=6/8`), while the successor scores 8/8 —
+`.ufo/waves/round-72/{control-baseline-c1-r72.txt,measurement-c1-r72.txt}`; the failure this
+criterion shows is a counter whose base leg already equals its target.
+Limits: the rule bounds the summary to the run's own detail, it does not authenticate a captured
+report replayed with matching detail; a finite control set is not fault coverage.
+
+**117. A verdict reads the subject's own report; a process status is recorded as evidence, never
+as the gate, and any summary/status contradiction policy is declared.** (a) A harness that greens
+or reds a run must derive the verdict from the subject's own parsed summary (or result object),
+and print the status as evidence; a missing or garbled summary is not a pass. (b) Where the
+summary and the status disagree, the rule says which one wins, in the frozen predicate and in
+the printed receipt.
+Shown able to fail: round 72's held round-71 `outcome_verdict(selftest_rc, killed)` is wrong on
+four of eight frozen cases in both directions (`failing-summary-exit0` green,
+`green-summary-exit2` red) — `.ufo/waves/round-72/{control-baseline-c2-r72.txt,measurement-c2-r72.txt}`;
+the successor scores 8/8. A verdict whose receipt does not state which input decided it cannot
+be re-derived by a reader.
+Limits: this governs the lane's own instruments; it is not a claim that every child prints a
+summary, nor that a summary cannot be forged.

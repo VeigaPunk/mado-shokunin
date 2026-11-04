@@ -335,3 +335,16 @@ session, socket or service is probed. The classifiers are bounded source approxi
 runtime guarantees. See `corpus/lessons/round-70.md` for the review repairs and remaining limits.
 
 **Round-71 refinement — one successor harness, two record counters; no new desktop/write surface.** `quality/counters/c1-r71-landing-controls.py` is the landing harness's round-71 successor: the M-Z kill credit follows the child's own parsed `MADO_LANDING_COUNTERS_SELFTEST: p/n assertions passed` summary with `p < n` whatever the child's exit status (the round-70 `mz_rc != 0` conjunct is dropped); a crash or an unparseable summary still earns no credit, and both captured streams are read in the round-70 concatenation order. `quality/counters/c1-r71-real-children.py` drives that harness and the byte-frozen round-70 harness with four real `bash` children whose exit status disagrees with their own summary (`liar-success`, `stderr-genuine`, `liar-kill`, `crash-stderr`) in a scratch git fixture the counter builds. `quality/counters/c2-r71-shapes.py` extends the carrier census with four shapes — a `dict(<args>, **module_mapping)` call splat, the splat through a one-hop alias of that mapping, a key store through a one-hop alias of the mapping handed to the launch, and an attribute store bridged to a dotted use by one object-alias edge — each under the held dominance test, with the round-70 seventeen-case set carried forward byte-identically. All three are record instruments: they score the lane's own landing evidence, never a compositor, a config plane or a host service. Evidence: `corpus/lessons/round-71.md`, `corpus/knowledge/kill-credit-exit-disagreement-r71.md`, `corpus/knowledge/guard-carrier-shapes-r71.md`.
+
+**Round-72 refinement — one successor harness, two record counters; no new desktop/write surface.**
+`quality/counters/c1-r72-landing-controls.py` is the landing harness's round-72 generation, carrying
+two disjoint rule deltas: the M-Z kill credit now requires the last parsed `p/n` summary to report a
+shortfall AND the run's own `SELFTEST FAIL` lines to number exactly that shortfall (a bare or replayed
+summary line earns no credit), and the contract verdict now reads the extracted instrument's last
+parsed summary (`n > 0` and `p == n`) instead of its exit status. `quality/counters/c1-r72-summary-credit.py`
+builds a scratch git fixture lane in eight summary modes and scores that harness against the
+byte-frozen round-71 harness (8/8 vs 6/8); `quality/counters/c2-r72-outcome.py` loads both harnesses
+and scores the committed outcome functions on eight frozen `(summary, rc, killed)` cases (8/8 vs 4/8).
+All three read git objects, launch only their own fixture children, and write caller scratch only;
+no config plane, compositor, session, socket or service is probed, and the rules remain bounded
+syntactic/evidence reads, not authentication of a forged report. Evidence: `corpus/lessons/round-72.md`.
