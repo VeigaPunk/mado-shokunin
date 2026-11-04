@@ -1,0 +1,22 @@
+# Round-67 m5 auxiliary probe (connector §6; not part of the frozen six-case denominator)
+# scratch clone of the lane at the record landing; a replacement blob is planted for PROVINCE.md's object
+# clone=2447048be5467ca0e35928d80aa99c90523a6739 replaced_blob=6dd4479f8ee4d5ce652a734c56465b96be120df7 replacement_blob=62a00294ee59c0e0ad7e30f366b98e629409fcc4
+$ python3 -I quality/counters/c1-r67-register.py --repo . --rev 2447048be5467ca0e35928d80aa99c90523a6739 --controls .ufo/waves/round-67/controls/c1-controls.json --scratch-root <scratch>
+# exit=0
+C1_R67 case=genuine verdict=accept expect=accept correct=yes headings=1 rows=8 groups=8/8 live-cited=yes
+C1_R67 case=duplicate-heading verdict=reject expect=reject correct=yes headings=2 rows=8 groups=8/8 live-cited=yes
+C1_R67 case=row-without-receipt verdict=reject expect=reject correct=yes headings=1 rows=8 groups=8/8 live-cited=yes
+C1_R67 case=file-plane-only verdict=reject expect=reject correct=yes headings=1 rows=8 groups=8/8 live-cited=no
+C1_R67 case=unreferenced-live-object verdict=reject expect=reject correct=yes headings=1 rows=8 groups=8/8 live-cited=no
+C1_R67 case=live-in-state-cell-only verdict=reject expect=reject correct=yes headings=1 rows=8 groups=8/8 live-cited=no
+MADO_R67_REGISTER: register=accept controls=6/6 headings=1 rows=8 groups=8/8 live-cited=yes verdict=TARGET_MET rev=2447048be5467ca0e35928d80aa99c90523a6739
+C1_R67: detail=case:duplicate-heading:heading-count=2 expected=1
+C1_R67: detail=case:row-without-receipt:row-receipt-missing='hypr plane'
+C1_R67: detail=case:file-plane-only:exact-live-line-missing=.ufo/waves/round-65/receipts/gate-live-r65.txt
+C1_R67: detail=case:file-plane-only:live-path-not-in-receipt-cell=.ufo/waves/round-65/receipts/gate-live-r65.txt
+C1_R67: detail=case:unreferenced-live-object:live-path-not-in-receipt-cell=.ufo/waves/round-65/receipts/gate-live-r65.txt
+C1_R67: detail=case:live-in-state-cell-only:live-path-not-in-receipt-cell=.ufo/waves/round-65/receipts/gate-live-r65.txt
+# control reads: unguarded `git show HEAD:PROVINCE.md` first line = ### Surface state register (2026-11-03, forged)
+# guarded   `git show HEAD:PROVINCE.md` first line = # mado-shokunin — Province
+# The counter still accepts the real register and scores 6/6: its own git env carries GIT_NO_REPLACE_OBJECTS=1.
+# m5 remains outside the frozen denominator; this is calibration evidence only.

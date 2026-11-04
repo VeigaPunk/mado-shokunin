@@ -208,3 +208,21 @@ Production cutover at `%s`; record landing at the commit that carries this lesso
   to the published base rubrics; the r67 control set is a new finite denominator whose do-nothing
   score is 4/6, not a published base sub-axis. (B7) the baseline scorer's default base was corrected
   to the frozen base at integration. No frozen expectation or predicate sentence changed.
+
+## Record-landing re-run (L1, after the wave settled)
+
+The frozen counters were re-run at the record landing `caf131d6be04dd2ccc742636625c1ce196610522` (receipts committed at `2447048be5467ca0e35928d80aa99c90523a6739`):
+C1 `MADO_R67_REGISTER: register=accept controls=6/6 headings=1 rows=8 groups=8/8 live-cited=yes
+verdict=TARGET_MET rev=caf131d6be04dd2ccc742636625c1ce196610522` rc 0; C2 `MADO_R67_LANDING_CONTROLS: selftest=0 mz=pass mr=pass
+killed=2/2 baseline=0/2 verdict=TARGET_MET rev=caf131d6be04dd2ccc742636625c1ce196610522` rc 0. The default `--round 67` citation scope
+now exists (`.ufo/waves/round-67/receipts/round-67-citations.txt`) and the standing instrument reads
+`MADO_LANDING_COUNTERS: GREEN (nav=0 usedby=0 ledger=0 citecheck=0)` at `caf131d6be04dd2ccc742636625c1ce196610522` with navigation
+79/79, used-by `missing=0`, ledger 110/110 and every citation resolved. Wave settlement:
+`WAVE wave=w1 ready=1 results=present seats=13 dispatched=13 settled=13 verdict=OK` and
+`MADO_WAVE_DONE: round=67 waves=1 settled=1 verdict=OK` at `2447048be5467ca0e35928d80aa99c90523a6739` (`wave-done-r67.txt`).
+Census exit 0, rows 372 -> 373 (A 358 -> 359, B 7, C 7 unchanged; malformed 0 both ends;
+`sources-shape-r67.txt`). The earlier draft-sha statements in this lesson refer to the seat drafts;
+the cut-over instrument is `quality/counters/c1-r67-register.py` sha256
+`6a902350f2d92f1f0fad9646908f6ea2f3d849faf02f33c9e8b7ecf302a00bbc` (B3 repair included) and the
+harness `quality/counters/c2-r67-landing-controls.py` sha256
+`a4376fa739405a213ccd59847620be02bec5fd2a70584aa59dfbc916022d9b58`.

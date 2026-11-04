@@ -3571,3 +3571,68 @@ Outside-lane closure owns admission, trade/no-harm judgment and promotion.
 Resolve the stronger citation-to-live-object gap under a newly frozen predicate; improve
 selftest coverage for zero-citation and replacement-ref controls without changing r66's
 record. Existing capture-scope and historical Windows-host L0 questions remain operator-owned.
+
+## Round 67 — citation-to-live-object binding and the landing control set (2026-11-03, hyaku run 15)
+
+Axis posture: saturation 9.0 / window N=3; last capability r66, so the stagnation nudge does not
+apply (gap 0 < 3 at round start). At base every **published** scored sub-axis sits at its finite
+maximum — navigation 78/78 = 10.0000 (`bash quality/landing-counters.sh --repo . --rev 0b28ffb4
+--round 66 --scratch-root <scratch>`), hermetic suite 460/460 = 10.0000
+(`bash tools/mado-verify.sh --selftest` rc 0), register 8/8 groups accepted, used-by missing=0,
+ledger 108/108 — so no axis is distinctly lowest: the same posture as rounds 56-66. The two claims
+take the r66 closure's planned items (C1 calibration, C2 operability) on **new finite denominators**,
+not a re-scoring of a held rule: the C1 control set's do-nothing score is 4/6 and the C2 control set's
+is 0/2, which are new-set values, not published base sub-axis scores (critic B4). Base
+`0b28ffb4baac9586566d246c3f0986b2bb650a33`; freeze `061dc329b598b2723a224b6c7b305b436946ec91`;
+instrument cutover `5f9ce459803dc17aceb16a6f8507006b85737c35`; measured content `caf131d6be04dd2ccc742636625c1ce196610522`; wave/receipts `2447048be5467ca0e35928d80aa99c90523a6739`.
+
+| Claim / axis | Counting command | Before -> after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — register citation-to-live-object binding | `python3 quality/counters/c1-r67-register.py --repo . --rev REV --controls .ufo/waves/round-67/controls/c1-controls.json --scratch-root DIR` | r66 counter at `0b28ffb4`: `correct=4/6` (accepts `unreferenced-live-object` and `live-in-state-cell-only`), bounded 6.6667 -> `caf131d6be04dd2ccc742636625c1ce196610522`: `register=accept controls=6/6 headings=1 rows=8 groups=8/8 live-cited=yes verdict=TARGET_MET` rc 0, selftest 16/16; bounded 10.0000 | improved on the frozen finite control set; state-cell truth and a stronger PROVINCE-only forgery with a valid live receipt left open |
+| C2 **operability** — zero-citation and replacement-ref controls | `python3 quality/counters/c2-r67-landing-controls.py --repo . --rev REV --scratch-root DIR` | pre-r67 tip: `zero_citation_case=0 replace_ref_case=0 usedby_guard=0 ledger_guard=0` and the harness at base prints `killed=0/2 verdict=TARGET_MISSED` rc 1, bounded 0.0000 -> `caf131d6be04dd2ccc742636625c1ce196610522`: `selftest=0 mz=pass mr=pass killed=2/2 baseline=0/2 verdict=TARGET_MET` rc 0; bounded 10.0000 | improved on the two named mutants; M-Z kill overdetermined, two harness self-mutants survive its selftest (C2-R1/R2), and the M-R child is landing-path-protected by inheritance (critic B1) — disclosed |
+
+Raw commands, revision bindings and exit codes:
+`.ufo/waves/round-67/measurement-c1-after.txt`, `measurement-c2-after.txt`,
+`measurement-baseline-derived.txt`, `measurement-selftests-r67.txt`, `landing-counters-r67.txt`,
+`aux-m5-r67.txt`, plus the committed pre-freeze baseline `control-baseline-r67.txt`. The m5
+auxiliary probe re-runs the r66 recipe against the r67 counter: a planted `refs/replace` on
+`PROVINCE.md` leaves the verdict unchanged because the counter sets its own guard; m5 remains
+outside the frozen six-case denominator.
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Register citation binding + landing control set | Score a returned-host register for row-local live-receipt citation against a frozen six-case set, and kill the zero-citation and replacement-ref defect mutants of the standing landing instrument in one read-only run | `.ufo/waves/round-67/measurement-c1-after.txt`, `measurement-c2-after.txt`; `corpus/knowledge/replace-ref-citation-boundaries-r67.md` | 67 |
+
+### Harm watch (at landing)
+
+- Both claim counters green at `caf131d6be04dd2ccc742636625c1ce196610522`; the same commands at the frozen base print 4/6 (r66 counter)
+  and `killed=0/2` (candidate harness at base) respectively.
+- Standing instrument at `caf131d6be04dd2ccc742636625c1ce196610522`, default round-67 scope: `MADO_LANDING_COUNTERS: GREEN`
+  (`nav=0 usedby=0 ledger=0 citecheck=0`), navigation `indexed=79/79`, used-by
+  `entries=79 rows=373 missing=0`, ledger `population=110 ledger_rows=110 uncovered=0`,
+  citecheck resolved with no missing citation — `.ufo/waves/round-67/landing-counters-r67.txt`.
+- Hermetic suites: gate `MADO_SELFTEST: 460/460`; landing selftest 62/62; harness selftest 47/47;
+  C1 selftest 16/16; citecheck 12/12; ledger 54/54; used-by 16/16 in-lane —
+  `measurement-selftests-r67.txt`.
+- QUALITY 107 anchor cover on the new entry `rows=8 covered=8 miss=0 verdict=OK`
+  (`anchor-cover-r67.txt`); index `79/79` and index-rows `rows=79 errors=0 warns=3` (pre-existing
+  warnings); wave checker `seats=13 settled=13 verdict=OK` (`wave-done-r67.txt`); census exit 0,
+  rows 372 -> 373, malformed 0 both ends (`census-end-r67.txt`, `sources-shape-r67.txt`).
+- No desktop probe, compositor/socket/service write, package-manager transaction, `MANIFEST.json`
+  edit or sibling-lane write. The r66 files stay at their historical revisions; no compatibility
+  alias was added.
+
+### Planned (round 68; intent only)
+
+1. C2-R2's flip: add a negative candidate to the C2 harness selftest so a `mr_killed = True`
+   mutation is killed by the harness itself.
+2. The citecheck tool's standalone zero-citation contract (currently vacuous `TARGET_MET` at
+   `citations=0`; the refusal binds only at the instrument marker layer) — an operator-facing
+   decision, not a silent contract change.
+3. The unguarded git readers the r67 knowledge entry counts (82 files mention git, 6 guarded after
+   this round) — a census, then a bounded repair if the axis warrants.
+4. The open L0 questions (r57-r60, the L2 floor, the host-recovery pacman pause, the new
+   session-material history question) stay operator-owned.
+

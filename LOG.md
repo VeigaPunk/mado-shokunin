@@ -3216,3 +3216,46 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   kumitate NO_CHILD, tsukuroi could-not-evaluate and tameshi ARM_DEAD.
   Current route-table drift is recorded, not silently overridden.
   Closure owns admission and any trade/no-harm judgment.
+
+### Round 67 — register citation binding and the landing control set
+
+- Claims (frozen at `061dc329`): C1 calibration, the returned-host register must cite the live
+  receipt inside a table row's receipt cell (r66 tree-level check accepted an unreferenced live
+  object; the r66 counter scores 4/6 on the frozen six cases, the r67 counter 6/6); C2 operability,
+  the standing landing instrument's selftest must kill the zero-citation guard clause and a child's
+  `GIT_NO_REPLACE_OBJECTS` (candidate harness at the base 0/2, at the cutover 2/2). Pre-freeze
+  control baseline committed at `aa7fe5a1` (`control-baseline-r67.txt`); no target is reachable by
+  doing nothing.
+- Instruments: new `quality/counters/c1-r67-register.py` (git-object reads only, row-local receipt
+  resolution, exact committed live line, 16-case hermetic selftest) and
+  `quality/counters/c2-r67-landing-controls.py` (extracts the instrument at `--rev`, runs its
+  selftest, builds M-Z and M-R in scratch, prints mutant digests; 47-case hermetic selftest). The
+  standing `quality/landing-counters.sh` gains one zero-citation selftest case (62/62); the three
+  git-reading children (`c3-r56-used-by.py`, `check-tool-ledger.py`, `mado-receipt-citecheck.py`)
+  set the replacement-object guard themselves — the r66 parent export never reached the two that
+  rebuild env. Cutover `5f9ce459803dc17aceb16a6f8507006b85737c35`; two ledger rows added in the same commit (critic B2).
+- Knowledge: `corpus/knowledge/replace-ref-citation-boundaries-r67.md` (blob vs tree/commit
+  replacement levels, presence-not-truthiness of `GIT_NO_REPLACE_OBJECTS`, the lane reader census,
+  what the R control does not prove), one new source `S436` (git v2.56.0 `git-replace.adoc`,
+  tag-pinned, three independent fetches), QUALITY 109, SKILL gate rows and a bold PROVINCE
+  refinement paragraph. No desktop surface, no PROVINCE frontier move. Assimilation none: the
+  `merge/mado/` package has no fit and its staged ids collide 94/147 with the lane registry
+  (connector screen).
+- Evidence: one v1 wave, 13 seats (executor 4, scribe 2, scout 2, connector 1, reviewer 2,
+  critic 1, mutation-tester 1; attack 4/13; L1 holds the planner seat), settled 13/13
+  (`wave-done-r67.txt`). Measured at `caf131d6be04dd2ccc742636625c1ce196610522`, receipts committed at `2447048be5467ca0e35928d80aa99c90523a6739`:
+  C1 `controls=6/6 register=accept TARGET_MET` rc 0; C2 `selftest=0 killed=2/2 TARGET_MET` rc 0;
+  landing GREEN at the default round-67 scope; gate 460/460; census exit 0 rows 372 -> 373.
+- Residuals, stated not smoothed: C1's row-count guard is an equivalent mutant; the M-Z kill is
+  overdetermined by two structural assertions beside the behavioural case; a harness self-mutant
+  (`mr_killed = True`) survives its selftest; the M-R child is landing-path-protected by
+  inheritance and is vulnerable only standalone (critic B1); the citecheck tool invoked alone still
+  reports `TARGET_MET` at `citations=0`; replacement refs do not prove authenticity and a repo
+  already rewritten is not repaired. The critic's B3 (block-wide unresolved-receipt regression) was
+  repaired at integration with 0 frozen-verdict changes; B5/B6/B7/B9 are recorded as wording/label
+  disclosures in the lesson.
+- Tooling: none installed or upgraded; no pacman transaction (host pause respected). The
+  considerThese 2026-10-28 proposal 2 was executed once at the pre-r67 tip: gate exit 1,
+  `files=33466 findings=280`, `waived 49/47`, the r37/r38 socket tables carry 5 and 715 proc rows —
+  routed to L0 as an operator history/redaction decision, not repaired here.
+
