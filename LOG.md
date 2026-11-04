@@ -3905,7 +3905,7 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   `transform` copies it, the newest rule wins), arranges the bar inside the static-reduced usable
   box and forms `expected = static[edge] + extent + opposite margin`; the frozen twenty-three-case
   set scores `cases=23 correct=23 mutants=12 killed=12 base_correct=18/23 carried=18/18
-  tool_selftest=50/50 TARGET_MET` at `cf5f09b9` after repairs R1 and R2 (the frozen run at
+  tool_selftest=50/50 TARGET_MET` at `999a4a3f` after repairs R1–R3 (the frozen run at
   `5eb8f20f` printed the same counts on the pre-repair bytes; base `e4b153df`), with the held r78 model at 18/23
   (`receipts/measurement-c1-r79.txt`, `receipts/control-c1-r79-at-base.txt`). C2 operability: the
   SKILL.md runbook executes per-row bindings — 22 cases on 22 distinct rows, four documented model

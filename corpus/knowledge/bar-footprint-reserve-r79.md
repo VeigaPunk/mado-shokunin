@@ -97,6 +97,13 @@ zeros, S459 `:19-30`); and a `transform` with no same-selector rule created a ph
 All five repaired with a selftest assertion each (44 → 50) and one red/green pair per class in
 `repair-r79-c1-model-r2.txt`; no frozen case, expectation, mutant or target moved.
 
+**R3 (wave seat R79Sentinel).** The file read now opens with `O_NOFOLLOW` and `fstat`s the
+handle, so the lstat/open race on `--rules` is closed; the C2 counter asserts that each case's
+executed argv equals its bound row text and prints the control set's sha256 on its own line. No
+count moved (23/23, 12/12, 50/50; 22/22). Named: a scratch root reached through a symlinked
+*parent* is still accepted, and the refusal rows execute the PATH-resolved `python3` the table
+documents rather than the counter's interpreter.
+
 ## What is not claimed
 
 - A second *layer-surface* consumer whose band is declared only at runtime is still not
