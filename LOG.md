@@ -3463,3 +3463,63 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   and origin/master matches the pushed hash (`final-record-checks-r70.txt`).
   Fleet-root misroot sweep found only shared/operator changes and unattributed sibling artifacts;
   no mado round-70 misroot was identified or removed.
+
+### Round 71 — the exit-status-disagreement kill credit and the four carrier shapes (2026-11-04, hyaku run 15)
+
+- Claims frozen at `4a91c644` before any candidate data: C1 **calibration** (the landing
+  harness credits a kill on the parsed failed assertion whatever the child's exit status) and
+  C2 **operability** (the guard census counts the dict-call splat, the splat-through-alias, the
+  store-through-alias and the attribute-through-second-object shapes). Declaration
+  `.ufo/waves/round-71/claims-declaration-r71.md`; control set
+  `.ufo/waves/round-71/controls/c2-controls-r71.json` (23 cases, sha256 `d7814de8…`); pre-freeze
+  do-nothing controls `control-baseline-c1-r71.txt` (held harness `3/4`, missing `liar-success`
+  only) and `control-baseline-c2-r71.txt` (held classifier `19/23`, missing exactly the four
+  carriers). Base `c354f4d410b829d985b31560af9202d98655dad0` — which itself first commits the
+  round-70 seat-report leftovers the closure routed (spot-check defect 1, criterion 114).
+- C1 instruments: `quality/counters/c1-r71-landing-controls.py` (successor harness;
+  `mz_killed = summary_shows_failure(out)` — the exit status no longer gates the credit) and
+  `quality/counters/c1-r71-real-children.py` (four real `bash` children: liar-success /
+  stderr-genuine / liar-kill / crash-stderr; candidate 4/4, held harness 3/4). Harness selftest
+  70/70; counter selftest 27/27. The reviewer verified the sole behavioural delta is the
+  dropped conjunct and that the combined-stream reader is the only one scoring 4/4
+  (`w1/R71RevC1.md`; its F1–F6 findings are disclosed limits, not blockers).
+- C2 instrument: `quality/counters/c2-r71-shapes.py` (held round-70 rule + four carriers,
+  23-case frozen set with the seventeen held cases carried byte-identically; selftest 63/63).
+  The wave's reviewer falsified the first widening (`w1/R71RevC2.md` F1 HIGH: splat-alias
+  rebind before the splat; F2 MEDIUM: object-alias edge bound after the call); repaired
+  against the frozen sentence at `3868bc65` with the red-before/green-after receipt
+  `.ufo/waves/round-71/c2-dominance-repair-r71.txt`, both repro sources pinned as counter
+  regressions, and the frozen 23 scoring identically before and after (re-run receipted in
+  `measurement-r71.txt`). No production file is reclassified: the per-file census stays
+  20 / 13 / 13 / 0.
+- Frozen counting commands run verbatim at `8e78a4ee` (instruments) and re-run at `3868bc65`
+  (repair): `MADO_R71_REAL_CHILDREN: cases=4 correct=4 base_correct=3 verdict=TARGET_MET` rc 0
+  and `MADO_R71_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 controls=23/23
+  base_controls=19/23 verdict=TARGET_MET` rc 0 (`.ufo/waves/round-71/measurement-r71.txt`).
+- Curation: SOURCES 378 → 380 rows (S442 supersedes S108 for the run() capture_output scope;
+  S443 supersedes S439 for the § Calls `**` scope; both fetched three times byte-identical to
+  the held pins, fetch receipts committed; stdtypes.rst screened and rejected). Two knowledge
+  entries admitted (`corpus/knowledge/kill-credit-exit-disagreement-r71.md`,
+  `corpus/knowledge/guard-carrier-shapes-r71.md`), README index 83 → 85 rows plus the round-71
+  frontier bullet, PROVINCE round-71 refinement, tool-ledger 119 → 122 rows, QUALITY criteria
+  114–115 registered from M71-1/M71-4 (`corpus/lessons/round-71.md` `## Mistakes`,
+  `## Gate`).
+- Wave: one v1 wave of 13 seats (executor 3, scribe 3, scout 2, reviewer 2, critic 1,
+  mutation-tester 1, connector 1; attack share 4/13 = 30.8%) validated under the band-8–16
+  policy and dispatched through the inline spawn handoff; all 13 settled `status: ok`, zero
+  dead; **11 seats returned empty outputs and wrote no files** — an evidence gap disclosed
+  per QUALITY 115, with the two reviewer reports carrying the round's independent attack
+  evidence (M71-4). No counter binds seat votes, so no frozen result depends on the missing
+  seats.
+- Standing-instrument repair (routed defect 2, M71-2): red-before receipt
+  `m71-2-red-before-r71.txt` (the `--round 70` default dies as a setup error) and the repair —
+  this round commits its receipts at `.ufo/waves/round-71/receipts/` so the `--round 71`
+  default resolves committed bytes; the landing-time GREEN default run is receipted in
+  `.ufo/waves/round-71/harm-watch-r71.txt`. Routed defect 3 (r69 deliverable-citation reds)
+  stays observed-not-repaired: it belongs to a round-69 correction entry.
+- Harm watch at the landing tip: gate `MADO_SELFTEST: 460/460`; the frozen round-70 counters
+  stay TARGET_MET (`cases=3 correct=3 base_correct=1`, `controls=17/17 base_controls=13/17`);
+  axis table `checked=3 mismatched=0`; navigation 85/85; ledger 122/122; landing GREEN with
+  the `--round 71` default path (`.ufo/waves/round-71/harm-watch-r71.txt`,
+  `.ufo/waves/round-71/receipts/`). No config tree, compositor, service or sibling repo was
+  written; no pacman transaction; no tool installed or upgraded.

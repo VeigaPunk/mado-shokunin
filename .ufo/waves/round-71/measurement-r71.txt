@@ -89,3 +89,78 @@ MADO_R71_CONTROL leg=base name=env-call-no-key-negative reader=yes guard=no expe
 MADO_R71_BASE controls=19/23 (the held round-70 rule must miss the target)
 MADO_R71_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 controls=23/23 base_controls=19/23 verdict=TARGET_MET rev=8e78a4ee82f6ccdc951faf531438178a9d12245e
 rc2=0
+
+## C2 re-run at the repair commit 3868bc659621fd1ffeb46d8a2040b1f327ae3444 (R71RevC2 F1/F2 repaired; the frozen 23 score identically)
+# python3 -I quality/counters/c2-r71-shapes.py --repo . --rev 3868bc659621fd1ffeb46d8a2040b1f327ae3444 --base-rev c354f4d410b829d985b31560af9202d98655dad0 --controls .ufo/waves/round-71/controls/c2-controls-r71.json --scratch-root /fast/scratch/hyaku/mado-r71/l1/meas-c2-fixed
+MADO_R71_CONTROLS path=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-71/controls/c2-controls-r71.json cases=23 sha256=d7814de8815bb0d4146ceed612ddd3e03029763b7cbf769d868a96ce5cefe7df
+MADO_R71_HELD_CONTROLS path=.ufo/waves/round-70/controls/c2-controls-r70.json cases=17 sha256=29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff carried=yes
+MADO_R71_READER file=quality/check-anchor-cover.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-axis-scores.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-control-receipts.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-counter-discrimination.py reader=no guard=no
+MADO_R71_READER file=quality/check-deliverables.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-evidence-pointers.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-freeze-order.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-index-rows.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-index.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-landed-contract.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-locators.py reader=no guard=no
+MADO_R71_READER file=quality/check-population.py reader=no guard=no
+MADO_R71_READER file=quality/check-r38-discrimination.py reader=no guard=no
+MADO_R71_READER file=quality/check-r55-controls.py reader=no guard=no
+MADO_R71_READER file=quality/check-r56-controls.py reader=no guard=no
+MADO_R71_READER file=quality/check-round-outcome-first.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-session-material.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-state-cite.py reader=no guard=no
+MADO_R71_READER file=quality/check-tool-ledger.py reader=yes guard=yes
+MADO_R71_READER file=quality/check-wave-done.py reader=yes guard=yes
+MADO_R71_CONTROL leg=candidate name=guarded-inline reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=value-position-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=candidate name=dead-branch-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=candidate name=uncalled-helper reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=candidate name=overwritten-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=candidate name=update-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=subscript-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=module-constant reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=producer-helper reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=argv-name-flow reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=mention-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=candidate name=alias-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=attribute-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=splat-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=constant-key reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=guarded-env-for-a-non-git-call reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=candidate name=git-called-without-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=candidate name=dict-call-splat reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=dict-call-splat-object-alias reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=store-through-alias-two-hop reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=attribute-second-object reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=candidate name=unguarded-dict-splat-negative reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=candidate name=env-call-no-key-negative reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_BASE_COUNTER path=quality/counters/c2-r70-carriers.py present=yes sha256=f100008df5bff9055cc601ca85c6b09c6b98a74002430dcee01700af090ee81a
+MADO_R71_CONTROL leg=base name=guarded-inline reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=value-position-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=base name=dead-branch-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=base name=uncalled-helper reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=base name=overwritten-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=base name=update-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=subscript-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=module-constant reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=producer-helper reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=argv-name-flow reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=mention-only reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=base name=alias-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=attribute-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=splat-carried reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=constant-key reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R71_CONTROL leg=base name=guarded-env-for-a-non-git-call reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=base name=git-called-without-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=base name=dict-call-splat reader=yes guard=no expect_reader=yes expect_guard=yes correct=no
+MADO_R71_CONTROL leg=base name=dict-call-splat-object-alias reader=yes guard=no expect_reader=yes expect_guard=yes correct=no
+MADO_R71_CONTROL leg=base name=store-through-alias-two-hop reader=yes guard=no expect_reader=yes expect_guard=yes correct=no
+MADO_R71_CONTROL leg=base name=attribute-second-object reader=yes guard=no expect_reader=yes expect_guard=yes correct=no
+MADO_R71_CONTROL leg=base name=unguarded-dict-splat-negative reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_CONTROL leg=base name=env-call-no-key-negative reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R71_BASE controls=19/23 (the held round-70 rule must miss the target)
+MADO_R71_GUARD_SHAPES: population=20 readers=13 guarded=13 unguarded=0 controls=23/23 base_controls=19/23 verdict=TARGET_MET rev=3868bc659621fd1ffeb46d8a2040b1f327ae3444
+rc=0

@@ -736,3 +736,36 @@ Limits: the three scenarios are named ones, not fault coverage; the fixture lane
 own instrument; a summary that parses with `p < n` is credited even if the failing assertion is
 unrelated to the frozen recipe; a harness whose decisions merely agree on these three inputs is
 not distinguished from a correct one.
+
+## Criteria from the round-71 inherited-record and wave-evidence defects (round 71)
+
+**114. A wave's seat-written files are committed before the round's report lands, and
+lane-authored files inherited from an earlier round are committed or reverted by the next
+round before its freeze.**
+(a) A seat report under `.ufo/waves/**` that the seat or the L1 revised after the round's last
+content commit is round work: the next round commits it under its own entry (or reverts it)
+before freezing claims, so the working tree is clean against the previous round's closure.
+(b) A wave's seats write their reports into the wave dir; anything the wave produced that the
+L1 integrates must be committed in the same round that cites it.
+Shown able to fail: the round-70 closure left four seat-report files modified in the lane
+working tree (`round-70-verifier-spotcheck.md` step-1 defect); round 71 committed them under
+its entry at `c354f4d4` before its freeze — the failure this criterion shows is
+`git status --porcelain` listing a wave file after a round's report has landed.
+Limits: the criterion governs lane-authored round work only; aggregator-owned
+`round-*-aggregator-*.md` files and operator sweeps stay outside it; a clean tree does not
+prove the *content* was reviewed, only that no work sits unlanded.
+
+**115. A wave seat names its written report path in its final output, and a wave whose seats
+return empty outputs is an evidence gap the round must disclose, never fill.**
+(a) Every wave item's prompt requires the seat to end with one line naming the file it wrote
+(`Report: <repo-relative path>`); a seat whose final output carries no report path and whose
+seat directory holds no file is an evidence gap. (b) The round report states, per seat, what
+was observed: a delivered report, an empty output with no file, or a dead seat — missing
+deliverables are never backfilled by the L1 prose or counted as if delivered.
+Shown able to fail: round 71's w1 wave settled 13/13 `status: ok` while 11 seats carried
+empty `output` cells and no seat files (`.ufo/waves/round-71/w1-results.json`; only
+`w1/R71RevC1.md` and `w1/R71RevC2.md` exist) — the gap is visible in the results file and is
+reported as a gap, not silently treated as verification.
+Limits: the results file's `status` field reflects settlement, not deliverables; a report
+path named in the output can still point at an unwritten file, so (b)'s per-seat check is the
+binding half; this criterion does not retroactively resurrect round-71's missing seats.

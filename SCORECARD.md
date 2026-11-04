@@ -3927,3 +3927,64 @@ Outside-lane closure owns admission, the trade/no-harm judgment and promotion.
 
 ### Axis table re-derived at the round-70 records (`harm-watch-r70.txt` and `quality/check-axis-scores.py`):
 navigation 83/83; calibration resolved-active 86/86; operability selftest 12/12, ledger 119/119.
+
+## Round 71 — exit-status-disagreement kill credit and the four carrier shapes (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-71/claims-declaration-r71.md`, landed
+`4a91c644289437b588881a7254481157decfa450`; base `c354f4d410b829d985b31560af9202d98655dad0`.
+Frozen control set: `.ufo/waves/round-71/controls/c2-controls-r71.json` (23 cases, sha256
+`d7814de8815bb0d4146ceed612ddd3e03029763b7cbf769d868a96ce5cefe7df`). Instruments committed
+`8e78a4ee82f6ccdc951faf531438178a9d12245e`; measured content for both claims
+`3868bc659621fd1ffeb46d8a2040b1f327ae3444` (the C2 counter carries the reviewer-driven
+dominance repair; the frozen 23 score identically at `8e78a4ee` and at the repair commit;
+receipts `.ufo/waves/round-71/measurement-r71.txt`). Axis posture at round start: every
+published finite sub-axis at its measured maximum (navigation 83/83, calibration resolved-active
+86/86, operability selftest 12/12, ledger 119/119; gate `MADO_SELFTEST: 460/460`), so no axis
+is distinctly lowest; the stagnation nudge does not apply (last capability r70, window N=3,
+gap 0). Both claims take new finite denominators and both do-nothing controls miss their
+targets (3/4 and 19/23).
+
+| Claim / axis | Counting command (REV is before or the measured content) | Before → after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the landing harness credits a kill on the parsed failed assertion even when the child's exit status disagrees | `python3 -I quality/counters/c1-r71-real-children.py --repo . --rev REV --base-rev c354f4d410b829d985b31560af9202d98655dad0 --scratch-root DIR` | at the base rev the r71 counter and harness are absent; the held round-70 harness scores the four frozen real-child scenarios `base_correct=3/4` (7.5000), missing `liar-success` exactly (`control-baseline-c1-r71.txt`); at `8e78a4ee` and at `3868bc65`: `cases=4 correct=4 base_correct=3 verdict=TARGET_MET` rc 0; bounded `10 × correct / 4`: absent (0.0000) with the held rule at 7.5000 → 10.0000 (the do-nothing control keeps 3/4) | improved on the frozen four-scenario set |
+| C2 **operability** — the guard census counts the dict-call splat, splat-through-alias, store-through-alias and attribute-through-second-object shapes | `python3 -I quality/counters/c2-r71-shapes.py --repo . --rev REV --base-rev c354f4d410b829d985b31560af9202d98655dad0 --controls .ufo/waves/round-71/controls/c2-controls-r71.json --scratch-root DIR` | at the base rev the counter is absent; the held round-70 classifier scores the same 23 frozen cases `19/23` (8.2609), missing exactly the four carriers and accepting both negatives (`control-baseline-c2-r71.txt`); at `3868bc65` (and identically at `8e78a4ee` pre-repair): `population=20 readers=13 guarded=13 unguarded=0 controls=23/23 base_controls=19/23 verdict=TARGET_MET` rc 0; bounded `10 × controls / 23`: 8.2609 → 10.0000 | improved on the frozen 23-case set |
+| — | coverage / admitted-note reachability (unchanged rubric) | `quality/check-index.py --repo . --rev REV` | 85/85 at the landing tip (83/83 at base) | unchanged (harm watch; two new entries indexed) |
+| — | operability / hermetic gate | `bash tools/mado-verify.sh --selftest` | 460/460 both ends | unchanged (harm watch) |
+| — | operability / instrument ledger | `quality/check-tool-ledger.py --repo . --rev REV` | 122 rows, 122 ledger_rows, 0 uncovered at the landing tip (119/119 with the three new instruments uncovered before their rows) | improved (three new instruments registered) |
+| — | calibration / frozen round-70 claim | `python3 -I quality/counters/c1-r70-real-children.py --repo . --rev REV --base-rev b37a5aec…` | `cases=3 correct=3 base_correct=1 TARGET_MET` at the landing tip (the round-70 harness and classifier files byte-identical) | unchanged (the r70 instruments stay byte-frozen) |
+
+**Evidence.** `.ufo/waves/round-71/measurement-r71.txt` (both counters, both runs),
+`control-baseline-c1-r71.txt` / `control-baseline-c2-r71.txt` (the do-nothing controls before
+freeze), `c2-dominance-repair-r71.txt` (the reviewer's F1/F2 bypasses: pre-fix blob credits
+both, repaired counter refuses both), `m71-2-red-before-r71.txt` and
+`receipts/` (the standing default-path repair), `harm-watch-r71.txt` (gate, frozen counters,
+axis table, landing GREEN on the `--round 71` default), `w1/R71RevC1.md` and `w1/R71RevC2.md`
+(the delivered attack-seat reviews; the wave's other 11 seats settled with empty outputs — an
+evidence gap disclosed under QUALITY 115, not treated as delivered verification).
+
+**Wave-review disclosures carried by this round** (each named in the entries and the report):
+the stale/canned/echoed-summary class, the mutation↔summary evidentiary link, the
+verdict-level flip on the rc-only selftest leg, the last-wins multi-summary rule, the
+{0,1,2}-rc indistinguishability, `global` rebinds of module mappings, value-agnostic key
+presence, and the one-hop/one-edge spelling bounds.
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Exit-status-disagreement kill-credit battery + shape-extended carrier census | Score a landing harness's kill credit with four real `bash` children whose exit status disagrees with their own summary (credit follows the parsed failed assertion, streams read combined), and classify a guard that reaches a git launch through a `dict(**module_mapping)` call splat, a one-hop splat alias with its rebind window, a key store through a one-hop alias of the handed mapping, or an attribute store bridged by one object-alias edge bound before the call — with the held dominance test intact and the round-70 set carried byte-identically | `.ufo/waves/round-71/measurement-r71.txt`; `quality/counters/c1-r71-real-children.py`, `c1-r71-landing-controls.py`, `c2-r71-shapes.py`; `corpus/knowledge/kill-credit-exit-disagreement-r71.md`, `corpus/knowledge/guard-carrier-shapes-r71.md` | 71 |
+
+### Planned (round 72; intent only)
+
+1. C1's next finite set: the stale/canned-summary class as named negatives (a wrapper echoing
+   a captured summary; a lane printing a summary from a run it skipped), and the last-wins
+   multi-summary tie as an explicit predicate — new controls, not an edit of this set.
+2. C2's next finite set: the F1/F2 bypass fixtures as frozen negatives, the `global`-rebind
+   escape, and edge-resolved stores — a new control set again.
+3. The selftest leg's rc-only verdict (`outcome_exit`) — a successor that applies the same
+   summary doctrine to the unmutated leg, under its own predicate.
+4. The open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
+
+### Axis table re-derived at the landing tip (`harm-watch-r71.txt` and `quality/check-axis-scores.py`):
+navigation 85/85; calibration resolved-active 86/86; operability selftest 12/12, ledger 122/122.
