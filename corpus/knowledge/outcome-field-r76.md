@@ -94,6 +94,11 @@ every other fixture.
 - A challenge authenticates the run's echo, not the truth of the assertions: a child that
   echoes the challenge and reports arithmetic it did not perform still passes the harness's
   arithmetic check.
+- The counter reads the **last** parsed contract row the candidate prints (the harness prints one
+  row at the end). A candidate that emits a forged later row is not distinguishable by this
+  counter — round-76 review attack `LATER_ROW` (`w1/R76RevC1/attacks.txt`).
+- `correct=16` is self-consistency between the counter and the harness it drives, not semantic
+  correctness of the labels (round-76 critic finding A-c).
 
 ## 5. Recheck
 

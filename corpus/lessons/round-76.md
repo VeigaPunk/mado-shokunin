@@ -151,6 +151,10 @@ control set, label or target, and both claims are re-measured after the repairs.
   eight negatives" — 3+1+8 = 12, and `dynamic-key-module-const` is a fourth positive. The file is
   frozen and not rewritten; the successor note (and `corpus/knowledge/interprocedural-del-r76.md`
   §2–§3) states the correct shape: 4 positives, 8 negatives, 12 appended, 59 total.
+- **Carried C1 limits (`R76RevC1`, `R76Mutant`).** The counter reads the last parsed contract
+  row (a forged later row is not distinguishable); the sixteen-case set does not separate the
+  `grammar16` narrowing (the labels read `mz=`/`verdict=`, not `witness=`); and `correct=16` is
+  counter/harness self-consistency, not label correctness.
 - **D3 parameter binding (`R76RevC2` P2, `R76Mutant` `d3-anyarg`).** Repaired at `5dade9b3`;
   see `SCORECARD.md` § Review-driven repair. Carried survivors: the `grammar16` narrowing and the
   `d3-anyarg` broadening both still score the target on the frozen set — named coverage gaps, not
