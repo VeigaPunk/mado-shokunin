@@ -106,3 +106,20 @@ All sources were opened 2026-11-04 before their rows were written; bytes under
   `wlr layer shell protocol`; and the S458/S460/S462/S461 quotes are now single-line literal fragments of the stored
   bytes (`S461.txt:91` for the troff line), not whitespace-normalized readings. The static-`addreserved` limit stays named, not refused: the reply cannot
   separate static from dynamic reserve, and the docstring says so.
+
+## Registry used-by updates (round 77, in-place, logged old → new)
+
+The `used-by` cell is the only registry cell changed in place this round (CORPUS.md rule 2).
+Each change adds an entry that already cites the row; the used-by counter
+(`quality/counters/c3-r56-used-by.py --detail`) listed the missing pairs, and the landings receipt
+re-runs it.
+
+| row | old | new |
+|---|---|---|
+| S435 | corpus/lessons/round-66.md,corpus/knowledge/landing-kill-credit-real-children-r70.md,corpus/knowledge/kill-credit-exit-disagreement-r71.md | corpus/lessons/round-66.md,corpus/knowledge/landing-kill-credit-real-children-r70.md,corpus/knowledge/kill-credit-exit-disagreement-r71.md,corpus/knowledge/outcome-verdict-gate-summary-r72.md,corpus/knowledge/summary-credit-own-detail-r72.md |
+| S441 | corpus/knowledge/landing-kill-credit-real-children-r70.md,corpus/lessons/round-70.md,corpus/knowledge/kill-credit-exit-disagreement-r71.md | corpus/knowledge/landing-kill-credit-real-children-r70.md,corpus/lessons/round-70.md,corpus/knowledge/kill-credit-exit-disagreement-r71.md,corpus/knowledge/control-set-mutant-kill-r73.md,corpus/knowledge/outcome-verdict-gate-summary-r72.md,corpus/knowledge/replay-witness-credit-r74.md,corpus/knowledge/summary-credit-own-detail-r72.md |
+| S442 | corpus/knowledge/kill-credit-exit-disagreement-r71.md,corpus/lessons/round-71.md,corpus/knowledge/summary-credit-own-detail-r72.md | corpus/knowledge/kill-credit-exit-disagreement-r71.md,corpus/lessons/round-71.md,corpus/knowledge/summary-credit-own-detail-r72.md,corpus/knowledge/outcome-verdict-gate-summary-r72.md |
+| S444 | corpus/knowledge/outcome-verdict-gate-summary-r72.md | corpus/knowledge/outcome-verdict-gate-summary-r72.md,corpus/knowledge/control-set-mutant-kill-r73.md,corpus/knowledge/replay-witness-credit-r74.md |
+| S448 | corpus/knowledge/guard-carrier-global-environ-r73.md | corpus/knowledge/guard-carrier-global-environ-r73.md,corpus/knowledge/guard-carrier-twohop-environ-alias-r74.md |
+| S455 | corpus/knowledge/interprocedural-del-r76.md | corpus/knowledge/interprocedural-del-r76.md,corpus/knowledge/outcome-field-r76.md |
+| S463 | — | corpus/knowledge/bar-footprint-r77.md |
