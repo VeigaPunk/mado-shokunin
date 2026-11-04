@@ -22,8 +22,8 @@ Contract (v1, round 77):
     waybar clears both horizontal anchors when the bar declares a width > 1
     (src/bar.cpp:422-424), and the both-anchors branch then centres the box; the same
     holds transposed for vertical bars.
-  * The reserved expectation is formed only when exclusive is true and the bar's edge
-    margin is zero: gtk-layer-shell's auto exclusive zone composes margins in a way this
+  * The reserved expectation is formed only when exclusive is true and every margin side
+    is zero: gtk-layer-shell's auto exclusive zone composes margins in a way this
     tool does not model (named limit), so a margined exclusive bar reports NOT_MODELLED.
   * `reserved` band order is [left, top, right, bottom] (HyprCtl.cpp monitors reply).
   * Refused, never guessed: a monitor whose scale is not 1 or whose transform is not 0 (the
@@ -231,6 +231,8 @@ def declared_bar(config):
     layer = config.get("layer", "bottom")
     if layer not in LEVEL:
         raise Unmodelled("layer %r is outside background/bottom/top/overlay" % (layer,))
+    if layer == "background":
+        raise Unmodelled("waybar's presets never select the background layer")
     namespace = config.get("name") if isinstance(config.get("name"), str) else "waybar"
     if isinstance(config.get("mode"), str):
         raise Unmodelled("a mode preset rewrites layer and exclusive zone at runtime")

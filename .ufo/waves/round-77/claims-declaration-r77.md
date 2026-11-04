@@ -161,7 +161,10 @@ C2's predicate sentence says "the observed outcome equals the expectation the bo
 states". The anchor check binds the row's *presence*, not its sample text, and for two cases the
 expectation is the frozen case value rather than a sample the row prints: `monitors-reserved`
 (the probes row documents the command, not the band value) and `waybar-process` (the row's pid is
-volatile; the case shape-checks `^[0-9]+$`, as the named limits already say). The instrument,
+volatile; the case shape-checks `^[0-9]+$`, as the named limits already say). Two more cases carry a
+written-form transform of the row's value: `monitors-size` compares the jq-rendered rate
+`99.99700` (the row writes `99.997`), and `layers-namespaces` compares a sorted join of the
+namespaces (the row lists them by level). The transforms are part of the frozen command text. The instrument,
 predicate, target and case set are unchanged. Source: the wave critic's F1.
 
 C1's sourced ground names S457–S462; S464 (gtk-layer-shell v0.10.1 `layer-surface.c`, the
