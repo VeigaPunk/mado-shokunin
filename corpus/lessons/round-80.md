@@ -211,3 +211,20 @@ than the table's sixteen rules. It flagged three multi-word-key lines (`COPILOT 
 `SUPER + LEFT MOUSE BUTTON`, `SUPER + RIGHT MOUSE BUTTON`, both `switch:` keys) as soft notes; the
 grammar accepts them (a key may be more than one token), which is what the formatter's own
 `code:201`/mouse-button rewrites produce.
+
+**R80CriticClaims** (critic; `w1/R80CriticClaims.md`, STATUS: ok). Its verdicts, recorded as they
+stand: **Q1c (accepted)** — C2's declared before-state is a *setup refusal*, never a verdict, and the
+refusal is structural (the counter pins `CASES=24`, the round-80 section title and a 1:1 anchor
+binding, so it refuses the base revision at any tree); the C2 claim is therefore **one-sided**
+(after-only plus mutant kills), not a measured before→after. It demonstrated the honest fix on a
+labelled copy (key the section by `round \d+`, score a zero-hit anchor as `row=-1`, waive the tree
+binding for the before-run): `rows=22/24 → 24/24`, `verdict=TARGET_MISSED rc 1` at the base — that
+becomes round 81's instrument, since a rule changed after a seat scored is not this round's rule.
+**Q1d (accepted as a named limit)** — removing the `cases[:CARRIED] == carried` comparison lets a
+tampered set certify a weakened tool; the check is present and the control sha is printed, but the
+sha is not compared to a frozen constant (the r79 counter-self-mutation limit, unchanged).
+**Q2** — the claims are causally separable as landings but C2's verdict is gated on C1's bytes (both
+live in one checkout); named, not a claim defect. **Q3** — C1 is coverage-shaped and C2
+operability-shaped, distinct axes; its caveat is adopted in the report: C1's denominator is a new
+diagnostic model-space, so the round must **not** book it as a move of an existing coverage score
+(the U-route 7/7 and rubric-V 6/6 rows are untouched).
