@@ -14,7 +14,7 @@ layer-shell protocol's zero-size clause (S481), gtk-layer-shell `layer-surface.c
 (S464) and Hyprland `Renderer.cpp`'s arrange/applyExclusive arithmetic — never from a tool
 run.
 
-Contract: MADO_R83_BARFOOT: cases=55 correct=55 mutants=38 killed=38 base_correct=49/55
+Contract: MADO_R83_BARFOOT: cases=57 correct=57 mutants=39 killed=39 base_correct=52/57
 carried=47/47 tool_selftest=p/n verdict=TARGET_MET rev=<hash> tool_sha256=<sha>
 (rc 0 iff every clause holds).
 
@@ -32,10 +32,10 @@ import subprocess
 import sys
 import tempfile
 
-CASES = 55
+CASES = 57
 CARRIED = 47
-MUTANTS = 38
-BASE_EXPECT = 49
+MUTANTS = 39
+BASE_EXPECT = 52
 
 MUTATIONS = [
     ("opposite-margin-dropped",
@@ -151,6 +151,9 @@ MUTATIONS = [
     ("box-verdict-blind",
      '            boxes.append("MATCH" if live_box == box else "DIFFER")',
      '            boxes.append("MATCH")'),
+    ("box-verdict-blind-single",
+     '    box_verdict = "MATCH" if live_box == box else "DIFFER"',
+     '    box_verdict = "MATCH"'),
     ("extra-alloc-ignored",
      '        if spec[axis] == 0 and spec["namespace"] in allocation:\n'
      '            spec[axis] = band_of(spec, allocation)',

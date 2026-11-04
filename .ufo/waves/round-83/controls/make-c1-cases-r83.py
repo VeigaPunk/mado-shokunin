@@ -2,7 +2,7 @@
 """mado round 83 — build the frozen C1 case set from the round-82 set plus eight cases.
 
 The forty-seven round-82 cases are carried parsed-equal (this script copies them verbatim);
-the eight new cases exercise the round-83 class: a *second* declared layer surface whose band
+the ten new cases exercise the round-83 class: a *second* declared layer surface whose band
 axis is dynamic (`height = 0` horizontal, `width = 0` vertical), resolved from the same
 `--allocation` map the bar uses, plus the causal discriminator the round-82 critic routed
 (V7: the live box disagrees with the allocation) and the boolean/zero refusals.
@@ -152,6 +152,29 @@ def new_cases():
         "expect": {"rc": 0, "band": 74, "box": "MATCH", "boxes": "MATCH,MATCH",
                    "expected": 74, "attributed": 74, "attr": "0,74,0,0", "gt": "0,74,0,0",
                    "ls": "VALID", "reserved": "EQ", "verdict": "CLEAN"},
+    })
+    # 9. the bar itself: a dynamic band with no entry is still a model refusal (the r82 rule)
+    cases.append({
+        "name": "bar-dyn-band-no-alloc",
+        "config": dict(TOP0),
+        "layers": layers({2: [entry("waybar", 0, 0, W, 34)]}),
+        "monitors": mon([0, 34, 0, 0]),
+        "monitor": None,
+        "expect": {"error": True, "rc": 3, "stage": "model"},
+    })
+
+    # 10. the composition path's own box verdict: a bar whose live box disagrees is DIFFER
+    cases.append({
+        "name": "alloc-live-box-differs-composed",
+        "config": dict(TOP0),
+        "surfaces": [{"namespace": "panel", "level": 3, "height": 40, "exclusive": 0}],
+        "allocation": {"waybar": 34},
+        "layers": layers({2: [entry("waybar", 0, 0, W, 40)], 3: [entry("panel", 0, 34, W, 40)]}),
+        "monitors": mon([0, 34, 0, 0]),
+        "monitor": None,
+        "expect": {"rc": 1, "band": 34, "box": "DIFFER", "boxes": "DIFFER,MATCH",
+                   "expected": 34, "attributed": 34, "attr": "0,34,0,0", "gt": "0,34,0,0",
+                   "ls": "VALID", "reserved": "EQ", "verdict": "DIFFER"},
     })
     return cases
 

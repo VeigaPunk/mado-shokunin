@@ -28,11 +28,13 @@ carried set is the evidence, and the instrument was corrected before any measure
 cited.
 
 **Frozen control set.** `.ufo/waves/round-83/controls/c1-cases-r83.json`, sha256
-`8cd3f5bc873a30b744b9b2c2d3fb980f97e9bff68eb16da1b177ea99837c7bfd` — the 47 round-82 cases
-carried parsed-equal plus 8 new: six on the new class (`extra-dyn-band-top`, `-dock`,
-`-bottom`, `-explicit`, `-zero-alloc`, `alloc-two-namespaces`) and two closing the round-82
-routed gaps — `alloc-live-band-differs` (V7's causal discriminator) and `alloc-bool-refused`
-(G1). Generator: `.ufo/waves/round-83/controls/make-c1-cases-r83.py` (no tool run; every
+`904d0345110fd08a92acca04901030500c4c5bd585691b9fbe677c963b5a1a7b` — the 47 round-82 cases
+carried parsed-equal plus 10 new: six on the new class (`extra-dyn-band-top`, `-dock`,
+`-bottom`, `-explicit`, `-zero-alloc`, `alloc-two-namespaces`) and four closing round-82
+routed gaps — `alloc-live-band-differs` (V7's single-bar discriminator),
+`alloc-live-box-differs-composed` (V7's composition reader), `alloc-bool-refused` (G1), and
+`bar-dyn-band-no-alloc` (the bar's own dynamic-band refusal, which the first freeze's
+measurement showed no case exercised). Generator: `.ufo/waves/round-83/controls/make-c1-cases-r83.py` (no tool run; every
 expectation derived from S481/S464/S457/S470's arithmetic).
 
 **Counter.** `quality/counters/c1-r83-surface-band.py`.
@@ -47,26 +49,29 @@ python3 -I quality/counters/c1-r83-surface-band.py --repo . --rev REV \
 ```
 
 **Predicate (one sentence, the same in this declaration, the counter's target clause and the
-receipt's label).** Every one of the 55 frozen cases scores correct, every one of the 38 named
-mutants is killed, the held r82 tool at the base scores exactly 49 of 55, the 47 round-82 cases
+receipt's label).** Every one of the 57 frozen cases scores correct, every one of the 39 named
+mutants is killed, the held r82 tool at the base scores exactly 52 of 57, the 47 round-82 cases
 are carried parsed-equal, and the tool selftest is green; only then does the counter print
 `verdict=TARGET_MET` with rc 0.
 
-**Target line.** `MADO_R83_BARFOOT: cases=55 correct=55 mutants=38 killed=38 base_correct=49/55
+**Target line.** `MADO_R83_BARFOOT: cases=57 correct=57 mutants=39 killed=39 base_correct=52/57
 carried=47/47 tool_selftest=136/136 verdict=TARGET_MET rev=<freeze> tool_sha256=<sha>`.
 
 **Kill rule.** Any clause false → `verdict=TARGET_MISSED`, rc 1, reported as an honest stop;
 no clause is edited after the freeze.
 
 **Do-nothing control (pre-freeze receipt).** The held r82 tool extracted at the base scores
-`base_correct=49/55` (`receipts/control-c1-r83-at-base.txt`): the two gap-closure cases pass
-there by design (the r82 model already fixes the bar's band from the allocation and refuses a
-boolean), and all six new-class cases fail. A tree that does nothing cannot reach 55.
+`base_correct=52/57` (`receipts/control-c1-r83-at-base.txt`): the four gap-closure cases pass
+there by design (the r82 model already fixes the bar's band from the allocation, refuses a
+boolean, refuses the bar's dynamic band, and reports a composed DIFFER), and all six new-class
+cases fail. A tree that does nothing cannot reach 57.
 
 **Causality (V7, the round-82 critic's routed gap).** `alloc-live-band-differs` supplies
 allocation 34 and a live box of height 40: the model must report `box=DIFFER band=34
-expected=34 reserved=EQ verdict=DIFFER` rc 1, and the mutant `box-verdict-blind`
-(`boxes.append("MATCH" if …)` → always `"MATCH"`) dies on exactly that case. The band is the
+expected=34 reserved=EQ verdict=DIFFER` rc 1; its composition twin
+`alloc-live-box-differs-composed` does the same with a `--surfaces` declaration so the
+composition's own `boxes.append` reader runs. The mutants `box-verdict-blind-single` and
+`box-verdict-blind` (each reader made to say `"MATCH"`) die on exactly those two cases. The band is the
 declared allocation, never an echo of the observed box. `extra-alloc-ignored` (the map entry
 unused for a non-bar surface) dies on `extra-dyn-band-top`, and `alloc-resolved-set-bar-only`
 (the declared set narrowed back to the bar) dies on `alloc-two-namespaces`.

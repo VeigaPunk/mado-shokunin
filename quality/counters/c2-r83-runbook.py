@@ -143,9 +143,9 @@ MUTATIONS = [
      '        return all(pattern.match(line) for line in lines)',
      '        return all(pattern.match(line) for line in lines)'),
     ("bool-shape-blind",
-     '    if kind == "bool_property":\n'
+     '        # busctl\'s terse boolean: the sign, a space, then the literal word\n'
      '        return re.fullmatch(r"b (true|false)", text) is not None',
-     '    if kind == "bool_property":\n        return text.startswith("b ")'),
+     '        return text.startswith("b ")'),
     ("bool-prefix-blind",
      '        return re.fullmatch(r"b (true|false)", text) is not None',
      '        return re.fullmatch(r"(true|false)", text) is not None'),
