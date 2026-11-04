@@ -287,6 +287,13 @@ Measured content `379e97f884a6cf7ed3ac96068b0165d63495524f`; measured commands a
 - Axis publication: this round publishes a fresh axis table (`SCORECARD.md`, round-68 section)
   re-derived at `379e97f8`: navigation 80/80, calibration resolved-active 86/86, operability
   selftest 12/12 — closing the navigation staleness (71/71) left since round 56.
+- Mutation battery (`w1/R68MutBattery.md`): the three harness recipes and the C2 classifier's
+  reader/guard/control rules are killed by the counters' selftests; the *counters' own wiring* is
+  not self-tested — mutants that drop the C1 base leg, count `recipe=none` as killed, invert the
+  kill test, drop the `selftest rc 0` term or force `unguarded = 0` survive their selftests (the
+  C2 `unguarded = 0` mutant forges the base line to `TARGET_MET`). Named residuals, outside the
+  claims' denominators: the claim is the artifact measured by the frozen command, not a proof that
+  the counter cannot be rewritten.
 - Disclosed by the attack seats, not smoothed: C1 survivors under multi-point forgeries
   (`forged_credit` term dropped; `mz_rc is None` credited; the hermeticity guard removable) —
   RevC1; the C2 classifier's value-position over-inclusion (a key string in a value reads as a
