@@ -145,3 +145,21 @@ Run the counting command in the provenance line against any revision that carrie
 instrument. It re-derives all 33 expectations from the frozen set, kills the 22 named mutants, and
 prints `verdict=TARGET_MET` only when the tool's own selftest is green. A model change that moves a
 case, a mutant or a target is a new round, never an edit to this entry (CORPUS.md rule 2).
+
+## 9. Limit addendum (append-only; written after the round-80 wave's live recon)
+
+Three limits the round's own seats surfaced, recorded rather than smoothed:
+
+1. **The empty declaration is refused, not treated as "no extras".** `--surfaces` with an empty list
+   exits `stage=setup` (`the surfaces declaration is empty`); the no-extras case is the *omitted*
+   flag, which selects the single-surface branch. A caller that wants to say "the bar is the only
+   surface" must omit the flag. (Seat `R80ScoutLive` §3.)
+2. **`hyprctl layers -j` carries neither an anchor nor an exclusive-zone field.** A declaration can
+   be *pinned* only where the box moves with the field: on this host `wallpaper`'s observed
+   `0,0,3440,1440` pins `exclusive: -1` (the `exclusive: 0` probe arranges it at `0,26,3440,1414`
+   and reads `DIFFER`), while its anchor set cannot be recovered from the reply at all. (Seat
+   `R80ScoutLive` §6.)
+3. **`RESERVED_DYNAMIC_TYPE_ERROR_BAR` is not modelled.** The compositor's reserved area sums two
+   dynamic types (`ReservedArea.hpp:5-8`); the join models only the layer-surface type, so a host
+   running the debug error bar reserves more than the model accounts for and reads `GT` — which the
+   verdict already treats as admissible (band > expected), never as agreement.

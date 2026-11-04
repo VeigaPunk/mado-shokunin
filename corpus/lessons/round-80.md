@@ -52,3 +52,29 @@ rests on), reject S475 (same reason as filed, narrowed).
 
 Seats: 14 in one v1 wave (`w1-spec.json`, `w1-dispatch.json`, `w1.ready`). Findings land here as the
 wave reports; a seat that settles without a report is disclosed, never backfilled.
+
+**R80ScoutLive** (scout; `w1/R80ScoutLive/findings.md`, STATUS: ok). Live recon on today's host:
+both registered joins reproduce `receipts/live-join-r80.txt` byte for byte (`CLEAN`, rc 0); the host
+carries exactly two layer surfaces (`waybar` level 2 `0,0,3440,26` pid 1720; `wallpaper` level 0
+`0,0,3440,1440` pid 1722), levels 1 and 3 empty, `reserved [0,26,0,0]`; the composition run prints
+`gt=0,26,0,0 attr=0,26,0,0` so nothing is unattributed. Two named limits: **(a)** `--surfaces`
+cannot express "no extras" — an empty declaration is refused `stage=setup` (`tools/mado-barfoot.py`,
+the `the surfaces declaration is empty` branch), so the honest no-extras run is the omitted flag;
+**(b)** `hyprctl layers -j` carries no anchor and no exclusive-zone field, so a declaration is pinned
+only where the box moves with the field — the seat's `exclusive: 0` probe (same captures, box
+`0,26,3440,1414`, `verdict=DIFFER`) is what pins `exclusive: -1` for `wallpaper`. The real
+`is-active` answer here is `inactive` rc 3, with a contrasting active unit
+(`wayland-wm@hyprland.desktop.service`, rc 0) available as a discriminating row.
+
+**R80ConnSiblings** (connector; report at `w1/R80ConnSiblings.md`, STATUS: ok). No sibling claims
+either claim's ground: `game-dev-3d/PROVINCE.md:75` explicitly cedes "desktop/compositor display
+behavior" to mado, `kotoba/PROVINCE.md:72` and `tsukuroi … adjacency-anchors-r19.md:84` both cite
+mado's ownership of the Hyprland/waybar plane, and no sibling `tools/` file models a layer surface
+(the only `exclusive` tokens in sibling tools are lock modes and argparse flag conflicts). Two
+homonyms are named so a later census does not merge them: tabi's "chord" is a browser input-event
+construct, not the keybindings text column; kake's `is-active` line is an adjacent observation about
+a different unit, not the verb's rc↔state mapping. Two cautions: kotoba's round-74 sibling census
+(`sibling-overlap-census-round74.md:66`) is pinned 363 commits behind this base and predates
+`tools/mado-barfoot.py`, so it clears nothing; and no staged `merge/mado/` entry touches r80 ground
+(one future reconciliation: `host-bar-producers-r28.md:12`'s 6354 B claim about the host waybar
+config, which a later landing check must re-measure).

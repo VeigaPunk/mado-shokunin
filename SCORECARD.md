@@ -4662,3 +4662,6 @@ reported per seat in the round report; an empty seat output is an evidence gap, 
 4. `considerthese/2026-10-28.md` proposal 4 (the live-tool table) stays available.
 5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
    session-material history question) stay operator-owned.
+
+### Axis table re-derived at the landing tip (`receipts/harm-watch-r80.txt` and `quality/check-axis-scores.py`):
+navigation 99/99; calibration resolved-active 86/86; operability selftest 12/12, ledger 146/146.
