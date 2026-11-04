@@ -165,13 +165,14 @@ def matches(kind, value, rc, stdout):
         return text == ""
     if kind == "int_range":
         lo, hi = value
-        if not re.fullmatch(r"-?[0-9]+", text.strip()):
+        # bare digits only: no sign, no padding, no surrounding whitespace
+        if re.fullmatch(r"[0-9]+", text) is None:
             return False
         number = int(text)
         return lo <= number <= hi
     if kind == "sorted_unique":
         parts = text.split(",") if text else []
-        if not parts or any(part == "" for part in parts):
+        if not parts or any(part == "" or part != part.strip() for part in parts):
             return False
         if parts != sorted(set(parts)):
             return False
@@ -293,6 +294,8 @@ def selftest():
     ok(not matches("int_range", [1, 10], 0, "0\n"), "int range lower")
     ok(not matches("int_range", [1, 10], 0, "11\n"), "int range upper")
     ok(not matches("int_range", [0, 10], 0, "ten\n"), "int range non-numeric")
+    ok(not matches("int_range", [0, 10], 0, " 7\n"), "int range padded refused")
+    ok(not matches("int_range", [0, 10], 0, "7 \n"), "int range trailing refused")
     ok(matches("sorted_unique", {"must_include": ["waybar"]}, 0, "wallpaper,waybar\n"),
        "sorted unique")
     ok(not matches("sorted_unique", {"must_include": ["waybar"]}, 0, "waybar,wallpaper\n"),
@@ -301,6 +304,8 @@ def selftest():
        "sorted unique duplicates")
     ok(not matches("sorted_unique", {"must_include": ["waybar"]}, 0, "wallpaper\n"),
        "sorted unique required")
+    ok(not matches("sorted_unique", {"must_include": ["waybar"]}, 0, " waller,waybar\n"),
+       "sorted unique padded part refused")
     ok(matches("json_object_fields", {"fields": {"id": "int", "name": "str"}}, 0,
                '{"id":1,"name":"1"}\n'), "object fields")
     ok(not matches("json_object_fields", {"fields": {"id": "int", "name": "str"}}, 0,
