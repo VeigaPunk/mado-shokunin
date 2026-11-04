@@ -75,3 +75,19 @@ All sources were opened 2026-11-04 before their rows were written; bytes under
 | id | class | evidence pointer | captured-by | fix (shown able to fail) |
 |---|---|---|---|---|
 | M77-6 | the C2 counter inherited the caller's environment but a non-interactive runner lacks `HYPRLAND_INSTANCE_SIGNATURE` and `OMARCHY_PATH`, so every `hyprctl`/`omarchy` probe failed with "not set" and the runbook scored 3/12 | `.ufo/waves/round-77/receipts/measurement-final-r77.txt` first C2 section (matched=3, "HYPRLAND_INSTANCE_SIGNATURE not set!") versus `receipts/repair-r77-c2-env.txt` (12/12) | the final measurement, run from a non-session shell rather than the session shell the runbook assumes | the counter now discovers the instance from `$XDG_RUNTIME_DIR/hypr/*/.socket.sock` and `OMARCHY_PATH` from the `omarchy` binary's own location, adding them only when absent; the red run is retained and the green run was executed with neither variable set. |
+
+- **R77Critic (design falsification).** The design stands: C1 is a coverage move (no `barfoot`/
+  `footprint` token at base; no prior counter reads the monitors band), the live-echo control is
+  the cheapest sufficient rule (best alternative 8/15; best constant 5/15), and C1/C2 are
+  causally separable (disjoint inputs, zero cross-references). Three findings are dispositioned:
+  **F1** C2's predicate overclaims for two rows — the anchor binds the row's presence, not its
+  sample text (`monitors-reserved` states no band value; `waybar-process` is shape-checked);
+  corrected by an append-only erratum to the declaration's C2 limits, no byte change to the
+  instrument, target or case set. **F2** the `reserved-wrong-edge` mutant's replacement carried a
+  trailing comma, so the kill was a `TypeError` crash rather than an oracle verdict
+  (`receipts/repair-r77-mutant-oracle.txt`: before-tuple → TypeError, after-dict → `reserved=DIFFER`
+  on `host-top`); the replacement is now a valid dict and the counter re-scores 5/5 killed with
+  oracle-based verdicts. **F3** the declaration's source provenance was uncommitted at the
+  critic's scan; it landed at `3e35d0a9` and the final tip is checked in §Landed. Watch items:
+  W1 `binds-count`/`monitors-size` are operator-volatile (re-measure after any change); W2 the
+  `row=` field prints the anchor, so `omarchy-version` shows the theme row (cosmetic, noted here).

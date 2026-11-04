@@ -36,7 +36,7 @@ MUTATIONS = [
     ("exclusive-false-ignored", 'if not bar["exclusive"]:', "if False:"),
     ("no-centred-width", 'if bar["width"] > 1:', 'if bar["width"] > 100000:'),
     ("reserved-wrong-edge", 'RESERVED_INDEX = {"left": 0, "top": 1, "right": 2, "bottom": 3}',
-     'RESERVED_INDEX = {"left": 0, "top": 3, "right": 2, "bottom": 1},'),
+     'RESERVED_INDEX = {"left": 0, "top": 3, "right": 2, "bottom": 1}'),
     ("per-side-margin-dropped",
      'sides[side] = value if isinstance(value, int) and not isinstance(value, bool) else 0',
      'sides[side] = 0'),

@@ -154,3 +154,12 @@ the read verbs on the SKILL runbook table plus the two `hyprctl` dumps captured 
   `controls/make-cases-r77.py` and both are committed with this declaration.
 - Live captures used by the C1 evidence entry are committed under
   `.ufo/waves/round-77/fetch/` with their sha256 in the measurement receipt.
+
+## Errata (round 77, append-only; never a re-freeze)
+
+C2's predicate sentence says "the observed outcome equals the expectation the bound SKILL.md row
+states". The anchor check binds the row's *presence*, not its sample text, and for two cases the
+expectation is the frozen case value rather than a sample the row prints: `monitors-reserved`
+(the probes row documents the command, not the band value) and `waybar-process` (the row's pid is
+volatile; the case shape-checks `^[0-9]+$`, as the named limits already say). The instrument,
+predicate, target and case set are unchanged. Source: the wave critic's F1.
