@@ -15,8 +15,9 @@ monitor's `reserved` band. Nothing is connected, started or written.
 
 Contract (v1, round 77):
   * position top/bottom/left/right; layer background/bottom/top/overlay; height/width;
-    margin-<side> and CSS-form margin strings; exclusive; name; output (exact names and
-    `!name` exclusions only).
+    margin-<side> and CSS-form margin strings (std::stoi prefix parse); exclusive; name;
+    output (waybar 0.15.0's two branches: an array's `!name`/`name`/`*` walk falling through
+    to false, a string's empty/`!name`/`name`; monitor names only).
   * Hyprland's arrange rule (src/render/Renderer.cpp arrangeLayerArray/@ efb5099):
     a zero desired width extends across the usable box minus horizontal margins;
     waybar clears both horizontal anchors when the bar declares a width > 1
@@ -36,12 +37,17 @@ Contract (v1, round 77):
   * Refused, never guessed: a monitor whose scale is not 1 or whose transform is not 0 (the
     monitors reply carries pixel size, the layer box is logical); a dynamic cross size (a
     horizontal bar with height 0, or a vertical bar with width 0 — the realised size is the
-    module allocation, not the declaration); a list-valued config (multiple bars); `*` or
-    space-bearing output patterns; and a `mode` key (presets rewrite layer and exclusive
-    zone at runtime).
+    module allocation, not the declaration); a list-valued config (multiple bars); a
+    space-bearing or string-`*` output pattern; a negative margin; and a `mode` key (presets
+    rewrite layer and exclusive zone at runtime).
+  * Modelled with the sources: the centred box rounds once (Hyprland computes the centre in
+    doubles and calls `box.round()`, Renderer.cpp:2660), and a bar whose box is not contained
+    in the monitor reserves nothing (CReservedArea's empty short-circuit, ReservedArea.cpp:20-31)
+    — the expected band is then 0.
   * Not modelled and named as a limit: a static `monitor … addreserved` band (the reported
-    band mixes the static reserve with the layer contribution), and any runtime change
-    after the capture.
+    band mixes the static reserve with the layer contribution); an output entry naming the
+    xdg-output identifier waybar derives from the monitor description (only the monitor name
+    is matched); and any runtime change after the capture.
 
 Exit map: 0 CLEAN · 1 DIFFER · 2 SETUP/ERROR · 3 NOT_FORMED (NO_LAYER/UNMODELLED/NO_BAR).
 """
@@ -189,9 +195,15 @@ def parse_margins(config):
     margin = config.get("margin")
     if isinstance(margin, str):
         tokens = margin.split()
-        try:
-            values = [int(t, 10) for t in tokens]
-        except ValueError:
+        values = []
+        for token in tokens:
+            # std::stoi is a prefix parse (4px -> 4); a token without an integer prefix
+            # throws and the catch leaves every side at its default
+            match = re.match(r"[+-]?[0-9]+", token)
+            if match is None:
+                return sides
+            values.append(int(match.group(0), 10))
+        if len(values) > 4:
             return sides
         if len(values) == 1:
             sides = {s: values[0] for s in MARGIN_SIDES}
@@ -208,31 +220,41 @@ def parse_margins(config):
 
 
 def output_matches(config, monitor):
-    """Exact monitor names and `!name` exclusions only; anything smarter is unmodelled."""
+    """Waybar 0.15.0 `isValidOutput`: the array and the string branch differ.
+
+    Array: `!name` excludes and continues, `name` includes, an entry starting with `*`
+    includes, and the loop falls through to false when no entry matched. String: an empty
+    value means every output, `!name` excludes, `name` includes, anything else does not
+    match. Monitor *names* only: an entry naming the xdg-output identifier (which waybar
+    derives from the output description) is not modelled and is reported as a limit.
+    """
     spec = config.get("output")
     if spec is None:
         return True
-    if isinstance(spec, str):
-        names = [spec]
-    elif isinstance(spec, list):
-        names = spec
-    else:
-        raise Unmodelled("output must be a string or an array")
-    include, exclude = [], []
-    for name in names:
-        if not isinstance(name, str):
-            raise Unmodelled("output entries must be strings")
-        if "*" in name or " " in name:
-            raise Unmodelled("output pattern %r is outside the modelled subset" % name)
-        if name.startswith("!"):
-            exclude.append(name[1:])
-        else:
-            include.append(name)
-    if monitor in exclude:
+    if isinstance(spec, list):
+        for entry in spec:
+            if not isinstance(entry, str):
+                raise Unmodelled("output entries must be strings")
+            if " " in entry:
+                raise Unmodelled("output pattern %r is outside the modelled subset" % entry)
+            if entry.startswith("!"):
+                if entry[1:] == monitor:
+                    return False
+                continue
+            if entry == monitor or entry.startswith("*"):
+                return True
         return False
-    if not include:
-        return True
-    return monitor in include
+    if isinstance(spec, str):
+        if " " in spec:
+            raise Unmodelled("output pattern %r is outside the modelled subset" % spec)
+        if spec == "":
+            return True
+        if spec.startswith("!"):
+            return spec[1:] != monitor
+        if spec.startswith("*"):
+            raise Unmodelled("output pattern %r is outside the modelled subset" % spec)
+        return spec == monitor
+    raise Unmodelled("output must be a string or an array")
 
 
 def declared_bar(config):
@@ -275,7 +297,7 @@ def declared_box(bar, mon_w, mon_h):
     if pos in ("top", "bottom"):
         if bar["width"] > 1:
             w = bar["width"]
-            x = (mon_w - w) // 2  # both horizontal anchors cleared -> centred, no margins
+            x = (mon_w - w + 1) // 2  # Hyprland centres in doubles and rounds once (:2660)
         else:
             w = mon_w - m["left"] - m["right"]
             x = m["left"]
@@ -289,7 +311,7 @@ def declared_box(bar, mon_w, mon_h):
     else:
         if bar["height"] > 1:
             h = bar["height"]
-            y = (mon_h - h) // 2  # both vertical anchors cleared -> centred, no margins
+            y = (mon_h - h + 1) // 2  # Hyprland centres in doubles and rounds once (:2660)
         else:
             h = mon_h - m["top"] - m["bottom"]
             y = m["top"]
@@ -409,6 +431,10 @@ def evaluate(config, layers, monitors, monitor=None):
     edge = bar["position"]
     band = mon["reserved"][RESERVED_INDEX[edge]]
     expected = extent + bar["margins"][OPPOSITE_EDGE[edge]]
+    if not (box["x"] >= 0 and box["y"] >= 0
+            and box["x"] + box["w"] <= mon_w and box["y"] + box["h"] <= mon_h):
+        # CReservedArea(parent, child) is empty when the child is not contained (S459:20-31)
+        expected = 0
     if not bar["exclusive"]:
         reserved_verdict = "NOT_APPLIED"
     elif band == expected:
@@ -555,6 +581,33 @@ def selftest():
     v, rc, _ = case({"position": "top", "layer": "top", "height": 26, "name": "bar2"},
                     layers_named, monitors)
     ok((v, rc) == ("CLEAN", 0), "namespace name")
+
+    # round 78 repairs: waybar's output branches, std::stoi margins, rounding, overflow
+    v, rc, _ = case({"position": "top", "layer": "top", "height": 26, "output": ["!M2"]},
+                    layers_top, monitors)
+    ok((v, rc) == ("NO_BAR", 3), "output array without a positive entry")
+    v, rc, _ = case({"position": "top", "layer": "top", "height": 26, "output": ["M1", "!M1"]},
+                    layers_top, monitors)
+    ok((v, rc) == ("CLEAN", 0), "output array first positive wins")
+    v, rc, _ = case({"position": "top", "layer": "top", "height": 26, "output": ""},
+                    layers_top, monitors)
+    ok((v, rc) == ("CLEAN", 0), "empty output string means every output")
+    ok(parse_margins({"margin": "4px 0"}) == {"top": 4, "right": 0, "bottom": 4, "left": 0},
+       "margin stoi prefix parse")
+    layers_odd = {"M1": {"levels": {"0": [], "1": [], "2": [
+        {"namespace": "waybar", "x": 1320, "y": 0, "w": 801, "h": 26, "alpha": 1, "pid": 1}],
+        "3": []}}}
+    v, rc, rows = case({"position": "top", "layer": "top", "height": 26, "width": 801},
+                       layers_odd, monitors)
+    ok(v == "CLEAN" and any("box=MATCH" in t for _, t in rows), "odd centring rounds like std::round")
+    layers_over = {"M1": {"levels": {"0": [], "1": [], "2": [
+        {"namespace": "waybar", "x": 0, "y": 0, "w": 1920, "h": 120, "alpha": 1, "pid": 1}],
+        "3": []}}}
+    v, rc, rows = case({"position": "top", "layer": "top", "height": 120},
+                       layers_over,
+                       {"M1": {"name": "M1", "width": 1920, "height": 100,
+                               "reserved": [0, 0, 0, 0], "scale": 1.0, "transform": 0}})
+    ok(v == "CLEAN" and any("expected=0" in t for _, t in rows), "an overflowing bar reserves nothing")
 
     # malformed inputs are setup errors, never verdicts
     with tempfile.TemporaryDirectory() as td:

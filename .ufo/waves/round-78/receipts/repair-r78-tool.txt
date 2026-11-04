@@ -1,0 +1,92 @@
+# round-78 tool repair receipt (scout findings F1-F4), 2026-11-04T09:44:02Z
+# before = tools/mado-barfoot.py at 44a36b64 (r78-v1, selftest 22/22); after = working tree (r78-v2, selftest 28/28)
+
+== F1a-array-exclude-only ==
+-- before
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_DECL: monitor=M1 box=0,0,3440,26 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=0,0,3440,26 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+rc=0
+-- after
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_RESULT: monitor=M1 box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR
+MADO_BARFOOT: verdict=NO_BAR
+rc=3
+
+== F1b-array-first-positive ==
+-- before
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_RESULT: monitor=M1 box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR
+MADO_BARFOOT: verdict=NO_BAR
+rc=3
+-- after
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_DECL: monitor=M1 box=0,0,3440,26 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=0,0,3440,26 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+rc=0
+
+== F1c-empty-string ==
+-- before
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_RESULT: monitor=M1 box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR
+MADO_BARFOOT: verdict=NO_BAR
+rc=3
+-- after
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_DECL: monitor=M1 box=0,0,3440,26 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=0,0,3440,26 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+rc=0
+
+== F2-odd-centring ==
+-- before
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=801 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_DECL: monitor=M1 box=1319,0,801,26 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=1320,0,801,26 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=EQ band=26 expected=26 verdict=DIFFER
+MADO_BARFOOT: verdict=DIFFER
+rc=1
+-- after
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=801 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_DECL: monitor=M1 box=1320,0,801,26 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=1320,0,801,26 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+rc=0
+
+== F3-stoi-margins ==
+-- before
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_DECL: monitor=M1 box=0,0,3440,26 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=0,4,3440,26 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=DIFFER reserved=GT band=34 expected=26 verdict=DIFFER
+MADO_BARFOOT: verdict=DIFFER
+rc=1
+-- after
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=4,0,4,0 exclusive=true
+MADO_BARFOOT_DECL: monitor=M1 box=0,4,3440,26 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=0,4,3440,26 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=34 expected=34 verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+rc=0
+
+== F4-overflow ==
+-- before
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=120 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_DECL: monitor=M1 box=0,0,1920,120 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=0,0,1920,120 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=DIFFER band=0 expected=120 verdict=DIFFER
+MADO_BARFOOT: verdict=DIFFER
+rc=1
+-- after
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=120 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_DECL: monitor=M1 box=0,0,1920,120 edge=top
+MADO_BARFOOT_LIVE: monitor=M1 level=2 ns=waybar box=0,0,1920,120 entries=1
+MADO_BARFOOT_RESULT: monitor=M1 box=MATCH reserved=EQ band=0 expected=0 verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+rc=0

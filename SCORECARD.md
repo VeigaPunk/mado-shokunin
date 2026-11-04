@@ -4525,5 +4525,5 @@ round 78 changed the same tool path: the r77 measurement stands for the bytes at
 row's "last change" phrase is time-bound. The r77 registry row (`SKILL.md`, `mado-r77-barfoot`) was
 corrected in place to the current tool's exit map and selftest (22/22); the r77 knowledge entry
 received an appended erratum; the forecast `NOT_MODELLED` phrase in the r77 index row was corrected.
-The C2 anchor leg was strengthened from a file-wide substring to a table-row command-cell binding
+The C1 instrument was repaired after the wave for four scout-found model defects (the output branches, `std::stoi` margin parsing, centring rounding, an overflowing bar); the eighteen cases, seven mutants and 8/18 control are unchanged at the tip, and the selftest tally rose 22/22 → 28/28 (receipt `receipts/repair-r78-tool.txt`). The C2 anchor leg was strengthened from a file-wide substring to a table-row command-cell binding
 after the wave's connector showed a deleted row would still pass, and the shape attack's padded-integer and padded-list samples were refused (selftest 34 → 40 assertions).

@@ -1,7 +1,7 @@
 # The margined bar's band: the client's auto zone plus the compositor's edge margin
 
 source: S457 Hyprland v0.56.2 src/render/Renderer.cpp @ efb5099 (applyExclusive `:2529-2585`, add `:2577`, edge guard `:2575`; arrangeLayerArray `:2587-2670`, margin block `:2634-2657`, apply call `:2664`; arrangeLayersForMonitor `:2673-2700`, addType `:2696`); S458 src/debug/HyprCtl.cpp @ efb5099 (layers reply `:647-700`, monitors `reserved` print `:281-282`); S459 src/desktop/reserved/ReservedArea.cpp @ efb5099 (parent/child band `:19-35`, apply `:53-60`); S460 wlr-layer-shell-unstable-v1 XML @ efb5099 (levels `:86-90`, exclusive `:152-190`); S461 waybar(5) 0.15.0; S462 Waybar v0.15.0 src/bar.cpp @ 90b209ad (margin precedence `:178-222`, anchors `:390-424`, auto-zone call `:357-361`); S464 gtk-layer-shell v0.10.1 src/layer-surface.c (auto zone `:264-292`). All re-opened 2026-11-04 with fresh pinned fetches under `.ufo/waves/round-78/fetch/` (`sha256-r78.txt`, seven files; the six `.bin`/man renders are byte-identical to the round-77 copies).
-verified-at: 2026-11-04, round 78; instrument revision `44a36b64117812af7cc23a1815430d8320642455` (tool sha256 `aac5d41b…`, 18/18 on the frozen set); host join receipt `.ufo/waves/round-78/receipts/live-join-r78.txt`
+verified-at: 2026-11-04, round 78; the eighteen cases are measured at `44a36b64117812af7cc23a1815430d8320642455` (tool `r78-v1`, sha256 `aac5d41b…`, 18/18); the landing tip carries `r78-v2`, whose wave-driven repairs (output branches, `std::stoi` margins, centring rounding, an overflowing bar) leave every case unchanged (receipt `receipts/repair-r78-tool.txt`); host join receipt `receipts/live-join-r78.txt`
 recheck: on-release (Hyprland after v0.56.2, Waybar after 0.15.0, gtk-layer-shell after v0.10.1); 180d otherwise — re-open the seven files, re-capture `hyprctl layers -j` / `hyprctl monitors -j` (reduce the monitors reply to the fields the join reads), and re-run `tools/mado-barfoot.py`
 Lane: mado-shokunin. Round: 78. Supersedes the `NOT_MODELLED` margin limit of `bar-footprint-r77.md` §3/§4 (the r77 body stays the record of the r77 instrument).
 
@@ -54,7 +54,13 @@ compositor's guard can void the band and this model does not compose that.
 | `layer: bottom` / `top` / `overlay` | unchanged | unchanged — the level moves the lookup only | `layer-bottom` |
 | `exclusive: false` | modelled | computed and printed, but `reserved=NOT_APPLIED` | `exclusive-false` |
 | `output: "!M"` excluding the joined monitor | none | none | rc 3 `NO_BAR` |
-| `output: "!M2"` on M1 | normal | normal | `output-exclusion` |
+| `output: "!M2"` on M1 (string) | normal | normal | `output-exclusion` |
+| `output: ["!M2"]` (array) | none: the array branch falls through to false | none | r78-v2 repair, `receipts/repair-r78-tool.txt` F1a |
+| `output: ["M1","!M1"]` on M1 | the first positive entry wins | normal | r78-v2 repair F1b |
+| `output: ""` | every output | normal | r78-v2 repair F1c |
+| `margin: "4px 0"` | `std::stoi` prefix-parses `4px` → top/bottom 4 | `h + 8` | r78-v2 repair F3 |
+| an odd centred cross size (e.g. width 801 on 3440) | Hyprland rounds the double centre once (`Renderer.cpp:2660`) | modelled | r78-v2 repair F2 |
+| a bar whose box is not contained in the monitor | `CReservedArea` is empty → no reserve | 0 | r78-v2 repair F4 |
 | any margin < 0 | refused (`mado-barfoot.py:253-254`) | — | rc 3 model error |
 | dynamic cross (`height 0` horizontal, `width 0` vertical) | refused (`:271-274`) | — | rc 3 |
 | `layer: background`, `mode:` key, list config, `*`/space output | refused (`:246`, `:249`, `:595`, `:226`) | — | rc 3 model / rc 2 setup |
@@ -122,10 +128,17 @@ transform, refresh rate, position), not the raw reply, which carries the output'
   assumes a zero static reserve (`mado-barfoot.py:42-43`).
 - **Scaled or transformed monitors** are refused, not modelled (logical box vs pixel size,
   `:370-374`).
-- **Centring rounding:** the tool floors (`//`), Hyprland rounds after doubles
-  (`Renderer.cpp:2660`); a 1 px divergence is possible and no case exercises an odd delta.
+- **Centring rounding is modelled, not cased.** The tool now rounds the double centre once
+  (`(extent + 1) // 2`), matching `Renderer.cpp:2660`; no frozen case exercises an odd delta, so
+  the rule is pinned by a selftest assertion and the repair receipt F2, not by a scored case.
 - **Which process set a zone** is not read: the layers entry carries `namespace`/`pid`, not
   the exclusive request (S458 `HyprCtl.cpp:671-682`).
+- **An output entry naming the xdg-output identifier** (which waybar derives from the
+  description) is not matched; only the monitor `name` is. A config that lists identifiers can
+  therefore read `NO_BAR` where waybar would draw.
+- **A bar taller than its module minimum** gets a larger allocation than the declared height
+  (waybar adopts the realised size, `bar.cpp:639-649`); the model predicts from the declaration
+  and reports the difference as drift.
 - **`GT` is admissible, not attribution.** A second exclusive surface yields
   `band > expected` and `CLEAN` (`second-consumer`, 60 vs 34); the join cannot apportion
   the band among surfaces.
