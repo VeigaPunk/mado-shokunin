@@ -1,0 +1,189 @@
+#!/usr/bin/env python3
+"""Build the round-68 wave spec. Deterministic; no network, no host writes."""
+import json
+import os
+
+LANE = "/home/vgpnk/Projects/shokunin/mado-shokunin"
+WAVE_DIR = LANE + "/.ufo/waves/round-68"
+
+GOD = """/skill:godspeed
+You are a Godspeed-enabled subagent.
+
+1. **Name the axes.**
+2. **Iterate cheap, in parallel.**
+3. **Keep moves that improve any axis and harm none.**
+4. **Don't aim — let the frontier walk itself.**
+
+## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls."""
+
+CONTEXT = GOD + """
+
+Round mado 68, ONE v1 wave (12 seats). Axes: calibration (C1) and operability (C2); L1 holds the planner seat. Read /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-68/claims-declaration-r68.md FIRST. Claims, predicates, control sets and recipes are FROZEN at e0727cda15621766c35dcf8b70c211b6531aab45: never re-scope, never narrow a target after seeing data, never invent a different counter, never edit the declaration or the control JSON.
+
+Lane repo: /home/vgpnk/Projects/shokunin/mado-shokunin. Base (pre-r68 tip): 510100c81e6cf63fec6be380c2f2f9c670f32cbc. Pre-freeze baseline receipt: .ufo/waves/round-68/control-baseline-r68.txt (C1 killed=0/3 base=0/3; C2 population=20 readers=13 guarded=1 unguarded=12).
+
+Write ONLY your own seat directory /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-68/w1/<your-name>/ (drafts of production files under draft/ inside it; L1 integrates them; nothing you write is production). Reading sibling seat dirs is allowed. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/mado-shokunin — write it at /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>.
+
+Scratch: /fast/scratch/hyaku/mado-r68/<your-name>/ (mkdir -p first) with delete-on-exit (`trap 'rm -rf -- "$S"' EXIT` in shell, `finally: shutil.rmtree` in Python). Never rely on an inherited TMPDIR, never write /tmp or /var/tmp. Report scratch removed before you yield.
+
+Never commit, push, stage, stash, checkout, switch, reset or run any mutating git/jj command in the lane, the fleet repo /home/vgpnk/Projects/shokunin, or any sibling lane. Never write the fleet repo, another lane, MANIFEST.json, .ufo/state, .scratch, or operator config. Fixture git repos: `D=$(mktemp -d "$S/fixture.XXXX")`, `git -C "$D" init -q`, verify `git -C "$D" rev-parse --show-toplevel` equals `$D` before the first commit, and name -C on every git call. Never probe, connect to, write or control a compositor surface, service, socket, session or package manager; this round has no desktop probe at all.
+
+Tooling authorization (operator, 2026-10-19): you may install/upgrade tools that help the task; first read /home/vgpnk/.omp/agent/RULES.md (official channels, update-safety gate; record tool/version/channel/reason in your report). PACMAN IS PAUSED host-wide: no pacman transaction (-S/-Sy/-Syu/-U/-R, no service restart); use uv tool / npx / an official binary into ~/.local/bin, or name the need in your report and continue.
+
+No credential material, session tokens, cookies or op:// refs in any artifact. No screenshots. Never message agent://all. Yield a concise report: findings, exact commands, exit codes, paths, sha256 of drafts. No prose padding."""
+
+
+def prompt(name, body):
+    return GOD + "\n\nYour name: " + name + ". Your only write directory: " + WAVE_DIR + "/w1/" + name + "/. Scratch: /fast/scratch/hyaku/mado-r68/" + name + "/.\n" + body
+
+
+ITEMS = []
+
+ITEMS.append(("R68ExecGate1", "executor", """Repair three standing gates so each carries the replacement-ref guard, and prove it in a scratch repo (never touch the lane files; the L1 integrates your drafts).
+
+Files (lane-relative, drafts at draft/<same path>):
+1. quality/check-anchor-cover.py — the caller builds `env` at ~line 102; add the guard key to that environment.
+2. quality/check-control-receipts.py — `env = dict(os.environ, GIT_OPTIONAL_LOCKS="0")` at line 61.
+3. quality/check-deliverables.py — git `show` / `cat-file` subprocess calls at ~lines 94 and 113 pass no env; give them one that carries the guard.
+
+Required shape (the frozen census tool recognizes these): the environment must carry the string `GIT_NO_REPLACE_OBJECTS` as a dict-literal key, a subscript store on an env-named target (`env["GIT_NO_REPLACE_OBJECTS"] = "1"`), an env-named binding, or inside an `env=` keyword value. Comments, docstrings and unrelated dictionaries do NOT count. Keep every other behavior byte-identical: same argv, same captured output, same exit codes, same marker texts. Do not add imports if avoidable; do not reformat.
+
+Prove in scratch:
+a) `D=$(mktemp -d)` a git repo; copy the lane's `quality/check-*.py` set (20 files at freeze e0727cda) into it, overwrite the three with your drafts, `git -C "$D" add -A`, commit under an explicit `-c user.name=r68 -c user.email=r68@example.invalid`, then run
+   `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r68-reader-guard.py --repo "$D" --rev HEAD --controls /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-68/controls/c2-controls.json`
+   and report the exact `MADO_R68_READER file=` lines for your three files and the final contract line. The un-repaired population must still show the other 9 unguarded files (that is expected — your seats share the repair).
+b) For each repaired file run its own test surface: `python3 -I <draft> --selftest` where the file supports it (check the argparse), otherwise `python3 -m py_compile <draft>` plus its `--help` and one real read-only invocation on the lane (e.g. `--repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev <freeze>` with whatever arguments the file requires). Report rc and any output change versus the committed file's run.
+c) `diff -u` each draft against the committed file; confirm the only added lines are the guard. Report the diff stat and each draft sha256.""" ))
+
+ITEMS.append(("R68ExecGate2", "executor", """Repair four standing gates so each carries the replacement-ref guard, and prove it in a scratch repo (never touch the lane files; the L1 integrates your drafts).
+
+Files (lane-relative, drafts at draft/<same path>):
+1. quality/check-evidence-pointers.py — module constant `GIT_ENV = {...}` at line 71.
+2. quality/check-freeze-order.py — `git_env()` builds the dict at lines 44-52; also keep its `extra_env` merge working.
+3. quality/check-index-rows.py — the comprehension env at line 58 and the fixture-env `dict(...)` at 402-412 (fixture writes; the object reads are the ones that matter — name which calls you guarded).
+4. quality/check-index.py — same shape at lines 51 and 279-289.
+
+Required shape (the frozen census tool recognizes these): the environment must carry the string `GIT_NO_REPLACE_OBJECTS` as a dict-literal key, a subscript store on an env-named target, an env-named binding, or inside an `env=` keyword value. Comments, docstrings and unrelated dictionaries do NOT count. Keep every other behavior byte-identical: same argv, same output, same exit codes, same marker texts, same fixture identities. Do not reformat.
+
+Prove in scratch:
+a) `D=$(mktemp -d)` a git repo; copy the lane's `quality/check-*.py` set (20 files at freeze e0727cda) into it, overwrite your four with drafts, `git -C "$D" add -A`, commit under an explicit `-c user.name=r68 -c user.email=r68@example.invalid`, then run
+   `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r68-reader-guard.py --repo "$D" --rev HEAD --controls /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-68/controls/c2-controls.json`
+   and report your four `MADO_R68_READER` lines plus the final contract line.
+b) `python3 -I <draft> --selftest` for each file that supports it (check the argparse); for the rest `python3 -m py_compile` plus one real read-only invocation on the lane as its own contract requires. Report rc and any output difference from the committed file.
+c) `diff -u` each draft against the committed file; the added lines must be the guard only. Report diff stat and draft sha256.""" ))
+
+ITEMS.append(("R68ExecGate3", "executor", """Repair four standing gates so each carries the replacement-ref guard, and prove it in a scratch repo (never touch the lane files; the L1 integrates your drafts).
+
+Files (lane-relative, drafts at draft/<same path>):
+1. quality/check-landed-contract.py — inline `git show` at line 54 with no env.
+2. quality/check-round-outcome-first.py — inline git calls at ~71/125 (and any other object read); fixture-building calls under 211-223 are writes and may stay unguarded, name the choice.
+3. quality/check-session-material.py — inline git calls at ~631 and ~924 (and any other object read); its selftest fixtures may stay as they are.
+4. quality/check-wave-done.py — `git_env()` at lines 179-189.
+
+Required shape (the frozen census tool recognizes these): the environment must carry the string `GIT_NO_REPLACE_OBJECTS` as a dict-literal key, a subscript store on an env-named target, an env-named binding, or inside an `env=` keyword value. Comments, docstrings and unrelated dictionaries do NOT count. Where the call currently inherits `os.environ`, the minimal repair is `env=dict(os.environ, GIT_NO_REPLACE_OBJECTS="1")`; do not otherwise scrub or add keys (that would change existing behavior beyond the claim). Keep argv, output, exit codes and marker texts byte-identical.
+
+Prove in scratch:
+a) `D=$(mktemp -d)` a git repo; copy the lane's `quality/check-*.py` set (20 files at freeze e0727cda) into it, overwrite your four with drafts, commit under an explicit `-c user.name=r68 -c user.email=r68@example.invalid`, then run
+   `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r68-reader-guard.py --repo "$D" --rev HEAD --controls /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-68/controls/c2-controls.json`
+   and report your four `MADO_R68_READER` lines plus the final contract line.
+b) `python3 -I <draft> --selftest` for each file that supports it; for the rest `python3 -m py_compile` plus one real read-only invocation on the lane as its contract requires. Report rc and any output difference.
+c) `diff -u` each draft against the committed file; the added lines must be the guard only. Report diff stat and draft sha256.""" ))
+
+ITEMS.append(("R68ExecHazard", "executor", """Two jobs: repair one gate, and prove the guard's hazard end-to-end (never touch the lane files; the L1 integrates your draft).
+
+1. Repair quality/check-axis-scores.py: both git environments (the comprehension at ~line 99 and the child-process env at ~line 121) must carry `GIT_NO_REPLACE_OBJECTS` in the frozen shape (dict-literal key, subscript store, env-named binding, or inside an `env=` value). Keep behavior byte-identical.
+
+2. Hazard probe (the round's auxiliary sample, outside the frozen denominator): build a scratch `git` repo carrying a blob the repaired gate actually reads, plant a `refs/replace` ref on that blob (fixture recipe: write original bytes, `git hash-object -w`, plant `git replace <orig> <forged>`; verify `git -C D cat-file -p <orig>` shows forged bytes unguarded and original bytes under `GIT_NO_REPLACE_OBJECTS=1`). Run the gate's own git helper (import the module with importlib, call its `git(...)` function against the fixture) or the gate end-to-end if its contract allows, once with the committed bytes (base) and once with your repaired draft, in the same scratch repo. Required pair: base reads the forged bytes (the gate's verdict/output differs from its clean run), draft reads the real bytes (verdict/output equals its clean run). Record both commands and outputs; if the gate cannot be driven this way, say so with the attempt and pick quality/check-evidence-pointers.py instead.
+
+3. Real measurement of the round's harness: `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r68-landing-controls.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 510100c81e6cf63fec6be380c2f2f9c670f32cbc --scratch-root /fast/scratch/hyaku/mado-r68/R68ExecHazard/harness` (this runs the real children and builds the fixture; expect `killed=2/2`). Report the exact `MADO_R68_MUTANT` and final `MADO_R68_LANDING_CONTROLS` lines and rc.
+
+Report: draft sha256 and diff, the hazard pair with commands and outputs, the harness line, and scratch removed.""" ))
+
+ITEMS.append(("R68ScribeLesson", "scribe", """Draft corpus/lessons/round-68.md at draft/corpus/lessons/round-68.md for the L1 to finish. Required sections:
+
+- header: author (mado L1, integrated from one w1 wave; outside-lane closure remains authoritative), date 2026-11-03, base 510100c81e6cf63fec6be380c2f2f9c670f32cbc, frozen declaration .ufo/waves/round-68/claims-declaration-r68.md at e0727cda15621766c35dcf8b70c211b6531aab45, control-set sha256 b7a1c939e5a715792d2969eb4ca86d8119cd5a72ef930d00d57338c62faf6a91.
+- Outcome and boundaries: the two claims (C1 calibration — the control harness kills its own forged kill credit, 3 frozen recipes, base 0/3; C2 operability — the standing gates' git-object reads are guarded, 13/13 readers, base 1/13) and what is NOT claimed (state truth, universal fault coverage, honest invocation, runtime behavior of the gates, desktop health).
+- `## Mistakes` table with at least one mined mistake, class from the CORPUS vocabulary (vacuous, survivor, stale-premise, reference-drift, number-drift, scope, attribution, landing, provider), evidence pointer, captured-by (the QUALITY criterion or rule that should have caught it, or `none`), and the fix with the failure it can now show. Real candidates from the round-67 outside spot-check (`corpus/lessons/round-67-verifier-spotcheck.md` routed defects 1-4): the mis-shaped kill rule for M-R (a mechanism sentence that did not describe the delivered observable), the path-vacuous "controls unchanged" sweep, the surviving harness self-mutant (`mr_killed = True`), and the unguarded-reader census that was named but never run. Pick the one that carries a red-before state you can cite at a named revision.
+- `## Gate`: this round's new SOURCES row (git v2.56.0 Documentation/git-cat-file.adoc, drafted by R68ScribeKnowledge and independently opened by R68ScoutSources): canonical URL, access date 2026-11-03, a <=25-word located quote with its line, the version pin, and >=1 admit + >=1 reject the outside spot-check can re-open; record any recheck/status/used-by cell change old->new (expect none).
+- Frontier and scope: census start .ufo/waves/round-68/census-start-r68.txt (exit 0, 373 rows at round start), no desktop claim, no PROVINCE frontier move, assimilation verdict from the connector seat if it lands one (else `none`).
+- Controls and limits: the three C1 recipes with their exact find/replace text, the eleven C2 control cases with their expectations, the finite denominators, the sampling limit of the hazard probe, and the C2 classification limits (text-level, no dataflow, presence-tested guard).
+- Integration placeholders: write TBD-INTEGRATION only for values only the L1 can measure at landing (final revision lines, counts, hashes).
+
+Cite exact file paths and commit hashes where known. Do not invent measurements.""" ))
+
+ITEMS.append(("R68ScribeKnowledge", "scribe", """Draft the round's knowledge entry plus its index and source rows:
+
+1. draft/corpus/knowledge/gate-git-read-guards-r68.md, opening with `source:`, `verified-at:`, `recheck:` in that order. Ground it on the git v2.56.0 `Documentation/git-cat-file.adoc` bytes you fetch and pin yourself (raw.githubusercontent.com/git/git/v2.56.0/Documentation/git-cat-file.adoc, record sha256 and byte count). Explain, in lane-tooling scope: what the object-read verb family means for replacement refs (why `show`/`cat-file`/`ls-tree`/`rev-parse` are the read surface), the four env-construction shapes the census recognizes and the three it rejects (comment, docstring, unrelated dict), the population boundary (`quality/check-*.py` stands for the gates, frozen per-round counters stay pinned), what the round repaired (12 files at the freeze revision; the census line before and after), and what the guard does not prove (no authenticity, no protection against an already-rewritten repo, no runtime dataflow). Keep it lane-tooling, not a desktop claim; no credential material.
+2. corpus/README.md index row text at draft/corpus/README-row.txt in the file's exact pipe-table row shape (first cell a backticked `knowledge/....md` path). Do not edit the real file.
+3. SOURCES row text at draft/corpus/SOURCES-row.txt: 11 columns (id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by), id = the next unused after the round-start census (compute it from corpus/SOURCES.md; expect S437), no literal or escaped pipe in any cell, kind docs, tier A scoped to the lane's git object reads, ISO opened date 2026-11-03, status mined, recheck 90d, used-by corpus/lessons/round-68.md,corpus/knowledge/gate-git-read-guards-r68.md.
+
+Report the URL, access date, <=25-word located quote, sha256 of the fetched bytes, the computed next id with its collision check, and the three drafts.""" ))
+
+ITEMS.append(("R68ScoutSources", "scout", """Open and bind the round's source independently of the scribes; verify the frozen recipe texts. Read-only.
+
+1. Fetch the pinned git v2.56.0 documentation for `git cat-file`: raw.githubusercontent.com/git/git/v2.56.0/Documentation/git-cat-file.adoc. Record URL, access date 2026-11-03, sha256, byte count and the <=25-word located quote (section + line) that grounds "cat-file reads objects" / the batch and pretty forms. Also confirm `git ls-tree` and `git show` docs at the same tag if you use them in the quote set.
+2. Verify the host git: `git --version` (expect 2.56.0) and that the tag exists at github.com/git/git (`git ls-remote https://github.com/git/git 'v2.56.0' 'v2.56.0^{}'`); report both object ids.
+3. Compute the next unused SOURCES id from corpus/SOURCES.md (rows 373 at round start, ids S001..S436 with gaps) and check the planned row: 11 columns, no literal/escaped pipe, kind docs, tier A, anchor names the file and line range at the tag (no `latest`/`main`), opened 2026-11-03, status mined, used-by names two paths that will exist. Report a duplicate-URL verdict for this canonical URL and any sibling-row precedent at the same repository.
+4. Verify the three frozen C1 recipe texts against committed bytes, quoting the file:line of each occurrence and its count in BOTH quality/counters/c2-r67-landing-controls.py at 510100c8 and quality/counters/c1-r68-landing-controls.py in the lane worktree (the L1's draft): `mr_killed = bool(`, `mz_killed = mz_rc != 0`, `killed = int(mz_killed) + int(mr_killed)`. Report every count, and whether any recipe text also occurs in a second place in either file.
+5. Name one rejected candidate with reason + flip condition for the lesson's Gate (e.g. a docs page that documents the config plane rather than the object read).
+Deliver a short table: item | exact locator | observed | verdict.""" ))
+
+ITEMS.append(("R68ConnSiblings", "connector", """Sibling-overlap and adoption scan (read-only; no writes outside your seat dir).
+
+1. Search sibling lane repos under /home/vgpnk/Projects/shokunin for prior art on (a) git environment guards / GIT_NO_REPLACE_OBJECTS / replacement-ref controls, (b) harness self-mutation (a selftest that kills its own kill-credit), (c) git-reader censuses over a gate population. Report file:line hits and whether mado's moves duplicate, should cite them, or are novel; name the owning lane.
+2. Read /home/vgpnk/Projects/shokuknow/merge/mado/MERGE-REPORT.md and SOURCES.append.md (read-only; run no campaign tool there). Report whether any staged theme fits C1/C2 as evidence (not as a new claim), and whether the package's rows collide with the lane registry ids (derive the collision count with the 0-3-space tolerant pattern from the round prompt; do not run campaign tools).
+3. Read /home/vgpnk/Projects/shokunin/mado-shokunin/considerthese/2026-10-28.md (and any newer file). Name at most ONE still-unimplemented proposal that fits this round's claims without widening them, say which and why, or say none. Remember the r67 execution of proposal 2: check whether anything remains.
+4. Report adjacent-domain evidence mado must not absorb (name the owning lane): e.g. secrets in env construction (kagi), session material (mori), package state (tsukuroi).
+Deliver a table: item | source file:line | fit (fits/does-not-fit) | owning lane | what mado does about it.""" ))
+
+ITEMS.append(("R68RevC1", "reviewer", """Adversarial review of C1 (read the frozen declaration first). Run everything yourself; never accept self-attestation.
+
+- Run `python3 quality/counters/c1-r68-selfmutants.py --selftest` and the frozen counting command at `--rev 510100c8 --base-rev 510100c8`; report exact lines and rc. The candidate harness is the L1's worktree file quality/counters/c1-r68-landing-controls.py — commit it into a scratch repo to score it at a revision (copy the file into a scratch `D=$(mktemp -d)`, `git init`, commit, run the counter with `--repo "$D" --rev HEAD --base-rev 510100c8` and `--repo` pointing at the lane for the base harness — the counter extracts from one repo per run, so run the candidate and base legs as the counter supports and report what it actually scores).
+- Reproduce each recipe by hand: apply S1/S2/S3 to a copy of the harness, run `--selftest`, report rc and the failing assertion. Then try to BREAK the selftest: build at least four harness mutations the selftest does NOT catch, e.g. (a) `forged_credit` always True, (b) `control_ok` always True, (c) `outcome_exit` returning 0 always, (d) the scripted case's expected line edited to match a mutated output. For each: killed or survived, with the exact edit and the selftest rc. Say plainly which credit-forgeries survive — that is the claim's boundary.
+- Verify the scripted cases exercise the real body: with the scripted `run` in place, show that `measure()` reaches `build_r_fixture`, both mutant copies and `run_r_child` (grep the printed evidence lines in the captured output), and that no subprocess is spawned (`--selftest` must not call subprocess.run — quote the selftest code that enforces it).
+- Verify the printed contract line is the one the counter asserts, and that `--base-rev` genuinely scores the r67 harness (quote the extracted sha256; it must equal a4376fa739405a213ccd59847620be02bec5fd2a70584aa59dfbc916022d9b58).
+Report per-check command + rc + line, survivor list, and a verdict: C1 predicate sound/unsound as bounded.""" ))
+
+ITEMS.append(("R68RevC2", "reviewer", """Adversarial review of C2 (read the frozen declaration first). Run everything yourself.
+
+- Run the frozen counting command at `--rev 510100c8` (expect unguarded=12) and against a scratch repo carrying the L1's repaired gates (copy the lane's 20 `quality/check-*.py` files, plus the L1's drafts for the 12 repaired files — read them from the lane worktree — commit, score). Report exact lines and rc.
+- Attack the census: construct at least five ways to make a gate pass without a real guard, e.g. a comment, a docstring, an unrelated dict passed to `env=`, a guard inside a dead `if False:` branch, a guard in a module that is never called, an `env` variable that is later overwritten without the key. For each: does the census say guard=yes or no? Name the false positives and false negatives you find with the reproduction command.
+- Verify the reader rule cannot be satisfied by deleting reads: take one repaired gate, delete its object-read verbs entirely, and show the census reports reader=no (the population/reader counts are part of the frozen target — explain what the counter does, not what it should do).
+- Verify no behavior drift: for each of the 12 repaired gates run its own `--selftest` (where supported) and one real read-only invocation on the lane at the freeze revision; compare output and exit status with the committed file's run. Report every difference, even cosmetic.
+- Verify one hazard end-to-end yourself: scratch repo, planted `refs/replace` on a blob a gate reads, base bytes read forged, repaired bytes read real. Report the commands and outputs.
+Report per-check command + rc, false positives/negatives with reproductions, behavior drifts, and a verdict: C2 predicate sound/unsound as bounded.""" ))
+
+ITEMS.append(("R68CriticClaims", "critic", """Falsify the two frozen claims without building them (read the declaration, the baseline receipt and the counters first).
+
+1. Do-nothing control: does the pre-r68 state already meet either target? Re-run both frozen counting commands at 510100c8 and cite the numbers. If a target is reachable without the claimed work, say so with the command.
+2. Predicate-literal binding: compare the declaration's frozen sentences and printed labels character-for-character with the counters' output formats (CONTRACT_RE), the recipe texts, the control JSON cases, and the exit rules. Name every mismatch (the round-67 routed defect class: a frozen sentence that does not describe the delivered observable — notably the M-R kill rule that said "exits nonzero" while the delivered observable was a forged-credit flip).
+3. Causal separability: prove each claim can land and be measured without the other (file sets, commands, scratch).
+4. Axis attribution: is C1 calibration and C2 operability? Name any misattribution and the surface actually changed. Check the declaration's axis-posture paragraph against SCORECARD.md's published values.
+5. No-harm: enumerate what existing behavior changes (12 gate envs, a new harness file, two new counters) and every caller/invocation that could break; `grep -rn` the lane for each gate's invocation sites and say which round processes would notice a change.
+6. Claim sizing: no universal clauses; both targets are finite denominators; kill rules stated before data. Flag any all/every/complete language.
+7. Chronology: from git log and paths, is the pre-control baseline commit (2ca2bec3) before the freeze commit (e0727cda) and is the freeze before the wave launch (`.ufo/waves/round-68/w1.ready`)? Cite the commits and the ready file time.
+Report blockers B1..Bn with file:line and a reproduction command; no prose verdicts without evidence.""" ))
+
+ITEMS.append(("R68MutBattery", "mutation-tester", """Independent mutation testing of the two counters (scratch only; never edit lane files).
+
+- C1 counter `quality/counters/c1-r68-selfmutants.py`: build at least five single-point mutants: (a) skip the base-rev leg, (b) count a `recipe=none` as killed, (c) count a mutant whose selftest rc is 0 as killed, (d) accept an unmutated selftest rc != 0 as green, (e) drop the `applied` count from the printed line. For each: does the counter's own `--selftest` kill it? Then run the mutant counter on a scratch candidate/base pair and record whether its printed contract line/exit changes.
+- C2 counter `quality/counters/c2-r68-reader-guard.py`: at least six mutants: (a) guard rule accepts any dict key anywhere, (b) guard rule accepts a comment mention, (c) reader rule drops the verb requirement, (d) the population regex widened to all quality/*.py, (e) `unguarded` computed as 0 unconditionally, (f) controls score ignored in the verdict. For each: selftest killed/survived, plus the printed line and rc against a scratch repo with known guards.
+- Verify the frozen targets are real: at the base rev the counters must print TARGET_MISSED rc 1; on a scratch candidate tree with the repairs the census must print unguarded=0.
+- Do not pad the count; report every survivor as a named residual with its diff digest and a one-line flip condition. No universal fault-coverage claim.
+Deliver a kill matrix table and the scratch cleanup receipt.""" ))
+
+
+def main():
+    doc = {"wave": "w1", "reportDir": ".ufo/waves/round-68/w1", "context": CONTEXT,
+           "items": [{"name": n, "role": r, "prompt": prompt(n, b)} for n, r, b in ITEMS]}
+    path = os.path.join(WAVE_DIR, "w1-spec.json")
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write(json.dumps(doc, indent=1) + "\n")
+    roles = {}
+    for _, r, _ in ITEMS:
+        roles[r] = roles.get(r, 0) + 1
+    print("items", len(ITEMS), "chars", sum(len(i["prompt"]) for i in doc["items"]), "roles", roles)
+
+
+if __name__ == "__main__":
+    main()
