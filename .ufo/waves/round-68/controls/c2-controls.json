@@ -1,0 +1,74 @@
+{
+ "round": 68,
+ "claim": "c2",
+ "frozen": "2026-11-03",
+ "predicate": "reader = git token AND a quoted object-read verb; guard = GIT_NO_REPLACE_OBJECTS constructed in an env= value or an env-named binding",
+ "cases": [
+  {
+   "name": "guarded-env-dict",
+   "src": "def git_env():\n    env = {\"PATH\": \"/usr/bin\", \"GIT_NO_REPLACE_OBJECTS\": \"1\"}\n    return env\n\n\ndef run(repo):\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=git_env())\n",
+   "expect_reader": true,
+   "expect_guard": true
+  },
+  {
+   "name": "unguarded-env-dict",
+   "src": "def run(repo):\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"],\n                   env={\"PATH\": \"/usr/bin\", \"GIT_OPTIONAL_LOCKS\": \"0\"})\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "inherited-env",
+   "src": "def run(repo):\n    subprocess.run([\"git\", \"-C\", repo, \"cat-file\", \"-p\", \"HEAD:a\"])\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "comprehension-env",
+   "src": "def git(repo, *args):\n    return subprocess.run([\"git\", \"-C\", repo] + list(args), capture_output=True,\n                          env={k: v for k, v in os.environ.items()\n                               if not k.startswith(\"GIT_\")})\n\n\ndef head(repo):\n    return git(repo, \"show\", \"HEAD:a\")\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "subscript-store-guard",
+   "src": "def git_env():\n    env = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\n    env[\"GIT_OPTIONAL_LOCKS\"] = \"0\"\n    env[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n    return env\n\n\ndef run(repo):\n    subprocess.run([\"git\", \"-C\", repo, \"ls-tree\", \"-r\", \"HEAD\"], env=git_env())\n",
+   "expect_reader": true,
+   "expect_guard": true
+  },
+  {
+   "name": "module-const-guard",
+   "src": "GIT_ENV = {k: v for k, v in os.environ.items() if not k.startswith(\"GIT_\")}\nGIT_ENV[\"GIT_NO_REPLACE_OBJECTS\"] = \"1\"\n\n\ndef git(repo, *args):\n    return subprocess.run([\"git\", \"-C\", repo] + list(args), env=GIT_ENV)\n\n\ndef head(repo):\n    return git(repo, \"show\", \"HEAD:a\")\n",
+   "expect_reader": true,
+   "expect_guard": true
+  },
+  {
+   "name": "comment-only-mention",
+   "src": "# The guard GIT_NO_REPLACE_OBJECTS is deliberately not set here.\ndef run(repo):\n    subprocess.run([\"git\", \"-C\", repo, \"rev-parse\", \"HEAD\"])\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "docstring-only-mention",
+   "src": "\"\"\"Reads objects with git show; GIT_NO_REPLACE_OBJECTS is not set.\"\"\"\n\n\ndef run(repo):\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=dict(os.environ))\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "dict-keyword-guard",
+   "src": "def run(repo):\n    env = dict(os.environ, GIT_NO_REPLACE_OBJECTS=\"1\")\n    subprocess.run([\"git\", \"-C\", repo, \"log\", \"-1\"], env=env)\n",
+   "expect_reader": true,
+   "expect_guard": true
+  },
+  {
+   "name": "unrelated-dict-as-env",
+   "src": "def run(repo):\n    labels = {\"GIT_NO_REPLACE_OBJECTS\": \"documented\"}\n    subprocess.run([\"git\", \"-C\", repo, \"show\", \"HEAD:a\"], env=labels)\n",
+   "expect_reader": true,
+   "expect_guard": false
+  },
+  {
+   "name": "non-reader",
+   "src": "def build(repo):\n    subprocess.run([\"git\", \"-C\", repo, \"init\", \"-q\"])\n    subprocess.run([\"git\", \"-C\", repo, \"add\", \"-A\"])\n",
+   "expect_reader": false,
+   "expect_guard": false
+  }
+ ]
+}

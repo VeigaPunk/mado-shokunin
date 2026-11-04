@@ -1,0 +1,58 @@
+# round-68 pre-freeze control baseline (claim C1 and C2, attempt 1)
+# lane repo: /home/vgpnk/Projects/shokunin/mado-shokunin
+# base (pre-r68 tip): 510100c81e6cf63fec6be380c2f2f9c670f32cbc
+# captured 2026-11-03 before any round-68 candidate artifact exists in the lane.
+
+$ python3 -I quality/counters/c1-r68-selfmutants.py --selftest
+MADO_R68_SELFMUTANTS_SELFTEST: 26/26 assertions passed
+rc=0
+
+$ python3 -I quality/counters/c2-r68-reader-guard.py --selftest
+MADO_R68_READER_GUARD_SELFTEST: 17/17 assertions passed
+rc=0
+
+$ python3 -I quality/counters/c1-r68-selfmutants.py --repo . --rev 510100c81e6cf63fec6be380c2f2f9c670f32cbc --base-rev 510100c81e6cf63fec6be380c2f2f9c670f32cbc --scratch-root /fast/scratch/hyaku/mado-r68/l1/c1base
+MADO_R68_EXTRACT path=quality/counters/c1-r68-landing-controls.py state=absent rev=510100c81e6cf63fec6be380c2f2f9c670f32cbc
+MADO_R68_BASE_EXTRACT path=quality/counters/c2-r67-landing-controls.py bytes=30697 sha256=a4376fa739405a213ccd59847620be02bec5fd2a70584aa59dfbc916022d9b58 rev=510100c81e6cf63fec6be380c2f2f9c670f32cbc
+MADO_R68_SELFTEST_FIXTURE harness=base sha256=a4376fa739405a213ccd59847620be02bec5fd2a70584aa59dfbc916022d9b58 rc=0 assertions=47/47
+MADO_R68_SELF_MUTANT harness=base recipe=S1 find='mr_killed = bool(' occurrences=1 recipe_sha256=629b1b0386d2b879c619bc40bbd5482359dcba41d733037c38f24fc0cead571c rc=0 assertions=47/47 applicable=yes killed=no
+MADO_R68_SELF_MUTANT harness=base recipe=S2 find='mz_killed = mz_rc != 0' occurrences=1 recipe_sha256=77a277af7fef0d44515112e28dab7d6014c6c8f9a446e72538957fcf7f355d08 rc=0 assertions=47/47 applicable=yes killed=no
+MADO_R68_SELF_MUTANT harness=base recipe=S3 find='killed = int(mz_killed) + int(mr_killed)' occurrences=1 recipe_sha256=933b9c6ee74909f5eb989bb213dc8b3880db2462396c7f87ef063926acdfc9a0 rc=0 assertions=47/47 applicable=yes killed=no
+MADO_R68_BASE_CONTROL survivors=S1,S2,S3 killed=0/3 applied=3
+MADO_R68_SELFMUTANTS: selftest=absent killed=0/3 applied=0/3 base=0/3 verdict=TARGET_MISSED rev=510100c81e6cf63fec6be380c2f2f9c670f32cbc
+rc=1
+
+$ python3 -I quality/counters/c2-r68-reader-guard.py --repo . --rev 510100c81e6cf63fec6be380c2f2f9c670f32cbc --controls .ufo/waves/round-68/controls/c2-controls.json
+MADO_R68_READER file=quality/check-anchor-cover.py reader=yes guard=no
+MADO_R68_READER file=quality/check-axis-scores.py reader=yes guard=no
+MADO_R68_READER file=quality/check-control-receipts.py reader=yes guard=no
+MADO_R68_READER file=quality/check-counter-discrimination.py reader=no guard=no
+MADO_R68_READER file=quality/check-deliverables.py reader=yes guard=no
+MADO_R68_READER file=quality/check-evidence-pointers.py reader=yes guard=no
+MADO_R68_READER file=quality/check-freeze-order.py reader=yes guard=no
+MADO_R68_READER file=quality/check-index-rows.py reader=yes guard=no
+MADO_R68_READER file=quality/check-index.py reader=yes guard=no
+MADO_R68_READER file=quality/check-landed-contract.py reader=yes guard=no
+MADO_R68_READER file=quality/check-locators.py reader=no guard=no
+MADO_R68_READER file=quality/check-population.py reader=no guard=no
+MADO_R68_READER file=quality/check-r38-discrimination.py reader=no guard=no
+MADO_R68_READER file=quality/check-r55-controls.py reader=no guard=no
+MADO_R68_READER file=quality/check-r56-controls.py reader=no guard=no
+MADO_R68_READER file=quality/check-round-outcome-first.py reader=yes guard=no
+MADO_R68_READER file=quality/check-session-material.py reader=yes guard=no
+MADO_R68_READER file=quality/check-state-cite.py reader=no guard=no
+MADO_R68_READER file=quality/check-tool-ledger.py reader=yes guard=yes
+MADO_R68_READER file=quality/check-wave-done.py reader=yes guard=no
+MADO_R68_CONTROL name=guarded-env-dict reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=unguarded-env-dict reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R68_CONTROL name=inherited-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R68_CONTROL name=comprehension-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R68_CONTROL name=subscript-store-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=module-const-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=comment-only-mention reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R68_CONTROL name=docstring-only-mention reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R68_CONTROL name=dict-keyword-guard reader=yes guard=yes expect_reader=yes expect_guard=yes correct=yes
+MADO_R68_CONTROL name=unrelated-dict-as-env reader=yes guard=no expect_reader=yes expect_guard=no correct=yes
+MADO_R68_CONTROL name=non-reader reader=no guard=no expect_reader=no expect_guard=no correct=yes
+MADO_R68_READER_GUARD: population=20 readers=13 guarded=1 unguarded=12 controls=11/11 verdict=TARGET_MISSED rev=510100c81e6cf63fec6be380c2f2f9c670f32cbc
+rc=1
