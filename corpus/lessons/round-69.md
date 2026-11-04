@@ -77,6 +77,15 @@ S436 with its own tag-pinned quotes, and this round cites it without re-opening 
 must re-quote `git-replace.adoc` bytes from a different tag (for example when the host git leaves
 2.56.0) re-opens it as a superseding row rather than a duplicate.
 
+Registry cell changes (old → new, logged per `CORPUS.md` rule 2):
+
+- S436 `used-by`: `corpus/lessons/round-67.md, corpus/knowledge/replace-ref-citation-boundaries-r67.md,
+  corpus/knowledge/gate-git-read-guards-r68.md` → the same list plus
+  `corpus/knowledge/gate-guard-dominance-r69.md` (the new entry re-quotes the replacement rule).
+- S437 `used-by`: `corpus/lessons/round-68.md,corpus/knowledge/gate-git-read-guards-r68.md` → the same
+  list plus `corpus/knowledge/gate-guard-dominance-r69.md` (the new entry cites the object-read verb
+  family). No `status` and no `recheck` cell changed; S438 is a new append.
+
 Assimilation: none this round — no `merge/mado/` theme was taken. `considerthese/2026-10-28.md`
 proposal 4 (a live-tool table) is named in the round report as an unmined proposal, not adopted;
 it adds no claim slot and no registry row.
