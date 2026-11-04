@@ -118,3 +118,33 @@ Two new rows opened this round, fetched three times each with receipts under
 `rejected` row (the round-71 verifier's routed defect: `stdtypes.rst` under the 3.14 tree lives
 at `Doc/builtins/stdtypes.rst`, re-opened this round). Duplicate-id and duplicate-URL checks run
 before any append; the registry census must exit 0 at round end.
+
+## Erratum against the frozen declaration (round 72; append-only)
+
+Written after the wave's reviews, before the round report. No predicate, counter, kill rule,
+target or control label above is changed; the frozen eight-case scores stand at the repaired
+content (`.ufo/waves/round-72/receipts/re-measure-r72.txt`).
+
+1. **"Last parsed" is implemented literally.** `RevC1` F1 and `CriticClaims` Counterexample B
+   showed the first implementation selected the last *prefix-matching* line and then rejected
+   it, so a trailing `MADO_LANDING_COUNTERS_SELFTEST: runner cleanup complete` suppressed an
+   earlier valid summary. The repair scans backward for the last line that fully parses; both
+   repros are pinned as harness selftest regressions (87/87). Red-before/green-after:
+   `.ufo/waves/round-72/receipts/c1-r72-repair.txt` (`credit` False→True, `summary_green`
+   False→True).
+2. **The failure-line grammar is the production emitter's.** `RevC1` F2 showed
+   `count_fails`'s `startswith("SELFTEST FAIL")` accepted `SELFTEST FAILURE: …`. The repair
+   counts only `^SELFTEST FAIL [0-9]+: ` (the grammar `quality/landing-counters.sh:18` emits);
+   red-before/green-after in the same receipt (`credit` True→False; `count_fails` 1→0).
+3. **Stream precedence is a declared limit, not a claim.** `RevC2`'s Medium finding: the harness
+   reads `stdout + stderr` (the r71 capture order), so an stderr summary precedes every stdout
+   summary in the concatenation whatever the real emission order; "last" means last in that
+   captured concatenation, not interleaved chronological last. Separate pipes cannot be
+   interleaved after the fact; an interleaving witness is future ground.
+4. **The C2 eight-case set is finite.** It contains no zero-denominator case and no
+   valid-then-garbled tail (`CriticClaims` Counterexample A/B): the successor's `total > 0`
+   guard and the repaired parse are covered by its selftest (25/25), not by the frozen eight.
+   A later round adds those controls under a new frozen denominator, never by widening this one.
+5. **Setup failure after a green summary is `TARGET_MET` by design** (`RevC2` informational):
+   the verdict is the summary-and-kills predicate, never a claim that the child's whole
+   execution succeeded; the receipt records the rc as evidence.

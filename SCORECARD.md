@@ -4038,3 +4038,15 @@ report; a seat whose output is empty is an evidence gap, never backfilled (QUALI
 
 ### Axis table re-derived at the landing tip (`receipts/harm-watch-r72.txt` and `quality/check-axis-scores.py`):
 navigation 87/87; calibration resolved-active 86/86; operability selftest 12/12, ledger 125/125.
+
+### Review-driven repair (round 72, append-only)
+
+At `4f598cfd` the harness implements the frozen sentence literally: `last_parsed_summary()`
+scans backward for the last full `p/n` match (a malformed trailing marker cannot suppress it)
+and `count_fails()` counts only the production grammar `SELFTEST FAIL <i>: `, both from the
+wave's `R72RevC1` F1/F2 and `R72CriticClaims` Counterexample B. Red-before/green-after:
+`.ufo/waves/round-72/receipts/c1-r72-repair.txt`; the frozen eight-case sets score identically
+after the repair (`cases=8 correct=8 base_correct=6` and `cases=8 correct=8 base_correct=4`,
+`receipts/re-measure-r72.txt`). Declared limits unchanged: stream precedence is the captured
+concatenation order (`R72RevC2` Medium), and the C2 eight-case set carries no zero-denominator
+case (`R72CriticClaims` Counterexample A) — future controls, never a widening of this round's.

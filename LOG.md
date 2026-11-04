@@ -3575,3 +3575,11 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   census exit 0; frozen instrument blob ids unchanged (`.ufo/waves/round-72/receipts/harm-watch-r72.txt`).
   No config tree, compositor, service or sibling repo was written; no pacman transaction; no
   tool installed or upgraded.
+- Review-driven repair at `4f598cfd` (this entry, appended): the successor harness now
+  implements "last parsed summary" literally (a malformed trailing marker cannot suppress the
+  last parseable one) and counts only the production fail grammar `SELFTEST FAIL <i>: ` —
+  both from the wave's `R72RevC1` F1/F2 and `R72CriticClaims` Counterexample B, with the
+  red-before/green-after receipt `.ufo/waves/round-72/receipts/c1-r72-repair.txt` and the
+  frozen eight-case sets re-scored identically (`re-measure-r72.txt`: 8/8 vs 6/8 and 8/8 vs
+  4/8). The declaration carries an append-only erratum naming the stream-precedence limit and
+  the finite-set statements; no predicate, control or target changed.

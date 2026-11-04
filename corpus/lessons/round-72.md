@@ -103,3 +103,21 @@ round start (380) and at round end (383), with the held W04 superseding-URL warn
 **Spot-check duty.** The in-round wave seats are the lane's own; the non-author spot-check of
 this round's gate decisions (at least one admit and one reject) is the closure's, per LEARNING.md.
 The two admits and the one reject are handed over with their URLs, dates and quotes above.
+
+## Addendum — wave review findings and the repair (append-only)
+
+The wave's `R72RevC1` (F1 P2, F2 P3) and `R72CriticClaims` (Counterexample B) found the
+implementation wider/narrower than the frozen sentence: the first successor selected the last
+prefix-matching line and then rejected it, so a malformed trailing marker suppressed a valid
+summary; and `count_fails` counted `SELFTEST FAILURE:` as a fail line. Repaired at `4f598cfd`:
+`last_parsed_summary()` scans for the last full match, `count_fails()` matches the production
+grammar `SELFTEST FAIL <i>: `, both repros are selftest regressions, and the red-before/green-
+after pair is `.ufo/waves/round-72/receipts/c1-r72-repair.txt`. The frozen eight-case sets
+score identically at the repair (`.ufo/waves/round-72/receipts/re-measure-r72.txt`).
+
+`R72RevC2`'s Medium finding stands as a **declared limit**: the harness reads `stdout + stderr`
+in the r71 capture order, so "last" is last in the captured concatenation, not interleaved
+chronological last; separate pipes cannot be interleaved after the fact. `CriticClaims`
+Counterexample A stands as a **finite-set statement**: the C2 eight cases carry no
+zero-denominator case (the successor's `total > 0` guard is selftest-covered, not frozen-set
+covered), and a later round adds those controls under a new denominator.
