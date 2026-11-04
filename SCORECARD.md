@@ -3810,3 +3810,64 @@ disposition is recorded here rather than smoothed.
 | B9 | "neither is reachable without the work" is falsified by B1 | correction applied to the axis-posture paragraph (above) |
 | B10 | the cited source grounds the *flag*, while the rule keys on the *environment* | clarified: `--no-replace-objects` is documented as equivalent to exporting the variable, which is exactly why an environment that reaches the child is the object the census must count; the entry's §5 says the value is not interpreted |
 | B11 | C2's `10 × guarded / readers` cannot move (13/13 both ends) | the C2 row now scores the discrimination move `10 × controls / 11` (7.0000 → 10.0000); the population fraction stays as harm-watch only |
+
+## Round 70 — real-children kill credit and the guard carrier set (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-70/claims-declaration-r70.md`, landed
+`bc18399b409a6390a6c6e8831bf9ad2dacbbf189`; base `b37a5aec4ea03f2223d8e09dd5d386d055c24179`.
+Frozen control set: `.ufo/waves/round-70/controls/c2-controls-r70.json` (17 cases, sha256
+`29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff`). Measured content for both claims:
+`5adba5a92a8d58eb76533b39a9216d8e85d48fbc` (receipt `.ufo/waves/round-70/measurement-r70.txt`); the
+receipt-bearing tip is `71caa8b7d3eb6efa1d5a701a1467b1cfec50f0ab` (ledger rows and wave evidence). Axis
+posture at round start: every published finite sub-axis at its measured maximum (navigation 81/81,
+calibration 86/86, operability 12/12 at `379e97f8`; gate `MADO_SELFTEST: 460/460`), so no axis is
+distinctly lowest; the stagnation nudge does not apply (last capability r69, window N=3, gap 0). Both
+claims take new finite denominators and both do-nothing controls miss their targets (1/3 and 13/17).
+
+| Claim / axis | Counting command (REV is before or the measured content) | Before → after | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the landing harness credits a kill only on a parsed failed assertion, proven with real children | `python3 -I quality/counters/c1-r70-real-children.py --repo . --rev REV --base-rev b37a5aec4ea03f2223d8e09dd5d386d055c24179 --scratch-root DIR` | at base: the counter and the r70 harness are absent (`absent_at_base=yes`); the held harness scores the three real-child scenarios `mz=pass` on genuine **and** on crash and garbage → `base_correct=1/3` (3.3333); at `5adba5a9`: `cases=3 correct=3 base_correct=1 verdict=TARGET_MET` rc 0; bounded `10 × correct / 3` 3.3333 → 10.0000 (the do-nothing control keeps 1/3) | improved on the frozen three-scenario set |
+| C2 **operability** — the guard census counts alias, attribute, splat and constant-key carriers while keeping the git-launch negatives | `python3 -I quality/counters/c2-r70-carriers.py --repo . --rev REV --base-rev b37a5aec… --controls .ufo/waves/round-70/controls/c2-controls-r70.json --scratch-root DIR` | at base: the counter is absent; the held round-69 classifier scores the same 17 frozen cases `13/17` (7.6471) — it misses `alias-carried`, `attribute-carried`, `splat-carried`, `constant-key`; at `5adba5a9`: `population=20 readers=13 guarded=13 unguarded=0 controls=17/17 base_controls=13/17 verdict=TARGET_MET` rc 0; bounded `10 × controls / 17` 7.6471 → 10.0000 | improved on the frozen seventeen-case set |
+| — | coverage / admitted-note reachability (unchanged rubric) | `quality/check-index.py` | 81/81 both ends | unchanged (harm watch) |
+| — | operability / hermetic gate | `bash tools/mado-verify.sh --selftest` | 460/460 both ends | unchanged (harm watch) |
+| — | operability / instrument ledger | `python3 quality/check-tool-ledger.py --repo . --rev REV` | 119 rows, 119 population, 0 uncovered at `71caa8b7` | improved (three new instruments registered) |
+| — | calibration / frozen round-69 claim | `python3 quality/counters/c1-r69-paired-recipes.py --repo . --rev REV --base-rev b37a5aec…` | `killed=3/3 applied=3/3 base=0/3 TARGET_MET` at the round-70 tip | unchanged (the r69 harness stays byte-frozen) |
+
+**Evidence.** `.ufo/waves/round-70/measurement-r70.txt` (both counters, both ends, before-state proofs),
+`control-baseline-r70.txt` (the two do-nothing controls before freeze), `harm-watch-r70.txt` (gate 460/460,
+the frozen r69 counter TARGET_MET, landing GREEN on the round's committed artifacts, axis table
+`checked=3 mismatched=0`, every instrument selftest), `w1/` (the wave's seat reports), `proto/`
+(the fixture lane the three scenarios ride).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Real-child kill-credit battery + guard carrier census | Score a landing harness's kill credit with **real** `bash` children in three states (a genuine failed assertion, a crash with no summary, a garbled summary) and require the credit to follow the parsed assertion summary rather than an exit status; and classify a guard that reaches a git launch through an alias, an attribute, a `**`-splatted module mapping or a module string constant used as the subscript key, with the held eleven-case set still carried forward byte-identically | `.ufo/waves/round-70/measurement-r70.txt`; `quality/counters/c1-r70-real-children.py`, `c1-r70-landing-controls.py`, `c2-r70-carriers.py`; `corpus/knowledge/landing-kill-credit-real-children-r70.md`, `corpus/knowledge/guard-carrier-shapes-r70.md` | 70 |
+
+### Limits and conformance
+
+The three scenarios are a named set, not a fault-coverage claim; the fixture lane is the counter's own
+instrument, not the lane's real landing instrument; a harness whose decisions merely agree on these
+three inputs is not distinguished from a correct one. The carrier rule is a bounded syntactic
+approximation (one module, one hop, one-level `**` of a module-level literal mapping, no attribute chain
+longer than one dotted name in the guarded position, no path-sensitivity beyond a literal-false branch)
+and does not interpret the guard's value. C1's intended CPython `subprocess.rst` row was **refused as a
+duplicate**: the URL is already S108 (same bytes, 61,603 B, sha256 `05cd782c…`), so C1 instead rests on
+the held S435 (Bash exit-status vocabulary: 126/127 execution failures, 128+N signals) and the two new
+C2 rows S439/S440 are the round's opened ground. Curation: SOURCES 375 → 377 rows (two new A/docs/mined
+rows, no existing cell changed except `used-by`). Round shape: one v1 wave, seat counts and dead seats in
+the report. Outside-lane closure owns admission, the trade/no-harm judgment and promotion.
+
+### Planned (round 71; intent only)
+
+1. C1's next finite set: a child whose summary parses but whose *stdout* also carries a second summary
+   (the `last_summary` choice), and a real child that writes the summary to stderr only — a new
+   predicate, not an edit of this one.
+2. C2's next finite set: `dict(**GUARD)` call form, a two-hop alias, and an attribute carried through a
+   second object (`runner.env`) — a new control set again.
+3. The open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.
+
+### Axis table re-derived at the round-70 records (`harm-watch-r70.txt` and `quality/check-axis-scores.py`):
+navigation 81/81; calibration resolved-active 86/86; operability selftest 12/12, ledger 119/119.

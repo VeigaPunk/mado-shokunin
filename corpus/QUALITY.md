@@ -699,3 +699,40 @@ Limits: the scripted-case probe proves the recipe changes a synthetic line, not 
 detector would catch the defect; the dominance rule is a bounded syntactic approximation (one
 module, one hop, no alias/attribute/container flow, no path-sensitivity beyond a literal-false
 branch) and does not interpret the guard's value.
+
+## Criteria from the round-70 real-children credit and the round-69 record defects (round 70)
+
+**112. An append-only record edit is anchored to the round whose heading it sits under, and a
+round's commit list is complete against the range it claims.**
+(a) A block appended to `LOG.md` or `SCORECARD.md` must sit under the heading of the round that
+produced it; an insertion that lands inside another round's entry is an organization defect even
+when no prior byte is deleted, because it misattributes one round's facts to another. (b) A
+round's Landed-changes table is complete iff the number of enumerated content commits equals
+`git rev-list --count <base>..<round tip>`, so a reader can re-derive the list with one command
+rather than trusting prose.
+Shown able to fail: the round-69 spot-check (defects 1–2) found the same 10-line block inside the
+Round 67 entry (`LOG.md:3257-3266`) and the Round 68 entry (`LOG.md:3314-3323`) as well as its own
+(`LOG.md:3396-3405`), all introduced by `139f4801`, and found `b9b70a09` in no report, LOG or
+SCORECARD row (`grep -rn b9b70a09` → rc 1). The round-70 sweep is the command below; at the
+round-70 tip it prints one block per round heading.
+Limits: the count rule proves that every commit in range is enumerated, not that each is
+attributed to the right round; a commit that changes no listed path still counts.
+
+**113. A kill credit rests on a parsed failed assertion, not on an exit status, and its
+real-children leg is scored with real child processes.**
+(a) An instrument that credits a mutation ("killed", "pass") from a child's exit status alone is
+crediting a process outcome, not the check: the credit requires the child's own summary line to
+parse and to report at least one failed assertion; a crash (no summary), a garbled summary and a
+summary reporting no failure earn no credit, and the leg then reports a miss. (b) The
+real-children leg is scored with real child processes in at least the crash and unparseable
+positions; scripted stand-ins alone leave the hazard unevidenced.
+Shown able to fail: the frozen round-69 harness credits `mz=pass` for a crash (rc 2, no summary)
+and for a garbled summary (rc 1, `???`) on the three real-child scenarios —
+`base_correct=1/3` in `.ufo/waves/round-70/control-baseline-r70.txt` § C1 — while the round-70
+harness scores `cases=3 correct=3` at `5adba5a9` (`measurement-r70.txt`).
+Recheck: `python3 -I quality/counters/c1-r70-real-children.py --repo . --rev REV --base-rev
+b37a5aec4ea03f2223d8e09dd5d386d055c24179 --scratch-root DIR`.
+Limits: the three scenarios are named ones, not fault coverage; the fixture lane is the counter's
+own instrument; a summary that parses with `p < n` is credited even if the failing assertion is
+unrelated to the frozen recipe; a harness whose decisions merely agree on these three inputs is
+not distinguished from a correct one.
