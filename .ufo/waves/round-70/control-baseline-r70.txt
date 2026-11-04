@@ -1,0 +1,51 @@
+# round-70 pre-freeze do-nothing controls (measured 2026-11-04T02:26:28Z)
+# base rev: b37a5aec4ea03f2223d8e09dd5d386d055c24179
+
+## C2: the held round-69 classifier on the round-70 17-case set
+$ python3 - (runpy.run_path quality/counters/c2-r69-guard-dominance.py) classify over .ufo/waves/round-70/controls/c2-controls-r70.json
+== .ufo/waves/round-69/controls/c2-controls-r69.json cases=11 sha256=975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9
+  guarded-inline                     reader=yes guard=yes expect=(True,True) OK
+  value-position-only                reader=yes guard=no  expect=(True,False) OK
+  dead-branch-only                   reader=yes guard=no  expect=(True,False) OK
+  uncalled-helper                    reader=yes guard=no  expect=(True,False) OK
+  overwritten-env                    reader=yes guard=no  expect=(True,False) OK
+  update-guard                       reader=yes guard=yes expect=(True,True) OK
+  subscript-guard                    reader=yes guard=yes expect=(True,True) OK
+  module-constant                    reader=yes guard=yes expect=(True,True) OK
+  producer-helper                    reader=yes guard=yes expect=(True,True) OK
+  argv-name-flow                     reader=yes guard=yes expect=(True,True) OK
+  mention-only                       reader=yes guard=no  expect=(True,False) OK
+  score=11/11
+== .ufo/waves/round-70/controls/c2-controls-r70.json cases=17 sha256=29947b4ce5890f5c977f3ec74bafd14ba12b0d581dcb03ef1e3b637017a778ff
+  guarded-inline                     reader=yes guard=yes expect=(True,True) OK
+  value-position-only                reader=yes guard=no  expect=(True,False) OK
+  dead-branch-only                   reader=yes guard=no  expect=(True,False) OK
+  uncalled-helper                    reader=yes guard=no  expect=(True,False) OK
+  overwritten-env                    reader=yes guard=no  expect=(True,False) OK
+  update-guard                       reader=yes guard=yes expect=(True,True) OK
+  subscript-guard                    reader=yes guard=yes expect=(True,True) OK
+  module-constant                    reader=yes guard=yes expect=(True,True) OK
+  producer-helper                    reader=yes guard=yes expect=(True,True) OK
+  argv-name-flow                     reader=yes guard=yes expect=(True,True) OK
+  mention-only                       reader=yes guard=no  expect=(True,False) OK
+  alias-carried                      reader=yes guard=no  expect=(True,True) MISS
+  attribute-carried                  reader=yes guard=no  expect=(True,True) MISS
+  splat-carried                      reader=yes guard=no  expect=(True,True) MISS
+  constant-key                       reader=yes guard=no  expect=(True,True) MISS
+  guarded-env-for-a-non-git-call     reader=yes guard=no  expect=(True,False) OK
+  git-called-without-env             reader=yes guard=no  expect=(True,False) OK
+  score=13/17
+rc=0
+
+## C1: the held round-69 harness on the three real-child scenarios
+$ python3 -I quality/counters/c1-r69-landing-controls.py --repo <fixture> --rev <mode-rev> --scratch-root <dir>
+--- scenario genuine (fixture rev d3c3a5c1abd2112693e6144db874867e35be0799)
+MADO_R69_MUTANT M-Z path=quality/landing-counters.sh clause_count=1 recipe=clause-delete removed='[ "$citations" -gt 0 ] && ' from_sha256=96cf148ea48964331fb4ca19557e322a348127687b1b3a6492d1b3a3b7a9a2cc rc=1 failed_assertions=1 assertions=1/2 killed=yes sha256=8dddf7cf35ec23728c609c8ddd38ece43a82c9ba22faca59d56cfe9b7b0c01c5
+MADO_R69_LANDING_CONTROLS: selftest=0 mz=pass mr=pass killed=2/2 baseline=0/2 verdict=TARGET_MET rev=d3c3a5c1abd2112693e6144db874867e35be0799
+--- scenario crash (fixture rev ef281cd47fd745610711c1151308ca40e41e11e9)
+MADO_R69_MUTANT M-Z path=quality/landing-counters.sh clause_count=1 recipe=clause-delete removed='[ "$citations" -gt 0 ] && ' from_sha256=e8562c3fa3e4e3c0747f8354192bb76f9ea5a7cea4a39bbd625f7912ecc3c33c rc=2 failed_assertions=0 assertions=none killed=yes sha256=bd0c0b2bfe6bcbcf5c318bb7c5500e4ae52e8839ae6cb135f633cab9dbe1feb9
+MADO_R69_LANDING_CONTROLS: selftest=0 mz=pass mr=pass killed=2/2 baseline=0/2 verdict=TARGET_MET rev=ef281cd47fd745610711c1151308ca40e41e11e9
+--- scenario garbage (fixture rev aa47dea0c93bd175756bd62c106c384b83109360)
+MADO_R69_MUTANT M-Z path=quality/landing-counters.sh clause_count=1 recipe=clause-delete removed='[ "$citations" -gt 0 ] && ' from_sha256=85dcd09cd619562c4a4f60b212395ccab1581fd8b5a4fb90f14bb94ba4216ff2 rc=1 failed_assertions=0 assertions=none killed=yes sha256=0a8aa1d40e2f7a8b22cf6a855c3d704ce400baec60bad19e85dd9cefde051d58
+MADO_R69_LANDING_CONTROLS: selftest=0 mz=pass mr=pass killed=2/2 baseline=0/2 verdict=TARGET_MET rev=aa47dea0c93bd175756bd62c106c384b83109360
+--- score: genuine pass=correct, crash pass=INCORRECT, garbage pass=INCORRECT -> base_correct=1/3

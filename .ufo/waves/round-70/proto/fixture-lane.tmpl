@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# fixture lane for the r70 real-children probe (mode: __MODE__)
+set -u
+MODE=__MODE__
+verify() {
+  local citations=$1 resolved=$2 missing=$3
+  [ "$citations" -gt 0 ] && [ "$citations" -eq "$((resolved+missing))" ] || return 1
+  if [ "$missing" -eq 0 ]; then return 0; fi
+  return 1
+}
+N=0
+P=0
+check() { N=$((N+1)); if [ "$2" = "$3" ]; then P=$((P+1)); printf 'SELFTEST ok %d: %s\n' "$N" "$1"; else printf 'SELFTEST FAIL %d: %s want=%s got=%s\n' "$N" "$1" "$2" "$3"; fi; }
+verify 1 1 0; check 'one citation resolves' 0 "$?"
+zero=0
+verify 0 0 0 || zero=1
+if [ "$zero" -eq 1 ]; then
+  check 'zero citations refused' 1 1
+  printf 'MADO_LANDING_COUNTERS_SELFTEST: %d/%d assertions passed\n' "$P" "$N"
+  [ "$P" -eq "$N" ]
+else
+  case "$MODE" in
+    genuine) check 'zero citations refused' 1 0; printf 'MADO_LANDING_COUNTERS_SELFTEST: %d/%d assertions passed\n' "$P" "$N"; [ "$P" -eq "$N" ] ;;
+    crash) exit 2 ;;
+    garbage) printf 'MADO_LANDING_COUNTERS_SELFTEST: ??? assertions passed\n'; exit 1 ;;
+  esac
+fi
