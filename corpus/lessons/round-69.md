@@ -7,7 +7,7 @@ frozen declaration: `.ufo/waves/round-69/claims-declaration-r69.md`, `789a87f1a6
 control set: `.ufo/waves/round-69/controls/c2-controls-r69.json`, sha256
 `975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9` (11 cases)
 pre-freeze baseline: `.ufo/waves/round-69/control-baseline-r69.txt`
-measured content: `e0e1831aed0b5b983957d2eb1aae4e0f1ebcd630` (first measurement at the instruments commit `5fc29ae72e66b9347d576c796ee656aea2fdd04c`, then `296ed0d7` after the review-driven repairs)
+measured content: `759c9d7b0d81ed0d6457b0b83e5f7e05b46abe3d` (first measurement at the instruments commit `5fc29ae72e66b9347d576c796ee656aea2fdd04c`, then `296ed0d7` after the review-driven repairs, then `759c9d7b` after the critic closures)
 
 ## Outcome and boundaries
 
@@ -39,6 +39,15 @@ authenticates objects or protects an already-rewritten repository; state truth o
 `PROVINCE.md` cell; any `[x]`, promotion or axis retirement. Both claims are finite-control claims
 and no wider guarantee is read out of a green count. Desktop, compositor, session and service
 surfaces were not probed at all this round.
+
+**Disclosed after the wave (critic `R69CriticClaims`, all in SCORECARD § Closure corrections).** B1:
+a substitute text-checking harness can score the C1 target — the counter scores the committed
+harness's selftest, not its authorship, and the claim is bounded to the delivered harness. B3: the
+sha-frozen eleven cases do not discriminate the git-launch clause; two regression cases now pin it
+in the counter's selftest and round 70 plans the frozen-set cases. B5: the harm watch was RED at
+the first measured content (`296ed0d7`, registry `used-by` cells not yet updated) and GREEN at the
+final tip — both states are in the receipts. B4/B6/B7/B10 are record-level disclosures; B8/B9/B11
+are corrections applied append-only to `SCORECARD.md`.
 
 ## Mistakes
 

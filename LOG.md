@@ -3254,6 +3254,16 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   already rewritten is not repaired. The critic's B3 (block-wide unresolved-receipt regression) was
   repaired at integration with 0 frozen-verdict changes; B5/B6/B7/B9 are recorded as wording/label
   disclosures in the lesson.
+- Critic closures (`R69CriticClaims`, B1-B11) — dispositions in SCORECARD § Closure corrections:
+  B2 fixed (the base leg must apply all three recipes or the counter refuses; selftest 28/28),
+  B3 mitigated (two dominance regression cases in the counter's own selftest; the mutant now dies
+  39/41), B8/B9/B11 corrections applied to the SCORECARD, B4/B5/B6/B7/B10 disclosed, B1 disclosed
+  as the instrument's limit (a substitute harness can score the target; the delivered harness is
+  the r68 measurement body plus the paired cases). Receipt `critic-closures-r69.txt`.
+- Final measurement at `759c9d7b0d81ed0d6457b0b83e5f7e05b46abe3d` (`measurement-final-r69.txt`):
+  C1 `selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET` rc 0; C2 `population=20
+  readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0.
+- Wave settlement: 12 seats dispatched, 12 settled, no dead seats (`w1-results.json`).
 - Tooling: none installed or upgraded; no pacman transaction (host pause respected). The
   considerThese 2026-10-28 proposal 2 was executed once at the pre-r67 tip: gate exit 1,
   `files=33466 findings=280`, `waived 49/47`, the r37/r38 socket tables carry 5 and 715 proc rows —
@@ -3301,6 +3311,16 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
   and the connector's guard-dominance variant (reads forged bytes while classified guarded;
   `aux-dominance-r68.txt`). The guard is presence-tested, does not authenticate objects and does
   not protect an already-rewritten repository. No universal fault-coverage claim.
+- Critic closures (`R69CriticClaims`, B1-B11) — dispositions in SCORECARD § Closure corrections:
+  B2 fixed (the base leg must apply all three recipes or the counter refuses; selftest 28/28),
+  B3 mitigated (two dominance regression cases in the counter's own selftest; the mutant now dies
+  39/41), B8/B9/B11 corrections applied to the SCORECARD, B4/B5/B6/B7/B10 disclosed, B1 disclosed
+  as the instrument's limit (a substitute harness can score the target; the delivered harness is
+  the r68 measurement body plus the paired cases). Receipt `critic-closures-r69.txt`.
+- Final measurement at `759c9d7b0d81ed0d6457b0b83e5f7e05b46abe3d` (`measurement-final-r69.txt`):
+  C1 `selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET` rc 0; C2 `population=20
+  readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0.
+- Wave settlement: 12 seats dispatched, 12 settled, no dead seats (`w1-results.json`).
 - Tooling: none installed or upgraded; no pacman transaction (host pause respected).
 
 ### Round 68 — closure addendum (critic blockers)
@@ -3373,4 +3393,14 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
 - Harm watch: `MADO_SELFTEST: 460/460` rc 0; axis table 3/3 MATCH at the records; landing counters
   GREEN with explicit citecheck paths (the first run's `rc 2` was a setup default, logged as
   M69-3); r68 counters keep their pinned bytes and selftests (27/27, 52/52, 26/26).
+- Critic closures (`R69CriticClaims`, B1-B11) — dispositions in SCORECARD § Closure corrections:
+  B2 fixed (the base leg must apply all three recipes or the counter refuses; selftest 28/28),
+  B3 mitigated (two dominance regression cases in the counter's own selftest; the mutant now dies
+  39/41), B8/B9/B11 corrections applied to the SCORECARD, B4/B5/B6/B7/B10 disclosed, B1 disclosed
+  as the instrument's limit (a substitute harness can score the target; the delivered harness is
+  the r68 measurement body plus the paired cases). Receipt `critic-closures-r69.txt`.
+- Final measurement at `759c9d7b0d81ed0d6457b0b83e5f7e05b46abe3d` (`measurement-final-r69.txt`):
+  C1 `selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET` rc 0; C2 `population=20
+  readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0.
+- Wave settlement: 12 seats dispatched, 12 settled, no dead seats (`w1-results.json`).
 - Tooling: none installed or upgraded; no pacman transaction (host pause respected).

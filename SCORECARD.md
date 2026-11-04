@@ -3728,8 +3728,8 @@ Frozen declaration: `.ufo/waves/round-69/claims-declaration-r69.md`, landed
 `789a87f1a667b43dd759222a2f048bf8f75b43ce`; base `04093b83f73a841117d3b31dbb2a6063f4f2a454`.
 Frozen control set: `.ufo/waves/round-69/controls/c2-controls-r69.json` (11 cases, sha256
 `975ca3ba37341b5a058dec4fa76278d548996738e8b517616181824a841f90b9`). Instruments-repaired
-content: `e0e1831aed0b5b983957d2eb1aae4e0f1ebcd630` (the counters as finally repaired after the
-review seats: `296ed0d7` instruments, `e0e1831a` the revised scripted revisions). Measured receipts:
+content: `759c9d7b0d81ed0d6457b0b83e5f7e05b46abe3d` (the counters as finally repaired: `296ed0d7`
+instruments, `e0e1831a` the revised scripted revisions, `759c9d7b` the critic closures). Measured receipts:
 `.ufo/waves/round-69/measurement-r69.txt` (first measurement) and
 `.ufo/waves/round-69/measurement-final-r69.txt` (final).
 
@@ -3737,12 +3737,16 @@ Axis posture at round start: every published finite sub-axis sat at its measured
 (navigation 80/80, calibration 86/86, operability 12/12 at `379e97f8`; gate `MADO_SELFTEST:
 460/460`), so no axis is distinctly lowest (rounds 56–68 posture); the stagnation nudge does not
 apply (last capability r68, window N=3, gap 0). Both claims take new finite denominators and both
-do-nothing controls miss the target (0/3 and 7/11), so neither is reachable without the work.
+do-nothing controls miss the target (0/3 and 7/11). **Correction (critic B9):** that a do-nothing
+control misses is not the same as "the target is unreachable by a substitute artifact" — the
+critic's B1 showed a text-checking stand-in harness scores the C1 target, so this row no longer
+claims non-reachability; the claim is bounded to the delivered harness, and the instrument's
+forgeability by a substitute artifact is a disclosed limit.
 
 | Claim / axis | Counting command (REV is before or the measured content) | Before → after | Verdict |
 |---|---|---|---|
-| C1 **calibration** — the hardened harness kills paired (decision + oracle) forgeries | `python3 quality/counters/c1-r69-paired-recipes.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --scratch-root DIR` | at base: `selftest=absent killed=0/3 applied=0/3 base=0/3 verdict=TARGET_MISSED` rc 1 (r68 harness survives all three: `killed=0/3 applied=3/3`) → at `e0e1831a`: `selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET` rc 0; bounded `10 × killed / 3` 0.0000 → 10.0000 | improved on the frozen three-recipe set; an equivalent recipe is excluded with its probe |
-| C2 **operability** — the guard census requires key position and dominance | `python3 quality/counters/c2-r69-guard-dominance.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --controls .ufo/waves/round-69/controls/c2-controls-r69.json --scratch-root DIR` | held rule at the same frozen set: `controls=7/11` (accepts value-position, dead-branch, uncalled-helper, overwritten-env) → at `e0e1831a`: `population=20 readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0; bounded `10 × guarded / readers` 10.0000 (population 13/13 at both ends — the move is discrimination, not the count) | improved on the frozen eleven-case set; six implementation defects against the frozen sentence repaired red-before |
+| C1 **calibration** — the hardened harness kills paired (decision + oracle) forgeries | `python3 quality/counters/c1-r69-paired-recipes.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --scratch-root DIR` | at base: `selftest=absent killed=0/3 applied=0/3 base=0/3 verdict=TARGET_MISSED` rc 1 (r68 harness survives all three: `killed=0/3 applied=3/3`) → at `759c9d7b`: `selftest=0 killed=3/3 applied=3/3 base=0/3 verdict=TARGET_MET` rc 0; bounded `10 × killed / 3` 0.0000 → 10.0000 | improved on the frozen three-recipe set; an equivalent recipe is excluded with its probe |
+| C2 **operability** — the guard census requires key position and dominance | `python3 quality/counters/c2-r69-guard-dominance.py --repo . --rev REV --base-rev 04093b83f73a841117d3b31dbb2a6063f4f2a454 --controls .ufo/waves/round-69/controls/c2-controls-r69.json --scratch-root DIR` | held rule at the same frozen set: `controls=7/11` (accepts value-position, dead-branch, uncalled-helper, overwritten-env) → at `759c9d7b`: `population=20 readers=13 guarded=13 unguarded=0 controls=11/11 base_controls=7/11 verdict=TARGET_MET` rc 0; bounded `10 × controls / 11` for the discrimination move: 7.0000 → 10.0000 (the held rule scores 7/11, the round-69 rule 11/11); the population fraction `10 × guarded / readers` is 10.0000 at both ends and is harm-watch only, not the move (critic B11) | improved on the frozen eleven-case set; six implementation defects against the frozen sentence repaired red-before |
 
 **Evidence.** `.ufo/waves/round-69/measurement-r69.txt` (both counters at the measured content),
 `control-baseline-r69.txt` (the two do-nothing controls before freeze),
@@ -3766,7 +3770,11 @@ The recipes are three named ones, not a fault-coverage claim; the dominance rule
 syntactic approximation (one module, one hop, no alias/attribute/container flow, no
 path-sensitivity beyond a literal-false branch, value not interpreted); the census reads committed
 source text, not runtime wiring; the guard does not authenticate objects or repair a rewritten
-repository. The round-68 reviewer's recipe L is an equivalent mutant and is excluded with its
+repository. **Correction (critic B8):** the round-68 row above still lists `credit mz_rc is None` as a
+RevC1 survivor; round 69 measured it as an *equivalent* mutant (the text sits after
+`mz_rc = r.returncode`, so the disjunct is unreachable) and excluded it — the r68 row stays as
+history and this line is the correction. The round-68 reviewer's recipe L is an equivalent mutant
+and is excluded with its
 probe (lesson M69-1), not silently dropped. Curation: SOURCES 374 → 375 rows (one new A/docs/mined
 S438, no existing cell changed); the new entry cites S438/S436/S437 with locators. Round shape: one
 v1 wave, seat counts and dead seats in the report. Outside-lane closure owns admission, the
@@ -3783,3 +3791,22 @@ trade/no-harm judgment and promotion.
 
 ### Axis table re-derived at the round-69 records (`measurement-r69.txt` and `quality/check-axis-scores.py`):
 navigation 81/81; calibration resolved-active 86/86; operability selftest 12/12.
+
+### Closure corrections (round 69, after the wave settled)
+
+The critic seat (`w1/R69CriticClaims.md`) filed eleven blockers after the first landing; each
+disposition is recorded here rather than smoothed.
+
+| blocker | finding | disposition |
+|---|---|---|
+| B1 | a 1.4 KB text-checking stand-in harness with no measurement body scores the C1 target | **not repairable without changing the frozen predicate after data.** Disclosed as a limit: the counter scores the committed harness's selftest, not its authorship; the delivered harness is the r68 measurement body plus the paired cases (seat report `w1/R69ExecHarness.md`), and the SCORECARD row no longer claims non-reachability |
+| B2 | `base_applied` is printed but not in the verdict, so a base leg that ran one recipe reads `base=0/3` and MET | fixed: `measure()` raises `SetupError` when `base_applied != 3`; the contract line is unchanged, so the frozen sentence and the counter are again one sentence; selftest 28/28 pins it (`critic-closures-r69.txt`) |
+| B3 | the sha-frozen eleven cases do not discriminate the git-launch clause; a dominance-dropping mutant still scores 11/11 | the frozen set is unchanged (it is sha-pinned). Two review-regression cases (`guarded-env-for-a-non-git-call`, `git-called-without-env`) entered the counter's own selftest, and the dominance mutant now dies there (39/41, rc 1). The gap in the frozen set is disclosed; round 70 plans the two cases |
+| B4 | the reader half has no negative case in the frozen set | the counter's selftest already pins three reader negatives (git init/add only, verb without the git token, git token without a verb); the frozen-set gap is disclosed |
+| B5 | the declared harm watch is red at the measured content | true and disclosed: at `296ed0d7` the landing instrument read RED (usedby missing S436/S437, cells updated later); the final tip reads GREEN (`final-gates-r69.txt`). The report carries both states |
+| B6 | the declaration points at bytes the baseline receipt does not contain | disclosed: the receipt records occurrence counts and verdicts, not full recipe bytes; the byte strings live in the counter and in the seat reports |
+| B7 | `applied` names two different artifacts in two frozen documents | disclosed: the contract line's `applied` is the candidate's three recipes; the base leg's `applied` is printed on its own `MADO_R69_BASE` evidence line and is now enforced (B2) |
+| B8 | the round-68 row still publishes recipe L as a survivor while the lesson calls it equivalent | append-only correction added to this round's section (above) |
+| B9 | "neither is reachable without the work" is falsified by B1 | correction applied to the axis-posture paragraph (above) |
+| B10 | the cited source grounds the *flag*, while the rule keys on the *environment* | clarified: `--no-replace-objects` is documented as equivalent to exporting the variable, which is exactly why an environment that reaches the child is the object the census must count; the entry's §5 says the value is not interpreted |
+| B11 | C2's `10 × guarded / readers` cannot move (13/13 both ends) | the C2 row now scores the discrimination move `10 × controls / 11` (7.0000 → 10.0000); the population fraction stays as harm-watch only |
