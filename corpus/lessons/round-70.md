@@ -74,7 +74,7 @@ Admitted, **S439** — CPython v3.14.8 `Doc/reference/expressions.rst`, § Dicti
   `e19de4fead912abcb323f3a6ab42b20595bf6b8ae302e04f257b844b3ce7582a`, 92,034 bytes, 2,407 lines);
   the scout's independent fetch agrees on the bytes and on the tag pin (tag object `992560c2…`,
   peeled commit `8e6e75d9…`).
-- Located quote, 22 words, expressions.rst:509-512: "A double asterisk `**` denotes dictionary
+- Located quote, 22 words, expressions.rst:514-517: "A double asterisk `**` denotes dictionary
   unpacking. Its operand must be a mapping. Each mapping item is added to the new dictionary."
 - Why it grounds the claim: the carrier rule counts `env = {**os.environ, **GUARD}` as a carrier of
   the key only because the documented semantics *add the mapping's items to the new dictionary* —
@@ -135,8 +135,8 @@ live-state instruments on a probed host; this round probes no host), not adopted
 
 ## Wave findings
 
-The one v1 wave settled 14 seats (13 reports plus the critic; see the round report's round-shape line
-for the final settlement). The material findings, each with its disposition:
+The orchestrator sent WAVE-DONE for the one v1 wave: all 14 seats settled. Results are committed at
+`.ufo/waves/round-70/w1-results.json`. The material findings and dispositions follow.
 
 - **C2's attribute and constant-key carriers bypassed the dominance test** (`w1/R70RevC2.md` blockers
   1-2). Repaired against the frozen sentence; red-before to green-after in
@@ -151,6 +151,6 @@ for the final settlement). The material findings, each with its disposition:
   Pre-existing; the round passes explicit committed paths and records both runs.
 - **`check-deliverables.py` is red on the round-69 seat reports** (a doubled seat prefix in one
   trailer; eight without trailers). Pre-existing, not round-70 harm.
-- **No dead seats**: all 14 seats produced reports; the settlement line is in
-  `.ufo/waves/round-70/w1-results.json` when the orchestrator writes it, and the dispatch marker plus
-  the seat reports otherwise.
+- All 14 seats settled per the orchestrator's WAVE-DONE message. The results file contains 14
+  outputs but no per-seat status field; zero dead seats is based on that handoff, not a parsed
+  status field.

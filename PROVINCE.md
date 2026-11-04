@@ -324,3 +324,12 @@ the scored revision (20 files, 13 readers, 13 guarded). All three instruments re
 caller scratch (the census writes nothing). None touches a config plane, the compositor, a socket or a host
 service, and the dominance rule is a bounded syntactic approximation, not a runtime proof. Evidence:
 `corpus/lessons/round-69.md`.
+
+**Round-70 refinement — three lane record instruments; no new desktop/write surface.**
+`quality/counters/c1-r70-landing-controls.py` is the successor credit harness;
+`quality/counters/c1-r70-real-children.py` builds scratch Git fixtures and launches real Bash
+children to score its three frozen scenarios; `quality/counters/c2-r70-carriers.py` reads Git
+objects and classifies the unchanged 20-file check population against the 17-case carrier set.
+All writes and fixture subprocesses stay in caller scratch; no config plane, compositor,
+session, socket or service is probed. The classifiers are bounded source approximations, not
+runtime guarantees. See `corpus/lessons/round-70.md` for the review repairs and remaining limits.

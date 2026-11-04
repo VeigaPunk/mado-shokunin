@@ -66,7 +66,7 @@ base_controls=13/17 verdict=TARGET_MET` at
 
 | id | proposition | source | pin |
 |---|---|---|---|
-| K01 | A `**` display item's operand must be a mapping and each of its items is added to the new dictionary, so a guarded module mapping expanded into the env mapping carries the key. | S439 | expressions.rst:510 |
+| K01 | A `**` display item's operand must be a mapping and each of its items is added to the new dictionary, so a guarded module mapping expanded into the env mapping carries the key. | S439 | expressions.rst:515 |
 | K02 | A subscription target evaluates the primary then the subscript expression, so `env[KEY]` with a module string constant stores under the key's value. | S440 | simple_stmts.rst:191 |
 
 ## 4. What stays outside
@@ -91,4 +91,4 @@ python3 -I quality/counters/c2-r70-carriers.py --repo . --rev <rev> \
 
 Exit 0 iff `population=20 readers=13 guarded=13 unguarded=0 controls=17 base_controls=13`;
 the last line is the contract sentence § 3 quotes. `--selftest` carries the seventeen
-cases plus the regression table (49/49 at the measured content).
+cases plus the regression table (54/54 at the measured content).

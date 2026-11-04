@@ -2822,3 +2822,16 @@ The r67 harness (`quality/counters/c2-r67-landing-controls.py`) keeps its pinned
 its selftest does not drive the decision body and its three forced-credit mutations survive. The
 r68 harness is the successor; no alias or rewrite is added to the r67 file. The twelve repaired
 gates keep their argv, output and exit status; the guard is the only added behavior.
+
+## Round 70 — real-child credit and carrier census
+
+Use `python3 -I quality/counters/c1-r70-real-children.py --repo . --rev REV --base-rev b37a5aec4ea03f2223d8e09dd5d386d055c24179 --scratch-root DIR`
+for the three-scenario credit battery (exit 0 iff `correct=3 base_correct=1`, 1 miss, 2 setup).
+It runs `quality/counters/c1-r70-landing-controls.py`, whose M-Z credit requires a nonzero exit
+and a parsed summary reporting fewer passes than assertions; a crash earns no credit.
+Use `python3 -I quality/counters/c2-r70-carriers.py --repo . --rev REV --base-rev b37a5aec4ea03f2223d8e09dd5d386d055c24179 --controls .ufo/waves/round-70/controls/c2-controls-r70.json --scratch-root DIR`
+for the 17-case carrier census (exit 0 target met, 1 miss, 2 setup).
+Create DIR first outside /tmp-family; each instrument supports `--selftest --scratch-root DIR`.
+These are lane-record checks, not live desktop probes. Historical counters remain pinned to their
+original files. Limits and evidence: `corpus/knowledge/landing-kill-credit-real-children-r70.md`
+and `corpus/knowledge/guard-carrier-shapes-r70.md`.

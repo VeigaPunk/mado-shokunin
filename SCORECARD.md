@@ -3910,10 +3910,10 @@ approximation (one module, one hop, one-level `**` of a module-level literal map
 longer than one dotted name in the guarded position, no path-sensitivity beyond a literal-false branch)
 and does not interpret the guard's value. C1's intended CPython `subprocess.rst` row was **refused as a
 duplicate**: the URL is already S108 (same bytes, 61,603 B, sha256 `05cd782c…`), so C1 instead rests on
-the held S435 (Bash exit-status vocabulary: 126/127 execution failures, 128+N signals) and the two new
-C2 rows S439/S440 are the round's opened ground. Curation: SOURCES 375 → 377 rows (two new A/docs/mined
-rows, no existing cell changed except `used-by`). Round shape: one v1 wave, seat counts and dead seats in
-the report. Outside-lane closure owns admission, the trade/no-harm judgment and promotion.
+the held S435 plus opened S441 (rendered subprocess return-code documentation). The new
+C2 rows S439/S440 ground the carrier semantics. Curation: SOURCES 375 → 378 rows (three new
+A/docs/mined rows and S435's used-by reverse link). Round shape: one v1 wave of 14 settled seats.
+Outside-lane closure owns admission, the trade/no-harm judgment and promotion.
 
 ### Planned (round 71; intent only)
 

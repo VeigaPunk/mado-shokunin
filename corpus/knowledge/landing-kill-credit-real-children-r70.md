@@ -82,9 +82,8 @@ its own `LANE_TEMPLATE`.
 
 | id | proposition | source | pin |
 |---|---|---|---|
-| K01 | A child's exit status has more than one cause: 0 is success, 126/127 are execution failures and 128+N a fatal signal, so a nonzero status is not "the assertions failed". | S435 | Exit-Status.html:3902 |
 | K02 | The status is the *child process's* exit status; a negative value is a signal death, so the harness cannot read it as an assertion result. | S441 | subprocess.html:364 |
-| K03 | A crash (no summary) and a garbled summary both leave the assertion outcome unknown; the harness must therefore require a parsed failed-assertion summary. | S441 | subprocess.html:361 |
+| K03 | The status definition does not identify failed assertions; requiring a parsed failed-assertion summary is the lane's policy inference, not a documented Python requirement. | S441 | subprocess.html:361 |
 
 ## 5. Limits
 
