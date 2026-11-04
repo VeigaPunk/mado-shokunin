@@ -178,3 +178,11 @@ key, a foreign modifier, a numeric mask, a repeated modifier and an arrow still 
 negative, expectation, mutant or target moved. Named consequence: the row's live answer depends on
 the formatter's `xkbcli compile-keymap` map being populated, which is why the empty-key shape has to
 pass — the old grammar would have failed the row on a host whose keymap cache was cold.
+
+**R80Sentinel** (sentinel; `w1/R80Sentinel/findings.md`, STATUS: ok — no high/medium boundary
+defect). Its three findings: **F1 (LOW)** the C2 counter handed every child the caller's whole
+environment (carried from r79); **F2 (LOW)** it pinned no `TMPDIR`, so the no-`/tmp` property was
+implicit; **F3 (INFO)** `parse_surfaces` accepts negative surface margins and an `exclusive` below
+−1, both inert because `apply_exclusive` only shrinks when `zone + margin > 0`. F1 and F2 are
+repaired as **R3** (an allowlisted child environment plus `TMPDIR` inside the scratch root; 24/24
+re-measured); F3 stays a named model limit.

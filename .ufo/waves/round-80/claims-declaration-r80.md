@@ -191,3 +191,16 @@ tolerate, not a regression. The grammar now treats a line ending ` +` as a chord
 modifier and an arrow in the chord column). No case, sample, negative, expectation, mutant or target
 moves; the counter's selftest gains one assertion (80 → 81) and the re-cut `chord-key-padded` mutant
 drops the strip check only. The frozen `24/24` is re-measured at the repair tip.
+
+## Repair R3 (append-only; after R2, wave seat R80Sentinel F1/F2)
+
+The C2 counter handed every probed child the caller's whole environment (`dict(os.environ)`) and
+pinned no `TMPDIR`. Neither breaks a frozen case (all 24 probes are read verbs and none writes a
+temp file), but both are the wrong boundary: an exported credential would reach `hyprctl`, `jq`,
+`omarchy` and `systemctl`, and a future row with a temp-writing verb would land in `/tmp`. `run()`
+now builds the child environment from an allowlist (the runtime/instance/omarchy keys, `HOME`, the
+session bus, `XDG_*`, `PATH`, `USER`/`LOGNAME`) and sets `TMPDIR` inside the caller's scratch root —
+the C1 counter's shape. No case, sample, negative, expectation, mutant or target moves; the frozen
+`24/24` is re-measured at the repair tip. The sentinel's F3 (a negative surface margin or an
+`exclusive` below −1 is accepted by `parse_surfaces`) is a model-faithfulness nit, not a boundary
+defect — `apply_exclusive`'s `zone + margin > 0` guard keeps it inert — and stays a named limit.

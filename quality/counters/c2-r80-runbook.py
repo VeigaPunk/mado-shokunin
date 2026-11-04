@@ -127,10 +127,16 @@ def sha256(data):
 
 
 def run(argv, cwd, timeout=120):
-    env = dict(os.environ)
+    # R3 (sentinel F1/F2): hand a child only what the frozen read verbs need, never the whole
+    # caller environment; TMPDIR is pinned inside the scratch root so no child can land in /tmp.
+    allow = ("XDG_RUNTIME_DIR", "HYPRLAND_INSTANCE_SIGNATURE", "OMARCHY_PATH", "HOME",
+             "DBUS_SESSION_BUS_ADDRESS", "XDG_DATA_DIRS", "XDG_CONFIG_HOME", "XDG_CACHE_HOME",
+             "XDG_DATA_HOME", "PATH", "USER", "LOGNAME", "TMPDIR")
+    env = dict((key, os.environ[key]) for key in allow if key in os.environ)
     env["LC_ALL"] = "C"
     env["LANG"] = "C"
     env["PYTHONDONTWRITEBYTECODE"] = "1"
+    env["TMPDIR"] = cwd
     runtime = env.get("XDG_RUNTIME_DIR") or ("/run/user/%d" % os.getuid())
     if os.path.isdir(runtime):
         env.setdefault("XDG_RUNTIME_DIR", runtime)
