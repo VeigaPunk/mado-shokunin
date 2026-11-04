@@ -116,3 +116,17 @@ runbook's live values remain a point sample of this host at measurement time.
   exactly those fixtures, moving no expectation, label, mutant, kill rule or target. The receipts
   cited by the round are those at `44a36b64` and later, and the final measurement commit is named
   in the report.
+
+## Known limits (append-only, from the wave)
+
+- **The `version` row is only as strong as its regex.** An rc-0 line that begins with
+  `Hyprland <x.y.z>` satisfies the shape even when its tail says the build is unavailable; no
+  runbook can authenticate the binaries on `PATH` against a shim. The row still proves "the
+  command answered with a version-shaped line", not "the pins are true".
+- **`json_object_fields` constrains the declared keys only.** An object with the right types plus
+  extra keys matches; the `active-workspace` row is a shape check, not an exact-object check.
+- **An `empty` row accepts a newline-only output** (`rstrip("\n")`); `hyprctl configerrors` prints
+  a blank line when clean.
+- These three are case-set facts; changing them would change a frozen case. They are round-79
+  ground, and the C2 entry (the registry row plus this declaration) states them rather than
+  hiding them.

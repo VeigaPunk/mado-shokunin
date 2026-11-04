@@ -4526,4 +4526,4 @@ row's "last change" phrase is time-bound. The r77 registry row (`SKILL.md`, `mad
 corrected in place to the current tool's exit map and selftest (22/22); the r77 knowledge entry
 received an appended erratum; the forecast `NOT_MODELLED` phrase in the r77 index row was corrected.
 The C2 anchor leg was strengthened from a file-wide substring to a table-row command-cell binding
-after the wave's connector showed a deleted row would still pass (selftest 34 → 37 assertions).
+after the wave's connector showed a deleted row would still pass, and the shape attack's padded-integer and padded-list samples were refused (selftest 34 → 40 assertions).

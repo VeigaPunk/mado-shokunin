@@ -47,3 +47,31 @@ on), reject S463 (same reason as round 77).
 
 ## Wave findings (append-only; written as the seats settle)
 
+- **R78ExecC1Cases (executor, independent re-derivation).** Re-derived all eighteen expectations
+  from the two source rules before running the tool: 18/18 agree, the held r77 tool on the same
+  fixtures 8/18 (equal to `base_correct`), and it confirmed the arithmetic identity
+  `expected = extent + margins[opposite edge]`. No defect found; receipt under
+  `w1/R78ExecC1Cases/receipt-c1-cases-tool-run.txt`.
+- **R78ScribeEntry (scribe).** Its draft entry supplied the structure the landed entry uses
+  (per-case worked table, line-anchored decision table, explicit "no live observation" limits);
+  the landed version adds the round's live join (reduced capture) and the corrected mutant scores.
+- **R78ScribeSources (scribe).** Confirms the registry delta: 401 rows before and after, no id
+  change, exactly eight rows differ and only in `used-by`; quotes located byte-exactly; census exit
+  0 with only the standing W04/W01 warnings. F1 (the fetch manifest had six lines when an entry
+  sentence named it) is resolved — the manifest now pins seven files and `sha256sum -c` is OK. F2
+  (thirteen untracked `S465…S477` files in `fetch/`) is a seat write-scope deviation: the files
+  were gathered by the scout into a committed directory instead of its own write dir; they are
+  relocated to `w1/R78ScoutMargins/fetch/` and never committed as registry evidence.
+- **R78ExecC2Shapes (executor, attack).** Six weak-shape negatives were accepted by the r78 rule:
+  an rc-0 error line beginning with a version token (`version` regex), newline-only
+  `configerrors`, padded integers (`"1720 "`, `"\t3"`, `" 7"`), an object with extra keys, and a
+  padded list part in `sorted_unique`. Repairs that touch no case: the integer rule now accepts
+  bare digits only and `sorted_unique` refuses padded parts (selftest 34 → 40 assertions, mutants
+  still 5/5). The `version`, extra-key and empty-output shapes are named case-level limits in the
+  declaration's `## Known limits`. The seat's PATH-shim run proves the general limit: a runbook
+  cannot authenticate the binary it calls; it certifies the answer's shape, not the pins' truth.
+- **R78ConnSiblings (connector).** No sibling lane claims the layer-shell plane, the band or the
+  runbook (one shared read verb with game-dev-2d). It broke the anchor leg (M78-4), found the
+  ledger-red freeze (M78-5), the provenance drift (M78-6), and the stale registry/index/entry
+  claims (M78-7) — all repaired this round; M78-8 is the time-bound r77 citation, recorded
+  append-only in SCORECARD.
