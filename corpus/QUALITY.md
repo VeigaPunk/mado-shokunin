@@ -965,3 +965,11 @@ correct tool reported `DIFFER` and the case scored `correct=no` until the fixtur
 to 40x1080 (round-77 M77-5). Source: round-77 lesson M77-5.
 Limits: consistency catches impossible sizes; a wrong-but-possible value still needs a source
 derivation.
+
+**135. A probe matches only when it exits zero and produces the stated outcome; empty output
+from a failed command is not a pass.** Shown able to fail: round 77's C2 matcher ignored the exit
+status, so an `empty` expectation accepted rc=127 with "command not found" and an `exact` accepted
+its value on a failing command (`receipts/repair-r77-c2-rc-guard.txt`: before `matched=True` for
+rc=127 and rc=1, after `matched=False`). Source: round-77 mutation-tester finding.
+Limits: the guard makes a failed probe fail; it does not make a passing probe's expected value
+stronger (the mutant's shape-only rows are carried to round 78).

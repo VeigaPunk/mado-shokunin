@@ -123,3 +123,16 @@ re-runs it.
 | S448 | corpus/knowledge/guard-carrier-global-environ-r73.md | corpus/knowledge/guard-carrier-global-environ-r73.md,corpus/knowledge/guard-carrier-twohop-environ-alias-r74.md |
 | S455 | corpus/knowledge/interprocedural-del-r76.md | corpus/knowledge/interprocedural-del-r76.md,corpus/knowledge/outcome-field-r76.md |
 | S463 | — | corpus/knowledge/bar-footprint-r77.md |
+
+- **R77Mutant (mutation testing).** Thirteen own mutants of the join (ten killed), with three
+  survivors classified: `bottom-extent-altform` is a proven algebraic equivalent (no case can
+  separate it); `right-extent-flip`, `level-lookup-pinned` and `output-empty-include-refused`
+  are real coverage gaps in the frozen fifteen (no right-anchored case, no bottom-declared case
+  with a top-level live entry, no exclusion-only output case) — named with their discriminating
+  cases in the seat report and carried to round 78; the frozen set is not re-cut after scoring.
+  Its C2 attack found a real instrument defect: the matcher never consulted the exit status, so
+  `empty` accepted rc=127 and `exact` accepted its value on a failing command; repaired with the
+  `rc == 0` guard (`receipts/repair-r77-c2-rc-guard.txt`: before True for rc=127/1, after False),
+  QUALITY 135, counter selftest still 9/9 and the frozen twelve still 12/12. The seat's
+  stronger-expectation proposals (version commit pin, layers geometry join, pid join) are
+  round-78 case upgrades, not edits to the frozen set.

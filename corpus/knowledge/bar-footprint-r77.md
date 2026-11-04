@@ -54,7 +54,7 @@ INF: the usable area of DP-1 is 3440 x 1414, starting at y = 26 (the band is the
 - **Static `monitor … addreserved` bands.** The reported band mixes the static reserve with the layer contribution (`logicalBoxMinusReserved()`), and the tool assumes a zero static reserve; a static band is a named, unmodelled case.
 - **`mode` presets.** `mode: hide|invisible|overlay` rewrites layer and exclusive zone at runtime (`bar.cpp:326-361`); a `mode` key is refused (exit 3) rather than read past.
 - **Centring rounding.** Floor division vs Hyprland's round-after-double differs by 1 px on odd deltas.
-- **Level not exercised by the frozen set.** `layer: bottom` with `exclusive: true` still reserves (`arrangeLayersForMonitor` runs the exclusive pass over every level), but no frozen case declares bottom; the claim is source-licensed and case-unexercised.
+- **Frozen-set gaps named by the mutation tester.** No case declares a right-anchored bar (the right edge extent is untested; a `position=right` case with reserved `[0,0,40,0]` would kill the survivor), no case exercises an exclusion-only output spec (`output: "!M2"` on M1), and no case declares `layer: bottom` (the level lookup and the bottom-level reserve are untested). All three are source-licensed and case-unexercised; the frozen set stays as declared and the cases are round-78 candidates.
 - **Runtime after the capture:** a layer mapped or destroyed after the dump is outside the join; only a fresh capture sees it.
 - **Who set the zone:** the reply has no exclusive-zone field (`HyprCtl.cpp:671-682`); the namespace is evidence of the surface, not of the request.
 

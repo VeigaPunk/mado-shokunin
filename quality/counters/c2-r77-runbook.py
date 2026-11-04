@@ -92,6 +92,8 @@ def run(argv, timeout=30):
 
 
 def matched(case, rc, stdout, stderr):
+    if rc != 0:
+        return False  # a probe that failed did not produce the stated outcome
     kind = case["kind"]
     text = stdout.rstrip("\n")
     if kind == "exact":
