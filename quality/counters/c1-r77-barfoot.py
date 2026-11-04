@@ -217,6 +217,7 @@ def main(argv):
         print("MADO_R77_BARFOOT: ERROR (stage=setup usage)")
         return 2
     try:
+        repo = os.path.abspath(args.repo)
         if args.scratch_root == "/":
             raise Setup("refusing / as the scratch root")
         if os.path.islink(args.scratch_root):
@@ -226,14 +227,14 @@ def main(argv):
             raise Setup("scratch root is not a directory")
         workroot = tempfile.mkdtemp(prefix="c1-r77-", dir=args.scratch_root)
         tool_path = os.path.join(workroot, "mado-barfoot.py")
-        rc, source, err = run(["git", "-C", args.repo, "show", args.rev + ":tools/mado-barfoot.py"],
+        rc, source, err = run(["git", "-C", repo, "show", args.rev + ":tools/mado-barfoot.py"],
                              workroot, timeout=60)
         if rc != 0:
             raise Setup("cannot extract tools/mado-barfoot.py at %s: %s" % (args.rev, err.strip()))
         with open(tool_path, "w") as fh:
             fh.write(source)
         tool_sha = sha256(source.encode())
-        proc = subprocess.run(["git", "-C", args.repo, "rev-parse", args.rev], stdout=subprocess.PIPE,
+        proc = subprocess.run(["git", "-C", repo, "rev-parse", args.rev], stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
         rev_full = proc.stdout.decode().strip()
         if proc.returncode != 0 or not rev_full:
