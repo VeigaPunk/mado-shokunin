@@ -516,6 +516,14 @@ def main(argv):
             bindings[hits[0]] = case["name"]
         if len(bindings) != CASES:
             raise Setup("only %d of %d rows are bound" % (len(bindings), CASES))
+        for case in cases:
+            argv = case["argv"]
+            documented = argv[2] if argv and argv[0] == "/bin/sh" else " ".join(argv)
+            if documented != case["skill_anchor"]:
+                raise Setup("case %s executes a command its row does not document"
+                            % case["name"])
+        print("MADO_R79_CONTROLS: sha256=%s cases=%d"
+              % (sha256(open(args.controls, "rb").read()), len(cases)))
 
         row_of = {name: index for index, name in bindings.items()}
         executed = matched = shapes = 0

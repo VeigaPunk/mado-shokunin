@@ -129,19 +129,23 @@ def read_bytes(path, stdin_ok=False):
         if len(data) > MAX_BYTES:
             raise Setup("stdin exceeds %d bytes" % MAX_BYTES)
         return data
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
     try:
-        st = os.lstat(path)
+        fd = os.open(path, flags)
     except OSError as exc:
         raise Setup("unreadable path %s: %s" % (path, exc))
-    if not stat.S_ISREG(st.st_mode):
-        raise Setup("refused non-regular path: %s" % path)
-    if st.st_size > MAX_BYTES:
-        raise Setup("file exceeds %d bytes: %s" % (MAX_BYTES, path))
     try:
-        with open(path, "rb") as fh:
+        st = os.fstat(fd)
+        if not stat.S_ISREG(st.st_mode):
+            raise Setup("refused non-regular path: %s" % path)
+        if st.st_size > MAX_BYTES:
+            raise Setup("file exceeds %d bytes: %s" % (MAX_BYTES, path))
+        with os.fdopen(fd, "rb") as fh:
+            fd = None
             return fh.read()
-    except OSError as exc:
-        raise Setup("unreadable path %s: %s" % (path, exc))
+    finally:
+        if fd is not None:
+            os.close(fd)
 
 
 def strip_jsonc(text):
