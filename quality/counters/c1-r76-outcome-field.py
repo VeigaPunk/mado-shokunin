@@ -23,10 +23,10 @@ Two fields are scored per case against the frozen expectation:
 Four named mutations of the outcome rule are then applied to the candidate harness bytes at
 unique anchors and each mutated harness is scored on the same sixteen cases:
 
-  outcome-term-dropped   the outcome ignores the challenge echo (round-75's surviving C1-M2)
-  prefix-match           the echo comparison becomes a prefix test (needs the widened grammar)
-  first-witness-wins     the first parsed echo wins instead of the last
-  case-insensitive       the echo comparison folds case (needs the case-changing challenge)
+  outcome-summary-only   the outcome drops the `killed == 2` conjunct
+  outcome-killed-only    the outcome drops the green conjunct
+  outcome-killed-any     `killed >= 1` instead of `killed == 2`
+  outcome-killed-or      green **or** killed 2
 
 A mutant is killed iff its two-field score is below sixteen (any miss out of the sixteen
 frozen cases). The held scoring rule reads `mz=`
