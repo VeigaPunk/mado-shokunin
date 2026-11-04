@@ -11,8 +11,11 @@ contributors, never from a run of the tool:
   * Hyprland v0.56.2 `applyExclusive`: the exclusive zone plus the anchored edge's margin is
     added to the usable box on that edge.
 
-Waybar anchors a top bar TOP|LEFT|RIGHT and a bottom bar BOTTOM|LEFT|RIGHT, so the band is
-`height + margin.top + margin.bottom` (and `width + margin.left + margin.right` transposed).
+Waybar anchors a top bar TOP|LEFT|RIGHT and a bottom bar BOTTOM|LEFT|RIGHT, and clears the two
+horizontal anchors when a horizontal bar declares width > 1 (bar.cpp:413-424), so the band is
+`height + margin.top + margin.bottom` for a horizontal bar (and `width + margin.left +
+margin.right` transposed); the vertical band is anchor-insensitive across that clearing because the
+client adds the unanchored vertical margins in both branches.
 The box arithmetic is Hyprland's `arrangeLayerArray`.
 
 Usage: python3 make-cases-r78.py --out c1-cases-r78.json
