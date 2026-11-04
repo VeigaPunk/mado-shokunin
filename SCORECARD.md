@@ -4611,3 +4611,54 @@ found (`selftest_ok` accepting `0/0`) is repaired with a `p > 0` floor.
 
 ### Axis table re-derived at the landing tip (`receipts/harm-watch-r79.txt` and `quality/check-axis-scores.py`):
 navigation 98/98; calibration resolved-active 86/86; operability selftest 12/12, ledger 144/144.
+
+## Round 80 — the composition under the band, and two matcher classes (2026-11-04, hyaku run 15)
+
+Frozen declaration: `.ufo/waves/round-80/claims-declaration-r80.md`; freeze `6c302a53eb8f577e83fbcadc01e05a286778df8e`;
+base `e10f7e9f528b13195a1cdde28a68a702af3045c4`. Frozen control sets:
+`.ufo/waves/round-80/controls/c1-cases-r80.json` (33 cases, sha256 `17c27157…`, the twenty-three
+round-79 cases carried parsed-equal) and `c2-runbook-cases-r80.json` (24 cases, 24 distinct anchors,
+sha256 `f1dfb5f4…`). Pre-freeze do-nothing controls: the held r79 tool scores `base_correct=23/33`
+on the C1 set (`receipts/control-c1-r80-at-base.txt`, `tool_selftest=50/50`); the held r79 runbook
+instrument exits 2 on the successor set (`receipts/control-c2-held-instrument-r80.txt`, "carries 24
+cases, frozen target expects 22") and the r80 counter at the base rev exits 2 (`tree not bound`).
+Measured at `6c302a53` (receipts `measurement-c{1,2}-r80.txt`). Axis posture at round start:
+navigation 98/98, calibration resolved-active 86/86, operability selftest 12/12, ledger 144/144;
+gate `MADO_SELFTEST: 460/460`; the dormant freshness value (9.6552, host-absent) stays
+operator-owned and is excluded from the tie. The stagnation nudge does not apply (last capability
+row entered round 79, window N=3).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** — a second exclusive layer surface composes under the running usable box | `python3 -I quality/counters/c1-r80-multisurface.py --repo . --rev REV --base-rev e10f7e9f528b13195a1cdde28a68a702af3045c4 --controls .ufo/waves/round-80/controls/c1-cases-r80.json --carried .ufo/waves/round-79/controls/c1-cases-r79.json --scratch-root DIR` | at the base rev the r79 model has no `--surfaces` input and no composition term: `cases=33 correct=23 mutants=22 killed=12 base_correct=23/33 tool_selftest=50/50 verdict=TARGET_MISSED` rc 1; at `6c302a53` (tool `r80-v1`, sha256 `c3eb5fbe…`): `cases=33 correct=33 mutants=22 killed=22 base_correct=23/33 carried=23/23 tool_selftest=111/111 verdict=TARGET_MET` rc 0; bounded `10 × 33/33` → 10.0000 on this finite set | improved |
+| C2 **operability** — the runbook's chord grammar and its state/exit-status matcher | `python3 -I quality/counters/c2-r80-runbook.py --repo . --rev REV --controls .ufo/waves/round-80/controls/c2-runbook-cases-r80.json --carried .ufo/waves/round-79/controls/c2-runbook-cases-r79.json --scratch-root DIR` | at the base rev the counter refuses (rc 2, working tree is not the measured revision's bytes) and the held r79 instrument exits 2 on the successor set; at `6c302a53`: `cases=24 executed=24 matched=24 shapes=19/19 anchors=24/24 rows=24/24 control_new=0/2 mutants=16 killed=16 verdict=TARGET_MET tree=bound` rc 0, with `control_all=15/24` printed as an observation | improved |
+| — | coverage / admitted-note reachability (`quality/check-index.py --repo . --rev REV`) | 98/98 at base → 99/99 at the landing tip (one new entry indexed) | improved (index) |
+| — | operability / hermetic gate (`bash tools/mado-verify.sh --selftest`) | 460/460 both ends; the gate is byte-identical this round | unchanged (harm watch) |
+| — | operability / instrument ledger (`quality/check-tool-ledger.py --repo . --rev REV`) | 144 rows at base → 146 rows at the tip, uncovered 0 (two new counters) | improved (ledger) |
+| — | calibration / held instruments (`git rev-parse <rev>:<path>`) | identical blob ids at base and tip for `quality/landing-counters.sh`, `check-tool-ledger.py`, `check-axis-scores.py`, `check-index.py`, `c1-r72…r79-*`, `c2-r73…r79-*`, `tools/mado-verify.sh`; `tools/mado-barfoot.py` changes by design (the C1 instrument) and the two r80 counters are new | unchanged (frozen) |
+
+**Evidence.** `.ufo/waves/round-80/receipts/` (`measurement-c{1,2}-r80.txt`, per-case and per-mutant
+lines; `control-c1-r80-at-base.txt`, `control-c2-held-instrument-r80.txt`,
+`control-c2-r80-at-base.txt`, `live-join-r80.txt`, `census-start-r80.txt`, `gate-selftest-r80.txt`),
+`controls/` (frozen sets plus their two generators), `fetch/` (S470–S474 plus `sha256-r80.txt`),
+`w1-spec.json` / `w1-dispatch.json` / `w1.ready` and `w1/` (seat reports). Wave disclosures are
+reported per seat in the round report; an empty seat output is an evidence gap, never backfilled
+(QUALITY 115).
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| Multi-surface reserved-band composition | Predict a monitor's layer-plane reserved band when more than one layer surface is declared: the level-then-`order()` arrangement against a running usable box, `exclusive == -1` against the full box, the four-rule first-match with the `zone + margin > 0` guard, the empty-box skip, and the area guard that zeroes the whole layer reserve; print each surface's attribution (`attr=`) beside the compositor's total (`gt=`) | `.ufo/waves/round-80/receipts/measurement-c1-r80.txt`; `tools/mado-barfoot.py`, `quality/counters/c1-r80-multisurface.py` | round 80 |
+| Chord-grammar and state/exit-status runbook matchers | Bind a runbook row on `omarchy-menu-keybindings`' chord column (one to four distinct SUPER/SHIFT/CTRL/ALT words, ` + `, one key, or a bare key) and on `systemctl --user is-active`'s word-plus-exit-status pair, so a foreign modifier, a numeric mask, a repeated modifier, a padded or doubled key, an arrow, an empty line, a truncated reply and a state/status contradiction each fail while host churn passes | `.ufo/waves/round-80/receipts/measurement-c2-r80.txt`; `quality/counters/c2-r80-runbook.py` | round 80 |
+
+### Planned (round 81; intent only)
+
+1. C1's next finite ground: the cross-axis overflow with a valid area (a box wider than the bounds,
+   the centring arithmetic) and `preview_scale`/fractional scaling, each on its own frozen set.
+2. C2's next finite ground: the keybindings row's **action column** grammar (an arrow plus a
+   non-empty action, with the `-35s` padding) and the `pgrep -x waybar` churn row.
+3. Carry the round-80 wave's repairs and named limits into the next append.
+4. `considerthese/2026-10-28.md` proposal 4 (the live-tool table) stays available.
+5. Open L0 questions (r57–r60, the L2 floor, the host-recovery pacman pause, the r37/r38
+   session-material history question) stay operator-owned.

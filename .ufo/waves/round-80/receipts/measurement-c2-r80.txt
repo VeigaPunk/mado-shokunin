@@ -1,0 +1,43 @@
+MADO_R80_CONTROLS: sha256=f1dfb5f4c66a46e456f7da2d56709385cf6de2d3801463702fbb0a41911cc8cf cases=24
+MADO_R80_PROBE: name=version row=0 kind=regex match=yes rc=0 out='Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clea...'
+MADO_R80_PROBE: name=configerrors row=1 kind=empty match=yes rc=0 out=''
+MADO_R80_PROBE: name=monitors-size row=2 kind=regex match=yes rc=0 out='DP-1 3440x1440@99.99700'
+MADO_R80_PROBE: name=monitors-reserved row=3 kind=int4 match=yes rc=0 json-bytes=11
+MADO_R80_PROBE: name=gaps-out row=4 kind=exact match=yes rc=0 out='custom type: 0 0 0 0'
+MADO_R80_PROBE: name=kb-layout row=5 kind=exact match=yes rc=0 out='str: br'
+MADO_R80_PROBE: name=binds-count row=6 kind=int_range match=yes rc=0 out='192'
+MADO_R80_PROBE: name=layers-namespaces row=7 kind=sorted_unique match=yes rc=0 out='wallpaper,waybar'
+MADO_R80_PROBE: name=waybar-process row=8 kind=int_range match=yes rc=0 out='1720'
+MADO_R80_PROBE: name=mako-mode row=9 kind=exact match=yes rc=0 out='default'
+MADO_R80_PROBE: name=omarchy-theme row=10 kind=exact match=yes rc=0 out='Matte Black'
+MADO_R80_PROBE: name=omarchy-version row=11 kind=regex match=yes rc=0 out='3.8.3'
+MADO_R80_PROBE: name=active-workspace row=12 kind=json_object_fields match=yes rc=0 json-bytes=20
+MADO_R80_PROBE: name=layers-dump row=13 kind=levels_dump match=yes rc=0 json-bytes=748
+MADO_R80_PROBE: name=monitors-dump row=14 kind=array_fields match=yes rc=0 json-bytes=1339
+MADO_R80_PROBE: name=clients-count row=15 kind=int_range match=yes rc=0 out='2'
+MADO_R80_PROBE: name=workspaces-count row=16 kind=int_range match=yes rc=0 out='2'
+MADO_R80_PROBE: name=refuse-mode row=17 kind=refusal match=yes rc=3 out='MADO_BARFOOT: ERROR (stage=model a mode preset rewrites layer and exclusive zone at runtime)'
+MADO_R80_PROBE: name=refuse-scale row=18 kind=refusal match=yes rc=3 out='MADO_BARFOOT: ERROR (stage=model monitor M1 has scale/transform 2.0/0; the reply carries pixel si...'
+MADO_R80_PROBE: name=refuse-layer-background row=19 kind=refusal match=yes rc=3 out="MADO_BARFOOT: ERROR (stage=model waybar's presets never select the background layer)"
+MADO_R80_PROBE: name=refuse-output-space row=20 kind=refusal match=yes rc=3 out="MADO_BARFOOT: ERROR (stage=model output pattern 'DP-1 DP-2' is outside the modelled subset)"
+MADO_R80_PROBE: name=omarchy-menu-keybindings row=21 kind=lines_shape match=yes rc=0 out='SUPER + RETURN                      → Terminal\nSUPER ALT + RETURN                  → Tmux\nSUPER S...'
+MADO_R80_PROBE: name=keybindings-chords row=22 kind=chord_shape match=yes rc=0 out='SUPER + RETURN                     \nSUPER ALT + RETURN                 \nSUPER SHIFT + RETURN     ...'
+MADO_R80_PROBE: name=hypridle-is-active row=23 kind=is_active match=yes rc=3 out='inactive'
+MADO_R80_MUTANT: name=rc-blind matched=18/24 killed=yes
+MADO_R80_MUTANT: name=int-range-lower-open matched=21/24 killed=yes
+MADO_R80_MUTANT: name=json-required-ignored matched=22/24 killed=yes
+MADO_R80_MUTANT: name=sorted-unique-dropped matched=23/24 killed=yes
+MADO_R80_MUTANT: name=empty-accepted matched=23/24 killed=yes
+MADO_R80_MUTANT: name=refusal-stage-blind matched=20/24 killed=yes
+MADO_R80_MUTANT: name=refusal-rc-blind matched=20/24 killed=yes
+MADO_R80_MUTANT: name=lines-any-line matched=23/24 killed=yes
+MADO_R80_MUTANT: name=lines-min-lines-dropped matched=23/24 killed=yes
+MADO_R80_MUTANT: name=chord-mod-word-blind matched=23/24 killed=yes
+MADO_R80_MUTANT: name=chord-key-padded matched=23/24 killed=yes
+MADO_R80_MUTANT: name=chord-arrow-blind matched=23/24 killed=yes
+MADO_R80_MUTANT: name=chord-mod-duplicate-accepted matched=23/24 killed=yes
+MADO_R80_MUTANT: name=chord-min-chords-dropped matched=23/24 killed=yes
+MADO_R80_MUTANT: name=state-rc-blind matched=23/24 killed=yes
+MADO_R80_MUTANT: name=state-enum-blind matched=23/24 killed=yes
+MADO_R80_CONTROL: control_new=0/2 held=fixed-value(no-frozen-value-for-the-new-rows) control_all=15/24 rule=held-r78-fixed-value
+MADO_R80_RUNBOOK: cases=24 executed=24 matched=24 shapes=19/19 anchors=24/24 rows=24/24 control_new=0/2 mutants=16 killed=16 verdict=TARGET_MET rev=6c302a53eb8f577e83fbcadc01e05a286778df8e tree=bound

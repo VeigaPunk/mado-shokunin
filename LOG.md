@@ -3949,3 +3949,9 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
 - **Wave.** One v1 wave, 14 seats (2 scouts, 1 connector, 4 executors, 2 scribes, 2 reviewers,
   1 critic, 1 mutation-tester, 1 sentinel; attack share 5/14). Seat outcomes are reported in the
   round report; a dead seat stays dead in the evidence.
+
+## Corrections (round 80, append-only)
+
+- **Round-79 count.** The round-79 entry above says "Seven mined"; `corpus/lessons/round-79.md`
+  carries eight `## Mistakes` rows (M79-1…M79-8). The eight stands; the sentence above stays as the
+  dated record (round-79 closure D3; the r80 lesson's M80-3).

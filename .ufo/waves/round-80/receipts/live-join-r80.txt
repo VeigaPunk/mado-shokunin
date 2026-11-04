@@ -1,0 +1,21 @@
+# live join, captured read-only 2026-11-04 (UTC)
+$ hyprctl monitors -j; hyprctl layers -j; python3 -I tools/mado-barfoot.py --config <copy> --layers … --monitors … --monitor DP-1
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true
+MADO_BARFOOT_STATIC: monitor=DP-1 top=0 right=0 bottom=0 left=0 source=none
+MADO_BARFOOT_DECL: monitor=DP-1 box=0,0,3440,26 edge=top
+MADO_BARFOOT_LIVE: monitor=DP-1 level=2 ns=waybar box=0,0,3440,26 entries=1
+MADO_BARFOOT_RESULT: monitor=DP-1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+rc=0
+
+$ … --surfaces <wallpaper as exclusive -1>
+MADO_BARFOOT_CONFIG: pos=top layer=top level=2 ns=waybar height=26 width=0 margins=0,0,0,0 exclusive=true surfaces=2
+MADO_BARFOOT_STATIC: monitor=DP-1 top=0 right=0 bottom=0 left=0 source=none
+MADO_BARFOOT_DECL: monitor=DP-1 level=2 ns=waybar box=0,0,3440,26 anchor=top+left+right zone=26
+MADO_BARFOOT_LIVE: monitor=DP-1 level=2 ns=waybar box=0,0,3440,26 entries=1
+MADO_BARFOOT_ATTR: monitor=DP-1 level=2 ns=waybar edge=top contribution=26 box=0,0,3440,26
+MADO_BARFOOT_DECL: monitor=DP-1 level=0 ns=wallpaper box=0,0,3440,1440 anchor=top+bottom+left+right zone=-1
+MADO_BARFOOT_LIVE: monitor=DP-1 level=0 ns=wallpaper box=0,0,3440,1440 entries=1
+MADO_BARFOOT_RESULT: monitor=DP-1 box=MATCH boxes=MATCH,MATCH reserved=EQ band=26 expected=26 attributed=26 gt=0,26,0,0 attr=0,26,0,0 ls=VALID verdict=CLEAN
+MADO_BARFOOT: verdict=CLEAN
+rc=0

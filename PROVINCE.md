@@ -438,3 +438,19 @@ preset, a scaled monitor, the `background` layer, a spaced output pattern). The 
 instruments (`quality/counters/c1-r79-reserve.py`, `c2-r79-runbook.py`) read committed bytes and
 caller scratch only; the C2 counter executes the lane's read verbs and that read-only join. No
 config tree, compositor, service or sibling repo is written by this round.
+
+**Round-80 refinement (append-only; one read-only declaration, no new write surface):**
+`tools/mado-barfoot.py` gains an optional `--surfaces` input — a caller-supplied JSON list of the
+layer surfaces the join should compose (namespace, level, anchor, desired size, margins, requested
+exclusive zone, exclusive edge, rule order) — and, when at least one entry is present, arranges
+every declared surface in level order against the running usable box and attributes each exclusive
+surface's shrink by the first matching edge. It reads that one regular file (1 MiB cap,
+symlinks/FIFOs/devices refused) beside the same three caller-supplied artifacts; it writes nothing,
+starts no process and opens no socket. A declaration the compositor would refuse is refused
+(`stage=model`) rather than guessed: an `exclusiveEdge` outside the declared anchor set, a level
+outside 0–3, a non-integer margin or an unknown position. The round's record instruments
+(`quality/counters/c1-r80-multisurface.py`, `c2-r80-runbook.py`) read committed bytes and caller
+scratch only; the C2 counter executes the lane's read verbs and that read-only join. The knowledge
+entry `corpus/knowledge/bar-footprint-composition-r80.md` is documentation of the layer plane the
+lane already owns; the host join it records was captured read-only. No config tree, compositor,
+service or sibling repo is written by this round.
