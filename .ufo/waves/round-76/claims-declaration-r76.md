@@ -64,9 +64,12 @@ of the published field.
 | `outcome-killed-any` | `killed >= 1` instead of `killed == 2` | `green-mutant` (green, killed 1) |
 | `outcome-killed-or` | green **or** killed 2 | `always-red` |
 
-**Kill rule (frozen).** A mutant is killed iff its two-field score is below fifteen. The
+**Kill rule (frozen).** A mutant is killed iff its two-field score is below sixteen (any miss
+out of the sixteen frozen cases). *Text corrected pre-integration from an earlier "below fifteen"
+wording that no longer matched the sixteen-case set (critic finding F1); the implemented rule is
+`score < len(cases)` and the target line was always `cases=16`.* The
 **do-nothing control** is the held round-75 scoring rule, which reads `mz=` only: a
-mutant is base-killed iff its mz-only score is below fifteen.
+mutant is base-killed iff its mz-only score is below sixteen.
 
 **Target (frozen).** Exit 0 and `verdict=TARGET_MET` iff
 `cases=16 correct=16 mutants=4 killed=4 base_killed=0`. Exit 1 iff measured and missed;

@@ -32,8 +32,9 @@ pair) and scores **both** fields per case. Receipt line:
 MADO_R76_OUTCOME_FIELD: cases=16 correct=16 mutants=4 killed=4 base_killed=0 verdict=TARGET_MET
 ```
 
-The do-nothing control (the held `mz=`-only scoring rule, `control-baseline-r76.txt`) scores
-16/16 on `mz=` and kills 0/4 mutants: the control cannot reach the target.
+The do-nothing control (the held `mz=`-only scoring rule, `control-baseline-r76-matched.txt`) scores
+16/16 on `mz=` and kills 0/4 mutants: the control cannot reach the target. (The historical
+`control-baseline-r76.txt` scored the v1/v2 fifteen-case set and is kept beside it, append-only.)
 
 ## 2. The negative result: an echo-dropping outcome mutation is unobservable
 
@@ -50,10 +51,10 @@ through this field, and the reason is structural:
 The M-Z kill already requires the run's echo of the per-run challenge, and `verdict=` is
 green only when `killed == 2`. So on every reachable case, `killed == 2` already implies the
 echo matched, and dropping the echo from the outcome clause changes no published field.
-Measured: the echo-dropping mutation scores 16/16 and is not killed
-(`MADO_R76_MUTANT name=outcome-term-dropped score=16/16 ... killed=no` in the v2 receipt kept
-beside the final one). This is a *negative result*, recorded rather than papered over
-(`corpus/lessons/round-76.md` M76-2).
+Measured before the frozen set moved to the observable class: the echo-dropping mutation scored
+16/16 and was not killed (round-76 declaration §C1 and `corpus/lessons/round-76.md` M76-2; the
+v1/v2 run's own receipt is the historical `control-baseline-r76.txt`). This is a *negative
+result*, recorded rather than papered over.
 
 What remains observable is the published field's own conjuncts. Four named mutations, each
 anchored once at `outcome_green`'s single return line:

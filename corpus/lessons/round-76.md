@@ -122,3 +122,36 @@ Assimilation: none this round (no `merge/mado/` package adopted; the round state
 report's Sources & frontier section). considerthese mined: proposal 5 of
 `considerthese/2026-10-28.md` ("separate relayed from re-measured in every number") lands as
 QUALITY 131.
+
+## Review-driven repair (round 76, append-only)
+
+The w1 wave found six defects the round's own selftests missed; none touches a frozen predicate,
+control set, label or target, and both claims are re-measured after the repairs.
+
+- **F1 — frozen kill-rule wording (`R76Critic`).** The declaration said "below fifteen" while the
+  implemented rule is `score < len(cases)` with sixteen cases; three mutants sit at 15/16, so the
+  frozen text made the target unreachable as written. Corrected pre-integration to "below sixteen
+  (any miss out of sixteen)" in the declaration and the counter docstring; the target line was
+  always `cases=16` and no case, label or mutant changed.
+- **F2 — the "held rule" is a port (`R76Critic`).** The held round-75 binary parses `MADO_R75_`
+  rows and would report `active=absent` on round-76 rows; `proto/held-r76.py` re-implements the
+  held arithmetic/witness predicate and extracts the held classifier at `--base-rev`. The receipt
+  now names the executor, the command and the rc.
+- **F3 — receipts without command/rc (round-75 R7 repeated).** Both control receipts and the
+  label-derivation receipt now carry an appended provenance block (command, rc, executor, the
+  revision and label set they scored).
+- **F4 — the C1 entry cited a v1 receipt and a nonexistent v2 one (`R76Critic`,
+  `R76ScribeEntries`).** The entry cites the matched control and states the historical receipt
+  and the negative result's actual provenance.
+- **F5 — v3 was frozen without a pre-freeze held run (`R76Critic`).** Closed by
+  `control-baseline-r76-matched.txt`, committed before this round's integration commit and
+  agreeing with the measurement's own base leg.
+- **F6 — the C2 control note miscounts its own taxonomy (`R76Critic`).** `c2-cases-r76.json`'s
+  note says "thirteen appended: three interprocedural cancellations, one dynamic-key delete, and
+  eight negatives" — 3+1+8 = 12, and `dynamic-key-module-const` is a fourth positive. The file is
+  frozen and not rewritten; the successor note (and `corpus/knowledge/interprocedural-del-r76.md`
+  §2–§3) states the correct shape: 4 positives, 8 negatives, 12 appended, 59 total.
+- **D3 parameter binding (`R76RevC2` P2, `R76Mutant` `d3-anyarg`).** Repaired at `5dade9b3`;
+  see `SCORECARD.md` § Review-driven repair. Carried survivors: the `grammar16` narrowing and the
+  `d3-anyarg` broadening both still score the target on the frozen set — named coverage gaps, not
+  certificates.

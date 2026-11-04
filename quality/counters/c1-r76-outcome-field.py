@@ -7,7 +7,7 @@ not only the M-Z kill decision (claim C1, round 76).
         --controls .ufo/waves/round-76/controls/c1-outcome-cases-r76.json --scratch-root DIR
     python3 quality/counters/c1-r76-outcome-field.py --selftest --scratch-root DIR
 
-What is scored. Fifteen REAL `bash` fixture lanes, one per frozen mode, each committed into its
+What is scored. Sixteen REAL `bash` fixture lanes, one per frozen mode, each committed into its
 own scratch git fixture whose `quality/landing-counters.sh` is the mode-driven test double; the
 fixture carries the real `c3-r56-used-by.py`, `check-tool-ledger.py`,
 `mado-receipt-citecheck.py` and the frozen `c1-r72-landing-controls.py` bytes at --rev. The
@@ -21,22 +21,23 @@ Two fields are scored per case against the frozen expectation:
   verdict  the contract outcome (the field the held counter never reads).
 
 Four named mutations of the outcome rule are then applied to the candidate harness bytes at
-unique anchors and each mutated harness is scored on the same fifteen cases:
+unique anchors and each mutated harness is scored on the same sixteen cases:
 
   outcome-term-dropped   the outcome ignores the challenge echo (round-75's surviving C1-M2)
   prefix-match           the echo comparison becomes a prefix test (needs the widened grammar)
   first-witness-wins     the first parsed echo wins instead of the last
   case-insensitive       the echo comparison folds case (needs the case-changing challenge)
 
-A mutant is killed iff its two-field score is below fifteen. The held scoring rule reads `mz=`
-only, so every mutant's mz score stays fifteen and `base_killed` is zero: the control cannot
+A mutant is killed iff its two-field score is below sixteen (any miss out of the sixteen
+frozen cases). The held scoring rule reads `mz=`
+only, so every mutant's mz score stays sixteen and `base_killed` is zero: the control cannot
 reach the target.
 
 Printed receipt (last line, exact):
 
     MADO_R76_OUTCOME_FIELD: cases=15 correct=15 mutants=4 killed=4 base_killed=0 verdict=<TARGET_MET|TARGET_MISSED> rev=<sha>
 
-Exit 0 iff cases == 15, correct == 15, mutants == 4, killed == 4 and base_killed == 0; 1 iff the
+Exit 0 iff cases == 16, correct == 16, mutants == 4, killed == 4 and base_killed == 0; 1 iff the
 measurement ran and missed (an absent candidate prints `correct=absent`); 2 on usage/setup error
 with the reason on stderr and no contract line.
 
