@@ -267,6 +267,22 @@ filters every `GIT_*` name reads as guarded while executing unguarded
 - **No desktop, compositor, session, socket or service surface** was read
   or written for this entry.
 
+## Evidence rows
+
+One row per quoted sentence this entry turns on, pinned to the fetched bytes at tag
+`v2.56.0` (sha256 `6c32dbda8c2106be08bda471592db50b5afaf185de32f2e513e80d802b4a95b2`, 16099 B).
+
+| id | claim the row grounds | source | locator |
+|---|---|---|---|
+| K01 | `cat-file` is the documented object-contents read ("Provide contents or details of repository objects"). | S437 | git-cat-file.adoc:6 |
+| K02 | The DESCRIPTION states the read returns contents or other properties of one or more objects. | S437 | git-cat-file.adoc:21 |
+| K03 | `-t` reports "the object type identified by `<object>`", one of the typed read forms. | S437 | git-cat-file.adoc:40 |
+| K04 | `-s` reports "the object size identified by `<object>`". | S437 | git-cat-file.adoc:44 |
+| K05 | `-e` exits zero iff the object "exists and is a valid object" — presence, not content. | S437 | git-cat-file.adoc:50 |
+| K06 | `-p` "Pretty-print the contents of `<object>` based on its type." | S437 | git-cat-file.adoc:55 |
+| K07 | The one documented mode that bypasses replacement: `--batch-all-objects` presents objects "as-is, without respecting the "replace" mechanism". | S437 | git-cat-file.adoc:198 |
+| K08 | Batch input lines are "considered as an object, as if it were fed to linkgit:git-rev-parse[1]" — the documented join to name resolution. | S437 | git-cat-file.adoc:303 |
+
 ## 6. Recheck and provenance
 
 - Fetch command:
