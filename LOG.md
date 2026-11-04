@@ -3955,3 +3955,61 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
 - **Round-79 count.** The round-79 entry above says "Seven mined"; `corpus/lessons/round-79.md`
   carries eight `## Mistakes` rows (M79-1…M79-8). The eight stands; the sentence above stays as the
   dated record (round-79 closure D3; the r80 lesson's M80-3).
+
+## Round 80 — the composition under the band, and two matcher classes (2026-11-04, hyaku run 15)
+
+- **Claims.** C1 coverage (capability acquisition): a second exclusive layer surface composes under
+  the running usable box — `tools/mado-barfoot.py` (`r80-v1`) gains `--surfaces` and the arrangement
+  model (`arrangeLayersForMonitor`'s level order and running bounds, `arrangeLayerArray`'s
+  full-box/usable bounds split and empty-box skip, `applyExclusive`'s four-rule first match with the
+  `zone + margin > 0` guard, and `CReservedArea{ORIGINAL, usable}`'s area guard), printing
+  per-surface `MADO_BARFOOT_ATTR:` beside `gt=`/`attr=` vectors — the frozen thirty-three-case set
+  scores `cases=33 correct=33 mutants=22 killed=22 base_correct=23/33 carried=23/23
+  tool_selftest=111/111 TARGET_MET` at the repair tip (`receipts/measurement-c1-r80-at-tip.txt`;
+  the freeze run at `6c302a53` printed the same counts on the pre-repair bytes), with the held r79
+  model at 23/33 (`receipts/control-c1-r80-at-base.txt`) and a parser-stub skip also at 23/33
+  (`receipts/control-c1-r80-parser-stub.txt`). C2 operability: the runbook gains two matcher
+  classes — a chord grammar over `omarchy-menu-keybindings`' chord column and a word-plus-exit-status
+  matcher for `systemctl --user is-active` — `cases=24 executed=24 matched=24 shapes=19/19
+  anchors=24/24 rows=24/24 control_new=0/2 mutants=16 killed=16 tree=bound TARGET_MET`
+  (`receipts/measurement-c2-r80-at-tip.txt`); its before-state is a structural setup refusal (the
+  critic's Q1c), so the claim is a capability acquisition with the capability's absence as its
+  before, and the demonstrated `rows=22/24 → 24/24` before→after is round 81's instrument.
+- **Host ground (read-only).** `receipts/live-join-r80.txt`: the single-surface join and the
+  composition join with `wallpaper` declared (`boxes=MATCH,MATCH … attributed=26 gt=0,26,0,0
+  CLEAN`); the host carries exactly two layer surfaces (waybar level 2, wallpaper level 0) and no
+  second exclusive consumer, stated as such in the entry's limits. No config tree, compositor state
+  or service was written.
+- **Sources.** SOURCES 404 → 412 rows: S470 (`src/render/Renderer.cpp`, the arrangement/attribution
+  ranges) byte-identical to the round-78 pin, S471 (`src/protocols/LayerShell.cpp`, the zone/edge
+  handlers and the alignment error), S472 (`tests/desktop/Reserved.cpp`, the upstream area
+  assertions), S473 (the installed `omarchy-menu-keybindings`, own-work) and S474 (the installed
+  `systemctl` man page) mined; S475 a rejected row that supersedes S467; S476/S477 mined supersede
+  rows for S473/S472 after the wave's source seat caught two wrong anchors. One mutable cell moved
+  (S475 `recheck on-change → 180d`). Census exit 0 at both ends.
+- **Mistakes.** Six mined in `corpus/lessons/round-80.md`: the five routed defects of the round-79
+  closure (M80-1 the stale after-cell, M80-2 S467's reason, M80-3 LOG's "Seven mined", M80-4 the
+  unregistered `S468`/`S469` fetch files, M80-5 the r79 partial seat) and M80-6, the round's own
+  wrong S473/S472 anchors caught by the wave's source seat and corrected as S476/S477. Two empty
+  sweeps recorded (no `TODO/FIXME/XXX` in the three instruments; no dead keys in the new sets).
+- **Repairs (append-only, declaration §Repair).** R1 the composition `box=` field's index
+  (`boxes[sequence.index(0)]`; wave seat `R80ScribeEntry` F1) and the C1 docstring's stale
+  `cases=30`; R2 the chord grammar accepts the formatter's empty-key rendering (found by the L1 on
+  live bytes and independently by `R80ReviewerC2` F1); R3 the C2 counter's child environment is an
+  allowlist and `TMPDIR` is pinned inside the scratch root (`R80Sentinel` F1/F2); R4 the state
+  matcher follows the 0/non-zero contract instead of pinning 3 (`R80ReviewerC2` F3). No case,
+  expectation, mutant or target moved; every repair re-measured.
+- **Named limits (entry §11, SCORECARD).** Four reachable classes where the frozen set does not
+  reach and the model is wrong (negative-tie centring, `auto` on a dynamic band, `auto` on
+  corner/parallel anchors, the `exclusive` default), plus the C2 residuals the reviewer named
+  (the mask-65-only `code:201` rewrite, the enum's `maintenance`/`refreshing` gap, >35-column
+  truncation, synthetic negatives).
+- **Registry and gate bookkeeping.** `quality/tool-ledger.md` 144 → 146 rows; `SKILL.md` gains the
+  `### Executable runbook rows (round 80)` table (24 rows) and three registry rows
+  (`mado-r80-barfoot-composition`, `…-counter`, `mado-r80-runbook`), with the two r80 counter cells
+  corrected to their measured selftests (60/60, 80/80); `PROVINCE.md` gains the round-80 refinement
+  (one read-only `--surfaces` declaration); the hermetic gate stays 460/460; index 98/98 → 99/99;
+  axis table `mismatched=0`; session-material 291 findings with no round-80 path.
+- **Wave.** One v1 wave, 14 seats (`w1-spec.json`, `w1-dispatch.json`, `w1.ready.dispatched`); seat
+  reports under `.ufo/waves/round-80/w1/` and their findings in the lesson. Dead seats and empties
+  are disclosed in the round report, never backfilled (QUALITY 115).
