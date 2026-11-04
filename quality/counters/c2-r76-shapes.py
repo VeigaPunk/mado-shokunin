@@ -51,6 +51,7 @@ import runpy
 import shutil
 import subprocess
 import sys
+import tempfile
 
 TOOL = "c2-r76-shapes.py"
 BASE_COUNTER = "quality/counters/c2-r75-shapes.py"
@@ -86,17 +87,30 @@ class SetupError(Exception):
 
 
 # --------------------------------------------------------------------------------------------- env
-def git_env():
-    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
-    env["GIT_OPTIONAL_LOCKS"] = "0"
-    env["GIT_NO_REPLACE_OBJECTS"] = "1"
-    env["LC_ALL"] = "C"
+def git_env(home=None):
+    """Round-76 repair (R76Sentinel P2): an allowlisted child environment, never a copy of the
+    caller's. A caller-supplied LD_PRELOAD/BASH_ENV/PYTHONPATH cannot run before a read-only git
+    call, and the child HOME/TMPDIR live under the caller's validated scratch root."""
+    base = home or os.path.join(tempfile.gettempdir(), "mado-r76-c2-home")
+    os.makedirs(base, exist_ok=True)
+    env = {
+        "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+        "HOME": base,
+        "TMPDIR": base,
+        "LC_ALL": "C",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": os.devnull,
+        "GIT_CONFIG_SYSTEM": os.devnull,
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+    }
     return env
 
 
-def run(argv, cwd=None, timeout=900):
+def run(argv, cwd=None, timeout=900, home=None):
     return subprocess.run(argv, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                          env=git_env(), timeout=timeout)
+                          env=git_env(home), timeout=timeout)
 
 
 def dec(data):
@@ -440,16 +454,18 @@ def cancelling_functions(tree, consts, dead):
     return out
 
 
-def call_cancellations(tree, cancelling, dead, functions):
+def call_cancellations(nodes, cancelling, dead, functions):
     """Round-76 D3: name -> call lines where a cancelling callee deletes THAT argument's key.
 
     Reviews R76RevC2 P2 and R76Mutant `d3-anyarg`: only the argument bound to the deleted
-    parameter cancels, by position (postonly/positional order) or by keyword name.
+    parameter cancels, by position (postonly/positional order) or by keyword name. Repair from
+    R76ScoutPopulation's cross-scope finding: `nodes` is one lexical scope's node list, so a
+    same-named guard in another scope is never cancelled by a call elsewhere.
     """
     out = {}
     if not cancelling:
         return out
-    for node in ast.walk(tree):
+    for node in nodes:
         if not isinstance(node, ast.Call) or node.lineno in dead:
             continue
         if not isinstance(node.func, ast.Name) or node.func.id not in cancelling:
@@ -631,8 +647,8 @@ def has_guard(src):
         if not binds:
             continue
         rebinds = unguarded_rebindings(nodes, maps, dead, consts)
-        for name, lines in call_cancellations(tree, cancelling, dead,
-                                             local_functions(tree)).items():
+        for name, lines in call_cancellations(nodes, cancelling, dead,
+                                             locals_).items():
             rebinds.setdefault(name, set()).update(lines)
         for name, guard_lines in binds.items():
             uses = usage_lines(nodes, name, locals_)
@@ -1010,7 +1026,6 @@ def carrier_guard(tree, dead):
     consts = const_key_names(tree)
     maps = splat_mapping_names(tree)
     cancelling = cancelling_functions(tree, consts, dead)
-    calls = call_cancellations(tree, cancelling, dead, local_functions(tree))
     if attribute_flow(tree, dead, consts):
         return True
     if alias_store_guard(tree, dead):
@@ -1043,7 +1058,8 @@ def carrier_guard(tree, dead):
         if not binds:
             continue
         rebinds = unguarded_rebindings(nodes, maps, dead, consts)
-        for name, lines in calls.items():
+        for name, lines in call_cancellations(nodes, cancelling, dead,
+                                              locals_).items():
             rebinds.setdefault(name, set()).update(lines)
         for name, guard_lines in binds.items():
             uses = usage_lines(nodes, name, locals_)

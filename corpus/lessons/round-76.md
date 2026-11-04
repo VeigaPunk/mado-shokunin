@@ -159,3 +159,25 @@ control set, label or target, and both claims are re-measured after the repairs.
   see `SCORECARD.md` § Review-driven repair. Carried survivors: the `grammar16` narrowing and the
   `d3-anyarg` broadening both still score the target on the frozen set — named coverage gaps, not
   certificates.
+
+### Second repair pass (wave seats R76RevC1, R76Sentinel, R76ScoutPopulation)
+
+- **C1 `--base-rev` was unbound (`R76RevC1` P2).** The counter resolved the revision but read
+  nothing from it, so a base revision holding no held generation still certified `TARGET_MET`.
+  Repaired: the held round-75 counter must exist at `--base-rev` (rc 2 otherwise); receipt
+  `receipts/repair-r76-c1-base-absent.txt`.
+- **C2 inherited the caller's environment into git children (`R76Sentinel` P2).** `git_env()`
+  copied `os.environ` minus `GIT_*`, so `LD_PRELOAD`/`BASH_ENV`/`PYTHONPATH` could run before a
+  read-only git call. Repaired to an allowlisted environment with a child HOME/TMPDIR.
+- **C2 cross-scope cancellation (`R76ScoutPopulation`).** `call_cancellations` walked the whole
+  tree and was merged into every scope's rebindings, so a call in one function could cancel a
+  same-named guard in another. Repaired to walk only the scope's own node list; probe flips to
+  guarded.
+- **`callee-del-param-rebound` is unreachable as written (`R76ScoutPopulation` P2, M75-3 class).**
+  The fixture rebinds `m` to a fresh dict and then deletes a key it never had, so the source
+  raises `KeyError` before any launch; its "guarded" label is a counterfactual. The frozen file is
+  not re-cut; the successor shape must initialise the key before the delete.
+- **Evidence prototypes are not hardened (`R76Sentinel` P2).** `proto/held-r76.py` and
+  `proto/label-derivation-r76.py` write into a caller-named scratch root with symlink-following
+  opens; they are one-shot evidence generators run by the L1, never part of a gate, and the
+  limit is carried rather than repaired in-round.

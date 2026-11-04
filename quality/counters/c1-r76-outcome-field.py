@@ -62,6 +62,7 @@ import sys
 
 TOOL = "c1-r76-outcome-field.py"
 CAND = "quality/counters/c1-r76-landing-controls.py"
+HELD = "quality/counters/c1-r75-harness-witness.py"
 R72 = "quality/counters/c1-r72-landing-controls.py"
 USEDBY = "quality/counters/c3-r56-used-by.py"
 LEDGER = "quality/check-tool-ledger.py"
@@ -243,6 +244,11 @@ def extract(repo, sha, path, env):
     return r.stdout
 
 
+def maybe_extract(repo, sha, path, env):
+    r = git(repo, ["show", "%s:%s" % (sha, path)], env)
+    return r.stdout if r.returncode == 0 else None
+
+
 def parse_row(out):
     """The last parsed successor contract row as (mz, verdict) with verdict MET -> pass."""
     for line in reversed(out.splitlines()):
@@ -344,6 +350,10 @@ def measure(args):
 
     sha = resolve_rev(repo, args.rev, env)
     base_sha = resolve_rev(repo, args.base_rev, env)
+    # R76RevC1 P2: --base-rev must bind the held generation it names; a revision where the held
+    # round-75 counter is absent is a setup error, never a certified TARGET_MET.
+    if maybe_extract(repo, base_sha, HELD, env) is None:
+        raise SetupError("held generation %s is absent at --base-rev %s" % (HELD, base_sha))
     r = git(repo, ["show", "%s:%s" % (sha, CAND)], env)
     cand_bytes = r.stdout if r.returncode == 0 else None
     lane_files = {path: extract(repo, sha, path, env)
