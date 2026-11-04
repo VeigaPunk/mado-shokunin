@@ -166,8 +166,8 @@ edge only; the four-value vectors are printed for inspection, not compared. `GT`
 than expected) is admissible and does not fail — an undeclared consumer can reserve more.
 `DIFFER` (band less than expected) is a model or host disagreement and fails with rc 1. Two
 different per-surface attributions can produce the same total; the frozen cases separate them
-only because the case set pins `attr_ns` per surface, and the counter refuses a mismatched `attr`
-or `attributed` (its selftest exercises both refusals).
+only because the case set pins `attr_ns` per surface, and the counter compares `attr`,
+`attributed` and `attr_ns` (its selftest exercises the vector and per-surface refusals).
 
 ## §8 The ten composition cases
 
@@ -253,7 +253,7 @@ same receipt; the ten new ones are the last ten):
 
 | number | value | command | revision |
 |---|---|---|---|
-| frozen cases | 33 | `python3 -c 'import json;print(len(json.load(open(".ufo/waves/round-80/controls/c1-cases-r80.json"))["cases"]))'` | content at `6c302a53`; sha256 `17c27157…` |
+| frozen cases | 33 | `python3 -c 'import json;print(len(json.load(open(".ufo/waves/round-80/controls/c1-cases-r80.json"))["cases"]))'` | sha256 `17c27157…` at the freeze run `6c302a53` |
 | carried cases, parsed-equal | 23/23 | `MADO_R80_CONTROL: … carried=23/23` from the C1 command | `6c302a53` |
 | cases correct | 33/33 | C1 command above | `6c302a53` |
 | mutants killed | 22/22 | C1 command above | `6c302a53` |
@@ -277,8 +277,8 @@ same receipt; the ten new ones are the last ten):
    capture carries it, so a caller declares it. A wrong `order` moves boxes and attribution; an
    edge total is a sum, so it can stay unchanged.
 3. **`preview_scale` is unmodelled.** The join has no field for it and makes no claim about a
-   layer surface whose box is scaled before arrangement; every box in this entry is the declared
-   size.
+   layer surface whose box is scaled before arrangement; every box here is a declared or
+   arranged size, never a scaled one.
 4. **Cross-axis overflow with a valid area is unmodelled.** A box wider (or taller) than the
    bounds, whose exclusive band still leaves a valid usable box, is arranged by the arithmetic
    here and its band is predicted; what the compositor renders for the overflowing box, and
@@ -313,7 +313,7 @@ same receipt; the ten new ones are the last ten):
 - `.ufo/waves/round-80/controls/c1-cases-r80.json` — sha256 `17c27157…`, 33 cases; generator
   `controls/make-cases-r80.py`.
 - `tools/mado-barfoot.py` — `r80-v1`, sha256 `c3eb5fbe…`;
-  `quality/counters/c1-r80-multisurface.py` — the counter, selftest 60/60.
+  `quality/counters/c1-r80-multisurface.py` — sha256 `6268667c…`, selftest 60/60.
 
 ## Sources
 

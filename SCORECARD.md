@@ -4665,3 +4665,14 @@ reported per seat in the round report; an empty seat output is an evidence gap, 
 
 ### Axis table re-derived at the landing tip (`receipts/harm-watch-r80.txt` and `quality/check-axis-scores.py`):
 navigation 99/99; calibration resolved-active 86/86; operability selftest 12/12, ledger 146/146.
+
+### Named limits and next-round ground (append-only, round 80)
+
+The wave's source seat probed four reachable classes where the frozen thirty-three do not reach and
+the model is wrong: the centring tie past a negative absolute coordinate (1 px, `w > bounds.w`), the
+`auto` zone on a dynamic band size (computed from the declared size, not the allocation), `auto` on a
+corner/parallel anchor pair (gtk sends no zone), and a declared surface with no `exclusive` key
+(the declaration grammar's `auto` default versus the protocol's `0`). They are recorded in
+`corpus/knowledge/bar-footprint-composition-r80.md` §11 and become round 81's C1 ground; the round-80
+claim is measured on the frozen set and no expectation, mutant or target moved.
+
