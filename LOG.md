@@ -4138,3 +4138,16 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   file:line sibling ownership scan and one interpretation caption, without changing frozen rows.
 - Every source/claim result is either re-executed this round or explicitly attributed to
   committed prior evidence. No tool installs, pacman transaction or desktop/service write.
+- L1 final re-executions at `6229a0eb8be551660aa2862e52c3991613429532`:
+  C1 cases61/correct61/mutants41/killed41/held58/carried58/TARGET_MET;
+  C2 repaired successor cases33/executed33/matched33/shapes26/26/killed29/29/TARGET_MET.
+  Exact commands/revision/input hashes: `.ufo/waves/round-84/receipts/final-c{1,2}-r84.txt`.
+  Frozen C2 remains setup rc2, not retroactively green; **round honest stop, not admitted**.
+- Harm watch at that content: `final-index-r84.txt`104/104; `final-ledger-r84.txt`154/154;
+  `final-gate-r84.txt`460/460; `final-wave-r84.txt`1/1 with10 settled outputs. Initial
+  axis publication failed (102 versus104), retained as `axis-prepublication-r84.txt`; records
+  correct only its publication marker. Source census420→422, exits0/0, warning set retained.
+- R83 registry R1 red4 missing→green0 in `registry-{before,after}-r84.txt`; per-seat exact IDs,
+  expired terminal statuses and unverified actual models are disclosed in `seat-metadata-r84.json`.
+  Zero replaced seats; ten substantive outputs, no terminal-success inference. Main's WAVE-DONE
+  received before any report. No source tree/sibling edit or package operation.

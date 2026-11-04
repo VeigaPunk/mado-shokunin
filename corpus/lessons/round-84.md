@@ -77,3 +77,29 @@ is disclosed and the province addendum limits execution to this round's assigned
 Counter headers had obsolete predecessor counts/paths and the printed C2 control named an absent
 historical section-refusal receipt. They are corrected forward as documentation/publication only;
 the raw freeze stays resolvable and is never claimed to have contained those corrections.
+
+## End measurements
+
+L1 re-executed both full successor commands at content6229a0eb8be551660aa2862e52c3991613429532:
+C1 TARGET_MET61/61,41/41 kills,held58/61,carried58/58,139/139 selftest; C2 successor
+TARGET_MET33/33,26/26 shapes,29/29 kills. All input counter/control SHA256s and exact commands
+are retained in `receipts/final-c{1,2}-r84.txt`. Frozen C2 remains rc2; round is an honest stop,
+not retroactively admitted. Counter selftests99/99 and98/98 re-executed on that content.
+
+Registry-after receipt verifies missing0/4 against before missing4/4. Standing gate460/460,
+index104/104, ledger154/154 and WAVE-DONE1/1 exit0. Initial axis gate was stale102/102 versus
+derived104/104, retained at `receipts/axis-prepublication-r84.txt`; the scorecard's exact
+publication marker is corrected forward and the post-records axis result is a separate receipt.
+Census end422 rows/exit0; start420/exit0; known W04 and W01 S277 warnings retained unfiltered.
+`receipts/sources-row-count-r84.txt` counts committed base/content bytes; two new tierA mined rows,
+zero existing status/recheck/used-by changes. Frontier advances only within the two named notes.
+
+Main supplied exact job IDs (equal to seat names). All ten handles' terminal statuses expired,
+so status and actual answering model are unavailable, not assumed successful. WAVE-DONE establishes
+none still live at finalization, and results retain ten substantive outputs. Configured override
+was @m_zfl for each role; no answering-provider inference follows. No replacements.
+
+Misroot sweep retains fleet status in `receipts/misroot-sweep-r84.txt`; operator .scratch files,
+another lane report and an unattributed root `after` file were left untouched. The latter contains
+only a SCORECARD-diff heading, not evidence assigning it to mado. All ten mado reports are lane-local.
+No own misroot was identified. No tool install, new L0 question or promotion change.

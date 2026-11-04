@@ -4937,3 +4937,29 @@ Planned next round, intent only: equal-valued/interleaved allocation keys, cross
 duplicates and case-sensitive names; precise cause discrimination rather than stage-only refusals;
 C2 any-nonzero/prefix acceptance, failing-tail/SIGPIPE distinctions, and inherited causal-cheat
 limits. Do not widen this round's frozen populations after seeing those attacks.
+
+### Round84 measured results and honest stop
+
+Measured content revision `6229a0eb8be551660aa2862e52c3991613429532`; exact commands and input
+SHA256 values are in `.ufo/waves/round-84/receipts/final-c{1,2}-r84.txt`.
+
+- C1: re-executed61/61,41/41 kills,held58/61,carried58/58,selftest139/139,TARGET_MET rc0.
+  Finite refusal-set score `10*58/61=9.5082` → `10*61/61=10.0000` (+0.4918), coverage
+  improved only on the three frozen input witnesses. The reviewer's broader surviving cheats
+  do not disappear merely because canonical mutants die.
+- C2: raw freeze `3f9eec39` remains setup rc2, no numeric score delta and no frozen-target
+  success. The forward repaired instrument at `6229a0eb` executes/matches33/33,26/26 shapes,
+  anchors/rows33/33 and29/29 kills,TARGET_MET rc0. This is successor evidence, not retroactive
+  admission of the frozen claim. The one-case no-guard control remains0/1; do not call it a
+  full held31-row replay. **Round verdict: honest stop, not admitted.**
+- Registry R1: missing4/4 at base → missing0/4 at content, red/green receipts retained.
+  Counter selftests99/99 and98/98 re-executed on the repaired content.
+- Harm watch at content: index104/104, ledger154/154 uncovered0, standing gate460/460, and
+  WAVE-DONE gate waves1/settled1,seats10/settled10 all exit0. Initial axis publication gate
+  was stale102/102 versus derived104/104 (rc1): this correction adds the exact publication
+  syntax below, retaining the red in `receipts/axis-prepublication-r84.txt`.
+
+Axis table re-derived at the round84 records (final-axis receipt decides agreement):
+navigation 104/104; calibration resolved-active 86/86; operability selftest 12/12, ledger 154/154.
+No capability row is admitted from failed frozen C2. Other axes unchanged within the exercised
+harm-watch scope; no claim of global absence of harm or promotion clearance.
