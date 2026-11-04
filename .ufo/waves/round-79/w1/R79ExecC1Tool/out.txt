@@ -1,0 +1,494 @@
+PASS 73 / 73  (fail = observed class diverges from the docstring exit map or the reference arithmetic)
+
+OK   R01-comment-only         rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: comment-only file: rule must not apply
+     fixture: b'# monitor = M1, addreserved, 99, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R01-comment-only.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R01-comment-only.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R01-comment-only.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R01-comment-only --monitor M1
+
+OK   R02-inline-comment       rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: trailing # comment stripped, reserve applies
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0 # trailing\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R02-inline-comment.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R02-inline-comment.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R02-inline-comment.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R02-inline-comment --monitor M1
+
+OK   R03-whitespace           rc=1  want=accept
+     STATIC monitor=M1 top=12 right=0 bottom=34 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=12 expected=46 verdict=DIFFER
+     note: leading tabs/spaces, spaced fields
+     fixture: b'\t  monitor   =   M1 , addreserved , 12 , 34 , 0 , 0  \n  \n\t\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R03-whitespace.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R03-whitespace.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R03-whitespace.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R03-whitespace --monitor M1
+
+OK   R04-nospace              rc=1  want=accept
+     STATIC monitor=M1 top=7 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=7 expected=41 verdict=DIFFER
+     note: no-space form; selector x skipped, M1 applies
+     fixture: b'monitor=x,addreserved,1,2,3,4\nmonitor=M1,addreserved,7,0,0,0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R04-nospace.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R04-nospace.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R04-nospace.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R04-nospace --monitor M1
+
+OK   R05a-huge-19digit        rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model addreserved needs four plain integers, TOP BOTTOM LEFT RIGHT (line 1))
+     note: 20-digit field is not a plain integer (INT_FIELD_RE max 6 digits)
+     fixture: b'monitor = M1, addreserved, 99999999999999999999, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R05a-huge-19digit.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R05a-huge-19digit.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R05a-huge-19digit.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R05a-huge-19digit --monitor M1
+
+OK   R05b-huge-7digit         rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model addreserved needs four plain integers, TOP BOTTOM LEFT RIGHT (line 1))
+     note: 7-digit field over the 6-digit plain-integer cap
+     fixture: b'monitor = M1, addreserved, 1234567, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R05b-huge-7digit.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R05b-huge-7digit.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R05b-huge-7digit.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R05b-huge-7digit --monitor M1
+
+OK   R05c-huge-6digit         rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model the static reserved area leaves no usable box (3440x-998559))
+     note: 6-digit 999999 parses, then usable box h=1440-999999<=0 -> refused downstream (stage=model, different message)
+     fixture: b'monitor = M1, addreserved, 999999, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R05c-huge-6digit.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R05c-huge-6digit.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R05c-huge-6digit.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R05c-huge-6digit --monitor M1
+
+OK   R06-negative             rc=1  want=accept
+     STATIC monitor=M1 top=-10 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=-10 expected=24 verdict=DIFFER
+     note: NEGATIVE top field accepted; S466 ctor clamps negatives to 0 -> tool diverges (usable box expanded, band reduced)
+     fixture: b'monitor = M1, addreserved, -10, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R06-negative.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R06-negative.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R06-negative.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R06-negative --monitor M1
+
+OK   R07-six-fields           rc=1  want=accept
+     STATIC monitor=M1 top=1 right=4 bottom=2 left=3 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=1 expected=35 verdict=DIFFER
+     note: five numbers: fifth silently ignored (handler reads ARGS[2..5])
+     fixture: b'monitor = M1, addreserved, 1, 2, 3, 4, 5\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R07-six-fields.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R07-six-fields.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R07-six-fields.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R07-six-fields --monitor M1
+
+OK   R08-five-fields          rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model addreserved needs four plain integers, TOP BOTTOM LEFT RIGHT (line 1))
+     note: three numbers: refused as needing four plain integers
+     fixture: b'monitor = M1, addreserved, 1, 2, 3\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R08-five-fields.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R08-five-fields.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R08-five-fields.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R08-five-fields --monitor M1
+
+OK   R09-unknown-key          rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: unknown positional key: line dropped, slot untouched
+     fixture: b'monitor = M1, frobnicate, 1, 2, 3, 4\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R09-unknown-key.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R09-unknown-key.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R09-unknown-key.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R09-unknown-key --monitor M1
+
+OK   R10a-unknown-after       rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: unknown-key line after addreserved: previous reserve survives
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\nmonitor = M1, frobnicate, 1, 2, 3, 4\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R10a-unknown-after.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R10a-unknown-after.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R10a-unknown-after.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R10a-unknown-after --monitor M1
+
+OK   R10b-unknown-2field      rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: 2-field unknown kind: treated as a positional rule and ZEROES the slot (no mode validation) - asymmetry vs the 6-field unknown kind
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\nmonitor = M1, custom\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R10b-unknown-2field.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R10b-unknown-2field.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R10b-unknown-2field.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R10b-unknown-2field --monitor M1
+
+OK   R11a-disable             rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: disable replaces the slot with zero
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\nmonitor = M1, disable\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R11a-disable.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R11a-disable.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R11a-disable.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R11a-disable --monitor M1
+
+OK   R11b-disabled            rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: `disabled` also treated as disable (extra keyword accepted)
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\nmonitor = M1, disabled\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R11b-disabled.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R11b-disabled.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R11b-disabled.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R11b-disabled --monitor M1
+
+OK   R12a-transform-keep      rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: transform copies the slot and keeps the reserve
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\nmonitor = M1, transform, 1\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R12a-transform-keep.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R12a-transform-keep.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R12a-transform-keep.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R12a-transform-keep --monitor M1
+
+OK   R12b-transform-first     rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: transform before addreserved: zero-copy slot then reserve set
+     fixture: b'monitor = M1, transform, 1\nmonitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R12b-transform-first.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R12b-transform-first.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R12b-transform-first.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R12b-transform-first --monitor M1
+
+OK   R13a-positional-after    rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: positional rule after addreserved replaces the slot (zero)
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\nmonitor = M1, 3440x1440@100, 0x0, 1\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R13a-positional-after.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R13a-positional-after.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R13a-positional-after.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R13a-positional-after --monitor M1
+
+OK   R13b-positional-before   rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: positional rule before addreserved: reserve applies
+     fixture: b'monitor = M1, 3440x1440@100, 0x0, 1\nmonitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R13b-positional-before.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R13b-positional-before.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R13b-positional-before.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R13b-positional-before --monitor M1
+
+OK   R14a-two-selectors-space rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: two selectors in one line: whole selector string mismatched, skipped
+     fixture: b'monitor = M1 M2, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R14a-two-selectors-space.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R14a-two-selectors-space.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R14a-two-selectors-space.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R14a-two-selectors-space --monitor M1
+
+OK   R14b-two-selectors-isolated rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: other selector never touches M1's slot
+     fixture: b'monitor = M2, addreserved, 7, 0, 0, 0\nmonitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R14b-two-selectors-isolated.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R14b-two-selectors-isolated.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R14b-two-selectors-isolated.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R14b-two-selectors-isolated --monitor M1
+
+OK   R14c-two-selectors-rev   rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: reverse order: isolation holds (per-selector last-wins)
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\nmonitor = M2, addreserved, 7, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R14c-two-selectors-rev.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R14c-two-selectors-rev.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R14c-two-selectors-rev.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R14c-two-selectors-rev --monitor M1
+
+OK   R15a-var-value           rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model a monitor rule outside the literal subset (line 1))
+     note: $ in the matched selector's value: literal-subset refusal
+     fixture: b'monitor = M1, addreserved, $x, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R15a-var-value.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R15a-var-value.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R15a-var-value.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R15a-var-value --monitor M1
+
+OK   R15b-var-selector        rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model a monitor rule outside the literal subset (line 1))
+     note: $ anywhere in a monitor= value refuses the join BEFORE the selector comparison (selftest case 'a variable rule')
+     fixture: b'monitor = $disp, 3440x1440, 0x0, 1\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R15b-var-selector.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R15b-var-selector.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R15b-var-selector.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R15b-var-selector --monitor M1
+
+OK   R15c-var-def-only        rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: variable DEFINITION line ignored (key $disp != monitor/source)
+     fixture: b'$disp = M1\nmonitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R15c-var-def-only.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R15c-var-def-only.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R15c-var-def-only.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R15c-var-def-only --monitor M1
+
+OK   R16a-hashhash-line       rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: ## line: comment-stripped to empty, skipped
+     fixture: b'## monitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R16a-hashhash-line.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R16a-hashhash-line.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R16a-hashhash-line.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R16a-hashhash-line --monitor M1
+
+OK   R16b-hashhash-inline     rc=1  want=accept
+     STATIC monitor=M1 top=1 right=4 bottom=2 left=3 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=1 expected=35 verdict=DIFFER
+     note: inline ## never reaches the '"##" in value' check (comment strip runs first) - that refusal branch is dead code
+     fixture: b'monitor = M1, addreserved, 1, 2, 3, 4 ## note\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R16b-hashhash-inline.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R16b-hashhash-inline.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R16b-hashhash-inline.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R16b-hashhash-inline --monitor M1
+
+OK   R16c-hashhash-midrule    rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: # truncates the line mid-rule: value becomes 'M1', parsed as a bare positional rule -> slot zeroed
+     fixture: b'monitor = M1##alias, addreserved, 1, 2, 3, 4\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R16c-hashhash-midrule.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R16c-hashhash-midrule.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R16c-hashhash-midrule.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R16c-hashhash-midrule --monitor M1
+
+OK   R17a-source              rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model the rules file carries a `source =` line (line 1); a sourced file is not followed, so the static reserve is unknown)
+     note: source line refuses the join (sourced file not followed)
+     fixture: b'source = ~/.config/hypr/other.conf\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R17a-source.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R17a-source.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R17a-source.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R17a-source --monitor M1
+
+OK   R17b-source-nospace      rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model the rules file carries a `source =` line (line 1); a sourced file is not followed, so the static reserve is unknown)
+     note: source without spaces still refused
+     fixture: b'source=/x.conf\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R17b-source-nospace.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R17b-source-nospace.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R17b-source-nospace.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R17b-source-nospace --monitor M1
+
+OK   R17c-source-commented    rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: commented source line is not a source line
+     fixture: b'# source = /x.conf\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R17c-source-commented.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R17c-source-commented.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R17c-source-commented.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R17c-source-commented --monitor M1
+
+OK   R17d-source-upper        rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: uppercase key not matched (Hyprland keys are case-sensitive)
+     fixture: b'SOURCE = /x.conf\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R17d-source-upper.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R17d-source-upper.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R17d-source-upper.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R17d-source-upper --monitor M1
+
+OK   R18-nonutf8              rc=2  want=setup-refuse
+     MADO_BARFOOT: ERROR (stage=setup rules file is not UTF-8: 'utf-8' codec can't decode byte 0xff in position 38: invalid start byte)
+     note: non-UTF-8 byte: Setup refusal (rules file must be UTF-8)
+     fixture: b'monitor = M1, addreserved, 1, 2, 3, 4\n\xff\xfe\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R18-nonutf8.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R18-nonutf8.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R18-nonutf8.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R18-nonutf8 --monitor M1
+
+OK   R19a-plus-one            rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model addreserved needs four plain integers, TOP BOTTOM LEFT RIGHT (line 1))
+     note: +1 is not a plain integer under INT_FIELD_RE
+     fixture: b'monitor = M1, addreserved, +1, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R19a-plus-one.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R19a-plus-one.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R19a-plus-one.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R19a-plus-one --monitor M1
+
+OK   R19b-float               rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model addreserved needs four plain integers, TOP BOTTOM LEFT RIGHT (line 1))
+     note: 1.0 refused
+     fixture: b'monitor = M1, addreserved, 1.0, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R19b-float.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R19b-float.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R19b-float.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R19b-float --monitor M1
+
+OK   R19c-hex                 rc=3  want=model-refuse
+     MADO_BARFOOT: ERROR (stage=model addreserved needs four plain integers, TOP BOTTOM LEFT RIGHT (line 1))
+     note: 0x10 refused
+     fixture: b'monitor = M1, addreserved, 0x10, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R19c-hex.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R19c-hex.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R19c-hex.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R19c-hex --monitor M1
+
+OK   R19d-tab-numbers         rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: tab-separated fields: comma-split then strip accepts
+     fixture: b'monitor = M1,\taddreserved,\t26,\t0,\t0,\t0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R19d-tab-numbers.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R19d-tab-numbers.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R19d-tab-numbers.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R19d-tab-numbers --monitor M1
+
+OK   R19e-crlf                rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: CRLF line endings tolerated via splitlines
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\r\nmonitor = M2, disable\r\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R19e-crlf.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R19e-crlf.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R19e-crlf.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R19e-crlf --monitor M1
+
+OK   R19f-bom                 rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: UTF-8 BOM: first key is U+FEFFmonitor -> line silently skipped (Hyprland also ignores the unknown key)
+     fixture: b'\xef\xbb\xbfmonitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R19f-bom.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R19f-bom.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R19f-bom.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R19f-bom --monitor M1
+
+OK   R20a-trailing-comma      rc=1  want=accept
+     STATIC monitor=M1 top=1 right=4 bottom=2 left=3 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=1 expected=35 verdict=DIFFER
+     note: trailing comma yields an empty field beyond index 5: fields[2:6] intact
+     fixture: b'monitor = M1, addreserved, 1, 2, 3, 4,\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R20a-trailing-comma.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R20a-trailing-comma.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R20a-trailing-comma.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R20a-trailing-comma --monitor M1
+
+OK   R20b-minus-zero          rc=1  want=accept
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: -0 fullmatches INT_FIELD_RE and int()s to 0
+     fixture: b'monitor = M1, addreserved, -0, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-R20b-minus-zero.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-R20b-minus-zero.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-R20b-minus-zero.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-R20b-minus-zero --monitor M1
+
+OK   R21-directory            rc=2  want=setup-refuse
+     MADO_BARFOOT: ERROR (stage=setup refused non-regular path: /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/adir)
+     note: None
+     fixture: b'<directory>'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-spec.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-spec.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-spec.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/adir --monitor M1
+
+OK   R22-fifo                 rc=2  want=setup-refuse
+     MADO_BARFOOT: ERROR (stage=setup refused non-regular path: /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/afifo)
+     note: None
+     fixture: b'<fifo>'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-spec.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-spec.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-spec.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/afifo --monitor M1
+
+OK   R23-2mib                 rc=2  want=setup-refuse
+     MADO_BARFOOT: ERROR (stage=setup file exceeds 1048576 bytes: /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/big-rules)
+     note: None
+     fixture: b'<1797558 bytes of comment lines>'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-spec.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-spec.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-spec.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/big-rules --monitor M1
+
+OK   R24-exactly-max          rc=1  want=accept
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: {'top': 26, 'right': 0, 'bottom': 0, 'left': 0}
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-spec.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-spec.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-spec.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/max-rules --monitor M1
+
+OK   R25-max-plus-one         rc=2  want=setup-refuse
+     MADO_BARFOOT: ERROR (stage=setup file exceeds 1048576 bytes: /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/max1-rules)
+     note: None
+     fixture: b'<1048578 bytes>'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-spec.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-spec.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-spec.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/max1-rules --monitor M1
+
+OK   R26-stdin-dash           rc=2  want=setup-refuse
+     MADO_BARFOOT: ERROR (stage=setup stdin is not accepted for this argument)
+     note: None
+     fixture: b"<literal '-' argument>"
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-spec.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-spec.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-spec.json --rules - --monitor M1
+
+OK   A-top-top26              rc=1  want=accept-cmp
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=60 verdict=DIFFER
+     note: pos=top static=top26 | want box=(0, 26, 3440, 34) expected=60 got box=(0, 26, 3440, 34) expected=60 [contained] | rules='monitor = M1, addreserved, 26, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-top-top26.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-top-top26.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-top-top26.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-top-top26 --monitor M1
+
+OK   A-top-bottom10           rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=10 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=top static=bottom10 | want box=(0, 0, 3440, 34) expected=34 got box=(0, 0, 3440, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 10, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 10, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-top-bottom10.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-top-bottom10.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-top-bottom10.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-top-bottom10 --monitor M1
+
+OK   A-top-left40             rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=40 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=top static=left40 | want box=(40, 0, 3400, 34) expected=34 got box=(40, 0, 3400, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 40, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 40, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-top-left40.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-top-left40.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-top-left40.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-top-left40 --monitor M1
+
+OK   A-top-right50            rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=50 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=top static=right50 | want box=(0, 0, 3390, 34) expected=34 got box=(0, 0, 3390, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 0, 50\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 0, 50\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-top-right50.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-top-right50.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-top-right50.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-top-right50 --monitor M1
+
+OK   A-bottom-top26           rc=1  want=accept-cmp
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=bottom static=top26 | want box=(0, 1406, 3440, 34) expected=34 got box=(0, 1406, 3440, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 26, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-bottom-top26.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-bottom-top26.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-bottom-top26.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-bottom-top26 --monitor M1
+
+OK   A-bottom-bottom10        rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=10 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=10 expected=44 verdict=DIFFER
+     note: pos=bottom static=bottom10 | want box=(0, 1396, 3440, 34) expected=44 got box=(0, 1396, 3440, 34) expected=44 [contained] | rules='monitor = M1, addreserved, 0, 10, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 10, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-bottom-bottom10.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-bottom-bottom10.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-bottom-bottom10.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-bottom-bottom10 --monitor M1
+
+OK   A-bottom-left40          rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=40 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=bottom static=left40 | want box=(40, 1406, 3400, 34) expected=34 got box=(40, 1406, 3400, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 40, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 40, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-bottom-left40.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-bottom-left40.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-bottom-left40.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-bottom-left40 --monitor M1
+
+OK   A-bottom-right50         rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=50 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=bottom static=right50 | want box=(0, 1406, 3390, 34) expected=34 got box=(0, 1406, 3390, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 0, 50\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 0, 50\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-bottom-right50.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-bottom-right50.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-bottom-right50.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-bottom-right50 --monitor M1
+
+OK   A-left-top26             rc=1  want=accept-cmp
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=left static=top26 | want box=(0, 26, 34, 1414) expected=34 got box=(0, 26, 34, 1414) expected=34 [contained] | rules='monitor = M1, addreserved, 26, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-left-top26.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-left-top26.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-left-top26.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-left-top26 --monitor M1
+
+OK   A-left-bottom10          rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=10 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=left static=bottom10 | want box=(0, 0, 34, 1430) expected=34 got box=(0, 0, 34, 1430) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 10, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 10, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-left-bottom10.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-left-bottom10.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-left-bottom10.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-left-bottom10 --monitor M1
+
+OK   A-left-left40            rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=40 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=40 expected=74 verdict=DIFFER
+     note: pos=left static=left40 | want box=(40, 0, 34, 1440) expected=74 got box=(40, 0, 34, 1440) expected=74 [contained] | rules='monitor = M1, addreserved, 0, 0, 40, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 40, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-left-left40.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-left-left40.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-left-left40.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-left-left40 --monitor M1
+
+OK   A-left-right50           rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=50 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=left static=right50 | want box=(0, 0, 34, 1440) expected=34 got box=(0, 0, 34, 1440) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 0, 50\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 0, 50\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-left-right50.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-left-right50.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-left-right50.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-left-right50 --monitor M1
+
+OK   A-right-top26            rc=1  want=accept-cmp
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=right static=top26 | want box=(3406, 26, 34, 1414) expected=34 got box=(3406, 26, 34, 1414) expected=34 [contained] | rules='monitor = M1, addreserved, 26, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-right-top26.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-right-top26.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-right-top26.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-right-top26 --monitor M1
+
+OK   A-right-bottom10         rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=10 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=right static=bottom10 | want box=(3406, 0, 34, 1430) expected=34 got box=(3406, 0, 34, 1430) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 10, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 10, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-right-bottom10.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-right-bottom10.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-right-bottom10.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-right-bottom10 --monitor M1
+
+OK   A-right-left40           rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=40 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: pos=right static=left40 | want box=(3406, 0, 34, 1440) expected=34 got box=(3406, 0, 34, 1440) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 40, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 40, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-right-left40.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-right-left40.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-right-left40.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-right-left40 --monitor M1
+
+OK   A-right-right50          rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=50 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=50 expected=84 verdict=DIFFER
+     note: pos=right static=right50 | want box=(3356, 0, 34, 1440) expected=84 got box=(3356, 0, 34, 1440) expected=84 [contained] | rules='monitor = M1, addreserved, 0, 0, 0, 50\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 0, 50\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-right-right50.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-right-right50.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-right-right50.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-right-right50 --monitor M1
+
+OK   A-centre-w-lr            rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=50 bottom=0 left=40 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: top bar width=1000, static left40 right50: centring inside the static-reduced usable box | want box=(1215, 0, 1000, 34) expected=34 got box=(1215, 0, 1000, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 40, 50\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 40, 50\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-centre-w-lr.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-centre-w-lr.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-centre-w-lr.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-centre-w-lr --monitor M1
+
+OK   A-centre-w-l             rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=40 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: top bar width=1000, static left40 | want box=(1240, 0, 1000, 34) expected=34 got box=(1240, 0, 1000, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 40, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 40, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-centre-w-l.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-centre-w-l.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-centre-w-l.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-centre-w-l --monitor M1
+
+OK   A-centre-w-r             rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=50 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: top bar width=1000, static right50 | want box=(1195, 0, 1000, 34) expected=34 got box=(1195, 0, 1000, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 0, 50\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 0, 50\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-centre-w-r.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-centre-w-r.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-centre-w-r.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-centre-w-r --monitor M1
+
+OK   A-centre-h-t             rc=1  want=accept-cmp
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: left bar height=300 (length axis), static top26: centred vertically in the usable box | want box=(0, 583, 34, 300) expected=34 got box=(0, 583, 34, 300) expected=34 [contained] | rules='monitor = M1, addreserved, 26, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-centre-h-t.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-centre-h-t.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-centre-h-t.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-centre-h-t --monitor M1
+
+OK   A-centre-h-tb            rc=1  want=accept-cmp
+     STATIC monitor=M1 top=26 right=0 bottom=10 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: right bar height=300, static top26 bottom10 | want box=(3406, 578, 34, 300) expected=34 got box=(3406, 578, 34, 300) expected=34 [contained] | rules='monitor = M1, addreserved, 26, 10, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 26, 10, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-centre-h-tb.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-centre-h-tb.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-centre-h-tb.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-centre-h-tb --monitor M1
+
+OK   A-uncontained            rc=0  want=accept-cmp
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=EQ band=26 expected=26 verdict=CLEAN
+     note: top bar width=5000 overflows usable.w=3440: contribution must be 0, expected=static only | want box=(-780, 26, 5000, 34) expected=26 got box=(-780, 26, 5000, 34) expected=26 [UNCONTAINED] | rules='monitor = M1, addreserved, 26, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-uncontained.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-uncontained.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-uncontained.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-uncontained --monitor M1
+
+OK   A-margin-bottom          rc=1  want=accept-cmp
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=26 expected=66 verdict=DIFFER
+     note: top bar h34 margin-bottom6, static top26: expected=26+34+6 | want box=(0, 26, 3440, 34) expected=66 got box=(0, 26, 3440, 34) expected=66 [contained] | rules='monitor = M1, addreserved, 26, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-margin-bottom.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-margin-bottom.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-margin-bottom.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-margin-bottom --monitor M1
+
+OK   A-margin-lr              rc=1  want=accept-cmp
+     STATIC monitor=M1 top=0 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=0 expected=34 verdict=DIFFER
+     note: top bar margins l8 r12: box w=usable.w-20, x=usable.x+8 | want box=(8, 0, 3420, 34) expected=34 got box=(8, 0, 3420, 34) expected=34 [contained] | rules='monitor = M1, addreserved, 0, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 0, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-margin-lr.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-margin-lr.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-margin-lr.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-margin-lr --monitor M1
+
+OK   A-exclusive-false        rc=0  want=accept-cmp
+     STATIC monitor=M1 top=26 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=NOT_APPLIED band=26 expected=60 verdict=CLEAN
+     note: exclusive=false: NOT_APPLIED, expectation still printed | want box=(0, 26, 3440, 34) expected=60 got box=(0, 26, 3440, 34) expected=60 [contained] | rules='monitor = M1, addreserved, 26, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, 26, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-exclusive-false.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-exclusive-false.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-exclusive-false.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-exclusive-false --monitor M1
+
+OK   A-negative-static        rc=1  want=accept-cmp
+     STATIC monitor=M1 top=-10 right=0 bottom=0 left=0 source=rules
+     RESULT monitor=M1 box=MATCH reserved=DIFFER band=-10 expected=24 verdict=DIFFER
+     note: static top=-10: tool expands the usable box; S466 ctor would clamp to 0 -> reference here is the tool formula, Hyprland ground differs | want box=(0, -10, 3440, 34) expected=24 got box=(0, -10, 3440, 34) expected=24 [contained] | rules='monitor = M1, addreserved, -10, 0, 0, 0\n'
+     fixture: b'monitor = M1, addreserved, -10, 0, 0, 0\n'
+     cmd: /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-79/w1/R79ExecC1Tool/mado-barfoot.py --config /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/config-A-negative-static.jsonc --layers /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/layers-A-negative-static.json --monitors /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/monitors-A-negative-static.json --rules /fast/scratch/hyaku/mado-r79/R79ExecC1Tool/fx/rules-A-negative-static --monitor M1
