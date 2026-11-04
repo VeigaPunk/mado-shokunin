@@ -454,3 +454,16 @@ scratch only; the C2 counter executes the lane's read verbs and that read-only j
 entry `corpus/knowledge/bar-footprint-composition-r80.md` is documentation of the layer plane the
 lane already owns; the host join it records was captured read-only. No config tree, compositor,
 service or sibling repo is written by this round.
+
+**Round-81 refinement (append-only).** The same read-only join now models the box rounding the
+compositor applies after arranging a layer surface (hyprutils `CBox::round`, S478) and the auto
+exclusive zone the client library actually sends (gtk-layer-shell's `horiz XOR vert` gate, the
+allocation as its size, the unanchored margins — S464 held), and it *refuses* an auto zone whose
+band size is dynamic instead of printing a zero band. It still reads only caller-supplied artifacts;
+the declaration grammar's `exclusive` default remains `auto`, so a plain client must say `0`. The
+round's record instruments (`quality/counters/c1-r81-overflow-auto.py`, `c2-r81-runbook.py`) read
+committed bytes and caller scratch only; the C2 counter executes the lane's read verbs, including
+`omarchy menu keybindings --print` and `pgrep -x waybar`, both non-mutating. The knowledge entry
+`corpus/knowledge/bar-footprint-rounding-auto-r81.md` documents the layer plane the lane already
+owns; the host join it records was captured read-only with the monitor's identifying fields redacted.
+No config tree, compositor, service or sibling repo is written by this round.

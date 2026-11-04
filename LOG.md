@@ -4013,3 +4013,45 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
 - **Wave.** One v1 wave, 14 seats (`w1-spec.json`, `w1-dispatch.json`, `w1.ready.dispatched`); seat
   reports under `.ufo/waves/round-80/w1/` and their findings in the lesson. Dead seats and empties
   are disclosed in the round report, never backfilled (QUALITY 115).
+
+## Round 81 — the overflow rounding and the auto gate, and two matcher classes (2026-11-04, hyaku run 15)
+
+- **Claims.** C1 coverage (capability acquisition): the bar-footprint join models the three reachable
+  classes round 80 recorded as `NOT_MODELLED` — hyprutils `CBox::round`'s coupled origin/far-edge
+  rounding (a panel one pixel wider than its bounds lands at `x=-1, w=1002`, where the round-80 model's
+  floor-divided offset gave `0/1001`), the auto exclusive zone gtk-layer-shell actually sends (gated on
+  `horiz XOR vert`, sized from the allocation, plus the unanchored margins — so a corner, a parallel
+  pair and an all-four anchor set reserve nothing even with an explicit `exclusiveEdge`, a left dock's
+  zone reaches the left rule and the attribution vector, and a dynamic band is a named refusal), and
+  the `hyprutils >= 0.14.0` pin that licenses the tag. Frozen set 39 cases (33 carried parsed-equal +
+  6 new), 28 mutants, held round-80 tool 33/39 — `cases=39 correct=39 mutants=28 killed=28
+  base_correct=33/39 carried=33/33 tool_selftest=121/121 verdict=TARGET_MET` at `0e2ccd2a`
+  (`receipts/measurement-c1-r81.txt`). C2 operability: the runbook gains an action-column matcher
+  (`omarchy menu keybindings --print | cut -c36-`: the `%-35s` padding pins the separator's column, the
+  action must be non-empty, trimmed and carry no second arrow — and no entity rule, because the
+  payload escapes markup only on some lines) and a `pgrep -x waybar` matcher that binds the PID list
+  with the exit status (a state pair, never a frozen value) — 26 cases / 26 rows / 26 distinct anchors,
+  `control_new=0/2`, 23 mutants killed (`receipts/measurement-c2-r81.txt`).
+- **Sources.** Two rows opened and pinned this round: **S478** hyprutils `v0.14.0` `src/math/Box.cpp`
+  (`CBox::round` `:51-63`, sha256 `2d04de99…`) and **S479** Hyprland `CMakeLists.txt` `:150`
+  (`set(HYPRUTILS_MINIMUM_VERSION 0.14.0)`, sha256 `97b8028a…`); `fetch/sha256-r81.txt` verifies 2/2.
+  Census 412 → 414 rows, exit 0 both ends (standing W04 warnings). Assimilation: none — the staged
+  `/home/vgpnk/Projects/shokuknow/merge/mado/` package collides with the lane's id space on **94** ids
+  and touches none of this round's ground (`assimilation/collisions`).
+- **Instruments.** `tools/mado-barfoot.py` `r81-v1` (selftest 111 → 121); the two successors
+  `quality/counters/c1-r81-overflow-auto.py` (72/72) and `c2-r81-runbook.py` (88/88); the runbook
+  heading moves to `### Executable runbook rows (round 81)` with two new rows and the r80 probe rows
+  795–797 followed by the r81 registry rows 798–800. Index 99/99 → 100/100; ledger 146 → 148 rows;
+  gate 460/460 unchanged; axis table `mismatched=0`.
+- **Live observation.** The host join is CLEAN on today's capture (`receipts/live-join-r81.txt`):
+  DP-1 3440x1440, waybar level 2 at `0,0,3440,26`, `band=26 expected=26 CLEAN`; the monitor's
+  `description`/`serial`/`make`/`model` fields were redacted before the capture was kept.
+- **Repairs of the round-80 closure.** D1 (appended errata only), D2 (report pointers measured at the
+  landing tip), D3 (every pointer carries its `grep -n` line), D4 (the blank line before M80-6
+  removed), D5 (every seat named with its artifact count), D6 (attack share stated by the policy
+  list, the sentinel named separately), D7 (`receipts/wave-done-r81.txt`).
+- **Mistakes.** Four mined into `corpus/lessons/round-81.md`: M81-1 the entity rule imported from the
+  payload's escaping code and falsified by a live bare `&`; M81-2 `.strip()` on `pgrep` output
+  accepting a padded PID; M81-3 two carried mutant anchors dying `anchor-absent` after the zone moved
+  (caught by the anchor-existence check, re-pointed); M81-4 the round-80 `Planned` row's
+  `preview_scale` ground — no such symbol exists.
