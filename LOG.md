@@ -3831,7 +3831,7 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   counter's docstring text (parity receipt); D4 the mistake count from the lesson rows; D5 this
   report's Stale-lane line; D6 the three r76 handoff files committed with the freeze; D7/D8 the
   r76 pointer corrections in the lesson.
-- **Registry and gate bookkeeping.** `quality/tool-ledger.md` 136 → 139 rows; `SKILL.md`
+- **Registry and gate bookkeeping.** `quality/tool-ledger.md` 136 → 140 rows; `SKILL.md`
   canonical Gate registry gains `mado-r77-barfoot` (probe), `mado-r77-barfoot-counter` and
   `mado-r77-runbook` (gates); index 95 → 96 rows; SCORECARD round-77 block with both axis rows
   and two capability rows.

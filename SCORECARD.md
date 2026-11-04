@@ -4417,7 +4417,7 @@ is excluded from the tie. The stagnation nudge does not apply (last capability r
 | C2 **operability** — the SKILL.md read-only probe table executes end-to-end | `python3 -I quality/counters/c2-r77-runbook.py --repo . --rev REV --controls .ufo/waves/round-77/controls/c2-runbook-cases-r77.json` | at the base rev the table is a dated record (0 frozen expectations, 0 batch execution; the read-the-table control reports `executed=0`); at `a83e9bee`: `cases=12 executed=12 matched=12 unexecuted=0 anchors=12/12 verdict=TARGET_MET` rc 0; bounded `10 × 12/12` → 10.0000 | improved |
 | — | coverage / admitted-note reachability (`quality/check-index.py --repo . --rev REV`) | 95/95 at base → 96/96 at the landing tip (one new entry indexed) | improved (index) |
 | — | operability / hermetic gate (`bash tools/mado-verify.sh --selftest`) | 460/460 both ends; the gate is byte-identical this round | unchanged (harm watch) |
-| — | operability / instrument ledger (`quality/check-tool-ledger.py --repo . --rev REV`) | 136 rows at base → 139 rows at the tip, uncovered 0 (three new instruments) | improved (ledger) |
+| — | operability / instrument ledger (`quality/check-tool-ledger.py --repo . --rev REV`) | 136 rows at base → 140 rows at the tip, uncovered 0 (four new instruments) | improved (ledger) |
 | — | calibration / held instruments (`git rev-parse <rev>:<path>`) | identical blob ids at base and tip for `tools/mado-verify.sh`, `quality/landing-counters.sh`, `check-tool-ledger.py`, `check-axis-scores.py`, `c1-r72/r73/r74/r75/r76-*`, `c2-r73/r74/r75/r76-shapes.py` (the r76 counter receives a docstring-text-only correction under D3, with a parity receipt; its 16-case counts are unchanged) | unchanged (frozen) |
 
 **Evidence.** `.ufo/waves/round-77/receipts/control-baseline-r77.txt` (per-case, per-mutant,
@@ -4448,4 +4448,4 @@ disclosures are reported per seat in the round report.
    session-material history question) stay operator-owned.
 
 ### Axis table re-derived at the landing tip (`receipts/measurement-final-r77.txt` and `quality/check-axis-scores.py`):
-navigation 96/96; calibration resolved-active 86/86; operability selftest 12/12, ledger 139/139.
+navigation 96/96; calibration resolved-active 86/86; operability selftest 12/12, ledger 140/140.
