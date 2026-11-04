@@ -501,6 +501,13 @@ def dotted(node):
     return None
 
 
+def attr_dotted(node):
+    """`a.b` for a chain with at least one attribute; a bare name is not an attribute."""
+    if not isinstance(node, ast.Attribute):
+        return None
+    return dotted(node)
+
+
 def module_literals(tree):
     """name -> literal value for names the module binds exactly once to a literal."""
     seen = {}
@@ -610,33 +617,71 @@ def splat_guard_lines(nodes, dead, maps):
     return out
 
 
-def attribute_guard(tree, dead, consts):
-    """Guard key stored on an attribute that reaches a git launch."""
-    guarded = subscript_guard_lines(ast.walk(tree), dead, consts, attr=True)
+def attribute_flow(tree, dead, consts):
+    """Guard key stored on an attribute that reaches a git launch, in order and unreplaced.
+
+    Round-70 review (R70RevC2 a13/a14) showed the first implementation accepted any store
+    anywhere in the module: a later `self.env = {}` replacement and a call *before* the store
+    both counted. The frozen sentence requires the same dominance test as the name flow, so the
+    bounded implementation requires a store line strictly before the call line and no plain
+    assignment to the same dotted attribute in between, either at the call's `env=` or through an
+    env-named binding. Cross-method order is line order; a store in `__init__` precedes a use in
+    another method, and the disclosure names that approximation.
+    """
+    guarded = {}
+    replaced = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign) or node.lineno in dead:
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Subscript) and isinstance(target.ctx, ast.Store):
+                d = attr_dotted(target.value)
+                if d and key_is_guard(target.slice, consts):
+                    guarded.setdefault(d, set()).add(node.lineno)
+            else:
+                d = attr_dotted(target)
+                if d:
+                    replaced.setdefault(d, set()).add(node.lineno)
     if not guarded:
         return False
+
+    def store_before(d, line):
+        for store in guarded.get(d, ()):
+            if store < line and not any(store < r < line for r in replaced.get(d, ())):
+                return True
+        return False
+
     for node in ast.walk(tree):
-        if isinstance(node, ast.Call) and call_is_git(node) and node.lineno not in dead:
-            for kw in node.keywords:
-                if kw.arg == "env" and dotted(kw.value) in guarded:
+        if not isinstance(node, ast.Call) or not call_is_git(node) or node.lineno in dead:
+            continue
+        for kw in node.keywords:
+            if kw.arg == "env":
+                d = attr_dotted(kw.value)
+                if d and store_before(d, node.lineno):
                     return True
-    aliases = {}
+
+    bind_lines = {}
     for node in ast.walk(tree):
-        if isinstance(node, ast.Assign) and len(node.targets) == 1 \
-                and node.lineno not in dead:
-            target = node.targets[0]
-            if isinstance(target, ast.Name) and env_named(target.id) \
-                    and dotted(node.value) in guarded:
-                aliases.setdefault(target.id, set()).add(node.lineno)
-    if not aliases:
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1 \
+                or node.lineno in dead:
+            continue
+        target = node.targets[0]
+        d = attr_dotted(node.value)
+        if isinstance(target, ast.Name) and env_named(target.id) and d \
+                and store_before(d, node.lineno):
+            bind_lines.setdefault(target.id, set()).add(node.lineno)
+    if not bind_lines:
         return False
     locals_ = local_functions(tree)
     for scope in function_scopes(tree):
         nodes = scoped_nodes(scope)
-        for name, lines in aliases.items():
+        rebinds = unguarded_rebindings(nodes)
+        for name, lines in bind_lines.items():
             uses = usage_lines(nodes, name, locals_)
-            if any(use > min(lines) for use in uses):
-                return True
+            for line in lines:
+                after = [use for use in uses if use > line]
+                if after and not any(line < r < min(after) for r in rebinds.get(name, ())):
+                    return True
     return False
 
 
@@ -644,7 +689,7 @@ def carrier_guard(tree, dead):
     """The four round-70 carrier shapes, each still subject to the dominance flows."""
     consts = const_key_names(tree)
     maps = splat_mapping_names(tree)
-    if attribute_guard(tree, dead, consts):
+    if attribute_flow(tree, dead, consts):
         return True
     module_nodes = scoped_nodes(tree)
     module_binds = {}
@@ -656,9 +701,10 @@ def carrier_guard(tree, dead):
     locals_ = local_functions(tree)
     for scope in function_scopes(tree):
         nodes = scoped_nodes(scope)
+        visible = consts if scope is tree else consts - assigned_names(nodes)
         binds = {}
-        for extra in (subscript_guard_lines(nodes, dead, consts),
-                      alias_guard_lines(nodes, dead, consts),
+        for extra in (subscript_guard_lines(nodes, dead, visible),
+                      alias_guard_lines(nodes, dead, visible),
                       splat_guard_lines(nodes, dead, maps)):
             for name, lines in extra.items():
                 binds.setdefault(name, set()).update(lines)
@@ -991,6 +1037,31 @@ REGRESSIONS = {
                                 '    env = {"GIT_NO_REPLACE_OBJECTS": "1"}\n'
                                 '    subprocess.run(["git", "-C", repo, "show", "HEAD:a"], '
                                 'capture_output=True)\n', True, False),
+    "round70-attribute-rebound": ('class R:\n    def m(self, repo):\n'
+                                  '        self.env = {}\n'
+                                  '        self.env["GIT_NO_REPLACE_OBJECTS"] = "1"\n'
+                                  '        self.env = {}\n'
+                                  '        return subprocess.run(["git", "show", "HEAD:a"], '
+                                  'env=self.env)\n', True, False),
+    "round70-attribute-after-use": ('class R:\n    def m(self, repo):\n'
+                                   '        self.env = {}\n'
+                                   '        subprocess.run(["git", "show", "HEAD:a"], '
+                                   'env=self.env)\n'
+                                   '        self.env["GIT_NO_REPLACE_OBJECTS"] = "1"\n',
+                                   True, False),
+    "round70-const-key-shadow": ('KEY = "GIT_NO_REPLACE_OBJECTS"\n\n\n'
+                                 'def run(repo):\n    KEY = "OTHER"\n'
+                                 '    env = {"PATH": "/usr/bin"}\n    env[KEY] = "1"\n'
+                                 '    return subprocess.run(["git", "-C", repo, "show", "HEAD:a"], '
+                                 'env=env)\n', True, False),
+    "round70-dict-splat-call": ('GUARD = {"GIT_NO_REPLACE_OBJECTS": "1"}\n\n\n'
+                                'def run(repo):\n    env = dict(os.environ, **GUARD)\n'
+                                '    return subprocess.run(["git", "show", "HEAD:a"], env=env)\n',
+                                True, False),
+    "round70-two-hop-alias": ('def run(repo):\n    base = {}\n    a = base\n    b = a\n'
+                              '    b["GIT_NO_REPLACE_OBJECTS"] = "1"\n'
+                              '    return subprocess.run(["git", "show", "HEAD:a"], env=base)\n',
+                              True, False),
     "module-visible-binding": ('GIT_ENV = {"PATH": "/usr/bin"}\n'
                                'GIT_ENV["GIT_NO_REPLACE_OBJECTS"] = "1"\n\n\n'
                                'def head(repo):\n'
