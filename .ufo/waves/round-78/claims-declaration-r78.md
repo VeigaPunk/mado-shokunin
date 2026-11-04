@@ -117,6 +117,17 @@ runbook's live values remain a point sample of this host at measurement time.
   cited by the round are those at `44a36b64` and later, and the final measurement commit is named
   in the report.
 
+## Wave repairs (append-only)
+
+The scout demonstrated four model defects in the tool that the frozen cases do not exercise: the
+output matcher flattened waybar's two branches (an array without a positive entry must exclude the
+bar; an empty string means every output), the margin string parser did not follow `std::stoi`'s
+prefix rule, the centred box floored where Hyprland rounds once, and a bar whose box is not
+contained in the monitor reserves nothing. The tool was repaired as `r78-v2`; the eighteen cases,
+seven mutants and the 8/18 control are unchanged (measured at `b774f920`), the selftest tally rose
+22/22 → 28/28, and the red/green receipt is `receipts/repair-r78-tool.txt`. The frozen predicate's
+substance — 18/18 cases, 7/7 mutants, base below target — did not move.
+
 ## Known limits (append-only, from the wave)
 
 - **The `version` row is only as strong as its regex.** An rc-0 line that begins with
