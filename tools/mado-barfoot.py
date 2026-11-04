@@ -7,6 +7,8 @@ Reads three caller-supplied artifacts and writes nothing:
   --layers    a captured `hyprctl layers -j` reply (file or `-` for stdin)
   --monitors  a captured `hyprctl monitors -j` reply (file or `-` for stdin)
   --monitor   the monitor name to join (optional when exactly one monitor answers)
+  --rules     optional: the Hyprland config file carrying the joined monitor's `monitor =`
+              rules, from which the static reserved area (`addreserved`) is read
 
 It derives the bar's declared layer-surface footprint from the configuration at the
 resolution Hyprland 0.56.2 gives it, finds the live layer entry with the same namespace
@@ -33,21 +35,36 @@ Contract (v1, round 77):
     band is the anchored-edge extent plus the opposite edge's margin. Horizontal margins of
     a horizontal bar never enter the band (they only move/resize a zero-width box).
     A negative margin is refused (the band can be voided or extend past the box).
+  * A static reserved area declared by a `monitor = NAME, addreserved, TOP, BOTTOM, LEFT,
+    RIGHT` rule is composed once, underneath the bar's own contribution (round 79):
+    the monitor's usable box starts after it (`CReservedArea::apply`), the layer box is
+    placed inside that usable box, and the printed `reserved` sums the static and the
+    dynamic bands (`CReservedArea::calculate`). So `expected = static_band + extent +
+    opposite margin`, the box is translated by the static origin, and an uncontained box
+    contributes nothing (the dynamic-area constructor refuses it; Hyprland's own
+    `m_reservedArea` then keeps the static band). The rule walk follows
+    `handleMonitor`: a positional rule or `disable` replaces the selector's rule (reserved
+    zero), `addreserved` sets it in line order TOP, BOTTOM, LEFT, RIGHT, `transform`
+    copies the rule and keeps its reserved area, and the newest rule for the selector is
+    the static reserve the monitor applies (`Monitor.cpp:654 setStatic`).
   * `reserved` band order is [left, top, right, bottom] (HyprCtl.cpp monitors reply).
   * Refused, never guessed: a monitor whose scale is not 1 or whose transform is not 0 (the
     monitors reply carries pixel size, the layer box is logical); a dynamic cross size (a
     horizontal bar with height 0, or a vertical bar with width 0 — the realised size is the
     module allocation, not the declaration); a list-valued config (multiple bars); a
-    space-bearing or string-`*` output pattern; a negative margin; and a `mode` key (presets
-    rewrite layer and exclusive zone at runtime).
+    space-bearing or string-`*` output pattern; a negative margin; a `mode` key (presets
+    rewrite layer and exclusive zone at runtime); and a `--rules` file carrying a `source =`
+    line or a selector outside the literal subset (a sourced file is not followed).
   * Modelled with the sources: the centred box rounds once (Hyprland computes the centre in
-    doubles and calls `box.round()`, Renderer.cpp:2660), and a bar whose box is not contained
-    in the monitor reserves nothing (CReservedArea's empty short-circuit, ReservedArea.cpp:20-31)
-    — the expected band is then 0.
-  * Not modelled and named as a limit: a static `monitor … addreserved` band (the reported
-    band mixes the static reserve with the layer contribution); an output entry naming the
-    xdg-output identifier waybar derives from the monitor description (only the monitor name
-    is matched); and any runtime change after the capture.
+    doubles and calls `box.round()`, Renderer.cpp:2660); a static reserved area that leaves no
+    usable box is refused; and a bar whose box is not contained in the usable box reserves
+    nothing (CReservedArea's empty short-circuit, ReservedArea.cpp:20-31) — the expected
+    band is then the static band alone.
+  * Not modelled and named as a limit: a second *layer-surface* consumer whose band is not
+    declared statically (the reported band then exceeds `expected` and is reported `GT`,
+    never attributed); an output entry naming the xdg-output identifier waybar derives from
+    the monitor description (only the monitor name is matched); and any runtime change after
+    the capture.
 
 Exit map: 0 CLEAN · 1 DIFFER · 2 SETUP/ERROR · 3 NOT_FORMED (NO_LAYER/UNMODELLED/NO_BAR).
 """
@@ -59,7 +76,7 @@ import re
 import stat
 import sys
 
-VERSION = "r78-v1"
+VERSION = "r79-v1"
 
 MAX_BYTES = 1048576
 
@@ -73,6 +90,21 @@ RESERVED_INDEX = {"left": 0, "top": 1, "right": 2, "bottom": 3}
 # The edge opposite the anchored one on the band axis: gtk-layer-shell's auto zone adds
 # the unanchored edge's margin; Hyprland adds the anchored edge's margin (r78 model).
 OPPOSITE_EDGE = {"top": "bottom", "bottom": "top", "left": "right", "right": "left"}
+
+# `monitor = NAME, addreserved, TOP, BOTTOM, LEFT, RIGHT` line order: the handler reads
+# ARGS[2] as top, ARGS[3] as bottom, ARGS[4] as left, ARGS[5] as right and hands them to
+# CReservedArea(top, right, bottom, left) (Hyprland-legacy-ConfigManager.cpp:1323-1326).
+STATIC_SIDES = ("top", "bottom", "left", "right")
+
+ZERO_STATIC = {"top": 0, "right": 0, "bottom": 0, "left": 0}
+
+# The KEY forms a positional `monitor =` line accepts; any other key drops the whole line
+# before the rule is added (Hyprland-legacy-ConfigManager.cpp:1351-1379), so the rule the
+# selector already had survives and its reserved area is kept.
+MONITOR_RULE_KEYS = {"mirror", "bitdepth", "cm", "sdrsaturation", "sdrbrightness",
+                     "transform", "vrr", "icc"}
+
+INT_FIELD_RE = re.compile(r"-?[0-9]{1,6}")
 
 
 class Setup(Exception):
@@ -286,6 +318,77 @@ def declared_bar(config):
     }
 
 
+def strip_rule_comment(line):
+    """Hyprland config comments run from `#` to the end of the line."""
+    return line.split("#", 1)[0].strip()
+
+
+def read_text(path):
+    data = read_bytes(path)
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise Setup("rules file is not UTF-8: %s" % exc)
+
+
+def parse_static_reserve(text, monitor):
+    """The static reserved area the joined monitor's `monitor =` rules leave active.
+
+    Walks the file in order and keeps one rule slot for the exact selector, following the
+    handler's own effects: a positional rule (or `disable`) replaces the selector's rule
+    with a zero reserved area, `addreserved` sets the slot's area (creating a default rule
+    when none exists), and `transform` copies the slot and keeps its area. The newest rule
+    for the selector is the one the monitor applies, so the final slot is the static
+    reserve. Rules for other selectors never touch this slot. Fail-closed: a `source =`
+    line (a sourced file is not followed), a rule line outside the literal subset, or an
+    `addreserved` field that is not a plain integer refuses the whole join.
+    """
+    slot = None
+    for number, raw in enumerate(text.splitlines(), 1):
+        line = strip_rule_comment(raw)
+        if not line:
+            continue
+        key, sep, value = line.partition("=")
+        if not sep:
+            continue
+        key = key.strip()
+        if key == "source":
+            raise Unmodelled("the rules file carries a `source =` line (line %d); a sourced "
+                             "file is not followed, so the static reserve is unknown" % number)
+        if key != "monitor":
+            continue
+        if "$" in value or "\\" in value or "##" in value:
+            raise Unmodelled("a monitor rule outside the literal subset (line %d)" % number)
+        fields = [field.strip() for field in value.split(",")]
+        selector = fields[0]
+        kind = fields[1] if len(fields) > 1 else ""
+        if selector != monitor:
+            continue
+        if kind in ("disable", "disabled"):
+            slot = dict(ZERO_STATIC)
+        elif kind == "addreserved":
+            values = fields[2:6]
+            if len(values) != 4 or not all(INT_FIELD_RE.fullmatch(v) for v in values):
+                raise Unmodelled("addreserved needs four plain integers, TOP BOTTOM LEFT "
+                                 "RIGHT (line %d)" % number)
+            slot = dict(zip(STATIC_SIDES, (int(v) for v in values)))
+        elif kind == "transform":
+            slot = dict(slot) if slot is not None else dict(ZERO_STATIC)
+        else:
+            # a positional rule replaces the selector's rule only when the line parses:
+            # an unknown key drops the whole line before the add (ConfigManager:1351-1379)
+            index = 4
+            kept = True
+            while index < len(fields) and fields[index] != "":
+                if fields[index] not in MONITOR_RULE_KEYS:
+                    kept = False
+                    break
+                index += 2
+            if kept:
+                slot = dict(ZERO_STATIC)
+    return dict(slot) if slot is not None else dict(ZERO_STATIC)
+
+
 def declared_box(bar, mon_w, mon_h):
     """Hyprland 0.56.2 arrangeLayerArray: desired size, anchors, margins."""
     m = bar["margins"]
@@ -326,15 +429,16 @@ def declared_box(bar, mon_w, mon_h):
     return {"x": x, "y": y, "w": w, "h": h}
 
 
-def edge_extent(bar, box, mon_w, mon_h):
+def edge_extent(bar, box, usable):
+    """The anchored-edge extent of the realised box, measured inside the usable box."""
     pos = bar["position"]
     if pos == "top":
-        return box["y"] + box["h"]
+        return (box["y"] - usable["y"]) + box["h"]
     if pos == "bottom":
-        return mon_h - box["y"]
+        return (usable["y"] + usable["h"]) - box["y"]
     if pos == "left":
-        return box["x"] + box["w"]
-    return mon_w - box["x"]
+        return (box["x"] - usable["x"]) + box["w"]
+    return (usable["x"] + usable["w"]) - box["x"]
 
 
 def parse_layers(raw):
@@ -377,8 +481,9 @@ def find_layer(layers, monitor, level, namespace):
     return hits[0] if hits else None
 
 
-def evaluate(config, layers, monitors, monitor=None):
+def evaluate(config, layers, monitors, monitor=None, static=None, static_source="none"):
     bar = declared_bar(config)
+    static = dict(static or ZERO_STATIC)
     if monitor is None:
         if len(monitors) != 1:
             raise Setup("--monitor is required when the monitors reply carries %d entries"
@@ -395,18 +500,29 @@ def evaluate(config, layers, monitors, monitor=None):
                          "and the layer box is logical, so this join is not modelled"
                          % (monitor, scale, transform))
     mon_w, mon_h = mon["width"], mon["height"]
+    usable = {"x": static["left"], "y": static["top"],
+              "w": mon_w - static["left"] - static["right"],
+              "h": mon_h - static["top"] - static["bottom"]}
+    if usable["w"] <= 0 or usable["h"] <= 0:
+        raise Unmodelled("the static reserved area leaves no usable box (%dx%d)"
+                         % (usable["w"], usable["h"]))
 
     rows = [("CONFIG", "pos=%s layer=%s level=%d ns=%s height=%d width=%d margins=%d,%d,%d,%d exclusive=%s"
              % (bar["position"], bar["layer"], bar["level"], bar["namespace"], bar["height"],
                 bar["width"], bar["margins"]["top"], bar["margins"]["right"],
                 bar["margins"]["bottom"], bar["margins"]["left"],
-                "true" if bar["exclusive"] else "false"))]
+                "true" if bar["exclusive"] else "false")),
+            ("STATIC", "monitor=%s top=%d right=%d bottom=%d left=%d source=%s"
+             % (monitor, static["top"], static["right"], static["bottom"], static["left"],
+                static_source))]
 
     if not output_matches(config, monitor):
         rows.append(("RESULT", "monitor=%s box=NOT_ON_MONITOR reserved=NOT_APPLIED verdict=NO_BAR" % monitor))
         return "NO_BAR", 3, rows
 
-    box = declared_box(bar, mon_w, mon_h)
+    local = declared_box(bar, usable["w"], usable["h"])
+    box = {"x": local["x"] + usable["x"], "y": local["y"] + usable["y"],
+           "w": local["w"], "h": local["h"]}
     rows.append(("DECL", "monitor=%s box=%d,%d,%d,%d edge=%s"
                  % (monitor, box["x"], box["y"], box["w"], box["h"], bar["position"])))
 
@@ -427,14 +543,16 @@ def evaluate(config, layers, monitors, monitor=None):
 
     box_verdict = "MATCH" if live_box == box else "DIFFER"
 
-    extent = edge_extent(bar, box, mon_w, mon_h)
+    extent = edge_extent(bar, box, usable)
     edge = bar["position"]
     band = mon["reserved"][RESERVED_INDEX[edge]]
-    expected = extent + bar["margins"][OPPOSITE_EDGE[edge]]
-    if not (box["x"] >= 0 and box["y"] >= 0
-            and box["x"] + box["w"] <= mon_w and box["y"] + box["h"] <= mon_h):
-        # CReservedArea(parent, child) is empty when the child is not contained (S459:20-31)
-        expected = 0
+    contained = (box["x"] >= usable["x"] and box["y"] >= usable["y"]
+                 and box["x"] + box["w"] <= usable["x"] + usable["w"]
+                 and box["y"] + box["h"] <= usable["y"] + usable["h"])
+    # CReservedArea(parent, child) is empty when the child is not contained (S459:19-31);
+    # the static band survives either way (CReservedArea::calculate sums static + dynamic)
+    contribution = (extent + bar["margins"][OPPOSITE_EDGE[edge]]) if contained else 0
+    expected = static[edge] + contribution
     if not bar["exclusive"]:
         reserved_verdict = "NOT_APPLIED"
     elif band == expected:
@@ -472,8 +590,8 @@ def selftest():
         else:
             print("MADO_BARFOOT_SELFTEST_FAIL: %s" % label)
 
-    def case(config, layers, monitors, monitor=None):
-        return evaluate(config, layers, monitors, monitor)
+    def case(config, layers, monitors, monitor=None, static=None, source="none"):
+        return evaluate(config, layers, monitors, monitor, static, source)
 
     mon = {"name": "M1", "width": 3440, "height": 1440, "reserved": [0, 26, 0, 0], "scale": 1.0, "transform": 0}
     monitors = {"M1": mon}
@@ -609,6 +727,74 @@ def selftest():
                                "reserved": [0, 0, 0, 0], "scale": 1.0, "transform": 0}})
     ok(v == "CLEAN" and any("expected=0" in t for _, t in rows), "an overflowing bar reserves nothing")
 
+    # round 79: the static `addreserved` band composes under the bar's own contribution
+    ok(parse_static_reserve("monitor = M1, addreserved, 26, 0, 0, 0\n", "M1")
+       == {"top": 26, "right": 0, "bottom": 0, "left": 0},
+       "static addreserved parses top bottom left right")
+    ok(parse_static_reserve("monitor = M2, addreserved, 5, 0, 0, 0\n", "M1") == ZERO_STATIC,
+       "another selector does not reserve")
+    ok(parse_static_reserve("monitor = M1, addreserved, 10, 0, 0, 0\n"
+                            "monitor = M1, addreserved, 26, 0, 0, 0\n", "M1")["top"] == 26,
+       "the later addreserved wins")
+    ok(parse_static_reserve("monitor = M1, addreserved, 26, 0, 0, 0\n"
+                            "monitor = M1, 3440x1440@100, 0x0, 1\n", "M1") == ZERO_STATIC,
+       "a later positional rule replaces the reserved rule")
+    ok(parse_static_reserve("monitor = M1, addreserved, 26, 0, 0, 0\n"
+                            "monitor = M1, 3440x1440, 0x0, 1, sdr_eotf, 1\n", "M1")["top"] == 26,
+       "a dropped rule keeps the reserved area")
+    ok(parse_static_reserve("# monitor = M1, addreserved, 99, 0, 0, 0\n", "M1") == ZERO_STATIC,
+       "a commented rule is not a rule")
+    ok(parse_static_reserve("monitor = M1, addreserved, 26, 0, 0, 0 # a comment\n", "M1")["top"]
+       == 26, "a trailing comment is not part of the rule")
+    for label, bad in (
+        ("bad addreserved field", "monitor = M1, addreserved, x, 0, 0, 0\n"),
+        ("short addreserved", "monitor = M1, addreserved, 1, 2, 3\n"),
+        ("a source line", "source = ~/.config/hypr/other.conf\n"),
+        ("a variable rule", "monitor = $MON, 3440x1440, 0x0, 1\n"),
+    ):
+        try:
+            parse_static_reserve(bad, "M1")
+            ok(False, "refused %s" % label)
+        except Unmodelled:
+            ok(True, "refused %s" % label)
+
+    static26 = {"top": 26, "right": 0, "bottom": 0, "left": 0}
+    layers_static = {"M1": {"levels": {"0": [], "1": [], "2": [
+        {"namespace": "waybar", "x": 4, "y": 30, "w": 3432, "h": 26, "alpha": 1, "pid": 1}],
+        "3": []}}}
+    v, rc, rows = case({"position": "top", "layer": "top", "height": 26, "margin": 4},
+                       layers_static,
+                       {"M1": {"name": "M1", "width": 3440, "height": 1440,
+                               "reserved": [0, 60, 0, 0], "scale": 1.0, "transform": 0}},
+                       None, static26, "rules")
+    ok(v == "CLEAN" and any("box=MATCH reserved=EQ band=60 expected=60" in t for _, t in rows),
+       "static reserve composes with the bar band")
+    v, rc, rows = case({"position": "top", "layer": "top", "height": 26, "exclusive": False},
+                       {"M1": {"levels": {"0": [], "1": [], "2": [
+                           {"namespace": "waybar", "x": 0, "y": 26, "w": 3440, "h": 26,
+                            "alpha": 1, "pid": 1}], "3": []}}},
+                       {"M1": {"name": "M1", "width": 3440, "height": 1440,
+                               "reserved": [0, 26, 0, 0], "scale": 1.0, "transform": 0}},
+                       None, static26, "rules")
+    ok(v == "CLEAN" and any("reserved=NOT_APPLIED band=26 expected=52" in t for _, t in rows),
+       "static reserve enters the printed expectation when not applied")
+    static_left = {"top": 0, "right": 0, "bottom": 0, "left": 40}
+    v, rc, rows = case({"position": "top", "layer": "top", "height": 26},
+                       {"M1": {"levels": {"0": [], "1": [], "2": [
+                           {"namespace": "waybar", "x": 40, "y": 0, "w": 3400, "h": 26,
+                            "alpha": 1, "pid": 1}], "3": []}}},
+                       {"M1": {"name": "M1", "width": 3440, "height": 1440,
+                               "reserved": [40, 26, 0, 0], "scale": 1.0, "transform": 0}},
+                       None, static_left, "rules")
+    ok(v == "CLEAN" and any("box=MATCH reserved=EQ band=26 expected=26" in t for _, t in rows),
+       "a static left reserve moves the box only")
+    try:
+        case({"position": "top", "height": 26}, layers_top, monitors, None,
+             {"top": 1440, "right": 0, "bottom": 0, "left": 0}, "rules")
+        ok(False, "empty usable box refused")
+    except Unmodelled:
+        ok(True, "empty usable box refused")
+
     # malformed inputs are setup errors, never verdicts
     with tempfile.TemporaryDirectory() as td:
         bad = os.path.join(td, "bad.json")
@@ -635,12 +821,13 @@ def main(argv):
     ap.add_argument("--layers")
     ap.add_argument("--monitors")
     ap.add_argument("--monitor")
+    ap.add_argument("--rules")
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args(argv)
     if args.selftest:
         return selftest()
     if not (args.config and args.layers and args.monitors):
-        print("MADO_BARFOOT: ERROR (usage: --config PATH --layers PATH|- --monitors PATH|-)")
+        print("MADO_BARFOOT: ERROR (usage: --config PATH --layers PATH|- --monitors PATH|- [--rules PATH])")
         return 2
     try:
         config = load_jsonc(read_bytes(args.config), "config")
@@ -648,7 +835,18 @@ def main(argv):
             raise Setup("waybar config is not a JSON object (list-valued configs are unmodelled)")
         layers = parse_layers(read_bytes(args.layers, stdin_ok=True))
         monitors = parse_monitors(read_bytes(args.monitors, stdin_ok=True))
-        verdict, rc, rows = evaluate(config, layers, monitors, args.monitor)
+        monitor = args.monitor
+        if monitor is None:
+            if len(monitors) != 1:
+                raise Setup("--monitor is required when the monitors reply carries %d entries"
+                            % len(monitors))
+            monitor = next(iter(monitors))
+        static = dict(ZERO_STATIC)
+        static_source = "none"
+        if args.rules:
+            static = parse_static_reserve(read_text(args.rules), monitor)
+            static_source = "rules"
+        verdict, rc, rows = evaluate(config, layers, monitors, monitor, static, static_source)
         emit(rows, verdict)
         return rc
     except Unmodelled as exc:
