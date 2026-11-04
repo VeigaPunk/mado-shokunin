@@ -1,8 +1,8 @@
 # The bar's footprint: declared waybar config → live layer box → monitor reserved band
 
 source: S457 Hyprland v0.56.2 src/render/Renderer.cpp @ efb5099 (arrangeLayerArray, applyExclusive, arrangeLayersForMonitor); S458 src/debug/HyprCtl.cpp @ efb5099 (layers request, monitors reserved print); S459 src/desktop/reserved/ReservedArea.cpp @ efb5099 (parent/child band); S460 protocols/wlr-layer-shell-unstable-v1.xml @ efb5099 (levels, exclusive zone); S461 waybar(5) 0.15.0 (position, layer, height, width, margin, exclusive); S462 Waybar v0.15.0 src/bar.cpp (margin precedence, namespace, size request, exclusive zone); S464 gtk-layer-shell v0.10.1 src/layer-surface.c (auto exclusive zone)
-verified-at: 2026-11-04 (schema and host join re-measured; fetch receipts `.ufo/waves/round-77/fetch/S457.bin` … `S462.bin`, sha256 in `fetch/sha256-r77.txt`)
-recheck: on-release (Hyprland after v0.56.2 or Waybar after 0.15.0); 180d otherwise — re-pin the six files, re-capture `hyprctl layers -j` and `hyprctl monitors -j`, re-run `tools/mado-barfoot.py`
+verified-at: 2026-11-04 (schema and host join re-measured; fetch receipts `.ufo/waves/round-77/fetch/S457.bin` … `S464.bin`, sha256 in `fetch/sha256-r77.txt`)
+recheck: on-release (Hyprland after v0.56.2 or Waybar after 0.15.0); 180d otherwise — re-pin the seven files, re-capture `hyprctl layers -j` and `hyprctl monitors -j`, re-run `tools/mado-barfoot.py`
 ground: what sets a waybar bar's position and size on this compositor, what the monitor's `reserved` band owes to that surface, and which part of the chain `hyprctl layers` cannot show
 Lane: mado-shokunin. Round: 77.
 
@@ -24,7 +24,7 @@ Lane: mado-shokunin. Round: 77.
 
 **2. Size request and anchors.** The bar requests `(width, height)` as its desired size (`bar.cpp:240`); a horizontal bar with an explicit width > 1 clears both horizontal anchors, and a vertical bar with an explicit height > 1 clears both vertical anchors (`bar.cpp:419-426`). The compositor then places the surface.
 
-**3. Arrange.** `arrangeLayerArray` computes the box (S457, `Renderer.cpp:2587-2670`): a zero desired width spans the usable box minus horizontal margins, with both horizontal anchors set; a non-zero desired width is centred and the margins are not applied horizontally. The same rule transposed applies to vertical bars. The box is rounded (`:2660`), then `applyExclusive` adds the exclusive zone and the edge margin to the usable area on the anchored edge (`:2664`): `*edges[i].positive_axis += exclusive + edges[i].margin;` (`:2576-2581`). Only one edge wins per surface: the singular anchor, the anchor triplet at the same edge, or the exclusive edge (`:2568-2572`).
+**3. Arrange.** `arrangeLayerArray` computes the box (S457, `Renderer.cpp:2587-2670`): a zero desired width spans the usable box minus horizontal margins, with both horizontal anchors set; a non-zero desired width is centred and the margins are not applied horizontally. The same rule transposed applies to vertical bars. The box is rounded (`:2660`), then `applyExclusive` adds the exclusive zone and the edge margin to the usable area on the anchored edge (`:2664`): `*edges[i].positive_axis += exclusive + edges[i].margin;` (add at `:2577`, rule `:2575-2583`). Only one edge wins per surface: the singular anchor, the anchor triplet at the same edge, or the exclusive edge (`:2575-2583`).
 
 **4. Reserved.** `arrangeLayersForMonitor` resets the dynamic layer-shell contribution, runs the exclusive pass and then the non-exclusive pass, and stores `CReservedArea{ORIGINAL_USABLE_AREA, usableArea}` (`Renderer.cpp:2673-2700`). The parent/child constructor turns the two boxes into a per-side band (S459, `ReservedArea.cpp:19-35`); `apply()` subtracts it from the logical box (`:53-60`). So a top bar of height `h` with no margins shrinks the usable area by `h` and produces `reserved.top = h`.
 
@@ -52,7 +52,7 @@ INF: the usable area of DP-1 is 3440 x 1414, starting at y = 26 (the band is the
 - **Scaled or transformed monitors.** `hyprctl monitors -j` prints `width`/`height` from `m_pixelSize` (`HyprCtl.cpp:278`) while every layer box is logical (`m_size = pixelSize / scale`), so a scale-2 output would overstate the declared box. The tool refuses a monitor whose `scale` is not 1 or whose `transform` is not 0 (`UNMODELLED`, exit 3).
 - **Dynamic cross size.** A horizontal bar with `height` unset (or 0) gets the module allocation, not a declared value; the tool refuses rather than computing the whole usable height (`UNMODELLED`).
 - **Static `monitor … addreserved` bands.** The reported band mixes the static reserve with the layer contribution (`logicalBoxMinusReserved()`), and the tool assumes a zero static reserve; a static band is a named, unmodelled case.
-- **`mode` presets.** `mode: hide|invisible|overlay` rewrites layer and exclusive zone at runtime (`bar.cpp:326-361`); the model reads the raw `layer`/`exclusive` keys.
+- **`mode` presets.** `mode: hide|invisible|overlay` rewrites layer and exclusive zone at runtime (`bar.cpp:326-361`); a `mode` key is refused (exit 3) rather than read past.
 - **Centring rounding.** Floor division vs Hyprland's round-after-double differs by 1 px on odd deltas.
 - **Level not exercised by the frozen set.** `layer: bottom` with `exclusive: true` still reserves (`arrangeLayersForMonitor` runs the exclusive pass over every level), but no frozen case declares bottom; the claim is source-licensed and case-unexercised.
 - **Runtime after the capture:** a layer mapped or destroyed after the dump is outside the join; only a fresh capture sees it.
@@ -60,7 +60,7 @@ INF: the usable area of DP-1 is 3440 x 1414, starting at y = 26 (the band is the
 
 ## Evidence
 
-- `.ufo/waves/round-77/fetch/S457.bin`–`S462.bin` and `sha256-r77.txt` (six pinned sources, byte receipts).
+- `.ufo/waves/round-77/fetch/S457.bin`–`S464.bin` and `sha256-r77.txt` (seven pinned sources, byte receipts).
 - `.ufo/waves/round-77/fetch/live-layers-r77.json`, `live-monitors-r77.json` (host captures, sha256 in `receipts/pre-wave-evidence-r77.txt`).
 - `.ufo/waves/round-77/receipts/control-baseline-r77.txt` — frozen 15-case score 15/15, five mutants killed, live-echo control 8/15; `MADO_R77_CONTROL` sha256 `7d6e2b1a…`.
 - `.ufo/waves/round-77/controls/c1-cases-r77.json` — the frozen case set (generator `controls/make-cases-r77.py`).

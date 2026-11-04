@@ -4449,3 +4449,15 @@ disclosures are reported per seat in the round report.
 
 ### Axis table re-derived at the landing tip (`receipts/measurement-final-r77.txt` and `quality/check-axis-scores.py`):
 navigation 96/96; calibration resolved-active 86/86; operability selftest 12/12, ledger 140/140.
+
+### Corrections (round 77, append-only)
+
+The C1 row above says the measurement is "at `a83e9bee` (its instrument's last change)". Four
+repair passes followed that freeze, none touching the predicate, labels, target or case set: the
+tool hardening (`0fa69f41`), the mode refusal (`bbca7469`) and the literal-quote/docstring pass
+(`2df46e29`), and the C1 counter's mutant fix at `de627316` (the `reserved-wrong-edge` replacement
+is now a valid dict, so its kill is an oracle verdict, `correct=10/15`, not a crash). Final
+instrument revisions: C1 counter `de627316`, tool `2df46e29`, tool sha256 `446d197f…`; the final
+receipt is `.ufo/waves/round-77/receipts/measurement-final-r77.txt` and the counts are unchanged
+(`cases=15 correct=15 mutants=5 killed=5 base_correct=8/15 tool_selftest=18/18`). C2's counter last
+changed at `4a17b31f` (session-env discovery), counts unchanged (`12/12`).
