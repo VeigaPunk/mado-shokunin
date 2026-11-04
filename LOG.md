@@ -4032,10 +4032,12 @@ mutation-tester 1, connector 1, sentinel 1; attack share 4/13 = 30.8%; no dead s
   payload escapes markup only on some lines) and a `pgrep -x waybar` matcher that binds the PID list
   with the exit status (a state pair, never a frozen value) — 26 cases / 26 rows / 26 distinct anchors,
   `control_new=0/2`, 23 mutants killed (`receipts/measurement-c2-r81.txt`).
-- **Sources.** Two rows opened and pinned this round: **S478** hyprutils `v0.14.0` `src/math/Box.cpp`
-  (`CBox::round` `:51-63`, sha256 `2d04de99…`) and **S479** Hyprland `CMakeLists.txt` `:150`
-  (`set(HYPRUTILS_MINIMUM_VERSION 0.14.0)`, sha256 `97b8028a…`); `fetch/sha256-r81.txt` verifies 2/2.
-  Census 412 → 414 rows, exit 0 both ends (standing W04 warnings). Assimilation: none — the staged
+- **Sources.** Three rows opened and pinned this round: **S478** hyprutils `v0.14.0` `src/math/Box.cpp`
+  (`CBox::round` `:51-63`, sha256 `2d04de99…`), **S479** Hyprland `CMakeLists.txt` `:150`
+  (`set(HYPRUTILS_MINIMUM_VERSION 0.14.0)`, sha256 `97b8028a…`) and **S480** hyprutils `v0.14.2`
+  `src/math/Box.cpp` — the installed version, byte-identical to S478 (`pacman -Q hyprutils` →
+  `0.14.2-1`, `cmp` empty); `fetch/sha256-r81.txt` verifies 3/3. Census 412 → 415 rows, exit 0 both
+  ends (standing W04 warnings). Assimilation: none — the staged
   `/home/vgpnk/Projects/shokuknow/merge/mado/` package collides with the lane's id space on **94** ids
   and touches none of this round's ground (`assimilation/collisions`).
 - **Instruments.** `tools/mado-barfoot.py` `r81-v1` (selftest 111 → 121); the two successors

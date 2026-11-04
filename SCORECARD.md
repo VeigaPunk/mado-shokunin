@@ -4706,7 +4706,7 @@ The stagnation nudge does not apply (last capability row entered round 80, windo
 **Evidence.** `.ufo/waves/round-81/receipts/` (`measurement-c{1,2}-r81.txt`, per-case and per-mutant
 lines; `control-c1-r81-at-base.txt`, `control-c2-held-instrument-r81.txt`,
 `control-c2-r81-at-base.txt`, `live-join-r81.txt`, `census-start-r81.txt`, `gate-selftest-r81.txt`),
-`controls/` (frozen sets plus their two generators), `fetch/` (S478/S479 plus `sha256-r81.txt`),
+`controls/` (frozen sets plus their two generators), `fetch/` (S478/S479/S480 plus `sha256-r81.txt`),
 `w1-spec.json` / `w1-dispatch.json` / `w1.ready` and `w1/` (seat reports). Wave disclosures are
 reported per seat in the round report; an empty seat output is an evidence gap, never backfilled
 (QUALITY 115).
