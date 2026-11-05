@@ -5049,3 +5049,6 @@ Planned next-round intent only: bind the wave's settlement state to the claim ro
 implemented as a check over `w1-results.json` instead of prose); extend the negative observation to
 a cause-token census derived from the tool source instead of a hand-kept vocabulary; carry the
 round-85 R3/R4 debts. Do not rewrite round86 frozen populations.
+
+Axis table re-derived at the round86 publication (final-axis receipt decides agreement):
+navigation 107/107; calibration resolved-active 86/86; operability selftest 12/12, ledger 158/158.
