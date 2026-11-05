@@ -1028,3 +1028,32 @@ Round85 `w1/R85ReviewerC2.md` shows exact141 and signal13 accept the same status
 Bash documents128+N; POSIX does not mandate that encoding. The lane must not infer the
 converse or advertise unbound Markdown outcome/status cells as authenticated.
 Source: `corpus/lessons/round-85.md`, S488/S489/S490.
+
+## Round86 — records, observations and settlement state
+
+**143. A refusal is the tool's record, and a foreign cause token is a forgery.**
+Shown able to fail: `corpus/knowledge/refusal-records-clause-observations-r86.md` and
+`.ufo/waves/round-86/receipts/c1-r86.txt` — the same honest tool with the ten cause tokens
+printed before its records scores `flooding=48/75` under the record rule and
+`held_flooding=75/75` under the held substring rule. Bind the record's own stage and cause,
+require exactly one record, and treat any vocabulary token outside that record's cause field
+as a failed case. Limits: the record's stage and cause are the tool's own words; the rule does
+not authenticate the reason, and a new cause token absent from `CAUSE_VOCAB` passes vacuously.
+
+**144. A matched row is a clause that ran, and its declared population is the live judgement.**
+Shown able to fail: `.ufo/waves/round-86/receipts/c2-anchor-only-r86.txt` (34/37, three anchored
+cases impossible to pass under the `1+samples+negatives` reading) and
+`c2-live-observation-r86.txt` (37/37 matched, `killed=35` — two mutants had drifted onto the
+held control). Observe the sample loop, the negative loop and the anchor branch of the live
+call; a declared clause whose observation is not its declared population is a missing
+judgement. Limits: the observation counts calls, not reasons; a clause incremented without
+evaluating its sample passes this criterion and needs its own mutation.
+
+**145. A claim row names its wave's settlement state; a null output is missing telemetry.**
+Shown able to fail: round85 routed defect R4 (13 seat outputs null beside
+`settled=1 verdict=OK`) and `considerthese/2026-11-04.md` proposal 2, 2026-11-04 (r81: five of
+fourteen seats empty and the wave check `MISSING`). A published claim states what the wave
+actually returned — settled seats with substantive reports, dead seats named, or a red
+settlement receipt — and never reads a green wave check as evidence that seats worked.
+Limits: this is a reporting criterion, not an instrument; it forbids the inference, it does
+not recover the lost output.

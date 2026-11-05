@@ -4215,3 +4215,39 @@ round85 `receipts/final-c{1,2}-r85.txt`, `final-inputs-r85.json`. Counter selfte
 standing selftest460/460; wave1/1/OK all exit0. Census422→425, exits0/0 with warnings
 unfiltered. Final fleet misroot sweep leaves unassignable `after` and all sibling/operator
 files untouched. No owned misroot, installs, replacements or new L0 question.
+
+### Round86 — refusal records, clause observation and a fresh start after three rejections
+
+Round 86 (hyaku run 15, attempt 2) continues attempt 1's frozen declaration unchanged:
+base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
+`237ecf4e69a4986108f719f3beeafe111adaa033`. Fresh-start reads done first:
+`corpus/lessons/round-85-verifier-spotcheck.md` (routed defects R1–R7),
+`round-84-verifier-spotcheck.md`, `round-83-verifier-spotcheck.md`, `round-85.md` and the
+2026-11-04 `considerthese/` reflection.
+
+- The counters shipped by the dead attempt were run before anything was frozen, and both C2 runs
+  before the last repair failed: `ERROR (stage=setup mutant regex-anchor-dropped anchor occurs 0
+  times, not once)` (rc 2, never a verdict) and then `matched=34/37 … clauses_observed=34/37`
+  because the anchor-observation conjunct contradicted the counter's own `declared` tuple, then
+  `matched=37/37 … killed=35` because two mutations had drifted onto the held control. All four
+  runs, and the three repairs, are in `.ufo/waves/round-86/receipts/instrument-repair-r86.md`;
+  C1 needed no repair.
+- C1 at the freeze: `cases=75 correct=75 mutants=51 killed=51 base_correct=75/75 carried=72/72
+  tool_selftest=152/152 flooding=48/75 held_flooding=75/75 verdict=TARGET_MET` — the all-cause
+  flood that the held substring rule scores 75/75 scores 48/75 under the record rule, while the
+  unchanged r85 tool scores full marks under both (the increment is the rule).
+- C2 at the freeze: `cases=37 executed=37 matched=37 shapes=27/27 anchors=37/37 rows=37/37
+  clauses_observed=37/37 mutants=37 killed=37 verdict=TARGET_MET`, `held_rule_new_case=0/1`.
+  The four r85 survivors (`negatives-skipped`, `samples-skipped`, `regex-anchor-dropped`,
+  `line-anchor-prefix`) die on the observation.
+- Knowledge: `corpus/knowledge/refusal-records-clause-observations-r86.md` (indexed in
+  `corpus/README.md`, frontier bullet added). Lesson: `corpus/lessons/round-86.md` (M86-1..5,
+  Gate with S491/S492, census, considerthese). QUALITY 143/144/145 added.
+- Registry: S491 (RFC 7493 §2.3, duplicate member names MUST NOT, pin
+  `fetch/S491.bin` line 159) and S492 (CPython `re.rst` `fullmatch`, pin `fetch/S492.bin`
+  line 957) — 425→427 rows, census exit 0 before and after, standing W04 warnings unfiltered.
+- CONSIDERTHESE: `considerthese/2026-11-04.md` proposal 2 (a claim stands beside a red wave-done
+  receipt) lands as QUALITY 145; the reflection's figures are relayed, not re-measured.
+- Work in flight: ONE v1 wave of 14 seats (executor3, scribe3, scout2, reviewer2, critic1,
+  mutation-tester1, sentinel1, connector1; L1 holds the planner seat; 4 attack seats). Wave
+  settlement, dead seats, final measurements and the misroot sweep are recorded after WAVE-DONE.

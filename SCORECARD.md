@@ -5015,3 +5015,37 @@ independently of that wave check's OK. Counter selftests119/119 and106/106 exit0
 Source census422→425, exits0/0. Final input SHA256s are in `final-inputs-r85.json`.
 **Round verdict: honest stop, not admitted.** Other axes are unchanged within the exercised
 harm-watch scope; this does not assert global absence of harm or outside-lane promotion.
+
+## Round86 — refusal records and clause observation
+
+Base `a722c60493f24f83429112e9123058835b2cdd82` (r85 spot-check tip); attempt-1 in-flight bytes
+preserved at `f72bba01928efe80cfa1a7907fe3aaa9eba1cfd7`; declaration/instrument freeze
+`237ecf4e69a4986108f719f3beeafe111adaa033` (carries the attempt-1 declaration unchanged plus the
+three pre-verdict instrument repairs recorded in `.ufo/waves/round-86/receipts/
+instrument-repair-r86.md`).
+Two distinct surfaces: C1 calibration of the refusal judgement (a record, not a substring) and C2
+operability of the runbook judgement (a clause that ran, not a shape that matched). Coverage and
+operability remain tied as the lowest non-retired axes at 9.0; C2 works operability, so the
+lowest-axis obligation is met. Saturation 9.0 / window 3 unchanged; no retirement.
+
+| Claim | Counting command | Before → after and verdict |
+|---|---|---|
+| C1 calibration / refusal records | `python3 -I quality/counters/c1-r86-refusal-records.py --repo . --rev REV --base-rev 2b6dd76b65de4dfe701db87db13b7e448b3538ee --controls .ufo/waves/round-86/controls/c1-cases-r86.json --carried .ufo/waves/round-85/controls/c1-cases-r85.json --scratch-root DIR` | On the r86 75-case set: held r85 rule scores the honest tool and the all-cause flood **both 75/75** (discrimination gap 0/75); the r86 record rule scores the honest tool 75/75 and the flood **48/75** (gap 27/75), with 51/51 declared mutants killed and 72/72 carried cases parsed-equal. `base_correct=75/75` shows the r85 tool passes under the new rule: the increment is the rule. VERDICT: TARGET_MET. |
+| C2 operability / clause observation | `python3 -I quality/counters/c2-r86-clause-observations.py --repo . --rev REV --controls .ufo/waves/round-86/controls/c2-cases-r86.json --carried .ufo/waves/round-85/controls/c2-cases-r85.json --scratch-root DIR` | r85 freeze: 36/36 rows matched with **33/37** mutants killed (four clause-skipping survivors). r86 freeze: 37/37 rows matched, 27/27 shapes, 37/37 clause populations observed, **37/37** mutants killed, held rule 0/1 on the new anchor witness (`border-size-int`). VERDICT: TARGET_MET. |
+
+Repairs and their failing receipts are disclosed: the C2 instrument as inherited exited 2 on a
+stale mutation anchor (`matched` never produced); with the anchor repaired it scored 34/37 because
+its anchor-observation conjunct contradicted its own printed declared population; with the
+observation repaired but two mutations still pointing at the held control it scored 37/37 matched
+with `killed=35`. All four runs are committed receipts; the predicate's wording, numbers and kill
+rule are the declaration's, unchanged. C1 needed no repair.
+
+New QUALITY criteria 143 (refusal records), 144 (clause observation) and 145 (a claim row names its
+wave's settlement state, mined from `considerthese/2026-11-04.md` proposal 2). Registry 425→427
+rows (S491, S492); census exit 0 before and after. No capability row is admitted: both claims
+change an instrument's judgement, not what the lane can do on the compositor's surfaces.
+
+Planned next-round intent only: bind the wave's settlement state to the claim row (QUALITY 145
+implemented as a check over `w1-results.json` instead of prose); extend the negative observation to
+a cause-token census derived from the tool source instead of a hand-kept vocabulary; carry the
+round-85 R3/R4 debts. Do not rewrite round86 frozen populations.

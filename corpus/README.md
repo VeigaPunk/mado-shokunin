@@ -9,6 +9,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
 
 | Note | Holds | Sources |
 |---|---|---|
+| `knowledge/refusal-records-clause-observations-r86.md` | Refusal records (one record, own stage and cause, no foreign cause token) and clause observation (sample, negative and anchor loops ran over their declared populations); the held substring rule passes a flood 75/75 where the record rule scores it 48/75. | S491/S492; round-86 frozen controls and receipts |
 | `knowledge/bar-footprint-identity-causes-r85.md` | Exact-string declaration identity and cause-bound refusal witnesses; finite72-case/51-mutant proof, not all-ten-cause certification. | S486; round85 frozen controls and reviews |
 | `knowledge/runbook-status-classes-r85.md` | Guarded numeric status classes0/7/141, POSIX/Bash source distinction and frozen-counter failure; not signal-cause authentication or round admission. | S487/S488/S489; round85 controls and lesson |
 | `knowledge/bar-footprint-namespace-discipline-r84.md` | Ambiguous allocation keys and repeated declaration identities are refused, not guessed; this is the join's grammar, not protocol uniqueness. | S486; round-84 frozen controls |
@@ -135,6 +136,7 @@ landed [arc synthesis](knowledge/arc-synthesis.md), as recorded in
 
 ## Frontier
 
+- Round86 replaces two substring judgements with observations: a refusal must be one record with its own stage and cause and no foreign cause token (75 cases, 51 mutants, carried 72/72; a flood of all ten causes scores 48/75 where the held rule scores it 75/75), and a runbook row must have run its sample, negative and anchor clauses over their declared populations (37 cases, 37/37 mutants killed, held rule 0/1 on the new anchor witness). The clause observations count calls, not reasons; the record reads the tool's own words. See [refusal records and clause observation](knowledge/refusal-records-clause-observations-r86.md).
 - Round85 adds identity refusal causes and documents status-class propagation. Cause-bound witnesses distinguish nine tokens; negative-allocation cause and arbitrary cause authenticity remain open. Runbook frozen C2 fails; four declared survivors and signal/exit ambiguity prevent admission. See [identity causes](knowledge/bar-footprint-identity-causes-r85.md) and [status classes](knowledge/runbook-status-classes-r85.md).
 - Round84 explores declaration-identity ambiguity and pipeline producer-status propagation. See [namespace discipline](knowledge/bar-footprint-namespace-discipline-r84.md) and [producer status](knowledge/runbook-producer-status-r84.md). Live-reply ambiguity and the r83 causal cheats remain open.
 - Round83 extends the allocation map to declared extra surfaces. The finite model is 58/58 versus held 52/58, but independent attacks leave extra-surface allocation-source certification open. See [surface band](knowledge/bar-footprint-surface-band-r83.md); do not treat a repaired counter's green line as causal admission.
