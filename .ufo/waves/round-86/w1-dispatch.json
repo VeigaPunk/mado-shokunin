@@ -1,0 +1,197 @@
+{
+  "schema": "ufo-swarm-wave-dispatch-v1",
+  "wave": "w1",
+  "policy": {
+    "source": "config",
+    "maxLanes": 256,
+    "minLanes": 8,
+    "waveMinLanes": 8,
+    "waveMaxLanes": 16,
+    "declaredMaxLanes": null,
+    "hardCeiling": 256,
+    "rampBatchSize": 5,
+    "rampIntervalMs": 700,
+    "globalRunnerCeiling": 1056
+  },
+  "counts": {
+    "spawn": 14,
+    "resume": 0,
+    "total": 14
+  },
+  "registry": {
+    "schema": "ufo-swarm-registry-v1",
+    "path": ".ufo/waves/round-86/w1/swarm-registry.json",
+    "reportDir": ".ufo/waves/round-86/w1",
+    "members": {
+      "R86ExecC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "R86ExecC2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "R86ExecControl": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "R86ScoutRunbook": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null
+      },
+      "R86ScoutSources": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null
+      },
+      "R86ScribeEntry": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null
+      },
+      "R86ScribeLesson": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null
+      },
+      "R86ScribeSources": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null
+      },
+      "R86ReviewerC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null
+      },
+      "R86ReviewerC2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null
+      },
+      "R86CriticClaims": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null
+      },
+      "R86MutationTester": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null
+      },
+      "R86Sentinel": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "sentinel",
+        "item": null
+      },
+      "R86ConnSiblings": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "connector",
+        "item": null
+      }
+    }
+  },
+  "compaction": {
+    "applied": false,
+    "mechanism": null,
+    "reason": null,
+    "savedBytes": 0,
+    "payloadBytesBefore": 0,
+    "payloadBytesAfter": 0
+  },
+  "taskCall": {
+    "context": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRound mado 86 (hyaku run 15), ONE v1 wave, 14 seats. Lane root /home/vgpnk/Projects/shokunin/mado-shokunin. L1 MadoR86 holds the planner seat.\nFrozen declaration (READ IT FIRST): /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/claims-declaration-r86.md\nFreeze revision 237ecf4e69a4986108f719f3beeafe111adaa033 (carries the declaration, both counters, both control sets and the repaired instruments).\nTwo claims: C1 calibration (refusal RECORDS, not cause substrings: tools/mado-barfoot.py scored by\nquality/counters/c1-r86-refusal-records.py, 75 cases / 51 mutants / 72 carried / flooding control) and\nC2 operability (clause observation: SKILL.md runbook rows scored by\nquality/counters/c2-r86-clause-observations.py, 37 cases / 37 mutants / 27 shapes).\nThe instruments are FROZEN. You may read and run them; you may NOT edit them, the control sets, the\ndeclaration or each other's report. A defect you find is a finding, never a fix: report it with the\nexact command and output.\n\nRULES, binding every seat:\n- Write scope: only inside /home/vgpnk/Projects/shokunin/mado-shokunin, except your own scratch. NEVER write the fleet repo\n  /home/vgpnk/Projects/shokunin, a sibling lane, /home/vgpnk/Projects/shokuknow, .ufo/state/,\n  .scratch/, .ufo/watchdog.log, MANIFEST.json or any operator file. Never run a mutating git/jj\n  command anywhere (no add/commit/push/checkout/reset/stash/rebase/bookmark); read-only git is fine.\n  Seats never commit and never push. No `ask` tool, no task/spawn of your own swarm, no agent://all\n  messages.\n- Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/mado-shokunin — write it at /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>.\n- All file paths in your work are absolute.\n- Scratch: everything you create lives under /fast/scratch/hyaku/mado-r86/<your-seat-name>/ ; create\n  it with mkdir -p, pass it explicitly (TMPDIR=...), and remove it before you yield\n  (trap 'rm -rf -- \"$S\"' EXIT). /tmp is for files under 50 MB only and is never citable evidence. Any\n  git fixture repo is made with D=$(mktemp -d -p /fast/scratch/hyaku/mado-r86/<seat>) && git -C \"$D\"\n  init -q and every later git call names -C \"$D\"; verify `git -C \"$D\" rev-parse --show-toplevel`\n  equals $D before the first commit. Never commit with a throwaway identity.\n- Tooling authorization (operator, 2026-10-19): you may install or upgrade tools that help this task;\n  read /home/vgpnk/.omp/agent/RULES.md first (official channels, update-safety gate, record\n  tool/version/channel/reason). PACMAN GUARD (orchestrator 2026-10-20): all pacman transactions are\n  PAUSED host-wide; install via `uv tool`/`npx`/an official binary in ~/.local/bin, or route around it.\n  Never `pacman -Sy/-Syu/-U/-R`.\n- Honesty: an unrun check has not passed. Never fabricate a verdict; report misses, failures and what\n  you could not run. A clean run must be reproducible from the command you paste.\n- Do not edit a file another seat owns. Your item text names the files you own and your report path.\n",
+    "tasks": [
+      {
+        "name": "R86ExecC1",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ExecC1.md (report). Independently re-execute the C1 claim.\ncd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r86-refusal-records.py --repo . --rev 237ecf4e69a4986108f719f3beeafe111adaa033 --base-rev 2b6dd76b65de4dfe701db87db13b7e448b3538ee --controls .ufo/waves/round-86/controls/c1-cases-r86.json --carried .ufo/waves/round-85/controls/c1-cases-r85.json --scratch-root /fast/scratch/hyaku/mado-r86/R86ExecC1/c1\nRun it twice into your scratch and keep both transcripts. Then verify, from bytes only, that the\nflooding control is built deterministically from tools/mado-barfoot.py (diff the two\nflooding_sha256 values), that the honest tool still scores 75/75, and that the carried set is the 72\nround-85 cases (count them with jq). Report: rc, the MADO_R86_REFUSALS line verbatim, the\nflooding/held_flooding pair, both flooding_sha256 values, and any inconsistency between the printed\ncounters and the declaration's target sentence. Do not edit any instrument.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ExecC1.md"
+      },
+      {
+        "name": "R86ExecC2",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ExecC2.md (report). Independently re-execute the C2 claim.\ncd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c2-r86-clause-observations.py --repo . --rev 237ecf4e69a4986108f719f3beeafe111adaa033 --controls .ufo/waves/round-86/controls/c2-cases-r86.json --carried .ufo/waves/round-85/controls/c2-cases-r85.json --scratch-root /fast/scratch/hyaku/mado-r86/R86ExecC2/c2\nThen audit the declared mutant population mechanically: for each of the 37 entries in MUTATIONS\n(quality/counters/c2-r86-clause-observations.py), confirm its anchor string occurs exactly once in\nthe file outside the literal list AND lands inside a function on the scoring path (case_correct /\nmatches / special_matches / line_anchored / status_ok / run), not in the held-control helpers\n(held_case_correct) or the selftest. Print a table mutant -> line number -> function. A mutant that\nonly mutates the held control or a selftest is a hole; say so. Report rc, the MADO_R86_RUNBOOK line\nverbatim, and the table.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ExecC2.md"
+      },
+      {
+        "name": "R86ExecControl",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ExecControl.md (report + any scripts under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/ctrl-*).\nBuild the cheapest do-nothing controls and score them with the frozen counters, proving the targets\nare not reachable without the claimed work:\n(a) C1 no-work control: score the held round-85 rule on the r86 case set (the counter already prints\nheld_flooding and base readings; also run quality/counters/c1-r85-identity-causes.py at 237ecf4e69a4986108f719f3beeafe111adaa033 with the\nr86 controls path and record its exit/rc and score).\n(b) C1 flood control: confirm a tool that prints every cause token among the honest answer is refused\n(flooding=48/75) while the held rule passes it (75/75).\n(c) C2 no-work control: run quality/counters/c2-r85-status-classes.py at 237ecf4e69a4986108f719f3beeafe111adaa033 with the r85 controls\nand record its score (the four survivors must still be visible there); then show the new witness\nborder-size-int scores 0/1 under the held rule (held_rule_new_case in the r86 receipt).\nPaste every command, rc and scored line.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ExecControl.md"
+      },
+      {
+        "name": "R86ScoutRunbook",
+        "agent": "scout",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86LabRunbook.md. One falsifiable hypothesis: the r86 runbook row\n`set -o pipefail; hyprctl getoption general:border_size -j | jq -r .int` is a real, live Hyprland read\nverb whose unanchored `[0-9]+` pattern wrongly accepts the plausible next-day output `0 extra`, and\nwhose whole-line rule refuses it.\n1) Run the exact row command read-only in /home/vgpnk/Projects/shokunin/mado-shokunin; record rc and output (a bare integer is expected; the\n   value is host state, never freeze it).\n2) Confirm the row exists once in SKILL.md's `### Executable runbook rows (round 86)` section\n   (`grep -n`), and that the counter binds it as case border-size-int.\n3) Show the semantics: python3 -c with re.search vs re.fullmatch over '0 extra' for pattern\n   '[0-9]+' — search matches, fullmatch does not — and check that against the CPython re docs bytes\n   in .ufo/waves/round-86/fetch/S492.bin (quote the sentence and its line number).\n4) State whether the negative `0 extra` is plausible producer output and whether any other live output\n   of that row would be wrongly refused by the whole-line rule (e.g. whitespace, 'int: 2' shape).\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ScoutRunbook.md"
+      },
+      {
+        "name": "R86ScoutSources",
+        "agent": "scout",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ScoutSources.md. Re-ground the two sources the claims rest on, at\ntheir committed bytes:\n- S491: RFC 7493 (I-JSON) — /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/fetch/S491.bin (12,849 B). Find the §2.3 duplicate-name sentence,\n  quote it (<=25 words), record its line number and byte offset, and verify sha256 against the value\n  the declaration prints.\n- S492: CPython v3.14.8 Doc/library/re.rst — /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/fetch/S492.bin (78,262 B). Find the fullmatch\n  sentence ('If the whole string matches ...'), quote it, record line number and byte offset.\nThen judge: does S491 actually pin a MUST (not a SHOULD) for duplicate member names, and does S492 pin\nwhole-string match semantics (as opposed to `search`)? Re-fetch each URL if network allows and compare\nthe bytes to the committed file; if the endpoint is unreachable, record `unreachable` and keep the\ncommitted bytes as the pinned evidence (never claim a fetch you did not make). The URL of each source\nis printed in the declaration; do not invent a new one.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ScoutSources.md"
+      },
+      {
+        "name": "R86ScribeEntry",
+        "agent": "scribe",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ScribeEntry.md — a DRAFT knowledge entry (do not place it under\ncorpus/knowledge/; the L1 lands it). Subject: how a refusal and a runbook row are authenticated.\nContent, grounded only in committed bytes you open:\n- the r86 C1 rule: the refusal record `^MADO_BARFOOT: ERROR \\(stage=(setup|model)( cause=<tok>)? ` must\n  occur exactly once, its stage/cause must match the case, and no cause token may appear outside that\n  record's own cause field; why a substring test is overreach (all-cause flooding tool scores 75/75\n  under the held rule, 48/75 under the r86 rule);\n- the r86 C2 rule: sample loop, negative loop and the line-anchor branch are observed; a declared\n  clause whose observation count is not its declared population is a missing judgement (held rule\n  36/36 with four survivors; r86 37/37 with 37/37 mutants killed);\n- the two sources (S491 MUST for duplicate names, S492 fullmatch) and the exact counters' invocations.\nStyle: the lane's existing corpus/knowledge entries (tables, short prose, no filler). Every number you\nwrite must be a number you read in a receipt or produced yourself.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ScribeEntry.md"
+      },
+      {
+        "name": "R86ScribeLesson",
+        "agent": "scribe",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ScribeLesson.md — the round-86 lesson draft (the L1 lands\ncorpus/lessons/round-86.md). Required sections:\n- `## Mistakes`: mine at least one mistake with class, evidence pointer, captured-by and fix. Candidates\n  to check yourself (read the receipts in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/receipts/ and the git history of the counters):\n  (1) the frozen c2 instrument as first committed exited 2 on a stale mutation anchor (setup error);\n  (2) after the anchor repair it scored 34/37 because its anchor-observation conjunct expected\n  1+samples+negatives while its own printed `declared` tuple said 1 — the counter contradicted itself;\n  (3) two mutations (`samples-skipped`, `negatives-skipped`) had anchors that only existed in the held\n  control helper, so they mutated a function on no scoring path and survived;\n  (4) the r85 routed defects R1–R7: which are closed by r86 and which stay open.\n- `## Gate`: the two sources (URL, access date 2026-11-04, <=25-word located quote, byte offset), one\n  ADMIT and one REJECT judgement from the round's source work, and the census command + exit code.\n- `## Census`: run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root\n  /home/vgpnk/Projects/shokunin mado` and paste its exit code and tail.\nA fix counts only once shown able to fail: for each mistake, name the check that would have caught it.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ScribeLesson.md"
+      },
+      {
+        "name": "R86ScribeSources",
+        "agent": "scribe",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ScribeSources.md — the registry rows for S491 and S492, in the\ncensus schema of /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md, plus the collision check.\n1) Read the last 5 rows of corpus/SOURCES.md and the header to learn the exact 11-column shape; copy\n   the shape, not the content.\n2) Confirm the ids S491/S492 do not already exist: `grep -oE '^ {0,3}\\|[[:space:]]*S[0-9]{3,}'\n   corpus/SOURCES.md | grep -oE 'S[0-9]+' | sort | tail -5` and a `comm` against your two ids.\n3) Draft both rows with status `mined`, `used-by` naming the round-86 knowledge entry and lesson, the\n   URL and anchor from the declaration, and a recheck value that is a valid ISO date or cadence.\n4) Build a scratch mirror (copy corpus/ + your rows appended) and run\n   `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <mirror>/corpus/SOURCES.md`;\n   paste the exit code. No cell may contain a literal or escaped `|`.\nDo not edit corpus/SOURCES.md itself; the L1 appends.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ScribeSources.md"
+      },
+      {
+        "name": "R86ReviewerC1",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ReviewerC1.md. Attack C1. Do not restate the claim's\nproof; try to break it.\n(1) Read quality/counters/c1-r86-refusal-records.py and the r86 case set. Build forgeries in your\nscratch that the r86 rule should refuse and score them with the counter's own scoring functions\n(import them with python3 -I -c or exec the file's module): duplicate records; a record whose stage\nmatches but whose cause token is another of the ten; a cause token hidden inside a compound token\n(`cause=alloc-negative` vs `cause=alloc`); tokens printed to stderr instead of stdout; a record\npreceded/followed by whitespace variants; a tool that prints the record twice with the same cause;\nunicode look-alikes; a tool that prints a record for one case and floods on the others.\n(2) Verify the ten-token vocabulary is complete against the tool's real cause set (grep the tool).\n(3) Re-run the frozen counter once at 237ecf4e69a4986108f719f3beeafe111adaa033 and quote its MADO_R86_REFUSALS line.\nReport each forgery with the score you observed and whether the rule caught it: a survivor is a hole in\nthe claim, not a footnote.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ReviewerC1.md"
+      },
+      {
+        "name": "R86ReviewerC2",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ReviewerC2.md. Attack C2. Do not restate the claim's\nproof; try to break it.\n(1) Quantify the r85 survivors the claim says it kills: run quality/counters/c2-r85-status-classes.py at\n237ecf4e69a4986108f719f3beeafe111adaa033 and show the four survivors actually alive there (this is the before-side of the claim).\n(2) Try to satisfy the r86 clause observation without doing the work: a counter that increments\nOBS['samples']/'negatives' but never evaluates the sample; one that evaluates the live output twice and\nskips the negative loop; one that keeps the anchor branch but searches a prefix. For each, state\nwhether the r86 rule refuses the case and which conjunct catches it.\n(3) Check the declared population arithmetic: for an `anchor: line` case with S samples and N negatives,\nwhat does the counter now require, and does the declaration's sentence ('observed ... counts equal\ntheir declared populations') mean the same thing? Name any reading under which a case could be scored\nwithout its anchor clause running.\n(4) Re-run the frozen counter once at 237ecf4e69a4986108f719f3beeafe111adaa033 and quote its MADO_R86_RUNBOOK line.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ReviewerC2.md"
+      },
+      {
+        "name": "R86CriticClaims",
+        "agent": "critic",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86CriticClaims.md. Falsify the two frozen predicates.\nCheck, quoting lines: (a) the declaration's target sentence, the counter's code condition and the\nreceipt label are the SAME claim — one sentence, one condition, one label (a rule changed after data is\nnot the claim's rule); (b) the kill rule misses exactly when the target is missed; (c) causal\nseparability — C1 needs no SKILL.md row and C2 needs no tools/mado-barfoot.py change; verify that from\nthe file dependencies, not from the prose; (d) the axis naming: C1 is calibration (a judgement about\nrefusal overreach), C2 is operability (rows execute); say whether each claim's surface matches its\naxis per AXES.md; (e) whether the r86 additions are a capability/depth move disguised as coverage.\nAlso state what a do-nothing control would score on each target and whether the declared targets are\nreachable without the round's work.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86CriticClaims.md"
+      },
+      {
+        "name": "R86MutationTester",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86MutationTester.md. Independent mutation battery BEYOND the\ndeclared populations (do not edit the counters; copy them to your scratch and mutate the copies).\nBuild >=12 mutants of the two r86 counters that the declared populations do NOT contain, at least:\n- C1: drop the 'exactly once' check; allow the record to match anywhere with .search; drop the\n  negative observation for one token class; accept a record whose cause is any of the ten for cases\n  that bind a cause; skip the carried parsed-equal check; make rc0 unconditional.\n- C2: drop the LIVE snapshot (revert to the full OBS count); drop the samples/negatives equality; make\n  `observed_all` a constant; drop `tree=bound`; make the carried-set comparison tolerate field drift;\n  make `shapes` count every case.\nFor each mutant run the copy's own --selftest and one full scoring pass at 237ecf4e69a4986108f719f3beeafe111adaa033, and report\nkilled/survived with the exact score. A survivor is a hole in the instrument: name the hole.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86MutationTester.md"
+      },
+      {
+        "name": "R86Sentinel",
+        "agent": "sentinel",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86Sentinel.md. Boundary and safety review of the two r86 instruments\nand their receipts.\n1) Enumerate every argv executed by the two counters (parse the control sets with jq) and confirm each\n   is a read verb or the lane's read-only join; name any mutating command, any network call, any\n   write outside the scratch root.\n2) Check the scratch handling: `--scratch-root` validation, symlink refusal, mktemp prefix, cleanup;\n   check no hardcoded /tmp; check the subprocess env is not the whole environment (which variables\n   reach a child).\n3) Check the receipts under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/receipts/ for leaked host state: no monitor serial/description, no\n   secrets, no absolute home paths, no raw JSON dumps of live surfaces.\n4) Check exit-map honesty: setup error (2) is never a verdict; rc 0/1 map to TARGET_MET/MISSED.\nReport findings with file:line and a severity each.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86Sentinel.md"
+      },
+      {
+        "name": "R86ConnSiblings",
+        "agent": "connector",
+        "task": "/skill:godspeed\n\nOwn: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-86/w1/R86ConnSiblings.md. Cross-instrument overlap scan.\n1) Diff quality/counters/c1-r86-refusal-records.py against c1-r85-identity-causes.py and\n   c2-r86-clause-observations.py against c2-r85-status-classes.py: name each carried function, each\n   changed function and each addition, with line counts.\n2) Find duplicated or dead logic: functions defined but never called, constants never read, branches\n   unreachable under the case set (run the counter once and use python3 -m trace/coverage if available;\n   otherwise reason from the call graph and say which method you used).\n3) Map the r85 routed defects R1–R7 (corpus/lessons/round-85-verifier-spotcheck.md) to the r86 changes:\n   closed / partially closed / open, one line each, with the code or receipt pointer.\n4) Name any place where the two counters now re-implement the same judgement twice (a second\n   convention) — that is a maintainability defect the L1 must see.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-86/w1/R86ConnSiblings.md"
+      }
+    ]
+  },
+  "resumeSends": [],
+  "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave into multiple task calls (one-swarm-per-wave). Then one hub send per resumeSends entry: hub send --to <entry.resume> --message <entry.message> (entry.name is bookkeeping, not a hub field)."
+}

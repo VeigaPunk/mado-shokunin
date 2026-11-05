@@ -4251,3 +4251,19 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
 - Work in flight: ONE v1 wave of 14 seats (executor3, scribe3, scout2, reviewer2, critic1,
   mutation-tester1, sentinel1, connector1; L1 holds the planner seat; 4 attack seats). Wave
   settlement, dead seats, final measurements and the misroot sweep are recorded after WAVE-DONE.
+- WAVE ATTACKS (records under `.ufo/waves/round-86/w1/`, all instruments frozen and unfixed):
+  ReviewerC1 scores four forgeries 75/75 under the record rule (all-ten-token flood on stderr,
+  one-leading-space duplicate record, result-path flood, homoglyph flood) and verifies the ten-cause
+  vocabulary complete by AST; Critic shows the negative observation exempts the record's own cause by
+  identity not position, both kill rules under-enumerate their rc conjunctions, separability holds one
+  way but not both, and dissents from C1's calibration label; ReviewerC2 shows the clause observation
+  counts iterations not evaluations (count-preserving stub passes case-level); Sentinel rates an
+  ambient `GIT_DIR` overriding C2's `-C repo` as high and lists seven more hygiene findings;
+  MutationTester runs 17 counter mutants beyond the declared populations — 5 killed, 12 survived,
+  each with an executable input; Connector names the dead constants and the two-convention refusal
+  judgement between C1 and C2. Every item is routed in `corpus/lessons/round-86.md`; none changes a
+  frozen predicate or a verdict.
+- Quote fidelity: the declaration and the first lesson draft quoted S492 as "… return a corresponding
+  Match." while the pinned bytes carry the Sphinx role (`:class:`~re.Match``). Both places now quote
+  the bytes verbatim; the located spans are S491 bytes 6364–6437 and S492 bytes 39792–39901, and the
+  word counts are 11 and 13 (M86-8).
