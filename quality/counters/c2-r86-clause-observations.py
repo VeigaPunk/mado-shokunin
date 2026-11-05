@@ -183,17 +183,17 @@ MUTATIONS = [
      '        return rc == 128 + status["signal"]',
      '        return rc == status["signal"]'),
     ('regex-anchor-dropped',
-     '        if anchor == "line":\n            return line_anchored(value, text)',
-     '        if False:\n            return line_anchored(value, text)'),
+     '            OBS["anchors"] += 1\n            return line_anchored(value, text)',
+     '            OBS["anchors"] += 1\n            return re.search(value, text) is not None'),
     ('line-anchor-prefix',
      '        if found is not None and found.group(0) == line:',
      '        if found is not None:'),
     ('negatives-skipped',
-     '    for sample in case.get("negatives", []):',
-     '    for sample in ():'),
+     '    for sample in negatives:\n        OBS["negatives"] += 1',
+     '    for sample in ():\n        OBS["negatives"] += 1'),
     ('samples-skipped',
-     '    for sample in case.get("samples", []):',
-     '    for sample in ():'),
+     '    for sample in samples:\n        OBS["samples"] += 1',
+     '    for sample in ():\n        OBS["samples"] += 1'),
 ]
 EXACT_KINDS = ("exact", "contains", "empty")
 SHAPE_KINDS = ("json_object_fields", "array_fields", "int4", "levels_dump", "int_range",
@@ -204,6 +204,9 @@ SHAPE_KINDS = ("json_object_fields", "array_fields", "int4", "levels_dump", "int
 SCRATCH_ROOT = None
 # the clause observation for the case currently being scored (round 86)
 OBS = {"anchors": 0, "samples": 0, "negatives": 0}
+# the live-output call alone: the declared anchor population for a `anchor: line` case is one
+# judgement of the row's own output, never one per churn or negative sample
+LIVE = {"anchors": 0}
 
 
 class Setup(Exception):
@@ -550,6 +553,7 @@ def case_correct(case, rc, stdout):
                                case.get("anchor"))
 
     good = okay(rc, stdout)
+    LIVE["anchors"] = OBS["anchors"]
     samples = case.get("samples", [])
     negatives = case.get("negatives", [])
     for sample in samples:
@@ -562,7 +566,7 @@ def case_correct(case, rc, stdout):
             good = False
     if OBS["samples"] != len(samples) or OBS["negatives"] != len(negatives):
         return False
-    if case.get("anchor") == "line" and OBS["anchors"] != 1 + len(samples) + len(negatives):
+    if case.get("anchor") == "line" and LIVE["anchors"] != 1:
         return False
     return good
 
@@ -880,7 +884,7 @@ def main(argv):
             shapes += 1 if case["kind"] in SHAPE_KINDS and good else 0
             declared = (1 if case.get("anchor") == "line" else 0,
                         len(case.get("samples", [])), len(case.get("negatives", [])))
-            ran = (clauses["anchors"], clauses["samples"], clauses["negatives"])
+            ran = (LIVE["anchors"], clauses["samples"], clauses["negatives"])
             observed_all += 1 if ran == declared else 0
             if case["name"] == NEW_CASE:
                 held_new_case = 1 if held_case_correct(case, rc, stdout) else 0
