@@ -23,10 +23,12 @@ Class: frozen-predicate implementation. Evidence: `receipts/c2-anchor-only-r86.t
 anchored cases (`version`, `omarchy-version`, `border-size-int`) could never pass, so the score was
 34/37 with every mutant dead. The two readings differ on a real question: a negative refused by the
 producer-status gate never reaches the anchor branch, so "one judgement of the live output" and "one
-per sample" are different claims. Captured by: **none** — the counter printed both readings side by
-side and nothing compared them. Fix: one reading, written down (the declared population is 1; the
-live call is snapshotted as `LIVE["anchors"]`), plus the failing run kept as the receipt that the
-rule can fail.
+per sample" are different claims. Captured by: **the scored run** — `TARGET_MISSED`,
+`matched=34/37`, `clauses_observed=34/37` — not by the selftest, which printed `114/114` at the same
+revision: its anchor assertion drives the raw `OBS` dict, not a producer-status-refused negative
+through `case_correct`. That selftest blind spot is open and routed below. Fix: one reading, written
+down (the declared population is 1; the live call is snapshotted as `LIVE["anchors"]`), plus the
+failing run kept as the receipt that the rule can fail.
 
 **M86-3 — a mutation that targets the held control mutates nothing that scores.**
 Class: mutation population integrity. Evidence: `receipts/c2-live-observation-r86.txt` — after the
@@ -88,6 +90,7 @@ the instruments stay frozen; the four classes are the next round's control addit
 | the foreign-token test exempts the record's own cause **by identity, not position**, so an own-cause echo tool scores 75/75 against a binding that forbids the token outside the record | Critic (a) | medium | track the record's cause field as a span, not a token, and add the echo tool to the control set |
 | the C1 kill rule under-enumerates the target conjunction (tool selftest, `held_flooding`) and the carried/tree conditions are `Setup` errors rather than misses; `--no-mutants` prints `MUTANTS_SKIPPED` with rc 0 | Critic (b) | medium | one enumerated clause list in code, one miss for every `T`-false, and a non-zero rc for a skipped population |
 | 17 counter mutants beyond the declared populations: **5 killed, 12 survived** — C1 `record-any-count`, `record-search-anywhere`, `negative-one-class`, `carried-check-skipped`, `rc-ignored-result-cases`, `tool-selftest-rc-free`, `stage-unchecked`; C2 `observed-all-constant`, `tree-bound-dropped`, `carried-field-drift`, `live-anchor-clause-dropped`, `live-anchor-declared` | MutationTester | high | each survivor is an executable doctored input in `w1/R86MutationTester.md`; the successor control sets carry them as cases (an `observed_all` that always increments, a dropped tree binding, a widened carried exemption) |
+| the C2 selftest printed 114/114 at both revisions while the counter contradicted its own declared population; it asserts the raw `OBS` dict, never `case_correct` on a producer-status-refused negative | ScribeLesson M86-2 | medium | add a selftest case that drives each anchored control case through `case_correct` and asserts the declared verdict |
 | the axis label moved coverage → calibration with no derived cell moving; the lane's instrumented calibration axis is resolved-active entries (86/86) | Critic (d) | medium | no repair this round: the label is the frozen declaration's; the dissent is recorded for the closure judge and the next declaration must name the cell its claim moves |
 
 ## Gate
