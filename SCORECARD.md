@@ -5045,6 +5045,8 @@ wave's settlement state, mined from `considerthese/2026-11-04.md` proposal 2). R
 rows (S491, S492); census exit 0 before and after. No capability row is admitted: both claims
 change an instrument's judgement, not what the lane can do on the compositor's surfaces.
 
+**Attack findings, recorded not repaired (instruments frozen).** `w1/R86ReviewerC1.md` scores four forgery classes at 75/75 under the record rule (stderr flood, one-leading-space duplicate record, result-path flood, homoglyph flood); `w1/R86CriticClaims.md` (a) shows the negative observation exempts the record's own cause token by identity, not position (an own-cause echo tool scores 75/75), (b) shows both kill rules under-enumerate their rc conjunctions and that carried/tree failures are `Setup` rather than misses, (c) shows separability holds as "neither needs the other's change" but not as "either verdict survives the other's landing" (registering the counters in SKILL.md at `b33afc08` invalidated the frozen C2 `tree=bound` until `--rev` advanced), and (d) dissents from C1's `calibration` label: the lane's instrumented calibration axis is resolved-active entries 86/86 and no derived cell moves. `w1/R86ReviewerC2.md` shows the clause observation counts iterations, not evaluations. `w1/R86Sentinel.md` F1 rates an ambient `GIT_DIR` overriding C2's `-C repo` as high. None of these changes a frozen predicate; each is routed in `corpus/lessons/round-86.md`.
+
 Planned next-round intent only: bind the wave's settlement state to the claim row (QUALITY 145
 implemented as a check over `w1-results.json` instead of prose); extend the negative observation to
 a cause-token census derived from the tool source instead of a hand-kept vocabulary; carry the

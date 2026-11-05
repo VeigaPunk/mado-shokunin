@@ -119,7 +119,9 @@ S492 (line 957 of the pin) is the semantics the `anchor: line` witnesses need:
 
 > If the whole *string* matches the regular expression *pattern*, return a corresponding Match.
 
-`re.fullmatch` is that predicate; `re.search` is not. The round-86 witness row
+`re.fullmatch` is that predicate; `re.search` is not. The counter implements it as `search` plus
+`match.group(0) == line` (`line_anchored`), which is the same predicate for these patterns — the
+match's own span must be the whole line. The round-86 witness row
 `set -o pipefail; hyprctl getoption general:border_size -j | jq -r .int` binds an **unanchored**
 pattern `[0-9]+` to a whole line, so a plausible next-day output that carries the value with
 trailing text (`0 extra`) is accepted by `search` and refused by the whole-line rule; `-1` and
@@ -128,6 +130,10 @@ host state, reported with churn samples, never frozen.
 
 ## 4. What this entry does not certify
 
+- **The negative observation exempts by token identity, not by position** (`w1/R86CriticClaims.md`
+  (a)): the record's own cause token is allowed *anywhere* in stdout, so a tool that echoes its own
+  cause on a second line and then prints the honest record scores 75/75, although the declared
+  binding says no vocabulary token may appear outside the record's own cause field.
 - **Four forgery classes score 75/75 under the record rule** (`w1/R86ReviewerC1.md`
   S1-a/S1-b/S2-a/S2-b): all ten tokens printed on **stderr** (the counter captures stderr and never
   inspects it); a duplicate record shifted by one leading space (`^`-anchored `re.M`, so "exactly
