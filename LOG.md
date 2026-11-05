@@ -4281,3 +4281,18 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   tree=bound`, rc 0, plus the freeze-revision clone receipt `final-c2-freezerev-r86.txt`.
   Counter selftests 127/127 and 114/114; standing gate selftest 460/460; index 107/107;
   ledger 158/158 uncovered0; axis 3/0; census 425→427 both exit 0. **Both claims verify.**
+
+### Round 87 — mako effective settings and control-figure fidelity (2026-11-05, hyaku run 15, attempt 1)
+
+- Fresh start after Amendment 27 ("Authorize all"). Declared two frozen claims (`.ufo/waves/round-87/claims-declaration-r87.md`):
+  C1 capability, coverage (mako effective settings for one notification); C2 calibration (the r86 held-rule control figure `0/1`).
+  Stagnation nudge applied (every axis at 10; no capability row since round 82).
+- Wave w1: 12 seats (scout 1, executor 3, scribe 2, connector 1, reviewer 2, critic 1, mutation-tester 1, sentinel 1), attack share
+  4/12. All 12 settled; no dead seat; `w1-results.json`; reports under `.ufo/waves/round-87/w1/`.
+- Landed: `7563452f9b35af0141c49dc4cc7f791968ca0c90` (tool, two counters, frozen controls, figure file, knowledge entry, S493 row,
+  README/PROVINCE/ledger rows, lesson, r86 correction blocks, declaration errata); `00c967214e338d8f0ebb02b78f98fd61a542a515`
+  (C1 counter accepts upper-case mutant ids: pre-score setup repair; measured revision).
+- Measured at `00c96721`: C1 `TARGET_MISSED` (22/22 cases; controls 7/22, 8/22; mutants 5/10). C2 `TARGET_MET` (before 5.0
+  fixture, after 10.0). Harm watch: index 108/108, ledger 161/161 uncovered 0, gate 460/460, file plane CLEAN, census exit 0 (428 rows).
+- Named limits: five surviving frozen mutants; containment of symlinked includes; correction-block reasoning; the r86 selftest pin.
+  Routed to round 88. Receipts: `.ufo/waves/round-87/receipts/`.

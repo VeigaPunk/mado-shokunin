@@ -39,8 +39,8 @@ held notes observe the chain, and no note resolves effective values. C1 claims o
 **M87-5 — a pin-free fixture set was attacked after it changed.** Class: landing.
 Evidence: `R87Sentinel.md` F1/F2 and `R87MutTester.md` D1/D2 record a case file with `app_name`/`modes` keys, lowercase-invalid ids
 and a `.config_mako/config` typo; the file on disk at the wave's close (22 cases, sha256 `0a955874…`) has the counter's keys and
-the corrected path. Captured-by: the wave's own attack seats (after their reads), not the lane. Fix: the attacks were re-run
-against the final bytes in this round's measurement; the earlier findings are recorded as void for the final file.
+the corrected path. Captured-by: the wave's own attack seats (after their reads), not the lane. Fix: the frozen counter was run against
+the final bytes in this round's measurement (`receipts/c1-measured-r87.txt`: 22/22 cases correct); the seats' attacks were on the earlier bytes and were not re-run; their findings are recorded as void for the final file.
 
 ## Wave findings routed (instruments frozen or named as limits)
 
@@ -85,7 +85,9 @@ Pending: the non-author closure is the operator-dispatched verifier (LEARNING.md
 
 - Round start: `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado` exit 0, 427 rows
   (`receipts/census-start-r87.txt`).
-- Round end: [[CENSUS]].
+- Round end: exit 0, 428 rows, 55 standing `W04` duplicate-URL warnings (unchanged from round start; `receipts/census-end-r87.txt`).
+- Measurements (measured revision 00c967214e338d8f0ebb02b78f98fd61a542a515; content commit 7563452f9b35af0141c49dc4cc7f791968ca0c90; counter fix 00c967214e338d8f0ebb02b78f98fd61a542a515; see the declaration errata):
+  C1 `TARGET_MISSED` (5/10 mutants killed; 22/22 cases; controls 7/22 and 8/22); C2 `TARGET_MET` (F1 1/1 reconciled by the correction; before 5.0 on a fixture of the base correction blocks).
 
 ## Considerthese
 

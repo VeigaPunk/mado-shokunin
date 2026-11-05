@@ -5091,3 +5091,37 @@ The round-86 C2 row above states "held rule 0/1 on the new anchor witness (`bord
 round-85 counter's own `case_correct` on that witness: **1/1**. The 0/1 figure came from the round-86 model
 `held_case_correct` (`quality/counters/c2-r86-clause-observations.py:574`), not the held counter (figure id
 F1_held_rule_witness_r86; lesson `corpus/lessons/round-87.md` M87-1). The round-86 C2 verdict (`TARGET_MET`, 37/37) is not affected.
+
+## Round 87 — mako effective settings (capability) and control-figure fidelity (2026-11-05, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-87/claims-declaration-r87.md` (frozen; pre-scoring errata appended). Content commit
+`7563452f9b35af0141c49dc4cc7f791968ca0c90`; counter repair `00c967214e338d8f0ebb02b78f98fd61a542a515`, the measured revision.
+Stagnation nudge applied (every axis at 10; no capability row since round 82).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (capability): mako effective settings for one notification | `python3 -I quality/counters/c1-r87-mako-criteria.py --repo . --rev 00c967214e338d8f0ebb02b78f98fd61a542a515 --cases .ufo/waves/round-87/controls/mako-cases-r87.json --scratch-root DIR` | base e4875ba: SETUP (no tool at base; `receipts/c1-base-r87.txt`). At 00c96721: 22/22 frozen cases correct; do-nothing controls naive-toplevel 7/22 and globals-include 8/22 (both below N); 5/10 frozen mutants killed (M03, M05, M06, M08, M10 survive). `MADO_MAKO_CRITERIA: TARGET_MISSED … score=10.0000` (rc 1). | **TARGET_MISSED** (honest stop; mutant kill short of all-killed). No capability row entered. |
+| C2 **calibration**: control-figure fidelity | `python3 -I quality/counters/c2-r87-control-fidelity.py --repo . --rev 00c967214e338d8f0ebb02b78f98fd61a542a515 --figures .ufo/waves/round-87/controls/r86-figures-r87.json --expect-figures-sha256 f206a75907e385fc957aef07c8e1e2037b1328d5d1bcbfbd03c7201bc0b46ea6 --scratch-root DIR` | before (fixture: the base correction blocks, `receipts/c2-before-r87.txt`): F1 unreconciled, **5.0000 TARGET_MISSED**. After (00c96721): F1 re-derived 1/1 and reconciled by the correction block; F2 reproduces; **10.0000 TARGET_MET** (`receipts/c2-after-r87.txt`). | **improved** (calibration: one unreconciled figure, the r86 held-rule `0/1`, reconciled). |
+| harm watch | `python3 -I quality/check-index.py --repo . --rev 00c96721…` · `python3 -I quality/check-tool-ledger.py --repo . --rev 00c96721…` · `bash tools/mado-verify.sh --selftest` · `bash tools/mado-verify.sh --no-live` · census | index 107/107 → 108/108; ledger 158 → 161, uncovered 0; standing gate 460/460; file plane CLEAN (29 pass, 4 notes); census exit 0, 427 → 428 rows, 55 `W04` before and after | unchanged (harm watch) / improved (index, ledger) |
+
+Capability: none admitted (C1 missed). Capability window: rounds 83–87 added none (N=3 exceeded; the capability move is still owed).
+Saturation 9.0 / window 3 unchanged; no retirement; dormant freshness now measured (file plane 29/29 on this host).
+
+### Named limits and next-round ground (append-only, round 87)
+
+- C1 mutant survivors (frozen list, not extended after scoring): M03 relative include accepted, M05 initial mode, M06 defaults, M08 missing input match, M10 unterminated quote. Next-round ground: a superseding case set over these five; the frozen predicate of this round is not rewritten.
+- Containment: a symlinked include that escapes HOME is read (the manual allows absolute include paths; no containment is stated).
+- Correction blocks are checked for the figure id and the literal value, not their reasoning. The r86 selftest pinning its own model (`c2-r86-clause-observations.py:736-737`) is outside the predicate and routed.
+- Assimilation: none (no mako theme in `merge/mado`).
+
+### Routed defects fixed in this round (append-only)
+
+- Tool: implicit `$HOME` fallback removed (`--home` required for `~/` includes); bare `none`/`invoke-default-action` refuse trailing words; refusal wording (ReviewMako D1–D3).
+- Counter: mutant ids accept upper case (`00c96721`); the declared command's sha pin is passed (MutTester D8).
+- Declaration errata (before scoring): manual pin container vs text; "Not held" withdrawn; F2 stated text single-line; the case-file rewrite recorded.
+
+### Lesson and mistakes (append-only)
+
+`corpus/lessons/round-87.md` M87-1 (held-control figure from the lane's model), M87-2 (decompressed digest labelled as the file's), M87-3 (wrapped stated text), M87-4 ("not held" without a grep), M87-5 (attacks on an earlier fixture version).
+
+Trend-relevant: quality improved (the false r86 figure is superseded by a named, measured correction); expansion improved (one admitted entry, S493); discernment unchanged pending the non-author closure.

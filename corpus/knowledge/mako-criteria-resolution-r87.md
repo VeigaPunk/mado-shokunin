@@ -1,5 +1,5 @@
 source: S493 (mako(5) manual text of the installed mako 1.11.0-1; locator /usr/share/man/man5/mako.5.gz, container sha256 17ffc88c9950ba83a60a8d5bdf4cb528ca994adc6ba58e9386a81617b9db1670, decompressed text sha256 f717848f47cc7739d4bddbcc08c133a32e0d7dface7d1769882da1a0150477ba), host bytes `~/.config/mako/config` (symlink to the omarchy theme `mako.ini`) and `~/.local/share/omarchy/default/mako/core.ini`
-verified-at: 2026-11-05 at [[REV]] (round 87, attempt 1)
+verified-at: 2026-11-05 at 00c967214e338d8f0ebb02b78f98fd61a542a515 (round 87 measured revision; content in 7563452f)
 recheck: 90d
 
 # mako effective settings for one notification: include chain, criteria, mode
@@ -55,7 +55,7 @@ caller supplies), D-Bus ownership, a live notification, rendering, and the layou
 
 Both controls are implemented in the counter `quality/counters/c1-r87-mako-criteria.py`, not in the tool.
 
-## 4. Host bytes (OBS, read at [[REV]])
+## 4. Host bytes (OBS, read at 00c967214e338d8f0ebb02b78f98fd61a542a515)
 
 - `~/.config/mako/config` is a symlink to `~/.config/omarchy/current/theme/mako.ini`, which holds `include=` and
   three colour keys (`text-color`, `border-color`, `background-color`).
@@ -81,6 +81,11 @@ Both controls are implemented in the counter `quality/counters/c1-r87-mako-crite
 - The runtime handling of an include cycle: UNSTATED; refused by design here.
 - Whether `mode` criteria are re-evaluated on every `makoctl mode` change: UNSTATED beyond 617-618.
 
-## Measurements
+## Measurements (round 87, measured at 00c967214e338d8f0ebb02b78f98fd61a542a515)
 
-[[MEASURE]]
+- C1, `python3 -I quality/counters/c1-r87-mako-criteria.py --repo . --rev 00c967214e338d8f0ebb02b78f98fd61a542a515 --cases .ufo/waves/round-87/controls/mako-cases-r87.json --scratch-root DIR`:
+  `MADO_MAKO_CRITERIA: TARGET_MISSED cases=22 correct=22 mutants=10 killed=5 naive_correct=7 globals_include_correct=8 score=10.0000`, rc 1
+  (`.ufo/waves/round-87/receipts/c1-measured-r87.txt`). The tool answers all 22 frozen cases. Both do-nothing controls score below
+  N (7/22 and 8/22). The predicate also requires all ten frozen mutants killed; five are killed and M03, M05, M06, M08, M10 survive.
+  No case was added after scoring: the survivors are the next round's control ground. Before (base e4875ba, no tool): SETUP
+  (`.ufo/waves/round-87/receipts/c1-base-r87.txt`).
