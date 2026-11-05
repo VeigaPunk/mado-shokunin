@@ -117,7 +117,7 @@ against the held rule's `held_rule_new_case=0/1` on the same witness and the rou
 
 S492 (line 957 of the pin) is the semantics the `anchor: line` witnesses need:
 
-> If the whole *string* matches the regular expression *pattern*, return a corresponding Match.
+> If the whole *string* matches the regular expression *pattern*, return a corresponding :class:`~re.Match`.
 
 `re.fullmatch` is that predicate; `re.search` is not. The counter implements it as `search` plus
 `match.group(0) == line` (`line_anchored`), which is the same predicate for these patterns — the

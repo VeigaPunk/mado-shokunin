@@ -77,6 +77,14 @@ the **result** path (no vocabulary check exists there at all), and a homoglyph f
 case set carries none of these. Disposition: recorded as named limits of the entry and the claim;
 the instruments stay frozen; the four classes are the next round's control additions.
 
+**M86-8 — a "located quote" that was normalised without saying so.** Class: source fidelity (r85 R6's
+class). Evidence: the frozen declaration and the first landing of this lesson quoted S492 as
+"… return a corresponding Match." while the pinned bytes read "… return a corresponding
+:class:`~re.Match`." — a Sphinx role inside the sentence, dropped silently. Captured by: **the round's
+own source seat** (`w1/R86ScribeLesson.md` M86-4), which recomputed both spans from the pins and
+corrected the offsets to 6364–6437 and 39792–39901. Fix: both places now quote the bytes verbatim and
+name the markup; the word counts are 11 and 13, not 12 and 14.
+
 ## Wave findings routed to r87 (instruments stay frozen)
 
 | finding | seat | severity | routed repair |
@@ -102,8 +110,8 @@ Two rows are added to `corpus/SOURCES.md`; before **425** rows, after **427** ro
 
 | row | source, URL | access date | located quote (≤25 words) | scope | tier / status |
 |---|---|---|---|---|---|
-| **S491** | RFC 7493 (I-JSON) §2.3 Object Constraints — https://www.rfc-editor.org/rfc/rfc7493.txt | 2026-11-04 | "Objects in I-JSON messages MUST NOT have members with duplicate names." (12 words) — pin `.ufo/waves/round-86/fetch/S491.bin` 12,849 B, sha256 `a44ccf1451a7bf4f4bbb78b39e10ed0e9a27ff2ee5b639c6458042b5a7197062`, **bytes 6364–6424, line 159** (§2.3 heading at line 157; the sentence carries one newline, after "duplicate") | duplicate member names in an I-JSON object are a **MUST NOT**, not the RFC 8259 §4 "SHOULD" the lane already holds as S486; it grounds *refusing* a duplicate-name object, not choosing among duplicates | spec / **A** / mined / recheck 180d |
-| **S492** | CPython v3.14.8 `Doc/library/re.rst`, `fullmatch` — https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/re.rst | 2026-11-04 | "If the whole *string* matches the regular expression *pattern*, return a corresponding Match." (14 words) — pin `.ufo/waves/round-86/fetch/S492.bin` 78,262 B, sha256 `d252cc185dfc1014e1b4a8087b2515b71c76527f0f2f6dfddba9a880537e6a48`, **bytes 39792–39901, line 957** (the `fullmatch` directive at line 955; the sentence carries one newline, normalised to a space in the quote) | `fullmatch` is whole-string, `re.search` is not: the ground for the `anchor: line` rows, where a prefix-accepting matcher must refuse a line that merely starts with the value | docs / **A** / mined / recheck on-release |
+| **S491** | RFC 7493 (I-JSON) §2.3 Object Constraints — https://www.rfc-editor.org/rfc/rfc7493.txt | 2026-11-04 | "Objects in I-JSON messages MUST NOT have members with duplicate names." (11 words) — pin `.ufo/waves/round-86/fetch/S491.bin` 12,849 B, sha256 `a44ccf1451a7bf4f4bbb78b39e10ed0e9a27ff2ee5b639c6458042b5a7197062`, **bytes 6364–6437, line 159** (§2.3 heading at line 157; the sentence carries one newline, after "duplicate") | duplicate member names in an I-JSON object are a **MUST NOT**, not the RFC 8259 §4 "SHOULD" the lane already holds as S486; it grounds *refusing* a duplicate-name object, not choosing among duplicates | spec / **A** / mined / recheck 180d |
+| **S492** | CPython v3.14.8 `Doc/library/re.rst`, `fullmatch` — https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/re.rst | 2026-11-04 | "If the whole *string* matches the regular expression *pattern*, return a corresponding :class:`~re.Match`." (13 words; the Sphinx role is part of the bytes) — pin `.ufo/waves/round-86/fetch/S492.bin` 78,262 B, sha256 `d252cc185dfc1014e1b4a8087b2515b71c76527f0f2f6dfddba9a880537e6a48`, **bytes 39792–39901, line 957** (the `fullmatch` directive at line 955; the sentence carries one newline, normalised to a space in the quote) | `fullmatch` is whole-string, `re.search` is not: the ground for the `anchor: line` rows, where a prefix-accepting matcher must refuse a line that merely starts with the value | docs / **A** / mined / recheck on-release |
 
 ### Rejects
 
