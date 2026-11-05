@@ -1,0 +1,65 @@
+{
+  "schema": "mako-mutants-r87-v1",
+  "mutants": [
+    {
+      "id": "M01-criteria-setdefault",
+      "description": "criteria options only fill unset keys, so they never override defaults or the global section (breaks last-wins and any matching override; L435-437)",
+      "old": "effective[key] = value",
+      "new": "effective.setdefault(key, value)"
+    },
+    {
+      "id": "M02-global-ignored",
+      "description": "the global section is dropped; resolution sees defaults and criteria only (L519-522)",
+      "old": "effective.update(state.global_values)",
+      "new": "effective.update({})"
+    },
+    {
+      "id": "M03-relative-include-accepted",
+      "description": "a relative include path is accepted and read from the working directory instead of being refused (L45-48)",
+      "old": "elif value.startswith(\"/\"):",
+      "new": "elif value.startswith(\"/\") or value:"
+    },
+    {
+      "id": "M04-tilde-ignores-home",
+      "description": "~/ include paths expand to the filesystem root instead of --home (L16-17, L48)",
+      "old": "os.path.join(self.home, value[2:])",
+      "new": "os.path.join(\"/\", value[2:])"
+    },
+    {
+      "id": "M05-no-initial-mode",
+      "description": "the initial mode list is empty, so [mode=default] sections never apply (L620-621)",
+      "old": "INITIAL_MODES = (\"default\",)",
+      "new": "INITIAL_MODES = ()"
+    },
+    {
+      "id": "M06-no-defaults",
+      "description": "effective starts empty instead of from the manual defaults (L519-522)",
+      "old": "effective = dict(DEFAULTS)",
+      "new": "effective = {}"
+    },
+    {
+      "id": "M07-app-name-ignored",
+      "description": "app-name criteria are never compared, so sections for other applications apply (L443-444)",
+      "old": "elif key == \"app-name\":",
+      "new": "elif key == \"app-name-ignored\":"
+    },
+    {
+      "id": "M08-missing-input-matches",
+      "description": "a criteria app-name with no --app-name supplied is treated as a match instead of refused",
+      "old": "undecided.append(\"--app-name\")",
+      "new": "pass"
+    },
+    {
+      "id": "M09-urgency-inverted",
+      "description": "urgency criteria match when the notification urgency differs (L459)",
+      "old": "mismatch = mismatch or self.urgency != value",
+      "new": "mismatch = mismatch or self.urgency == value"
+    },
+    {
+      "id": "M10-unterminated-quote-accepted",
+      "description": "an unterminated quote in a criteria header is not refused and yields an unconditional match (L497-508)",
+      "old": "return [], \"unterminated quote\"",
+      "new": "return [], None"
+    }
+  ]
+}

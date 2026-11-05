@@ -5084,3 +5084,10 @@ command there (`37/37 matched, 37/37 killed, tree=bound`), and `final-c2-r86.txt
 re-measures the landed content. No receipt this round binds the counter's own bytes; the r87
 declaration must print `counter_sha256` and assert it against the blob at `--rev` (routed defect,
 `corpus/lessons/round-86.md`).
+
+## Correction (round 87 — held-rule witness figure)
+
+The round-86 C2 row above states "held rule 0/1 on the new anchor witness (`border-size-int`)". Re-derived in round 87 by the held
+round-85 counter's own `case_correct` on that witness: **1/1**. The 0/1 figure came from the round-86 model
+`held_case_correct` (`quality/counters/c2-r86-clause-observations.py:574`), not the held counter (figure id
+F1_held_rule_witness_r86; lesson `corpus/lessons/round-87.md` M87-1). The round-86 C2 verdict (`TARGET_MET`, 37/37) is not affected.

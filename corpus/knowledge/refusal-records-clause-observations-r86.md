@@ -158,3 +158,13 @@ host state, reported with churn samples, never frozen.
   revision by sha256 (`tree=bound`) — which also means a later edit to any of those files makes the
   frozen counter refuse to run at the older revision; they do not bind their own receipt to the run
   that printed it.
+
+## Correction (round 87 — held-rule witness figure)
+
+Superseded sentence: line 112 of this entry states that the held rule scores the new witness `held_rule_new_case=0/1`.
+Re-derived in round 87 by calling the held round-85 counter's own `case_correct` (`quality/counters/c2-r85-status-classes.py`)
+on the witness `border-size-int` of `.ufo/waves/round-86/controls/c2-cases-r86.json`: **1/1**. The `0/1` came from the round-86
+counter's model `held_case_correct` (`quality/counters/c2-r86-clause-observations.py:574`), which does not pass `anchor` and so
+scores the anchored witness differently; the r86 selftest pinned that model to itself (`:736-737`). Figure id:
+F1_held_rule_witness_r86. Mistake: M87-1 in `corpus/lessons/round-87.md`. The round-87 counter
+`quality/counters/c2-r87-control-fidelity.py` reconciles this figure. §3 of this entry is superseded by this block, not rewritten.

@@ -492,3 +492,11 @@ The numeric0/7/141 pipeline observations do not prove a unique termination cause
 truth, rendered UI or service health. OS diagnosis, reusable testing method and fleet record
 governance remain sibling-owned; source docs support only this desktop-runbook application.
 Frozen C2 failure and successor limitations are retained in lesson85, not province expansion.
+
+**Round-87 refinement — read-only resolver, two record instruments; no new write surface.** `tools/mado-mako.py` resolves the effective
+settings of one notification from the mako config bytes the caller names (`--config`, `--home`; regular files only; `include=` followed
+under the manual's absolute or `~/` rule; `--mode` supplies the enabled set as an input). Its selftest writes only inside
+`--scratch-root`; it starts no process and opens no socket. `quality/counters/c1-r87-mako-criteria.py` and
+`quality/counters/c2-r87-control-fidelity.py` are record instruments: the first scores the tool over a frozen case set and two
+do-nothing controls, the second re-derives the round-86 figures and reconciles them against append-only corrections. The lane reads
+`~/.config/mako`; it never writes it, and the operator applies any change.
