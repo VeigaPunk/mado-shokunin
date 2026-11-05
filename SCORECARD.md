@@ -5071,3 +5071,16 @@ checked 3 mismatched 0. Census 425→427, exits 0/0 with the standing W04 warnin
 `corpus/knowledge/refusal-records-clause-observations-r86.md` §4 and routed in
 `corpus/lessons/round-86.md`. No capability row, no promotion; outside-lane judgment remains the
 integrator's.**
+
+### Round86 provenance correction (append-only, post-wave)
+
+The row above cites `receipts/final-c2-freezerev-r86.txt` as a detached-clone run at the freeze
+`237ecf4e`. That receipt is byte-identical to `receipts/c2-repaired-r86.txt` except its `rev=` cell
+(the wave critic's `diff`, `w1/R86CriticClaims.md` §(a)), and `tree=bound` is a literal in the print
+statement, so the file cannot itself distinguish a frozen-clone run from a relabelled transcript —
+it is not self-evidencing and is no longer cited as independent freeze-revision evidence. What is
+independently verified: the critic extracted `237ecf4e` into a throwaway repository and ran the same
+command there (`37/37 matched, 37/37 killed, tree=bound`), and `final-c2-r86.txt` at `8528dfa6`
+re-measures the landed content. No receipt this round binds the counter's own bytes; the r87
+declaration must print `counter_sha256` and assert it against the blob at `--rev` (routed defect,
+`corpus/lessons/round-86.md`).
