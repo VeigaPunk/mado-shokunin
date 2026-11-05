@@ -1,0 +1,484 @@
+{
+  "schema": "mako-containment-r88-v1",
+  "notes": "Round-88 C2 case set, authored from the declaration's C2 stance text alone (independence: the author did not read tools/mado-mako.py, build/, or the counter past its docstring). Every case declares --home=home; read_roots are declared only where a positive requires an extra root. Escapes (k01-k09) must keep width at the value set before/without the escaped file and report refusals present. Positives (k10-k17) must apply the include content and report no refusals. Only width= is used, so expectations are unambiguous; each case sets width before the include line so the surviving value is the pre-include one. Draft revision (L1 MadoR88, before the freeze): k18-k26 were added from the w1 attack seats' proposals (R88MReviewC2 F2/F3/F4/F10, R88MCritic C2(c)); each pin names the seat finding. Their author is the L1, who also wrote the candidate tool; the expectation of each follows the stance text and path_resolution(7) as the pin states.",
+  "cases": [
+    {
+      "id": "k01-symlink-file-escape",
+      "files": {
+        "home/config.ini": "width=101\ninclude=~/inc.ini\n",
+        "home/inc.ini": {
+          "symlink_to": "outside/esc.ini"
+        },
+        "outside/esc.ini": "width=901\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "101"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: \"its fully resolved path (realpath: every symlink and `..` resolved) lies inside a declared read root\""
+    },
+    {
+      "id": "k02-symlink-dir-escape",
+      "files": {
+        "home/config.ini": "width=102\ninclude=~/dir/esc.ini\n",
+        "home/dir": {
+          "symlink_to": "outside"
+        },
+        "outside/esc.ini": "width=902\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "102"
+        },
+        "refusals": "present"
+      },
+      "pin": "path_resolution(7) L77-80: \"If the component is found and is a symbolic link, we first resolve this symbolic link\""
+    },
+    {
+      "id": "k03-tilde-dotdot-escape",
+      "files": {
+        "home/config.ini": "width=103\ninclude=~/../outside/esc.ini\n",
+        "outside/esc.ini": "width=903\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "103"
+        },
+        "refusals": "present"
+      },
+      "pin": "path_resolution(7) L141-143: \"The path resolution process will assume that these entries have their conventional meanings\""
+    },
+    {
+      "id": "k04-absolute-outside-no-root",
+      "files": {
+        "home/config.ini": "width=104\ninclude=@ROOT@/outside/esc.ini\n",
+        "outside/esc.ini": "width=904\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "104"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: \"otherwise it is refused before it is stat'ed or opened, and the resolved path is what is opened\""
+    },
+    {
+      "id": "k05-prefix-sibling-escape",
+      "files": {
+        "home/config.ini": "width=105\ninclude=@ROOT@/home-evil/esc.ini\n",
+        "home-evil/esc.ini": "width=905\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "105"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: \"inside a declared read root \u2014 `--home` and each `--read-root DIR`\""
+    },
+    {
+      "id": "k06-chained-second-hop-escape",
+      "files": {
+        "home/config.ini": "width=106\ninclude=~/mid.ini\n",
+        "home/mid.ini": "width=206\ninclude=@ROOT@/outside/esc.ini\n",
+        "outside/esc.ini": "width=906\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "206"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: \"the include is refused (refusals present) and nothing from the target is applied\""
+    },
+    {
+      "id": "k07-symlink-root-then-escape",
+      "files": {
+        "home/config.ini": "width=107\ninclude=~/inc.ini\n",
+        "home/inc.ini": {
+          "symlink_to": "roots/mid.ini"
+        },
+        "roots/mid.ini": "width=207\ninclude=@ROOT@/outside/esc.ini\n",
+        "outside/esc.ini": "width=907\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "read_roots": [
+        "roots"
+      ],
+      "expect": {
+        "effective": {
+          "width": "207"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: \"its fully resolved path (realpath: every symlink and `..` resolved) lies inside a declared read root\""
+    },
+    {
+      "id": "k08-missing-target-refused",
+      "files": {
+        "home/config.ini": "width=108\ninclude=~/missing.ini\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "108"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: \"missing or non-regular targets are refused\""
+    },
+    {
+      "id": "k09-directory-target-refused",
+      "files": {
+        "home/config.ini": "width=109\ninclude=~/adir\n",
+        "home/adir/keep.ini": "width=909\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "109"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: \"missing or non-regular targets are refused\""
+    },
+    {
+      "id": "k10-tilde-include",
+      "files": {
+        "home/config.ini": "width=110\ninclude=~/inc.ini\n",
+        "home/inc.ini": "width=610\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "610"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 L45-48: \"The path must be absolute or otherwise start with ~/\""
+    },
+    {
+      "id": "k11-absolute-inside-home",
+      "files": {
+        "home/config.ini": "width=111\ninclude=@ROOT@/home/inc.ini\n",
+        "home/inc.ini": "width=611\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "611"
+        },
+        "refusals": "none"
+      },
+      "pin": "stance: \"inside a declared read root \u2014 `--home` and each `--read-root DIR`\""
+    },
+    {
+      "id": "k12-symlink-inside-home",
+      "files": {
+        "home/config.ini": "width=112\ninclude=~/link.ini\n",
+        "home/link.ini": {
+          "symlink_to": "home/real.ini"
+        },
+        "home/real.ini": "width=612\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "612"
+        },
+        "refusals": "none"
+      },
+      "pin": "stance: \"its fully resolved path (realpath: every symlink and `..` resolved) lies inside a declared read root\""
+    },
+    {
+      "id": "k13-outside-under-read-root",
+      "files": {
+        "home/config.ini": "width=113\ninclude=@ROOT@/outside/inc.ini\n",
+        "outside/inc.ini": "width=613\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "read_roots": [
+        "outside"
+      ],
+      "expect": {
+        "effective": {
+          "width": "613"
+        },
+        "refusals": "none"
+      },
+      "pin": "stance: \"lies inside a declared read root \u2014 `--home` and each `--read-root DIR`\""
+    },
+    {
+      "id": "k14-symlink-into-read-root",
+      "files": {
+        "home/config.ini": "width=114\ninclude=~/link.ini\n",
+        "home/link.ini": {
+          "symlink_to": "roots/inc.ini"
+        },
+        "roots/inc.ini": "width=614\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "read_roots": [
+        "roots"
+      ],
+      "expect": {
+        "effective": {
+          "width": "614"
+        },
+        "refusals": "none"
+      },
+      "pin": "stance: \"its fully resolved path (realpath: every symlink and `..` resolved) lies inside a declared read root\""
+    },
+    {
+      "id": "k15-config-outside-home",
+      "files": {
+        "home/keep.ini": "width=915\n",
+        "outside/conf.ini": "width=615\n"
+      },
+      "config": "outside/conf.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "615"
+        },
+        "refusals": "none"
+      },
+      "pin": "stance: \"The `--config` file itself is named by the caller and is not subject to the roots.\""
+    },
+    {
+      "id": "k16-inhome-symlinked-dir",
+      "files": {
+        "home/config.ini": "width=116\ninclude=~/linkdir/inc.ini\n",
+        "home/linkdir": {
+          "symlink_to": "home/realdir"
+        },
+        "home/realdir/inc.ini": "width=616\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "616"
+        },
+        "refusals": "none"
+      },
+      "pin": "stance: \"realpath: every symlink and `..` resolved\" \u2014 ~/linkdir resolves inside home"
+    },
+    {
+      "id": "k17-symlink-chain-inside-home",
+      "files": {
+        "home/config.ini": "width=117\ninclude=~/l1.ini\n",
+        "home/l1.ini": {
+          "symlink_to": "home/l2.ini"
+        },
+        "home/l2.ini": {
+          "symlink_to": "home/real.ini"
+        },
+        "home/real.ini": "width=617\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "617"
+        },
+        "refusals": "none"
+      },
+      "pin": "path_resolution(7) L107: \"the maximum number of symbolic links that will be followed while resolving a pathname is 40\""
+    },
+    {
+      "id": "k18-dotdot-after-symlinked-dir",
+      "files": {
+        "home/config.ini": "width=118\ninclude=~/linkdir/../secret.ini\n",
+        "home/linkdir": {
+          "symlink_to": "outside/sub"
+        },
+        "outside/sub/keep.ini": "width=0\n",
+        "home/secret.ini": "width=418\n",
+        "outside/secret.ini": "width=918\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "118"
+        },
+        "refusals": "present"
+      },
+      "pin": "path_resolution(7) line 77-80: a symlinked non-final component is resolved before the walk continues \u2014 so linkdir/.. is outside/, not home/ (decoy home/secret.ini must not be read; R88MReviewC2 F2)"
+    },
+    {
+      "id": "k19-final-symlink-in-symlinked-dir",
+      "files": {
+        "home/config.ini": "width=119\ninclude=~/linkdir/final.ini\n",
+        "home/linkdir": {
+          "symlink_to": "home/realdir"
+        },
+        "home/realdir/final.ini": {
+          "symlink_to": "outside/esc.ini"
+        },
+        "outside/esc.ini": "width=919\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "119"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: fully resolved path, every symlink resolved \u2014 the final component here is a symlink to outside/ (R88MReviewC2 F3)"
+    },
+    {
+      "id": "k20-absolute-with-dotdot",
+      "files": {
+        "home/config.ini": "width=120\ninclude=@ROOT@/home/../outside/esc.ini\n",
+        "outside/esc.ini": "width=920\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "120"
+        },
+        "refusals": "present"
+      },
+      "pin": "path_resolution(7) lines 141-142: dot-dot refers to the parent directory \u2014 the absolute path leaves home (R88MReviewC2 F4a)"
+    },
+    {
+      "id": "k21-proc-self-root-prefix",
+      "files": {
+        "home/config.ini": "width=121\ninclude=/proc/self/root@ROOT@/outside/esc.ini\n",
+        "outside/esc.ini": "width=921\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "121"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: fully resolved path \u2014 /proc/self/root is a symlink to / and resolves to the outside path (R88MReviewC2 F4b)"
+    },
+    {
+      "id": "k22-symlink-chain-leaves-home",
+      "files": {
+        "home/config.ini": "width=122\ninclude=~/l1.ini\n",
+        "home/l1.ini": {
+          "symlink_to": "home/l2.ini"
+        },
+        "home/l2.ini": {
+          "symlink_to": "outside/esc.ini"
+        },
+        "outside/esc.ini": "width=922\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "122"
+        },
+        "refusals": "present"
+      },
+      "pin": "stance: every symlink resolved \u2014 a two-link chain whose last link points outside (R88MReviewC2 F4c)"
+    },
+    {
+      "id": "k23-symlink-self-loop",
+      "files": {
+        "home/config.ini": "width=123\ninclude=~/loop.ini\n",
+        "home/loop.ini": {
+          "symlink_to": "home/loop.ini"
+        }
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "123"
+        },
+        "refusals": "present"
+      },
+      "pin": "path_resolution(7): a symlink loop cannot be resolved (ELOOP); include rules: an unreadable target is refused (R88MReviewC2 F4d)"
+    },
+    {
+      "id": "k24-symlinked-read-root",
+      "files": {
+        "home/config.ini": "width=124\ninclude=@ROOT@/rootlink/inc.ini\n",
+        "rootlink": {
+          "symlink_to": "outside"
+        },
+        "outside/inc.ini": "width=624\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "read_roots": [
+        "rootlink"
+      ],
+      "expect": {
+        "effective": {
+          "width": "624"
+        },
+        "refusals": "none"
+      },
+      "pin": "stance (draft revision): each read root is itself resolved with realpath \u2014 a symlinked root covers its target (R88MReviewC2 F10)"
+    },
+    {
+      "id": "k25-config-is-a-symlink",
+      "files": {
+        "home/.config/mako/config": {
+          "symlink_to": "home/.config/theme/mako.ini"
+        },
+        "home/.config/theme/mako.ini": "width=125\ninclude=~/core.ini\n",
+        "home/core.ini": "width=625\n"
+      },
+      "config": "home/.config/mako/config",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "625"
+        },
+        "refusals": "none"
+      },
+      "pin": "stance: the --config file is named by the caller; host shape: ~/.config/mako/config is a symlink to the theme's mako.ini (R88MCritic C2(c)3)"
+    },
+    {
+      "id": "k26-secret-named-file-inside-home-is-read",
+      "files": {
+        "home/config.ini": "width=126\ninclude=~/.secret/token.ini\n",
+        "home/.secret/token.ini": "width=626\n"
+      },
+      "config": "home/config.ini",
+      "home": "home",
+      "expect": {
+        "effective": {
+          "width": "626"
+        },
+        "refusals": "none"
+      },
+      "pin": "stance named limit: containment bounds the read set to the declared roots and does not classify content inside a root (R88MCritic C2(c)2)"
+    }
+  ]
+}

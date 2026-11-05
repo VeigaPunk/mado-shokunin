@@ -1,0 +1,1248 @@
+{
+  "schema": "mako-cases-r88-v1",
+  "notes": "Round-88 superseding C1 case set for mado, authored from the pinned mako(5) manual alone plus upstream mako v1.11.0 sources (criteria.c sha256 22767742365ea632351751c46d3d5241c340fcf60f376028eb050797b422d76c, types.c sha256 c2f3398d45877c10ae94a61634629c22b1c4c472b526a4963d45f7981c4734de, config.c sha256 94c3a4e7b0bc7304dd9011c1e44d91cfffe417fe03aa3fa864205204f968ca12) and the host's omarchy mako core.ini (sha256 255e30c44d49c4195882c6b9ce491cdf9feccccfa803903da5fc18508d76e450, reduced to its [mode=do-not-disturb] and [mode=do-not-disturb app-name=notify-send] sections and their lines). The manual is the installed mako 1.11.0 manual (/usr/share/man/man5/mako.5.gz; decompressed sha256 f717848f47cc7739d4bddbcc08c133a32e0d7dface7d1769882da1a0150477ba), numbered with zcat | nl -ba. The 22 round-87 frozen cases are carried unchanged; 37 new cases (c23..c59) widen coverage to the five exact string criteria fields (app-icon, summary, body, category, desktop-entry), the boolean criteria grammar (true/false/1/0/bare/!bare/case-folded, invalid value, mismatching flag, missing input) and the upstream boolean grammar for style options, plus the manual defaults of unconfigured options. Every case names its own HOME fixture, its own --config path relative to HOME, the notification inputs, the expected effective values and the refusals, and is pinned to one source line. expect.effective asserts only the listed keys: effective is the manual defaults, overridden by the global section and then by every matching criteria section in file order. Where a refusal is expected the global section repeats the manual default of the option the refused section would have set, so the expectation holds whether the refusal drops only that section or the whole file. args keys follow the loader of quality/counters/c1-r88-mako-fields.py (app-name, app-icon, summary, body, category, desktop-entry, urgency, actionable, expiring, mode). Every include= target stays inside HOME. Draft revision (L1 MadoR88, before the freeze): c60-c62 were added by the L1 for mutants M20-M22 (urgency high alias, urgency casefold, repeated-field last-wins), which entered the mutant list after this file was authored (R88MCritic C1(b), R88MReviewC1 F1). Their author is the L1, who also wrote the candidate; each pin names the upstream line it follows.",
+  "cases": [
+    {
+      "id": "c01-global-section-values",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\noutput=HDMI-1\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left",
+          "output": "HDMI-1"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 523: for all style options, overwritten with any configured in the global section."
+    },
+    {
+      "id": "c02-criteria-overrides-global",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=alpha]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 437: any given style option will \"win\"."
+    },
+    {
+      "id": "c03-no-criteria-matched",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=alpha]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "beta",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 432: each criteria. If all of the fields match, the style options within will be"
+    },
+    {
+      "id": "c04-urgency-critical-matches",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[urgency=critical]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "critical",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 459: urgency (one of \"low\", \"normal\", \"critical\")"
+    },
+    {
+      "id": "c05-urgency-critical-not-matched",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[urgency=critical]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 432: each criteria. If all of the fields match, the style options within will be"
+    },
+    {
+      "id": "c06-urgency-low-matches",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[urgency=low]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "low",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 459: urgency (one of \"low\", \"normal\", \"critical\")"
+    },
+    {
+      "id": "c07-mode-criteria-active",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[mode=do-not-disturb]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": [
+          "do-not-disturb"
+        ]
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 618: matches. makoctl(1) can be used to change the current mode."
+    },
+    {
+      "id": "c08-mode-criteria-inactive",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[mode=do-not-disturb]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": [
+          "focus"
+        ]
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 470: mode is currently enabled. For more information about modes, see the MODES"
+    },
+    {
+      "id": "c09-two-sections-per-option-last-wins",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=alpha]\nlayer=bottom\n[urgency=critical]\noutput=DP-2\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "critical",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "layer": "bottom",
+          "output": "DP-2",
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 437: any given style option will \"win\"."
+    },
+    {
+      "id": "c10-two-sections-only-first-matches",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=alpha]\nlayer=bottom\n[urgency=critical]\nlayer=overlay\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 435: This matching occurs in the order the criteria are defined in the config file,"
+    },
+    {
+      "id": "c11-combined-fields-all-match",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=alpha urgency=critical]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "critical",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 432: each criteria. If all of the fields match, the style options within will be"
+    },
+    {
+      "id": "c12-combined-fields-one-miss",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=alpha urgency=critical]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 432: each criteria. If all of the fields match, the style options within will be"
+    },
+    {
+      "id": "c13-include-globals-under-home",
+      "home_files": {
+        ".config/mako/config": "include=~/.config/mako/core.ini\nanchor=bottom-left\n",
+        ".config/mako/core.ini": "output=HDMI-1\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "output": "HDMI-1",
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 47: Includes a config at the specified path. The path must be absolute"
+    },
+    {
+      "id": "c14-comments-and-blank-lines",
+      "home_files": {
+        ".config/mako/config": "# a comment\n\nanchor=bottom-left\n\n# another comment\noutput=HDMI-1\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left",
+          "output": "HDMI-1"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 24: Empty lines and lines that begin with # are ignored."
+    },
+    {
+      "id": "c15-quoted-field-value",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=\"Google Chrome\"]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "Google Chrome",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 501: [app-name=\"Google Chrome\"]"
+    },
+    {
+      "id": "c16-backslash-escaped-space",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=Google\\ Chrome]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "Google Chrome",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 503: [app-name=Google\\ Chrome]"
+    },
+    {
+      "id": "c17-equal-sign-inside-value",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=foo=bar]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "foo=bar",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 508: signs within values is unnecessary."
+    },
+    {
+      "id": "c18-mode-criteria-among-several-modes",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[mode=do-not-disturb]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": [
+          "focus",
+          "do-not-disturb"
+        ]
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 469: mode (string): only apply style options in this section if the provided"
+    },
+    {
+      "id": "c19-combined-mode-and-app-name-active",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=alpha mode=do-not-disturb]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": [
+          "do-not-disturb"
+        ]
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 432: each criteria. If all of the fields match, the style options within will be"
+    },
+    {
+      "id": "c20-combined-mode-and-app-name-mode-inactive",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=alpha mode=do-not-disturb]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": [
+          "focus"
+        ]
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 470: mode is currently enabled. For more information about modes, see the MODES"
+    },
+    {
+      "id": "c21-two-matching-sections-last-wins",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=alpha]\nlayer=bottom\n[urgency=critical]\nlayer=overlay\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "critical",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "layer": "overlay",
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 436: meaning that if multiple criteria match a notification, the last occurrence of"
+    },
+    {
+      "id": "c22-refusal-summary-conflicts-summary-tilde",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[summary=hello summary~=hello]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "app-name": "alpha",
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {},
+        "refusals": "present"
+      },
+      "pin": "mako.5 line 448: field conflicts with summary~."
+    },
+    {
+      "id": "c23-include-relative-path-refused",
+      "home_files": {
+        ".config/mako/config": "include=relative.ini\nanchor=top-right\n",
+        "relative.ini": "layer=bottom\n",
+        ".config/mako/relative.ini": "layer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right",
+          "layer": "top"
+        },
+        "refusals": "present"
+      },
+      "pin": "mako.5 line 47: Includes a config at the specified path. The path must be absolute"
+    },
+    {
+      "id": "c24-mode-default-section-applies",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[mode=default]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 620: The initial list of modes contains a single mode called \"default\"."
+    },
+    {
+      "id": "c25-default-font-unconfigured",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "font": "monospace 10"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 170: Default: monospace 10"
+    },
+    {
+      "id": "c26-default-layer-unconfigured",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "layer": "top"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 407: Default: top"
+    },
+    {
+      "id": "c27-default-border-size-unconfigured",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "border-size": "2"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 234: Default: 2"
+    },
+    {
+      "id": "c28-appname-criteria-missing-input-refusal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[app-name=alpha]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": []
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c line 76: strcmp(criteria->app_name, notif->app_name) != 0"
+    },
+    {
+      "id": "c29-unterminated-quote-header-refusal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[app-name=\"alpha]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c line 230: Unmatched quote in criteria definition"
+    },
+    {
+      "id": "c30-app-icon-match",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-icon=mail-unread]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "app-icon": "mail-unread"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 81: strcmp(criteria->app_icon, notif->app_icon) != 0"
+    },
+    {
+      "id": "c31-app-icon-mismatch",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-icon=mail-unread]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "app-icon": "other-icon"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 81: strcmp(criteria->app_icon, notif->app_icon) != 0"
+    },
+    {
+      "id": "c32-summary-match",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[summary=Hello]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "summary": "Hello"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 111: strcmp(criteria->summary, notif->summary) != 0"
+    },
+    {
+      "id": "c33-summary-mismatch-case-sensitive",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[summary=Hello]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "summary": "hello"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 447: summary (string): exact match on the summary of the notification."
+    },
+    {
+      "id": "c34-body-match",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[body=Backup]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "body": "Backup"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 123: strcmp(criteria->body, notif->body) != 0"
+    },
+    {
+      "id": "c35-body-mismatch",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[body=Backup]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "body": "Somethingelse"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 123: strcmp(criteria->body, notif->body) != 0"
+    },
+    {
+      "id": "c36-category-match",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[category=im.received]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "category": "im.received"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 101: strcmp(criteria->category, notif->category) != 0"
+    },
+    {
+      "id": "c37-category-mismatch",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[category=im.received]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "category": "im.sent"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 101: strcmp(criteria->category, notif->category) != 0"
+    },
+    {
+      "id": "c38-desktop-entry-match",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[desktop-entry=firefox.desktop]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "desktop-entry": "firefox.desktop"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 106: strcmp(criteria->desktop_entry, notif->desktop_entry) != 0"
+    },
+    {
+      "id": "c39-desktop-entry-mismatch",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[desktop-entry=firefox.desktop]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "desktop-entry": "chromium.desktop"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-left"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 106: strcmp(criteria->desktop_entry, notif->desktop_entry) != 0"
+    },
+    {
+      "id": "c40-summary-missing-input-refusal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary=Hello]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c line 111: strcmp(criteria->summary, notif->summary) != 0"
+    },
+    {
+      "id": "c41-app-icon-missing-input-refusal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[app-icon=mail-unread]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c line 81: strcmp(criteria->app_icon, notif->app_icon) != 0"
+    },
+    {
+      "id": "c42-boolean-true-literal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable=true]\nanchor=bottom-center\n[expiring=true]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "true",
+        "expiring": "true"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center",
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 514: [actionable=true] [actionable=1] [actionable]"
+    },
+    {
+      "id": "c43-boolean-one-literal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable=1]\nanchor=bottom-center\n[expiring=1]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "true",
+        "expiring": "true"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center",
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 514: [actionable=true] [actionable=1] [actionable]"
+    },
+    {
+      "id": "c44-boolean-false-literal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable=false]\nanchor=bottom-center\n[expiring=false]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "false",
+        "expiring": "false"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center",
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 516: [actionable=false] [actionable=0] [!actionable]"
+    },
+    {
+      "id": "c45-boolean-zero-literal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable=0]\nanchor=bottom-center\n[expiring=0]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "false",
+        "expiring": "false"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center",
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 516: [actionable=false] [actionable=0] [!actionable]"
+    },
+    {
+      "id": "c46-boolean-bare-word",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable]\nanchor=bottom-center\n[expiring]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "true",
+        "expiring": "true"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center",
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 288: value = \"true\";"
+    },
+    {
+      "id": "c47-boolean-negated-bare-word",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[!actionable]\nanchor=bottom-center\n[!expiring]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "false",
+        "expiring": "false"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center",
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 286: value = \"false\";"
+    },
+    {
+      "id": "c48-boolean-uppercase-word",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable=TRUE]\nanchor=bottom-center\n[expiring=FALSE]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "true",
+        "expiring": "false"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center",
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "types.c line 20: if (strcasecmp(string, \"true\") == 0 || strcmp(string, \"1\") == 0) {"
+    },
+    {
+      "id": "c49-boolean-mixed-case-word",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable=True]\nanchor=bottom-center\n[expiring=FaLsE]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "true",
+        "expiring": "false"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center",
+          "layer": "bottom"
+        },
+        "refusals": "none"
+      },
+      "pin": "types.c line 23: } else if (strcasecmp(string, \"false\") == 0 || strcmp(string, \"0\") == 0) {"
+    },
+    {
+      "id": "c50-boolean-invalid-value-refusal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable=yes]\nanchor=bottom-center\n[expiring=maybe]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "true",
+        "expiring": "true"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right",
+          "layer": "top"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c line 370: if (!parse_boolean(value, &criteria->actionable)) {"
+    },
+    {
+      "id": "c51-boolean-mismatching-flag",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable=true]\nanchor=bottom-center\n[expiring=true]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "actionable": "false",
+        "expiring": "false"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right",
+          "layer": "top"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c line 86: criteria->actionable == wl_list_empty(&notif->actions)) {"
+    },
+    {
+      "id": "c52-boolean-missing-input-refusal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nlayer=top\n[actionable=true]\nanchor=bottom-center\n[expiring=true]\nlayer=bottom\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right",
+          "layer": "top"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c line 86: criteria->actionable == wl_list_empty(&notif->actions)) {"
+    },
+    {
+      "id": "c53-summary-tilde-refused",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=hello]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha",
+        "summary": "hello"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "mako.5 line 450: summary~ (string): a POSIX extended regular expression match on the summary"
+    },
+    {
+      "id": "c54-style-boolean-true-normalized",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[app-name=alpha]\ninvisible=true\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "invisible": "1"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 545: invisible=0|1"
+    },
+    {
+      "id": "c55-style-boolean-false-normalized",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nmarkup=false\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "markup": "0"
+        },
+        "refusals": "none"
+      },
+      "pin": "types.c line 23: } else if (strcasecmp(string, \"false\") == 0 || strcmp(string, \"0\") == 0) {"
+    },
+    {
+      "id": "c56-style-boolean-invalid-option-value-refused",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\nicons=yes\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "icons": "1"
+        },
+        "refusals": "present"
+      },
+      "pin": "config.c line 593: parse_boolean(value, &style->icons);"
+    },
+    {
+      "id": "c57-host-dnd-notify-send-invisible",
+      "home_files": {
+        ".config/mako/config": "[mode=do-not-disturb]\ninvisible=true\n\n[mode=do-not-disturb app-name=notify-send]\ninvisible=false\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [
+          "do-not-disturb"
+        ],
+        "app-name": "notify-send"
+      },
+      "expect": {
+        "effective": {
+          "invisible": "0"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 623: For example, to hide all notifications if the mode \"do-not-disturb\" is"
+    },
+    {
+      "id": "c58-host-dnd-other-app-invisible",
+      "home_files": {
+        ".config/mako/config": "[mode=do-not-disturb]\ninvisible=true\n\n[mode=do-not-disturb app-name=notify-send]\ninvisible=false\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [
+          "do-not-disturb"
+        ],
+        "app-name": "other-app"
+      },
+      "expect": {
+        "effective": {
+          "invisible": "1"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 628: [mode=do-not-disturb]"
+    },
+    {
+      "id": "c59-mismatch-beside-undecided-no-refusal",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[app-name=alpha summary=Hello]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "beta"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako.5 line 432: each criteria. If all of the fields match, the style options within will be"
+    },
+    {
+      "id": "c60-urgency-high-means-critical",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[urgency=high]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "critical",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "types.c lines 119-120: } else if (strcasecmp(string, \"high\") == 0) { *out = MAKO_NOTIFICATION_URGENCY_CRITICAL;"
+    },
+    {
+      "id": "c61-urgency-value-case-insensitive",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[urgency=LOW]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "low",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "types.c line 110: if (strcasecmp(string, \"low\") == 0) {"
+    },
+    {
+      "id": "c62-repeated-field-last-value-wins",
+      "home_files": {
+        ".config/mako/config": "anchor=bottom-left\n[app-name=gamma app-name=alpha]\nanchor=bottom-center\n"
+      },
+      "config": ".config/mako/config",
+      "args": {
+        "urgency": "normal",
+        "mode": [],
+        "app-name": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c lines 298-299: if (strcmp(key, \"app-name\") == 0) { criteria->app_name = strdup(value); \u2014 each token assigns in turn, the last wins"
+    }
+  ]
+}

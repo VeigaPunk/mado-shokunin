@@ -1,0 +1,48 @@
+{
+  "schema": "mako-containment-mutants-r88-v1",
+  "notes": "Round-88 C2 mutants over the include read-root containment in tools/mado-mako.py. Each old anchor must occur exactly once in the candidate tool.",
+  "mutants": [
+    {
+      "id": "K1-containment-skipped",
+      "description": "the read-root check is skipped, so an include resolving anywhere is read",
+      "old": "if not self.within_roots(real):",
+      "new": "if False:"
+    },
+    {
+      "id": "K2-lexical-resolution",
+      "description": "the target is resolved lexically (abspath) instead of through symlinks, so a symlinked include escaping the roots is read",
+      "old": "real = os.path.realpath(target)",
+      "new": "real = os.path.abspath(target)"
+    },
+    {
+      "id": "K3-prefix-without-separator",
+      "description": "a root matches by string prefix without a path separator, so a sibling such as <home>-evil counts as inside <home>",
+      "old": "if real == root or real.startswith(prefix):",
+      "new": "if real == root or real.startswith(root):"
+    },
+    {
+      "id": "K4-read-roots-ignored",
+      "description": "--read-root values are dropped, so an include under a declared root is refused",
+      "old": "roots.extend(os.path.realpath(root) for root in read_roots)",
+      "new": "roots.extend(())"
+    },
+    {
+      "id": "K5-home-not-a-root",
+      "description": "--home is not a read root, so an include resolving inside home is refused",
+      "old": "roots = [os.path.realpath(home)] if home else []",
+      "new": "roots = []"
+    },
+    {
+      "id": "K6-normpath-first",
+      "description": "the target is normalised lexically before symlink resolution, so `..` after a symlinked directory is folded away and lands back inside home (path_resolution(7): a symlinked component is resolved before `..` is applied)",
+      "old": "real = os.path.realpath(target)",
+      "new": "real = os.path.realpath(os.path.normpath(target))"
+    },
+    {
+      "id": "K7-final-component-unresolved",
+      "description": "only the directory part is resolved and the final component is kept as written, so a symlinked include file whose target is outside the roots passes the check",
+      "old": "real = os.path.realpath(target)",
+      "new": "real = os.path.join(os.path.realpath(os.path.dirname(target)), os.path.basename(target))"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+MADO_MAKO_BASE_HOST_CONFIG — round 88, seat R88MScribeEntry (scribe entry)
+Purpose: capture the r87 resolver's behaviour on the host's own mako config chain.
+This is the BASE tool (round base), run read-only; it is not a candidate score.
+
+base revision : 24ba2a9ddac21c1211579231e6ee1d98963f9988
+tool path     : tools/mado-mako.py at that revision
+extraction    : git -C /home/vgpnk/Projects/shokunin/mado-shokunin show \
+                24ba2a9ddac21c1211579231e6ee1d98963f9988:tools/mado-mako.py > base/mado-mako-r87.py
+tool sha256   : 67a955a5fa06135c2748855b7e452bd3f0792c540002009ec90842ee5c986698
+command       : python3 -I base/mado-mako-r87.py --config ~/.config/mako/config --home "$HOME" \
+                --app-name notify-send --urgency normal --mode do-not-disturb
+rc            : 0
+stdout head   : MADO_MAKO: resolved=37 refusals=7
+
+refusals (7), verbatim:
+  /home/vgpnk/.local/share/omarchy/default/mako/core.ini:15: invisible='true': expects 0 or 1
+  /home/vgpnk/.local/share/omarchy/default/mako/core.ini:18: invisible='false': expects 0 or 1
+  /home/vgpnk/.local/share/omarchy/default/mako/core.ini:24: criteria field 'summary~' is outside the model (refused)
+  /home/vgpnk/.local/share/omarchy/default/mako/core.ini:27: criteria field 'summary~' is outside the model (refused)
+  /home/vgpnk/.local/share/omarchy/default/mako/core.ini:30: criteria field 'summary~' is outside the model (refused)
+  /home/vgpnk/.local/share/omarchy/default/mako/core.ini:33: criteria field 'summary~' is outside the model (refused)
+  /home/vgpnk/.local/share/omarchy/default/mako/core.ini:36: criteria field 'summary~' is outside the model (refused)
+
+effective invisible : "0"
+  (the two do-not-disturb sections matched, but their invisible value was refused, so the
+   resolved value falls back to the default 0 — the host's DND state is not resolvable by r87)
+
+producer sites in the base tool (line numbers of that extracted file):
+  :75   MODELLED_FIELDS = ("app-name", "urgency", "mode")
+  :114  return None if value in ("0", "1") else "expects 0 or 1"
+  :271  self.refuse(where, "criteria field '" + key + "' is outside the model (refused)")
+
+host config chain read: ~/.config/mako/config (symlink, includes the theme mako.ini) →
+  ~/.local/share/omarchy/default/mako/core.ini (the file the refusals name).
+No credential material was read.
