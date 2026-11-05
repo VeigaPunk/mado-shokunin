@@ -128,12 +128,25 @@ host state, reported with churn samples, never frozen.
 
 ## 4. What this entry does not certify
 
-- The ten-token cause vocabulary is exhaustive for the tool at the freeze; a new cause token added
-  to the tool without editing the control set would pass the negative observation vacuously.
+- **Four forgery classes score 75/75 under the record rule** (`w1/R86ReviewerC1.md`
+  S1-a/S1-b/S2-a/S2-b): all ten tokens printed on **stderr** (the counter captures stderr and never
+  inspects it); a duplicate record shifted by one leading space (`^`-anchored `re.M`, so "exactly
+  once" holds only at column 0); all ten tokens printed on the **result** path, where no vocabulary
+  check exists; and a homoglyph flood (`а` U+0430 for `a`) against a byte-substring vocabulary.
+  Three of the four also score 75/75 under the held rule, so the increment does not cover them.
+- The ten-token cause vocabulary is exhaustive for the tool **at the freeze** — `R86ReviewerC1`
+  verified the raise sites by AST (`vocab − raised = ∅`) — but a new cause token added to the tool
+  without editing the control set would pass the negative observation vacuously.
 - The record rule reads the tool's own stage/cause words; it does not verify the refusal happened
-  for the reason claimed.
+  for the reason claimed, and a cause-free case accepts a spurious cause (the record's own token is
+  self-exempted from the foreign check).
+- The clause observation **counts iterations, not evaluations** (`w1/R86ReviewerC2.md` F1/F2): a
+  count-preserving stub passes every case-level conjunct and is caught only by the declared mutant
+  population, not by the observation itself.
 - A numeric status still cannot distinguish a normal `exit 141` from SIGPIPE (QUALITY 142, S489).
 - The Markdown status and outcome cells of the runbook tables are prose; the counter binds the
   command cell and its live output only (r85 routed defect R3, still open).
 - The counters bind `SKILL.md`, `tools/mado-barfoot.py` and every listed fixture to the measured
-  revision by sha256 (`tree=bound`); they do not bind their own receipt to the run that printed it.
+  revision by sha256 (`tree=bound`) — which also means a later edit to any of those files makes the
+  frozen counter refuse to run at the older revision; they do not bind their own receipt to the run
+  that printed it.

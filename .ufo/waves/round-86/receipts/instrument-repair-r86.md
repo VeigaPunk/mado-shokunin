@@ -44,12 +44,24 @@ loops in `case_correct` (`for sample in samples:` / `for sample in negatives:`).
 Every repair is proven able to fail: each run above is a receipt, and run 2 / run 3 are the failing
 states of the repairs that follow them.
 
-## C1 — no repair
+## C1 — no predicate repair; one documentation edit attempted and reverted
 
 `c1-r86-refusal-records.py` ran first time at the committed bytes and reports `verdict=TARGET_MET`
 with `flooding=48/75`, `held_flooding=75/75` and `carried=72/72` (`receipts/c1-r86.txt`). Its
-`base_correct=75/75` is the declaration's third control: the round-85 tool scores full marks under the
-new rule, so the increment is the rule, not the tool.
+`base_correct=75/75` is the declaration's third control: the round-85 tool scores full marks under
+the new rule, so the increment is the rule, not the tool.
+
+Repair 4 (attempted, rejected, reverted — documentation only): the module docstring's contract line
+says `mutants=53 killed=53` while `MUTANTS = 51`, `len(MUTATIONS) == 51` and the declaration's target
+is `killed == 51` — the executable predicate and the declaration agree, the prose does not (round
+83's "declared 38 vs 39 killed" class of bookkeeping drift). The L1 edited the line to 51 at
+00:15:58 during the wave; `w1/R86ReviewerC1.md` caught the drift and named it a breach of the
+declaration's freeze rule. The edit was reverted at 00:26 and the working tree carries the frozen
+bytes again. The defect is recorded in `corpus/lessons/round-86.md` M86-6 as found-and-not-fixed,
+routed to r87 as its own repair with a control. No scored condition, case, control or mutation was
+ever changed.
+
+
 
 ## Run-1 transcript (verbatim tail of the committed instrument)
 

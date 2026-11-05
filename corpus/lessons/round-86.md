@@ -55,6 +55,37 @@ its counters shipped with three defects (M86-1..3) that only a run exposes. Clas
 handling. Fix: attempt 2 ran both instruments before freezing anything, and the failing runs are
 committed as receipts rather than deleted. A round that reuses in-flight work must run it first.
 
+**M86-6 — a docstring's contract line is a declaration, and it can drift from the code.**
+Class: bookkeeping drift (round 83 was rejected for exactly this shape: declared 38 against 39
+killed). Evidence: `quality/counters/c1-r86-refusal-records.py` says `mutants=53 killed=53` while
+`MUTANTS = 51` and the declaration's target is `killed == 51`; the printed line and the executable
+predicate agree, only the prose does not. Captured by: **none** — nothing compares the docstring's
+contract line to the constants. **Disposition: found and NOT fixed.** The L1 did edit the line to
+51 during the wave, and `w1/R86ReviewerC1.md` caught the drift and named it a breach of the
+declaration's freeze rule; the edit was reverted, the working tree returned to the frozen bytes, and
+the defect is routed to r87 as its own repair with a control. A frozen instrument is not repaired
+mid-round, even in prose.
+
+**M86-7 — an attacker found four forgery classes the record rule scores 75/75.**
+Class: claim scope. Evidence: `w1/R86ReviewerC1.md` S1-a/S1-b/S2-a/S2-b — an all-ten-token flood on
+**stderr** (the counter captures stderr and never inspects it), a duplicate record shifted by one
+leading space (`^`-anchored `re.M` hides it, so "exactly once" holds only at column 0), a flood on
+the **result** path (no vocabulary check exists there at all), and a homoglyph flood (`а` U+0430 for
+`a`, defeating a byte-substring vocabulary). Captured by: the wave's own attack seat — the frozen
+case set carries none of these. Disposition: recorded as named limits of the entry and the claim;
+the instruments stay frozen; the four classes are the next round's control additions.
+
+## Wave findings routed to r87 (instruments stay frozen)
+
+| finding | seat | severity | routed repair |
+|---|---|---|---|
+| `git` child inherits the whole environment and is resolved via `PATH`; an ambient `GIT_DIR` overrides `-C repo`, so `tree=bound` could bind a different repository | Sentinel F1 | high | pass an explicit environment and `git --git-dir`-free resolution; add a control that sets `GIT_DIR` to a decoy |
+| the counter's own bytes are not bound to `--rev` (the receipt's `rev=` names a revision whose counter bytes may differ from the executing file) | Sentinel F2, C2 | medium | hash `__file__` into the printed contract and assert it against the blob at `--rev` |
+| a count-preserving stub (increments kept, evaluations removed) passes every case-level clause; only the mutant population catches it | ReviewerC2 F1/F2 | medium | observe the evaluation result, not only the call (e.g. count sample matches, not loop iterations) |
+| C2 judges a refusal by a stage substring while C1 judges the same tool's refusal as one record — two conventions for one stream | Connector §4 | medium | one versioned refusal-record parser owned by one module, kept out of the frozen populations |
+| dead constants `BASE_EXPECT` (c1:37) and `EXACT_KINDS` (c2:198) | Connector §2 | low | delete with the successor |
+| `--no-mutants` exits 0 with `killed=0`, and C1's branch returns 0 without evaluating the target | Sentinel F3 | medium | print a distinct `MUTANTS_SKIPPED` verdict and a non-zero exit, or drop the flag from the public contract |
+
 ## Gate
 
 ### New registry rows opened this round (2026-11-04)
