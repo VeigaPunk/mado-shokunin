@@ -5054,3 +5054,20 @@ round-85 R3/R4 debts. Do not rewrite round86 frozen populations.
 
 Axis table re-derived at the round86 publication (final-axis receipt decides agreement):
 navigation 107/107; calibration resolved-active 86/86; operability selftest 12/12, ledger 158/158.
+
+### Round86 final committed-revision measurements
+
+L1 re-executed both complete commands after Main's wave settled. Receipts under
+`.ufo/waves/round-86/receipts/` retain commands, outputs and exits:
+`final-c1-r86.txt` 75/75, 51/51 kills, base 75/75, carried 72/72, tool selftest 152/152, flooding
+48/75 vs held 75/75, TARGET_MET, exit 0 at `3afdb713`;
+`final-c2-r86.txt` 37/37, 27/27 shapes, 37/37 clauses observed, 37/37 kills, tree bound, TARGET_MET,
+exit 0 at `8528dfa6`, and `final-c2-freezerev-r86.txt` reproduces it at the freeze `237ecf4e` from a
+detached clone; `control-held-rule-r86.txt` re-measures the r85 instrument at this tip (36/36,
+33/37 kills, the four survivors alive). Counter selftests 127/127 and 114/114; standing gate
+selftest `final-gate-r86.txt` 460/460; index 107/107; ledger 158/158 uncovered0/bad_pointer0; axis
+checked 3 mismatched 0. Census 425→427, exits 0/0 with the standing W04 warnings unfiltered.
+**Round verdict: both declared claims TARGET_MET; the instruments' limits are named in
+`corpus/knowledge/refusal-records-clause-observations-r86.md` §4 and routed in
+`corpus/lessons/round-86.md`. No capability row, no promotion; outside-lane judgment remains the
+integrator's.**

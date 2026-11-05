@@ -85,6 +85,14 @@ own source seat** (`w1/R86ScribeLesson.md` M86-4), which recomputed both spans f
 corrected the offsets to 6364–6437 and 39792–39901. Fix: both places now quote the bytes verbatim and
 name the markup; the word counts are 11 and 13, not 12 and 14.
 
+**M86-9 — an item text and an item name that disagree put a seat's report on the wrong path.** Class:
+dispatch authoring. Evidence: the round-86 spec renamed the runbook probe from `R86LabRunbook` to
+`R86ScoutRunbook` (a `labrat` is not a swarm role) but its prompt text still said "Own: …/w1/
+R86LabRunbook.md"; the seat wrote exactly the path it was given. Captured by: **none** — the wave
+registry lists the member name, the report sat under the old one, and nothing compares them. Fix: the
+file is renamed to `R86ScoutRunbook.md` at integration (content untouched, its own heading kept) and
+the prompt generator must derive the path from the item name.
+
 ## Wave findings routed to r87 (instruments stay frozen)
 
 | finding | seat | severity | routed repair |
@@ -99,6 +107,7 @@ name the markup; the word counts are 11 and 13, not 12 and 14.
 | the C1 kill rule under-enumerates the target conjunction (tool selftest, `held_flooding`) and the carried/tree conditions are `Setup` errors rather than misses; `--no-mutants` prints `MUTANTS_SKIPPED` with rc 0 | Critic (b) | medium | one enumerated clause list in code, one miss for every `T`-false, and a non-zero rc for a skipped population |
 | 17 counter mutants beyond the declared populations: **5 killed, 12 survived** — C1 `record-any-count`, `record-search-anywhere`, `negative-one-class`, `carried-check-skipped`, `rc-ignored-result-cases`, `tool-selftest-rc-free`, `stage-unchecked`; C2 `observed-all-constant`, `tree-bound-dropped`, `carried-field-drift`, `live-anchor-clause-dropped`, `live-anchor-declared` | MutationTester | high | each survivor is an executable doctored input in `w1/R86MutationTester.md`; the successor control sets carry them as cases (an `observed_all` that always increments, a dropped tree binding, a widened carried exemption) |
 | the C2 selftest printed 114/114 at both revisions while the counter contradicted its own declared population; it asserts the raw `OBS` dict, never `case_correct` on a producer-status-refused negative | ScribeLesson M86-2 | medium | add a selftest case that drives each anchored control case through `case_correct` and asserts the declared verdict |
+| the `0 extra` negative was described as a "plausible next-day output"; the probe falsified that — `jq -r .int` emits only the integer and the live row returns `0\n`, so the negative is a matcher witness, not a producer sample (and no live output was mis-refused) | ScoutRunbook | low | keep the witness, correct the prose (done in the entry); a producer-reachable mis-refusal case is r87's if one exists |
 | the axis label moved coverage → calibration with no derived cell moving; the lane's instrumented calibration axis is resolved-active entries (86/86) | Critic (d) | medium | no repair this round: the label is the frozen declaration's; the dissent is recorded for the closure judge and the next declaration must name the cell its claim moves |
 
 ## Gate

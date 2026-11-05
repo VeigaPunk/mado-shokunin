@@ -123,9 +123,11 @@ S492 (line 957 of the pin) is the semantics the `anchor: line` witnesses need:
 `match.group(0) == line` (`line_anchored`), which is the same predicate for these patterns — the
 match's own span must be the whole line. The round-86 witness row
 `set -o pipefail; hyprctl getoption general:border_size -j | jq -r .int` binds an **unanchored**
-pattern `[0-9]+` to a whole line, so a plausible next-day output that carries the value with
-trailing text (`0 extra`) is accepted by `search` and refused by the whole-line rule; `-1` and
-`0 extra` are the committed negatives. The row is read-only and its value (`0` on this host) is
+pattern `[0-9]+` to a whole line, so a negative that carries the value with trailing text
+(`0 extra`) is accepted by `search` and refused by the whole-line rule; `-1` and `0 extra` are the
+committed negatives. Neither is a reachable output of this producer — `jq -r .int` emits only the
+integer, and the live row returns `0\n` — so they are matcher witnesses, not producer samples
+(`w1/R86ScoutRunbook.md`). The row is read-only and its value (`0` on this host) is
 host state, reported with churn samples, never frozen.
 
 ## 4. What this entry does not certify

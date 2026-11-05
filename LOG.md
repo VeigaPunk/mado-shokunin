@@ -4267,3 +4267,17 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   Match." while the pinned bytes carry the Sphinx role (`:class:`~re.Match``). Both places now quote
   the bytes verbatim; the located spans are S491 bytes 6364–6437 and S492 bytes 39792–39901, and the
   word counts are 11 and 13 (M86-8).
+- WAVE SETTLEMENT: ONE v1 wave, 14 seats, roles executor3 / scribe3 / scout2 / reviewer2 / critic1 /
+  mutation-tester1 / sentinel1 / connector1; L1 holds the planner seat; four attack seats (28.6%).
+  `w1-results.json` records `seats=14`, 14 result rows, every `output` non-empty and 14 substantive
+  reports under `.ufo/waves/round-86/w1/`; no dead seat, no residual call, round total 14. One
+  report-path defect is my own: the item text still named `R86LabRunbook.md` after the item was
+  renamed for the scout role; the file is renamed to `R86ScoutRunbook.md` at integration (content
+  untouched) and the class is mined as M86-9.
+- FINAL MEASUREMENTS after settlement, at the round tip: C1 `receipts/final-c1-r86.txt` —
+  `cases=75 correct=75 mutants=51 killed=51 base_correct=75/75 carried=72/72 tool_selftest=152/152
+  flooding=48/75 held_flooding=75/75 verdict=TARGET_MET`, rc 0; C2 `receipts/final-c2-r86.txt` —
+  `matched=37/37 shapes=27/27 clauses_observed=37/37 mutants=37 killed=37 verdict=TARGET_MET
+  tree=bound`, rc 0, plus the freeze-revision clone receipt `final-c2-freezerev-r86.txt`.
+  Counter selftests 127/127 and 114/114; standing gate selftest 460/460; index 107/107;
+  ledger 158/158 uncovered0; axis 3/0; census 425→427 both exit 0. **Both claims verify.**
