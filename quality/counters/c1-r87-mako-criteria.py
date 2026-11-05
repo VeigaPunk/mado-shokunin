@@ -45,6 +45,7 @@ SCRUB = (
     "GIT_ALTERNATE_OBJECT_DIRECTORIES",
 )
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+MUTANT_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9-]{0,63}$")
 URGENCY = ("low", "normal", "critical")
 ARG_NAMES = ("app-name", "urgency", "mode")
 THIS = os.path.abspath(__file__)
@@ -175,7 +176,7 @@ def load_mutants(raw):
         if not isinstance(entry, dict):
             raise SetupError("mutant is not an object")
         mid, old, new = entry.get("id"), entry.get("old"), entry.get("new")
-        if not isinstance(mid, str) or not ID_RE.match(mid) or mid in ids:
+        if not isinstance(mid, str) or not MUTANT_ID_RE.match(mid) or mid in ids:
             raise SetupError(f"bad or duplicate mutant id {mid!r}")
         if not isinstance(old, str) or old == "" or not isinstance(new, str):
             raise SetupError(f"mutant {mid}: old must be a non-empty string, new a string")
