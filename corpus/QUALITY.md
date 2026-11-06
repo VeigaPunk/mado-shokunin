@@ -1057,3 +1057,32 @@ actually returned — settled seats with substantive reports, dead seats named, 
 settlement receipt — and never reads a green wave check as evidence that seats worked.
 Limits: this is a reporting criterion, not an instrument; it forbids the inference, it does
 not recover the lost output.
+
+**146. A resolver claim replays the host's own configuration once, and the replay's refusals are part of the claim.**
+A tool that resolves effective configuration for a named host (mako, waybar, any config chain it reads) is credited
+only when its claim carries one run over the host's own config chain, at a named revision, with the tool's sha256,
+the command, and the refusal lines it printed; a resolver that refuses the host's own lines is reported as refusing
+them, never as resolving the surface. The replay is read-only and stays inside the credential-material rule: only
+the config files the chain names.
+Shown able to fail: round 87's resolver, replayed at 24ba2a9ddac21c1211579231e6ee1d98963f9988 on this host,
+prints `invisible='true': expects 0 or 1` for `~/.local/share/omarchy/default/mako/core.ini:15` and the same for
+`:18`, and resolves `invisible` to `"0"` — the host's do-not-disturb state is not resolved
+(`.ufo/waves/round-88/w1/receipt-base-host-config-r88.txt`, base tool sha256 `67a955a5…`), while the round-87 case
+set carries no `invisible` token at all (22 cases).
+Limits: the replay proves the tool's behaviour on the bytes present at that run, not mako's runtime behaviour; a
+host config that changes after the replay is outside the claim; a tool that refuses every line of the chain
+satisfies the letter of "carries the refusals" — the claim must also state what it did resolve.
+(lesson: lessons/round-88.md#mistakes M88-1)
+
+**147. A declared counting command carries its sha pins from the freeze, and only frozen case bytes are scored or attacked as final.**
+Every counting command a declaration registers names the digest of each case, mutant and figure file it reads
+(`--expect-cases-sha256`, `--expect-mutants-sha256`, `--expect-figures-sha256`, and the digest of any earlier frozen
+file it carries) at the freeze revision, so no erratum adds a pin later. A case file read by seats before the
+freeze is a draft under review; findings that count against the claim are about the frozen bytes, read by seats
+that start after the freeze, and a draft change is listed with the finding that caused it.
+Shown able to fail: round 87's frozen C2 command omitted `--expect-figures-sha256` (erratum 6) and its C1 case
+file was rewritten during the wave, voiding early-seat findings (erratum 4; `corpus/lessons/round-87-verifier-spotcheck.md`
+§1 and §6 R4; M87-5 in `corpus/lessons/round-87.md`).
+Limits: a pin proves the bytes read are the bytes named, not that the case set is adequate (that is the mutant
+population's job); the freeze ordering is proved by the commit graph, not by a timestamp in the file.
+(lesson: lessons/round-88.md#mistakes M88-2; outside lessons/round-87-verifier-spotcheck.md §6 R4)

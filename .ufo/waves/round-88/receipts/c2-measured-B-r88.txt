@@ -1,0 +1,92 @@
+r87_counter_sha256=4d801c30b302ed5972142415012d8f461109459d9c44e85e0badef57a2ed3645 counter_sha256=f8e18b7c915fe831e6eaafcd09fad0af9ac23d89514317f131fb1ed409e96767
+cases_sha256=8b16c0cb0d73eb2e245b4b543db0a0396c824314cb8dbd26e5ad26214f20d039 cases=26
+tool_sha256=c374d71514f1559a12593b1097cd5e6ccc8ba2c225f2fa2b2d7764ef29192237 commit=7d3074865a9f5acfa0f1c9c66b460e73d4031331 base_tool_sha256=67a955a5fa06135c2748855b7e452bd3f0792c540002009ec90842ee5c986698 base=24ba2a9ddac21c1211579231e6ee1d98963f9988
+mutants=7 mutants_sha256=ff76cd698875cfc1eff6f36d5997e3df79e3ef694c22c4feb720885179403616
+case k01-symlink-file-escape ok ok
+case k02-symlink-dir-escape ok ok
+case k03-tilde-dotdot-escape ok ok
+case k04-absolute-outside-no-root ok ok
+case k05-prefix-sibling-escape ok ok
+case k06-chained-second-hop-escape ok ok
+case k07-symlink-root-then-escape ok ok
+case k08-missing-target-refused ok ok
+case k09-directory-target-refused ok ok
+case k10-tilde-include ok ok
+case k11-absolute-inside-home ok ok
+case k12-symlink-inside-home ok ok
+case k13-outside-under-read-root ok ok
+case k14-symlink-into-read-root ok ok
+case k15-config-outside-home ok ok
+case k16-inhome-symlinked-dir ok ok
+case k17-symlink-chain-inside-home ok ok
+case k18-dotdot-after-symlinked-dir ok ok
+case k19-final-symlink-in-symlinked-dir ok ok
+case k20-absolute-with-dotdot ok ok
+case k21-proc-self-root-prefix ok ok
+case k22-symlink-chain-leaves-home ok ok
+case k23-symlink-self-loop ok ok
+case k24-symlinked-read-root ok ok
+case k25-config-is-a-symlink ok ok
+case k26-secret-named-file-inside-home-is-read ok ok
+control base-tool k01-symlink-file-escape FAIL missing-refusal
+control base-tool k02-symlink-dir-escape FAIL missing-refusal
+control base-tool k03-tilde-dotdot-escape FAIL missing-refusal
+control base-tool k04-absolute-outside-no-root FAIL missing-refusal
+control base-tool k05-prefix-sibling-escape FAIL missing-refusal
+control base-tool k06-chained-second-hop-escape FAIL missing-refusal
+control base-tool k07-symlink-root-then-escape FAIL exit=2
+control base-tool k08-missing-target-refused ok ok
+control base-tool k09-directory-target-refused ok ok
+control base-tool k10-tilde-include ok ok
+control base-tool k11-absolute-inside-home ok ok
+control base-tool k12-symlink-inside-home ok ok
+control base-tool k13-outside-under-read-root FAIL exit=2
+control base-tool k14-symlink-into-read-root FAIL exit=2
+control base-tool k15-config-outside-home ok ok
+control base-tool k16-inhome-symlinked-dir ok ok
+control base-tool k17-symlink-chain-inside-home ok ok
+control base-tool k18-dotdot-after-symlinked-dir FAIL missing-refusal
+control base-tool k19-final-symlink-in-symlinked-dir FAIL missing-refusal
+control base-tool k20-absolute-with-dotdot FAIL missing-refusal
+control base-tool k21-proc-self-root-prefix FAIL missing-refusal
+control base-tool k22-symlink-chain-leaves-home FAIL missing-refusal
+control base-tool k23-symlink-self-loop ok ok
+control base-tool k24-symlinked-read-root FAIL exit=2
+control base-tool k25-config-is-a-symlink ok ok
+control base-tool k26-secret-named-file-inside-home-is-read ok ok
+control refuse-all-includes k01-symlink-file-escape ok ok
+control refuse-all-includes k02-symlink-dir-escape ok ok
+control refuse-all-includes k03-tilde-dotdot-escape ok ok
+control refuse-all-includes k04-absolute-outside-no-root ok ok
+control refuse-all-includes k05-prefix-sibling-escape ok ok
+control refuse-all-includes k06-chained-second-hop-escape FAIL mismatch width
+control refuse-all-includes k07-symlink-root-then-escape FAIL mismatch width
+control refuse-all-includes k08-missing-target-refused ok ok
+control refuse-all-includes k09-directory-target-refused ok ok
+control refuse-all-includes k10-tilde-include FAIL unexpected-refusal
+control refuse-all-includes k11-absolute-inside-home FAIL unexpected-refusal
+control refuse-all-includes k12-symlink-inside-home FAIL unexpected-refusal
+control refuse-all-includes k13-outside-under-read-root FAIL unexpected-refusal
+control refuse-all-includes k14-symlink-into-read-root FAIL unexpected-refusal
+control refuse-all-includes k15-config-outside-home ok ok
+control refuse-all-includes k16-inhome-symlinked-dir FAIL unexpected-refusal
+control refuse-all-includes k17-symlink-chain-inside-home FAIL unexpected-refusal
+control refuse-all-includes k18-dotdot-after-symlinked-dir ok ok
+control refuse-all-includes k19-final-symlink-in-symlinked-dir ok ok
+control refuse-all-includes k20-absolute-with-dotdot ok ok
+control refuse-all-includes k21-proc-self-root-prefix ok ok
+control refuse-all-includes k22-symlink-chain-leaves-home ok ok
+control refuse-all-includes k23-symlink-self-loop ok ok
+control refuse-all-includes k24-symlinked-read-root FAIL unexpected-refusal
+control refuse-all-includes k25-config-is-a-symlink FAIL unexpected-refusal
+control refuse-all-includes k26-secret-named-file-inside-home-is-read FAIL unexpected-refusal
+controls base_tool_correct=11 refuse_all_includes_correct=14
+mutant K1-containment-skipped killed
+mutant K2-lexical-resolution killed
+mutant K3-prefix-without-separator killed
+mutant K4-read-roots-ignored killed
+mutant K5-home-not-a-root killed
+mutant K6-normpath-first killed
+mutant K7-final-component-unresolved killed
+MADO_MAKO_CONTAINMENT: TARGET_MET rev=7d3074865a9f5acfa0f1c9c66b460e73d4031331 base_rev=24ba2a9ddac21c1211579231e6ee1d98963f9988 cases=26 correct=26 mutants=7 killed=7 base_tool_correct=11 refuse_all_includes_correct=14 score=10.0000 tool_sha256=c374d71514f1559a12593b1097cd5e6ccc8ba2c225f2fa2b2d7764ef29192237 cases_sha256=8b16c0cb0d73eb2e245b4b543db0a0396c824314cb8dbd26e5ad26214f20d039
+rc=0

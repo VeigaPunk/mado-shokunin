@@ -4296,3 +4296,19 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   fixture, after 10.0). Harm watch: index 108/108, ledger 161/161 uncovered 0, gate 460/460, file plane CLEAN, census exit 0 (428 rows).
 - Named limits: five surviving frozen mutants; containment of symlinked includes; correction-block reasoning; the r86 selftest pin.
   Routed to round 88. Receipts: `.ufo/waves/round-87/receipts/`.
+
+### Round 88 — mako criteria fields, upstream grammar and include containment (2026-11-06, hyaku run 15, attempt 1)
+
+- Fresh start (Amendment 46) after r83–r87 rejected honest stops; the r85–r87 spot-checks read first. Two claims
+  (`.ufo/waves/round-88/claims-declaration-r88.md`): C1 capability, coverage (mako criteria fields + upstream boolean/urgency
+  grammar); C2 operability (include= containment under declared read roots). Stagnation nudge applied.
+- Motivating evidence: the r87 resolver, replayed on the host's own mako chain, refuses `core.ini:15 invisible=true` and
+  `:18 invisible=false` ("expects 0 or 1") and so cannot resolve the do-not-disturb state (`.ufo/waves/round-88/w1/receipt-base-host-config-r88.txt`,
+  `R88MExecSelftest.md` §5); upstream `types.c parse_boolean` accepts them (S494). r87 R2: a symlinked include escaping HOME is read.
+- Wave w1: 12 seats (scout 2, scribe 2, executor 3, connector 1, reviewer 2, critic 1, mutation-tester 1), attack 4/12; all
+  settled, no dead seat (`w1-results.json`). Their findings became the declaration's draft revisions before the freeze.
+- Landed: freeze `9e36e3a3103349b939982e532feca443f02e660d` (declaration, counters, frozen cases/mutants, pre-freeze control
+  receipts, wave evidence); C1 tool `650e18bdf0ae404ec9a80874c4503ecf3237e8e6`; C2 tool `7d3074865a9f5acfa0f1c9c66b460e73d4031331`;
+  records (knowledge entry, S494/S495, README row, lesson, QUALITY 146–147, SCORECARD, this entry) in the round's record commit.
+- Measured: C1 at `650e18bd` TARGET_MET 62/62, 22/22 killed, controls 14/15/33/43 < 62; C2 at `7d307486` TARGET_MET 26/26, 7/7
+  killed, base 11, refuse-all 14 < 26; C1 re-run at `7d307486` TARGET_MET. Census 428 → 430, exit 0.

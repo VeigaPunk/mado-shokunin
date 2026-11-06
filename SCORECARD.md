@@ -5125,3 +5125,30 @@ Saturation 9.0 / window 3 unchanged; no retirement; dormant freshness now measur
 `corpus/lessons/round-87.md` M87-1 (held-control figure from the lane's model), M87-2 (decompressed digest labelled as the file's), M87-3 (wrapped stated text), M87-4 ("not held" without a grep), M87-5 (attacks on an earlier fixture version).
 
 Trend-relevant: quality improved (the false r86 figure is superseded by a named, measured correction); expansion improved (one admitted entry, S493); discernment unchanged pending the non-author closure.
+
+## Round 88 — mako criteria fields and the upstream grammar (capability), include containment (2026-11-06, hyaku run 15, attempt 1)
+
+Fresh start (Amendment 46) after five rejected honest stops (r83–r87). Declaration `.ufo/waves/round-88/claims-declaration-r88.md`
+(draft revisions from the w1 seats listed before the freeze). Freeze `9e36e3a3103349b939982e532feca443f02e660d`; C1 tool
+`650e18bdf0ae404ec9a80874c4503ecf3237e8e6` (C1 measured revision); C2 tool `7d3074865a9f5acfa0f1c9c66b460e73d4031331` (C2 measured
+revision). Stagnation nudge applied (every axis at 10; no capability row since round 82).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (capability): mako criteria fields + upstream boolean/urgency grammar | `python3 -I quality/counters/c1-r88-mako-fields.py --repo . --rev 650e18bdf0ae404ec9a80874c4503ecf3237e8e6 --base-rev 24ba2a9ddac21c1211579231e6ee1d98963f9988 --cases .ufo/waves/round-88/controls/mako-cases-r88.json --expect-cases-sha256 a0e81b191fb0f80ca352699ede47962c1ac01c1ae8e9e15ccf50b1d7fab4a091 --expect-mutants-sha256 2a569770aa255cfaf0afc15c63136e8c261396ca280d5646c51171e9009864a1 --expect-r87-cases-sha256 0a9558743a721f70bb64b48d188b375f1468a140b00ca75ac93ab59c316d5fe3 --scratch-root DIR` | modelled first-pass fields 3/12 → 10/12; on the frozen 62 cases the r87 resolver (base-tool control) scores 33/62 = 5.3226 → candidate 62/62 = **10.0000**; mutants 22/22 killed (r87's five survivors among them); controls naive 14, globals 15, base 33, inputs-ignored 43 (all < 62); carried 22/22 | **TARGET_MET** (`receipts/c1-measured-A-r88.txt`, rc 0) |
+| C2 **operability**: include= containment under declared read roots | `python3 -I quality/counters/c2-r88-include-containment.py --repo . --rev 7d3074865a9f5acfa0f1c9c66b460e73d4031331 --base-rev 24ba2a9ddac21c1211579231e6ee1d98963f9988 --cases .ufo/waves/round-88/controls/containment-cases-r88.json --expect-cases-sha256 8b16c0cb0d73eb2e245b4b543db0a0396c824314cb8dbd26e5ad26214f20d039 --expect-mutants-sha256 ff76cd698875cfc1eff6f36d5997e3df79e3ef694c22c4feb720885179403616 --scratch-root DIR` | the C1-revision tool 11/26 = 4.2308 (`receipts/c2-supp-base-is-A-r88.txt`; base tool also 11/26) → 26/26 = **10.0000**; mutants 7/7; refuse-all-includes forgery 14/26 | **TARGET_MET** (`receipts/c2-measured-B-r88.txt`, rc 0) |
+| harm watch | C1 re-run at `7d307486` · `bash tools/mado-verify.sh --selftest` · `--no-live` · `quality/check-index.py` · `quality/check-tool-ledger.py` · census | C1 at B TARGET_MET 62/62 (`receipts/c1-harm-at-B-r88.txt`); gate/file-plane/index/ledger in `receipts/harm-final-r88.txt`; census exit 0, 428 → 430 rows, 55 `W04` before and after | see receipts |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| mako effective settings over ten criteria fields | Resolve one notification's effective mako settings over app-name, app-icon, summary, body, urgency, category, desktop-entry, actionable, expiring and mode criteria, with upstream's boolean and urgency grammar and repeated-field last-wins, so the host's own do-not-disturb lines (`invisible=true/false`) resolve; summary~/body~ refused (named limit) | `receipts/c1-measured-A-r88.txt`; `corpus/knowledge/mako-fields-containment-r88.md` | 88 |
+
+### Named limits (append-only, round 88)
+
+- summary~/body~ (POSIX ERE) refused; the host's five click-action sections stay unresolved.
+- Containment is a lane stance: a mako-valid absolute include outside the roots is refused until `--read-root` names it;
+  TOCTOU, hardlinks and bind mounts are not covered; content inside a root is not classified (k26).
+- Cases c60–c62 (C1) and k18–k26 (C2) were authored by the L1, who also wrote the candidate; each carries a source pin and the
+  w1 finding it came from; the residual r1 seats re-audit them.
