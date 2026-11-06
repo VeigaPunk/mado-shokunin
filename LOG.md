@@ -4312,3 +4312,8 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   records (knowledge entry, S494/S495, README row, lesson, QUALITY 146–147, SCORECARD, this entry) in the round's record commit.
 - Measured: C1 at `650e18bd` TARGET_MET 62/62, 22/22 killed, controls 14/15/33/43 < 62; C2 at `7d307486` TARGET_MET 26/26, 7/7
   killed, base 11, refuse-all 14 < 26; C1 re-run at `7d307486` TARGET_MET. Census 428 → 430, exit 0.
+- Residual r1: 4 attack seats (reviewer 2, critic 1, mutation-tester 1), all settled (`r1-results.json`): C1 VERIFIES, C2
+  VERIFIES; critic STANDS on both predicates, FALLS on the declaration's C2 "before" sentence (errata appended), WEAKENED on two
+  stale ledger figures and an uncommitted harm receipt (fixed in the final commit). Mutation probe survivors routed to round 89.
+  Round total 16 seats (w1 12 + r1 4), 0 dead. Harm watch at `498855cb`: gate 460/460, file plane CLEAN 29, index 109/109,
+  ledger 163/163 uncovered 0, tool selftest 52/52, counter selftests 40/40 and 28/28 (`receipts/harm-final-r88.txt`).

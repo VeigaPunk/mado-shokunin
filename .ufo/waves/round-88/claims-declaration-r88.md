@@ -201,3 +201,14 @@ Controls executed before the freeze (`--controls-only`, the candidate and the mu
 
 Every control is strictly below its target before any candidate scoring. Expected verdicts of the controls, independent of the
 candidate: each control < N (resp. K). Wave w1 settled 12/12 seats (`w1-results.json`, no dead seat).
+
+## Errata (after the freeze; predicates, kill rules, controls and targets unchanged)
+
+1. C2 "Before" sentence. "Before: the counter at the C1 content revision (no containment) → TARGET_MISSED" is false as written:
+   at `650e18bd` the counter exits 2 (`SETUP_ERROR forgery anchor … occurs 0 times`, `receipts/c2-before-A-r88.txt`) because the
+   forgery and mutant anchors are built from the measured tool. The before figure is the base-tool control run with
+   `--base-rev 650e18bd` (`receipts/c2-supp-base-is-A-r88.txt`: the C1-revision tool scores 11/26). Found by R88MResidCritic §3.
+2. C1 before figure. The base-tool control's 33/62 includes 21 cases that fail by `exit=2` (the r87 CLI has no new input flags) and
+   8 by unexpected refusal; the semantic before is carried by the inputs-ignored control (43/62) and the mutants. R88MResidCritic §3.
+3. "Every scored axis sits at 10" excludes the dormant omarchy-host freshness sub-axis (9.6552, host-absent), as the lane's
+   convention does. R88MResidCritic H5.

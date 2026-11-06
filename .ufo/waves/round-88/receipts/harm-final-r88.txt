@@ -1,0 +1,22 @@
+rev=498855cb327cd4e3debfa9446ea38398c216dda1
+$ bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+rc=0
+$ bash tools/mado-verify.sh --no-live
+MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)
+rc=0
+$ python3 -I quality/check-index.py --repo . --rev 498855cb327cd4e3debfa9446ea38398c216dda1
+MADO_INDEX: rev=498855cb327cd4e3debfa9446ea38398c216dda1 indexed=109/109 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+$ python3 -I quality/check-tool-ledger.py --repo . --rev 498855cb327cd4e3debfa9446ea38398c216dda1
+LEDGER: population=163 ledger_rows=163 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=498855cb327cd4e3debfa9446ea38398c216dda1
+rc=0
+$ python3 -I tools/mado-mako.py --selftest --scratch-root /fast/scratch/hyaku/mado-r88/L1
+MADO_MAKO_SELFTEST: checks=52 failed=0
+rc=0
+$ python3 -I quality/counters/c1-r88-mako-fields.py --selftest --scratch-root /fast/scratch/hyaku/mado-r88/L1
+SELFTEST: passed=40/40
+rc=0
+$ python3 -I quality/counters/c2-r88-include-containment.py --selftest --scratch-root /fast/scratch/hyaku/mado-r88/L1
+SELFTEST: passed=28/28
+rc=0

@@ -5152,3 +5152,15 @@ revision). Stagnation nudge applied (every axis at 10; no capability row since r
   TOCTOU, hardlinks and bind mounts are not covered; content inside a root is not classified (k26).
 - Cases c60–c62 (C1) and k18–k26 (C2) were authored by the L1, who also wrote the candidate; each carries a source pin and the
   w1 finding it came from; the residual r1 seats re-audit them.
+
+### Errata (round 88, after measurement; append-only)
+
+- C2 before: the counter has no verdict at `650e18bd` (rc 2, anchors absent); the 11/26 before is the base-tool control with
+  `--base-rev 650e18bd` (`receipts/c2-supp-base-is-A-r88.txt`). C1 before 33/62 = 21 `exit=2` CLI failures + 8 unexpected refusals;
+  inputs-ignored 43/62 is the semantic control. Census row counts 428 → 430 are from `grep -c '^| S[0-9]' corpus/SOURCES.md` at
+  `24ba2a9` and at the record tip, not from the census receipts. The ledger rows for `tools/mado-mako.py` (29 → 52 selftest checks)
+  and `c1-r88-mako-fields.py` (19 → 22 mutants) were stale at the record commit and are corrected in the round's final commit.
+  Found by R88MResidCritic (`.ufo/waves/round-88/r1/R88MResidCritic.md` §3).
+- Residual r1 (4 seats): C1 VERIFIES, C2 VERIFIES (receipts reproduced byte-for-byte); R88MResidMut survivors routed to round 89:
+  app-name casefold, `!` on a string field, mode casefold, include inside a criteria section (C1); opening the unresolved target,
+  trailing-slash refusal dropped, `~//` re-join dropped, root-equality refused (C2).
