@@ -1,0 +1,14 @@
+# round-90 M90-1 fixture-lines check shown able to fail (MadoR90a2, 2026-11-06T20:32:30-03:00)
+$ python3 -I build/gen-c1-cases-r90.pre-M90-1.py > SCRATCH/pre.json   # rc=0
+$ python3 -I controls/check-fixture-lines-r90.py SCRATCH/pre.json   # pre-fix generator output
+merged k01-iface-key-kde-filechooser hyprland-portals.conf:2 default=hyprland;gtkorg.freedesktop.impl.portal.FileChooser=kde
+merged n02-iface-none hyprland-portals.conf:2 default=hyprland;gtkorg.freedesktop.impl.portal.Screenshot=none
+merged n06-iface-none-with-backend-first hyprland-portals.conf:2 default=hyprland;gtkorg.freedesktop.impl.portal.FileChooser=kde;none
+merged a01-settings-two hyprland-portals.conf:2 default=hyprland;gtkorg.freedesktop.impl.portal.Settings=darkman;gtk
+merged a02-settings-star hyprland-portals.conf:2 default=hyprland;gtkorg.freedesktop.impl.portal.Settings=*
+merged a03-settings-none hyprland-portals.conf:2 default=hyprland;gtkorg.freedesktop.impl.portal.Settings=none
+FIXTURE_LINES: cases=89 merged=6 verdict=MERGED
+rc=1
+$ python3 -I controls/check-fixture-lines-r90.py controls/portal-cases-r90.json   # frozen case file
+FIXTURE_LINES: cases=229 merged=0 verdict=CLEAN
+rc=0

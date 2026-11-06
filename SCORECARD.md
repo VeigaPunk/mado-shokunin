@@ -5199,3 +5199,42 @@ Stagnation nudge not claimed (a capability entered at round 88); every owned axi
   45-case bytes. The harm-watch row's census is in `receipts/census-end-r89.txt`, not in `receipts/harm-final-r89.txt`; both receipts
   were committed after the records commit `51bf076f` that first cited them. Found by R89MResidCritic (`r1/R89MResidCritic.md` F1–F4).
 - Residual r1 (4 seats): C1 VERIFIES, C2 VERIFIES; R89MResidMut survivors RS01, RS05, RS12 routed to round 90 as cases.
+
+## Round 90 — xdg-desktop-portal backend routing (capability), receipt-presence gate (2026-11-06, hyaku run 15, attempt 2)
+
+Declaration `.ufo/waves/round-90/claims-declaration-r90.md` (written by attempt 1 `MadoR90`; attempt 2 `MadoR90a2` re-checked
+every pin, re-ran both draft controls and froze it unchanged). Freeze `1d9bc40414a5d6bddd449cc633a12f2e7e338652`; C1 tool
+`7bec239929cdd1d7c796a89ddccefe47d802673a` (C1 measured revision; `tools/mado-portals.py` = frozen candidate bytes, sha256
+`d1bd9b9a…`); C2 check `c09d3465299c53a8158a96b2214c2bcda44bcb41` (C2 measured revision; `quality/check-receipt-presence.py`
+= frozen candidate bytes, sha256 `04b8be60…`). Stagnation nudge not claimed (capabilities entered at rounds 88 and 89); every
+owned axis at 10, so the lowest-axis duty is a tie. Sourced claim: C1 (S501–S503).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (capability): portal backend routing resolved as xdg-desktop-portal 1.22.1 resolves it | `python3 -I quality/counters/c1-r90-portal-routing.py --repo . --rev 7bec239929cdd1d7c796a89ddccefe47d802673a --base-rev 5041acf99e27263872bf0441ad5f9d4316152605 --cases .ufo/waves/round-90/controls/portal-cases-r90.json --mutants .ufo/waves/round-90/controls/portal-mutants-r90.json --expect-cases-sha256 66d4ffff70bd092bd2c900658b3b9a7566f8dedc2aacd4b334102acebc192da2 --expect-mutants-sha256 e761a4e44ec6d8a692d8ac9b2feec7ef8609b4d30f5ed40c11f7c332129c2451 --expect-oracle-binary-sha256 e1429fbe1bf6c2203ba07f478b9e92e9221437b13a92eebafb0982748583a4f8 --scratch-root DIR` | portal interfaces a lane tool resolves 0 → 21 (base: `tools/mado-portals.py` absent, `base_correct=0`); on the frozen 229 cases the tool **229/229**, blind 66/66, fresh 120/120 (seed 3518864282), mutants 60/60; controls r12-rule 70, host-table 10, do-nothing 35, base 0 (each < 229) | **TARGET_MET** (`.ufo/waves/round-90/receipts/c1-measured-r90.txt`) |
+| C2 **operability**: a runnable receipt-presence gate over the lane's records changes | `python3 -I quality/counters/c2-r90-receipt-presence.py --repo . --rev c09d3465299c53a8158a96b2214c2bcda44bcb41 --base-rev 5041acf99e27263872bf0441ad5f9d4316152605 --set .ufo/waves/round-90/controls/receipt-presence-set-r90.json --mutants .ufo/waves/round-90/controls/receipt-mutants-r90.json --expect-set-sha256 f7ab86c25edbb806a9f947af09fab5cf971a42602c252966c0075b9aeefa7939 --expect-mutants-sha256 68b39a805755f7685c00c847a48b0f8f679fdca2710773efb5f4469b7bebe82d --scratch-root DIR` | records-commit receipt checks 0 → 1 (base: check absent, `base_met=0`; existing checks silent on `498855cb`/`51bf076f`, `.ufo/waves/round-90/receipts/c2-existing-checks-prefreeze-r90.txt`); expectations **83/83** under both git configs, defects 4/4, population 38, mutants 28/28; controls do-nothing 44, smart always-OK 46, always-MISSING 0 | **TARGET_MET** (`.ufo/waves/round-90/receipts/c2-measured-r90.txt`) |
+| separability | C1 counter at the C2 revision; C2 counter at the C1 revision | C1 TARGET_MET at `c09d3465` (`.ufo/waves/round-90/receipts/c1-harm-at-c2-r90.txt`); C2 at `7bec2399` = `SETUP_ERROR … absent` (`.ufo/waves/round-90/receipts/c2-at-c1-r90.txt`): C1 landed and measured without C2 | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| xdg-desktop-portal backend routing over all 21 impl interfaces | Answer, read-only, which `<name>.portal` serves each `org.freedesktop.impl.portal.*` interface for a given desktop and XDG search path, with `none`, `*`, interface keys, Settings find-all, UseIn and the gtk last resort, as the installed 1.22.1 binary decides — this host: gtk 11, hyprland 4, no backend 6 | `.ufo/waves/round-90/receipts/c1-measured-r90.txt`; `.ufo/waves/round-90/receipts/host-run-r90.txt`; `corpus/knowledge/xdg-portal-routing-resolver-r90.md` | 90 |
+
+### Routed work (round-89 spot-check, not claims)
+
+- D2: ten `SKILL.md` gate-registry rows `mado-r87-mako-criteria` … `mado-receipt-presence` after `mado-r86-clause-observations`.
+- D3: `tools/mado-mako.py` selftest 59 → 62 (`7c28090e99ca99b799e16a92797bf33f63aca372`); RS01/RS05/RS12 survive the base
+  selftest and fail the new one (`.ufo/waves/round-90/receipts/d3-mako-survivors-r90.txt`); resolution code unchanged.
+
+### Named limits (append-only, round 90)
+
+- C1: empty `XDG_*_DIRS` elements are modelled cwd-relative like GLib but not oracle-tested; non-UTF-8 bytes make the tool
+  skip the whole file; HOME unset falls back to `/`; locale-suffixed keys dropped (C locale). Labels are 1.22.1-2's log lines
+  from the pinned binary; source names containing a newline or `.portal for ` are not labellable. The resolver answers what
+  the configuration selects, not whether a backend runs or answers a call.
+- C2: only added lines of SCORECARD.md, LOG.md, corpus/QUALITY.md, corpus/README.md, corpus/lessons/*.md and
+  corpus/knowledge/*.md; only `receipts/<name>.{txt,json,jsonl,md,log,csv,tsv}`; nested `receipts/<dir>/…`, seat-dir receipts
+  and pre-existing citations on unchanged lines are not checked; `--base` must be the branch tip the helper commits on.
+- Round shape: one v1 wave of 13 seats (attempt 1); the residual `r1` named in the declaration was not dispatched; two
+  scout outputs were not retained (lesson M90-4).

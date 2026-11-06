@@ -4350,3 +4350,32 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   argued equivalent. Round total 16 seats (w1 12 + r1 4), 0 dead. Harm watch at `51bf076f`: gate 460/460, file plane CLEAN 29,
   index 110/110, ledger 165/165 uncovered 0, tool selftest 59/59, counter selftests 27/27, 18/18, 40/40, 28/28
   (`receipts/harm-final-r89.txt`); census end rc 0 (`receipts/census-end-r89.txt`).
+
+### Round 90 — xdg-desktop-portal backend routing (capability) and a receipt-presence gate (2026-11-06, hyaku run 15, attempt 2)
+
+- Inputs: the round-89 non-author spot-check (D1 records cite receipts committed later, D2 registry stops at r86, D3 RS01/
+  RS05/RS12 survive); `considerthese/2026-11-06.md` proposal 4 (widen past bar + mako: xdg-desktop-portal); the round-12
+  portal table (`corpus/knowledge/xdg-portal-routing-r12.md`, hand-derived, 16 rows, no tool). Two claims
+  (`.ufo/waves/round-90/claims-declaration-r90.md`): C1 capability, coverage; C2 operability. Nudge not claimed.
+- Motivating evidence: `git show 5041acf9:tools/mado-portals.py` fails (no instrument on the portal plane); the round-12
+  table omits Background, Wallpaper, RemoteDesktop, Clipboard and Usb; `--rev 498855cb` and `--rev 51bf076f` of the new
+  check print `verdict=MISSING` where `check-deliverables.py` said `OK` (M90-2).
+- Attempts: attempt 1 (`MadoR90`) ran wave w1 and wrote the declaration, counters and frozen controls, then ended before
+  any commit (watchdog `lane-dead-no-report mado round=90` 20:22:51). Attempt 2 (`MadoR90a2`) inherited every file after
+  `sha256sum` matched each pin, re-ran both draft controls (`.ufo/waves/round-90/receipts/c1-controls-prefreeze-r90.txt`,
+  `.ufo/waves/round-90/receipts/c2-controls-prefreeze-r90.txt`), then froze. Nothing inherited was discarded.
+- Wave w1: 13 seats (scout 2, scribe 1, executor 4, connector 1, reviewer 2, critic 1, mutation-tester 2), attack 5/13; all
+  settled; `w1-results.json` records no outputs (orchestrator kernel restart); 11 seats left report files, the two scouts
+  did not (M90-4). Findings became the declaration's six draft revisions before the freeze.
+- Landed: freeze `1d9bc40414a5d6bddd449cc633a12f2e7e338652`; C1 `7bec239929cdd1d7c796a89ddccefe47d802673a`; C2
+  `c09d3465299c53a8158a96b2214c2bcda44bcb41`; D3 `7c28090e99ca99b799e16a92797bf33f63aca372`; records (knowledge entry, S501–S503,
+  README rows, QUALITY 150–151, ledger rows, SKILL registry rows, lesson, SCORECARD, this entry) in the records commit,
+  gated by the C2 check in `--worktree` mode (`.ufo/waves/round-90/receipts/c2-gate-records-r90.txt`).
+- Measured: C1 at `7bec2399` `TARGET_MET cases=229 correct=229 blind=66/66 fresh=120/120 mutants=60 killed=60`, controls
+  r12-rule 70, host-table 10, do-nothing 35, base 0 (`.ufo/waves/round-90/receipts/c1-measured-r90.txt`); C2 at `c09d3465`
+  `TARGET_MET expectations=83 met=83 defects_detected=4/4 population=38 mutants=28 killed=28`, controls 0/44/46/0
+  (`.ufo/waves/round-90/receipts/c2-measured-r90.txt`). Census 435 → 438 rows, rc 0 both ends
+  (`.ufo/waves/round-90/receipts/census-start-r90.txt`, `.ufo/waves/round-90/receipts/census-end-r90.txt`).
+- Host answer (`.ufo/waves/round-90/receipts/host-run-r90.txt`): gtk serves 11 interfaces, hyprland 4 (Screenshot,
+  ScreenCast, GlobalShortcuts, InputCapture), none 6 (Background, Wallpaper, Secret, RemoteDesktop, Clipboard, Usb); Secret
+  has no backend because `gnome-keyring.portal`'s `UseIn=gnome` never matches `hyprland` and gtk lacks Secret.

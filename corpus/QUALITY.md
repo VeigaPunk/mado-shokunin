@@ -1108,3 +1108,22 @@ whose escaped character is only `"` or `\` does not enter the rule being copied.
 `tools/mado-mako.py` at `7d3074865a9f5acfa0f1c9c66b460e73d4031331:222` keeps `\` before `.` inside quotes
 (`('summary', 'a\.b')` where `criteria.c:177-182` yields `a.b`) and splits on any whitespace at `:242` where
 `criteria.c:207` splits on a space only. (lesson: lessons/round-89.md#mistakes M89-2)
+
+## Round 90 — fixture bytes and receipt presence
+
+**150. A fixture assembled by concatenation is checked for the input its id names, not only labelled.** A case built by
+appending bytes to a host file (or to another fragment) terminates the earlier bytes with a newline first and carries a
+frozen line check run on the frozen case file: no config line may hold a second key. An oracle labels a merged line
+truthfully, so a true label does not prove the case tests its named rule. Check:
+`python3 -I .ufo/waves/round-90/controls/check-fixture-lines-r90.py <cases.json>` exits 0 with `merged=0`. Shown able to
+fail: on the pre-fix generator `.ufo/waves/round-90/build/gen-c1-cases-r90.pre-M90-1.py` it prints six `merged` lines
+(`k01`, `n02`, `n06`, `a01`, `a02`, `a03`) and `merged=6`, rc 1 (`.ufo/waves/round-90/receipts/m90-1-fixture-lines-r90.txt`).
+(lesson: lessons/round-90.md#mistakes M90-1)
+
+**151. A records commit is gated on its own receipt citations before it lands.** Every `receipts/<name>` a records change
+cites on an added line must be in the same commit's path list or already in the base tree. Check:
+`python3 -I quality/check-receipt-presence.py --repo . --worktree --base <branch tip> --round <N> --commit-path <paths>`
+exits 0 before `jj-lane.sh commit`, and its output is a receipt in that commit. Shown able to fail: `--rev` on
+`498855cb` and `51bf076f` prints `verdict=MISSING` (the round-88 and round-89 records commits that cited receipts first
+committed later; `.ufo/waves/round-90/receipts/c2-measured-r90.txt`). (lesson: lessons/round-90.md#mistakes M90-2)
+
