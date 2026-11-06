@@ -1,0 +1,77 @@
+{
+ "schema": "mako-cases-r88-v1",
+ "notes": "Round-89 C2 supplementary criteria-side cases: one per routed round-88 C1 survivor (R88MResidMut \u00a73.1). Expectations follow upstream mako 1.11.0 (criteria.c match_criteria strcmp for app-name and mode; apply_criteria_field accepts a bare !token for boolean fields only; mako.5 L45 include is a global option) and the tool's refusal stance.",
+ "cases": [
+  {
+   "id": "s1-appname-case-differs",
+   "config": ".config/mako/config",
+   "home_files": {
+    ".config/mako/config": "anchor=bottom-left\n[app-name=Alpha]\nanchor=bottom-center\n"
+   },
+   "args": {
+    "app-name": "alpha"
+   },
+   "expect": {
+    "effective": {
+     "anchor": "bottom-left"
+    },
+    "refusals": "none"
+   },
+   "pin": "criteria.c match_criteria: strcmp(criteria->app_name, notif->app_name) \u2014 case-sensitive; kills RM2C1"
+  },
+  {
+   "id": "s1-bang-string-field",
+   "config": ".config/mako/config",
+   "home_files": {
+    ".config/mako/config": "anchor=bottom-left\n[!app-name]\nanchor=bottom-center\n"
+   },
+   "args": {
+    "app-name": "alpha"
+   },
+   "expect": {
+    "effective": {
+     "anchor": "bottom-left"
+    },
+    "refusals": "present"
+   },
+   "pin": "criteria.c apply_criteria_field: a bare (value-less) token is tried against boolean fields only; !app-name is an error; kills RM3C1"
+  },
+  {
+   "id": "s1-mode-case-differs",
+   "config": ".config/mako/config",
+   "home_files": {
+    ".config/mako/config": "anchor=bottom-left\n[mode=Do-Not-Disturb]\nanchor=bottom-center\n"
+   },
+   "args": {
+    "mode": [
+     "do-not-disturb"
+    ]
+   },
+   "expect": {
+    "effective": {
+     "anchor": "bottom-left"
+    },
+    "refusals": "none"
+   },
+   "pin": "criteria.c match_criteria: mode compared with strcmp against each enabled mode; kills RM5C1"
+  },
+  {
+   "id": "s1-include-in-criteria",
+   "config": ".config/mako/config",
+   "home_files": {
+    ".config/mako/config": "[app-name=alpha]\ninclude=~/.config/mako/core.ini\n",
+    ".config/mako/core.ini": "layer=bottom\n"
+   },
+   "args": {
+    "app-name": "alpha"
+   },
+   "expect": {
+    "effective": {
+     "layer": "top"
+    },
+    "refusals": "present"
+   },
+   "pin": "mako.5 L45: include is a global configuration option; inside a criteria section the tool refuses it; kills RM7C1"
+  }
+ ]
+}

@@ -1,0 +1,76 @@
+{
+ "schema": "mako-containment-r88-v1",
+ "notes": "Round-89 C2 supplementary containment-side cases: one per routed round-88 C2 survivor (R88MResidMut \u00a74.1). s2-cycle-second-lexical-path separates RM6C2 only by a crash (declared crash-only).",
+ "cases": [
+  {
+   "id": "s2-trailing-slash",
+   "files": {
+    "home/c": "width=1\ninclude=~/inc.ini/\n",
+    "home/inc.ini": "width=321\n"
+   },
+   "config": "home/c",
+   "home": "home",
+   "expect": {
+    "effective": {
+     "width": "1"
+    },
+    "refusals": "present"
+   },
+   "pin": "tool stance (r88 draft revision 4): a trailing / names a directory, never a regular file; kills RM3C2"
+  },
+  {
+   "id": "s2-double-slash",
+   "files": {
+    "home/c": "include=~//inc.ini\n",
+    "home/inc.ini": "width=321\n"
+   },
+   "config": "home/c",
+   "home": "home",
+   "expect": {
+    "effective": {
+     "width": "321"
+    },
+    "refusals": "none"
+   },
+   "pin": "config.c expand_config_path joins $HOME/ + the rest after ~/, so ~//inc.ini stays under HOME; kills RM4C2"
+  },
+  {
+   "id": "s2-root-is-a-file",
+   "files": {
+    "home/c": "include=@ROOT@/roots/x.ini\n",
+    "roots/x.ini": "width=321\n"
+   },
+   "config": "home/c",
+   "home": "home",
+   "read_roots": [
+    "roots/x.ini"
+   ],
+   "expect": {
+    "effective": {
+     "width": "321"
+    },
+    "refusals": "none"
+   },
+   "pin": "tool stance: a --read-root may name a file; a resolved path equal to a root is inside it; kills RM5C2"
+  },
+  {
+   "id": "s2-cycle-second-lexical-path",
+   "files": {
+    "home/c": "include=~/a.ini\n",
+    "home/a.ini": "width=2\ninclude=~/link.ini\n",
+    "home/link.ini": {
+     "symlink_to": "home/a.ini"
+    }
+   },
+   "config": "home/c",
+   "home": "home",
+   "expect": {
+    "effective": {
+     "width": "2"
+    },
+    "refusals": "present"
+   },
+   "pin": "tool stance: an include whose resolved path is already being read is a cycle; RM6C2 recurses to RecursionError here (crash, not a kill)"
+  }
+ ]
+}

@@ -1,0 +1,824 @@
+{
+  "schema": "mako-cases-r89-v1",
+  "notes": "Round-89 C1 blind cases authored by seat R89MScoutCases. INDEPENDENT of the candidate tool: build/mado-mako.c1.py and tools/mado-mako.py were not opened. Every pattern below is the post-tokenizer value derived by reading upstream mako v1.11.0 criteria.c parse_criteria (162-262) and apply_criteria_field (267-411), plus config.c load_config_file (780-885); every verdict comes from the POSIX ERE oracle controls/posix-ere-oracle.c (libc regcomp(REG_EXTENDED|REG_NOSUB) + regexec, C locale - mako never calls setlocale) built at $S/ore. Upstream sources: https://raw.githubusercontent.com/emersion/mako/v1.11.0/criteria.c, .../config.c and the v1.11.0 tag tarball. The 'oracle' field is the oracle's own verdict per criteria field; 'undecided' marks the cases where no regex verdict applies (the section is refused before matching). DRAFT contribution for L1 review - not a measurement.",
+  "cases": [
+    {
+      "id": "b01-bracket-range-match",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=[b-d]]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "c"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:333 regcomp(value, REG_EXTENDED|REG_NOSUB); a POSIX bracket range [b-d] is an ERE set (regex(7)); criteria.c:115-119 match_regex_criteria -> regexec matches 'c' Oracle trace: regcomp('[b-d]', REG_EXTENDED|REG_NOSUB) then regexec('c') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b02-bracket-range-nomatch",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=[b-d]]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "e"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:47-58 match_regex_criteria returns false on REG_NOMATCH; 'e' is outside [b-d] Oracle trace: regcomp('[b-d]', REG_EXTENDED|REG_NOSUB) then regexec('e') -> nomatch.",
+      "oracle": "summary~:nomatch"
+    },
+    {
+      "id": "b03-bracket-negation-match",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=[^abc]]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "z"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:333 a POSIX negated set [^abc] matches any byte other than a/b/c; criteria.c:115-119 regexec Oracle trace: regcomp('[^abc]', REG_EXTENDED|REG_NOSUB) then regexec('z') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b04-bracket-negation-nomatch",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=[^abc]]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:47-58 REG_NOMATCH -> the section does not match; criteria.c:115-119 Oracle trace: regcomp('[^abc]', REG_EXTENDED|REG_NOSUB) then regexec('a') -> nomatch.",
+      "oracle": "summary~:nomatch"
+    },
+    {
+      "id": "b05-capture-group-under-nosub",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=(ab)+]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "abab"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:333 REG_NOSUB (regex.h:323) suppresses submatch *reporting* only, so a capture group still compiles and matches; criteria.c:115-119 regexec Oracle trace: regcomp('(ab)+', REG_EXTENDED|REG_NOSUB) then regexec('abab') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b06-backreference-within-group",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=(a)\\\\1]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "aa"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "tokenizer: criteria.c:199-215 sees '\\\\' -> MAKO_PARSE_STATE_ESCAPE and criteria.c:177-182 appends the next character verbatim while dropping the backslash, so the regcomp input is '(a)\\1'; criteria.c:333 regcomp succeeds (a glibc ERE backreference extension, not POSIX) and criteria.c:115-119 regexec matches 'aa' Oracle trace: regcomp('(a)\\\\1', REG_EXTENDED|REG_NOSUB) then regexec('aa') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b07-backreference-alone-invalid",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=\\\\1]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "tokenizer: criteria.c:199-215 + 177-182 turn '\\\\1' into '\\1'; criteria.c:333-336 regcomp('\\1') fails (REG_ESUBREG) -> 'Invalid summary~ regex' -> apply_criteria_field false -> parse_criteria false -> config.c:844-848 refuses the section Oracle trace: regcomp('\\\\1', REG_EXTENDED|REG_NOSUB) then regexec('a') -> invalid.",
+      "oracle": "summary~:invalid"
+    },
+    {
+      "id": "b08-alt-anchored-branches-match",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=^a|b$]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "glibc anchors each alternation branch independently, so '^a' matches 'a'; criteria.c:333 regcomp, criteria.c:115-119 regexec Oracle trace: regcomp('^a|b$', REG_EXTENDED|REG_NOSUB) then regexec('a') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b09-alt-anchored-branches-nomatch",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=^a|b$]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "xa"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "'^a' needs a leading 'a' and 'b$' a trailing 'b', so 'xa' matches neither branch; criteria.c:47-58 REG_NOMATCH Oracle trace: regcomp('^a|b$', REG_EXTENDED|REG_NOSUB) then regexec('xa') -> nomatch.",
+      "oracle": "summary~:nomatch"
+    },
+    {
+      "id": "b10-alt-anchored-branches-second-match",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=^a|b$]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "xb"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "the 'b$' branch matches the trailing 'b' of 'xb'; criteria.c:115-119 regexec Oracle trace: regcomp('^a|b$', REG_EXTENDED|REG_NOSUB) then regexec('xb') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b11-dot-single-ascii-byte",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=.$]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "x"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako never calls setlocale, so the C locale applies and '.' is one byte; criteria.c:333 regcomp, criteria.c:115-119 regexec on 'x' Oracle trace: regcomp('.$', REG_EXTENDED|REG_NOSUB) then regexec('x') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b12-dot-matches-space",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=a.b]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a b"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "POSIX '.' matches a space (no REG_NEWLINE is passed, criteria.c:333); criteria.c:115-119 regexec Oracle trace: regcomp('a.b', REG_EXTENDED|REG_NOSUB) then regexec('a b') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b13-escaped-paren-becomes-group",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=\\(x\\)]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "x"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "tokenizer: criteria.c:199-215 '\\\\' -> ESCAPE, criteria.c:177-182 drops the backslash and keeps the next character, so the regcomp input is '(x)' - a capture group, NOT literal parentheses; criteria.c:333 regcomp succeeds and criteria.c:115-119 regexec matches the bare text 'x' Oracle trace: regcomp('(x)', REG_EXTENDED|REG_NOSUB) then regexec('x') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b14-escaped-bracket-becomes-open-bracket",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=\\[]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "["
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "tokenizer: criteria.c:199-215 + 177-182 drop the backslash, so the regcomp input is '['; criteria.c:333-336 regcomp('[') fails (REG_BADPAT) -> 'Invalid summary~ regex' -> refusal Oracle trace: regcomp('[', REG_EXTENDED|REG_NOSUB) then regexec('[') -> invalid.",
+      "oracle": "summary~:invalid"
+    },
+    {
+      "id": "b15-unquoted-space-splits-token",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=Setup Wi-Fi]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "Setup Wi-Fi"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "tokenizer: criteria.c:207-215 splits on a single space only, so the section yields the tokens 'summary~=Setup' and 'Wi-Fi'; criteria.c:269 strstr(key,'=') is NULL for the second token, criteria.c:272-286 treat it as a boolean field, and criteria.c:399-407 rejects it ('Invalid boolean criteria field') -> apply_criteria_field false -> parse_criteria false -> config.c:844-848 refuses the section Oracle trace: no pattern reaches regcomp (the section is refused while the criteria are parsed).",
+      "oracle": "undecided"
+    },
+    {
+      "id": "b16-unquoted-space-splits-two-fields",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=Setup app-name=alpha]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "app-name": "alpha",
+        "summary": "Setup"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "tokenizer: criteria.c:207-215 splits on the single space, giving the two tokens 'summary~=Setup' and 'app-name=alpha'; criteria.c:332-339 compiles the regex 'Setup' and criteria.c:298-303 stores app_name 'alpha', so the space does NOT become part of the regex value; criteria.c:74-77 and 115-119 both hold -> the section applies Oracle trace: regcomp('Setup', REG_EXTENDED|REG_NOSUB) then regexec('Setup') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b17-quote-inside-value",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=\"say \\\"hi\\\"\"]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "say \"hi\""
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "tokenizer: criteria.c:184-196 QUOTE state, criteria.c:186-188 '\\\\' -> QUOTE_ESCAPE and criteria.c:177-182 keeps the escaped quote verbatim, so the regcomp input is 'say \"hi\"'; criteria.c:333 regcomp succeeds ('\"' is an ordinary byte in an ERE) and criteria.c:115-119 regexec matches Oracle trace: regcomp('say \"hi\"', REG_EXTENDED|REG_NOSUB) then regexec('say \"hi\"') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b18-unquoted-quote-ends-value",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=say\"hi\"]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "sayhi"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "tokenizer: criteria.c:204-206 a '\"' in the NORMAL state opens a quoted run (criteria.c:184-196) and criteria.c:189-190 closes it, so both '\"' characters are dropped and the regcomp input is 'sayhi'; criteria.c:333 regcomp succeeds and criteria.c:115-119 regexec matches 'sayhi' Oracle trace: regcomp('sayhi', REG_EXTENDED|REG_NOSUB) then regexec('sayhi') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b19-first-equals-only-splits",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=a=b]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a=b"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:269 strstr(key,'=') splits at the FIRST '=' only, so the value is 'a=b'; criteria.c:333 regcomp('a=b') succeeds ('=' is an ordinary byte) and criteria.c:115-119 regexec matches 'a=b' Oracle trace: regcomp('a=b', REG_EXTENDED|REG_NOSUB) then regexec('a=b') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b20-escaped-dot-becomes-wildcard",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=a\\.b]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "axb"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "tokenizer: criteria.c:199-215 + 177-182 drop the backslash, so the regcomp input is 'a.b' where '.' is the ERE any-character operator, not a literal dot; criteria.c:333 regcomp succeeds and criteria.c:115-119 regexec matches 'axb' Oracle trace: regcomp('a.b', REG_EXTENDED|REG_NOSUB) then regexec('axb') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b21-escaped-dot-literal-wins",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=a\\\\.b]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a.b"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "tokenizer: criteria.c:199-215 + 177-182 turn '\\\\.' into a single backslash followed by '.', so the regcomp input is 'a\\.b' where '\\.' is a literal dot; criteria.c:333 regcomp succeeds and criteria.c:115-119 regexec matches the literal text 'a.b' Oracle trace: regcomp('a\\\\.b', REG_EXTENDED|REG_NOSUB) then regexec('a.b') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b22-escaped-dot-literal-misses",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=a\\\\.b]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "axb"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "same pattern as b21 (criteria.c:177-182): '\\.' is a literal dot, so 'axb' does not match; criteria.c:47-58 REG_NOMATCH Oracle trace: regcomp('a\\\\.b', REG_EXTENDED|REG_NOSUB) then regexec('axb') -> nomatch.",
+      "oracle": "summary~:nomatch"
+    },
+    {
+      "id": "b23-body-pattern-anchored-match",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[body~=^beta$]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "body": "beta"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:127-131 body_pattern is matched against notif->body via match_regex_criteria (criteria.c:47-58); '^beta$' anchors both ends Oracle trace: regcomp('^beta$', REG_EXTENDED|REG_NOSUB) then regexec('beta') -> match.",
+      "oracle": "body~:match"
+    },
+    {
+      "id": "b24-body-pattern-anchored-nomatch",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[body~=^beta$]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "body": "beta "
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:47-58 regexec REG_NOMATCH: '$' anchors at the very end of the body, so 'beta ' does not match '^beta$' Oracle trace: regcomp('^beta$', REG_EXTENDED|REG_NOSUB) then regexec('beta ') -> nomatch.",
+      "oracle": "body~:nomatch"
+    },
+    {
+      "id": "b25-body-pattern-no-body-input",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[body~=beta]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "beta"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c:127-131 body_pattern is only satisfiable when the notification carries a body; with no --body input the criterion cannot be satisfied and the tool refuses it (same tool stance as the round-89 draft case r19, whose oracle verdict is likewise 'undecided') Oracle trace: no pattern reaches regcomp (the section is refused while the criteria are parsed).",
+      "oracle": "undecided"
+    },
+    {
+      "id": "b26-two-regex-fields-both-match",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=alpha body~=beta]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "alpha",
+        "body": "beta"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:115-119 and 127-131 are two independent tests that must both hold; criteria.c:498-551 validate_criteria only refuses 'summary'+'summary~' and 'body'+'body~', so summary~ + body~ in one section is legal Oracle trace: regcomp('alpha', REG_EXTENDED|REG_NOSUB) then regexec('alpha') -> match; regcomp('beta', REG_EXTENDED|REG_NOSUB) then regexec('beta') -> match.",
+      "oracle": "summary~:match,body~:match"
+    },
+    {
+      "id": "b27-two-regex-fields-body-misses",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=alpha body~=beta]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "alpha",
+        "body": "gamma"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:127-131 the body~ branch fails on 'gamma', so match_criteria returns false and the section does not apply; the matching summary~ branch alone is not enough Oracle trace: regcomp('alpha', REG_EXTENDED|REG_NOSUB) then regexec('alpha') -> match; regcomp('beta', REG_EXTENDED|REG_NOSUB) then regexec('gamma') -> nomatch.",
+      "oracle": "summary~:match,body~:nomatch"
+    },
+    {
+      "id": "b28-app-name-plus-regex-match",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[app-name=alpha summary~=x]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "app-name": "alpha",
+        "summary": "x"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:298-303 app-name is a strcmp test and criteria.c:115-119 the regex test; both must hold for match_criteria to return true Oracle trace: regcomp('x', REG_EXTENDED|REG_NOSUB) then regexec('x') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b29-app-name-plus-regex-nomatch",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[app-name=alpha summary~=x]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "app-name": "alpha",
+        "summary": "y"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:115-119 the summary~ branch fails on 'y' -> match_criteria false -> no section match Oracle trace: regcomp('x', REG_EXTENDED|REG_NOSUB) then regexec('y') -> nomatch.",
+      "oracle": "summary~:nomatch"
+    },
+    {
+      "id": "b30-urgency-plus-regex-match",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[urgency=critical summary~=x]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "urgency": "critical",
+        "summary": "x"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:308-313 urgency is compared as an enum (parse_urgency, criteria.c:264-271) and criteria.c:115-119 the regex test; both must hold Oracle trace: regcomp('x', REG_EXTENDED|REG_NOSUB) then regexec('x') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b31-urgency-plus-regex-mismatch",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[urgency=critical summary~=x]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "urgency": "normal",
+        "summary": "x"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:91-93 the urgency test fails (critical != normal) -> match_criteria returns false before the regex test; the regex itself still matches, so the section is skipped rather than refused Oracle trace: regcomp('x', REG_EXTENDED|REG_NOSUB) then regexec('x') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b32-repeated-summary-token-last-wins-match",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=alpha summary~=beta]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "beta"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:207-215 and 241-247 call apply_criteria_field once per token; criteria.c:332-339 regcomp writes into the same criteria->summary_pattern each time, so the later token's pattern is the one left compiled and criteria.c:115-119 matches 'beta' (glibc regcomp over an already-used regex_t replaces the compiled program) Oracle trace: regcomp('beta', REG_EXTENDED|REG_NOSUB) then regexec('beta') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b33-repeated-summary-token-last-wins-nomatch",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=alpha summary~=beta]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "alpha"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "same last-token-wins rule as b32 (criteria.c:332-339): the surviving pattern is 'beta', which does not match 'alpha' Oracle trace: regcomp('beta', REG_EXTENDED|REG_NOSUB) then regexec('alpha') -> nomatch.",
+      "oracle": "summary~:nomatch"
+    },
+    {
+      "id": "b34-invalid-open-bracket",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=[abc]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c:333-336 regcomp('[abc') fails (REG_EBRACK, unmatched left bracket) -> 'Invalid summary~ regex' -> apply_criteria_field false -> parse_criteria false -> config.c:844-848 refuses the section Oracle trace: regcomp('[abc', REG_EXTENDED|REG_NOSUB) then regexec('a') -> invalid.",
+      "oracle": "summary~:invalid"
+    },
+    {
+      "id": "b35-invalid-leading-star",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=*a]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c:333-336 regcomp('*a') fails (REG_BADRPT: no preceding re for the repetition operator) -> refusal; POSIX ERE rejects a leading '*' Oracle trace: regcomp('*a', REG_EXTENDED|REG_NOSUB) then regexec('a') -> invalid.",
+      "oracle": "summary~:invalid"
+    },
+    {
+      "id": "b36-unmatched-close-paren-is-literal",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=a)]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a)"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:333 regcomp('a)') succeeds on glibc (an unmatched ')' is an ordinary byte there; regex.h:367 notes REG_ERPAREN is 'not returned from regcomp'); criteria.c:115-119 regexec matches the literal text 'a)' Oracle trace: regcomp('a)', REG_EXTENDED|REG_NOSUB) then regexec('a)') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b37-empty-alternative-branch",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=x|]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "zzz"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:333 regcomp('x|') succeeds (the empty second branch matches the empty string at offset 0) and criteria.c:115-119 regexec therefore matches any text Oracle trace: regcomp('x|', REG_EXTENDED|REG_NOSUB) then regexec('zzz') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b38-negated-posix-class",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=[^[:digit:]]]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "a"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "a POSIX bracket class [:digit:] inside a negated set (regex(7)); criteria.c:333 regcomp, criteria.c:115-119 regexec matches 'a' Oracle trace: regcomp('[^[:digit:]]', REG_EXTENDED|REG_NOSUB) then regexec('a') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b39-negated-posix-class-nomatch",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=[^[:digit:]]]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "5"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "'5' is a digit, so the negated POSIX class does not match it; criteria.c:47-58 REG_NOMATCH Oracle trace: regcomp('[^[:digit:]]', REG_EXTENDED|REG_NOSUB) then regexec('5') -> nomatch.",
+      "oracle": "summary~:nomatch"
+    },
+    {
+      "id": "b40-trailing-backslash",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=abc\\]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "abc"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "tokenizer: criteria.c:201-203 '\\\\' -> MAKO_PARSE_STATE_ESCAPE and criteria.c:228-236 rejects a section that ends in the ESCAPE state ('Trailing backslash in criteria definition') -> parse_criteria false -> config.c:844-848 refuses the section Oracle trace: no pattern reaches regcomp (the section is refused while the criteria are parsed).",
+      "oracle": "undecided"
+    },
+    {
+      "id": "b41-unmatched-quote",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=\"abc]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "abc"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "tokenizer: criteria.c:204-206 opens a quoted run and criteria.c:228-231 rejects a section that ends in the QUOTE state ('Unmatched quote in criteria definition') -> parse_criteria false -> config.c:844-848 refuses the section Oracle trace: no pattern reaches regcomp (the section is refused while the criteria are parsed).",
+      "oracle": "undecided"
+    },
+    {
+      "id": "b42-two-byte-locale-count",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=^..$]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "é"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "mako never calls setlocale, so the C locale applies and each byte is one character: the two-byte UTF-8 e-acute is two characters, so '^..$' matches it (criteria.c:333 regcomp, criteria.c:115-119 regexec). Under a UTF-8 locale the same pattern would NOT match Oracle trace: regcomp('^..$', REG_EXTENDED|REG_NOSUB) then regexec('é') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b43-bang-inside-value-is-literal",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[summary~=!x]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "!x"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "bottom-center"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:269-286 splits at the FIRST '=' and criteria.c:332-339 regcomp's the whole value; the '!' negation prefix of criteria.c:281-285 only applies to a BARE key (no '='), so here '!' is an ordinary byte of the regex and criteria.c:115-119 regexec matches the literal text '!x' Oracle trace: regcomp('!x', REG_EXTENDED|REG_NOSUB) then regexec('!x') -> match.",
+      "oracle": "summary~:match"
+    },
+    {
+      "id": "b44-body-pattern-reads-body-not-summary",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[body~=gamma]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "gamma",
+        "body": "delta"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "none"
+      },
+      "pin": "criteria.c:127-131 body_pattern is matched against notif->body, never against notif->summary, so the body~ branch fails on 'delta' even though the summary is 'gamma'; criteria.c:47-58 REG_NOMATCH Oracle trace: regcomp('gamma', REG_EXTENDED|REG_NOSUB) then regexec('delta') -> nomatch.",
+      "oracle": "body~:nomatch"
+    },
+    {
+      "id": "b45-bang-prefixed-regex-key-is-invalid",
+      "config": ".config/mako/config",
+      "home_files": {
+        ".config/mako/config": "anchor=top-right\n[!summary~=x]\nanchor=bottom-center\n"
+      },
+      "args": {
+        "summary": "x"
+      },
+      "expect": {
+        "effective": {
+          "anchor": "top-right"
+        },
+        "refusals": "present"
+      },
+      "pin": "criteria.c:267-272 apply_criteria_field splits at the '=' and gets the key '!summary~', which is not one of the known fields (criteria.c:297-373), so criteria.c:399-407 prints 'Invalid criteria field '!summary~'' and returns false -> parse_criteria false -> config.c:844-848 refuses the section; the '!' negation of criteria.c:281-285 applies only to a bare key Oracle trace: no pattern reaches regcomp (the section is refused while the criteria are parsed).",
+      "oracle": "undecided"
+    }
+  ]
+}

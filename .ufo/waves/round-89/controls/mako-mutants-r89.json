@@ -1,0 +1,228 @@
+{
+ "schema": "mako-mutants-r89-v1",
+ "notes": "Round-89 mutant set: M01-M22 carried byte-equal from .ufo/waves/round-88/controls/mako-mutants-r88.json; M23-M37 target the summary~/body~ POSIX ERE matcher (libc regcomp/regexec, C locale), the criteria tokenizer's backslash-inside-quotes and space-only token rules, the cannot-set-both refusal, REG_NEWLINE, end-of-input escapes and every regex occurrence being compiled. M33-M37 were added from the w1 review (R89MReviewC1 F1/M33, R89MMutTester N04/N07/N14) before the freeze. Each old anchor must occur exactly once in the candidate tool.",
+ "mutants": [
+  {
+   "id": "M01-criteria-setdefault",
+   "description": "criteria options only fill unset keys, so they never override defaults or the global section (breaks last-wins and any matching override; L435-437)",
+   "old": "effective[key] = value",
+   "new": "effective.setdefault(key, value)"
+  },
+  {
+   "id": "M02-global-ignored",
+   "description": "the global section is dropped; resolution sees defaults and criteria only (L519-522)",
+   "old": "effective.update(state.global_values)",
+   "new": "effective.update({})"
+  },
+  {
+   "id": "M03-relative-include-accepted",
+   "description": "a relative include path is accepted and read from the working directory instead of being refused (L45-48)",
+   "old": "elif value.startswith(\"/\"):",
+   "new": "elif value.startswith(\"/\") or value:"
+  },
+  {
+   "id": "M04-tilde-ignores-home",
+   "description": "~/ include paths expand to the filesystem root instead of --home (L16-17, L48)",
+   "old": "os.path.join(self.home, value[2:])",
+   "new": "os.path.join(\"/\", value[2:])"
+  },
+  {
+   "id": "M05-no-initial-mode",
+   "description": "the initial mode list is empty, so [mode=default] sections never apply (L620-621)",
+   "old": "INITIAL_MODES = (\"default\",)",
+   "new": "INITIAL_MODES = ()"
+  },
+  {
+   "id": "M06-no-defaults",
+   "description": "effective starts empty instead of from the manual defaults (L519-522)",
+   "old": "effective = dict(DEFAULTS)",
+   "new": "effective = {}"
+  },
+  {
+   "id": "M07-app-name-ignored",
+   "description": "app-name criteria are never compared, so sections for other applications apply (L443-444)",
+   "old": "elif key == \"app-name\":",
+   "new": "elif key == \"app-name-ignored\":"
+  },
+  {
+   "id": "M08-missing-input-matches",
+   "description": "a criteria app-name with no --app-name supplied is treated as a match instead of refused",
+   "old": "undecided.append(\"--app-name\")",
+   "new": "pass"
+  },
+  {
+   "id": "M09-urgency-inverted",
+   "description": "urgency criteria match when the notification urgency differs (L459)",
+   "old": "mismatch = mismatch or self.urgency != value",
+   "new": "mismatch = mismatch or self.urgency == value"
+  },
+  {
+   "id": "M10-unterminated-quote-accepted",
+   "description": "an unterminated quote in a criteria header is not refused and yields an unconditional match (L497-508)",
+   "old": "return [], \"unterminated quote\"",
+   "new": "return [], None"
+  },
+  {
+   "id": "M11-string-mismatch-ignored",
+   "description": "an exact string criteria field (app-icon, summary, body, category, desktop-entry) never mismatches, so a section for another value applies (L445-463)",
+   "old": "mismatch = mismatch or have != value",
+   "new": "mismatch = mismatch or False"
+  },
+  {
+   "id": "M12-string-missing-input-matches",
+   "description": "an exact string criteria field whose notification input was not supplied is treated as a match instead of refused",
+   "old": "undecided.append(\"--\" + key)",
+   "new": "pass"
+  },
+  {
+   "id": "M13-bool-negation-ignored",
+   "description": "a bare !actionable / !expiring token means true instead of false (L516)",
+   "old": "key, value = key[1:], \"false\"",
+   "new": "key, value = key[1:], \"true\""
+  },
+  {
+   "id": "M14-bool-casefold-dropped",
+   "description": "boolean words are compared case-sensitively, so TRUE/False are refused (types.c parse_boolean uses strcasecmp)",
+   "old": "lowered = value.lower()",
+   "new": "lowered = value"
+  },
+  {
+   "id": "M15-bool-criteria-inverted",
+   "description": "actionable/expiring criteria match when the notification flag differs (L465-467)",
+   "old": "mismatch = mismatch or have != want",
+   "new": "mismatch = mismatch or have == want"
+  },
+  {
+   "id": "M16-bool-missing-input-matches",
+   "description": "a boolean criteria field whose notification flag was not supplied is treated as a match instead of refused",
+   "old": "undecided.append(\"--\" + key + \" (boolean)\")",
+   "new": "pass"
+  },
+  {
+   "id": "M17-bool-invalid-accepted",
+   "description": "a boolean criteria value outside true/false/1/0 (e.g. yes) is not refused (L510-516)",
+   "old": "if key in BOOLEAN_FIELDS and parse_boolean(value) is None:",
+   "new": "if False:"
+  },
+  {
+   "id": "M18-option-bool-not-normalized",
+   "description": "a style boolean given as true/false is reported verbatim instead of in the manual's 0|1 form",
+   "old": "return \"1\" if parse_boolean(value) else \"0\"",
+   "new": "return value"
+  },
+  {
+   "id": "M19-bare-bool-refused",
+   "description": "a bare actionable / expiring token is refused instead of meaning true (L514)",
+   "old": "value = \"true\"  # L514 [actionable]",
+   "new": "value = None  # L514 [actionable]"
+  },
+  {
+   "id": "M20-urgency-high-alias-dropped",
+   "description": "an urgency criteria value high is refused instead of meaning critical (types.c parse_urgency)",
+   "old": "if word == \"high\":",
+   "new": "if False:"
+  },
+  {
+   "id": "M21-urgency-casefold-dropped",
+   "description": "urgency criteria values are compared case-sensitively, so Critical/LOW are refused (types.c parse_urgency uses strcasecmp)",
+   "old": "word = value.lower()",
+   "new": "word = value"
+  },
+  {
+   "id": "M22-repeated-field-first-wins",
+   "description": "a repeated criteria field keeps every occurrence, so an earlier mismatching value blocks the section instead of the last value deciding (criteria.c apply_criteria_field assigns in turn)",
+   "old": "fields = [(name, kept) for name, kept in fields if name != key]",
+   "new": "pass"
+  },
+  {
+   "id": "M23-basic-regex",
+   "description": "REG_EXTENDED dropped: regcomp compiles a POSIX basic regex, so + | ? { are literals (criteria.c passes REG_EXTENDED)",
+   "old": "if lib.regcomp(buf, raw, REG_EXTENDED | REG_NOSUB) != 0:",
+   "new": "if lib.regcomp(buf, raw, REG_NOSUB) != 0:"
+  },
+  {
+   "id": "M24-locale-inherited",
+   "description": "the C locale is not forced: regcomp/regexec run in the environment locale (C.UTF-8 under the counter), unlike mako which never calls setlocale",
+   "old": "locale.setlocale(locale.LC_ALL, \"C\")",
+   "new": "locale.setlocale(locale.LC_ALL, \"\")"
+  },
+  {
+   "id": "M25-anchored-match",
+   "description": "the pattern is wrapped in ^( )$ so it must match the whole value (criteria.c regexec searches)",
+   "old": "raw = pattern.encode(\"utf-8\", \"surrogateescape\")",
+   "new": "raw = b\"^(\" + pattern.encode(\"utf-8\", \"surrogateescape\") + b\")$\""
+  },
+  {
+   "id": "M26-regex-polarity",
+   "description": "a regex match counts as a mismatch and a non-match as a match",
+   "old": "mismatch = mismatch or not posix_ere_search(compiled[key], have)",
+   "new": "mismatch = mismatch or posix_ere_search(compiled[key], have)"
+  },
+  {
+   "id": "M27-summary-pattern-reads-body",
+   "description": "summary~ is matched against the body input instead of the summary",
+   "old": "REGEX_FIELDS = {\"summary~\": \"summary\", \"body~\": \"body\"}",
+   "new": "REGEX_FIELDS = {\"summary~\": \"body\", \"body~\": \"body\"}"
+  },
+  {
+   "id": "M28-invalid-regex-is-nomatch",
+   "description": "a pattern regcomp rejects makes the section a silent non-match instead of a refusal",
+   "old": "                    if pattern is None:\n                        self.refuse(where, key + \" \" + repr(value)\n                                    + \" is not a valid POSIX extended regex (regcomp refused it)\")\n                        return None\n",
+   "new": "                    if pattern is None:\n                        return \"nomatch\"\n"
+  },
+  {
+   "id": "M29-both-summary-fields-accepted",
+   "description": "summary with summary~ (or body with body~) in one section is accepted (criteria.c refuses: cannot set both)",
+   "old": "if key in names and plain in names:",
+   "new": "if False:"
+  },
+  {
+   "id": "M30-quote-escape-r88-rule",
+   "description": "inside quotes a backslash escapes only a quote or a backslash (the r88 rule), so \\. reaches regcomp with its backslash",
+   "old": "            if char == \"\\\\\":\n                if i + 1 >= len(body):\n                    return [], \"dangling backslash inside a quote (criteria.c: unmatched quote)\"\n                word.append(body[i + 1])",
+   "new": "            if char == \"\\\\\" and i + 1 < len(body) and body[i + 1] in ('\"', \"\\\\\"):\n                if i + 1 >= len(body):\n                    return [], \"dangling backslash inside a quote (criteria.c: unmatched quote)\"\n                word.append(body[i + 1])"
+  },
+  {
+   "id": "M31-any-whitespace-splits",
+   "description": "any whitespace (tab included) separates criteria tokens; parse_criteria splits on a space only",
+   "old": "elif char == \" \":",
+   "new": "elif char.isspace():"
+  },
+  {
+   "id": "M32-missing-regex-input-matches",
+   "description": "a regex field whose input was not supplied is treated as matching instead of refused",
+   "old": "undecided.append(\"--\" + REGEX_FIELDS[key])",
+   "new": "mismatch = mismatch or False"
+  },
+  {
+   "id": "M33-unquoted-escape-keeps-backslash",
+   "description": "outside quotes a backslash no longer removes itself, so \\. reaches regcomp with its backslash (criteria.c parse_criteria ESCAPE state drops it)",
+   "old": "                return [], \"dangling backslash\"\n            word.append(body[i + 1])",
+   "new": "                return [], \"dangling backslash\"\n            word.append(\"\\\\\" + body[i + 1])"
+  },
+  {
+   "id": "M34-reg-newline-added",
+   "description": "regcomp also gets REG_NEWLINE (4): . no longer matches a newline and ^/$ match at line breaks (criteria.c passes REG_EXTENDED | REG_NOSUB only)",
+   "old": "if lib.regcomp(buf, raw, REG_EXTENDED | REG_NOSUB) != 0:",
+   "new": "if lib.regcomp(buf, raw, REG_EXTENDED | REG_NOSUB | 4) != 0:"
+  },
+  {
+   "id": "M35-dangling-quote-escape-accepted",
+   "description": "a backslash at end of input inside a quote closes the quote and yields the token (criteria.c: unmatched quote, the criteria is rejected)",
+   "old": "                    return [], \"dangling backslash inside a quote (criteria.c: unmatched quote)\"\n",
+   "new": "                    in_quote = False\n                    break\n"
+  },
+  {
+   "id": "M36-trailing-backslash-dropped",
+   "description": "a trailing backslash outside quotes is dropped instead of rejecting the criteria (criteria.c: trailing backslash)",
+   "old": "            if i + 1 >= len(body):\n                return [], \"dangling backslash\"\n",
+   "new": "            if i + 1 >= len(body):\n                break\n"
+  },
+  {
+   "id": "M37-earlier-invalid-occurrence-ignored",
+   "description": "only the last occurrence of a repeated summary~/body~ is compiled, so an earlier invalid one no longer rejects the criteria (criteria.c regcomps each occurrence as it is applied)",
+   "old": "for key, value in (fields if ordered is None else ordered):",
+   "new": "for key, value in fields:"
+  }
+ ]
+}

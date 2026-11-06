@@ -1,0 +1,54 @@
+{
+ "schema": "mado-survivors-r89-v1",
+ "notes": "The eight round-88 residual survivors routed to round 89 (R88MResidMut \u00a73-\u00a74; RM2C2 excluded: a confirmed named limit, TOCTOU). Re-expressed from the seat's descriptions and line references against the round-88 tool; each old anchor must occur exactly once in the measured tool. RM6C2 is declared crash-distinguishable only (see the declaration).",
+ "mutants": [
+  {
+   "id": "RM2C1-app-name-casefolded",
+   "description": "app-name compared casefolded (criteria.c match_criteria uses strcmp)",
+   "old": "mismatch = mismatch or self.app_name != value",
+   "new": "mismatch = mismatch or self.app_name.casefold() != value.casefold()"
+  },
+  {
+   "id": "RM3C1-bang-accepted-on-string-fields",
+   "description": "a bare !<field> is accepted on any field as the literal value 'false' (criteria.c accepts bare tokens for boolean fields only)",
+   "old": "elif value is None and key.startswith(\"!\") and key[1:] in BOOLEAN_FIELDS:",
+   "new": "elif value is None and key.startswith(\"!\"):"
+  },
+  {
+   "id": "RM5C1-mode-casefolded",
+   "description": "mode criteria compared casefolded (criteria.c compares the mode with strcmp)",
+   "old": "mismatch = mismatch or value not in self.modes",
+   "new": "mismatch = mismatch or value.casefold() not in {m.casefold() for m in self.modes}"
+  },
+  {
+   "id": "RM7C1-include-accepted-inside-criteria",
+   "description": "include= inside a criteria section is followed instead of refused (mako.5 L45: include is a global option)",
+   "old": "                if section is not None:\n                    self.refuse(where, \"include is only valid in the global section\")\n                else:\n                    self.include(value, where)\n",
+   "new": "                self.include(value, where)\n"
+  },
+  {
+   "id": "RM3C2-trailing-slash-refusal-dropped",
+   "description": "the trailing-/ refusal is deleted, so ~/x.ini/ is read as ~/x.ini",
+   "old": "        if target.endswith(\"/\"):\n            self.refuse(where, \"include target is not a regular file: \" + target + \" (trailing /)\")\n            return\n",
+   "new": ""
+  },
+  {
+   "id": "RM4C2-double-slash-join-dropped",
+   "description": "~//x is no longer re-joined under HOME and becomes the absolute /x",
+   "old": "            value = \"~/\" + value[2:].lstrip(\"/\")  # config.c joins \"$HOME/\" + rest: ~//x stays under HOME\n",
+   "new": ""
+  },
+  {
+   "id": "RM5C2-root-equality-refused",
+   "description": "a resolved path equal to a read root is refused; only strict descendants are inside",
+   "old": "if real == root or real.startswith(prefix):",
+   "new": "if real.startswith(prefix):"
+  },
+  {
+   "id": "RM6C2-cycle-detected-on-lexical-target",
+   "description": "the cycle test compares the unresolved target with the stack of resolved paths",
+   "old": "        if real in self.stack:\n",
+   "new": "        if target in self.stack:\n"
+  }
+ ]
+}
