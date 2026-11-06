@@ -1,0 +1,385 @@
+{
+ "schema": "seat-reports-mutants-r91-v1",
+ "note": "R91MMutC2 mutants of the C2 candidate at tool_sha256. Each find occurs exactly once in those bytes (enforced again by the counter). Mutants with a non-null `equivalent` cannot be killed by any expectation; leave them out of a file that PRED-C2 requires to be fully killed, or give the predicate an equivalence carve-out. Per-mutant verdicts and the cheapest killing expectation are in .ufo/waves/round-91/w1/R91MMutC2.md.",
+ "tool": ".ufo/waves/round-91/build/check-seat-reports.c2.py",
+ "tool_sha256": "189b143735499d703c25354bae7e860ec057c9652736875c103e258c193bc5c8",
+ "tool_size": 14759,
+ "mutants": [
+  {
+   "id": "MC01",
+   "source_id": "C2M01",
+   "cls": "trailer regex (first vs last match)",
+   "find": "                rp = found[-1]",
+   "replace": "                rp = found[0]",
+   "equivalent": null
+  },
+  {
+   "id": "MC02",
+   "source_id": "C2M02",
+   "cls": "plain fallback dropped",
+   "find": "                found = TRAILER.findall(body) or PLAIN.findall(body)",
+   "replace": "                found = TRAILER.findall(body)",
+   "equivalent": null
+  },
+  {
+   "id": "MC03",
+   "source_id": "C2M03",
+   "cls": "rendered trailer not preferred (plain first)",
+   "find": "                found = TRAILER.findall(body) or PLAIN.findall(body)",
+   "replace": "                found = PLAIN.findall(body) or TRAILER.findall(body)",
+   "equivalent": null
+  },
+  {
+   "id": "MC04",
+   "source_id": "C2M04",
+   "cls": "empty file counted present",
+   "find": "                elif size == 0:",
+   "replace": "                elif False:",
+   "equivalent": null
+  },
+  {
+   "id": "MC05",
+   "source_id": "C2M05",
+   "cls": "empty reported as SR01",
+   "find": "                    lines.append(f\"SR02 empty {where} {name} {rp}\")",
+   "replace": "                    lines.append(f\"SR01 empty {where} {name} {rp}\")",
+   "equivalent": null
+  },
+  {
+   "id": "MC06",
+   "source_id": "C2M06",
+   "cls": "unsafe+link check dropped",
+   "find": "                if unsafe(rp) or tree.is_link(rp):",
+   "replace": "                if False:",
+   "equivalent": null
+  },
+  {
+   "id": "MC07",
+   "source_id": "C2M07",
+   "cls": "unsafe check partial (absolute only)",
+   "find": "    return path.startswith(\"/\") or \"..\" in path.split(\"/\")",
+   "replace": "    return path.startswith(\"/\")",
+   "equivalent": null
+  },
+  {
+   "id": "MC08",
+   "source_id": "C2M08",
+   "cls": "unsafe check partial ('..' only)",
+   "find": "    return path.startswith(\"/\") or \"..\" in path.split(\"/\")",
+   "replace": "    return \"..\" in path.split(\"/\")",
+   "equivalent": null
+  },
+  {
+   "id": "MC09",
+   "source_id": "C2M09",
+   "cls": "unsafe check over-broad (substring)",
+   "find": "    return path.startswith(\"/\") or \"..\" in path.split(\"/\")",
+   "replace": "    return path.startswith(\"/\") or \"..\" in path",
+   "equivalent": null
+  },
+  {
+   "id": "MC10",
+   "source_id": "C2M10",
+   "cls": "symlink check dropped (unsafe kept)",
+   "find": "                if unsafe(rp) or tree.is_link(rp):",
+   "replace": "                if unsafe(rp):",
+   "equivalent": null
+  },
+  {
+   "id": "MC11",
+   "source_id": "C2M11",
+   "cls": "unsafe check dropped (symlink kept)",
+   "find": "                if unsafe(rp) or tree.is_link(rp):",
+   "replace": "                if tree.is_link(rp):",
+   "equivalent": null
+  },
+  {
+   "id": "MC12",
+   "source_id": "C2M12",
+   "cls": "worktree islink guard in size() dropped (now unreachable)",
+   "find": "        if os.path.islink(p) or not os.path.isfile(p):",
+   "replace": "        if not os.path.isfile(p):",
+   "equivalent": "WorkTree.size() is never reached for a symlink: check() rejects it via tree.is_link() first"
+  },
+  {
+   "id": "MC13",
+   "source_id": "C2M13",
+   "cls": "worktree is_link() stubbed false",
+   "find": "        return os.path.islink(os.path.join(self.repo, path))",
+   "replace": "        return False",
+   "equivalent": null
+  },
+  {
+   "id": "MC14",
+   "source_id": "C2M14",
+   "cls": "rev link mode typo (120000 -> 12000)",
+   "find": "            if parts[0] == b\"120000\":",
+   "replace": "            if parts[0] == b\"12000\":",
+   "equivalent": null
+  },
+  {
+   "id": "MC15",
+   "source_id": "C2M15",
+   "cls": "rev paths() .ufo/waves filter dropped (equivalent)",
+   "find": "        return [p for p in self.sizes if p.startswith(\".ufo/waves/\")]",
+   "replace": "        return list(self.sizes)",
+   "equivalent": "DISPATCH.match anchors at .ufo/waves/round-, so extra paths in paths() never match"
+  },
+  {
+   "id": "MC16",
+   "source_id": "C2M16",
+   "cls": "ls-tree size off by one",
+   "find": "                self.sizes[name] = int(parts[3])",
+   "replace": "                self.sizes[name] = int(parts[3]) - 1",
+   "equivalent": null
+  },
+  {
+   "id": "MC17",
+   "source_id": "C2M17",
+   "cls": "ls-tree not recursive (no -r)",
+   "find": "        r = subprocess.run([\"git\", \"-C\", repo, \"ls-tree\", \"-r\", \"-l\", \"-z\", self.rev], capture_output=True)",
+   "replace": "        r = subprocess.run([\"git\", \"-C\", repo, \"ls-tree\", \"-l\", \"-z\", self.rev], capture_output=True)",
+   "equivalent": null
+  },
+  {
+   "id": "MC18",
+   "source_id": "C2M18",
+   "cls": "ls-tree sizes column not requested (no -l)",
+   "find": "        r = subprocess.run([\"git\", \"-C\", repo, \"ls-tree\", \"-r\", \"-l\", \"-z\", self.rev], capture_output=True)",
+   "replace": "        r = subprocess.run([\"git\", \"-C\", repo, \"ls-tree\", \"-r\", \"-z\", self.rev], capture_output=True)",
+   "equivalent": null
+  },
+  {
+   "id": "MC19",
+   "source_id": "C2M19",
+   "cls": "rev blob type filter dropped (trees parsed as sizes)",
+   "find": "            elif parts[1] == b\"blob\":",
+   "replace": "            elif True:",
+   "equivalent": "ls-tree -r emits only blobs and symlinks, and symlinks are taken by the 120000 branch first"
+  },
+  {
+   "id": "MC20",
+   "source_id": "C2M20",
+   "cls": "rev size defaults missing to 0 (missing read as empty)",
+   "find": "    def size(self, path: str) -> int | None:\n        return self.sizes.get(path)",
+   "replace": "    def size(self, path: str) -> int | None:\n        return self.sizes.get(path, 0)",
+   "equivalent": null
+  },
+  {
+   "id": "MC21",
+   "source_id": "C2M21",
+   "cls": "--all truncated to first round",
+   "find": "        rounds = sorted(dispatches)",
+   "replace": "        rounds = sorted(dispatches)[:1]",
+   "equivalent": null
+  },
+  {
+   "id": "MC22",
+   "source_id": "C2M22",
+   "cls": "named round without dispatch is not a setup error",
+   "find": "            raise SetupError(f\"round {n}: no <wave>-dispatch.json in .ufo/waves/round-{n}/\")",
+   "replace": "            continue",
+   "equivalent": null
+  },
+  {
+   "id": "MC23",
+   "source_id": "C2M23",
+   "cls": "setup error exits 0",
+   "find": "        out(f\"SEAT_REPORTS: SETUP_ERROR {e}\")\n        return 2",
+   "replace": "        out(f\"SEAT_REPORTS: SETUP_ERROR {e}\")\n        return 0",
+   "equivalent": null
+  },
+  {
+   "id": "MC24",
+   "source_id": "C2M24",
+   "cls": "setup error exits 1",
+   "find": "        out(f\"SEAT_REPORTS: SETUP_ERROR {e}\")\n        return 2",
+   "replace": "        out(f\"SEAT_REPORTS: SETUP_ERROR {e}\")\n        return 1",
+   "equivalent": null
+  },
+  {
+   "id": "MC25",
+   "source_id": "C2M25",
+   "cls": "exit code counts SR01 only",
+   "find": "    bad = c[\"missing\"] + c[\"empty\"] + c[\"unsafe\"] + c[\"untrailed\"]",
+   "replace": "    bad = c[\"missing\"]",
+   "equivalent": null
+  },
+  {
+   "id": "MC26",
+   "source_id": "C2M26",
+   "cls": "exit code ignores SR03",
+   "find": "    bad = c[\"missing\"] + c[\"empty\"] + c[\"unsafe\"] + c[\"untrailed\"]",
+   "replace": "    bad = c[\"missing\"] + c[\"empty\"] + c[\"untrailed\"]",
+   "equivalent": null
+  },
+  {
+   "id": "MC27",
+   "source_id": "C2M27",
+   "cls": "exit code ignores SR04",
+   "find": "    bad = c[\"missing\"] + c[\"empty\"] + c[\"unsafe\"] + c[\"untrailed\"]",
+   "replace": "    bad = c[\"missing\"] + c[\"empty\"] + c[\"unsafe\"]",
+   "equivalent": null
+  },
+  {
+   "id": "MC28",
+   "source_id": "C2M28",
+   "cls": "exit code inverted",
+   "find": "    return 1 if bad else 0",
+   "replace": "    return 0 if bad else 1",
+   "equivalent": null
+  },
+  {
+   "id": "MC29",
+   "source_id": "C2M29",
+   "cls": "summary verdict always OK",
+   "find": "    verdict = \"MISSING\" if bad else \"OK\"",
+   "replace": "    verdict = \"OK\"",
+   "equivalent": null
+  },
+  {
+   "id": "MC30",
+   "source_id": "C2M30",
+   "cls": "summary rounds count dropped",
+   "find": "    c = {\"rounds\": len(rounds), \"waves\": 0,",
+   "replace": "    c = {\"rounds\": 0, \"waves\": 0,",
+   "equivalent": null
+  },
+  {
+   "id": "MC31",
+   "source_id": "C2M31",
+   "cls": "summary waves count dropped",
+   "find": "            c[\"waves\"] += 1",
+   "replace": "            pass",
+   "equivalent": null
+  },
+  {
+   "id": "MC32",
+   "source_id": "C2M32",
+   "cls": "summary trailered includes untrailed",
+   "find": "                if not found:\n                    c[\"untrailed\"] += 1\n                    lines.append(f\"SR04 untrailed {where} {name}\")\n                    continue\n                c[\"trailered\"] += 1",
+   "replace": "                c[\"trailered\"] += 1\n                if not found:\n                    c[\"untrailed\"] += 1\n                    lines.append(f\"SR04 untrailed {where} {name}\")\n                    continue",
+   "equivalent": null
+  },
+  {
+   "id": "MC33",
+   "source_id": "C2M33",
+   "cls": "summary present double-counted with missing",
+   "find": "                    c[\"missing\"] += 1",
+   "replace": "                    c[\"missing\"] += 1\n                    c[\"present\"] += 1",
+   "equivalent": null
+  },
+  {
+   "id": "MC34",
+   "source_id": "C2M34",
+   "cls": "summary present includes empty files",
+   "find": "                elif size == 0:\n                    c[\"empty\"] += 1",
+   "replace": "                elif size == 0:\n                    c[\"empty\"] += 1\n                    c[\"present\"] += 1",
+   "equivalent": null
+  },
+  {
+   "id": "MC35",
+   "source_id": "C2M35",
+   "cls": "summary untrailed field dropped from the summary line",
+   "find": "unsafe={c['unsafe']} untrailed={c['untrailed']} \"",
+   "replace": "unsafe={c['unsafe']} \"",
+   "equivalent": null
+  },
+  {
+   "id": "MC36",
+   "source_id": "C2M36",
+   "cls": "missing and empty confused",
+   "find": "                if size is None:",
+   "replace": "                if size is None or size == 0:",
+   "equivalent": null
+  },
+  {
+   "id": "MC37",
+   "source_id": "C2M37",
+   "cls": "untrailed not counted (SR04 printed, summary 0)",
+   "find": "                    c[\"untrailed\"] += 1",
+   "replace": "                    pass",
+   "equivalent": null
+  },
+  {
+   "id": "MC38",
+   "source_id": "C2M38",
+   "cls": "trailer regex not line-anchored",
+   "find": "TRAILER = re.compile(r\"^Report: write your scoped findings to (\\S+)\\s*$\", re.M)",
+   "replace": "TRAILER = re.compile(r\"Report: write your scoped findings to (\\S+)\\s*$\", re.M)",
+   "equivalent": null
+  },
+  {
+   "id": "MC39",
+   "source_id": "C2M39",
+   "cls": "trailer regex end-of-line anchor dropped",
+   "find": "TRAILER = re.compile(r\"^Report: write your scoped findings to (\\S+)\\s*$\", re.M)",
+   "replace": "TRAILER = re.compile(r\"^Report: write your scoped findings to (\\S+)\\s*\", re.M)",
+   "equivalent": null
+  },
+  {
+   "id": "MC40",
+   "source_id": "C2M40",
+   "cls": "dispatch regex wave segment accepts slashes",
+   "find": "DISPATCH = re.compile(r\"^\\.ufo/waves/round-(\\d+)/([A-Za-z0-9_-]+)-dispatch\\.json$\")",
+   "replace": "DISPATCH = re.compile(r\"^\\.ufo/waves/round-(\\d+)/(.+)-dispatch\\.json$\")",
+   "equivalent": null
+  },
+  {
+   "id": "MC41",
+   "source_id": "C2M41",
+   "cls": "flat dispatch (no taskCall) accepted",
+   "find": "                tasks = d[\"taskCall\"][\"tasks\"]",
+   "replace": "                tasks = d.get(\"taskCall\", d).get(\"tasks\", [])",
+   "equivalent": null
+  },
+  {
+   "id": "MC42",
+   "source_id": "C2M42",
+   "cls": "non-list tasks coerced instead of setup error",
+   "find": "                if not isinstance(tasks, list):\n                    raise TypeError",
+   "replace": "                if not isinstance(tasks, list):\n                    tasks = list(tasks)",
+   "equivalent": null
+  },
+  {
+   "id": "MC43",
+   "source_id": "C2M43",
+   "cls": "--selftest short-circuits to success",
+   "find": "    if a.selftest:\n        return selftest()",
+   "replace": "    if a.selftest:\n        return 0",
+   "equivalent": null
+  },
+  {
+   "id": "MC44",
+   "source_id": "C2M44",
+   "cls": "no-mode setup error exits 0",
+   "find": "        print(\"SEAT_REPORTS: SETUP_ERROR name --round N or --all\")\n        return 2",
+   "replace": "        print(\"SEAT_REPORTS: SETUP_ERROR name --round N or --all\")\n        return 0",
+   "equivalent": null
+  },
+  {
+   "id": "MC45",
+   "source_id": "C2M45",
+   "cls": "--round/--all exclusivity exits 0",
+   "find": "        print(\"SEAT_REPORTS: SETUP_ERROR --round and --all are exclusive\")\n        return 2",
+   "replace": "        print(\"SEAT_REPORTS: SETUP_ERROR --round and --all are exclusive\")\n        return 0",
+   "equivalent": null
+  },
+  {
+   "id": "MC46",
+   "source_id": "C2M46",
+   "cls": "--all with no dispatch returns success instead of a setup error",
+   "find": "        if not dispatches:\n            raise SetupError(\"--all: no <wave>-dispatch.json under .ufo/waves/\")",
+   "replace": "        if not dispatches:\n            pass",
+   "equivalent": null
+  },
+  {
+   "id": "MC47",
+   "source_id": "C2M47",
+   "cls": "selftest rev cases run in worktree mode",
+   "find": "            rc = run(d, \"HEAD\" if git else None, not git, rounds, out=got.append)",
+   "replace": "            rc = run(d, None, True, rounds, out=got.append)",
+   "equivalent": null
+  }
+ ]
+}

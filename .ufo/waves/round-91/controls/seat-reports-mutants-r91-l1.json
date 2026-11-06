@@ -1,0 +1,113 @@
+{
+ "note": "Round-91 C2 mutants of quality/check-seat-reports.py (L1 K01-K18); each find occurs exactly once in the candidate.",
+ "mutants": [
+  {
+   "id": "K01",
+   "what": "first rendered trailer instead of last",
+   "find": "                rp = found[-1]",
+   "replace": "                rp = found[0]"
+  },
+  {
+   "id": "K02",
+   "what": "plain fallback dropped",
+   "find": "                found = TRAILER.findall(body) or PLAIN.findall(body)",
+   "replace": "                found = TRAILER.findall(body)"
+  },
+  {
+   "id": "K03",
+   "what": "plain preferred over rendered",
+   "find": "                found = TRAILER.findall(body) or PLAIN.findall(body)",
+   "replace": "                found = PLAIN.findall(body) or TRAILER.findall(body)"
+  },
+  {
+   "id": "K04",
+   "what": "empty file counted present",
+   "find": "                elif size == 0:",
+   "replace": "                elif size < 0:"
+  },
+  {
+   "id": "K05",
+   "what": "unsafe check dropped",
+   "find": "                if unsafe(rp):",
+   "replace": "                if False:"
+  },
+  {
+   "id": "K06",
+   "what": "'..' not unsafe",
+   "find": "    return path.startswith(\"/\") or \"..\" in path.split(\"/\")",
+   "replace": "    return path.startswith(\"/\")"
+  },
+  {
+   "id": "K07",
+   "what": "symlink counted in worktree",
+   "find": "        if os.path.islink(p) or not os.path.isfile(p):",
+   "replace": "        if not os.path.isfile(p):"
+  },
+  {
+   "id": "K08",
+   "what": "symlink blob counted in rev mode",
+   "find": "            if parts[1] != b\"blob\" or parts[0] == b\"120000\":",
+   "replace": "            if parts[1] != b\"blob\":"
+  },
+  {
+   "id": "K09",
+   "what": "missing round not a setup error",
+   "find": "        if n not in dispatches:\n            raise SetupError",
+   "replace": "        if n not in dispatches and False:\n            raise SetupError"
+  },
+  {
+   "id": "K10",
+   "what": "bad dispatch skipped instead of setup error",
+   "find": "                raise SetupError(f\"{p}: not a dispatch (taskCall.tasks)\") from None",
+   "replace": "                continue"
+  },
+  {
+   "id": "K11",
+   "what": "exit 0 on findings",
+   "find": "    return 1 if bad else 0\n\n\ndef selftest",
+   "replace": "    return 0\n\n\ndef selftest"
+  },
+  {
+   "id": "K12",
+   "what": "empty not counted as bad",
+   "find": "    bad = c[\"missing\"] + c[\"empty\"] + c[\"unsafe\"]",
+   "replace": "    bad = c[\"missing\"] + c[\"unsafe\"]"
+  },
+  {
+   "id": "K13",
+   "what": "unsafe not counted as bad",
+   "find": "    bad = c[\"missing\"] + c[\"empty\"] + c[\"unsafe\"]",
+   "replace": "    bad = c[\"missing\"] + c[\"empty\"]"
+  },
+  {
+   "id": "K14",
+   "what": "round filter ignored (all rounds)",
+   "find": "    if rounds is None:\n        rounds = sorted(dispatches)",
+   "replace": "    if True:\n        rounds = sorted(dispatches)"
+  },
+  {
+   "id": "K15",
+   "what": "only first dispatch of a round",
+   "find": "        for wave, p in sorted(dispatches[n]):",
+   "replace": "        for wave, p in sorted(dispatches[n])[:1]:"
+  },
+  {
+   "id": "K16",
+   "what": "setup error exits 1",
+   "find": "        out(f\"SEAT_REPORTS: SETUP_ERROR {e}\")\n        return 2",
+   "replace": "        out(f\"SEAT_REPORTS: SETUP_ERROR {e}\")\n        return 1"
+  },
+  {
+   "id": "K17",
+   "what": "untrailed counted missing",
+   "find": "                    lines.append(f\"SR04 untrailed {where} {name}\")\n                    continue",
+   "replace": "                    c[\"missing\"] += 1\n                    lines.append(f\"SR04 untrailed {where} {name}\")\n                    continue"
+  },
+  {
+   "id": "K18",
+   "what": "dispatch path regex too narrow (w-waves only)",
+   "find": "DISPATCH = re.compile(r\"^\\.ufo/waves/round-(\\d+)/([A-Za-z0-9_-]+)-dispatch\\.json$\")",
+   "replace": "DISPATCH = re.compile(r\"^\\.ufo/waves/round-(\\d+)/(w[0-9]+)-dispatch\\.json$\")"
+  }
+ ]
+}

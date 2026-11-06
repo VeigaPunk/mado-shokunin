@@ -1,0 +1,2704 @@
+{
+ "cases": [
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-01-default-basic",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:4722 g_app_info_get_default_for_type_impl -> :975 desktop_file_dir_unindexed_default_lookup"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=ghost.desktop\n"
+   },
+   "id": "bl-02-default-missing-desktop-file",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:4762 desktop_file_dir_get_app returns NULL for an id with no .desktop file"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=prog\n",
+    "dd1/applications/b.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=a.desktop;b.desktop\n"
+   },
+   "id": "bl-03-default-first-of-two",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:483 expand_strv keeps list order -> :4762 first installed default wins"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/b.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=ghost.desktop;b.desktop\n"
+   },
+   "id": "bl-04-default-second-after-missing-first",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:4762-4778 loop over results skips ids that have no desktop file"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "cd1/mimeapps.list": "[Default Applications]\ntext/plain=cd.desktop\n",
+    "ch/mimeapps.list": "[Default Applications]\ntext/plain=ch.desktop\n",
+    "dd1/applications/cd.desktop": "[Desktop Entry]\nType=Application\nName=CD\nExec=prog\n",
+    "dd1/applications/ch.desktop": "[Desktop Entry]\nType=Application\nName=CH\nExec=prog\n"
+   },
+   "id": "bl-05-config-home-before-config-dirs",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1624 desktop_file_dirs_lock: user config dir precedes system config dirs"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "cd1/mimeapps.list": "[Default Applications]\ntext/plain=one.desktop\n",
+    "cd2/mimeapps.list": "[Default Applications]\ntext/plain=two.desktop\n",
+    "dd1/applications/one.desktop": "[Desktop Entry]\nType=Application\nName=One\nExec=prog\n",
+    "dd1/applications/two.desktop": "[Desktop Entry]\nType=Application\nName=Two\nExec=prog\n"
+   },
+   "id": "bl-06-config-dirs-order",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1",
+     "cd2"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1655-1658 XDG_CONFIG_DIRS entries keep their order"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/home.desktop": "[Desktop Entry]\nType=Application\nName=Home\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=sys.desktop\n",
+    "dd1/applications/sys.desktop": "[Desktop Entry]\nType=Application\nName=Sys\nExec=prog\n",
+    "dh/applications/mimeapps.list": "[Default Applications]\ntext/plain=home.desktop\n"
+   },
+   "id": "bl-07-data-home-before-data-dirs",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1661-1668 user data dir precedes XDG_DATA_DIRS entries"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=one.desktop\n",
+    "dd1/applications/one.desktop": "[Desktop Entry]\nType=Application\nName=One\nExec=prog\n",
+    "dd1/applications/two.desktop": "[Desktop Entry]\nType=Application\nName=Two\nExec=prog\n",
+    "dd2/applications/mimeapps.list": "[Default Applications]\ntext/plain=two.desktop\n"
+   },
+   "id": "bl-08-data-dirs-order",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1",
+     "dd2"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1664-1667 XDG_DATA_DIRS entries keep their order"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/foo.desktop": "[Desktop Entry]\nType=Application\nName=Sys\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=foo.desktop\n[Default Applications]\ntext/plain=foo.desktop\n",
+    "dh/applications/foo.desktop": "[Desktop Entry]\nType=Application\nName=Home\nExec=prog\n"
+   },
+   "id": "bl-09-mask-blocks-lower-dir-association",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:288 desktop_file_dir_app_name_is_masked -> :1312 mime_lookup drops masked ids"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/foo.desktop": "[Desktop Entry]\nType=Application\nName=Sys\nExec=prog\n",
+    "dh/applications/foo.desktop": "[Desktop Entry]\nType=Application\nName=Home\nExec=prog\n",
+    "dh/applications/mimeapps.list": "[Added Associations]\ntext/plain=foo.desktop\n[Default Applications]\ntext/plain=foo.desktop\n"
+   },
+   "id": "bl-10-mask-kept-in-higher-dir-association",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:288 masking only checks higher-precedence dirs"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/bar.desktop": "[Desktop Entry]\nType=Application\nName=Sys\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=bar.desktop\n[Default Applications]\ntext/plain=bar.desktop\n",
+    "dh/applications/foo.desktop": "[Desktop Entry]\nType=Application\nName=Home\nExec=prog\n"
+   },
+   "id": "bl-11-no-mask-for-distinct-ids",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:288 masking compares the desktop id, not the app"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=app.desktop\n[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-12-added-association-registered",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:901 read_mimeapps_list -> :907 [Added Associations] becomes additions"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=app.desktop\n[Removed Associations]\ntext/plain=app.desktop\n[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-13-same-file-add-and-remove",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:855 expand_strv: removals are expanded against additions, so the removal is dropped"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "ch/mimeapps.list": "[Removed Associations]\ntext/plain=app.desktop\n",
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=app.desktop\n[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-14-remove-higher-dir-blocks-lower-add",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1312 removals of an earlier dir fill the shared blocklist"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "ch/mimeapps.list": "[Added Associations]\ntext/plain=app.desktop\n",
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Removed Associations]\ntext/plain=app.desktop\n[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-15-add-higher-dir-survives-lower-remove",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1339 removals are skipped for ids already in hits"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n",
+    "dd1/applications/mimeinfo.cache": "[MIME Cache]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-16-mimeinfocache-mime-cache-group",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1045 mimeinfo.cache is read with MIME_CACHE_GROUP as the added group"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeinfo.cache": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-17-mimeinfocache-defaults-group",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:977 the [Default Applications] group is read from every file"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/defaults.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-18-defaults-list-defaults",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1038 defaults.list is read after mimeapps.list"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/defaults.list": "[Added Associations]\ntext/plain=app.desktop\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-19-defaults-list-added-ignored",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1039 defaults.list is read with tweaks_permitted=FALSE"
+  },
+  {
+   "desktop": "GNOME",
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/gnome-mimeapps.list": "[Added Associations]\ntext/plain=app.desktop\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-20-desktop-specific-added-rejected",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1018 desktop-specific files are read with tweaks_permitted=FALSE"
+  },
+  {
+   "desktop": "GNOME",
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/gnome-mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-21-desktop-specific-defaults-honored",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:977 [Default Applications] is not gated by tweaks_permitted"
+  },
+  {
+   "desktop": "KDE",
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/kde-mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-22-desktop-specific-lowercase-filename",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:356 get_lowercase_current_desktops -> :1017 file name is lowercased"
+  },
+  {
+   "desktop": "KDE",
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/KDE-mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n",
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n"
+   },
+   "id": "bl-23-desktop-specific-uppercase-filename-ignored",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1017 the looked-up file name is always the lowercased desktop name"
+  },
+  {
+   "desktop": "Foo Bar",
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/foo bar-mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-24-desktop-name-invalid-token",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:312 validate_xdg_desktop rejects tokens that are not alnum/-/_"
+  },
+  {
+   "desktop": "A:B",
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/a-mimeapps.list": "[Default Applications]\ntext/plain=a.desktop\n",
+    "dd1/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=prog\n",
+    "dd1/applications/b-mimeapps.list": "[Default Applications]\ntext/plain=b.desktop\n",
+    "dd1/applications/b.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=prog\n"
+   },
+   "id": "bl-25-multiple-desktops-order",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1013 desktop-specific files are read in XDG_CURRENT_DESKTOP order"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\napplication/x-real=app.desktop\n",
+    "dh/mime/aliases": "application/x-alias application/x-real\n"
+   },
+   "id": "bl-26-alias-of-asked-type",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "application/x-alias"
+   ],
+   "why": "gcontenttype-fdo.c:69 _g_unix_content_type_unalias -> gdesktopappinfo.c:4558 get_list_of_mimetypes"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\napplication/x-alias=app.desktop\n",
+    "dh/mime/aliases": "application/x-alias application/x-real\n"
+   },
+   "id": "bl-27-alias-of-mimeapps-key",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "application/x-real"
+   ],
+   "why": "gdesktopappinfo.c:838 desktop_file_dir_unindexed_get_tweaks stores tweaks under the unaliased type"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\napplication/x-real=app.desktop\n",
+    "dd1/mime/aliases": "application/x-text application/x-real\n",
+    "dh/mime/mime.cache": {
+     "b64": "AAEAAgAAAHQAAACAAAAAlAAAAJgAAAEMAAABEAAAARwAAAEgAAABJAAAAShhcHBsaWNhdGlvbi94LXI5MWFsaWFzAABhcHBsaWNhdGlvbi94LXI5MWJhc2UAAABhcHBsaWNhdGlvbi94LXI5MWNoaWxkAAAAAAABAAAALAAAAFwAAAABAAAAXAAAAIwAAAABAAAARAAAAAAAAAABAAAAoAAAAGUAAAABAAAArAAAAHMAAAABAAAAuAAAAGEAAAABAAAAxAAAAGIAAAABAAAA0AAAADEAAAABAAAA3AAAADkAAAABAAAA6AAAAHIAAAABAAAA9AAAAC4AAAABAAABAAAAAAAAAABEAAAAMgAAAAAAAAAAAAAAAAAAARwAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA="
+    }
+   },
+   "id": "bl-28-mimecache-overrides-text-alias",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "application/x-text"
+   ],
+   "why": "xdgmime.c:735 _xdg_mime_unalias_mime_type uses the cache aliases whenever a mime.cache was loaded"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\napplication/x-r91child=app.desktop\n",
+    "dh/mime/mime.cache": {
+     "b64": "AAEAAgAAAHQAAACAAAAAlAAAAJgAAAEMAAABEAAAARwAAAEgAAABJAAAAShhcHBsaWNhdGlvbi94LXI5MWFsaWFzAABhcHBsaWNhdGlvbi94LXI5MWJhc2UAAABhcHBsaWNhdGlvbi94LXI5MWNoaWxkAAAAAAABAAAALAAAAFwAAAABAAAAXAAAAIwAAAABAAAARAAAAAAAAAABAAAAoAAAAGUAAAABAAAArAAAAHMAAAABAAAAuAAAAGEAAAABAAAAxAAAAGIAAAABAAAA0AAAADEAAAABAAAA3AAAADkAAAABAAAA6AAAAHIAAAABAAAA9AAAAC4AAAABAAABAAAAAAAAAABEAAAAMgAAAAAAAAAAAAAAAAAAARwAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA="
+    }
+   },
+   "id": "bl-29-mimecache-alias-and-parent",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "application/x-r91alias"
+   ],
+   "why": "xdgmimecache.c:1064 _xdg_mime_cache_list_mime_parents / :1051 cache unalias"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n",
+    "dd1/mime/subclasses": "text/x-child text/plain\n"
+   },
+   "id": "bl-30-text-subclasses-parent",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "xdgmimeparent.c:110 parent list -> gdesktopappinfo.c:4552 get_list_of_mimetypes BFS over parents"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/x-base=app.desktop\n",
+    "dd1/mime/subclasses": "text/x-mid text/x-base\ntext/x-child text/x-mid\n"
+   },
+   "id": "bl-31-text-subclasses-grandparent",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "gdesktopappinfo.c:4569-4584 the type list grows while iterating -> grandparent reached"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=P1\nExec=prog\n",
+    "dd1/applications/app2.desktop": "[Desktop Entry]\nType=Application\nName=P2\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/x-p1=app.desktop\n[Added Associations]\ntext/x-p1=app.desktop\n[Added Associations]\ntext/x-p2=app2.desktop\n",
+    "dd1/mime/subclasses": "text/x-child text/x-p1\ntext/x-child text/x-p2\n"
+   },
+   "id": "bl-32-two-parents-order",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "xdgmimeparent.c:150 parents keep file order -> gdesktopappinfo.c:4569 type list order"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n[Added Associations]\ntext/plain=app.desktop\n",
+    "dd1/mime/subclasses": "text/x-child text/plain\n"
+   },
+   "id": "bl-33-recommended-excludes-parent-hits",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "gdesktopappinfo.c:4623 recommended_for_type uses include_fallback=FALSE; :4688 all_for_type uses TRUE"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Removed Associations]\ntext/x-child=app.desktop\n[Added Associations]\ntext/plain=app.desktop\n[Default Applications]\ntext/plain=app.desktop\n",
+    "dd1/mime/subclasses": "text/x-child text/plain\n"
+   },
+   "id": "bl-34-cross-type-blocklist-child-remove",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "gdesktopappinfo.c:4599 the blocklist is shared across all types of one lookup"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/x-child=app.desktop\n[Removed Associations]\ntext/plain=app.desktop\n[Default Applications]\ntext/x-child=app.desktop\n",
+    "dd1/mime/subclasses": "text/x-child text/plain\n"
+   },
+   "id": "bl-35-cross-type-blocklist-parent-remove",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "gdesktopappinfo.c:4599 types are walked most-specific first, so the parent removal comes later"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=prog\n",
+    "dd1/applications/b.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=a.desktop\ntext/plain=b.desktop\n"
+   },
+   "id": "bl-36-duplicate-key-last-wins",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:4420 g_key_file_add_key_value_pair uses g_hash_table_replace, so the last value wins"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=a.desktop\n[Default Applications]\ntext/html=a.desktop\n"
+   },
+   "id": "bl-37-duplicate-group-merged",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:4665 g_key_file_add_group reuses an existing group of the same name"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\nthis line has no equals sign\n"
+   },
+   "id": "bl-38-malformed-line-fails-file",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:1618 g_key_file_parse_line rejects the line -> load fails -> gdesktopappinfo.c:906 the whole file is skipped"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\ntext/x-bad=val\\qal.desktop\n"
+   },
+   "id": "bl-39-invalid-escape-skips-type",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain",
+    "text/x-bad"
+   ],
+   "why": "gkeyfile.c:4693 parse_value_as_string fails on \\q -> g_key_file_get_string_list returns NULL -> gdesktopappinfo.c:939 skips that type"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=a.desktop\\;b.desktop\n"
+   },
+   "id": "bl-40-escaped-semicolon-one-id",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:4740 an escaped ';' stays inside one list item -> the id 'a.desktop;b.desktop' does not exist"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=prog\n",
+    "dd1/applications/b.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=a.desktop;b.desktop\n"
+   },
+   "id": "bl-41-semicolon-two-ids",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:4740 an unescaped ';' splits the value into two desktop ids"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop \n"
+   },
+   "id": "bl-42-trailing-space-in-value",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:1755 only leading whitespace is chugged from a value; the trailing space stays in the id"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=\n"
+   },
+   "id": "bl-43-empty-value",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:2401 an empty value yields an empty id list"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[default applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-44-group-name-case-sensitive",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:4531 group lookup is case sensitive"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "# a comment\n\n[Default Applications]\n# another comment\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-45-comments-blank-lines",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:1614 comment and blank lines are skipped"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain[1]=app.desktop\n"
+   },
+   "id": "bl-46-key-with-brackets",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain[1]"
+   ],
+   "why": "gkeyfile.c:1806 key_get_locale treats a [..] suffix as a locale qualifier -> :1586 locale_is_interesting drops unknown locales, so the key vanishes"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain]x=app.desktop\n"
+   },
+   "id": "bl-47-invalid-key-name-fails-file",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gkeyfile.c:4584 a ']' in the key name makes the key invalid -> the whole file fails to load"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Link\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-48-type-not-application",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1904 only Type=Application desktop entries are loaded"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=nosuchprogram\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-49-exec-program-missing",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1963 the Exec program must be found in PATH or the entry is dropped"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nTryExec=nosuchprogram\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-50-tryexec-program-missing",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1936 TryExec must resolve in PATH"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nTryExec=\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-51-tryexec-empty",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1935 an empty TryExec is skipped"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-52-exec-empty",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1960 an empty Exec is skipped, the entry still loads"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog --flag %f\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-53-exec-field-codes",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1959 g_shell_parse_argv splits the Exec line, argv[0] is looked up"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog \"unterminated\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-54-exec-unbalanced-quote",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1960 g_shell_parse_argv fails on an unbalanced quote -> the entry is dropped"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Action run]\nName=Run\nExec=prog\n[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-55-not-desktop-entry-first",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1902 the start group must be [Desktop Entry]"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nHidden=true\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n[Added Associations]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-56-hidden-default-not-registered",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:2186 g_desktop_app_info_new drops hidden apps from lists, but :4762 does not check Hidden for defaults"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nNoDisplay=true\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n[Added Associations]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-57-nodisplay-still-registered",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:2019 NoDisplay only affects should_show, never the mime lookup"
+  },
+  {
+   "desktop": "GNOME",
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nOnlyShowIn=SomeOtherDesktop\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n[Added Associations]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-58-onlyshowin-other-desktop",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:2472 OnlyShowIn/NotShowIn are only consulted by should_show"
+  },
+  {
+   "desktop": "GNOME",
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nNotShowIn=GNOME\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n[Added Associations]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-59-notshowin-current-desktop",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:2472 NotShowIn does not remove an app from the mime lists"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/kde/foo.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=kde-foo.desktop\n"
+   },
+   "id": "bl-60-subdir-desktop-id",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:769 get_apps_from_dir prefixes subdirectory names with 'dir-'"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/kde/foo.desktop": "[Desktop Entry]\nType=Application\nName=Sys\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=kde-foo.desktop\n[Default Applications]\ntext/plain=kde-foo.desktop\n",
+    "dh/applications/kde/foo.desktop": "[Desktop Entry]\nType=Application\nName=Home\nExec=prog\n"
+   },
+   "id": "bl-61-subdir-id-masking",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:288 masking uses the prefixed desktop id"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\nx-scheme-handler/http=app.desktop\n"
+   },
+   "id": "bl-62-x-scheme-handler-http",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "x-scheme-handler/http"
+   ],
+   "why": "gdesktopappinfo.c:4722 a x-scheme-handler/* type is resolved like any other type"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\nx-scheme-handler/http=app.desktop\n"
+   },
+   "id": "bl-63-x-scheme-handler-uppercase",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "x-scheme-handler/HTTP"
+   ],
+   "why": "gdesktopappinfo.c:4558 the type string is used verbatim; only g_app_info_get_default_for_uri_scheme lowercases it"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-64-type-key-case-sensitive",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "TEXT/PLAIN"
+   ],
+   "why": "gdesktopappinfo.c:4591 tweaks are looked up by the exact type string"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-65-no-default-no-lists",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:4745 additions also feed the default lookup; gio-tool-mime.c:112 prints all three lists"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": ""
+   },
+   "id": "bl-66-empty-mimeapps-file",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:906 an empty mimeapps.list contributes no tweaks"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n"
+   },
+   "id": "bl-67-missing-mimeapps-file",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:906 a missing mimeapps.list is not an error"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\ntext/x-other=other.desktop\n",
+    "dd1/applications/other.desktop": "[Desktop Entry]\nType=Application\nName=Other\nExec=prog\n"
+   },
+   "id": "bl-68-two-types-one-case",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain",
+    "text/x-other"
+   ],
+   "why": "gio-tool-mime.c:62 the read form is called once per requested type"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "ch/mimeapps.list": "[Added Associations]\ntext/plain=cfg.desktop\n",
+    "dd1/applications/cfg.desktop": "[Desktop Entry]\nType=Application\nName=Cfg\nExec=prog\n",
+    "dd1/applications/dat.desktop": "[Desktop Entry]\nType=Application\nName=Dat\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=dat.desktop\n[Default Applications]\ntext/plain=cfg.desktop\n"
+   },
+   "id": "bl-69-config-additions-before-data-additions",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:4598 the type loop is outer and the dir loop inner, so config dirs contribute first"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=par.desktop\n[Added Associations]\ntext/x-child=own.desktop\n",
+    "dd1/applications/own.desktop": "[Desktop Entry]\nType=Application\nName=Own\nExec=prog\n",
+    "dd1/applications/par.desktop": "[Desktop Entry]\nType=Application\nName=Par\nExec=prog\n",
+    "dd1/mime/subclasses": "text/x-child text/plain\n"
+   },
+   "id": "bl-70-child-addition-beats-parent-default",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "gdesktopappinfo.c:4739 the most specific type is tried first, and its additions precede the parent's defaults"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-71-desktop-outside-applications-dir",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1395 desktop_file_dir_new uses <datadir>/applications as the search path"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-72-mimeapps-outside-applications-dir",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1395 the mimeapps.list is looked up inside <datadir>/applications"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\napplication/x-real=app.desktop\n",
+    "dh/mime/aliases": "application/x-a application/x-real"
+   },
+   "id": "bl-73-alias-last-line-no-newline",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "application/x-a"
+   ],
+   "why": "xdgmimealias.c:104 the reader strips the last character, so a missing final newline eats 'l' of the target"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n",
+    "dd1/mime/subclasses": "text/x-child text/plain"
+   },
+   "id": "bl-74-subclasses-last-line-no-newline",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "xdgmimeparent.c:110 the reader strips the last character, so the parent becomes 'text/plai'"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\napplication/x-real=app.desktop\n",
+    "dd1/mime/mime.cache": {
+     "b64": "AAEAAgAAAHQAAACAAAAAlAAAAJgAAAEMAAABEAAAARwAAAEgAAABJAAAAShhcHBsaWNhdGlvbi94LXI5MWFsaWFzAABhcHBsaWNhdGlvbi94LXI5MWJhc2UAAABhcHBsaWNhdGlvbi94LXI5MWNoaWxkAAAAAAABAAAALAAAAFwAAAABAAAAXAAAAIwAAAABAAAARAAAAAAAAAABAAAAoAAAAGUAAAABAAAArAAAAHMAAAABAAAAuAAAAGEAAAABAAAAxAAAAGIAAAABAAAA0AAAADEAAAABAAAA3AAAADkAAAABAAAA6AAAAHIAAAABAAAA9AAAAC4AAAABAAABAAAAAAAAAABEAAAAMgAAAAAAAAAAAAAAAAAAARwAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA="
+    },
+    "dh/mime/aliases": "application/x-text application/x-real\n"
+   },
+   "id": "bl-75-mimecache-in-data-dir-overrides-text-alias",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "application/x-text"
+   ],
+   "why": "xdgmime.c:129 one mime.cache anywhere switches alias resolution to the cache for every mime dir"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/gnome-mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-76-no-current-desktop-ignores-desktop-file",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:328 with XDG_CURRENT_DESKTOP unset there is no current desktop, so no desktop-specific file is read"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/defaults.list": "[Default Applications]\ntext/plain=\n"
+   },
+   "id": "bl-77-empty-defaults-list-value",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1039 an empty id list in defaults.list yields no default"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=prog\n",
+    "dd1/applications/b.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=prog\n",
+    "dd1/applications/defaults.list": "[Default Applications]\ntext/plain=b.desktop\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=a.desktop\n"
+   },
+   "id": "bl-78-mimeapps-before-defaults-list",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1023 mimeapps.list is read before defaults.list, so its default comes first"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nMimeType=text/plain\n"
+   },
+   "id": "bl-79-mimetype-key-only",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:4590 desktop ids come only from the mime_tweaks (associations), never from MimeType="
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nMimeType=text/plain\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-80-mimetype-plus-association",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:2031 the MimeType= key is parsed but only the associations reach the mime_tweaks"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=missing.desktop\n"
+   },
+   "id": "bl-81-default-id-not-installed",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:4762 the default id must resolve to an installed desktop file"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nPath=bin\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-82-path-key-workdir",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:1930 the Path= key becomes the working dir of g_find_program_for_path"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nPath=nosuchdir\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-83-path-key-missing-dir",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gutils.c:300 g_find_program_for_path: with absolute PATH entries the working dir is never applied, so Path= is inert"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "ch/mimeapps.list": "[Added Associations]\ntext/plain=app.desktop\n",
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-84-defaults-collected-before-additions",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:4741 defaults of a type are collected from every dir before its additions"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Removed Associations]\ntext/x-child=app.desktop\n[Default Applications]\ntext/plain=app.desktop\n",
+    "dd1/mime/subclasses": "text/x-child text/plain\n"
+   },
+   "id": "bl-85-default-path-blocklist",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "gdesktopappinfo.c:4750 the default lookup keeps one blocklist across all types of the BFS"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Removed Associations]\ntext/x-child=app.desktop\n[Added Associations]\ntext/plain=app.desktop\n",
+    "dd1/mime/subclasses": "text/x-child text/plain\n"
+   },
+   "id": "bl-86-default-ignores-blocklist",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/x-child"
+   ],
+   "why": "gdesktopappinfo.c:4747 the default lookup keeps one blocklist across the whole type BFS, so the child's removal blocks the parent's addition"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=Sys\nExec=prog\n",
+    "dd1/applications/mimeapps.list": "[Added Associations]\ntext/plain=app.desktop\n[Default Applications]\ntext/plain=app.desktop\n",
+    "dh/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=Home\nExec=prog\n"
+   },
+   "id": "bl-87-desktop-in-two-data-dirs-id-collision",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gdesktopappinfo.c:288 the id in the higher-precedence data dir masks the one below"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=/bin/sh\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-88-exec-absolute-path",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gutils.c:332 an absolute Exec path is checked directly instead of searching PATH"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=sub/prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n",
+    "sub/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    }
+   },
+   "id": "bl-89-exec-relative-subdir-cwd",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gutils.c:339 a program containing a slash is tested as a file relative to the cwd, without a PATH fallback"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=sub/prog\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-90-exec-relative-subdir-missing",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gutils.c:352 a missing relative program falls through to the PATH search and the entry is dropped"
+  },
+  {
+   "desktop": null,
+   "files": {
+    "bin/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "dd1/applications/app.desktop": "[Desktop Entry]\nType=Application\nName=App\nExec=prog\nTryExec=/bin/sh\n",
+    "dd1/applications/mimeapps.list": "[Default Applications]\ntext/plain=app.desktop\n"
+   },
+   "id": "bl-91-tryexec-absolute-path",
+   "path": [
+    "bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "cd1"
+    ],
+    "config_home": "ch",
+    "data_dirs": [
+     "dd1"
+    ],
+    "data_home": "dh"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "why": "gutils.c:332 an absolute TryExec is checked directly instead of being searched in PATH"
+  }
+ ],
+ "note": "Blind cases written by seat R91MScoutBlind; 'expect' deliberately absent.",
+ "schema": "mime-cases-r91-v1"
+}

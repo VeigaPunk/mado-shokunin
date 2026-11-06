@@ -1,0 +1,227 @@
+{
+ "equivalent_not_counted": [
+  {
+   "argument": "duplicate ids in one tweak list are harmless: mime_lookup skips ids already in hits/blocklist and default_lookup skips ids already in results, and the first list is stored without dedup in GLib too (expand_strv keeps to_add as-is when the target list is NULL), so the dedup only removes ids the consumers skip; gdesktopappinfo.c:1330-1348, :1366-1371, :862-866.",
+   "id": "X08"
+  }
+ ],
+ "mutants": [
+  {
+   "find": "        if t and all(c.isascii() and (c.isalnum() or c in \"-_\") for c in t):",
+   "id": "X01",
+   "replace": "        if t and all(c.isascii() and (c.isalnum() or c in \"-_.\") for c in t):",
+   "what": "desktop token validation also accepts '.'"
+  },
+  {
+   "find": "        self.dirs.append(DesktopDir(os.path.join(data_home, \"applications\"), False, self.desktops, self.mime))\n        self.dirs += [DesktopDir(os.path.join(d, \"applications\"), False, self.desktops, self.mime) for d in data_dirs]",
+   "id": "X02",
+   "replace": "        self.dirs += [DesktopDir(os.path.join(d, \"applications\"), False, self.desktops, self.mime) for d in data_dirs]\n        self.dirs.append(DesktopDir(os.path.join(data_home, \"applications\"), False, self.desktops, self.mime))",
+   "what": "user data dir ranked below the system data dirs"
+  },
+  {
+   "find": "        for d in desktops:\n            self._read(os.path.join(path, f\"{d}-mimeapps.list\"), ADDED, False, mime)\n        self._read(os.path.join(path, \"mimeapps.list\"), ADDED, True, mime)",
+   "id": "X03",
+   "replace": "        self._read(os.path.join(path, \"mimeapps.list\"), ADDED, True, mime)\n        for d in desktops:\n            self._read(os.path.join(path, f\"{d}-mimeapps.list\"), ADDED, False, mime)",
+   "what": "mimeapps.list read before the desktop-specific lists"
+  },
+  {
+   "find": "        for d in desktops:",
+   "id": "X04",
+   "replace": "        for d in reversed(desktops):",
+   "what": "desktop-specific lists read in reverse desktop order"
+  },
+  {
+   "find": "        if permitted:\n            for k, ids in lists(added_group):\n                t = self._tw(k, mime)\n                t.additions = _expand(t.additions, ids, t.removals)\n            for k, ids in lists(REMOVED):\n                t = self._tw(k, mime)\n                t.removals = _expand(t.removals, ids, t.additions)",
+   "id": "X05",
+   "replace": "        if permitted:\n            for k, ids in lists(added_group):\n                t = self._tw(k, mime)\n                t.additions = _expand(t.additions, ids, t.removals)\n        for k, ids in lists(REMOVED):\n            t = self._tw(k, mime)\n            t.removals = _expand(t.removals, ids, t.additions)",
+   "what": "Removed Associations ungated in non-desktop-specific files"
+  },
+  {
+   "find": "            self._read(os.path.join(path, \"mimeinfo.cache\"), CACHE, True, mime)",
+   "id": "X06",
+   "replace": "            self._read(os.path.join(path, \"mimeinfo.cache\"), ADDED, True, mime)",
+   "what": "mimeinfo.cache read as [Added Associations]"
+  },
+  {
+   "find": "        if block and a in block:\n            continue",
+   "id": "X07",
+   "replace": "        if False and block and a in block:\n            continue",
+   "what": "expand_strv keeps blocklisted ids"
+  },
+  {
+   "find": "        if a in out:\n            continue",
+   "id": "X08",
+   "replace": "        if False and a in out:\n            continue",
+   "what": "expand_strv keeps duplicate ids"
+  },
+  {
+   "find": "        arr = [self.unalias(t)]",
+   "id": "X09",
+   "replace": "        arr = [t]",
+   "what": "root type not unaliased in type_list"
+  },
+  {
+   "find": "            if names and app in names:\n                return True",
+   "id": "X10",
+   "replace": "            if names and app in names and self.load(names[app])[0]:\n                return True",
+   "what": "masking demands a loadable higher file"
+  },
+  {
+   "find": "        for i in range(idx):",
+   "id": "X11",
+   "replace": "        for i in range(min(idx, 1)):",
+   "what": "masking only against the user config dir"
+  },
+  {
+   "find": "            for app in results:\n                for k in range(len(self.dirs)):\n                    if self._get_app(k, app)[0]:\n                        return app",
+   "id": "X12",
+   "replace": "            if results:\n                return results[0]",
+   "what": "default taken without checking that the id loads"
+  },
+  {
+   "find": "        block: list[str] = []\n        for t in self.mime.type_list(mime_type, True):",
+   "id": "X13",
+   "replace": "        for t in self.mime.type_list(mime_type, True):\n            block: list[str] = []",
+   "what": "blocklist reset for every ancestor type"
+  },
+  {
+   "find": "        hidden = g.get(\"Hidden\", \"\").rstrip(ASCII_SPACE) in (\"true\", \"1\")",
+   "id": "X14",
+   "replace": "        hidden = \"Hidden\" in g",
+   "what": "any Hidden key hides the file"
+  },
+  {
+   "find": "        if typ != \"Application\":",
+   "id": "X15",
+   "replace": "        if typ is not None and typ != \"Application\":",
+   "what": "desktop file without Type loads"
+  },
+  {
+   "find": "        if te and not find_program(te, self.path_env, workdir):",
+   "id": "X16",
+   "replace": "        if te and not find_program(te, \"/usr/bin:/bin\", workdir):",
+   "what": "TryExec resolved only on the system PATH"
+  },
+  {
+   "find": "        ex = vals[\"Exec\"]\n        if ex:",
+   "id": "X17",
+   "replace": "        ex = vals[\"Exec\"]\n        if not ex:\n            return (False, False)\n        if ex:",
+   "what": "desktop file with no Exec rejected"
+  },
+  {
+   "find": "    return s[j + 1:].strip(\" \\t\") == \"\"",
+   "id": "X18",
+   "replace": "    return True",
+   "what": "any line starting with '[' is a group header"
+  },
+  {
+   "find": "    if name == \"\":\n        return False\n    return not any(c in \"[]\" or ord(c) < 0x20 or ord(c) == 0x7f for c in name)",
+   "id": "X19",
+   "replace": "    return True",
+   "what": "group names not validated"
+  },
+  {
+   "find": "            groups.setdefault(name, {})",
+   "id": "X20",
+   "replace": "            groups[name] = {}",
+   "what": "duplicate group resets earlier keys"
+  },
+  {
+   "find": "        grp[key] = value",
+   "id": "X21",
+   "replace": "        if key not in grp:\n            grp[key] = value",
+   "what": "first duplicate key wins the value"
+  },
+  {
+   "find": "        key = s[:eq].rstrip(ASCII_SPACE)",
+   "id": "X22",
+   "replace": "        key = s[:eq]",
+   "what": "key name keeps trailing whitespace"
+  },
+  {
+   "find": "        value = s[eq + 1:].lstrip(ASCII_SPACE)",
+   "id": "X23",
+   "replace": "        value = s[eq + 1:]",
+   "what": "value keeps leading whitespace"
+  },
+  {
+   "find": "        return parse_keyfile(data.decode(\"utf-8\", \"surrogateescape\"))\n    except KeyFileError:",
+   "id": "X24",
+   "replace": "        return parse_keyfile(data.decode(\"utf-8\"))\n    except (UnicodeDecodeError, KeyFileError):",
+   "what": "invalid UTF-8 decoded lossily instead of skipping the file"
+  },
+  {
+   "find": "            m = {\"s\": \" \", \"n\": \"\\n\", \"t\": \"\\t\", \"r\": \"\\r\", \"\\\\\": \"\\\\\", \";\": \";\"}",
+   "id": "X25",
+   "replace": "            m = {\"s\": \" \", \"n\": \"\\n\", \"t\": \"\\t\", \"r\": \"\\r\", \"\\\\\": \"\\\\\"}",
+   "what": "escaped semicolon rejected in a string list"
+  },
+  {
+   "find": "        nl = data.find(b\"\\n\", i, i + 254)\n        end = nl + 1 if nl >= 0 else min(i + 254, len(data))",
+   "id": "X26",
+   "replace": "        nl = data.find(b\"\\n\", i, i + 255)\n        end = nl + 1 if nl >= 0 else min(i + 255, len(data))",
+   "what": "fgets chunk one byte too wide"
+  },
+  {
+   "find": "    if major != 1 or not (1 <= minor <= 2):",
+   "id": "X27",
+   "replace": "    if major != 1 or minor != 2:",
+   "what": "mime.cache 1.1 rejected"
+  },
+  {
+   "find": "                    if p not in out and len(out) < 127:",
+   "id": "X28",
+   "replace": "                    if p not in out:",
+   "what": "parent list not capped at 127"
+  },
+  {
+   "find": "                for p in [self.unalias(cur)] + self.list_parents(cur):",
+   "id": "X29",
+   "replace": "                for p in [self.unalias(cur)] + list(reversed(self.list_parents(cur))):",
+   "what": "parents taken in reverse order"
+  },
+  {
+   "find": "            i = 0\n            while i < len(arr):\n                cur = arr[i]\n                for p in [self.unalias(cur)] + self.list_parents(cur):\n                    if p not in arr:\n                        arr.append(p)\n                i += 1",
+   "id": "X30",
+   "replace": "            for cur in list(arr):\n                for p in [self.unalias(cur)] + self.list_parents(cur):\n                    if p not in arr:\n                        arr.append(p)",
+   "what": "only direct parents collected (no transitive ancestors)"
+  },
+  {
+   "find": "                \"registered\": self.ids_for_type(mime_type, True),",
+   "id": "X31",
+   "replace": "                \"registered\": self.ids_for_type(mime_type, False),",
+   "what": "registered list computed without ancestors"
+  },
+  {
+   "find": "        if self.caches:\n            for c in self.caches:\n                r = c.alias(t)",
+   "id": "X32",
+   "replace": "        if self.caches:\n            for c in reversed(self.caches):\n                r = c.alias(t)",
+   "what": "the last cache's alias wins"
+  },
+  {
+   "find": "        while b >= a:",
+   "id": "X33",
+   "replace": "        while b > a:",
+   "what": "cache alias bsearch misses a one-entry list"
+  },
+  {
+   "find": "    if len(buf) < 40:  # \"A valid cache must be at least 40 bytes for the header.\" (xdgmimecache.c)",
+   "id": "X34",
+   "replace": "    if len(buf) < 12:",
+   "what": "mime.cache smaller than the 40-byte GLib header accepted"
+  },
+  {
+   "find": "        for j in range(n):\n            if self._str(self._u32(lo + 4 + 8 * j)) == name:\n                po = self._u32(lo + 4 + 8 * j + 4)\n                k = self._u32(po)\n                return [self._str(self._u32(po + 4 + 4 * i)) for i in range(k)]\n        return None",
+   "id": "X35",
+   "replace": "        res = None\n        for j in range(n):\n            if self._str(self._u32(lo + 4 + 8 * j)) == name:\n                po = self._u32(lo + 4 + 8 * j + 4)\n                k = self._u32(po)\n                res = [self._str(self._u32(po + 4 + 4 * i)) for i in range(k)]\n        return res",
+   "what": "cache duplicate parent entry: last entry wins"
+  },
+  {
+   "find": "        grp[key] = value",
+   "id": "X36",
+   "replace": "        grp.pop(key, None)\n        grp[key] = value",
+   "what": "repeated key moves to its last position"
+  }
+ ],
+ "note": "Round-91 C1 mutants authored by seat R91MMutC1 (ids X01-X36), one per modelled rule; each find is an exact source span occurring exactly once in mado-mime.c1.py (sha256 ddbcd6e3cec2d484aa78038f1eee96ed86eb6dd436b65b3046f42315b5f09cbb) and every mutated source compiles.  Verdicts are DRAFT (--draft-tool), not a measurement."
+}

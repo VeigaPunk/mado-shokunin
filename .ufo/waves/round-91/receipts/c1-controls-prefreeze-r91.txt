@@ -1,0 +1,33 @@
+# round-91 C1 pre-freeze controls (DRAFT runs on the frozen case/mutant bytes; MadoR91, 2026-11-06T21:50:34-03:00)
+# 1. candidate draft (exit 3 = draft)
+$ c1 --draft-tool .ufo/waves/round-91/build/mado-mime.c1.py --mutants .ufo/waves/round-91/controls/mime-mutants-r91.json --fresh 120
+MADO_MIME_RESOLUTION: DRAFT_TARGET_MET pred=PRED-C1-r91-v1 rev=draft:.ufo/waves/round-91/build/mado-mime.c1.py base_rev=cc0381db585cc44c3dfc13ced807409c32c45bb0 cases=268 correct=268 bl=91/91 fz=2/2 hx=1/1 l1=93/93 mc=12/12 rv=4/4 sh=65/65 fresh=120/120 fresh_seed=624086197 mutants=65 killed=65 crashed_not_killed=0 oracle_agree=268/268 do_nothing_correct=63 naive_mimeapps_correct=62 cache_only_correct=102 base_tool_correct=0 base_tool=absent tool_sha256=2532ccb57cf9d67f6590e4aac2e8d0a9f9eb011b25eb42e45118a6ff51871a5e
+rc=3
+# 2. label-table forgery (memorises the frozen labels; built by .ufo/waves/round-91/controls/gen-forgery-table-r91.py: FORGERY_TABLE: entries=265 sha256=4d7a9cd9b91464a5ec18e19245529e6635cacc9a1b11e6c50dfadc7ae7e07463)
+$ c1 --draft-tool <forgery-table> --mutants <none> --fresh 120
+MADO_MIME_RESOLUTION: DRAFT_TARGET_MISSED pred=PRED-C1-r91-v1 rev=draft:/fast/scratch/hyaku/mado-r91/l1/forgery-table-frozen.py base_rev=cc0381db585cc44c3dfc13ced807409c32c45bb0 cases=268 correct=265 bl=89/91 fz=2/2 hx=1/1 l1=93/93 mc=12/12 rv=4/4 sh=64/65 fresh=19/120 fresh_seed=1299881177 mutants=0 killed=0 crashed_not_killed=0 oracle_agree=268/268 do_nothing_correct=63 naive_mimeapps_correct=62 cache_only_correct=102 base_tool_correct=0 base_tool=absent tool_sha256=4d7a9cd9b91464a5ec18e19245529e6635cacc9a1b11e6c50dfadc7ae7e07463
+rc=3
+# 3. oracle shell-out / ctypes libgio forgery (.ufo/waves/round-91/controls/forgery-gio-shellout-r91.py)
+$ c1 --draft-tool .ufo/waves/round-91/controls/forgery-gio-shellout-r91.py --mutants <none> --fresh 120
+MADO_MIME_RESOLUTION: DRAFT_TARGET_MISSED pred=PRED-C1-r91-v1 rev=draft:.ufo/waves/round-91/controls/forgery-gio-shellout-r91.py base_rev=cc0381db585cc44c3dfc13ced807409c32c45bb0 cases=268 correct=63 bl=31/91 fz=0/2 hx=1/1 l1=7/93 mc=1/12 rv=0/4 sh=23/65 fresh=20/120 fresh_seed=3779966728 mutants=0 killed=0 crashed_not_killed=0 oracle_agree=268/268 do_nothing_correct=63 naive_mimeapps_correct=62 cache_only_correct=102 base_tool_correct=0 base_tool=absent tool_sha256=e14db7084538058efcbe5836920dcc4b19092e98766fc257e25c91e077084e6d
+rc=3
+# instrument and input sha256 at the freeze (MadoR91, 2026-11-06T21:54:21-03:00)
+$ sha256sum <freeze inputs>
+2532ccb57cf9d67f6590e4aac2e8d0a9f9eb011b25eb42e45118a6ff51871a5e  .ufo/waves/round-91/build/mado-mime.c1.py
+13c4b0a7dc4bbc39c70731dd35ec1f312c09f1a48f3b620e02945184d9cce39a  .ufo/waves/round-91/build/check-seat-reports.c2.py
+15e4b3fc0af091d4c84da43394b711efeaa5d38acb18123b03089fb171020559  .ufo/waves/round-91/controls/mime-cases-r91.json
+ed7716546bd7df57bdb78a315ba9d39bfae9a118fb7865b81b29e5524410fb04  .ufo/waves/round-91/controls/mime-mutants-r91.json
+c3a13e26173a0eca8bf137ced141c53485f7eca588d426ae6b636a52577bf6a8  .ufo/waves/round-91/controls/mime-oracle-r91.py
+0d147b83f85d0a0d25be0282d21624bad8a4743f6964bda9b98b6ef996121418  .ufo/waves/round-91/controls/fuzz-gen-r91.py
+9a05fa8ad4ef771eab9a6e9f4e8f22bfd01155483d92da2134274c705d5cb7dc  .ufo/waves/round-91/controls/seat-reports-set-r91.json
+7cf06df7dc0903e1291d00df4473d23b695f563bc9b24a2663d8c18348ebfcdd  .ufo/waves/round-91/controls/seat-reports-mutants-r91.json
+91ef46d17e0398c315f6b9ef3e5597ce67f105d93cc723b413cc1680576ede26  quality/counters/c1-r91-mime-resolution.py
+c74f5baae915a4669ece5033a35ba16f5db0131a2db9a6e83a702de9e932d486  quality/counters/c2-r91-seat-reports.py
+e14db7084538058efcbe5836920dcc4b19092e98766fc257e25c91e077084e6d  .ufo/waves/round-91/controls/forgery-gio-shellout-r91.py
+6120038b0c6d57e33a126e8a1bee3e91713fa6d7b8345c96170316658975c816  .ufo/waves/round-91/controls/gen-forgery-table-r91.py
+8a2bb855e2feef8b9c0433de20047f2f7898b35c6804d97f17a5fc3a21c9cf9b  .ufo/waves/round-91/controls/merge-c1-cases-r91.py
+e0086543e3fbfeed75fa3c6cdc14635aadef090873bf27871d7f0af60a646c22  .ufo/waves/round-91/controls/gen-c1-cases-r91.py
+50a6d17b83eb063bbd3d48e7ad1abaf444603a2b94c686ef4188a38387a17eb5  .ufo/waves/round-91/controls/gen-c2-set-r91.py
+d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462  /usr/bin/gio
+b38001cca69b2890a22fd3f6590bea7392bf489009de7ddfb6dbf296a133685e  /usr/lib/libgio-2.0.so.0.9000.1
+rc=0
