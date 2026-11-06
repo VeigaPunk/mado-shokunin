@@ -1,0 +1,34 @@
+# round-90 harm watch at 6156d399895ed74faa431ebc688d55d3b47efaa0 (MadoR90a2, 2026-11-06T20:36:43-03:00); tree-dependent commands run in the lane worktree, whose tools/ bytes equal REV
+$ bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+rc=0
+$ bash tools/mado-verify.sh --no-live
+gate      boundary.readonly               PASS    config plane byte-identical before/after (combined sha 55ac57754af9…)
+counts: pass=29 fail=0 unknown=0 skip=8 note=4
+MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)
+rc=0
+$ python3 -I quality/check-index.py --repo . --rev 6156d399895ed74faa431ebc688d55d3b47efaa0
+MADO_INDEX: rev=6156d399895ed74faa431ebc688d55d3b47efaa0 indexed=111/111 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+$ python3 -I quality/check-tool-ledger.py --repo . --rev 6156d399895ed74faa431ebc688d55d3b47efaa0
+LEDGER: population=169 ledger_rows=169 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=6156d399895ed74faa431ebc688d55d3b47efaa0
+rc=0
+$ python3 -I tools/mado-mako.py --selftest --scratch-root /fast/scratch/hyaku/mado-r90/l1a2/harm/m
+MADO_MAKO_SELFTEST: checks=62 failed=0
+rc=0
+$ python3 -I tools/mado-portals.py --selftest
+MADO_PORTALS_SELFTEST: checks=22 failed=0
+rc=0
+$ python3 -I quality/check-receipt-presence.py --repo . --rev 6156d399895ed74faa431ebc688d55d3b47efaa0
+RECEIPT_PRESENCE: mode=rev rev=6156d399895ed74faa431ebc688d55d3b47efaa0 records=6 cited=31 present=31 missing=0 verdict=OK
+rc=0
+$ python3 -I quality/counters/c1-r89-mako-regex.py --repo . --rev 6156d399895ed74faa431ebc688d55d3b47efaa0 --base-rev af998dcc41d48618ffe7afe0efc9354755a9244e --cases .ufo/waves/round-89/controls/mako-cases-r89.json --expect-cases-sha256 5fdca7dbcce6687d81aa31548e935a49fa39cee03117db41358068a0ded15672 --expect-mutants-sha256 5471bee29b4ba5da7fa7e55d8b11003028b0eb4c7937bd8d114062491338e35f --expect-r88-cases-sha256 a0e81b191fb0f80ca352699ede47962c1ac01c1ae8e9e15ccf50b1d7fab4a091 --scratch-root /fast/scratch/hyaku/mado-r90/l1a2/harm/c1
+mutant M36-trailing-backslash-dropped killed
+mutant M37-earlier-invalid-occurrence-ignored killed
+MADO_MAKO_REGEX: TARGET_MET rev=6156d399895ed74faa431ebc688d55d3b47efaa0 base_rev=af998dcc41d48618ffe7afe0efc9354755a9244e cases=141 correct=141 carried=61/61 mutants=37 killed=37 naive_correct=34 globals_include_correct=35 base_tool_correct=78 python_re_correct=127 score=10.0000 score_scope=finite-cases tool_sha256=fe8c8344ed6ce1fb1da7dd0f0118cb1434240dea4760590e6cd6d20b52cef324 cases_sha256=5fdca7dbcce6687d81aa31548e935a49fa39cee03117db41358068a0ded15672
+rc=0
+$ python3 -I quality/counters/c2-r89-survivor-kills.py --repo . --rev 6156d399895ed74faa431ebc688d55d3b47efaa0 --expect-survivors-sha256 9f25df3cac28d9085d2e7d2a89e6002df24f76e6c5264df98f83d4d32c8104f0 --expect-c1side-sha256 c710a3e5a2a0e88692de68c6dec9815f14f5964099ec7ef6fdb8cb20bb743c1a --expect-c2side-sha256 e02e2b4de83410ab16fcf7ad92f5374c5178a3e49c80d6aa2c4994e0d04e612e --scratch-root /fast/scratch/hyaku/mado-r90/l1a2/harm/c2
+survivor RM5C2-root-equality-refused killed killed_by_B_only=false counted=true differs_on=s2-root-is-a-file crashed_on=-
+survivor RM6C2-cycle-detected-on-lexical-target crashed-not-killed killed_by_B_only=false counted=false differs_on=s2-cycle-second-lexical-path crashed_on=s2-cycle-second-lexical-path
+MADO_MAKO_SURVIVORS: TARGET_MET rev=6156d399895ed74faa431ebc688d55d3b47efaa0 cases=95 correct=95 counted=7 killed=7 do_nothing_B_only_killed=0 crash_only=RM6C2-cycle-detected-on-lexical-target tool_sha256=fe8c8344ed6ce1fb1da7dd0f0118cb1434240dea4760590e6cd6d20b52cef324
+rc=0

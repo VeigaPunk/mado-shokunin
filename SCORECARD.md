@@ -5238,3 +5238,7 @@ owned axis at 10, so the lowest-axis duty is a tie. Sourced claim: C1 (S501–S5
   and pre-existing citations on unchanged lines are not checked; `--base` must be the branch tip the helper commits on.
 - Round shape: one v1 wave of 13 seats (attempt 1); the residual `r1` named in the declaration was not dispatched; two
   scout outputs were not retained (lesson M90-4).
+
+### Harm watch (round 90, at the records commit `6156d399895ed74faa431ebc688d55d3b47efaa0`)
+
+- gate selftest 460/460, file plane CLEAN 29, index 111/111, ledger 169/169 uncovered 0, `tools/mado-mako.py` selftest 62/62, `tools/mado-portals.py` selftest 22/22, receipt presence at the records commit OK 31/31, round-89 C1 TARGET_MET 141/141 37/37 and C2 TARGET_MET 7/7 on the D3 tool (`.ufo/waves/round-90/receipts/harm-final-r90.txt`). No axis harmed.

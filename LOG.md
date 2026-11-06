@@ -4379,3 +4379,4 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
 - Host answer (`.ufo/waves/round-90/receipts/host-run-r90.txt`): gtk serves 11 interfaces, hyprland 4 (Screenshot,
   ScreenCast, GlobalShortcuts, InputCapture), none 6 (Background, Wallpaper, Secret, RemoteDesktop, Clipboard, Usb); Secret
   has no backend because `gnome-keyring.portal`'s `UseIn=gnome` never matches `hyprland` and gtk lacks Secret.
+- Harm watch at the records commit `6156d399`: gate selftest 460/460, file plane CLEAN 29, index 111/111, ledger 169/169 uncovered 0, `tools/mado-mako.py` selftest 62/62, `tools/mado-portals.py` selftest 22/22, receipt presence at the records commit OK 31/31, round-89 C1 TARGET_MET 141/141 37/37 and C2 TARGET_MET 7/7 on the D3 tool (`.ufo/waves/round-90/receipts/harm-final-r90.txt`). Final commit gated by the C2 check (`.ufo/waves/round-90/receipts/c2-gate-final-r90.txt`).
