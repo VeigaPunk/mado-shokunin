@@ -14,6 +14,16 @@
 #            The target must be a regular file (a non-regular target is refused), a missing target
 #            is refused, and an include cycle is refused. Included content is read at the position
 #            of the directive, and an included file starts again in the global section.
+#   Containment (lane stance, not a mako rule; mako itself opens any absolute include): an include
+#            is read only when its fully resolved path (every symlink and .. resolved, realpath)
+#            lies inside a declared read root: --home and each --read-root, both absolute, each
+#            root itself resolved with realpath. An include that resolves outside every root is
+#            refused before its contents are opened (the path is resolved only to test
+#            containment), and the resolved path is what is opened. The --config file itself is
+#            named by the caller and is not subject to the roots. Named limits: a concurrent writer
+#            under a root can swap a component between the check and the open (TOCTOU); hardlinks
+#            and bind mounts are not symlinks and are not seen; a root that holds secrets is read
+#            as declared (containment bounds the read set, it does not classify content).
 #   L53-161  Binding options (on-button-*, on-touch, on-notify) and their action grammar.
 #   L162-418 Style options; group-by (L371), max-visible (L381), output (L389), layer (L400),
 #            anchor (L410) are style options.
@@ -57,6 +67,7 @@
 #        [--app-icon S] [--summary S] [--body S] [--category S] [--desktop-entry S]
 #        [--urgency {low,normal,critical}] [--actionable {true,false}] [--expiring {true,false}]
 #        [--mode NAME ...]
+#        [--read-root DIR ...]   (extra trusted roots for include= targets; --home is always one)
 #        python3 -I tools/mado-mako.py --selftest --scratch-root DIR
 # Exit: 0 when resolution ran (refusals allowed); 2 on setup error (bad arguments, missing or unreadable config).
 
@@ -257,6 +268,14 @@ class _State:
         self.applied = []
         self.refusals = []
         self.stack = []
+        self.roots = []
+
+    def within_roots(self, real):
+        for root in self.roots:
+            prefix = root if root.endswith(os.sep) else root + os.sep
+            if real == root or real.startswith(prefix):
+                return True
+        return False
 
     def refuse(self, where, reason):
         self.refusals.append(where + ": " + reason)
@@ -408,14 +427,27 @@ class _State:
             self.refuse(where, "include ~/ needs --home (no implicit HOME fallback)")
             return
         if value.startswith("~/"):
+            value = "~/" + value[2:].lstrip("/")  # config.c joins "$HOME/" + rest: ~//x stays under HOME
             target = os.path.join(self.home, value[2:])
         elif value.startswith("/"):
             target = value
         else:
             self.refuse(where, "include path must be absolute or start with ~/: " + repr(value))
             return
+        if target.endswith("/"):
+            self.refuse(where, "include target is not a regular file: " + target + " (trailing /)")
+            return
         try:
-            info = os.stat(target)
+            real = os.path.realpath(target)
+        except ValueError as exc:
+            self.refuse(where, "include path is not a valid path: " + repr(value) + " (" + str(exc) + ")")
+            return
+        if not self.within_roots(real):
+            self.refuse(where, "include resolves outside the declared read roots: " + target
+                        + " -> " + real + " (declare it with --read-root to read it)")
+            return
+        try:
+            info = os.stat(real)
         except OSError as exc:
             self.refuse(where, "include target missing or unreadable: " + target
                         + " (" + str(exc.strerror) + ")")
@@ -423,19 +455,21 @@ class _State:
         if not stat.S_ISREG(info.st_mode):
             self.refuse(where, "include target is not a regular file: " + target)
             return
-        real = os.path.realpath(target)
         if real in self.stack:
             self.refuse(where, "include cycle: " + target)
             return
         self.applied.append("include:" + target)
         self.stack.append(real)
-        self.load(target)
+        self.load(real)
         self.stack.pop()
 
 
-def resolve(config, home, app_name, urgency, modes, inputs=None, flags=None):
+def resolve(config, home, app_name, urgency, modes, inputs=None, flags=None, read_roots=()):
     """Resolve effective settings for one notification. config must already be resolved once."""
     state = _State(home, app_name, urgency, modes, inputs, flags)
+    roots = [os.path.realpath(home)] if home else []
+    roots.extend(os.path.realpath(root) for root in read_roots)
+    state.roots = roots
     state.stack.append(config)
     state.load(config)
     effective = dict(DEFAULTS)
@@ -470,16 +504,22 @@ def selftest(scratch_root):
     def check(name, ok):
         checks.append((name, bool(ok)))
 
-    def run(name, config, app_name=None, urgency=None, modes=(), extra=None, inputs=None, flags=None):
+    def run(name, config, app_name=None, urgency=None, modes=(), extra=None, inputs=None, flags=None,
+            roots=None):
         base = os.path.join(work, name)
         os.makedirs(base)
         cfg = os.path.join(base, "config")
         _write(cfg, config.replace("@BASE@", base))
         for rel, text in (extra or {}).items():
-            _write(os.path.join(base, rel), text)
+            if isinstance(text, tuple):  # ("symlink", target relative to base)
+                os.makedirs(os.path.dirname(os.path.join(base, rel)), exist_ok=True)
+                os.symlink(os.path.join(base, text[1]), os.path.join(base, rel))
+            else:
+                _write(os.path.join(base, rel), text)
         os.makedirs(os.path.join(base, "home"), exist_ok=True)
+        read_roots = (base,) if roots is None else tuple(os.path.join(base, r) for r in roots)
         return resolve(os.path.realpath(cfg), os.path.join(base, "home"), app_name, urgency,
-                       set(INITIAL_MODES) | set(modes), inputs, flags)
+                       set(INITIAL_MODES) | set(modes), inputs, flags, read_roots)
 
     try:
         r = run("global", "width=500\nmargin = 10,20,5\n# comment\n\n")
@@ -591,6 +631,41 @@ def selftest(scratch_root):
         r = run("global-only-in-criteria", "[app-name=x]\nmax-history=2\n", app_name="x")
         check("max-history refused in criteria (L28)",
               any("global-only" in s for s in r["refusals"]) and r["effective"]["max-history"] == "5")
+        escape = {"home/inc.ini": ("symlink", "outside/secret.ini"), "outside/secret.ini": "width=666\n"}
+        r = run("escape-symlink", "include=~/inc.ini\n", extra=escape, roots=())
+        check("symlinked include escaping --home refused, not read (containment)",
+              any("outside the declared read roots" in s for s in r["refusals"])
+              and r["effective"]["width"] == "300")
+        r = run("escape-declared", "include=~/inc.ini\n", extra=escape, roots=("outside",))
+        check("escaping include read once its root is declared with --read-root",
+              r["effective"]["width"] == "666" and r["refusals"] == [])
+        r = run("escape-dotdot", "include=~/../outside/secret.ini\n",
+                extra={"outside/secret.ini": "width=666\n"}, roots=())
+        check("~/.. include escaping --home refused (containment)",
+              any("outside the declared read roots" in s for s in r["refusals"])
+              and r["effective"]["width"] == "300")
+        r = run("inside-symlink", "include=~/inc.ini\n",
+                extra={"home/inc.ini": ("symlink", "home/real/core.ini"), "home/real/core.ini": "width=444\n"},
+                roots=())
+        check("symlinked include resolving inside --home is read",
+              r["effective"]["width"] == "444" and r["refusals"] == [])
+        r = run("prefix-sibling", "include=@BASE@/home-evil/x.ini\n",
+                extra={"home-evil/x.ini": "width=666\n"}, roots=())
+        check("a sibling sharing the --home prefix is outside the root",
+              any("outside the declared read roots" in s for s in r["refusals"])
+              and r["effective"]["width"] == "300")
+        r = run("nul-include", "include=~/a\x00b\n", roots=())
+        check("an include path with a NUL byte is refused, not a crash",
+              any("not a valid path" in s for s in r["refusals"]))
+        r = run("double-slash", "include=~//inc.ini\n", extra={"home/inc.ini": "width=321\n"}, roots=())
+        check("~//x stays under --home (config.c joins $HOME/ + rest)", r["effective"]["width"] == "321")
+        r = run("trailing-slash", "include=~/inc.ini/\n", extra={"home/inc.ini": "width=321\n"}, roots=())
+        check("an include path with a trailing / is refused", r["effective"]["width"] == "300"
+              and any("trailing" in s for s in r["refusals"]))
+        r = run("symlinked-root", "include=@BASE@/rootlink/x.ini\n",
+                extra={"rootlink": ("symlink", "outside"), "outside/x.ini": "width=432\n"}, roots=("rootlink",))
+        check("a symlinked read root counts as its resolved target", r["effective"]["width"] == "432"
+              and r["refusals"] == [])
     finally:
         shutil.rmtree(work)
 
@@ -612,6 +687,7 @@ def main(argv):
     for field in BOOLEAN_FIELDS:
         parser.add_argument("--" + field, choices=("true", "false"))
     parser.add_argument("--mode", action="append", default=[])
+    parser.add_argument("--read-root", action="append", default=[])
     parser.add_argument("--selftest", action="store_true")
     parser.add_argument("--scratch-root")
     args = parser.parse_args(argv)
@@ -633,12 +709,15 @@ def main(argv):
         return setup_error("--config is not readable")
 
     home = args.home
+    for name, path in [("--home", home)] + [("--read-root", root) for root in args.read_root]:
+        if path is not None and not os.path.isabs(path):
+            return setup_error(name + " must be an absolute path: " + repr(path))
     modes = set(INITIAL_MODES) | set(args.mode)
     inputs = {field: getattr(args, field.replace("-", "_")) for field in STRING_INPUT_FIELDS}
     inputs = {field: value for field, value in inputs.items() if value is not None}
     flags = {field: getattr(args, field) == "true" for field in BOOLEAN_FIELDS
              if getattr(args, field) is not None}
-    result = resolve(config, home, args.app_name, args.urgency, modes, inputs, flags)
+    result = resolve(config, home, args.app_name, args.urgency, modes, inputs, flags, args.read_root)
     print(json.dumps(result, sort_keys=True))
     print("MADO_MAKO: resolved=" + str(len(result["effective"]))
           + " refusals=" + str(len(result["refusals"])), file=sys.stderr)
