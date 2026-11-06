@@ -35,8 +35,15 @@
 #            case-insensitively and also accepts high as critical, so a criteria value is mapped
 #            that way before it is compared; any other value is refused.
 #   L469-471 mode: the section applies only while that mode is enabled.
-#   L447-457 summary and body are exact string fields; summary~ and body~ (POSIX extended regex) are
-#            outside the model, so a section naming them is refused (Python re is not POSIX ERE).
+#   L447-457 summary and body are exact string fields. summary~ and body~ are POSIX extended regex
+#            fields: upstream criteria.c compiles the value with regcomp(REG_EXTENDED | REG_NOSUB) and
+#            matches with regexec (unanchored search). The tool calls the same libc regcomp/regexec
+#            through ctypes, never Python re (Python re is not POSIX ERE). mako never calls
+#            setlocale (no call anywhere in the v1.11.0 tree), so it matches in the C locale every
+#            C program starts in; the tool sets LC_ALL=C before its first regcomp. A value regcomp
+#            rejects is refused (upstream rejects the criteria); summary with summary~ (or body with
+#            body~) in one section is refused (criteria.c "Cannot set both"). A regexec error other
+#            than REG_NOMATCH is a non-match, as in criteria.c match_regex_criteria.
 #   L443-445,461-463 app-icon, category, desktop-entry: plain string fields compared for equality
 #            (upstream criteria.c v1.11.0 match_criteria uses strcmp for each).
 #   L465-467 actionable and expiring are boolean fields; L510-516 a value may be true/false, 0/1, or a
@@ -45,7 +52,9 @@
 #            A criteria field whose notification input was not supplied is refused, never guessed.
 #   L474-495 Second-pass fields (grouped, group-index, hidden, output, anchor) are outside the model
 #            and refused.
-#   L497-508 Criteria values may be quoted with double quotes; backslash escapes; no spaces around '='.
+#   L497-508 Criteria values may be quoted with double quotes; a backslash escapes the next character
+#            inside and outside quotes (criteria.c parse_criteria QUOTE_ESCAPE/ESCAPE states); only a
+#            space separates tokens; no spaces around '='.
 #   L510-516 Bare tokens other than actionable/expiring (grouped, hidden, ...) are outside the model.
 #   L519-522 Defaults form the base of resolution; the global section overrides them; criteria override both.
 #   L540-552 invisible is a criteria-only style option (default 0).
@@ -72,7 +81,10 @@
 # Exit: 0 when resolution ran (refusals allowed); 2 on setup error (bad arguments, missing or unreadable config).
 
 import argparse
+import ctypes
+import ctypes.util
 import json
+import locale
 import os
 import re
 import shutil
@@ -96,9 +108,52 @@ CRITERIA_ONLY_KEYS = ("invisible",)  # L545
 GLOBAL_KEYS = BINDING_KEYS + STYLE_KEYS + GLOBAL_ONLY_KEYS
 CRITERIA_KEYS = BINDING_KEYS + STYLE_KEYS + CRITERIA_ONLY_KEYS
 MODELLED_FIELDS = ("app-name", "app-icon", "summary", "body", "urgency", "category",
-                   "desktop-entry", "actionable", "expiring", "mode")
+                   "desktop-entry", "actionable", "expiring", "mode", "summary~", "body~")
 STRING_INPUT_FIELDS = ("app-icon", "summary", "body", "category", "desktop-entry")
 BOOLEAN_FIELDS = ("actionable", "expiring")
+REGEX_FIELDS = {"summary~": "summary", "body~": "body"}  # criteria.c summary_pattern / body_pattern
+REG_EXTENDED = 1  # /usr/include/regex.h
+REG_NOSUB = 1 << 3  # /usr/include/regex.h
+REGEX_T_BYTES = 256  # glibc x86-64 sizeof(regex_t) is 64; oversized on purpose
+_LIBC = []
+
+
+def _libc():
+    """libc regcomp/regexec/regfree, loaded once, in the C locale mako runs in."""
+    if not _LIBC:
+        locale.setlocale(locale.LC_ALL, "C")
+        lib = ctypes.CDLL(ctypes.util.find_library("c"))
+        lib.regcomp.argtypes = (ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int)
+        lib.regcomp.restype = ctypes.c_int
+        lib.regexec.argtypes = (ctypes.c_void_p, ctypes.c_char_p, ctypes.c_size_t, ctypes.c_void_p,
+                                ctypes.c_int)
+        lib.regexec.restype = ctypes.c_int
+        lib.regfree.argtypes = (ctypes.c_void_p,)
+        lib.regfree.restype = None
+        _LIBC.append(lib)
+    return _LIBC[0]
+
+
+def posix_ere_compile(pattern):
+    """regcomp(pattern, REG_EXTENDED | REG_NOSUB) as criteria.c does; the compiled buffer or None."""
+    raw = pattern.encode("utf-8", "surrogateescape")
+    if b"\x00" in raw:
+        return None
+    lib = _libc()
+    buf = ctypes.create_string_buffer(REGEX_T_BYTES)
+    if lib.regcomp(buf, raw, REG_EXTENDED | REG_NOSUB) != 0:
+        return None
+    return buf
+
+
+def posix_ere_search(compiled, text):
+    """regexec(compiled, text, 0, NULL, 0) == 0, as criteria.c match_regex_criteria."""
+    return _libc().regexec(compiled, text.encode("utf-8", "surrogateescape"), 0, None, 0) == 0
+
+
+def posix_ere_free(compiled):
+    _libc().regfree(compiled)
+
 
 DEFAULTS = {
     "max-history": "5", "sort": "-time",
@@ -219,7 +274,9 @@ def tokenize(body):
     while i < len(body):
         char = body[i]
         if in_quote:
-            if char == "\\" and i + 1 < len(body) and body[i + 1] in ('"', "\\"):
+            if char == "\\":
+                if i + 1 >= len(body):
+                    return [], "dangling backslash inside a quote (criteria.c: unmatched quote)"
                 word.append(body[i + 1])
                 i += 2
                 continue
@@ -239,7 +296,7 @@ def tokenize(body):
             started = True
             i += 2
             continue
-        elif char.isspace():
+        elif char == " ":
             end_word()
         elif char == "=" and key is None:
             key = "".join(word)
@@ -323,6 +380,7 @@ class _State:
             self.refuse(where, "criteria: " + error)
             return REFUSED
         fields = []
+        ordered = []
         for key, value in tokens:
             if value is None and key in BOOLEAN_FIELDS:
                 value = "true"  # L514 [actionable]
@@ -339,10 +397,12 @@ class _State:
                 self.refuse(where, "criteria field '" + key + "' is outside the model (refused)")
                 return REFUSED
             # criteria.c apply_criteria_field assigns each token in turn: a repeated field keeps the
-            # value of its last occurrence (it is not an error upstream).
+            # value of its last occurrence (it is not an error upstream), but every summary~/body~
+            # occurrence is regcomp'd as it is applied, so an earlier invalid one still rejects.
+            ordered.append((key, value))
             fields = [(name, kept) for name, kept in fields if name != key]
             fields.append((key, value))
-        verdict = self.evaluate(fields, where)
+        verdict = self.evaluate(fields, where, ordered)
         if verdict is None:
             return REFUSED
         section = {"header": body, "where": where, "verdict": verdict, "options": []}
@@ -351,7 +411,7 @@ class _State:
             self.applied.append("section:[" + body + "]")
         return section
 
-    def evaluate(self, fields, where):
+    def evaluate(self, fields, where, ordered=None):
         """Return 'match', 'nomatch', or None when the section is refused (reason recorded)."""
         for key, value in fields:
             if key == "urgency" and value not in URGENCIES:
@@ -360,6 +420,31 @@ class _State:
             if key in BOOLEAN_FIELDS and parse_boolean(value) is None:
                 self.refuse(where, key + " '" + value + "' is not true, false, 1 or 0")
                 return None
+        names = [key for key, _ in fields]
+        for key, plain in REGEX_FIELDS.items():
+            if key in names and plain in names:
+                self.refuse(where, "criteria sets both " + plain + " and " + key
+                            + " (criteria.c: cannot set both)")
+                return None
+        compiled = {}
+        try:
+            for key, value in (fields if ordered is None else ordered):
+                if key in REGEX_FIELDS:
+                    pattern = posix_ere_compile(value)
+                    if pattern is None:
+                        self.refuse(where, key + " " + repr(value)
+                                    + " is not a valid POSIX extended regex (regcomp refused it)")
+                        return None
+                    if key in compiled:
+                        posix_ere_free(compiled[key])
+                    compiled[key] = pattern
+            return self.decide(fields, where, compiled)
+        finally:
+            for pattern in compiled.values():
+                posix_ere_free(pattern)
+
+    def decide(self, fields, where, compiled):
+        """Match the validated fields against the notification; regex fields use compiled[key]."""
         mismatch = False
         undecided = []
         for key, value in fields:
@@ -388,6 +473,12 @@ class _State:
                     undecided.append("--" + key + " (boolean)")
                 else:
                     mismatch = mismatch or have != want
+            elif key in REGEX_FIELDS:
+                have = self.inputs.get(REGEX_FIELDS[key])
+                if have is None:
+                    undecided.append("--" + REGEX_FIELDS[key])
+                else:
+                    mismatch = mismatch or not posix_ere_search(compiled[key], have)
         if mismatch:
             return "nomatch"
         if undecided:
@@ -596,9 +687,31 @@ def selftest(scratch_root):
               len(r["refusals"]) == 1 and r["effective"]["anchor"] == "top-right")
         r = run("unterminated", '[app-name="foo]\nwidth=1\n', app_name="foo")
         check("unterminated quote refused (L497-508)", any("unterminated" in s for s in r["refusals"]))
-        r = run("regex-field", "[summary~=hel+o]\nwidth=1\n", inputs={"summary": "hello"})
-        check("summary~ regex field refused, not applied (L450)",
-              any("summary~" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
+        r = run("regex-field", "[summary~=hel+o]\nwidth=1\n", inputs={"summary": "say helllo"})
+        check("summary~ is an unanchored POSIX ERE search (L450, criteria.c regexec)",
+              r["effective"]["width"] == "1" and r["refusals"] == [])
+        r = run("regex-class", "[summary~=^[[:digit:]]+$]\nwidth=2\n[body~=\\\\d]\nheight=3\n",
+                inputs={"summary": "2026", "body": "d"})
+        check("POSIX bracket class matches and \\d is a literal d, not Python's digit class",
+              r["effective"]["width"] == "2" and r["effective"]["height"] == "3" and r["refusals"] == [])
+        r = run("regex-locale", "[summary~=^.$]\nwidth=4\n", inputs={"summary": "\u00e9"})
+        check("regex matches bytes in the C locale: one '.' does not span a two-byte UTF-8 character",
+              r["effective"]["width"] == "300" and r["refusals"] == [])
+        r = run("regex-quote-escape", '[summary~="1\\.0"]\nwidth=5\n', inputs={"summary": "1x0"})
+        check("a backslash inside quotes escapes the next character before regcomp (parse_criteria)",
+              r["effective"]["width"] == "5" and r["refusals"] == [])
+        r = run("regex-invalid", "[summary~=a(b]\nwidth=6\n", inputs={"summary": "a(b"})
+        check("a pattern regcomp rejects is refused, not applied",
+              any("regcomp" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
+        r = run("regex-both", "[summary=x summary~=x]\nwidth=7\n", inputs={"summary": "x"})
+        check("summary with summary~ in one section is refused (criteria.c cannot set both)",
+              any("both" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
+        r = run("regex-no-input", "[body~=x]\nwidth=8\n")
+        check("a regex field without its input is refused, not applied",
+              any("--body" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
+        r = run("regex-earlier-invalid", "[summary~=a(b summary~=x]\nwidth=9\n", inputs={"summary": "x"})
+        check("an earlier invalid summary~ occurrence rejects the section though a later one is valid",
+              any("regcomp" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
         exact = "[summary=hello category=im.received]\nwidth=9\n"
         r = run("string-fields", exact, inputs={"summary": "hello", "category": "im.received"})
         check("summary and category exact match applies (L447, L461)", r["effective"]["width"] == "9")
