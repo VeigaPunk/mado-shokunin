@@ -629,6 +629,10 @@ def selftest(scratch_root):
         check("quoted criteria value (L497-503)", r["effective"]["invisible"] == "1")
         r = run("escaped", "[app-name=Google\\ Chrome]\ninvisible=1\n", app_name="Google Chrome")
         check("backslash-escaped space in criteria (L506)", r["effective"]["invisible"] == "1")
+        r = run("bare-quoted-token", '["x"]\nwidth=9\n')
+        check("a quote opens grouping but does not end the token, so a bare quoted key is refused "
+              "(criteria.c:199-206,241-246; L510-516)",
+              any("has no '=value'" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
         r = run("last-wins", "[app-name=foo]\nwidth=111\n[urgency=critical]\nwidth=222\n",
                 app_name="foo", urgency="critical")
         check("later matching criteria wins (L435-437)", r["effective"]["width"] == "222")
@@ -712,6 +716,10 @@ def selftest(scratch_root):
         r = run("regex-earlier-invalid", "[summary~=a(b summary~=x]\nwidth=9\n", inputs={"summary": "x"})
         check("an earlier invalid summary~ occurrence rejects the section though a later one is valid",
               any("regcomp" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
+        r = run("regex-body-earlier-invalid", "[body~=a(b body~=x]\nwidth=9\n", inputs={"body": "x"})
+        check("an earlier invalid body~ occurrence rejects the section though a later one is valid "
+              "(criteria.c:209-212,241-246 apply every token; 344-350 regcomp per body~)",
+              any("regcomp" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
         exact = "[summary=hello category=im.received]\nwidth=9\n"
         r = run("string-fields", exact, inputs={"summary": "hello", "category": "im.received"})
         check("summary and category exact match applies (L447, L461)", r["effective"]["width"] == "9")
@@ -734,6 +742,12 @@ def selftest(scratch_root):
               any("--expiring" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
         r = run("bool-bare-other", "[grouped]\nwidth=9\n")
         check("bare second-pass token refused (L474-479)", any("grouped" in s for s in r["refusals"]))
+        r = run("group-index-field", "[group-index=1]\nwidth=9\n")
+        r2 = run("grouped-field", "[grouped=1]\nwidth=9\n")
+        check("group-index and grouped are second-pass fields, refused not applied "
+              "(criteria.c:134-141,321-327,385-392; L474-495)",
+              any("group-index" in s for s in r["refusals"]) and r["effective"]["width"] == "300"
+              and any("grouped" in s for s in r2["refusals"]) and r2["effective"]["width"] == "300")
         r = run("option-bool-word", "[mode=do-not-disturb]\ninvisible=true\n[mode=do-not-disturb app-name=n]\n"
                 "invisible=False\n", app_name="n", modes=["do-not-disturb"])
         check("option booleans accept true/false any case, reported 0|1 (config.c parse_boolean)",
