@@ -114,8 +114,8 @@ five), and the search is unanchored (§1.2), so each matches any notification wh
 | :33 | `[summary~="Install Dictation with Voxtype"]` | literal substring | `on-button-left=exec sh -c 'omarchy-notification-dismiss "Install Dictation with Voxtype"; omarchy-launch-floating-terminal-with-presentation omarchy-voxtype-install'` | section applies; that `on-button-left` |
 | :36 | `[summary~="Screenshot copied & saved"]` | literal substring; `&` is ordinary in ERE | `max-icon-size=80` and `format=<b>%s</b>\n%b` (the second line repeats the global default) | section applies; `max-icon-size` 32 → 80, `format` unchanged |
 
-A summary outside the five applies none of them (measured with `--summary Unrelated`). With `--summary` supplied
-and no `--urgency`, the only remaining refusal on the whole chain is `core.ini:20` (`[urgency=critical]`, which
+A summary outside the five applies none of them (measured with `--summary Unrelated`). With `--summary` and `--app-name`
+supplied and no `--urgency`, the only remaining refusal on the whole chain is `core.ini:20` (`[urgency=critical]`, which
 needs `--urgency`); `core.ini:11` (`[app-name=Spotify]`) and the five sections all resolve. This is what round 88
 could not do: it refused the five sections by construction.
 

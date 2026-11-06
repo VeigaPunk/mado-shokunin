@@ -39,7 +39,7 @@ probe's scorer-assigned status the evidence a survivor routing needs:
 Class: model-drift — a re-implementation narrowed an upstream state to two characters.
 Evidence: `tools/mado-mako.py` at `7d3074865a9f5acfa0f1c9c66b460e73d4031331:222` reads
 `if char == "\\" and i + 1 < len(body) and body[i + 1] in ('"', "\\"):`, and a backslash before any other
-character falls through to `:228` `word.append(char)`, keeping it. Upstream `criteria.c:186-188` sends **every**
+character falls through to `:229` `word.append(char)`, keeping it. Upstream `criteria.c:186-188` sends **every**
 backslash inside quotes to `MAKO_PARSE_STATE_QUOTE_ESCAPE`, and `:177-182` appends the next character and clears
 the escape bit; `include/enum.h:7-11` gives `QUOTE_ESCAPE = 3 = QUOTE | ESCAPE`, so the clear returns to `QUOTE`.
 The same pass also shows the separator rule: round 88 split on `char.isspace()` (`:242`), upstream splits on
@@ -83,6 +83,16 @@ Fix: the frozen declaration states `correct=141 of cases=141`, `killed=37 of mut
 C1's entry cites S496–S500, opened this round (below). No new criterion: QUALITY 118 and 147 already bind the exact
 argv and pins; this lesson records that the draft missed them before a seat read it.
 
+**M89-4 — the records commit again cited receipts it did not contain (a repeat of round 88's R4).**
+Class: commit-ordering — a receipt path written into SCORECARD/lesson before the receipt is committed.
+Evidence: records commit `51bf076fd970106da854e11873b886528c3cffaf` cites `receipts/harm-final-r89.txt` (SCORECARD harm row) and
+`receipts/census-end-r89.txt` (lesson §Census), both produced after that commit (`.ufo/waves/round-89/r1/R89MResidCritic.md` F1–F3);
+round 88's spot-check routed the same defect as R4.
+Captured-by: the r1 critic seat only — R4 was routed as prose, never turned into a check.
+Fix: both receipts land in the round's final commit; the report cites only receipts present at the final hash. A pre-report
+check (`git ls-tree -r <final> --name-only` contains every `receipts/` path the records cite) is proposed for round 90; it is
+not claimed here because it has not yet been shown able to fail on committed bytes.
+
 ## Wave findings routed (instruments frozen or named as limits)
 
 | finding | seat | severity | disposition |
@@ -97,6 +107,8 @@ argv and pins; this lesson records that the draft missed them before a seat read
 | RM6C2 crash-only | R89MReviewC2 §3 | — | confirmed; four counterexample attempts failed |
 | counter gaming by a candidate that detects its own role (filename / generation dir) | R89MExecForgery (`w1/forgeries/counter-*.py`) | low | named limit: the counters trust that the measured tool does not inspect its own path |
 | tool selftest already kills RM7C1, RM3C2, RM4C2 | L1 (pre-freeze control) | — | stated as C2's second "before" (3/7), `receipts/c2-selftest-control-r89.txt` |
+| residual r1: survivors RS01 (body~ earlier-invalid), RS05 (quoted bare token), RS12 (group-index accepted) | R89MResidMut §7 | medium | routed to round 90 as cases; RS02 crash-only, RS04/RS09 text-only, RS07/RS08/RS11/RS15 argued equivalent |
+| residual r1: receipts cited before commit; blind set 45 not 44; host-refusal sentence; locators | R89MResidCritic F1–F8 | medium | corrected in the final commit (records, errata) |
 
 ## Gate
 
@@ -114,7 +126,7 @@ Re-open commands (L1, 2026-11-06): `zcat <page> | nl -ba | sed -n <lines>p`, `nl
 `sha256sum` of each container, `curl -fsSL <tarball> | sha256sum` → the digests above.
 
 Considered, not appended (no admitted entry cites them): the POSIX Base Specifications chapter 9 and `regcomp()` pages
-(R89MScoutSources drafts S499/S500) — the entry rests the ERE/flag semantics on the host's own man pages and header,
+(R89MScoutSources draft ids S499/S500 — not the admitted rows that now carry those ids) — the entry rests the ERE/flag semantics on the host's own man pages and header,
 which are the bytes this host's libc implements; flip: an entry that needs the normative POSIX text.
 
 ### Registry rows touched (old → new)
@@ -140,8 +152,8 @@ Pending: the non-author closure is the operator-dispatched verifier (LEARNING.md
 
 ### Census
 
-- Start: `receipts/census-start-r89.txt` — `mado ok`, rc 0, 430 rows.
-- End: `receipts/census-end-r89.txt` (records revision).
+- Start: `receipts/census-start-r89.txt` — `mado ok`, rc 0, 55 W04 warnings; 430 rows by `grep -c '^| S[0-9]' corpus/SOURCES.md` at the base (the receipt prints no row count).
+- End: `receipts/census-end-r89.txt` — `mado ok`, rc 0, 55 W04 warnings (same as start; the census prints no row count); 435 rows by the same grep at the records revision.
 
 ## Considerthese
 

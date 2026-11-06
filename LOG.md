@@ -4330,7 +4330,7 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   The r88 tokenizer kept `\` inside quotes and split on any whitespace, unlike `parse_criteria` (M89-2).
 - Wave w1: 12 seats (scout 2, scribe 1, executor 4, connector 1, reviewer 2, critic 1, mutation-tester 1), attack 4/12. Findings
   became draft revisions before the freeze: earlier-invalid-occurrence fix (ReviewC1 F1), M33–M37, cases r31/r32/n04/n07,
-  44 blind cases (b01–b44), and the critic's wording/axis/provenance/sequencing changes (F2–F11). Fuzz: 12 800 candidate/oracle
+  45 blind cases (b01–b45), and the critic's wording/axis/provenance/sequencing changes (F2–F11). Fuzz: 12 800 candidate/oracle
   comparisons, 0 disagreements; Python `re` disagrees on 404/3200.
 - Landed: freeze `d87361354b4d142287aac05bb973315749ef1fce` (declaration, counters, frozen controls, pre-freeze receipts, w1
   evidence, r88 dispatch markers per R5); C1 tool `099c662dc55521e365cd4126132cdcda4efc54b6` (candidate bytes unchanged,
@@ -4340,3 +4340,13 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   `receipts/c2-measured-F-r89.txt`); C1 at `099c662d` `TARGET_MET cases=141 correct=141 carried=61/61 mutants=37 killed=37`,
   controls naive 34, globals 35, base 78, python-re 127 (`receipts/c1-measured-A-r89.txt`); C2 re-run at `099c662d` TARGET_MET
   (`receipts/c2-harm-at-A-r89.txt`). MODELLED_FIELDS 10 → 12. Census 430 → 435 rows, exit 0.
+- Residual r1: 4 attack seats (reviewer 2, critic 1, mutation-tester 1), all settled (`r1-results.json`): C1 VERIFIES (pins hold,
+  frozen command reproduces the receipt byte-for-byte, 26 expectations re-derived), C2 VERIFIES (F and A bodies byte-identical,
+  B-only 0/7 and selftest 3/7 reproduced, RM6C2 crash-only attack failed). Critic: F1–F3 (harm and end-census receipts cited
+  before they were committed) FALL → committed in the final commit; F4 the blind set is 45 (b01–b45), not 44 → corrected here and
+  as a declaration erratum; F5 the entry's host-refusal sentence described the `--summary --app-name` run → corrected; F6–F8 locator
+  and wording → corrected. Mutation probe: 15 new mutants, 4 killed, survivors RS01 (body~ earlier-invalid), RS05 (quoted bare
+  token), RS12 (group-index accepted) routed to round 90 as cases; RS02 crash-only; RS04/RS09 text-only; RS07/RS08/RS11/RS15
+  argued equivalent. Round total 16 seats (w1 12 + r1 4), 0 dead. Harm watch at `51bf076f`: gate 460/460, file plane CLEAN 29,
+  index 110/110, ledger 165/165 uncovered 0, tool selftest 59/59, counter selftests 27/27, 18/18, 40/40, 28/28
+  (`receipts/harm-final-r89.txt`); census end rc 0 (`receipts/census-end-r89.txt`).

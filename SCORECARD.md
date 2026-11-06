@@ -5192,3 +5192,10 @@ Stagnation nudge not claimed (a capability entered at round 88); every owned axi
 - 3 of the 8 C2 supplementary labels and r19/b25 are tool-stance labels (regression pins, not independent ground truth).
 - The counters trust that the measured tool does not inspect its own path (R89MExecForgery `w1/forgeries/counter-*.py`).
 - No live notification: the resolver answers what the config would compute. The C-locale reading holds for mako 1.11.0.
+
+### Errata (round 89, after measurement; append-only)
+
+- The blind case set is 45 (b01–b45), not 44: N = 141 = 61 carried + 32 r + 3 n + 45 b; the sha256 pin `a4fa66cf…` names the
+  45-case bytes. The harm-watch row's census is in `receipts/census-end-r89.txt`, not in `receipts/harm-final-r89.txt`; both receipts
+  were committed after the records commit `51bf076f` that first cited them. Found by R89MResidCritic (`r1/R89MResidCritic.md` F1–F4).
+- Residual r1 (4 seats): C1 VERIFIES, C2 VERIFIES; R89MResidMut survivors RS01, RS05, RS12 routed to round 90 as cases.

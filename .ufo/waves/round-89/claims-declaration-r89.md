@@ -182,3 +182,9 @@ C1, at the C1 tool revision `A` (the commit after the freeze that copies the can
 ```sh
 python3 -I quality/counters/c1-r89-mako-regex.py --repo . --rev A --base-rev af998dcc41d48618ffe7afe0efc9354755a9244e --cases .ufo/waves/round-89/controls/mako-cases-r89.json --expect-cases-sha256 5fdca7dbcce6687d81aa31548e935a49fa39cee03117db41358068a0ded15672 --expect-mutants-sha256 5471bee29b4ba5da7fa7e55d8b11003028b0eb4c7937bd8d114062491338e35f --expect-r88-cases-sha256 a0e81b191fb0f80ca352699ede47962c1ac01c1ae8e9e15ccf50b1d7fab4a091 --scratch-root DIR
 ```
+
+## Errata (after measurement; append-only — the frozen text above is unchanged)
+
+1. "b01–b44" / "(44, merged unchanged)" / "N 91 → 141" with 44 blind cases: the frozen blind file holds 45 cases (b01–b45; the scout
+   appended b45 before the freeze, after the L1's count). N = 141 is right and the pin `a4fa66cf…` names those bytes. No predicate,
+   counter or case changes. Found by R89MResidCritic F4.
