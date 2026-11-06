@@ -1,0 +1,226 @@
+{
+ "note": "R90MMutC1 extra semantic mutants of the C1 candidate (round 90, w1). Anchors verified to occur exactly once; same shape as controls/portal-mutants-r90.json.",
+ "mutants": [
+  {
+   "id": "X01",
+   "what": "form feed tolerated after a group header",
+   "find": "    return s[j + 1:].strip(\" \\t\") == \"\"",
+   "replace": "    return s[j + 1:].strip() == \"\""
+  },
+  {
+   "id": "X02",
+   "what": "all trailing CRs stripped from a line, not one",
+   "find": "    lines = text.split(\"\\n\")\n    for raw in lines:\n        if raw.endswith(\"\\r\"):\n            raw = raw[:-1]",
+   "replace": "    lines = text.split(\"\\n\")\n    for raw in lines:\n        if raw.endswith(\"\\r\"):\n            raw = raw.rstrip(\"\\r\")"
+  },
+  {
+   "id": "X03",
+   "what": "final CR kept even when no newline follows it",
+   "find": "    lines = text.split(\"\\n\")\n    for raw in lines:\n        if raw.endswith(\"\\r\"):\n            raw = raw[:-1]",
+   "replace": "    lines = text.split(\"\\n\")\n    for n_lines, raw in enumerate(lines):\n        if raw.endswith(\"\\r\") and n_lines != len(lines) - 1:\n            raw = raw[:-1]"
+  },
+  {
+   "id": "X04",
+   "what": "form feed not skipped as leading line whitespace",
+   "find": "        while i < len(raw) and raw[i] in \" \\t\\n\\v\\f\\r\":",
+   "replace": "        while i < len(raw) and raw[i] in \" \\t\\n\\v\\r\":"
+  },
+  {
+   "id": "X05",
+   "what": "tab not chugged from a value",
+   "find": "        value = s[eq + 1:].lstrip(\" \\t\\n\\v\\f\\r\")",
+   "replace": "        value = s[eq + 1:].lstrip(\" \")"
+  },
+  {
+   "id": "X06",
+   "what": "locale-suffixed key voids the file",
+   "find": "        if \"[\" in key:\n            # a locale-suffixed key: GLib keeps only \"interesting\" locales; in\n            # the C locale none is, so the pair is dropped (named limit).\n            continue",
+   "replace": "        if \"[\" in key:\n            raise KeyFileError(f\"locale key {key!r}\")"
+  },
+  {
+   "id": "X07",
+   "what": "locale part of a key admits any character but ']'",
+   "find": "        while q < len(key) and (key[q].isalnum() or key[q] in \"-_.@\"):",
+   "replace": "        while q < len(key) and key[q] != \"]\":"
+  },
+  {
+   "id": "X08",
+   "what": "non-ASCII desktop token kept",
+   "find": "        if tok and all(c.isascii() and (c.isalnum() or c in \"-_\") for c in tok):",
+   "replace": "        if tok and all(c.isalnum() or c in \"-_\" for c in tok):"
+  },
+  {
+   "id": "X09",
+   "what": "empty desktop token kept",
+   "find": "        if tok and all(c.isascii() and (c.isalnum() or c in \"-_\") for c in tok):",
+   "replace": "        if all(c.isascii() and (c.isalnum() or c in \"-_\") for c in tok):"
+  },
+  {
+   "id": "X10",
+   "what": "sort continues past a desktop both backends match",
+   "find": "            if ua:\n                break",
+   "replace": "            if ua:\n                continue"
+  },
+  {
+   "id": "X11",
+   "what": "sort matches UseIn case-sensitively",
+   "find": "            ua = a.use_in is not None and any(u.lower() == d.lower() for u in a.use_in)\n            ub = b.use_in is not None and any(u.lower() == d.lower() for u in b.use_in)",
+   "replace": "            ua = a.use_in is not None and any(u == d for u in a.use_in)\n            ub = b.use_in is not None and any(u == d for u in b.use_in)"
+  },
+  {
+   "id": "X12",
+   "what": "unknown escape kept in a plain string (DBusName)",
+   "find": "            m = {\"s\": \" \", \"n\": \"\\n\", \"t\": \"\\t\", \"r\": \"\\r\", \"\\\\\": \"\\\\\"}\n            if e not in m:\n                raise KeyFileError(f\"invalid escape sequence \\\\{e}\")\n            out.append(m[e])",
+   "replace": "            m = {\"s\": \" \", \"n\": \"\\n\", \"t\": \"\\t\", \"r\": \"\\r\", \"\\\\\": \"\\\\\"}\n            out.append(m.get(e, e))"
+  },
+  {
+   "id": "X13",
+   "what": "no 255-byte cap on a bus name",
+   "find": "def is_bus_name(s: str) -> bool:\n    if not s or len(s) > 255:",
+   "replace": "def is_bus_name(s: str) -> bool:\n    if not s:"
+  },
+  {
+   "id": "X14",
+   "what": "interface names not validated in a descriptor",
+   "find": "            if not is_interface_name(i):\n                raise KeyFileError(f\"not a valid interface name: {i}\")",
+   "replace": "            if False:\n                raise KeyFileError(f\"not a valid interface name: {i}\")"
+  },
+  {
+   "id": "X15",
+   "what": "empty Interfaces element skipped, descriptor kept",
+   "find": "        for i in ifaces:\n            if not is_interface_name(i):",
+   "replace": "        for i in ifaces:\n            if not i:\n                continue\n            if not is_interface_name(i):"
+  },
+  {
+   "id": "X16",
+   "what": "invalid UseIn escape keeps the descriptor (use_in=None)",
+   "find": "        use_in = string_list(g[\"UseIn\"]) if \"UseIn\" in g else None",
+   "replace": "        try:\n            use_in = string_list(g[\"UseIn\"]) if \"UseIn\" in g else None\n        except KeyFileError:\n            use_in = None"
+  },
+  {
+   "id": "X17",
+   "what": "interface named 'default' matched case-insensitively",
+   "find": "        if k == \"default\":\n            default = lst",
+   "replace": "        if k.lower() == \"default\":\n            default = lst"
+  },
+  {
+   "id": "X18",
+   "what": "a malformed value drops only that key, not the file",
+   "find": "        try:\n            lst = string_list(v)\n        except KeyFileError:\n            return None",
+   "replace": "        try:\n            lst = string_list(v)\n        except KeyFileError:\n            continue"
+  },
+  {
+   "id": "X19",
+   "what": "unterminated [group header accepted",
+   "find": "    j = s.find(\"]\", 1)\n    if j < 0:\n        return False",
+   "replace": "    j = s.find(\"]\", 1)\n    if j < 0:\n        return True"
+  },
+  {
+   "id": "X20",
+   "what": "empty group name accepted",
+   "find": "def _valid_group_name(name: str) -> bool:\n    if name == \"\":\n        return False",
+   "replace": "def _valid_group_name(name: str) -> bool:\n    if name == \"\":\n        return True"
+  },
+  {
+   "id": "X21",
+   "what": "control characters allowed in a group name",
+   "find": "    return not any(c in \"[]\" or ord(c) < 0x20 or ord(c) == 0x7f for c in name)",
+   "replace": "    return not any(c in \"[]\" for c in name)"
+  },
+  {
+   "id": "X22",
+   "what": "bad Encoding value tolerated in the first group",
+   "find": "        grp = groups[current]\n        grp.pop(key, None)",
+   "replace": "        if current == next(iter(groups)) and key == \"Encoding\" and value.lower() != \"utf-8\":\n            raise KeyFileError(f\"unsupported encoding {value!r}\")\n        grp = groups[current]\n        grp.pop(key, None)"
+  },
+  {
+   "id": "X23",
+   "what": "'*' recognised as a prefix, not an exact entry",
+   "find": "            if p == \"*\":",
+   "replace": "            if p.startswith(\"*\"):"
+  },
+  {
+   "id": "X24",
+   "what": "interface key matched case-insensitively",
+   "find": "        if k == \"default\":\n            default = lst\n        else:\n            ifaces[k] = lst",
+   "replace": "        if k == \"default\":\n            default = lst\n        else:\n            ifaces[k.lower()] = lst"
+  },
+  {
+   "id": "X25",
+   "what": "find_all does not deduplicate backends",
+   "find": "                if i in out or not i.supports(iface):\n                    continue",
+   "replace": "                if not i.supports(iface):\n                    continue"
+  },
+  {
+   "id": "X26",
+   "what": "Settings UseIn fallback does not deduplicate backends",
+   "find": "                    if i not in out:\n                        out.append(i)",
+   "replace": "                    out.append(i)"
+  },
+  {
+   "id": "X27",
+   "what": "desktops split on ';' rather than ':'",
+   "find": "    for tok in value.split(\":\"):",
+   "replace": "    for tok in value.split(\";\"):"
+  },
+  {
+   "id": "X28",
+   "what": "no-backend reason reported as none-key",
+   "find": "        u = self._usein(iface, False)\n        if u:\n            return [u[0].source], \"usein\"\n        g = self._gtk(iface)\n        if g is not None:\n            return [g.source], \"gtk-last-resort\"\n        return [], \"no-backend\"",
+   "replace": "        u = self._usein(iface, False)\n        if u:\n            return [u[0].source], \"usein\"\n        g = self._gtk(iface)\n        if g is not None:\n            return [g.source], \"gtk-last-resort\"\n        return [], \"none-key\""
+  },
+  {
+   "id": "X29",
+   "what": "\\t escape drops the character instead of emitting a tab",
+   "find": "            elif e == \"t\":\n                cur.append(\"\\t\")",
+   "replace": "            elif e == \"t\":\n                pass"
+  },
+  {
+   "id": "X30",
+   "what": "descriptor loaded only from the last data directory searched",
+   "find": "    for name in sorted(names):\n        if not name.endswith(\".portal\"):",
+   "replace": "    for name in sorted(names, reverse=True):\n        if not name.endswith(\".portal\"):"
+  }
+ ],
+ "classification": {
+  "killed_by_frozen_92": {
+   "X11": "s01-default-star",
+   "X18": "g09-invalid-escape-voids-file",
+   "X24": "k01-iface-key-kde-filechooser",
+   "X25": "a05-settings-dup-entries",
+   "X26": "a06-settings-usein-all",
+   "X27": "d06-desktop-two-hypr-first"
+  },
+  "killed_by_new_case": {
+   "X01": "n01-ff-after-group",
+   "X02": "n02-double-cr",
+   "X04": "n04-ff-leading-ws",
+   "X05": "n05-tab-after-equals",
+   "X06": "n06-locale-key-inert",
+   "X07": "n07-locale-key-chars",
+   "X08": "n08-nonascii-desktop",
+   "X09": "n09-empty-desktop-token",
+   "X10": "n10-sort-both-match",
+   "X12": "n12-plain-escape",
+   "X13": "n13-busname-256",
+   "X14": "n14-bad-iface-name",
+   "X15": "n15-empty-iface-element",
+   "X17": "n17-default-case-key",
+   "X19": "n19-unterminated-group",
+   "X20": "n20-empty-group-name",
+   "X21": "n21-group-control-char",
+   "X23": "n23-star-prefix",
+   "X29": "n29-tab-escape"
+  },
+  "upstream_equivalent_not_counted": {
+   "X03": "n03-final-cr",
+   "X16": "n16-bad-usein-escape",
+   "X22": "n22-bad-encoding"
+  },
+  "equivalent_not_counted": {
+   "X28": "reason string for an empty pick is invisible to the oracle and normalized by the counter",
+   "X30": "descriptor enumeration order cannot change the result: source names are unique per directory and sort_impls is a total order"
+  },
+  "note": "X03/X16/X22 restore upstream behaviour the candidate lacks; the oracle cannot distinguish them (unkillable), and their evidence cases FAIL the candidate. See .ufo/waves/round-90/w1/R90MMutC1.md."
+ }
+}

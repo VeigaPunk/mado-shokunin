@@ -1,0 +1,428 @@
+{
+ "note": "Round-90 C1 mutants of tools/mado-portals.py. Each `find` must occur exactly once in the measured tool; the counter refuses to score otherwise.",
+ "mutants": [
+  {
+   "id": "M01",
+   "what": "desktops not lowercased",
+   "find": "out.append(tok.lower())",
+   "replace": "out.append(tok)"
+  },
+  {
+   "id": "M02",
+   "what": "invalid desktop tokens kept",
+   "find": "if tok and all(c.isascii() and (c.isalnum() or c in \"-_\") for c in tok):",
+   "replace": "if tok:"
+  },
+  {
+   "id": "M03",
+   "what": "value trailing whitespace stripped",
+   "find": "value = s[eq + 1:].lstrip(\" \\t\\n\\v\\f\\r\")",
+   "replace": "value = s[eq + 1:].strip(\" \\t\\n\\v\\f\\r\")"
+  },
+  {
+   "id": "M04",
+   "what": "list items stripped",
+   "find": "            pieces.append(\"\".join(cur))\n            cur = []",
+   "replace": "            pieces.append(\"\".join(cur).strip())\n            cur = []"
+  },
+  {
+   "id": "M05",
+   "what": "trailing empty list piece kept",
+   "find": "    if cur:\n        pieces.append(\"\".join(cur))\n    return pieces",
+   "replace": "    if cur or pieces:\n        pieces.append(\"\".join(cur))\n    return pieces"
+  },
+  {
+   "id": "M06",
+   "what": "none recognised only as the first entry",
+   "find": "            return \"none\" in c.ifaces[iface]",
+   "replace": "            return c.ifaces[iface][:1] == [\"none\"]"
+  },
+  {
+   "id": "M08",
+   "what": "default none checked even when the interface key exists",
+   "find": "        if iface in c.ifaces:\n            return \"none\" in c.ifaces[iface]\n        return c.default",
+   "replace": "        if iface in c.ifaces and \"none\" in c.ifaces[iface]:\n            return True\n        return c.default"
+  },
+  {
+   "id": "M09",
+   "what": "named backend used without checking it implements the interface",
+   "find": "            if i is None or not i.supports(iface):\n                continue\n            return i",
+   "replace": "            if i is None:\n                continue\n            return i"
+  },
+  {
+   "id": "M10",
+   "what": "UseIn matched case-sensitively in the fallback",
+   "find": "                if i.use_in is not None and any(u.lower() == d for u in i.use_in):",
+   "replace": "                if i.use_in is not None and d in i.use_in:"
+  },
+  {
+   "id": "M12",
+   "what": "last resort chosen by file name gtk, not by DBusName",
+   "find": "            if i.dbus_name == GTK_DBUS and i.supports(iface):",
+   "replace": "            if i.source == \"gtk\" and i.supports(iface):"
+  },
+  {
+   "id": "M13",
+   "what": "backends sorted by name only (UseIn ignored)",
+   "find": "        for d in desktops:\n            ua = ",
+   "replace": "        for d in []:\n            ua = "
+  },
+  {
+   "id": "M14",
+   "what": "backends sorted case-insensitively",
+   "find": "        ab, bb = os.fsencode(a.source), os.fsencode(b.source)",
+   "replace": "        ab, bb = os.fsencode(a.source.lower()), os.fsencode(b.source.lower())"
+  },
+  {
+   "id": "M15",
+   "what": "only the first configuration found is used",
+   "find": "            if c is not None:\n                self.configs.append(c)",
+   "replace": "            if c is not None and not self.configs:\n                self.configs.append(c)"
+  },
+  {
+   "id": "M16",
+   "what": "desktop file without [preferred] is not skipped",
+   "find": "    g = groups.get(\"preferred\")\n    if g is None:\n        return None",
+   "replace": "    g = groups.get(\"preferred\", {})"
+  },
+  {
+   "id": "M17",
+   "what": "find_all consults default even when the interface key added backends",
+   "find": "            if len(out) > before:\n                continue\n",
+   "replace": ""
+  },
+  {
+   "id": "M18",
+   "what": "find_all none discards what earlier configs collected",
+   "find": "                return [i.source for i in out], (\"config\" if out else \"none-key\")",
+   "replace": "                return [], \"none-key\""
+  },
+  {
+   "id": "M19",
+   "what": "Settings resolved like a single-backend interface",
+   "find": "        if iface == IMPL + \".Settings\":",
+   "replace": "        if iface == IMPL + \".SettingsX\":"
+  },
+  {
+   "id": "M20",
+   "what": "a later descriptor of the same name replaces the first",
+   "find": "        if source in seen:\n            continue\n",
+   "replace": ""
+  },
+  {
+   "id": "M21",
+   "what": "invalid escape tolerated in lists",
+   "find": "            elif e == \";\":\n                cur.append(\";\")\n            else:\n                raise KeyFileError(f\"invalid escape sequence \\\\{e}\")",
+   "replace": "            elif e == \";\":\n                cur.append(\";\")\n            else:\n                cur.append(e)"
+  },
+  {
+   "id": "M22",
+   "what": "key before the first group tolerated",
+   "find": "        if current is None:\n            raise KeyFileError(\"key file does not start with a group\")",
+   "replace": "        if current is None:\n            continue"
+  },
+  {
+   "id": "M23",
+   "what": "empty [preferred] group treated as absent",
+   "find": "    ifaces: dict[str, list[str]] = {}\n    default: list[str] | None = None\n    for k, v in g.items():",
+   "replace": "    if not g:\n        return None\n    ifaces: dict[str, list[str]] = {}\n    default: list[str] | None = None\n    for k, v in g.items():"
+  },
+  {
+   "id": "M24",
+   "what": "XDG_DATA_HOME config directory not searched",
+   "find": "                    + [os.path.join(sysconfdir, SUBDIR), os.path.join(data_home, SUBDIR)]",
+   "replace": "                    + [os.path.join(sysconfdir, SUBDIR)]"
+  },
+  {
+   "id": "M25",
+   "what": "foreign (non-portal) interface tolerated in a descriptor",
+   "find": "            if not i.startswith(IMPL + \".\"):\n                raise KeyFileError",
+   "replace": "            if False:\n                raise KeyFileError"
+  },
+  {
+   "id": "M26",
+   "what": "source name cut at the first dot",
+   "find": "    source = base[:base.rfind(\".\")]",
+   "replace": "    source = base[:base.find(\".\")]"
+  },
+  {
+   "id": "M27",
+   "what": "key names not chomped",
+   "find": "        key = s[:eq].rstrip(\" \\t\\n\\v\\f\\r\")",
+   "replace": "        key = s[:eq]"
+  },
+  {
+   "id": "M28",
+   "what": "CR not stripped from CRLF lines",
+   "find": "        if idx < len(lines) - 1 and raw.endswith(\"\\r\"):\n            raw = raw[:-1]\n",
+   "replace": ""
+  },
+  {
+   "id": "M29",
+   "what": "group line with trailing text accepted",
+   "find": "    return s[j + 1:].strip(\" \\t\") == \"\"",
+   "replace": "    return True"
+  },
+  {
+   "id": "M30",
+   "what": "invalid bus name accepted",
+   "find": "        if not is_bus_name(dbus):\n            raise KeyFileError",
+   "replace": "        if False:\n            raise KeyFileError"
+  },
+  {
+   "id": "M31",
+   "what": "duplicate key keeps the first value",
+   "find": "        grp.pop(key, None)\n        grp[key] = value",
+   "replace": "        grp.setdefault(key, value)"
+  },
+  {
+   "id": "M32",
+   "what": "UseIn fallback skipped",
+   "find": "        u = self._usein(iface, False)\n        if u:",
+   "replace": "        u = []\n        if u:"
+  },
+  {
+   "id": "M33",
+   "what": "XDG_DATA_HOME portals not loaded",
+   "find": "            for d in [data_home] + data_dirs + [datadir]:",
+   "replace": "            for d in data_dirs + [datadir]:"
+  },
+  {
+   "id": "M34",
+   "what": "unparsable UseIn drops the whole descriptor (the pre-w1 candidate's rule)",
+   "find": "            except KeyFileError:\n                use_in = None",
+   "replace": "            except KeyFileError:\n                raise"
+  },
+  {
+   "id": "M35",
+   "what": "every trailing CR stripped, not exactly one",
+   "find": "        if idx < len(lines) - 1 and raw.endswith(\"\\r\"):\n            raw = raw[:-1]",
+   "replace": "        if idx < len(lines) - 1:\n            raw = raw.rstrip(\"\\r\")"
+  },
+  {
+   "id": "M36",
+   "what": "final CR stripped even when no LF follows it (the pre-w1 candidate's rule)",
+   "find": "        if idx < len(lines) - 1 and raw.endswith(\"\\r\"):",
+   "replace": "        if raw.endswith(\"\\r\"):"
+  },
+  {
+   "id": "M37",
+   "what": "Encoding compared case-sensitively",
+   "find": "value.encode(\"utf-8\").lower() != b\"utf-8\"",
+   "replace": "value != \"UTF-8\""
+  },
+  {
+   "id": "M38",
+   "what": "Encoding checked in every group, not only the first",
+   "find": "        if current == first_group and key == \"Encoding\"",
+   "replace": "        if key == \"Encoding\""
+  },
+  {
+   "id": "X01",
+   "what": "form feed tolerated after a group header",
+   "find": "    return s[j + 1:].strip(\" \\t\") == \"\"",
+   "replace": "    return s[j + 1:].strip() == \"\"",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X04",
+   "what": "form feed not skipped as leading line whitespace",
+   "find": "        while i < len(raw) and raw[i] in \" \\t\\n\\v\\f\\r\":",
+   "replace": "        while i < len(raw) and raw[i] in \" \\t\\n\\v\\r\":",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X05",
+   "what": "tab not chugged from a value",
+   "find": "        value = s[eq + 1:].lstrip(\" \\t\\n\\v\\f\\r\")",
+   "replace": "        value = s[eq + 1:].lstrip(\" \")",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X06",
+   "what": "locale-suffixed key voids the file",
+   "find": "        if \"[\" in key:\n            # a locale-suffixed key: GLib keeps only \"interesting\" locales; in\n            # the C locale none is, so the pair is dropped (named limit).\n            continue",
+   "replace": "        if \"[\" in key:\n            raise KeyFileError(f\"locale key {key!r}\")",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X07",
+   "what": "locale part of a key admits any character but ']'",
+   "find": "        while q < len(key) and (key[q].isalnum() or key[q] in \"-_.@\"):",
+   "replace": "        while q < len(key) and key[q] != \"]\":",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X08",
+   "what": "non-ASCII desktop token kept",
+   "find": "        if tok and all(c.isascii() and (c.isalnum() or c in \"-_\") for c in tok):",
+   "replace": "        if tok and all(c.isalnum() or c in \"-_\" for c in tok):",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X09",
+   "what": "empty desktop token kept",
+   "find": "        if tok and all(c.isascii() and (c.isalnum() or c in \"-_\") for c in tok):",
+   "replace": "        if all(c.isascii() and (c.isalnum() or c in \"-_\") for c in tok):",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X10",
+   "what": "sort continues past a desktop both backends match",
+   "find": "            if ua:\n                break",
+   "replace": "            if ua:\n                continue",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X11",
+   "what": "sort matches UseIn case-sensitively",
+   "find": "            ua = a.use_in is not None and any(u.lower() == d.lower() for u in a.use_in)\n            ub = b.use_in is not None and any(u.lower() == d.lower() for u in b.use_in)",
+   "replace": "            ua = a.use_in is not None and any(u == d for u in a.use_in)\n            ub = b.use_in is not None and any(u == d for u in b.use_in)",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X12",
+   "what": "unknown escape kept in a plain string (DBusName)",
+   "find": "            m = {\"s\": \" \", \"n\": \"\\n\", \"t\": \"\\t\", \"r\": \"\\r\", \"\\\\\": \"\\\\\"}\n            if e not in m:\n                raise KeyFileError(f\"invalid escape sequence \\\\{e}\")\n            out.append(m[e])",
+   "replace": "            m = {\"s\": \" \", \"n\": \"\\n\", \"t\": \"\\t\", \"r\": \"\\r\", \"\\\\\": \"\\\\\"}\n            out.append(m.get(e, e))",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X13",
+   "what": "no 255-byte cap on a bus name",
+   "find": "def is_bus_name(s: str) -> bool:\n    if not s or len(s) > 255:",
+   "replace": "def is_bus_name(s: str) -> bool:\n    if not s:",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X14",
+   "what": "interface names not validated in a descriptor",
+   "find": "            if not is_interface_name(i):\n                raise KeyFileError(f\"not a valid interface name: {i}\")",
+   "replace": "            if False:\n                raise KeyFileError(f\"not a valid interface name: {i}\")",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X15",
+   "what": "empty Interfaces element skipped, descriptor kept",
+   "find": "        for i in ifaces:\n            if not is_interface_name(i):",
+   "replace": "        for i in ifaces:\n            if not i:\n                continue\n            if not is_interface_name(i):",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X17",
+   "what": "interface named 'default' matched case-insensitively",
+   "find": "        if k == \"default\":\n            default = lst",
+   "replace": "        if k.lower() == \"default\":\n            default = lst",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X18",
+   "what": "a malformed value drops only that key, not the file",
+   "find": "        try:\n            lst = string_list(v)\n        except KeyFileError:\n            return None",
+   "replace": "        try:\n            lst = string_list(v)\n        except KeyFileError:\n            continue",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X19",
+   "what": "unterminated [group header accepted",
+   "find": "    j = s.find(\"]\", 1)\n    if j < 0:\n        return False",
+   "replace": "    j = s.find(\"]\", 1)\n    if j < 0:\n        return True",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X20",
+   "what": "empty group name accepted",
+   "find": "def _valid_group_name(name: str) -> bool:\n    if name == \"\":\n        return False",
+   "replace": "def _valid_group_name(name: str) -> bool:\n    if name == \"\":\n        return True",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X21",
+   "what": "control characters allowed in a group name",
+   "find": "    return not any(c in \"[]\" or ord(c) < 0x20 or ord(c) == 0x7f for c in name)",
+   "replace": "    return not any(c in \"[]\" for c in name)",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X23",
+   "what": "'*' recognised as a prefix, not an exact entry",
+   "find": "            if p == \"*\":",
+   "replace": "            if p.startswith(\"*\"):",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X24",
+   "what": "interface key matched case-insensitively",
+   "find": "        if k == \"default\":\n            default = lst\n        else:\n            ifaces[k] = lst",
+   "replace": "        if k == \"default\":\n            default = lst\n        else:\n            ifaces[k.lower()] = lst",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X25",
+   "what": "find_all does not deduplicate backends",
+   "find": "                if i in out or not i.supports(iface):\n                    continue",
+   "replace": "                if not i.supports(iface):\n                    continue",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X26",
+   "what": "Settings UseIn fallback does not deduplicate backends",
+   "find": "                    if i not in out:\n                        out.append(i)",
+   "replace": "                    out.append(i)",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X27",
+   "what": "desktops split on ';' rather than ':'",
+   "find": "    for tok in value.split(\":\"):",
+   "replace": "    for tok in value.split(\";\"):",
+   "origin": "R90MMutC1"
+  },
+  {
+   "id": "X29",
+   "what": "\\t escape drops the character instead of emitting a tab",
+   "find": "            elif e == \"t\":\n                cur.append(\"\\t\")",
+   "replace": "            elif e == \"t\":\n                pass",
+   "origin": "R90MMutC1"
+  }
+ ],
+ "equivalent_not_counted": [
+  {
+   "id": "M07",
+   "what": "star does not stop the list",
+   "find": "                    if i.supports(iface):\n                        return i\n                return None",
+   "replace": "                    if i.supports(iface):\n                        return i\n                continue",
+   "argument": "equivalent: \"*\" returns NULL only when no backend implements the interface (xdp-portal-config.c:694-711), and then no later named entry can implement it either (:764-770), so continuing the list cannot change the result."
+  },
+  {
+   "id": "M11",
+   "what": "UseIn fallback ignores desktop order (backend order first)",
+   "find": "        for d in self.desktops:\n            for i in self.impls:\n                if not i.supports(iface):\n                    continue",
+   "replace": "        for i in self.impls:\n            for d in self.desktops:\n                if not i.supports(iface):\n                    continue",
+   "argument": "equivalent: backends are already sorted desktop-major by UseIn (xdp-portal-config.c:267-296), so the first supporting backend in sorted order matches the earliest matching desktop; desktop-major and backend-major scans return the same first hit, and for Settings the same deduplicated order."
+  },
+  {
+   "id": "X28",
+   "what": "no-backend reason reported as none-key",
+   "find": "        u = self._usein(iface, False)\n        if u:\n            return [u[0].source], \"usein\"\n        g = self._gtk(iface)\n        if g is not None:\n            return [g.source], \"gtk-last-resort\"\n        return [], \"no-backend\"",
+   "replace": "        u = self._usein(iface, False)\n        if u:\n            return [u[0].source], \"usein\"\n        g = self._gtk(iface)\n        if g is not None:\n            return [g.source], \"gtk-last-resort\"\n        return [], \"none-key\"",
+   "argument": "equivalent under the frozen predicate: the counter maps both none-key and no-backend to the oracle's \"no decision line\" (R90MMutC1 §7-C)"
+  },
+  {
+   "id": "X22",
+   "what": "bad Encoding value tolerated in the first group",
+   "find": "        grp = groups[current]\n        grp.pop(key, None)",
+   "replace": "        if current == next(iter(groups)) and key == \"Encoding\" and value.lower() != \"utf-8\":\n            raise KeyFileError(f\"unsupported encoding {value!r}\")\n        grp = groups[current]\n        grp.pop(key, None)",
+   "origin": "R90MMutC1",
+   "argument": "equivalent after the w1 fix: the candidate already rejects a first-group Encoding other than UTF-8 (CAND-1 fix, M37/M38 cover it); this mutant adds a second, identical check before the same insertion."
+  },
+  {
+   "id": "X30",
+   "what": "descriptor loaded only from the last data directory searched",
+   "find": "    for name in sorted(names):\n        if not name.endswith(\".portal\"):",
+   "replace": "    for name in sorted(names, reverse=True):\n        if not name.endswith(\".portal\"):",
+   "origin": "R90MMutC1",
+   "argument": "equivalent: within one directory file names are unique, so a source name occurs once per directory and the first-of-name rule across directories (directory order, not name order) decides; reversing the in-directory order cannot change which descriptor wins (R90MMutC1 §7-C)."
+  }
+ ]
+}

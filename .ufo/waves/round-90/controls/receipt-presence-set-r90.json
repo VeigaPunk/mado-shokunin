@@ -1,0 +1,702 @@
+{
+ "note": "Round-90 C2 frozen expectation set for quality/check-receipt-presence.py. Lane revisions: D88/D89 labelled by the non-author spot-checks (round-88 R4, round-89 D1); D85/D86 labelled by w1 seats R90MCritic F4 and R90MReviewC2 §1 and by `git log --diff-filter=A` (each cited receipt is first added by a later commit, or by none at that round); C88/C89 the final commits the spot-checks graded clean. The population is every non-merge lane commit in the range; its expected MISSING set is exactly D85, D86, D88, D89. Fixtures: synthetic records changes in a throwaway repo (W*: L1; X*: R90MMutC2; Y*: w1 review findings). Every expectation is evaluated twice: with a clean git config and with diff.mnemonicPrefix=true plus diff.noprefix=true (R90MCritic F2).",
+ "revisions": [
+  {
+   "id": "D88",
+   "rev": "498855cb327cd4e3debfa9446ea38398c216dda1",
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/harm-final-r88.txt"
+   ],
+   "label_source": "corpus/lessons/round-88-verifier-spotcheck.md R4: the records commit 498855cb cited receipts/harm-final-r88.txt before it was committed"
+  },
+  {
+   "id": "D89",
+   "rev": "51bf076fd970106da854e11873b886528c3cffaf",
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/census-end-r89.txt",
+    "receipts/harm-final-r89.txt"
+   ],
+   "label_source": "corpus/lessons/round-89-verifier-spotcheck.md D1: records commit 51bf076f cites receipts/harm-final-r89.txt and receipts/census-end-r89.txt, first committed in 16ee97b5",
+   "expect_cited": 13,
+   "expect_present": 11,
+   "expect_locations": [
+    "SCORECARD.md:5179",
+    "corpus/lessons/round-89.md:144"
+   ]
+  },
+  {
+   "id": "D85",
+   "rev": "942365c87d3183d5b37d5207000d7a0c29a21831",
+   "expect_rc": 1,
+   "expect_missing": [
+    ".ufo/waves/round-85/receipts/independent-score-r85.txt",
+    "receipts/frozen-input-crosswalk-r85.json",
+    "receipts/harm-watch-r85.txt",
+    "receipts/independent-score-r85.txt"
+   ],
+   "label_source": "R90MCritic F4 (w1); git log --diff-filter=A: independent-score-r85.txt, frozen-input-crosswalk-r85.json, harm-watch-r85.txt first added by 2b6dd76b, a descendant of 942365c8"
+  },
+  {
+   "id": "D86",
+   "rev": "01be4234025dc8e27b2e60035427dd782622bc7e",
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/census-end-r86.txt",
+    "receipts/cleanup-r86.json"
+   ],
+   "label_source": "R90MReviewC2 §1 and R90MCritic F4 (w1); git log --diff-filter=A: census-end-r86.txt first added by 3afdb713, cleanup-r86.json by d7ffa762, both descendants of 01be4234"
+  },
+  {
+   "id": "C88",
+   "rev": "8e8f7ea354cf23178ad08c400cd8aee9668d7bb3",
+   "expect_rc": 0,
+   "expect_missing": [],
+   "min_cited": 1,
+   "label_source": "round-88 final commit (spot-check R4: fixed at the final commit)",
+   "expect_cited": 2,
+   "expect_present": 2
+  },
+  {
+   "id": "C89",
+   "rev": "16ee97b5a398d0d51b605670f35feb059a5487b6",
+   "expect_rc": 0,
+   "expect_missing": [],
+   "min_cited": 1,
+   "label_source": "round-89 final commit (spot-check D1: the receipts first appear in 16ee97b5)"
+  }
+ ],
+ "fixtures": [
+  {
+   "id": "W1-carried",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- harm: `receipts/harm-final-r90.txt`\n",
+    ".ufo/waves/round-90/receipts/harm-final-r90.txt": "ok\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md",
+    ".ufo/waves/round-90/receipts"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "W2-on-disk-not-carried",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- harm: `receipts/harm-final-r90.txt`\n",
+    ".ufo/waves/round-90/receipts/harm-final-r90.txt": "ok\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/harm-final-r90.txt"
+   ],
+   "expect_locations": [
+    "SCORECARD.md:2"
+   ]
+  },
+  {
+   "id": "W3-absent",
+   "round": 90,
+   "base": {
+    "LOG.md": "# l\n"
+   },
+   "work": {
+    "LOG.md": "# l\nsee .ufo/waves/round-90/receipts/census-end-r90.txt\n"
+   },
+   "commit_paths": [
+    "LOG.md",
+    ".ufo/waves/round-90"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    ".ufo/waves/round-90/receipts/census-end-r90.txt"
+   ]
+  },
+  {
+   "id": "W4-already-in-base",
+   "round": 90,
+   "base": {
+    "LOG.md": "# l\n",
+    ".ufo/waves/round-90/receipts/c1-r90.txt": "x\n"
+   },
+   "work": {
+    "LOG.md": "# l\nC1 receipt receipts/c1-r90.txt.\n"
+   },
+   "commit_paths": [
+    "LOG.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "W5-quality-receipts-fallback",
+   "round": 90,
+   "base": {
+    "corpus/README.md": "# r\n",
+    "quality/receipts/axis-abc.txt": "a\n"
+   },
+   "work": {
+    "corpus/README.md": "# r\naxis receipts/axis-abc.txt\n"
+   },
+   "commit_paths": [
+    "corpus/README.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "W6-removed-line-not-cited",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\nold `receipts/gone-r90.txt`\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "W7-json-receipt-missing",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\nresults receipts/w1-results-r90.json\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/w1-results-r90.json"
+   ]
+  },
+  {
+   "id": "W8-bare-name-uses-round",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\nsee receipts/plain.txt\n",
+    ".ufo/waves/round-90/receipts/plain.txt": "p\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md",
+    ".ufo/waves/round-90/receipts/plain.txt"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "W9-new-untracked-lesson",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "corpus/lessons/round-90.md": "# l\n- census `receipts/census-end-r90.txt`\n"
+   },
+   "commit_paths": [
+    "corpus/lessons/round-90.md"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/census-end-r90.txt"
+   ]
+  },
+  {
+   "id": "W10-non-record-file-ignored",
+   "round": 90,
+   "base": {
+    "notes.md": "# n\n"
+   },
+   "work": {
+    "notes.md": "# n\nreceipts/nowhere-r90.txt\n"
+   },
+   "commit_paths": [
+    "notes.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "W11-bare-name-suffix-round",
+   "round": 90,
+   "base": {
+    "LOG.md": "# l\n",
+    ".ufo/waves/round-89/receipts/old-r89.txt": "o\n"
+   },
+   "work": {
+    "LOG.md": "# l\ncarried receipts/old-r89.txt\n"
+   },
+   "commit_paths": [
+    "LOG.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "X1-slash-prefixed-path-not-a-citation",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- provenance `mado-shokunin/receipts/ghost-r90.txt`\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": [],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X2-hyphen-continuation-not-a-receipt",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- renamed `receipts/census-end-r90.txt-old`\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": [],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X3-png-not-a-receipt",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- screenshot `.ufo/waves/round-90/receipts/shot-r90.png`\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": [],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X4-untracked-non-record-ignored",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n",
+    "notes.md": "# n\n- `receipts/ghost-r90.txt`\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": [],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X5-ignored-untracked-not-scanned",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n",
+    ".gitignore": "corpus/knowledge/\n"
+   },
+   "work": {
+    "corpus/knowledge/ignored.md": "# i\n- `receipts/ghost-r90.txt`\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": [],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X6-quality-on-disk-not-carried",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- axis `quality/receipts/qr-r90.txt`\n",
+    "quality/receipts/qr-r90.txt": "q\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "quality/receipts/qr-r90.txt"
+   ],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X7-commit-path-trailing-slash",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- harm: `receipts/harm-final-r90.txt`\n",
+    ".ufo/waves/round-90/receipts/harm-final-r90.txt": "ok\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md",
+    ".ufo/waves/round-90/receipts/"
+   ],
+   "expect_rc": 0,
+   "expect_missing": [],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X8-full-path-no-quality-fallback",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n",
+    "quality/receipts/shared-r90.txt": "q\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- `.ufo/waves/round-90/receipts/shared-r90.txt`\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    ".ufo/waves/round-90/receipts/shared-r90.txt"
+   ],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X9-suffix-round-wins",
+   "round": 90,
+   "base": {
+    "LOG.md": "# l\n",
+    ".ufo/waves/round-90/receipts/ghost-r89.txt": "g\n"
+   },
+   "work": {
+    "LOG.md": "# l\n- carried `receipts/ghost-r89.txt`\n"
+   },
+   "commit_paths": [
+    "LOG.md"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/ghost-r89.txt"
+   ],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X10-nested-lesson-not-a-record",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "corpus/lessons/sub/deep.md": "# d\n- `receipts/ghost-r90.txt`\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": [],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X11-repo-root-not-a-receipt-home",
+   "round": 90,
+   "base": {
+    "SCORECARD.md": "# s\n",
+    "harm-final-r90.txt": "x\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- harm `receipts/harm-final-r90.txt`\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/harm-final-r90.txt"
+   ],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X12-full-path-present",
+   "round": 90,
+   "base": {
+    "LOG.md": "# l\n",
+    ".ufo/waves/round-90/receipts/kept-r90.txt": "k\n"
+   },
+   "work": {
+    "LOG.md": "# l\n- `.ufo/waves/round-90/receipts/kept-r90.txt`\n"
+   },
+   "commit_paths": [
+    "LOG.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": [],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "X13-suffixed-csv-name",
+   "round": 90,
+   "base": {
+    "LOG.md": "# l\n",
+    ".ufo/waves/round-89/receipts/census-r89.csv": "c\n"
+   },
+   "work": {
+    "LOG.md": "# l\n- carried `receipts/census-r89.csv`\n"
+   },
+   "commit_paths": [
+    "LOG.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": [],
+   "origin": "R90MMutC2"
+  },
+  {
+   "id": "Y1-receipt-deleted-in-change",
+   "round": 90,
+   "origin": "R90MCritic F3",
+   "base": {
+    "SCORECARD.md": "# s\n",
+    ".ufo/waves/round-90/receipts/keep-r90.txt": "k\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- kept `receipts/keep-r90.txt`\n"
+   },
+   "delete": [
+    ".ufo/waves/round-90/receipts/keep-r90.txt"
+   ],
+   "commit_paths": [
+    "SCORECARD.md",
+    ".ufo/waves/round-90/receipts"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/keep-r90.txt"
+   ]
+  },
+  {
+   "id": "Y2-brace-one-missing",
+   "round": 90,
+   "origin": "R90MReviewC2 G1",
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- census `receipts/census-{start,end}-r90.txt`\n",
+    ".ufo/waves/round-90/receipts/census-start-r90.txt": "s\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md",
+    ".ufo/waves/round-90/receipts"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/census-end-r90.txt"
+   ]
+  },
+  {
+   "id": "Y3-brace-all-present",
+   "round": 90,
+   "origin": "R90MReviewC2 G1",
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- census `receipts/census-{start,end}-r90.txt`\n",
+    ".ufo/waves/round-90/receipts/census-start-r90.txt": "s\n",
+    ".ufo/waves/round-90/receipts/census-end-r90.txt": "e\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md",
+    ".ufo/waves/round-90/receipts"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "Y4-glob-no-match",
+   "round": 90,
+   "origin": "R90MReviewC2 G1",
+   "base": {
+    "LOG.md": "# l\n"
+   },
+   "work": {
+    "LOG.md": "# l\n- ledgers `receipts/ledger-*-r90.txt`\n"
+   },
+   "commit_paths": [
+    "LOG.md",
+    ".ufo/waves/round-90/receipts"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/ledger-*-r90.txt"
+   ]
+  },
+  {
+   "id": "Y5-glob-match-carried",
+   "round": 90,
+   "origin": "R90MReviewC2 G1",
+   "base": {
+    "LOG.md": "# l\n"
+   },
+   "work": {
+    "LOG.md": "# l\n- ledgers `receipts/ledger-*-r90.txt`\n",
+    ".ufo/waves/round-90/receipts/ledger-start-r90.txt": "l\n"
+   },
+   "commit_paths": [
+    "LOG.md",
+    ".ufo/waves/round-90/receipts"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "Y6-ignored-under-listed-dir",
+   "round": 90,
+   "origin": "R90MReviewC2 W1",
+   "base": {
+    "SCORECARD.md": "# s\n",
+    ".gitignore": "*-ignored-r90.txt\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- `receipts/x-ignored-r90.txt`\n",
+    ".ufo/waves/round-90/receipts/x-ignored-r90.txt": "i\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md",
+    ".ufo/waves/round-90/receipts"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/x-ignored-r90.txt"
+   ]
+  },
+  {
+   "id": "Y7-ignored-named-file-carried",
+   "round": 90,
+   "origin": "R90MReviewC2 W1",
+   "base": {
+    "SCORECARD.md": "# s\n",
+    ".gitignore": "*-ignored-r90.txt\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- `receipts/x-ignored-r90.txt`\n",
+    ".ufo/waves/round-90/receipts/x-ignored-r90.txt": "i\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md",
+    ".ufo/waves/round-90/receipts/x-ignored-r90.txt"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "Y8-sentence-final-period",
+   "round": 90,
+   "origin": "L1",
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\nEnd census in receipts/census-end-r90.txt.\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 1,
+   "expect_missing": [
+    "receipts/census-end-r90.txt"
+   ]
+  },
+  {
+   "id": "Y9-mid-name-round-token",
+   "round": 90,
+   "origin": "L1 (D85 false-positive fix)",
+   "base": {
+    "LOG.md": "# l\n",
+    ".ufo/waves/round-84/receipts/control-c2-r84-unguarded.txt": "c\n"
+   },
+   "work": {
+    "LOG.md": "# l\n- `receipts/control-c2-r84-unguarded.txt`\n"
+   },
+   "commit_paths": [
+    "LOG.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "Y10-commit-path-dot-slash",
+   "round": 90,
+   "origin": "R90MReviewC2 W2",
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- `receipts/harm-final-r90.txt`\n",
+    ".ufo/waves/round-90/receipts/harm-final-r90.txt": "h\n"
+   },
+   "commit_paths": [
+    "./SCORECARD.md",
+    "./.ufo/waves/round-90/receipts"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  },
+  {
+   "id": "Y11-bak-not-a-receipt",
+   "round": 90,
+   "origin": "R90MReviewC2 §2",
+   "base": {
+    "SCORECARD.md": "# s\n"
+   },
+   "work": {
+    "SCORECARD.md": "# s\n- old `receipts/x-r90.txt.bak`\n"
+   },
+   "commit_paths": [
+    "SCORECARD.md"
+   ],
+   "expect_rc": 0,
+   "expect_missing": []
+  }
+ ],
+ "population": {
+  "range": "5f174ca48d4f9cf94abf1a8c58b7d6f88733aced..5041acf99e27263872bf0441ad5f9d4316152605",
+  "no_merges": true,
+  "expect_missing_commits": [
+   "01be4234025dc8e27b2e60035427dd782622bc7e",
+   "498855cb327cd4e3debfa9446ea38398c216dda1",
+   "51bf076fd970106da854e11873b886528c3cffaf",
+   "942365c87d3183d5b37d5207000d7a0c29a21831"
+  ],
+  "label_source": "rounds 85-89 (round-85 base 5f174ca4 = the r85 counter's --base-rev in SKILL.md); 38 commits; every other commit OK"
+ }
+}

@@ -1,0 +1,909 @@
+{
+ "note": "R90MMutC1 killing cases for the extra C1 mutants (round 90 w1). `cases` are labelled by controls/portal-oracle-r90.py and are safe to append to controls/portal-cases-r90.json: the candidate passes all of them (verified in draft: cases=111 correct=111). `candidate_divergence_cases` are labelled too, but the candidate FAILS them and the mutant matches the oracle: do NOT append those; they are defect evidence (see R90MMutC1.md).",
+ "merge": "append `cases` to controls/portal-cases-r90.json under the same `cases` array; host_tail_sha256 and oracle_binary_sha256 already equal the frozen label file's values",
+ "host_tail_sha256": "4a4cf31921e25dc6e60b283cc1aa1b79f743096bfdfc9dbb77df887c16f0fbf9",
+ "oracle_binary_sha256": "e1429fbe1bf6c2203ba07f478b9e92e9221437b13a92eebafb0982748583a4f8",
+ "cases": [
+  {
+   "id": "n01-ff-after-group",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[preferred]\f\ndefault=kde\n"
+   },
+   "note": "X01: GLib accepts only space/tab after ]; a form feed makes the line a parse error (gkeyfile.c:4647-4665)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n02-double-cr",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[preferred]\ndefault=gtk\r\r\n"
+   },
+   "note": "X02: parse_data erases exactly one CR before LF (gkeyfile.c:1856-1866); value is 'gtk\\r'",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n04-ff-leading-ws",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[preferred]\n\fdefault=kde\n"
+   },
+   "note": "X04: g_ascii_isspace covers \\f when skipping leading line whitespace (gkeyfile.c:1626-1628)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "kde"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "kde"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "config",
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n05-tab-after-equals",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[preferred]\ndefault=\tkde\n"
+   },
+   "note": "X05: leading whitespace of a value is chugged with g_ascii_isspace (gkeyfile.c:1755-1758)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "kde"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "kde"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "config",
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n06-locale-key-inert",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[preferred]\ndefault=kde\ndefault[C]=gtk\n"
+   },
+   "note": "X06: a well-formed locale key is kept as an inert interface name or dropped; default=kde still applies",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "kde"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "kde"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "config",
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n07-locale-key-chars",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[preferred]\ndefault[c!d]=gtk\norg.freedesktop.impl.portal.FileChooser=kde\n"
+   },
+   "note": "X07: '!' is not in the locale alphabet [alnum - _ . @], so the key is invalid and voids the file (gkeyfile.c:4584-4637)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n08-nonascii-desktop",
+   "mode": "dir",
+   "desktop": "é",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "aaa.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.aaa\nInterfaces=org.freedesktop.impl.portal.FileChooser;\nUseIn=é\n"
+   },
+   "note": "X08: validate_xdg_desktop keeps only [A-Za-z0-9_-] bytes; a non-ASCII token is dropped (xdp-portal-config.c:99-118)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n09-empty-desktop-token",
+   "mode": "dir",
+   "desktop": ":KDE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "-portals.conf": "[preferred]\ndefault=gtk\n"
+   },
+   "note": "X09: the empty token before ':' fails validate_xdg_desktop (i == 0), so '-portals.conf' is never consulted (xdp-portal-config.c:112-117)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "kde"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "kde"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "usein",
+    "org.freedesktop.impl.portal.FileChooser": "usein",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n10-sort-both-match",
+   "mode": "dir",
+   "desktop": "KDE:GNOME",
+   "files": {
+    "aaa.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.aaa\nInterfaces=org.freedesktop.impl.portal.FileChooser;\nUseIn=KDE\n",
+    "bbb.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.bbb\nInterfaces=org.freedesktop.impl.portal.FileChooser;\nUseIn=KDE;GNOME\n",
+    "portals.conf": "[preferred]\ndefault=*\n"
+   },
+   "note": "X10: when both backends match the first desktop the sort compares source names (break, xdp-portal-config.c:271-296)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "aaa"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.FileChooser": "default config"
+   }
+  },
+  {
+   "id": "n12-plain-escape",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\\q\nInterfaces=org.freedesktop.impl.portal.FileChooser;\nUseIn=gnome\n",
+    "xfce-portals.conf": "[preferred]\ndefault=gtk\n"
+   },
+   "note": "X12: a bad escape makes g_key_file_get_string return NULL, so DBusName is missing and the descriptor is skipped (xdp-portal-config.c:201-213)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {}
+  },
+  {
+   "id": "n13-busname-256",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nInterfaces=org.freedesktop.impl.portal.FileChooser;\nUseIn=gnome\n",
+    "xfce-portals.conf": "[preferred]\ndefault=gtk\n"
+   },
+   "note": "X13: g_dbus_is_name rejects names longer than 255 bytes (gdbusutils.c)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {}
+  },
+  {
+   "id": "n14-bad-iface-name",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.-Bad;\nUseIn=gnome\n",
+    "xfce-portals.conf": "[preferred]\ndefault=gtk\n"
+   },
+   "note": "X14: an invalid interface name voids the descriptor via g_dbus_is_interface_name (xdp-portal-config.c:226-240)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {}
+  },
+  {
+   "id": "n15-empty-iface-element",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=;org.freedesktop.impl.portal.FileChooser;\nUseIn=gnome\n",
+    "xfce-portals.conf": "[preferred]\ndefault=gtk\n"
+   },
+   "note": "X15: an empty list element is an invalid interface name and voids the descriptor (xdp-portal-config.c:226-240)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {}
+  },
+  {
+   "id": "n17-default-case-key",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[preferred]\nDefault=kde\n"
+   },
+   "note": "X17: only the exact key 'default' is the default list (xdp-portal-config.c:445-453)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n19-unterminated-group",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[preferred\ndefault=kde\n[preferred]\norg.freedesktop.impl.portal.FileChooser=kde\n"
+   },
+   "note": "X19: a line without ] that is not a key-value pair voids the file (gkeyfile.c:1640-1655, 4647-4665)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n20-empty-group-name",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[]\n[preferred]\ndefault=kde\n"
+   },
+   "note": "X20: an empty group name is invalid and voids the file (gkeyfile.c:4567-4582)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n21-group-control-char",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[pre\u0001ferred]\ndefault=gtk\n[preferred]\ndefault=kde\n"
+   },
+   "note": "X21: control characters are rejected in group names (gkeyfile.c:4572-4577)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n23-star-prefix",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "aaa.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.aaa\nInterfaces=org.freedesktop.impl.portal.FileChooser;\nUseIn=gnome\n",
+    "xfce-portals.conf": "[preferred]\ndefault=*x\n"
+   },
+   "note": "X23: only the exact entry '*' means any backend (xdp-portal-config.c:749-753)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {}
+  },
+  {
+   "id": "n29-tab-escape",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.other\nInterfaces=org.freedesktop.impl.portal.FileChooser;\nUseIn=gnome\n",
+    "xfce-portals.conf": "[preferred]\ndefault=g\\ttk\n"
+   },
+   "note": "X29: \\t decodes to a tab, so 'g\\ttk' is not the backend name gtk (gkeyfile.c:4710-4716)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {}
+  }
+ ],
+ "candidate_divergence_cases": [
+  {
+   "id": "n03-final-cr",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Notification;\nUseIn=gnome\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Settings;\nUseIn=kde\n",
+    "xfce-portals.conf": "[preferred]\ndefault=gtk\r"
+   },
+   "note": "X03: a CR is erased only when followed by LF; a final bare CR stays in the value (gkeyfile.c:1856-1866)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort"
+   }
+  },
+  {
+   "id": "n16-bad-usein-escape",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "hypr.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.hypr\nInterfaces=org.freedesktop.impl.portal.Screenshot;\nUseIn=wlroots\\q\n",
+    "xfce-portals.conf": "[preferred]\ndefault=hypr\n"
+   },
+   "note": "X16: the UseIn parse error is ignored (xdp-portal-config.c:246-248 passes error and never checks it), so the descriptor is registered with use_in NULL",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "hypr"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Screenshot": "default config"
+   }
+  },
+  {
+   "id": "n22-bad-encoding",
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "gtk.portal": "[portal]\nEncoding=latin1\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;\nUseIn=gnome\n",
+    "xfce-portals.conf": "[preferred]\ndefault=gtk\n"
+   },
+   "note": "X22: a non-UTF-8 Encoding in the first group voids the key file (gkeyfile.c:1764-1788)",
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {}
+  }
+ ]
+}

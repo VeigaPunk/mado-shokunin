@@ -1,0 +1,5549 @@
+{
+ "fuzz": {
+  "runs": [
+   {
+    "seed": 900150031,
+    "generated": 480,
+    "labelled": 480,
+    "agreed": 471,
+    "disagreed": 9
+   },
+   {
+    "seed": 900150032,
+    "generated": 400,
+    "labelled": 400,
+    "agreed": 393,
+    "disagreed": 7
+   },
+   {
+    "seed": 900150033,
+    "generated": 400,
+    "labelled": 400,
+    "agreed": 392,
+    "disagreed": 8
+   },
+   {
+    "seed": 900150034,
+    "generated": 400,
+    "labelled": 400,
+    "agreed": 400,
+    "disagreed": 0
+   }
+  ],
+  "generated": 1680,
+  "labelled": 1680,
+  "agreed": 1656,
+  "disagreed": 24,
+  "clean_disagreed": 0
+ },
+ "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+ "upstream": [
+  "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+  "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+  "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+ ],
+ "candidate_source": "mado-shokunin/.ufo/waves/round-90/build/mado-portals.c1.py:277-280 (string_list(g[\"UseIn\"]) raises KeyFileError, caught, descriptor skipped)",
+ "cases": [
+  {
+   "id": "f01",
+   "origin_case": "g0068",
+   "origin_seed": 900150031,
+   "mode": "xdg",
+   "desktop": ":GNOME:GNOME",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/zeta.portal": "[portal]\nDBusName=\nUseIn=\n",
+    "data_home/xdg-desktop-portal/portals/gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=\nUseIn=kde\\q\n",
+    "data_dirs/0/xdg-desktop-portal/portals.conf": "\n[preferred]\ndefault = \ndefault=none\n[preferred] x\n[other]\ndefault=none;*;\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [
+     "gnome-keyring"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Secret": "usein"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "gnome-keyring"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "usein",
+     "org.freedesktop.impl.portal.Access": "usein",
+     "org.freedesktop.impl.portal.Settings": "usein",
+     "org.freedesktop.impl.portal.FileChooser": "usein",
+     "org.freedesktop.impl.portal.AppChooser": "usein",
+     "org.freedesktop.impl.portal.Print": "usein",
+     "org.freedesktop.impl.portal.Notification": "usein",
+     "org.freedesktop.impl.portal.Inhibit": "usein",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "usein",
+     "org.freedesktop.impl.portal.Email": "usein",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "usein",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_size": {
+    "files": 5,
+    "chars": 527
+   },
+   "minimised": {
+    "files": 3,
+    "chars": 183,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f02",
+   "origin_case": "g0083",
+   "origin_seed": 900150031,
+   "mode": "xdg",
+   "desktop": "GNOME:\t:xfce",
+   "files": {
+    "data_dirs/1/xdg-desktop-portal/portals/gnome-keyring.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gnome-keyring\nInterfaces=org.freedesktop.impl.portal.DynamicLauncher;org.freedesktop.impl.portal.InputCapture;org.freedesktop.impl.portal.GlobalShortcuts;org.freedesktop.impl.portal.Background\nUseIn=kde\\q\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "usein",
+    "org.freedesktop.impl.portal.Access": "usein",
+    "org.freedesktop.impl.portal.Settings": "usein",
+    "org.freedesktop.impl.portal.FileChooser": "usein",
+    "org.freedesktop.impl.portal.AppChooser": "usein",
+    "org.freedesktop.impl.portal.Print": "usein",
+    "org.freedesktop.impl.portal.Notification": "usein",
+    "org.freedesktop.impl.portal.Inhibit": "usein",
+    "org.freedesktop.impl.portal.Account": "usein",
+    "org.freedesktop.impl.portal.Email": "usein",
+    "org.freedesktop.impl.portal.DynamicLauncher": "usein"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "gnome-keyring"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "usein",
+     "org.freedesktop.impl.portal.Access": "usein",
+     "org.freedesktop.impl.portal.Settings": "usein",
+     "org.freedesktop.impl.portal.FileChooser": "usein",
+     "org.freedesktop.impl.portal.AppChooser": "usein",
+     "org.freedesktop.impl.portal.Print": "usein",
+     "org.freedesktop.impl.portal.Notification": "usein",
+     "org.freedesktop.impl.portal.Inhibit": "usein",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "usein",
+     "org.freedesktop.impl.portal.Email": "usein",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "usein",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_size": {
+    "files": 3,
+    "chars": 599
+   },
+   "minimised": {
+    "files": 1,
+    "chars": 259,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f03",
+   "origin_case": "g0088",
+   "origin_seed": 900150031,
+   "mode": "dir",
+   "desktop": "Hyprland:Hyprland",
+   "files": {
+    "kwallet.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kwallet\nInterfaces=org.freedesktop.impl.portal.Secret;\nUseIn=kde\n",
+    "gnome-keyring.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.Secret\nUseIn=gnome\n",
+    "gtk2.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk22\nInterfaces=org.freedesktop.impl.portal.Screenshot;org.freedesktop.impl.portal.Access;org.freedesktop.impl.portal.Inhibit;org.freedesktop.impl.portal.Notification\nUseIn=kde\\q\n",
+    "kappa.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kappa\nInterfaces=org.kde.Foo;org.freedesktop.impl.portal.Access;org.freedesktop.impl.portal.Usb;org.freedesktop.impl.portal.Settings;\nUseIn=GNOME;Hyprland;\n",
+    "portals.conf": "[preferred]\r\ndefault =\t gtk2\\;gtk; gtk\\;gtk\r\ndefault =\tgtk2\r\n",
+    "hyprland-portals.conf": "# generated config\n[other]\ndefault[en]=  ;kappa\\\\\ndefault = \ndefault= None\\s"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Access": "default config",
+    "org.freedesktop.impl.portal.Notification": "default config",
+    "org.freedesktop.impl.portal.Inhibit": "default config",
+    "org.freedesktop.impl.portal.Screenshot": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [],
+     "org.freedesktop.impl.portal.Access": [],
+     "org.freedesktop.impl.portal.Settings": [],
+     "org.freedesktop.impl.portal.FileChooser": [],
+     "org.freedesktop.impl.portal.AppChooser": [],
+     "org.freedesktop.impl.portal.Print": [],
+     "org.freedesktop.impl.portal.Notification": [],
+     "org.freedesktop.impl.portal.Inhibit": [],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [],
+     "org.freedesktop.impl.portal.Email": [],
+     "org.freedesktop.impl.portal.Secret": [],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "no-backend",
+     "org.freedesktop.impl.portal.Access": "no-backend",
+     "org.freedesktop.impl.portal.Settings": "no-backend",
+     "org.freedesktop.impl.portal.FileChooser": "no-backend",
+     "org.freedesktop.impl.portal.AppChooser": "no-backend",
+     "org.freedesktop.impl.portal.Print": "no-backend",
+     "org.freedesktop.impl.portal.Notification": "no-backend",
+     "org.freedesktop.impl.portal.Inhibit": "no-backend",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "no-backend",
+     "org.freedesktop.impl.portal.Email": "no-backend",
+     "org.freedesktop.impl.portal.Secret": "no-backend",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "no-backend",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Screenshot",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Screenshot",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 8,
+    "chars": 1305
+   },
+   "minimised": {
+    "files": 6,
+    "chars": 800,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f04",
+   "origin_case": "g0094",
+   "origin_seed": 900150031,
+   "mode": "xdg",
+   "desktop": "xfce:Hyprland",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/hyprland.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.Wallpaper;org.freedesktop.impl.portal.Lockdown;org.freedesktop.impl.portal.Background;org.freedesktop.impl.portal.FileChooser\nUseIn=kde\\q\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Wallpaper": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "default config",
+    "org.freedesktop.impl.portal.Access": "default config",
+    "org.freedesktop.impl.portal.Settings": "config",
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.AppChooser": "default config",
+    "org.freedesktop.impl.portal.Print": "default config",
+    "org.freedesktop.impl.portal.Notification": "default config",
+    "org.freedesktop.impl.portal.Inhibit": "default config",
+    "org.freedesktop.impl.portal.Background": "default config",
+    "org.freedesktop.impl.portal.Wallpaper": "default config",
+    "org.freedesktop.impl.portal.Account": "default config",
+    "org.freedesktop.impl.portal.Email": "default config",
+    "org.freedesktop.impl.portal.DynamicLauncher": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "default config",
+     "org.freedesktop.impl.portal.Access": "default config",
+     "org.freedesktop.impl.portal.Settings": "config",
+     "org.freedesktop.impl.portal.FileChooser": "default config",
+     "org.freedesktop.impl.portal.AppChooser": "default config",
+     "org.freedesktop.impl.portal.Print": "default config",
+     "org.freedesktop.impl.portal.Notification": "default config",
+     "org.freedesktop.impl.portal.Inhibit": "default config",
+     "org.freedesktop.impl.portal.Screenshot": "default config",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "default config",
+     "org.freedesktop.impl.portal.Email": "default config",
+     "org.freedesktop.impl.portal.Secret": "no-backend",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "default config",
+     "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+     "org.freedesktop.impl.portal.ScreenCast": "default config",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "default config",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [
+      "hyprland"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [
+      "hyprland"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Screenshot",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Background",
+     "oracle_picks": [
+      "hyprland"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Wallpaper",
+     "oracle_picks": [
+      "hyprland"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.GlobalShortcuts",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.ScreenCast",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.InputCapture",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [
+      "hyprland"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [
+      "hyprland"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Screenshot",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Background",
+     "oracle_picks": [
+      "hyprland"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Wallpaper",
+     "oracle_picks": [
+      "hyprland"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.GlobalShortcuts",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.ScreenCast",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.InputCapture",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    }
+   ],
+   "original_size": {
+    "files": 3,
+    "chars": 390
+   },
+   "minimised": {
+    "files": 1,
+    "chars": 219,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f05",
+   "origin_case": "g0127",
+   "origin_seed": 900150031,
+   "mode": "xdg",
+   "desktop": "KDE",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk2\nInterfaces=org.freedesktop.impl.portal.AppChooser;org.freedesktop.impl.portal.Inhibit;org.freedesktop.impl.portal.Background;\nUseIn=kde\\q"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [
+     "kwallet"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Secret": "usein"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "kwallet"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Access": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+     "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+     "org.freedesktop.impl.portal.AppChooser": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Print": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Notification": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Inhibit": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Email": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "gtk-last-resort",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    }
+   ],
+   "original_size": {
+    "files": 2,
+    "chars": 303
+   },
+   "minimised": {
+    "files": 1,
+    "chars": 196,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f06",
+   "origin_case": "g0201",
+   "origin_seed": 900150031,
+   "mode": "xdg",
+   "desktop": "XFCE",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk2\nInterfaces=org.freedesktop.impl.portal.RemoteDesktop;org.freedesktop.impl.portal.Account;org.freedesktop.impl.portal.Print;org.freedesktop.impl.portal.Notification\nUseIn=kde\\q\n",
+    "config_dirs/0/xdg-desktop-portal/xfce-portals.conf": "\n  [preferred]\norg.freedesktop.impl.portal.Account=\ndefault=  gtk;unknown\\s\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Print": "default config",
+    "org.freedesktop.impl.portal.Notification": "default config",
+    "org.freedesktop.impl.portal.Account": "default config",
+    "org.freedesktop.impl.portal.RemoteDesktop": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "default config",
+     "org.freedesktop.impl.portal.Access": "default config",
+     "org.freedesktop.impl.portal.Settings": "config",
+     "org.freedesktop.impl.portal.FileChooser": "default config",
+     "org.freedesktop.impl.portal.AppChooser": "default config",
+     "org.freedesktop.impl.portal.Print": "default config",
+     "org.freedesktop.impl.portal.Notification": "default config",
+     "org.freedesktop.impl.portal.Inhibit": "default config",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "default config",
+     "org.freedesktop.impl.portal.Email": "default config",
+     "org.freedesktop.impl.portal.Secret": "no-backend",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.RemoteDesktop",
+     "oracle_picks": [
+      "gtk"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.RemoteDesktop",
+     "oracle_picks": [
+      "gtk"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 4,
+    "chars": 655
+   },
+   "minimised": {
+    "files": 2,
+    "chars": 311,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f07",
+   "origin_case": "g0367",
+   "origin_seed": 900150031,
+   "mode": "xdg",
+   "desktop": "a b: :Hyprland",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/gnome-keyring.portal": "[portal]\nDBusName=org.a-\nInterfaces=org.freedesktop.impl.portal.GlobalShortcuts;org.freedesktop.impl.portal.Clipboard;org.freedesktop.impl.portal.Inhibit;\nUseIn=kde\\q\n",
+    "config_dirs/0/xdg-desktop-portal/portals.conf": "# generated config\n[preferred]\ndefault=kwallet\ndefault= unknown;*;unknown\norg.freedesktop.impl.portal.InputCapture=\ndefault[en]=  KDE;unknown\nInhibit =\t \nInhibit= none;unknown\n[other]\ndefault=gtk;gtk \n",
+    "data_home/xdg-desktop-portal/hyprland-portals.conf": "  [preferred]\ndefault=nosuch\ndefault[en]= eta;kwallet\ndefault[en]=unknown; gtk\\s;nosuch\\q\ndefault\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gnome-keyring"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [
+     "kwallet"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [
+     "gnome-keyring"
+    ],
+    "org.freedesktop.impl.portal.InputCapture": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "default config",
+    "org.freedesktop.impl.portal.Access": "default config",
+    "org.freedesktop.impl.portal.Settings": "config",
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.AppChooser": "default config",
+    "org.freedesktop.impl.portal.Print": "default config",
+    "org.freedesktop.impl.portal.Notification": "default config",
+    "org.freedesktop.impl.portal.Inhibit": "default config",
+    "org.freedesktop.impl.portal.Screenshot": "default config",
+    "org.freedesktop.impl.portal.Account": "default config",
+    "org.freedesktop.impl.portal.Email": "default config",
+    "org.freedesktop.impl.portal.Secret": "default config",
+    "org.freedesktop.impl.portal.GlobalShortcuts": "default config",
+    "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+    "org.freedesktop.impl.portal.ScreenCast": "default config",
+    "org.freedesktop.impl.portal.Clipboard": "default config",
+    "org.freedesktop.impl.portal.InputCapture": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "gnome-keyring"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "default config",
+     "org.freedesktop.impl.portal.Access": "default config",
+     "org.freedesktop.impl.portal.Settings": "config",
+     "org.freedesktop.impl.portal.FileChooser": "default config",
+     "org.freedesktop.impl.portal.AppChooser": "default config",
+     "org.freedesktop.impl.portal.Print": "default config",
+     "org.freedesktop.impl.portal.Notification": "default config",
+     "org.freedesktop.impl.portal.Inhibit": "default config",
+     "org.freedesktop.impl.portal.Screenshot": "default config",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "default config",
+     "org.freedesktop.impl.portal.Email": "default config",
+     "org.freedesktop.impl.portal.Secret": "default config",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "default config",
+     "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+     "org.freedesktop.impl.portal.ScreenCast": "default config",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "default config",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [
+      "gnome-keyring"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [
+      "kwallet"
+     ],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Clipboard",
+     "oracle_picks": [
+      "gnome-keyring"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [
+      "gnome-keyring"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [
+      "kwallet"
+     ],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Clipboard",
+     "oracle_picks": [
+      "gnome-keyring"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 5,
+    "chars": 729
+   },
+   "minimised": {
+    "files": 3,
+    "chars": 466,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f08",
+   "origin_case": "g0390",
+   "origin_seed": 900150031,
+   "mode": "xdg",
+   "desktop": "GNOME:XFCE",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/epsilon.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=;\nUseIn=\n",
+    "data_dirs/0/xdg-desktop-portal/portals/gnome-keyring.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.GlobalShortcuts;org.freedesktop.impl.portal.Inhibit;org.freedesktop.impl.portal.Screenshot;org.freedesktop.impl.portal.Wallpaper\nUseIn=kde\\q\n",
+    "config_home/xdg-desktop-portal/xfce-portals.conf": "# generated config\n[preferred]\ndefault=hyprland;*\\\\;none\ndefault=\ndefault[en] =\tKDE;gnome-keyring\n",
+    "config_dirs/1/xdg-desktop-portal/gnome-portals.conf": "[preferred]\t\r\norg.freedesktop.impl.portal.Background=kwallet;gtk;\r\norg.freedesktop.impl.portal.Background=\r\ndefault =\tnosuch\\s;nosuch;\r\ndefault=\\s;"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "usein",
+    "org.freedesktop.impl.portal.Access": "usein",
+    "org.freedesktop.impl.portal.Settings": "usein",
+    "org.freedesktop.impl.portal.FileChooser": "usein",
+    "org.freedesktop.impl.portal.AppChooser": "usein",
+    "org.freedesktop.impl.portal.Print": "usein",
+    "org.freedesktop.impl.portal.Notification": "usein",
+    "org.freedesktop.impl.portal.Inhibit": "usein",
+    "org.freedesktop.impl.portal.Account": "usein",
+    "org.freedesktop.impl.portal.Email": "usein",
+    "org.freedesktop.impl.portal.DynamicLauncher": "usein"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "gnome-keyring"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "usein",
+     "org.freedesktop.impl.portal.Access": "usein",
+     "org.freedesktop.impl.portal.Settings": "usein",
+     "org.freedesktop.impl.portal.FileChooser": "usein",
+     "org.freedesktop.impl.portal.AppChooser": "usein",
+     "org.freedesktop.impl.portal.Print": "usein",
+     "org.freedesktop.impl.portal.Notification": "usein",
+     "org.freedesktop.impl.portal.Inhibit": "usein",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "usein",
+     "org.freedesktop.impl.portal.Email": "usein",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "usein",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_size": {
+    "files": 6,
+    "chars": 1109
+   },
+   "minimised": {
+    "files": 4,
+    "chars": 529,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f09",
+   "origin_case": "g0418",
+   "origin_seed": 900150031,
+   "mode": "xdg",
+   "desktop": "\t",
+   "files": {
+    "data_dirs/0/xdg-desktop-portal/portals/eta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.eta2\nInterfaces=org.freedesktop.impl.portal.Wallpaper;org.freedesktop.impl.portal.DynamicLauncher;\nUseIn=kde\\\n",
+    "config_dirs/0/xdg-desktop-portal/portals.conf": "[preferred]\t\ndefault =\tnone;eta\nGlobalShortcuts=gtk;*;zeta\n[preferred]\t\ndefault=*\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [
+     "eta"
+    ],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [
+     "gnome-keyring"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "eta"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "default config",
+    "org.freedesktop.impl.portal.Access": "default config",
+    "org.freedesktop.impl.portal.Settings": "config",
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.AppChooser": "default config",
+    "org.freedesktop.impl.portal.Print": "default config",
+    "org.freedesktop.impl.portal.Notification": "default config",
+    "org.freedesktop.impl.portal.Inhibit": "default config",
+    "org.freedesktop.impl.portal.Screenshot": "default config",
+    "org.freedesktop.impl.portal.Wallpaper": "default config",
+    "org.freedesktop.impl.portal.Account": "default config",
+    "org.freedesktop.impl.portal.Email": "default config",
+    "org.freedesktop.impl.portal.Secret": "default config",
+    "org.freedesktop.impl.portal.GlobalShortcuts": "default config",
+    "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+    "org.freedesktop.impl.portal.ScreenCast": "default config",
+    "org.freedesktop.impl.portal.InputCapture": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "gnome-keyring"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "default config",
+     "org.freedesktop.impl.portal.Access": "default config",
+     "org.freedesktop.impl.portal.Settings": "config",
+     "org.freedesktop.impl.portal.FileChooser": "default config",
+     "org.freedesktop.impl.portal.AppChooser": "default config",
+     "org.freedesktop.impl.portal.Print": "default config",
+     "org.freedesktop.impl.portal.Notification": "default config",
+     "org.freedesktop.impl.portal.Inhibit": "default config",
+     "org.freedesktop.impl.portal.Screenshot": "default config",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "default config",
+     "org.freedesktop.impl.portal.Email": "default config",
+     "org.freedesktop.impl.portal.Secret": "default config",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "default config",
+     "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+     "org.freedesktop.impl.portal.ScreenCast": "default config",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "default config",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Wallpaper",
+     "oracle_picks": [
+      "eta"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [
+      "eta"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Wallpaper",
+     "oracle_picks": [
+      "eta"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [
+      "eta"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    }
+   ],
+   "original_size": {
+    "files": 3,
+    "chars": 411
+   },
+   "minimised": {
+    "files": 2,
+    "chars": 246,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f10",
+   "origin_case": "g0020",
+   "origin_seed": 900150032,
+   "mode": "xdg",
+   "desktop": "KDE",
+   "files": {
+    "data_dirs/1/xdg-desktop-portal/portals/gamma.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gamma\nInterfaces=org.freedesktop.impl.portal.Lockdown;org.freedesktop.impl.portal.AppChooser;\nUseIn=kde\\q\n",
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\ndefault= kwallet;unknown;\nDefault =\t zeta\ndefault=none\ndefault =\thyprland\norg.freedesktop.impl.portal.AppChooser=*;gtk;gtk\n[other]\ndefault= nosuch\n[preferred]\ndefault=gamma;\n",
+    "config_dirs/0/xdg-desktop-portal/kde-portals.conf": "# generated config\n  [preferred]\norg.freedesktop.impl.portal.Lockdown=gamma;kwallet\n[preferred] x\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gamma"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gamma"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [
+     "kwallet"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "default config",
+    "org.freedesktop.impl.portal.Access": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.AppChooser": "interface specific config",
+    "org.freedesktop.impl.portal.Print": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Inhibit": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Account": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Email": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Secret": "usein",
+    "org.freedesktop.impl.portal.DynamicLauncher": "gtk-last-resort"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "kwallet"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Access": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+     "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+     "org.freedesktop.impl.portal.AppChooser": "interface specific config",
+     "org.freedesktop.impl.portal.Print": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Notification": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Inhibit": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Email": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "gtk-last-resort",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [
+      "gamma"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [
+      "gamma"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "interface specific config",
+     "candidate_reason": "interface specific config"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [
+      "gamma"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [
+      "gamma"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "interface specific config",
+     "candidate_reason": "interface specific config"
+    }
+   ],
+   "original_size": {
+    "files": 5,
+    "chars": 738
+   },
+   "minimised": {
+    "files": 3,
+    "chars": 444,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f11",
+   "origin_case": "g0075",
+   "origin_seed": 900150032,
+   "mode": "xdg",
+   "desktop": "Hyprland:sway",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/eta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.eta\nInterfaces=\n",
+    "data_dirs/0/xdg-desktop-portal/portals/epsilon.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.Secret;\nUseIn=;\n",
+    "data_dirs/2/xdg-desktop-portal/portals/gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.Clipboard;org.freedesktop.impl.portal.AppChooser;org.freedesktop.impl.portal.Screenshot;org.freedesktop.impl.portal.Notification;org.freedesktop.impl.portal.Print;org.freedesktop.impl.portal.Access\nUseIn=kde\\q\n",
+    "data_home/xdg-desktop-portal/sway-portals.conf": "[Preferred]\ndefault =\tNone"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.InputCapture": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Access": "default config",
+    "org.freedesktop.impl.portal.AppChooser": "default config",
+    "org.freedesktop.impl.portal.Print": "default config",
+    "org.freedesktop.impl.portal.Notification": "default config",
+    "org.freedesktop.impl.portal.Screenshot": "default config",
+    "org.freedesktop.impl.portal.GlobalShortcuts": "default config",
+    "org.freedesktop.impl.portal.ScreenCast": "default config",
+    "org.freedesktop.impl.portal.Clipboard": "default config",
+    "org.freedesktop.impl.portal.InputCapture": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "default config",
+     "org.freedesktop.impl.portal.Access": "default config",
+     "org.freedesktop.impl.portal.Settings": "config",
+     "org.freedesktop.impl.portal.FileChooser": "default config",
+     "org.freedesktop.impl.portal.AppChooser": "default config",
+     "org.freedesktop.impl.portal.Print": "default config",
+     "org.freedesktop.impl.portal.Notification": "default config",
+     "org.freedesktop.impl.portal.Inhibit": "default config",
+     "org.freedesktop.impl.portal.Screenshot": "default config",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "default config",
+     "org.freedesktop.impl.portal.Email": "default config",
+     "org.freedesktop.impl.portal.Secret": "no-backend",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "default config",
+     "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+     "org.freedesktop.impl.portal.ScreenCast": "default config",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "default config",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Clipboard",
+     "oracle_picks": [
+      "gtk"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Clipboard",
+     "oracle_picks": [
+      "gtk"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 6,
+    "chars": 846
+   },
+   "minimised": {
+    "files": 4,
+    "chars": 500,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f12",
+   "origin_case": "g0165",
+   "origin_seed": 900150032,
+   "mode": "dir",
+   "desktop": "sway",
+   "files": {
+    "alpha.portal": "[portal]\nInterfaces=\nUseIn=Hyprland;KDE;HYPRLAND\n",
+    "gtk2.portal": "[portal]\nDBusName=org.example.gtk2\nInterfaces=org.freedesktop.impl.portal.ScreenCast;org.freedesktop.impl.portal.Print;org.freedesktop.impl.portal.AppChooser;org.freedesktop.impl.portal.Secret\nUseIn=kde\\\n",
+    "portals.conf": "[preferred]  \ndefault = nosuch;gtk2\ndefault[en] =  alpha;nosuch;gtk2\nDefault=alpha;gtk2;alpha"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.AppChooser": "default config",
+    "org.freedesktop.impl.portal.Print": "default config",
+    "org.freedesktop.impl.portal.Secret": "default config",
+    "org.freedesktop.impl.portal.ScreenCast": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [],
+     "org.freedesktop.impl.portal.Access": [],
+     "org.freedesktop.impl.portal.Settings": [],
+     "org.freedesktop.impl.portal.FileChooser": [],
+     "org.freedesktop.impl.portal.AppChooser": [],
+     "org.freedesktop.impl.portal.Print": [],
+     "org.freedesktop.impl.portal.Notification": [],
+     "org.freedesktop.impl.portal.Inhibit": [],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [],
+     "org.freedesktop.impl.portal.Email": [],
+     "org.freedesktop.impl.portal.Secret": [],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "no-backend",
+     "org.freedesktop.impl.portal.Access": "no-backend",
+     "org.freedesktop.impl.portal.Settings": "no-backend",
+     "org.freedesktop.impl.portal.FileChooser": "no-backend",
+     "org.freedesktop.impl.portal.AppChooser": "no-backend",
+     "org.freedesktop.impl.portal.Print": "no-backend",
+     "org.freedesktop.impl.portal.Notification": "no-backend",
+     "org.freedesktop.impl.portal.Inhibit": "no-backend",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "no-backend",
+     "org.freedesktop.impl.portal.Email": "no-backend",
+     "org.freedesktop.impl.portal.Secret": "no-backend",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "no-backend",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.ScreenCast",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.ScreenCast",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 5,
+    "chars": 599
+   },
+   "minimised": {
+    "files": 3,
+    "chars": 346,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f13",
+   "origin_case": "g0240",
+   "origin_seed": 900150032,
+   "mode": "xdg",
+   "desktop": "KDE",
+   "files": {
+    "data_dirs/0/xdg-desktop-portal/portals/kde.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.DynamicLauncher\\;x;\nUseIn=kde\\\n",
+    "data_home/xdg-desktop-portal/portals/epsilon.portal": "[portal]\nInterfaces=\nUseIn=KDE;XFCE;wlroots;\n",
+    "data_dirs/0/xdg-desktop-portal/portals/gtk.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.FileChooser\nUseIn=kde\\q\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [
+     "kwallet"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Secret": "usein"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "kwallet"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Access": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+     "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+     "org.freedesktop.impl.portal.AppChooser": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Print": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Notification": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Inhibit": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Email": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "gtk-last-resort",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.AppChooser",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Inhibit",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Email",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "gtk-last-resort"
+    }
+   ],
+   "original_size": {
+    "files": 5,
+    "chars": 647
+   },
+   "minimised": {
+    "files": 3,
+    "chars": 262,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f14",
+   "origin_case": "g0319",
+   "origin_seed": 900150032,
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "kwallet.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kwallet\nInterfaces=org.freedesktop.impl.portal.Secret;\nUseIn=kde\n",
+    "gnome-keyring.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.Secret\nUseIn=gnome\n",
+    "mako.portal": "[portal]\nDBusName=org.example.mako\nInterfaces=org.freedesktop.impl.portal.Screenshot;\nUseIn=kde\\q\n",
+    "xfce-portals.conf": "\n[preferred]\ndefault=*;alpha\nSecret =\tkwallet;*\\;gtk;none\n[other]\ndefault=gnome-keyring;mako\\\\\n",
+    "portals.conf": "[preferred]\t\r\ndefault= *;\r\ndefault= zeta\r\norg.freedesktop.impl.portal.FileChooser = ;\r\nSecret =\tzeta;\r\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "mako"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [
+     "gnome-keyring"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Screenshot": "default config",
+    "org.freedesktop.impl.portal.Secret": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [],
+     "org.freedesktop.impl.portal.Access": [],
+     "org.freedesktop.impl.portal.Settings": [],
+     "org.freedesktop.impl.portal.FileChooser": [],
+     "org.freedesktop.impl.portal.AppChooser": [],
+     "org.freedesktop.impl.portal.Print": [],
+     "org.freedesktop.impl.portal.Notification": [],
+     "org.freedesktop.impl.portal.Inhibit": [],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [],
+     "org.freedesktop.impl.portal.Email": [],
+     "org.freedesktop.impl.portal.Secret": [
+      "gnome-keyring"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "no-backend",
+     "org.freedesktop.impl.portal.Access": "no-backend",
+     "org.freedesktop.impl.portal.Settings": "no-backend",
+     "org.freedesktop.impl.portal.FileChooser": "no-backend",
+     "org.freedesktop.impl.portal.AppChooser": "no-backend",
+     "org.freedesktop.impl.portal.Print": "no-backend",
+     "org.freedesktop.impl.portal.Notification": "no-backend",
+     "org.freedesktop.impl.portal.Inhibit": "no-backend",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "no-backend",
+     "org.freedesktop.impl.portal.Email": "no-backend",
+     "org.freedesktop.impl.portal.Secret": "default config",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "no-backend",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Screenshot",
+     "oracle_picks": [
+      "mako"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Screenshot",
+     "oracle_picks": [
+      "mako"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 7,
+    "chars": 885
+   },
+   "minimised": {
+    "files": 5,
+    "chars": 515,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f15",
+   "origin_case": "g0330",
+   "origin_seed": 900150032,
+   "mode": "xdg",
+   "desktop": "KDE",
+   "files": {
+    "data_dirs/1/xdg-desktop-portal/portals/kwallet.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kwallet\nInterfaces=org.freedesktop.impl.portal.Lockdown;org.freedesktop.impl.portal.Account;org.freedesktop.impl.portal.Notification;org.freedesktop.impl.portal.Background;org.freedesktop.impl.portal.Secret;org.freedesktop.impl.portal.FileChooser;\nUseIn=kde\\q\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Access": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.AppChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Print": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Inhibit": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Account": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Email": "gtk-last-resort",
+    "org.freedesktop.impl.portal.DynamicLauncher": "gtk-last-resort"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "kwallet"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Access": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+     "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+     "org.freedesktop.impl.portal.AppChooser": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Print": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Notification": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Inhibit": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Email": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "gtk-last-resort",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "kwallet"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "kwallet"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_size": {
+    "files": 3,
+    "chars": 479
+   },
+   "minimised": {
+    "files": 1,
+    "chars": 314,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f16",
+   "origin_case": "g0386",
+   "origin_seed": 900150032,
+   "mode": "xdg",
+   "desktop": " :XFCE:KDE",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/kwallet.portal": "[portal]\nDBusName=org.example.kwallet\nInterfaces=org.freedesktop.impl.portal.Lockdown;org.freedesktop.impl.portal.Background;org.freedesktop.impl.portal.RemoteDesktop;org.freedesktop.impl.portal.Settings\nUseIn=kde\\q\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Access": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+    "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.AppChooser": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Print": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Notification": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Inhibit": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Account": "gtk-last-resort",
+    "org.freedesktop.impl.portal.Email": "gtk-last-resort",
+    "org.freedesktop.impl.portal.DynamicLauncher": "gtk-last-resort"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "kwallet"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Access": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Settings": "gtk-last-resort",
+     "org.freedesktop.impl.portal.FileChooser": "gtk-last-resort",
+     "org.freedesktop.impl.portal.AppChooser": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Print": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Notification": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Inhibit": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Email": "gtk-last-resort",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "gtk-last-resort",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "kwallet"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "kwallet"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_size": {
+    "files": 3,
+    "chars": 624
+   },
+   "minimised": {
+    "files": 1,
+    "chars": 216,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f17",
+   "origin_case": "g0007",
+   "origin_seed": 900150033,
+   "mode": "xdg",
+   "desktop": "GNOME",
+   "files": {
+    "data_dirs/1/xdg-desktop-portal/portals/gtk2.portal": "[portal]\nDBusName=org.example.gtk2\nInterfaces=org.freedesktop.impl.portal.RemoteDesktop;org.freedesktop.impl.portal.Clipboard;org.freedesktop.impl.portal.DynamicLauncher;org.freedesktop.impl.portal.Wallpaper;org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.InputCapture\nUseIn=kde\\\n",
+    "data_dirs/0/xdg-desktop-portal/gnome-portals.conf": "[preferred]\nAppChooser= epsilon;epsilon;\ndefault = gtk2;gnome-keyring;epsilon\\s;",
+    "config_dirs/0/xdg-desktop-portal/portals.conf": "[preferred]  \nDynamicLauncher= ;\nDynamicLauncher=\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [
+     "gnome-keyring"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Clipboard": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.InputCapture": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "usein",
+    "org.freedesktop.impl.portal.Access": "usein",
+    "org.freedesktop.impl.portal.Settings": "usein",
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.AppChooser": "usein",
+    "org.freedesktop.impl.portal.Print": "usein",
+    "org.freedesktop.impl.portal.Notification": "usein",
+    "org.freedesktop.impl.portal.Inhibit": "usein",
+    "org.freedesktop.impl.portal.Wallpaper": "default config",
+    "org.freedesktop.impl.portal.Account": "usein",
+    "org.freedesktop.impl.portal.Email": "usein",
+    "org.freedesktop.impl.portal.Secret": "default config",
+    "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+    "org.freedesktop.impl.portal.RemoteDesktop": "default config",
+    "org.freedesktop.impl.portal.Clipboard": "default config",
+    "org.freedesktop.impl.portal.InputCapture": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "gnome-keyring"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "usein",
+     "org.freedesktop.impl.portal.Access": "usein",
+     "org.freedesktop.impl.portal.Settings": "usein",
+     "org.freedesktop.impl.portal.FileChooser": "usein",
+     "org.freedesktop.impl.portal.AppChooser": "usein",
+     "org.freedesktop.impl.portal.Print": "usein",
+     "org.freedesktop.impl.portal.Notification": "usein",
+     "org.freedesktop.impl.portal.Inhibit": "usein",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "usein",
+     "org.freedesktop.impl.portal.Email": "usein",
+     "org.freedesktop.impl.portal.Secret": "default config",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "usein",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Wallpaper",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.RemoteDesktop",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Clipboard",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.InputCapture",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Wallpaper",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "usein"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.RemoteDesktop",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Clipboard",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.InputCapture",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 5,
+    "chars": 588
+   },
+   "minimised": {
+    "files": 3,
+    "chars": 430,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f18",
+   "origin_case": "g0027",
+   "origin_seed": 900150033,
+   "mode": "xdg",
+   "desktop": "SWAY",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/gtk2.portal": "[portal]\nDBusName=org.example.gtk2\nInterfaces=org.freedesktop.impl.portal.Notification;org.freedesktop.impl.portal.Account;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Usb;org.freedesktop.impl.portal.Clipboard\nUseIn=kde\\\n",
+    "data_home/xdg-desktop-portal/portals/gtk.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.GlobalShortcuts\nUseIn=gnome;My.Desk;",
+    "config_dirs/1/xdg-desktop-portal/sway-portals.conf": "[preferred]  \r\nGlobalShortcuts =  gnome-keyring;nosuch;\r\ndefault=nosuch;\r\ndefault= nosuch;gtk2;\r\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [
+     "gtk2"
+    ],
+    "org.freedesktop.impl.portal.InputCapture": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Usb": [
+     "gtk2"
+    ]
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Settings": "config",
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.Notification": "default config",
+    "org.freedesktop.impl.portal.Screenshot": "usein",
+    "org.freedesktop.impl.portal.Account": "default config",
+    "org.freedesktop.impl.portal.GlobalShortcuts": "usein",
+    "org.freedesktop.impl.portal.ScreenCast": "usein",
+    "org.freedesktop.impl.portal.Clipboard": "default config",
+    "org.freedesktop.impl.portal.InputCapture": "usein",
+    "org.freedesktop.impl.portal.Usb": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [],
+     "org.freedesktop.impl.portal.Access": [],
+     "org.freedesktop.impl.portal.Settings": [],
+     "org.freedesktop.impl.portal.FileChooser": [],
+     "org.freedesktop.impl.portal.AppChooser": [],
+     "org.freedesktop.impl.portal.Print": [],
+     "org.freedesktop.impl.portal.Notification": [],
+     "org.freedesktop.impl.portal.Inhibit": [],
+     "org.freedesktop.impl.portal.Screenshot": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [],
+     "org.freedesktop.impl.portal.Email": [],
+     "org.freedesktop.impl.portal.Secret": [],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.DynamicLauncher": [],
+     "org.freedesktop.impl.portal.ScreenCast": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "no-backend",
+     "org.freedesktop.impl.portal.Access": "no-backend",
+     "org.freedesktop.impl.portal.Settings": "no-backend",
+     "org.freedesktop.impl.portal.FileChooser": "no-backend",
+     "org.freedesktop.impl.portal.AppChooser": "no-backend",
+     "org.freedesktop.impl.portal.Print": "no-backend",
+     "org.freedesktop.impl.portal.Notification": "no-backend",
+     "org.freedesktop.impl.portal.Inhibit": "no-backend",
+     "org.freedesktop.impl.portal.Screenshot": "usein",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "no-backend",
+     "org.freedesktop.impl.portal.Email": "no-backend",
+     "org.freedesktop.impl.portal.Secret": "no-backend",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "usein",
+     "org.freedesktop.impl.portal.DynamicLauncher": "no-backend",
+     "org.freedesktop.impl.portal.ScreenCast": "usein",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "usein",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Clipboard",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Usb",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Notification",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Account",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Clipboard",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Usb",
+     "oracle_picks": [
+      "gtk2"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 5,
+    "chars": 656
+   },
+   "minimised": {
+    "files": 3,
+    "chars": 495,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f19",
+   "origin_case": "g0030",
+   "origin_seed": 900150033,
+   "mode": "xdg",
+   "desktop": "sway:GNOME",
+   "files": {
+    "data_dirs/1/xdg-desktop-portal/portals/beta.portal": "[portal]\n# synthetic descriptor\nDBusName=org.1a.b\nInterfaces=",
+    "data_dirs/0/xdg-desktop-portal/portals/gnome-keyring.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=\nUseIn=kde\\q\n",
+    "config_dirs/1/xdg-desktop-portal/gnome-portals.conf": "default=theta\r\n[other]\r\ndefault=nosuch;*\r\ndefault=none\r\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "usein",
+    "org.freedesktop.impl.portal.Access": "usein",
+    "org.freedesktop.impl.portal.Settings": "usein",
+    "org.freedesktop.impl.portal.FileChooser": "usein",
+    "org.freedesktop.impl.portal.AppChooser": "usein",
+    "org.freedesktop.impl.portal.Print": "usein",
+    "org.freedesktop.impl.portal.Notification": "usein",
+    "org.freedesktop.impl.portal.Inhibit": "usein",
+    "org.freedesktop.impl.portal.Screenshot": "usein",
+    "org.freedesktop.impl.portal.Account": "usein",
+    "org.freedesktop.impl.portal.Email": "usein",
+    "org.freedesktop.impl.portal.GlobalShortcuts": "usein",
+    "org.freedesktop.impl.portal.DynamicLauncher": "usein",
+    "org.freedesktop.impl.portal.ScreenCast": "usein",
+    "org.freedesktop.impl.portal.InputCapture": "usein"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "gnome-keyring"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "usein",
+     "org.freedesktop.impl.portal.Access": "usein",
+     "org.freedesktop.impl.portal.Settings": "usein",
+     "org.freedesktop.impl.portal.FileChooser": "usein",
+     "org.freedesktop.impl.portal.AppChooser": "usein",
+     "org.freedesktop.impl.portal.Print": "usein",
+     "org.freedesktop.impl.portal.Notification": "usein",
+     "org.freedesktop.impl.portal.Inhibit": "usein",
+     "org.freedesktop.impl.portal.Screenshot": "usein",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "usein",
+     "org.freedesktop.impl.portal.Email": "usein",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "usein",
+     "org.freedesktop.impl.portal.DynamicLauncher": "usein",
+     "org.freedesktop.impl.portal.ScreenCast": "usein",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "usein",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_size": {
+    "files": 5,
+    "chars": 535
+   },
+   "minimised": {
+    "files": 3,
+    "chars": 183,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f20",
+   "origin_case": "g0093",
+   "origin_seed": 900150033,
+   "mode": "dir",
+   "desktop": "KDE",
+   "files": {
+    "kappa.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.Screenshot;org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.DynamicLauncher;\nUseIn=kde\\q\n",
+    "swayfc.portal": "[portal]\nInterfaces=org.freedesktop.impl.portal.Lockdown\\;x; org.freedesktop.impl.portal.InputCapture; org.freedesktop.impl.portal.Email\nUseIn=kde\n",
+    "portals.conf": "[preferred]\t\nDefault=*;unknown\ndefault=None\ndefault= nosuch;*\nDefault= none;none\\s\n",
+    "kde-portals.conf": "[preferred]\t\ndefault=\norg.freedesktop.impl.portal.ScreenCast =\tswayfc;unknown\ndefault=nosuch\\\\;KDE;kappa\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "kappa"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "kappa"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "kappa"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.Screenshot": "default config",
+    "org.freedesktop.impl.portal.DynamicLauncher": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [],
+     "org.freedesktop.impl.portal.Access": [],
+     "org.freedesktop.impl.portal.Settings": [],
+     "org.freedesktop.impl.portal.FileChooser": [],
+     "org.freedesktop.impl.portal.AppChooser": [],
+     "org.freedesktop.impl.portal.Print": [],
+     "org.freedesktop.impl.portal.Notification": [],
+     "org.freedesktop.impl.portal.Inhibit": [],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [],
+     "org.freedesktop.impl.portal.Email": [],
+     "org.freedesktop.impl.portal.Secret": [],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "no-backend",
+     "org.freedesktop.impl.portal.Access": "no-backend",
+     "org.freedesktop.impl.portal.Settings": "no-backend",
+     "org.freedesktop.impl.portal.FileChooser": "no-backend",
+     "org.freedesktop.impl.portal.AppChooser": "no-backend",
+     "org.freedesktop.impl.portal.Print": "no-backend",
+     "org.freedesktop.impl.portal.Notification": "no-backend",
+     "org.freedesktop.impl.portal.Inhibit": "no-backend",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "no-backend",
+     "org.freedesktop.impl.portal.Email": "no-backend",
+     "org.freedesktop.impl.portal.Secret": "no-backend",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "no-backend",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [
+      "kappa"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Screenshot",
+     "oracle_picks": [
+      "kappa"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [
+      "kappa"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.FileChooser",
+     "oracle_picks": [
+      "kappa"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Screenshot",
+     "oracle_picks": [
+      "kappa"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.DynamicLauncher",
+     "oracle_picks": [
+      "kappa"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 6,
+    "chars": 956
+   },
+   "minimised": {
+    "files": 4,
+    "chars": 524,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f21",
+   "origin_case": "g0222",
+   "origin_seed": 900150033,
+   "mode": "xdg",
+   "desktop": "Hyprland",
+   "files": {
+    "data_dirs/1/xdg-desktop-portal/portals/theta.portal": "[portal]\nDBusName=org.a-\nInterfaces=org.freedesktop.impl.portal.InputCapture;org.freedesktop.impl.portal.ScreenCast;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Print;org.freedesktop.impl.portal.Lockdown;org.freedesktop.impl.portal.Secret\nUseIn=kde\\\n",
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]  \ndefault=nosuch\\s;theta;kwallet;\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "theta"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "theta",
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "theta"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [
+     "theta"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [
+     "theta"
+    ],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [
+     "theta"
+    ],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "default config",
+    "org.freedesktop.impl.portal.Access": "default config",
+    "org.freedesktop.impl.portal.Settings": "config",
+    "org.freedesktop.impl.portal.FileChooser": "default config",
+    "org.freedesktop.impl.portal.AppChooser": "default config",
+    "org.freedesktop.impl.portal.Print": "default config",
+    "org.freedesktop.impl.portal.Notification": "default config",
+    "org.freedesktop.impl.portal.Inhibit": "default config",
+    "org.freedesktop.impl.portal.Screenshot": "default config",
+    "org.freedesktop.impl.portal.Account": "default config",
+    "org.freedesktop.impl.portal.Email": "default config",
+    "org.freedesktop.impl.portal.Secret": "default config",
+    "org.freedesktop.impl.portal.GlobalShortcuts": "default config",
+    "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+    "org.freedesktop.impl.portal.ScreenCast": "default config",
+    "org.freedesktop.impl.portal.InputCapture": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "kwallet"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "default config",
+     "org.freedesktop.impl.portal.Access": "default config",
+     "org.freedesktop.impl.portal.Settings": "config",
+     "org.freedesktop.impl.portal.FileChooser": "default config",
+     "org.freedesktop.impl.portal.AppChooser": "default config",
+     "org.freedesktop.impl.portal.Print": "default config",
+     "org.freedesktop.impl.portal.Notification": "default config",
+     "org.freedesktop.impl.portal.Inhibit": "default config",
+     "org.freedesktop.impl.portal.Screenshot": "default config",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "default config",
+     "org.freedesktop.impl.portal.Email": "default config",
+     "org.freedesktop.impl.portal.Secret": "default config",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "default config",
+     "org.freedesktop.impl.portal.DynamicLauncher": "default config",
+     "org.freedesktop.impl.portal.ScreenCast": "default config",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "default config",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [
+      "theta",
+      "gtk"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "config",
+     "candidate_reason": "config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "kwallet"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.ScreenCast",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.InputCapture",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Lockdown",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Settings",
+     "oracle_picks": [
+      "theta",
+      "gtk"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "config",
+     "candidate_reason": "config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Print",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "gtk"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "kwallet"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.ScreenCast",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    },
+    {
+     "interface": "org.freedesktop.impl.portal.InputCapture",
+     "oracle_picks": [
+      "theta"
+     ],
+     "candidate_picks": [
+      "hyprland"
+     ],
+     "oracle_reason": "default config",
+     "candidate_reason": "default config"
+    }
+   ],
+   "original_size": {
+    "files": 3,
+    "chars": 347
+   },
+   "minimised": {
+    "files": 2,
+    "chars": 316,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f22",
+   "origin_case": "g0262",
+   "origin_seed": 900150033,
+   "mode": "dir",
+   "desktop": "XFCE",
+   "files": {
+    "beta.portal": "[portal]\nDBusName=org.example.beta\nInterfaces=org.freedesktop.impl.portal.Access;\nUseIn=kde\\\n",
+    "xfce-portals.conf": "[preferred]\ndefault =\tnone;None;\ndefault = lambda;beta"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [
+     "beta"
+    ],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Access": "default config"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [],
+     "org.freedesktop.impl.portal.Access": [],
+     "org.freedesktop.impl.portal.Settings": [],
+     "org.freedesktop.impl.portal.FileChooser": [],
+     "org.freedesktop.impl.portal.AppChooser": [],
+     "org.freedesktop.impl.portal.Print": [],
+     "org.freedesktop.impl.portal.Notification": [],
+     "org.freedesktop.impl.portal.Inhibit": [],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [],
+     "org.freedesktop.impl.portal.Email": [],
+     "org.freedesktop.impl.portal.Secret": [],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "no-backend",
+     "org.freedesktop.impl.portal.Access": "no-backend",
+     "org.freedesktop.impl.portal.Settings": "no-backend",
+     "org.freedesktop.impl.portal.FileChooser": "no-backend",
+     "org.freedesktop.impl.portal.AppChooser": "no-backend",
+     "org.freedesktop.impl.portal.Print": "no-backend",
+     "org.freedesktop.impl.portal.Notification": "no-backend",
+     "org.freedesktop.impl.portal.Inhibit": "no-backend",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "no-backend",
+     "org.freedesktop.impl.portal.Email": "no-backend",
+     "org.freedesktop.impl.portal.Secret": "no-backend",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "no-backend",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [
+      "beta"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Access",
+     "oracle_picks": [
+      "beta"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "default config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 4,
+    "chars": 450
+   },
+   "minimised": {
+    "files": 2,
+    "chars": 147,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f23",
+   "origin_case": "g0354",
+   "origin_seed": 900150033,
+   "mode": "xdg",
+   "desktop": "GNOME:sway",
+   "files": {
+    "data_home/xdg-desktop-portal/portals/gtk2.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk2\nInterfaces=",
+    "data_dirs/0/xdg-desktop-portal/portals/lambda.portal": "[Portal]\nDBusName=org.freedesktop.secrets\nInterfaces=\n",
+    "data_dirs/0/xdg-desktop-portal/portals/gnome-keyring.portal": "[portal]\nDBusName=org.example.gnome-keyring\nInterfaces=org.freedesktop.impl.portal.Wallpaper;org.freedesktop.impl.portal.Secret\nUseIn=kde\\q\n",
+    "config_home/xdg-desktop-portal/sway-portals.conf": "[other]\ndefault =\tkappa;kwallet\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Access": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Settings": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.FileChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.AppChooser": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Print": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Notification": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Inhibit": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Screenshot": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [],
+    "org.freedesktop.impl.portal.Account": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Email": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.Secret": [],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.DynamicLauncher": [
+     "gtk"
+    ],
+    "org.freedesktop.impl.portal.ScreenCast": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [
+     "hyprland"
+    ],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Lockdown": "usein",
+    "org.freedesktop.impl.portal.Access": "usein",
+    "org.freedesktop.impl.portal.Settings": "usein",
+    "org.freedesktop.impl.portal.FileChooser": "usein",
+    "org.freedesktop.impl.portal.AppChooser": "usein",
+    "org.freedesktop.impl.portal.Print": "usein",
+    "org.freedesktop.impl.portal.Notification": "usein",
+    "org.freedesktop.impl.portal.Inhibit": "usein",
+    "org.freedesktop.impl.portal.Screenshot": "usein",
+    "org.freedesktop.impl.portal.Account": "usein",
+    "org.freedesktop.impl.portal.Email": "usein",
+    "org.freedesktop.impl.portal.GlobalShortcuts": "usein",
+    "org.freedesktop.impl.portal.DynamicLauncher": "usein",
+    "org.freedesktop.impl.portal.ScreenCast": "usein",
+    "org.freedesktop.impl.portal.InputCapture": "usein"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Access": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Settings": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.FileChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.AppChooser": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Print": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Notification": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Inhibit": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Screenshot": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Email": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.Secret": [
+      "gnome-keyring"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.DynamicLauncher": [
+      "gtk"
+     ],
+     "org.freedesktop.impl.portal.ScreenCast": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [
+      "hyprland"
+     ],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "usein",
+     "org.freedesktop.impl.portal.Access": "usein",
+     "org.freedesktop.impl.portal.Settings": "usein",
+     "org.freedesktop.impl.portal.FileChooser": "usein",
+     "org.freedesktop.impl.portal.AppChooser": "usein",
+     "org.freedesktop.impl.portal.Print": "usein",
+     "org.freedesktop.impl.portal.Notification": "usein",
+     "org.freedesktop.impl.portal.Inhibit": "usein",
+     "org.freedesktop.impl.portal.Screenshot": "usein",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "usein",
+     "org.freedesktop.impl.portal.Email": "usein",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "usein",
+     "org.freedesktop.impl.portal.DynamicLauncher": "usein",
+     "org.freedesktop.impl.portal.ScreenCast": "usein",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "usein",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Secret",
+     "oracle_picks": [],
+     "candidate_picks": [
+      "gnome-keyring"
+     ],
+     "oracle_reason": null,
+     "candidate_reason": "usein"
+    }
+   ],
+   "original_size": {
+    "files": 6,
+    "chars": 539
+   },
+   "minimised": {
+    "files": 4,
+    "chars": 296,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  },
+  {
+   "id": "f24",
+   "origin_case": "g0391",
+   "origin_seed": 900150033,
+   "mode": "dir",
+   "desktop": "KDE",
+   "files": {
+    "kwallet.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kwallet\nInterfaces=org.freedesktop.impl.portal.Secret;\nUseIn=kde\n",
+    "hyprland.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.hyprland\nInterfaces=org.freedesktop.impl.portal.Screenshot;org.freedesktop.impl.portal.ScreenCast;org.freedesktop.impl.portal.GlobalShortcuts;org.freedesktop.impl.portal.InputCapture;\nUseIn=wlroots;Hyprland;sway;Wayfire;river;\n",
+    "Zeta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.Zeta2\nInterfaces=org.freedesktop.impl.portal.GlobalShortcuts;org.freedesktop.impl.portal.Wallpaper;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Clipboard;org.freedesktop.impl.portal.InputCapture;org.freedesktop.impl.portal.Email;\nUseIn=kde\\\n",
+    "kde.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.kde\nInterfaces=org.freedesktop.impl.portal.Settings;\nUseIn=x.y;kde\n",
+    "portals.conf": "[preferred]\t\norg.freedesktop.impl.portal.Wallpaper=  Zeta;kde\norg.freedesktop.impl.portal.Settings= none;none;\norg.freedesktop.impl.portal.Clipboard=nosuch\\\\;KDE\nRemoteDesktop = *;gtk \\s\nDefault= gtk\nRemoteDesktop=\n"
+   },
+   "oracle": {
+    "org.freedesktop.impl.portal.Lockdown": [],
+    "org.freedesktop.impl.portal.Access": [],
+    "org.freedesktop.impl.portal.Settings": [],
+    "org.freedesktop.impl.portal.FileChooser": [],
+    "org.freedesktop.impl.portal.AppChooser": [],
+    "org.freedesktop.impl.portal.Print": [],
+    "org.freedesktop.impl.portal.Notification": [],
+    "org.freedesktop.impl.portal.Inhibit": [],
+    "org.freedesktop.impl.portal.Screenshot": [],
+    "org.freedesktop.impl.portal.Background": [],
+    "org.freedesktop.impl.portal.Wallpaper": [
+     "Zeta"
+    ],
+    "org.freedesktop.impl.portal.Account": [],
+    "org.freedesktop.impl.portal.Email": [],
+    "org.freedesktop.impl.portal.Secret": [
+     "kwallet"
+    ],
+    "org.freedesktop.impl.portal.GlobalShortcuts": [],
+    "org.freedesktop.impl.portal.DynamicLauncher": [],
+    "org.freedesktop.impl.portal.ScreenCast": [],
+    "org.freedesktop.impl.portal.RemoteDesktop": [],
+    "org.freedesktop.impl.portal.Clipboard": [],
+    "org.freedesktop.impl.portal.InputCapture": [],
+    "org.freedesktop.impl.portal.Usb": []
+   },
+   "oracle_reason": {
+    "org.freedesktop.impl.portal.Wallpaper": "interface specific config",
+    "org.freedesktop.impl.portal.Secret": "usein"
+   },
+   "candidate": {
+    "picks": {
+     "org.freedesktop.impl.portal.Lockdown": [],
+     "org.freedesktop.impl.portal.Access": [],
+     "org.freedesktop.impl.portal.Settings": [],
+     "org.freedesktop.impl.portal.FileChooser": [],
+     "org.freedesktop.impl.portal.AppChooser": [],
+     "org.freedesktop.impl.portal.Print": [],
+     "org.freedesktop.impl.portal.Notification": [],
+     "org.freedesktop.impl.portal.Inhibit": [],
+     "org.freedesktop.impl.portal.Screenshot": [],
+     "org.freedesktop.impl.portal.Background": [],
+     "org.freedesktop.impl.portal.Wallpaper": [],
+     "org.freedesktop.impl.portal.Account": [],
+     "org.freedesktop.impl.portal.Email": [],
+     "org.freedesktop.impl.portal.Secret": [
+      "kwallet"
+     ],
+     "org.freedesktop.impl.portal.GlobalShortcuts": [],
+     "org.freedesktop.impl.portal.DynamicLauncher": [],
+     "org.freedesktop.impl.portal.ScreenCast": [],
+     "org.freedesktop.impl.portal.RemoteDesktop": [],
+     "org.freedesktop.impl.portal.Clipboard": [],
+     "org.freedesktop.impl.portal.InputCapture": [],
+     "org.freedesktop.impl.portal.Usb": []
+    },
+    "reasons": {
+     "org.freedesktop.impl.portal.Lockdown": "no-backend",
+     "org.freedesktop.impl.portal.Access": "no-backend",
+     "org.freedesktop.impl.portal.Settings": "none-key",
+     "org.freedesktop.impl.portal.FileChooser": "no-backend",
+     "org.freedesktop.impl.portal.AppChooser": "no-backend",
+     "org.freedesktop.impl.portal.Print": "no-backend",
+     "org.freedesktop.impl.portal.Notification": "no-backend",
+     "org.freedesktop.impl.portal.Inhibit": "no-backend",
+     "org.freedesktop.impl.portal.Screenshot": "no-backend",
+     "org.freedesktop.impl.portal.Background": "no-backend",
+     "org.freedesktop.impl.portal.Wallpaper": "no-backend",
+     "org.freedesktop.impl.portal.Account": "no-backend",
+     "org.freedesktop.impl.portal.Email": "no-backend",
+     "org.freedesktop.impl.portal.Secret": "usein",
+     "org.freedesktop.impl.portal.GlobalShortcuts": "no-backend",
+     "org.freedesktop.impl.portal.DynamicLauncher": "no-backend",
+     "org.freedesktop.impl.portal.ScreenCast": "no-backend",
+     "org.freedesktop.impl.portal.RemoteDesktop": "no-backend",
+     "org.freedesktop.impl.portal.Clipboard": "no-backend",
+     "org.freedesktop.impl.portal.InputCapture": "no-backend",
+     "org.freedesktop.impl.portal.Usb": "no-backend"
+    }
+   },
+   "diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Wallpaper",
+     "oracle_picks": [
+      "Zeta"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "interface specific config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_diffs": [
+    {
+     "interface": "org.freedesktop.impl.portal.Wallpaper",
+     "oracle_picks": [
+      "Zeta"
+     ],
+     "candidate_picks": [],
+     "oracle_reason": "interface specific config",
+     "candidate_reason": "no-backend"
+    }
+   ],
+   "original_size": {
+    "files": 7,
+    "chars": 1833
+   },
+   "minimised": {
+    "files": 5,
+    "chars": 1051,
+    "signature_preserved": true
+   },
+   "cause": "descriptor UseIn value that fails GKeyFile unescaping: the production binary keeps the backend with use_in=NULL, the candidate drops the whole descriptor, which also un-shadows host-tail duplicates",
+   "upstream": [
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:244-249 (g_key_file_get_string_list(..., \"UseIn\", NULL, error) leaves use_in NULL and g_hash_table_insert still registers the backend)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:195-199 (register_portal skips a later file with an already-seen source, so a broken-UseIn descriptor still shadows the DATADIR one)",
+    "xdg-desktop-portal-1.22.1/src/xdp-portal-config.c:367-384 (load order: XDG data dirs, then DATADIR; XDG_DESKTOP_PORTAL_DIR replaces the whole chain)"
+   ]
+  }
+ ]
+}

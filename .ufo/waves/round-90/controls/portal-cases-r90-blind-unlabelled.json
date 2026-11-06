@@ -1,0 +1,648 @@
+{
+ "author": "R90MScoutCases",
+ "round": 90,
+ "note": "Blind C1 cases authored from xdg-desktop-portal 1.22.1 src/xdp-portal-config.c, GLib 2.90.1 gkeyfile.c/gdbusutils.c and the oracle alone. Unlabelled input; the labelled twin is produced by controls/portal-oracle-r90.py.",
+ "cases": [
+  {
+   "id": "b01-none-in-default",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Print\n",
+    "zulu.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.zulu\nInterfaces=org.freedesktop.impl.portal.Print\nUseIn=gnome\n",
+    "portals.conf": "[preferred]\ndefault=none\n"
+   }
+  },
+  {
+   "id": "b02-none-in-interface-key",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Print;org.freedesktop.impl.portal.Settings\n",
+    "portals.conf": "[preferred]\ndefault=alpha\norg.freedesktop.impl.portal.FileChooser=none\n"
+   }
+  },
+  {
+   "id": "b03-none-not-first-in-list",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha;none\n"
+   }
+  },
+  {
+   "id": "b04-interface-key-overrides-default-none",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=none\norg.freedesktop.impl.portal.Print=alpha\n"
+   }
+  },
+  {
+   "id": "b05-star-single-vs-settings",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print;org.freedesktop.impl.portal.Settings\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Settings\n",
+    "portals.conf": "[preferred]\ndefault=none\norg.freedesktop.impl.portal.Print=*\norg.freedesktop.impl.portal.Settings=*\n"
+   }
+  },
+  {
+   "id": "b06-star-strcmp-order",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "Beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.Beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "a_b.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.a_b\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "a-b.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.a-b\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "a0.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.a0\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\norg.freedesktop.impl.portal.Print=*\n"
+   }
+  },
+  {
+   "id": "b07-default-usein-and-gtk-lastresort",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Settings\n",
+    "zulu.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.zulu\nInterfaces=org.freedesktop.impl.portal.Print\nUseIn=Hyprland\n",
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b08-usein-case-insensitive",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "zulu.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.zulu\nInterfaces=org.freedesktop.impl.portal.Print\nUseIn=HYPRLAND\n",
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n"
+   }
+  },
+  {
+   "id": "b09-usein-other-desktop-then-gtk-lastresort",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\nUseIn=wlroots\n",
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser\n"
+   }
+  },
+  {
+   "id": "b10-duplicate-default-key",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\ndefault=beta\n"
+   }
+  },
+  {
+   "id": "b11-repeated-preferred-group",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n[preferred]\norg.freedesktop.impl.portal.Print=beta\n"
+   }
+  },
+  {
+   "id": "b12-equals-inside-value",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha=beta\n"
+   }
+  },
+  {
+   "id": "b13-whitespace-around-list-items",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha ; beta\n"
+   }
+  },
+  {
+   "id": "b14-escaped-separator-in-interfaces",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser\\;org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b15-interface-element-leading-digit",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.2Fast\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b16-invalid-dbus-name",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=9invalid.example\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b17-dbus-name-255-bytes-valid",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b18-dbus-name-256-bytes-invalid",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b19-unique-bus-name-valid",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=:1.2\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b20-interface-name-256-bytes-drops-descriptor",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print;org.freedesktop.impl.portal.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b21-missing-dbus-name-key",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b22-missing-interfaces-key",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b23-crlf-descriptor",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\r\nDBusName=org.freedesktop.impl.portal.desktop.alpha\r\nInterfaces=org.freedesktop.impl.portal.Print\r\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b24-crlf-config",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\r\ndefault=alpha\r\n"
+   }
+  },
+  {
+   "id": "b25-leading-space-comments",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "# a comment\n   # an indented comment\n[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b26-garbage-line-rejects-file",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "hyprland-portals.conf": "[preferred]\ndefault=beta\nthis line has no equals sign\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b27-whitespace-only-line-is-comment",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "hyprland-portals.conf": "[preferred]\ndefault=beta\n   \n# trailing comment\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b28-empty-desktop-specific-file",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "hyprland-portals.conf": "",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b29-empty-preferred-group-shadows-generic",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "hyprland-portals.conf": "[preferred]\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b30-comments-only-file",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "hyprland-portals.conf": "# nothing here\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b31-key-with-space-in-middle",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\nmy default=alpha\n"
+   }
+  },
+  {
+   "id": "b32-trailing-space-in-value",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha \n"
+   }
+  },
+  {
+   "id": "b33-backslash-t-escape-in-value",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\\tbeta\n"
+   }
+  },
+  {
+   "id": "b34-leading-space-in-value",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=  alpha\n"
+   }
+  },
+  {
+   "id": "b35-interface-without-impl-prefix",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print;com.example.Other\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b36-near-miss-impl-prefix",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print;org.freedesktop.impl.portalX.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b37-usein-tie-strcmp-order",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "a.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.a\nInterfaces=org.freedesktop.impl.portal.Print\nUseIn=Hyprland\n",
+    "A.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.A\nInterfaces=org.freedesktop.impl.portal.Print\nUseIn=Hyprland\n"
+   }
+  },
+  {
+   "id": "b38-usein-desktop-list-order",
+   "mode": "dir",
+   "desktop": "Hyprland:sway",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\nUseIn=sway\n",
+    "zulu.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.zulu\nInterfaces=org.freedesktop.impl.portal.Print\nUseIn=Hyprland;sway\n"
+   }
+  },
+  {
+   "id": "b39-gtk-lastresort-by-dbusname",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "mygtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser\n"
+   }
+  },
+  {
+   "id": "b40-gtk-filename-without-gtk-dbusname",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.notgtk\nInterfaces=org.freedesktop.impl.portal.FileChooser\n"
+   }
+  },
+  {
+   "id": "b41-source-name-inner-dots",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "foo.bar.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.foobar\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=foo.bar\n"
+   }
+  },
+  {
+   "id": "b42-non-portal-suffix-ignored",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "zeta.portal.bak": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.zeta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=zeta.portal\n"
+   }
+  },
+  {
+   "id": "b43-invalid-desktop-token-dropped",
+   "mode": "dir",
+   "desktop": "My Desk",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "my desk-portals.conf": "[preferred]\ndefault=beta\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b44-desktop-digits-underscore-hyphen",
+   "mode": "dir",
+   "desktop": "My-Desk_2",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "my-desk_2-portals.conf": "[preferred]\ndefault=beta\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  },
+  {
+   "id": "b45-first-desktop-in-list-wins",
+   "mode": "dir",
+   "desktop": "GNOME:Hyprland",
+   "files": {
+    "gamma.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gamma\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "gnome-portals.conf": "[preferred]\ndefault=gamma\n",
+    "hyprland-portals.conf": "[preferred]\ndefault=beta\n"
+   }
+  },
+  {
+   "id": "b46-desktop-name-case-folded",
+   "mode": "dir",
+   "desktop": "HYPRLAND",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "hyprland-portals.conf": "[preferred]\ndefault=alpha\n",
+    "portals.conf": "[preferred]\ndefault=beta\n"
+   }
+  },
+  {
+   "id": "b47-list-order-inside-interface-key",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\norg.freedesktop.impl.portal.Print=beta;alpha\n"
+   }
+  },
+  {
+   "id": "b48-first-supporting-entry-wins",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\norg.freedesktop.impl.portal.Print=alpha;beta\n"
+   }
+  },
+  {
+   "id": "b49-settings-findall-keeps-both",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Settings\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Settings\n",
+    "portals.conf": "[preferred]\norg.freedesktop.impl.portal.Settings=alpha;beta\n"
+   }
+  },
+  {
+   "id": "b50-config-names-missing-backend",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=nosuchbackend\n"
+   }
+  },
+  {
+   "id": "b51-usein-only-no-config",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "zulu.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.zulu\nInterfaces=org.freedesktop.impl.portal.Print\nUseIn=wlroots;Hyprland;sway\n"
+   }
+  },
+  {
+   "id": "b52-findall-none-truncates-accumulation",
+   "mode": "xdg",
+   "desktop": null,
+   "files": {
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=alpha\n",
+    "config_dirs/0/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=none\n",
+    "data_home/xdg-desktop-portal/portals/alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Settings\n"
+   }
+  },
+  {
+   "id": "b53-findall-accumulates-across-dirs",
+   "mode": "xdg",
+   "desktop": null,
+   "files": {
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=alpha\n",
+    "config_dirs/0/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=beta\n",
+    "data_home/xdg-desktop-portal/portals/alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Print\n",
+    "data_dirs/0/xdg-desktop-portal/portals/beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Settings\n"
+   }
+  },
+  {
+   "id": "b54-findall-interface-specific-then-default",
+   "mode": "xdg",
+   "desktop": null,
+   "files": {
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\norg.freedesktop.impl.portal.Settings=beta\n",
+    "config_dirs/0/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=alpha\n",
+    "data_home/xdg-desktop-portal/portals/alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.Print\n",
+    "data_dirs/0/xdg-desktop-portal/portals/beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Settings\n"
+   }
+  },
+  {
+   "id": "b55-none-in-earlier-dir-interface-key",
+   "mode": "xdg",
+   "desktop": null,
+   "files": {
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\norg.freedesktop.impl.portal.Print=none\n",
+    "config_dirs/0/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=alpha\n",
+    "data_home/xdg-desktop-portal/portals/alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n"
+   }
+  },
+  {
+   "id": "b56-none-in-earlier-dir-default",
+   "mode": "xdg",
+   "desktop": null,
+   "files": {
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=none\n",
+    "config_dirs/0/xdg-desktop-portal/portals.conf": "[preferred]\norg.freedesktop.impl.portal.Print=alpha\n",
+    "data_home/xdg-desktop-portal/portals/alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n"
+   }
+  },
+  {
+   "id": "b57-generic-earlier-beats-desktop-specific-later",
+   "mode": "xdg",
+   "desktop": "Hyprland",
+   "files": {
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=alpha\n",
+    "config_dirs/0/xdg-desktop-portal/hyprland-portals.conf": "[preferred]\ndefault=beta\n",
+    "data_home/xdg-desktop-portal/portals/alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "data_dirs/0/xdg-desktop-portal/portals/beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n"
+   }
+  },
+  {
+   "id": "b58-xdg-desktop-name-case-folded",
+   "mode": "xdg",
+   "desktop": "HYPRLAND",
+   "files": {
+    "config_home/xdg-desktop-portal/hyprland-portals.conf": "[preferred]\ndefault=alpha\n",
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=beta\n",
+    "data_home/xdg-desktop-portal/portals/alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "data_dirs/0/xdg-desktop-portal/portals/beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n"
+   }
+  },
+  {
+   "id": "b59-duplicate-descriptor-data-home-wins",
+   "mode": "xdg",
+   "desktop": null,
+   "files": {
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=foo\n",
+    "data_home/xdg-desktop-portal/portals/foo.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.foo\nInterfaces=org.freedesktop.impl.portal.Background\n",
+    "data_dirs/0/xdg-desktop-portal/portals/foo.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.foo\nInterfaces=org.freedesktop.impl.portal.Settings\n"
+   }
+  },
+  {
+   "id": "b60-later-dir-interface-key-ignored",
+   "mode": "xdg",
+   "desktop": null,
+   "files": {
+    "config_home/xdg-desktop-portal/portals.conf": "[preferred]\ndefault=alpha\n",
+    "config_dirs/0/xdg-desktop-portal/portals.conf": "[preferred]\norg.freedesktop.impl.portal.Print=none\n",
+    "data_home/xdg-desktop-portal/portals/alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n"
+   }
+  },
+  {
+   "id": "b61-invalid-escape-discards-config",
+   "mode": "dir",
+   "desktop": "gnome",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print;org.freedesktop.impl.portal.FileChooser\nUseIn=gnome\n",
+    "portals.conf": "[preferred]\norg.freedesktop.impl.portal.FileChooser=alpha\ndefault=alpha\\q\n"
+   }
+  },
+  {
+   "id": "b62-none-among-items-in-interface-key",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=alpha\norg.freedesktop.impl.portal.Print=none;alpha\n"
+   }
+  },
+  {
+   "id": "b63-star-in-default-key",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "Beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.Beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\ndefault=*\n"
+   }
+  },
+  {
+   "id": "b64-capital-default-is-not-default",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\nDefault=alpha\norg.freedesktop.impl.portal.Print=alpha\n"
+   }
+  },
+  {
+   "id": "b65-interface-key-wrong-case",
+   "mode": "dir",
+   "desktop": null,
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.FileChooser\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "portals.conf": "[preferred]\norg.freedesktop.impl.portal.print=alpha\ndefault=beta\n"
+   }
+  },
+  {
+   "id": "b66-desktop-file-name-must-be-lowercase",
+   "mode": "dir",
+   "desktop": "Hyprland",
+   "files": {
+    "alpha.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.alpha\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "beta.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.beta\nInterfaces=org.freedesktop.impl.portal.Print\n",
+    "Hyprland-portals.conf": "[preferred]\ndefault=beta\n",
+    "portals.conf": "[preferred]\ndefault=alpha\n"
+   }
+  }
+ ]
+}

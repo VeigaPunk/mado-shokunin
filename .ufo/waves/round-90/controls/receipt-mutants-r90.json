@@ -1,0 +1,173 @@
+{
+ "note": "Round-90 C2 mutants of quality/check-receipt-presence.py (L1 K01-K13 re-anchored to the w1-revised check; K14-K28 from R90MCritic F2/F3, R90MReviewC2 G1/W1/W2 and R90MMutC2 E01/E02/E05/E11/E13/E15/E16); each find must occur exactly once in the measured check.",
+ "mutants": [
+  {
+   "id": "K01",
+   "what": "bare name ignores its -r<k> tokens (change round only)",
+   "find": "    rounds = list(dict.fromkeys(reversed(tokens))) if tokens else ([round_no] if round_no is not None else [])",
+   "replace": "    rounds = [round_no] if round_no is not None else []"
+  },
+  {
+   "id": "K02",
+   "what": "no quality/receipts fallback",
+   "find": "    out.append(f\"quality/receipts/{name}\")\n    return out",
+   "replace": "    return out"
+  },
+  {
+   "id": "K03",
+   "what": "lessons not scanned",
+   "find": "|corpus/lessons/[^/]+\\.md",
+   "replace": ""
+  },
+  {
+   "id": "K04",
+   "what": "SCORECARD not scanned",
+   "find": "^(SCORECARD\\.md|LOG\\.md|",
+   "replace": "^(LOG\\.md|"
+  },
+  {
+   "id": "K05",
+   "what": "rev mode checks the working tree instead of the commit",
+   "find": "        def carried(p: str) -> bool:\n            return p in rev_tree",
+   "replace": "        def carried(p: str) -> bool:\n            return os.path.isfile(os.path.join(top, p))"
+  },
+  {
+   "id": "K06",
+   "what": "worktree mode ignores the commit paths (any on-disk file is carried)",
+   "find": "            if not covered:\n                return p in base_tree",
+   "replace": "            if not covered:\n                return p in base_tree or os.path.isfile(os.path.join(top, p))"
+  },
+  {
+   "id": "K07",
+   "what": "always exits 0",
+   "find": "    return 0 if missing == 0 else 1",
+   "replace": "    return 0"
+  },
+  {
+   "id": "K08",
+   "what": "bare receipts/ citations not recognised",
+   "find": "((?:\\.ufo/waves/round-\\d+/|quality/)?receipts/",
+   "replace": "((?:\\.ufo/waves/round-\\d+/|quality/)receipts/"
+  },
+  {
+   "id": "K09",
+   "what": "removed lines treated as citations",
+   "find": "        if line.startswith(\"+\"):\n            out.append",
+   "replace": "        if line.startswith(\"+\") or line.startswith(\"-\"):\n            out.append"
+  },
+  {
+   "id": "K10",
+   "what": "json receipts not recognised",
+   "find": "\\.(?:txt|json|jsonl|md|log|csv|tsv))",
+   "replace": "\\.(?:txt|md|log|csv|tsv))"
+  },
+  {
+   "id": "K11",
+   "what": "--round ignored",
+   "find": "    round_no = a.round\n    extra",
+   "replace": "    round_no = None\n    extra"
+  },
+  {
+   "id": "K12",
+   "what": "untracked record files ignored",
+   "find": "        for p in untracked.stdout.split(\"\\0\"):",
+   "replace": "        for p in []:"
+  },
+  {
+   "id": "K13",
+   "what": "every changed file treated as a record",
+   "find": "        if path is None or not RECORD_FILES.match(path):",
+   "replace": "        if path is None:"
+  },
+  {
+   "id": "K14",
+   "what": "diff prefixes left to the user's git config",
+   "find": "PREFIXES = (\"--src-prefix=a/\", \"--dst-prefix=b/\")",
+   "replace": "PREFIXES = ()"
+  },
+  {
+   "id": "K15",
+   "what": "a covered receipt deleted in the change still counts (base tree trusted)",
+   "find": "            if not os.path.isfile(os.path.join(top, p)):\n                return False",
+   "replace": "            if not os.path.isfile(os.path.join(top, p)):\n                return p in base_tree"
+  },
+  {
+   "id": "K16",
+   "what": "git-ignored file under a listed directory counted as carried",
+   "find": "            if not exact and git(repo, \"check-ignore\", \"-q\", \"--\", p).returncode == 0:\n                return False",
+   "replace": ""
+  },
+  {
+   "id": "K17",
+   "what": "brace groups not expanded",
+   "find": "    parts = BRACE.split(cite)\n    if len(parts) == 1:",
+   "replace": "    parts = [cite]\n    if len(parts) == 1:"
+  },
+  {
+   "id": "K18",
+   "what": "glob treated as a literal file name",
+   "find": "        if \"*\" in p:",
+   "replace": "        if False:"
+  },
+  {
+   "id": "K19",
+   "what": "only a final -r<k> token counts",
+   "find": "ROUND_TOKEN = re.compile(r\"-r(\\d+)(?=[-.])\")",
+   "replace": "ROUND_TOKEN = re.compile(r\"-r(\\d+)(?=\\.[a-z]+$)\")"
+  },
+  {
+   "id": "K20",
+   "what": "commit paths used raw, not normalised",
+   "find": "            rel = os.path.relpath(os.path.realpath(os.path.join(top, p)), os.path.realpath(top))",
+   "replace": "            rel = p"
+  },
+  {
+   "id": "K21",
+   "what": "a citation ending a sentence is not recognised",
+   "find": "(?![A-Za-z0-9_-])(?!\\.[A-Za-z0-9])\")",
+   "replace": "(?![A-Za-z0-9_.-])\")"
+  },
+  {
+   "id": "K22",
+   "what": "reported line numbers off by one",
+   "find": "            n = int(m.group(1))\n            continue",
+   "replace": "            n = int(m.group(1)) + 1\n            continue"
+  },
+  {
+   "id": "K23",
+   "what": "present count never incremented",
+   "find": "                if any(present(c) for c in cands):\n                    present_n += 1",
+   "replace": "                if any(present(c) for c in cands):\n                    pass"
+  },
+  {
+   "id": "K24",
+   "what": "rev mode never derives the round from the commit subject",
+   "find": "            m = re.match(r\"round-(\\d+)\\b\", subj)",
+   "replace": "            m = None"
+  },
+  {
+   "id": "K25",
+   "what": "slash-prefixed path counted as a citation (lookbehind loses /)",
+   "find": "(?<![A-Za-z0-9_./-])",
+   "replace": "(?<![A-Za-z0-9_.-])"
+  },
+  {
+   "id": "K26",
+   "what": "citation continued by a hyphen still counted",
+   "find": "(?![A-Za-z0-9_-])(?!",
+   "replace": "(?![A-Za-z0-9_])(?!"
+  },
+  {
+   "id": "K27",
+   "what": "ignored untracked records scanned",
+   "find": "\"ls-files\", \"--others\", \"--exclude-standard\", \"-z\"",
+   "replace": "\"ls-files\", \"--others\", \"-z\""
+  },
+  {
+   "id": "K28",
+   "what": "nested lesson directories scanned as records",
+   "find": "corpus/lessons/[^/]+\\.md",
+   "replace": "corpus/lessons/.+\\.md"
+  }
+ ]
+}

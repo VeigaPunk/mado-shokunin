@@ -1,0 +1,107 @@
+{
+ "note": "Round-90 C2 extra mutants (seat R90MMutC2, wave w1): every mutant here survives the frozen expectation set receipt-presence-set-r90.json (sha256 15c57903b26a780858da3de3cc8975d7e6b00c234d53b8c45fbd4b9741f3d0fd). Same shape as controls/receipt-mutants-r90.json.",
+ "mutants": [
+  {
+   "id": "E01",
+   "what": "citation preceded by '/' still matches (lookbehind loses the path separator)",
+   "find": "CITE = re.compile(r\"(?<![A-Za-z0-9_./-])((?:",
+   "replace": "CITE = re.compile(r\"(?<![A-Za-z0-9_.-])((?:"
+  },
+  {
+   "id": "E02",
+   "what": "trailing lookahead accepts a hyphen continuation (txt-old counted as txt)",
+   "find": "(?![A-Za-z0-9_-])\")",
+   "replace": "(?![A-Za-z0-9_])\")"
+  },
+  {
+   "id": "E03",
+   "what": "grammar also accepts .png receipts",
+   "find": "\\.(?:txt|json|jsonl|md|log|csv|tsv))",
+   "replace": "\\.(?:txt|json|jsonl|md|log|csv|tsv|png))"
+  },
+  {
+   "id": "E04",
+   "what": "every untracked file is scanned as a record, not just RECORD_FILES",
+   "find": "if p and RECORD_FILES.match(p):",
+   "replace": "if p:"
+  },
+  {
+   "id": "E05",
+   "what": "untracked scan no longer skips ignored files",
+   "find": "git(repo, \"ls-files\", \"--others\", \"--exclude-standard\", \"-z\")",
+   "replace": "git(repo, \"ls-files\", \"--others\", \"-z\")"
+  },
+  {
+   "id": "E06",
+   "what": "worktree present() trusts any on-disk quality/receipts file",
+   "find": "            return any(p == c or p.startswith(c + \"/\") for c in cpaths)",
+   "replace": "            return p.startswith(\"quality/receipts/\") or any(p == c or p.startswith(c + \"/\") for c in cpaths)"
+  },
+  {
+   "id": "E07",
+   "what": "commit paths keep a trailing slash and then match nothing",
+   "find": "cpaths = [p.rstrip(\"/\") for p in a.commit_path]",
+   "replace": "cpaths = [p for p in a.commit_path]"
+  },
+  {
+   "id": "E08",
+   "what": "a full .ufo/... path also falls back to quality/receipts by basename",
+   "find": "    if not cite.startswith(\"receipts/\"):\n        return [cite]",
+   "replace": "    if not cite.startswith(\"receipts/\"):\n        return [cite, \"quality/receipts/\" + cite.rsplit(\"/\", 1)[-1]]"
+  },
+  {
+   "id": "E09",
+   "what": "a suffixed bare name is also resolved against the change round",
+   "find": "    if k is not None:\n        out.append(f\".ufo/waves/round-{k}/receipts/{name}\")",
+   "replace": "    if k is not None:\n        out.append(f\".ufo/waves/round-{k}/receipts/{name}\")\n    if round_no is not None and round_no != k:\n        out.append(f\".ufo/waves/round-{round_no}/receipts/{name}\")"
+  },
+  {
+   "id": "E11",
+   "what": "summary present= is never incremented",
+   "find": "                present_n += 1",
+   "replace": "                present_n += 0"
+  },
+  {
+   "id": "E12",
+   "what": "summary records= reports cited lines, not record files",
+   "find": "records = sorted({p for p, _, _ in lines})",
+   "replace": "records = [p for p, _, _ in lines]"
+  },
+  {
+   "id": "E13",
+   "what": "missing lines all report line 0 instead of the hunk's new-file line number",
+   "find": "            n = int(m.group(1))",
+   "replace": "            n = 0"
+  },
+  {
+   "id": "E14",
+   "what": "worktree present() checks HEAD rather than --base's tree",
+   "find": "            if git(repo, \"cat-file\", \"-e\", f\"{base}:{p}\").returncode == 0:",
+   "replace": "            if git(repo, \"cat-file\", \"-e\", f\"HEAD:{p}\").returncode == 0:"
+  },
+  {
+   "id": "E15",
+   "what": "rev-mode round is never derived from the commit subject",
+   "find": "            m = re.match(r\"round-(\\d+)\\b\", subj)",
+   "replace": "            m = None"
+  },
+  {
+   "id": "E16",
+   "what": "a record file nested under corpus/lessons/ is scanned (RECORD_FILES .+ crosses '/')",
+   "find": "|corpus/lessons/[^/]+\\.md",
+   "replace": "|corpus/lessons/.+\\.md"
+  },
+  {
+   "id": "E17",
+   "what": "a bare receipt name is also accepted at the repo root",
+   "find": "    out.append(f\"quality/receipts/{name}\")",
+   "replace": "    out.append(f\"quality/receipts/{name}\")\n    out.append(name)"
+  },
+  {
+   "id": "E19",
+   "what": "the -r<k> suffix is only recognised for .txt and .json",
+   "find": "SUFFIX = re.compile(r\"-r(\\d+)\\.[a-z]+$\")",
+   "replace": "SUFFIX = re.compile(r\"-r(\\d+)\\.(?:txt|json)$\")"
+  }
+ ]
+}
