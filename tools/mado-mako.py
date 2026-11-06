@@ -21,14 +21,22 @@
 #   L431-434 A criteria section matches when all of its fields match; unlisted fields are not considered.
 #   L435-437 Criteria apply in file order; the last matching occurrence of an option wins.
 #   L443-444 app-name is a plain string field, compared for equality (regex needs the ~ suffix, L450).
-#   L459     urgency is one of low, normal, critical.
+#   L459     urgency is one of low, normal, critical; upstream types.c parse_urgency compares them
+#            case-insensitively and also accepts high as critical, so a criteria value is mapped
+#            that way before it is compared; any other value is refused.
 #   L469-471 mode: the section applies only while that mode is enabled.
-#   L447-467 summary, summary~, body, body~, app-icon, category, desktop-entry, actionable, expiring:
-#            outside the model, so a section naming them is refused.
+#   L447-457 summary and body are exact string fields; summary~ and body~ (POSIX extended regex) are
+#            outside the model, so a section naming them is refused (Python re is not POSIX ERE).
+#   L443-445,461-463 app-icon, category, desktop-entry: plain string fields compared for equality
+#            (upstream criteria.c v1.11.0 match_criteria uses strcmp for each).
+#   L465-467 actionable and expiring are boolean fields; L510-516 a value may be true/false, 0/1, or a
+#            bare word, where a leading ! negates. Upstream types.c parse_boolean compares true/false
+#            case-insensitively (strcasecmp) and 1/0 exactly; any other value is refused.
+#            A criteria field whose notification input was not supplied is refused, never guessed.
 #   L474-495 Second-pass fields (grouped, group-index, hidden, output, anchor) are outside the model
 #            and refused.
 #   L497-508 Criteria values may be quoted with double quotes; backslash escapes; no spaces around '='.
-#   L510-516 Bare boolean tokens (actionable, !actionable) are outside the model and refused.
+#   L510-516 Bare tokens other than actionable/expiring (grouped, hidden, ...) are outside the model.
 #   L519-522 Defaults form the base of resolution; the global section overrides them; criteria override both.
 #   L540-552 invisible is a criteria-only style option (default 0).
 #   L581     Global option lines may put spaces around '=' (margin = 10,20,5).
@@ -37,14 +45,18 @@
 #   L557     Colours are #RRGGBB or #RRGGBBAA.
 #   L569-573 Directional values: 1 to 4 comma-separated integers.
 #   L37-38   sort: +/-time or +/-priority.
-#   L266,311,320,328,363,545  Boolean options take 0 or 1.
+#   L266,311,320,328,363,545  Boolean options are documented as 0|1; upstream config.c parses them with
+#            types.c parse_boolean, so true/false (any case) are accepted too. The effective value
+#            is reported in the manual's 0|1 form.
 #   L296-301 icon-location: left, right, top, bottom. L348-352 text-alignment: left, center, right.
 #   L400-407 layer: background, bottom, top, overlay. L410-416 anchor: nine positions.
 #   L252-263 progress-color: [over|source] colour.
 #   Defaults: the "Default:" line of each option in the manual (L34 .. L552).
 #
 # Usage: python3 -I tools/mado-mako.py --config PATH [--home DIR] [--app-name NAME]
-#        [--urgency {low,normal,critical}] [--mode NAME ...]
+#        [--app-icon S] [--summary S] [--body S] [--category S] [--desktop-entry S]
+#        [--urgency {low,normal,critical}] [--actionable {true,false}] [--expiring {true,false}]
+#        [--mode NAME ...]
 #        python3 -I tools/mado-mako.py --selftest --scratch-root DIR
 # Exit: 0 when resolution ran (refusals allowed); 2 on setup error (bad arguments, missing or unreadable config).
 
@@ -72,7 +84,10 @@ GLOBAL_ONLY_KEYS = ("max-history", "sort")  # L28, L37
 CRITERIA_ONLY_KEYS = ("invisible",)  # L545
 GLOBAL_KEYS = BINDING_KEYS + STYLE_KEYS + GLOBAL_ONLY_KEYS
 CRITERIA_KEYS = BINDING_KEYS + STYLE_KEYS + CRITERIA_ONLY_KEYS
-MODELLED_FIELDS = ("app-name", "urgency", "mode")
+MODELLED_FIELDS = ("app-name", "app-icon", "summary", "body", "urgency", "category",
+                   "desktop-entry", "actionable", "expiring", "mode")
+STRING_INPUT_FIELDS = ("app-icon", "summary", "body", "category", "desktop-entry")
+BOOLEAN_FIELDS = ("actionable", "expiring")
 
 DEFAULTS = {
     "max-history": "5", "sort": "-time",
@@ -111,7 +126,7 @@ REFUSED = object()
 def check_value(key, value):
     """Return None when value is valid for key, otherwise the reason it is not."""
     if key in BOOL_KEYS:
-        return None if value in ("0", "1") else "expects 0 or 1"
+        return None if parse_boolean(value) is not None else "expects 0, 1, true or false"
     if key in INT_KEYS:
         return None if re.fullmatch(r"-?[0-9]+", value) else "expects an integer"
     if key in DIRECTIONAL_KEYS:
@@ -141,6 +156,31 @@ def check_value(key, value):
             return words[0] + " needs an argument"
         return None
     return None
+
+
+def parse_boolean(value):
+    """Upstream types.c parse_boolean: true/false case-insensitive, 1/0 exact; None otherwise."""
+    lowered = value.lower()
+    if lowered == "true" or value == "1":
+        return True
+    if lowered == "false" or value == "0":
+        return False
+    return None
+
+
+def parse_urgency(value):
+    """Upstream types.c parse_urgency: low/normal/critical case-insensitive, high means critical."""
+    word = value.lower()
+    if word == "high":
+        return "critical"
+    return word if word in URGENCIES else None
+
+
+def normalize(key, value):
+    """Report a validated boolean option in the manual's 0|1 form; other values unchanged."""
+    if key in BOOL_KEYS:
+        return "1" if parse_boolean(value) else "0"
+    return value
 
 
 def tokenize(body):
@@ -205,11 +245,13 @@ def tokenize(body):
 
 
 class _State:
-    def __init__(self, home, app_name, urgency, modes):
+    def __init__(self, home, app_name, urgency, modes, inputs=None, flags=None):
         self.home = home
         self.app_name = app_name
         self.urgency = urgency
         self.modes = modes
+        self.inputs = dict(inputs or {})
+        self.flags = dict(flags or {})
         self.global_values = {}
         self.sections = []
         self.applied = []
@@ -263,16 +305,23 @@ class _State:
             return REFUSED
         fields = []
         for key, value in tokens:
+            if value is None and key in BOOLEAN_FIELDS:
+                value = "true"  # L514 [actionable]
+            elif value is None and key.startswith("!") and key[1:] in BOOLEAN_FIELDS:
+                key, value = key[1:], "false"  # L516 [!actionable]
+            if key == "urgency" and value is not None and parse_urgency(value) is not None:
+                value = parse_urgency(value)  # types.c parse_urgency
             if value is None:
                 self.refuse(where, "criteria token '" + key + "' has no '=value' "
-                            "(bare tokens such as actionable are outside the model; spaces around '=' are refused)")
+                            "(bare tokens other than actionable/expiring are outside the model; "
+                            "spaces around '=' are refused)")
                 return REFUSED
             if key not in MODELLED_FIELDS:
                 self.refuse(where, "criteria field '" + key + "' is outside the model (refused)")
                 return REFUSED
-            if any(name == key for name, _ in fields):
-                self.refuse(where, "criteria field '" + key + "' is repeated")
-                return REFUSED
+            # criteria.c apply_criteria_field assigns each token in turn: a repeated field keeps the
+            # value of its last occurrence (it is not an error upstream).
+            fields = [(name, kept) for name, kept in fields if name != key]
             fields.append((key, value))
         verdict = self.evaluate(fields, where)
         if verdict is None:
@@ -289,6 +338,9 @@ class _State:
             if key == "urgency" and value not in URGENCIES:
                 self.refuse(where, "urgency '" + value + "' is not low, normal or critical")
                 return None
+            if key in BOOLEAN_FIELDS and parse_boolean(value) is None:
+                self.refuse(where, key + " '" + value + "' is not true, false, 1 or 0")
+                return None
         mismatch = False
         undecided = []
         for key, value in fields:
@@ -304,6 +356,19 @@ class _State:
                     undecided.append("--app-name")
                 else:
                     mismatch = mismatch or self.app_name != value
+            elif key in STRING_INPUT_FIELDS:
+                have = self.inputs.get(key)
+                if have is None:
+                    undecided.append("--" + key)
+                else:
+                    mismatch = mismatch or have != value
+            elif key in BOOLEAN_FIELDS:
+                want = parse_boolean(value)
+                have = self.flags.get(key)
+                if have is None:
+                    undecided.append("--" + key + " (boolean)")
+                else:
+                    mismatch = mismatch or have != want
         if mismatch:
             return "nomatch"
         if undecided:
@@ -323,7 +388,7 @@ class _State:
         if reason:
             self.refuse(where, key + "=" + repr(value) + ": " + reason)
             return
-        self.global_values[key] = value
+        self.global_values[key] = normalize(key, value)
 
     def criteria_option(self, section, key, value, where):
         if key in GLOBAL_ONLY_KEYS:
@@ -336,7 +401,7 @@ class _State:
         if reason:
             self.refuse(where, key + "=" + repr(value) + ": " + reason)
             return
-        section["options"].append((key, value))
+        section["options"].append((key, normalize(key, value)))
 
     def include(self, value, where):
         if value.startswith("~/") and self.home is None:
@@ -368,9 +433,9 @@ class _State:
         self.stack.pop()
 
 
-def resolve(config, home, app_name, urgency, modes):
+def resolve(config, home, app_name, urgency, modes, inputs=None, flags=None):
     """Resolve effective settings for one notification. config must already be resolved once."""
-    state = _State(home, app_name, urgency, modes)
+    state = _State(home, app_name, urgency, modes, inputs, flags)
     state.stack.append(config)
     state.load(config)
     effective = dict(DEFAULTS)
@@ -405,7 +470,7 @@ def selftest(scratch_root):
     def check(name, ok):
         checks.append((name, bool(ok)))
 
-    def run(name, config, app_name=None, urgency=None, modes=(), extra=None):
+    def run(name, config, app_name=None, urgency=None, modes=(), extra=None, inputs=None, flags=None):
         base = os.path.join(work, name)
         os.makedirs(base)
         cfg = os.path.join(base, "config")
@@ -414,7 +479,7 @@ def selftest(scratch_root):
             _write(os.path.join(base, rel), text)
         os.makedirs(os.path.join(base, "home"), exist_ok=True)
         return resolve(os.path.realpath(cfg), os.path.join(base, "home"), app_name, urgency,
-                       set(INITIAL_MODES) | set(modes))
+                       set(INITIAL_MODES) | set(modes), inputs, flags)
 
     try:
         r = run("global", "width=500\nmargin = 10,20,5\n# comment\n\n")
@@ -444,6 +509,13 @@ def selftest(scratch_root):
         check("initial mode default is enabled (L620-621)", r["effective"]["width"] == "77")
         r = run("urgency-miss", "[urgency=low]\nwidth=77\n", urgency="critical")
         check("urgency mismatch skipped (L459)", r["effective"]["width"] == "300")
+        r = run("urgency-alias", "[urgency=HIGH]\nwidth=77\n[urgency=Low]\nheight=7\n", urgency="critical")
+        check("urgency criteria casefold and high = critical (types.c parse_urgency)",
+              r["effective"]["width"] == "77" and r["effective"]["height"] == "100" and r["refusals"] == [])
+        r = run("repeat-last-wins", "[app-name=a app-name=b]\nwidth=78\n[actionable !actionable]\nheight=8\n",
+                app_name="b", flags={"actionable": False})
+        check("a repeated criteria field keeps its last value (criteria.c apply_criteria_field)",
+              r["effective"]["width"] == "78" and r["effective"]["height"] == "8" and r["refusals"] == [])
         r = run("rel-include", "include=core.ini\n")
         check("relative include refused (L45-50)",
               any("absolute" in s for s in r["refusals"]) and r["applied"] == [])
@@ -484,6 +556,38 @@ def selftest(scratch_root):
               len(r["refusals"]) == 1 and r["effective"]["anchor"] == "top-right")
         r = run("unterminated", '[app-name="foo]\nwidth=1\n', app_name="foo")
         check("unterminated quote refused (L497-508)", any("unterminated" in s for s in r["refusals"]))
+        r = run("regex-field", "[summary~=hel+o]\nwidth=1\n", inputs={"summary": "hello"})
+        check("summary~ regex field refused, not applied (L450)",
+              any("summary~" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
+        exact = "[summary=hello category=im.received]\nwidth=9\n"
+        r = run("string-fields", exact, inputs={"summary": "hello", "category": "im.received"})
+        check("summary and category exact match applies (L447, L461)", r["effective"]["width"] == "9")
+        r = run("string-fields-miss", exact, inputs={"summary": "Hello", "category": "im.received"})
+        check("summary is case-sensitive exact match (L447)", r["effective"]["width"] == "300")
+        r = run("string-field-no-input", "[desktop-entry=org.foo]\nwidth=9\n")
+        check("string field without input refused, not applied",
+              any("--desktop-entry" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
+        r = run("bool-bare", "[actionable]\nwidth=9\n", flags={"actionable": True})
+        check("bare boolean field matches true (L514)", r["effective"]["width"] == "9")
+        r = run("bool-negated", "[!actionable]\nwidth=9\n", flags={"actionable": True})
+        check("negated bare boolean skips a true notification (L516)", r["effective"]["width"] == "300")
+        r = run("bool-casefold", "[expiring=FALSE]\nwidth=9\n", flags={"expiring": False})
+        check("boolean value case-insensitive (types.c parse_boolean)", r["effective"]["width"] == "9")
+        r = run("bool-invalid", "[expiring=yes]\nwidth=9\n", flags={"expiring": True})
+        check("invalid boolean value refused (L510)",
+              any("expiring 'yes'" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
+        r = run("bool-no-input", "[expiring=false]\nwidth=9\n")
+        check("boolean field without its flag refused, not applied",
+              any("--expiring" in s for s in r["refusals"]) and r["effective"]["width"] == "300")
+        r = run("bool-bare-other", "[grouped]\nwidth=9\n")
+        check("bare second-pass token refused (L474-479)", any("grouped" in s for s in r["refusals"]))
+        r = run("option-bool-word", "[mode=do-not-disturb]\ninvisible=true\n[mode=do-not-disturb app-name=n]\n"
+                "invisible=False\n", app_name="n", modes=["do-not-disturb"])
+        check("option booleans accept true/false any case, reported 0|1 (config.c parse_boolean)",
+              r["effective"]["invisible"] == "0" and r["refusals"] == [])
+        r = run("option-bool-bad", "icons=yes\n")
+        check("option boolean outside true/false/0/1 refused",
+              len(r["refusals"]) == 1 and r["effective"]["icons"] == "1")
         r = run("global-only-in-criteria", "[app-name=x]\nmax-history=2\n", app_name="x")
         check("max-history refused in criteria (L28)",
               any("global-only" in s for s in r["refusals"]) and r["effective"]["max-history"] == "5")
@@ -503,6 +607,10 @@ def main(argv):
     parser.add_argument("--home")
     parser.add_argument("--app-name")
     parser.add_argument("--urgency", choices=URGENCIES)
+    for field in STRING_INPUT_FIELDS:
+        parser.add_argument("--" + field)
+    for field in BOOLEAN_FIELDS:
+        parser.add_argument("--" + field, choices=("true", "false"))
     parser.add_argument("--mode", action="append", default=[])
     parser.add_argument("--selftest", action="store_true")
     parser.add_argument("--scratch-root")
@@ -526,7 +634,11 @@ def main(argv):
 
     home = args.home
     modes = set(INITIAL_MODES) | set(args.mode)
-    result = resolve(config, home, args.app_name, args.urgency, modes)
+    inputs = {field: getattr(args, field.replace("-", "_")) for field in STRING_INPUT_FIELDS}
+    inputs = {field: value for field, value in inputs.items() if value is not None}
+    flags = {field: getattr(args, field) == "true" for field in BOOLEAN_FIELDS
+             if getattr(args, field) is not None}
+    result = resolve(config, home, args.app_name, args.urgency, modes, inputs, flags)
     print(json.dumps(result, sort_keys=True))
     print("MADO_MAKO: resolved=" + str(len(result["effective"]))
           + " refusals=" + str(len(result["refusals"])), file=sys.stderr)
