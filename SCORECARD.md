@@ -5164,3 +5164,31 @@ revision). Stagnation nudge applied (every axis at 10; no capability row since r
 - Residual r1 (4 seats): C1 VERIFIES, C2 VERIFIES (receipts reproduced byte-for-byte); R88MResidMut survivors routed to round 89:
   app-name casefold, `!` on a string field, mode casefold, include inside a criteria section (C1); opening the unresolved target,
   trailing-slash refusal dropped, `~//` re-join dropped, root-equality refused (C2).
+
+## Round 89 — mako summary~/body~ as POSIX extended regex (capability), runnable survivor gate (2026-11-06, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-89/claims-declaration-r89.md` (w1 draft revisions listed before the freeze). Freeze
+`d87361354b4d142287aac05bb973315749ef1fce` (C2 measured revision; `tools/mado-mako.py` = the round-88 tool, sha256 `c374d715…`);
+C1 tool `099c662dc55521e365cd4126132cdcda4efc54b6` (C1 measured revision; the frozen candidate bytes, sha256 `6b4bc409…`).
+Stagnation nudge not claimed (a capability entered at round 88); every owned axis at 10, so the lowest-axis duty is a tie.
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (capability): summary~/body~ matched as mako matches them | `python3 -I quality/counters/c1-r89-mako-regex.py --repo . --rev 099c662dc55521e365cd4126132cdcda4efc54b6 --base-rev af998dcc41d48618ffe7afe0efc9354755a9244e --cases .ufo/waves/round-89/controls/mako-cases-r89.json --expect-cases-sha256 5fdca7dbcce6687d81aa31548e935a49fa39cee03117db41358068a0ded15672 --expect-mutants-sha256 5471bee29b4ba5da7fa7e55d8b11003028b0eb4c7937bd8d114062491338e35f --expect-r88-cases-sha256 a0e81b191fb0f80ca352699ede47962c1ac01c1ae8e9e15ccf50b1d7fab4a091 --scratch-root DIR` | MODELLED_FIELDS 10 → 12; on the frozen 141 cases the r88 tool (base-tool control) 78/141 → candidate **141/141**, mutants 37/37, carried 61/61; python-re control 127, naive 34, globals 35 (all < 141) | **TARGET_MET** (`receipts/c1-measured-A-r89.txt`, rc 0) |
+| C2 **operability**: a runnable survivor gate over round 88's routed survivors | `python3 -I quality/counters/c2-r89-survivor-kills.py --repo . --rev d87361354b4d142287aac05bb973315749ef1fce --expect-survivors-sha256 9f25df3cac28d9085d2e7d2a89e6002df24f76e6c5264df98f83d4d32c8104f0 --expect-c1side-sha256 c710a3e5a2a0e88692de68c6dec9815f14f5964099ec7ef6fdb8cb20bb743c1a --expect-c2side-sha256 e02e2b4de83410ab16fcf7ad92f5374c5178a3e49c80d6aa2c4994e0d04e612e --scratch-root DIR` | routed survivors caught by the lane's runnable checks: round-88 frozen sets 0/7, tool `--selftest` 3/7 (`receipts/c2-controls-prefreeze-r89.txt`, `c2-selftest-control-r89.txt`) → gate **7/7** over 95/95 correct cases, B-only 0; RM6C2 crash-only (declared) | **TARGET_MET** (`receipts/c2-measured-F-r89.txt`, rc 0) |
+| harm watch | C2 re-run at `099c662d`; gate selftest / `--no-live`; index; ledger; tool and counter selftests; census | C2 at A TARGET_MET 95/95 7/7 (`receipts/c2-harm-at-A-r89.txt`); the rest in `receipts/harm-final-r89.txt` | see receipts |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| mako effective settings over all twelve modelled criteria fields, regex included | Resolve one notification's effective mako settings when the config uses `summary~`/`body~`: libc POSIX ERE in the C locale, unanchored, every occurrence compiled, cannot-set-both, upstream's tokenizer escapes — the host's five click-action sections resolve (host criteria sections decided 4/9 → 9/9) | `receipts/c1-measured-A-r89.txt`; `.ufo/waves/round-89/w1/R89MExecHostDiff.md`; `corpus/knowledge/mako-regex-criteria-r89.md` | 89 |
+
+### Named limits (append-only, round 89)
+
+- `group-index`/`grouped` (second-pass fields) stay refused. Escaped `=` and a standalone `""` token are refused (upstream accepts /
+  ignores them; pre-existing). A NUL byte in a regex value is refused.
+- RM6C2 stays alive (crash-only by argument, R89MReviewC2 §3); N09 (message text) unobservable; N10 crash-only.
+- 3 of the 8 C2 supplementary labels and r19/b25 are tool-stance labels (regression pins, not independent ground truth).
+- The counters trust that the measured tool does not inspect its own path (R89MExecForgery `w1/forgeries/counter-*.py`).
+- No live notification: the resolver answers what the config would compute. The C-locale reading holds for mako 1.11.0.

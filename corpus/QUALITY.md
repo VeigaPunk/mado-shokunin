@@ -1086,3 +1086,25 @@ file was rewritten during the wave, voiding early-seat findings (erratum 4; `cor
 Limits: a pin proves the bytes read are the bytes named, not that the case set is adequate (that is the mutant
 population's job); the freeze ordering is proved by the commit graph, not by a timestamp in the file.
 (lesson: lessons/round-88.md#mistakes M88-2; outside lessons/round-87-verifier-spotcheck.md §6 R4)
+
+**148. A survivor is a coverage gap only when a probe makes the mutant return a well-formed wrong answer.** A seat
+that routes a survivor names the probe, the correct tool's result, and the mutant's result *as the scorer assigned
+it* — a `killed`/semantic verdict, not a process exit status. A probe on which the mutant terminates abnormally
+(nonzero exit, traceback, abort, timeout) distinguishes nothing: it is recorded as "no separating input found",
+the crash is kept as evidence, and the mutant is declared crash-only or equivalent. Check: re-score the probe
+through the same predicate the claim uses and quote its status field; no row whose mutant status is
+`crashed-not-killed` may carry the word "distinguishes". Shown able to fail:
+`.ufo/waves/round-88/r1/R88MResidMut.md:131` routes RM6C2 on `mutant FAIL exit=1 (RecursionError)` while `:38`
+states the rule and `quality/counters/c2-r88-include-containment.py:225` assigns `crashed-not-killed`.
+(lesson: lessons/round-89.md#mistakes M89-1)
+
+**149. A model of an upstream parser is checked against the upstream state machine's own states, one probe per
+state, and the probe list is frozen with the model.** A re-implementation of a tokenizer or scanner names the
+upstream file and line range of each state it copies and carries one input that enters that state: for mako's
+`parse_criteria` at minimum the quoted state with a backslash before a character other than the quote or a
+backslash, and the normal state with a tab inside a token. Check: compile a replica of the upstream state machine
+from the pinned source lines and require the model's token output to equal the replica's on every probe; a probe
+whose escaped character is only `"` or `\` does not enter the rule being copied. Shown able to fail:
+`tools/mado-mako.py` at `7d3074865a9f5acfa0f1c9c66b460e73d4031331:222` keeps `\` before `.` inside quotes
+(`('summary', 'a\.b')` where `criteria.c:177-182` yields `a.b`) and splits on any whitespace at `:242` where
+`criteria.c:207` splits on a space only. (lesson: lessons/round-89.md#mistakes M89-2)

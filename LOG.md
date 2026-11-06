@@ -4317,3 +4317,26 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   stale ledger figures and an uncommitted harm receipt (fixed in the final commit). Mutation probe survivors routed to round 89.
   Round total 16 seats (w1 12 + r1 4), 0 dead. Harm watch at `498855cb`: gate 460/460, file plane CLEAN 29, index 109/109,
   ledger 163/163 uncovered 0, tool selftest 52/52, counter selftests 40/40 and 28/28 (`receipts/harm-final-r88.txt`).
+
+### Round 89 — mako summary~/body~ as POSIX ERE (capability) and a runnable survivor gate (2026-11-06, hyaku run 15, attempt 1)
+
+- Inputs: the r88 non-author spot-check (routed R1–R5) and `R88MResidMut` §3–§4; the r88 named limit "summary~/body~ refused";
+  `considerthese/2026-11-06.md` proposals 1 and 3. Two claims (`.ufo/waves/round-89/claims-declaration-r89.md`): C1 capability,
+  coverage (mako `summary~`/`body~` matched with libc `regcomp(REG_EXTENDED + REG_NOSUB)`/`regexec` in the C locale, behind
+  upstream's criteria tokenizer); C2 operability (a runnable survivor gate over round 88's routed survivors). Nudge not claimed.
+- Motivating evidence: the host's `core.ini:24-36` carry five `[summary~="…"]` click-action sections, all refused by the r88 tool
+  (base decides 4/9 host criteria sections, 5 refusals per run; the candidate 9/9, 0 refusals: `w1/R89MExecHostDiff.md`). mako
+  v1.11.0 never calls setlocale (S500), so it matches in the C locale (S498); a bare Python process here starts in `en_US.UTF-8`.
+  The r88 tokenizer kept `\` inside quotes and split on any whitespace, unlike `parse_criteria` (M89-2).
+- Wave w1: 12 seats (scout 2, scribe 1, executor 4, connector 1, reviewer 2, critic 1, mutation-tester 1), attack 4/12. Findings
+  became draft revisions before the freeze: earlier-invalid-occurrence fix (ReviewC1 F1), M33–M37, cases r31/r32/n04/n07,
+  44 blind cases (b01–b44), and the critic's wording/axis/provenance/sequencing changes (F2–F11). Fuzz: 12 800 candidate/oracle
+  comparisons, 0 disagreements; Python `re` disagrees on 404/3200.
+- Landed: freeze `d87361354b4d142287aac05bb973315749ef1fce` (declaration, counters, frozen controls, pre-freeze receipts, w1
+  evidence, r88 dispatch markers per R5); C1 tool `099c662dc55521e365cd4126132cdcda4efc54b6` (candidate bytes unchanged,
+  sha256 6b4bc409…); records (knowledge entry, S496–S500, S493/S494 used-by, README rows, lesson, QUALITY 148–149, ledger rows,
+  SCORECARD, this entry, measured receipts) in the round's records commit.
+- Measured: C2 at the freeze `TARGET_MET cases=95 correct=95 counted=7 killed=7 do_nothing_B_only_killed=0` (tool = r88 tool,
+  `receipts/c2-measured-F-r89.txt`); C1 at `099c662d` `TARGET_MET cases=141 correct=141 carried=61/61 mutants=37 killed=37`,
+  controls naive 34, globals 35, base 78, python-re 127 (`receipts/c1-measured-A-r89.txt`); C2 re-run at `099c662d` TARGET_MET
+  (`receipts/c2-harm-at-A-r89.txt`). MODELLED_FIELDS 10 → 12. Census 430 → 435 rows, exit 0.
