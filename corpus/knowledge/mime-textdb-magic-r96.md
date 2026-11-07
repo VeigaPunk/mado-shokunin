@@ -537,17 +537,19 @@ answers; the candidate's host leg is the `9822 pairs (4911 paths x 2 legs: own p
 
 | leg | expected | measured |
 |---|---|---|
-| frozen cases | `correct == cases` | `265` |
+| frozen cases | `correct == cases` | `284` (correct 284/284; the `265` that stood here was the pre-relabel case count, corrected by the round-96 erratum and this round's sweep) |
 | per-class census | 16 declared classes, >= 8 cases each | `16 classes, 14-25 cases each (284 cases, 423 inputs)` |
 | fresh seeded inputs | `fresh == fresh_total`, >= 120 | `40 cases, 289-319 inputs per seed, all correct` |
 | host files | `host == host_total`, >= 1500 | `9822 pairs (4911 paths x 2 legs: own path and data-only)` |
-| frozen mutants | `killed == mutants`, every class kills >= 1 | `97` |
+| frozen mutants | `killed == mutants`, every class kills >= 1 | `84 counted killed 84/84 (class kills 16/16); the population is 84 counted + 13 not-observable (each with its probe fixture) + 13 equivalents - the `97` that stood here mixed the draft totals` |
 | controls | do-nothing 0, naive < cases, memoriser 0 fresh, forgery rejected | `do-nothing 0/259 text-mode (20/20 none-mode answered), name-only 32/284, naive 101/284, base 0, memoriser fresh 0/40, forgery rejected (`audit_denials=5`)` |
 | selftest | `checks=N failed=0`, N >= 18 | ``checks=50 failed=0`` |
 | tool pin | `tool_pin=ok` at the measured rev | ``tool_pin=ok` at the measured rev` |
 
-Every cell above is a placeholder for `.ufo/waves/round-96/receipts/c1-measured-r96.txt`; the seat
-report lists them as the cells the scribe did not have at draft time.
+Every cell above is re-derived from `.ufo/waves/round-96/receipts/c1-measured-r96.txt` (the measured
+line prints `cases=284 correct=284 classes=16/16 fresh=268/268 host=9822/9822 mutants=84 killed=84
+class_kills=16/16 selftest=ok checks=50 failed=0`). The placeholder sentence that stood here until
+round 97 is corrected by the round-97 record fix (round-96 spot-check D2).
 
 ## 8. Located quotes for the registry rows
 

@@ -268,3 +268,20 @@ and `LOG.md`, because a commit cannot contain its own hash.
 - The tool docstring's three line citations are off (R96MReviewC1 F9); the entry's citations are correct. Fixing the
   docstring is routed to round 97 (it changes the frozen bytes and re-anchors the mutant set).
 - `--data-home D --data-home-unset` together is accepted and the unset wins (R96MReviewC1 F10, unscored).
+
+## Correction (appended by round 97, 2026-11-07; QUALITY 6 — old and new values preserved)
+
+**D5 — the C1 counting command's `--expect-mutants-sha256` was stale.** The command body above carries
+`--expect-mutants-sha256 f8d461e8bd4d4d6a6f813bf63fc547e74cdf6c5f7a386c536d62633cb18b806a`; the frozen file
+`.ufo/waves/round-96/controls/magictext-mutants-r96-frozen.json` and the freeze block pin
+`448150e2be7650309d126670413ea0a2d8c11c8c257807014418cf28ac1bc440`. Both values are kept here; the frozen pin is
+the one the counter accepts (a verbatim replay of the body command fails SETUP; the report's command, which carries
+`448150e2…bc440`, is the measured one).
+
+**D6 — the mutant population is 84 counted / 13 not-observable / 13 equivalents (110).** The freeze block's
+"97 mutants … (14 equivalents excluded)" mixes the wave draft's totals (`97` counted + `14` equivalents = 111). The
+frozen file's three arrays are `mutants` = 84, `not_observable_not_counted` = 13 (each with its probe fixture) and
+`equivalent_not_counted` = 13; the reclassification (`indent-skip-current-level` dropped, `indent-depth-guard-one`
+added, `indent-depth-guard` moved from equivalent to counted) is recorded in the wave's mutant draft
+`.ufo/waves/round-96/build/magictext-mutants-r96.json`. The measured line stands: `mutants=84 killed=84
+class_kills=16/16`.
