@@ -540,3 +540,7 @@ given and writes nothing; editing `~/.config/xdg-desktop-portal/portals.conf` st
 **Round-93 refinement (C2) — one record gate; no new write surface.** `quality/check-selftest-strength.py` copies a lane
 gate into scratch, applies the committed kill-set's mutants there and runs its `--selftest`; it reads only the lane tree and
 writes only scratch.
+
+**Round-94 refinement (C1) — file name → MIME type (read-only); no new write surface.** `tools/mado-mimeglob.py` reads
+`mime.cache`, `globs2` and `globs` under the xdgmime data roots it is given (S515–S518, S505) and writes nothing; it
+never runs `update-mime-database` or edits `~/.local/share/mime`, which stay operator-owned. Content sniffing is outside it.
