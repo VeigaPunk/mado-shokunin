@@ -5533,3 +5533,46 @@ index 117/117, ledger 188/188, every tool selftest green, the four gate kill-set
 r94 C1/C2 and r93 C2 TARGET_MET) and `r90c1_portal_routing` rc 2, its declared expectation since round 93; the
 round-96 legs are the separate c1/c2/c1-at-c2 receipts. No axis harmed.
 
+
+## Round 97 — the path's content type (capability), the round-96 counters' self-invocation (2026-11-07, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-97/claims-declaration-r97.md` (freeze `78e9ccdd`, corrected pre-freeze on the wave's
+measured findings). C1 measured at `4541d94b` (tool `da6af7a0…8a44d2d8`); C2 measured at `65ff5591` (counters
+`4f678384…aaa64d` / `54143b8a…002217b`, C2 counter `abb17a01…06b879`). Stagnation nudge not claimed; every owned axis
+at 10, so the lowest-axis duty is a tie. Sourced claim: C1 (S522, S526, S527, S518, S521, S515, S516, S519, S520,
+S524, S525).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (new surface, capability): the content type GIO 2.90.1 reports for a **path** (`standard::content-type` / `standard::fast-content-type`) | `python3 -I quality/counters/c1-r97-filetype.py --repo . --rev 4541d94b4797c872b55f3facf3996d54e63326a5 --base-rev e6152b58… --cases …/filetype-cases-r97-frozen.json --mutants …/filetype-mutants-r97-frozen.json --genseed …/filetype-fresh-r97.py --host-list …/filetype-host-r97-frozen.txt --host-labels …/host-labels-r97-frozen.json --host-db …/host-db-r97.json --expect-* (the full pinned command is the declaration's C1 block) --scratch-root DIR` | at base no lane tool answers a path's content type (0 scored paths; `git cat-file -e e6152b58:tools/mado-filetype.py` absent) → `TARGET_MET` at `4541d94b`: cases 157/157 (15/15 classes), mutants 101/101 (class_kills 15/15), fresh 140/140 (seed `4c1d3a48…`), host 6194/6194 (0 mismatches, 0 errors, 0 drift), selftest `checks=40 failed=0`, controls name-only 39/157, naive 67/157, memoriser 0/140 fresh, forgery rejected (`.ufo/waves/round-97/receipts/c1-measured-r97.txt`) | **improved** (capability demonstrated: `tools/mado-filetype.py`, first-working round 97) |
+| C2 **operability**: the two round-96 counters gain a Gate-standard self-invocation mode, and the registry rows for the three instruments close | `python3 -I quality/counters/c2-r97-counter-selftest.py --repo . --rev 65ff5591c40c13ae7686b30587d202086353c165 --base-rev e6152b58… --expect-base-registry-sha256 6a8754df… --panel …/counter-selftest-panel-r97.json --expect-panel-sha256 87ba2f41… --expect-c1-sha256 4f678384… --expect-c2-sha256 54143b8a… --expect-registry-sha256 fab1ff74… --expect-ledger-sha256 fb0f2f3c… --scratch-root DIR` | at base both counters refuse `--selftest` (argparse rc 2, no result line) and the registry holds 1 of the 3 instrument rows → `TARGET_MET` at `65ff5591`: selftest_green 2/2 (checks 10,10), negative_ids 18/18, broken_modes 6/6 (3 per counter), base bytes refuse (rc 2, 0/2 green), echo stub uncredited 18/18, registry 1 → 3, ledger_members 2/2, uncovered 0 (`.ufo/waves/round-97/receipts/c2-measured-r97.txt`) | **improved** |
+| separability | C1 counter at the C2 revision; C2 counter at the C1 revision | C1 `TARGET_MET` at `65ff5591` (`receipts/c1-at-c2-r97.txt`); C2 `TARGET_MISSED`/`SETUP_ERROR` at `4541d94b` (the counters there have no `--selftest`; `receipts/c2-at-c1-r97.txt`) | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| GIO 2.90.1 path content type (`tools/mado-filetype.py`, read-only) | Answer, read-only, what `standard::content-type` and `standard::fast-content-type` report for a path: the stat branches in order (symlink broken/nofollow, directory, chardev, blockdev, FIFO, zero-size regular, socket), the alias rewrite, the basename-only guess and its uncertain states, and the sniff of the database's own max extent (clamped to 16384) taken only when not `--fast` and uncertain, with a failed open/read keeping the name-only answer; 157 frozen cases, a seeded fresh leg, 6194 frozen host labels, 101 counted mutants | `.ufo/waves/round-97/receipts/c1-measured-r97.txt`; `corpus/knowledge/gio-content-type-file-r97.md` | 97 |
+
+### Named limits (append-only, round 97)
+
+- C1: paths only (the guess over raw inputs stays rounds 94–96); only the two content-type attributes; a path whose
+  `lstat` fails with an errno other than `EACCES` is refused per path (exit 2) and not scored; the fresh leg
+  re-samples contents and names over a fixed fixture family per class against measurement-time oracle labels; 14
+  cases pin the host database through the frozen `host-db` manifest; the host leg is the 6,194-path stable system
+  subset (`/usr`, `/etc`, `/dev`, `/proc`, `/sys`), credential-shaped and volatile paths excluded; `O_NOATIME`'s
+  EPERM retry is modelled, the atime effect is not measured; the sniff extent is read from the database (a synthetic
+  small-extent case is the only observable form of the rule).
+- C2: the panel's neutralisations short-circuit each named check to False, so the mode proves the id plumbing and the
+  fail-closed exits, not the strength of each check's assertion; the counters' production verdicts are re-derived by
+  their own round-96 receipts, not by this counter; the always-OK control is the echo stub the counter must refuse.
+- Round shape: wave w1 (14 seats: 3 executors, 2 mutation-testers, 2 reviewers, 1 critic, 1 scout, 1 connector,
+  1 scribe; attack 5/14) plus wave w1b (10 seats: 5 executors, 2 mutation-testers, 2 reviewers, 1 critic; attack
+  5/10) re-dispatched after four w1 seats died on a provider 401; round total 24 seats; dead seats: w1
+  R97MScoutSources, R97MExecC2, R97MMutC2 (no report) and the four 401 deaths replaced in w1b; no residual call.
+
+### Harm watch (round 97, at the records tip)
+
+`receipts/harm-final-r97.txt` (see the report): the r96 leg set plus the r95/r96/r97 counter declarations replayed at
+the records tip; expected rc 0 everywhere except `r90c1_portal_routing` (its declared SETUP_ERROR since round 93).
+No axis harmed.

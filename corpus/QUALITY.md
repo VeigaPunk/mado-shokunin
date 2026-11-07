@@ -1260,3 +1260,26 @@ its selftest in the middle leaves the main path outside the prefix and every mai
 able to fail: `quality/check-receipt-presence.py` at base (selftest at line 122 of 327) refused a `cited += 1`
 mutant with `find occurs 0 times in non-selftest code`; after the block moved after `main()` the six labels have
 singleton kills and the gate prints `OK kills=7 held=7`.
+
+## Round 97 — a caller surface, control inputs, and measured counts
+
+**168. A model sentence whose subject is a field of the round's own frozen fixture is re-derived from that fixture
+before admission.** Round 96 admitted an entry sentence ("the cache version sits at bytes 4..7") beside a counter
+that reads offsets 0..3, and nothing in the round compared them; the spot-check's D12 raised it after the report.
+The rule: when a sentence names a field, offset, count or constant that a committed artifact of the same round
+reads, the sentence is re-derived from that artifact (or carries an erratum naming both readings), and a superseded
+sentence is corrected append-only with both values kept. Shown able to fail: at `0caf2465^` the pair
+`git show 0caf2465^:corpus/knowledge/mime-textdb-magic-r96.md | grep -c '^## 10. Erratum'` -> 0 with
+`grep -c 'int.from_bytes(data\[0:2\], "big")' quality/counters/c1-r96-magictext.py` -> 1 shows the disagreement
+nothing named; at the tip both read 1. (lesson: lessons/round-97.md#mistakes M97-1)
+
+**169. A refusal sentinel names the library's actual condition, including the errnos it tolerates, and a count in a
+frozen predicate is measured at its base revision before it is declared.** Two halves of one class: a control or a
+predicate that asserts a state the instrument does not test. Round 97's declaration first said "a path that cannot
+be stat'ed at all (missing, or a symlink loop) is refused" while GLib tolerates `EACCES` and answers a loop as
+`inode/symlink`, and it said the registry held "0 rows" for four artifacts while one row existed at the base
+revision. Shown able to fail: `gio info -a standard::content-type` on a file under a mode-000 directory prints
+`application/octet-stream` exit 0 and on `a -> b -> a` prints `inode/symlink` exit 0 (both contradict the first
+sentence); `git show e6152b58:SKILL.md | grep -c 'mado-mimetext'` prints 1 (contradicts the second). The fix is the
+same in both halves: the sentence is derived from a measurement of the exact artifact it names, and the predicate
+carries the measured base value. (lesson: lessons/round-97.md#mistakes M97-2, M97-4)

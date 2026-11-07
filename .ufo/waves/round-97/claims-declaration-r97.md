@@ -184,7 +184,7 @@ sentence is preserved in `.ufo/waves/round-97/w1/R97MReviewC2.md` §3):
 ```sh
 python3 -I quality/counters/c2-r97-counter-selftest.py --repo . --rev <C2-measured-rev> \
   --base-rev e6152b589c2c6a28426c28263c4bcc3c46398be4 --expect-base-registry-sha256 6a8754df2d6d0123b77db384ac85bef17baa378e0be2782a01ba79e069ff028d \
-  --panel .ufo/waves/round-97/controls/counter-selftest-panel-r97.json --expect-panel-sha256 95f86861d97c6bf6104095c7b7fcdf57cfdd6946dbdb34710bd6dbefc188faa8 \
+  --panel .ufo/waves/round-97/controls/counter-selftest-panel-r97.json --expect-panel-sha256 87ba2f4149ff5fbcd7dfe7179bc87b1bd50cd083867f736b62f02796cfa9b4ba \
   --expect-c1-sha256 4f6783848ded9c63f934c68a24da856369895987651d0f66fdd6920f07aaa64d --expect-c2-sha256 54143b8a28f2be4b2f1361c443d32156a68fd088c7cdb9c9030ca7415002217b \
   --expect-registry-sha256 <SKILL-AT-MEASURED-REV> --expect-ledger-sha256 <LEDGER-AT-MEASURED-REV> \
   --scratch-root <SCRATCH>

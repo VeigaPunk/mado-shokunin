@@ -1,155 +1,177 @@
 {
- "version": 2,
- "pred": "PRED-C2-r97-v1",
- "counters": [
-  {
-   "path": "quality/counters/c1-r96-magictext.py",
-   "checks": [
-    {
-     "id": "C1-green-target-met",
-     "find": "        return bool(line_ok and find_ok)\n",
-     "replace": "        return False\n"
-    },
-    {
-     "id": "C1-missing-cases",
-     "find": "        return rc == 2 and \"SETUP_ERROR\" in out and \"MADO_MAGICTEXT_COUNT:\" in out\n",
-     "replace": "        return False\n"
-    },
-    {
-     "id": "C1-wrong-rev-pin",
-     "find": "        return rc == 2 and \"SETUP_ERROR\" in out\n",
-     "replace": "        return False\n"
-    },
-    {
-     "id": "C1-mutant-mismatch",
-     "find": "                if broken == tool_src:\n                    return False\n        return True\n",
-     "replace": "                if broken == tool_src:\n                    return False\n        return False\n"
-    },
-    {
-     "id": "C1-result-format",
-     "find": "    print(\"MADO_COUNTER_SELFTEST: checks=%d failed=%d\" % (len(checks), len(failed)))\n    return 0 if not failed else 1\n",
-     "replace": "    print(\"MADO_COUNTER_SELFTEST_X: checks=%d failed=%d\" % (len(checks), len(failed)))\n    return 0 if not failed else 1\n"
-    },
-    {
-     "id": "C1-no-scratch-left",
-     "find": "        return not any(n.startswith(\"c1r96-\") or n.startswith(\"c1-selftest-\")\n                       for n in _os.listdir(FIX))\n",
-     "replace": "        return False\n"
-    },
-    {
-     "id": "C1-fixture-parses",
-     "find": "        _js.loads(open(MUTANTS, encoding=\"utf-8\").read())\n        return True\n",
-     "replace": "        _js.loads(open(MUTANTS, encoding=\"utf-8\").read())\n        return False\n"
-    }
-   ]
-  },
-  {
-   "path": "quality/counters/c2-r96-selftest-kills.py",
-   "checks": [
-    {
-     "id": "C2-green-target-met",
-     "find": "        return bool(shape and kshape)\n",
-     "replace": "        return False\n"
-    },
-    {
-     "id": "C2-missing-panel",
-     "find": "        return rc == 2 and \"SETUP_ERROR\" in out and \"MADO_SELFTEST_KILLS:\" in out\n",
-     "replace": "        return False\n"
-    },
-    {
-     "id": "C2-wrong-rev-pin",
-     "find": "        return rc == 2 and \"SETUP_ERROR\" in out\n",
-     "replace": "        return False\n"
-    },
-    {
-     "id": "C2-mutant-mismatch",
-     "find": "                if broken == tool_src:\n                    return False\n        return True\n",
-     "replace": "                if broken == tool_src:\n                    return False\n        return False\n"
-    },
-    {
-     "id": "C2-result-format",
-     "find": "    print(\"MADO_COUNTER_SELFTEST: checks=%d failed=%d\" % (len(checks), len(failed)))\n    return 0 if not failed else 1\n",
-     "replace": "    print(\"MADO_COUNTER_SELFTEST_X: checks=%d failed=%d\" % (len(checks), len(failed)))\n    return 0 if not failed else 1\n"
-    },
-    {
-     "id": "C2-no-scratch-left",
-     "find": "        return not any(n.startswith(\"c2r96-\") or n.startswith(\"c2-selftest-\")\n                       for n in _os.listdir(FIX))\n",
-     "replace": "        return False\n"
-    },
-    {
-     "id": "C2-fixture-parses",
-     "find": "        _js.loads(open(R90, encoding=\"utf-8\").read())\n        return True\n",
-     "replace": "        _js.loads(open(R90, encoding=\"utf-8\").read())\n        return False\n"
-    }
-   ]
-  }
- ],
  "broken": [
   {
+   "counter": "quality/counters/c1-r96-magictext.py",
+   "expect_exit": 1,
+   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: st-fixture-dir",
    "id": "c1-missing-input",
-   "counter": "quality/counters/c1-r96-magictext.py",
-   "mode": "missing-input",
-   "expect_exit": 2,
-   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: C1-fixture-could-not-evaluate"
+   "mode": "missing-input"
   },
   {
+   "counter": "quality/counters/c1-r96-magictext.py",
+   "expect_exit": 1,
+   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: st-tool-pin",
    "id": "c1-wrong-rev",
-   "counter": "quality/counters/c1-r96-magictext.py",
-   "mode": "wrong-rev",
-   "expect_exit": 1,
-   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: C1-green-target-met"
+   "mode": "wrong-rev"
   },
   {
+   "counter": "quality/counters/c1-r96-magictext.py",
+   "expect_exit": 1,
+   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: st-tool-pin",
    "id": "c1-mutated-fixture",
-   "counter": "quality/counters/c1-r96-magictext.py",
    "mode": "mutated-tool",
-   "path": "c1-mutants.json",
-   "expect_exit": 1,
-   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: C1-mutant-mismatch"
+   "path": "c1/mado-mimetext.py"
   },
   {
+   "counter": "quality/counters/c2-r96-selftest-kills.py",
+   "expect_exit": 1,
+   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: st-fixture-dir",
    "id": "c2-missing-input",
-   "counter": "quality/counters/c2-r96-selftest-kills.py",
-   "mode": "missing-input",
-   "expect_exit": 2,
-   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: C2-fixture-could-not-evaluate"
+   "mode": "missing-input"
   },
   {
+   "counter": "quality/counters/c2-r96-selftest-kills.py",
+   "expect_exit": 1,
+   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: st-tool-pin",
    "id": "c2-wrong-rev",
-   "counter": "quality/counters/c2-r96-selftest-kills.py",
-   "mode": "wrong-rev",
-   "expect_exit": 1,
-   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: C2-green-target-met"
+   "mode": "wrong-rev"
   },
   {
-   "id": "c2-mutated-fixture",
    "counter": "quality/counters/c2-r96-selftest-kills.py",
-   "mode": "mutated-tool",
-   "path": "c2-kills.json",
    "expect_exit": 1,
-   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: C2-mutant-mismatch"
+   "expect_line": "MADO_COUNTER_SELFTEST_FAIL: st-tool-pin",
+   "id": "c2-mutated-fixture",
+   "mode": "mutated-tool",
+   "path": "c2/dummy-tool.py"
   }
  ],
+ "counters": [
+  {
+   "checks": [
+    {
+     "find": "add(\"st-fixture-dir\", ",
+     "id": "st-fixture-dir",
+     "replace": "add(\"st-fixture-dir\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-tool-pin\", ",
+     "id": "st-tool-pin",
+     "replace": "add(\"st-tool-pin\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-gate-target-met\", ",
+     "id": "st-gate-target-met",
+     "replace": "add(\"st-gate-target-met\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-result-line-format\", ",
+     "id": "st-result-line-format",
+     "replace": "add(\"st-result-line-format\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-scratch-clean\", ",
+     "id": "st-scratch-clean",
+     "replace": "add(\"st-scratch-clean\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-setup-missing-input\", ",
+     "id": "st-setup-missing-input",
+     "replace": "add(\"st-setup-missing-input\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-setup-wrong-pin\", ",
+     "id": "st-setup-wrong-pin",
+     "replace": "add(\"st-setup-wrong-pin\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-setup-wrong-rev\", ",
+     "id": "st-setup-wrong-rev",
+     "replace": "add(\"st-setup-wrong-rev\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-target-missed-mutant\", ",
+     "id": "st-target-missed-mutant",
+     "replace": "add(\"st-target-missed-mutant\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    }
+   ],
+   "path": "quality/counters/c1-r96-magictext.py"
+  },
+  {
+   "checks": [
+    {
+     "find": "add(\"st-fixture-dir\", ",
+     "id": "st-fixture-dir",
+     "replace": "add(\"st-fixture-dir\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-tool-pin\", ",
+     "id": "st-tool-pin",
+     "replace": "add(\"st-tool-pin\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-gate-target-met\", ",
+     "id": "st-gate-target-met",
+     "replace": "add(\"st-gate-target-met\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-result-line-format\", ",
+     "id": "st-result-line-format",
+     "replace": "add(\"st-result-line-format\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-scratch-clean\", ",
+     "id": "st-scratch-clean",
+     "replace": "add(\"st-scratch-clean\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-setup-missing-input\", ",
+     "id": "st-setup-missing-input",
+     "replace": "add(\"st-setup-missing-input\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-setup-wrong-pin\", ",
+     "id": "st-setup-wrong-pin",
+     "replace": "add(\"st-setup-wrong-pin\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-setup-wrong-rev\", ",
+     "id": "st-setup-wrong-rev",
+     "replace": "add(\"st-setup-wrong-rev\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    },
+    {
+     "find": "add(\"st-target-missed-mutant\", ",
+     "id": "st-target-missed-mutant",
+     "replace": "add(\"st-target-missed-mutant\", False and ",
+     "why": "short-circuits the named check to False; the selftest must print its id and exit 1"
+    }
+   ],
+   "path": "quality/counters/c2-r96-selftest-kills.py"
+  }
+ ],
+ "pred": "PRED-C2-r97-v1",
  "stub": {
-  "id": "always-ok-echo-stub",
-  "what": "always-OK control: prints the selftest result line and every panel id as MADO_COUNTER_SELFTEST_FAIL lines at rc 1 while running no check",
-  "runs_check": false,
+  "credit_rule": "credited only when the judged instrument's own bytes carry the row's find anchor exactly once, the run exits 1 with the declared FAIL id, and the unneutralised baseline does not already print that id",
   "expect_flagged": 0,
-  "invocation": "python3 -I <stub.py> --selftest <panel ids...>",
-  "credit_rule": "credited for a neutralisation only when the judged instrument's own bytes carry that row's find anchor exactly once, the run exits 1 with the declared FAIL id, and the unneutralised baseline of the same instrument does not already print that id; the stub's bytes carry no find anchor, so it is credited with none (always_ok_flagged=0)",
-  "source": "import sys\ntoks = sys.argv[1:]\nif toks and toks[0] == '--selftest':\n    toks = toks[1:]\nfor t in toks:\n    print('MADO_COUNTER_SELFTEST_FAIL: %s' % t)\nprint('MADO_COUNTER_SELFTEST: checks=6 failed=%d' % len(toks))\nsys.exit(1)\n"
+  "id": "always-ok-echo-stub",
+  "runs_check": false,
+  "what": "prints the selftest result line and every panel id as MADO_COUNTER_SELFTEST_FAIL lines at rc 1 while running no check"
  },
- "controls": {
-  "base_counter_bytes": "the e6152b58 counter bytes refuse --selftest (argparse usage error rc 2, no MADO_COUNTER_SELFTEST result line); the v2 runner's base-control leg requires 0/2 green"
- },
- "_freeze": {
-  "c1_counter": "quality/counters/c1-r96-magictext.py",
-  "c1_sha256": "dd9b5a0ba09dc490e286522e9d4d55d60f04dec4274bf456c0a891fa630f61d6",
-  "c2_counter": "quality/counters/c2-r96-selftest-kills.py",
-  "c2_sha256": "d4689f5a43b3bc38ef45a1eca354169cf5de4b91846bed336b8d15c0ae79f7a3",
-  "runner": "build/c2-r97-counter-selftest.v2.py",
-  "runner_sha256": "abb17a019141c57635f1c9771ad449a4348dfdc75a0bb57af3776075fe06b879",
-  "fixtures_root": ".ufo/waves/round-97/selftest-fixtures/ (8 files)",
-  "runner_layout_dependency": "the runner extracts quality/ + tools/ + SKILL.md from --rev into the layout root, sets MADO_SELFTEST_REPO=root, and runs every counter invocation from that root with an explicit --fixture-dir (missing-input: a never-created dir; wrong-rev/mutated-tool: a sibling fixture tree). The counters are fixture-only as of this revision, so the support tree is no longer required by the checks; it is still materialised by the runner.",
-  "note": "frozen against the final revision: fixture-only checks, --fixture-dir > env > --repo > walk-up > __file__ sibling (no absolute lane literal), result-format asserts the emit statement occurs exactly twice and the neutralisation mutates the emit site; ids and result-line spelling unchanged"
- }
+ "version": 2
 }

@@ -526,3 +526,21 @@ env -i LC_ALL=C HOME="$S/h" /usr/bin/gio info -a standard::content-type "$S/d/f.
 The 16384 boundary of section 2.4 uses section 7.2's recipe: build a private `mime/magic` whose only
 rule is `><n>=<00 02>AB` and a file with `AB` at offset `<n>`, then compare `n = 16380` (matches),
 `n = 16382` (matches) and `n = 16385` (does not).
+
+## 11. Measured (round-97 C1 receipt, appended at landing)
+
+The C1 counter's run at `4541d94b4797c872b55f3facf3996d54e63326a5`
+(`.ufo/waves/round-97/receipts/c1-measured-r97.txt`) prints, for this entry's model:
+
+| leg | measured |
+|---|---|
+| frozen cases | `cases=157 correct=157 classes=15/15` (per class: dir 12, chr 9, blk 10, fifo 9, sock 9, zero 11, empty 9, sym 12, brok 10, nofollow 9, follow 9, certain 11, uncertain 14, fast 10, readerr 13) |
+| frozen mutants | `mutants=101 killed=101 crashed_not_killed=0 survived=0 class_kills=15/15` |
+| fresh seeded leg | `fresh=140/140 fresh_seed=4c1d3a48329c2167` (labels from `/usr/bin/gio` at measurement time) |
+| host leg | `host=6194/6194 host_paths=6194 host_mismatches=0 host_errors=0 host_drift=0` against the frozen oracle labels |
+| controls | `control_nameonly=39/157`, `control_fastproxy=130/157`, `control_naive=67/157`, `memoriser_frozen=157/157 memoriser_fresh=0/140`, `forgery=rejected` (`forgery_audit_denials=3`) |
+| structural | `static_structural=ok audit_denials=0 credential_guard=0 host_db=cache files=9` |
+| selftest | `selftest=ok checks=40 failed=0` |
+
+The tool's own selftest at the landed bytes: `MADO_FILETYPE_SELFTEST: checks=40 failed=0` (exit 0), and from a lone
+copy (no siblings) `checks=38 failed=0`.

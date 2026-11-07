@@ -4572,3 +4572,43 @@ round-95 spot-check's routed defect 3 for the last gate-compatible tool.
 - **Correction (appended, round 96):** the r96 entry's §9 first said the cache version sits "at bytes 4..7"; the
   library reads it at offsets 0..3 (BE u16 major, then minor), which is what the frozen counter's `loadable_cache`
   and the five refusal fixtures use. Corrected by the entry's §10 erratum; no measurement moves.
+
+## Round 97 — the path's content type (capability), the round-96 counters' self-invocation (2026-11-07, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-97/claims-declaration-r97.md` (freeze `78e9ccdd`; corrected before the freeze on the
+wave's measured findings, listed in its `## Freeze` block). C1 measured at `4541d94b` (`tools/mado-filetype.py` =
+frozen candidate `da6af7a0…8a44d2d8`; counter `quality/counters/c1-r97-filetype.py` `745a341e…195ba9e0`); C2 measured
+at `65ff5591` (the two round-96 counters with `--selftest`: `c1-r96-magictext.py` `4f678384…aaa64d`,
+`c2-r96-selftest-kills.py` `54143b8a…002217b`; counter `quality/counters/c2-r97-counter-selftest.py`
+`abb17a01…06b879`). Stagnation nudge not claimed (capabilities entered at rounds 88–96); every owned axis at 10, so
+the lowest-axis duty is a tie. Sourced claim: C1 (S522, S526, S527, S518, S521, S515, S516, S519, S520, S524, S525;
+S526/S527 opened this round).
+
+- C1 — coverage, new surface (capability): no lane tool answered a *path's* content type at base; `tools/mado-filetype.py`
+  now answers GIO 2.90.1's `standard::content-type` / `standard::fast-content-type` — the stat branches in order
+  (symlink broken/nofollow, directory, chardev, blockdev, FIFO, zero-size regular, socket), the alias rewrite, the
+  basename-only guess and its uncertain states, and the sniff of the database's own max extent (clamped to 16384)
+  taken only when not `--fast` and uncertain — 157/157 frozen cases (15 classes), 101/101 counted mutants
+  (class_kills 15/15), 140/140 fresh paths from a measurement-time seed, 6194/6194 frozen host labels (0 mismatches,
+  0 drift), `checks=40 failed=0`; controls name-only 39/157, naive 67/157, memoriser 0/140 fresh, ctypes forgery
+  rejected (`audit_denials=0` on the candidate, 3 on the forgery)
+  (`.ufo/waves/round-97/receipts/c1-measured-r97.txt`). Entry `corpus/knowledge/gio-content-type-file-r97.md`; index
+  and frontier rows; SKILL and PROVINCE rows; SOURCES 460 → 462.
+- C2 — operability: the two round-96 counters gain a `--selftest` self-invocation mode (10 checks each, stable `st-*`
+  ids, fixtures resolved from the counter's own path so the landed `quality/counters/` layout is green), the C2
+  counter scores it (18/18 neutralisations flagged with their declared ids, 6/6 broken modes named, base bytes
+  refuse `--selftest` rc 2, the echo stub credited with none of the 18, registry 1 → 3 instrument rows re-derived at
+  both revisions, ledger membership 2/2) (`.ufo/waves/round-97/receipts/c2-measured-r97.txt`). SKILL registry rows for
+  the two counters and the receipt-presence kill-set named inside the strength row's population; ledger rows for the
+  tool and both counters.
+- Separability: C1 re-run at the C2 tip (`receipts/c1-at-c2-r97.txt`); C2 at the C1 tip (`receipts/c2-at-c1-r97.txt`).
+- Frontier: SOURCES 460 → 462 rows (S526 `gcontenttype-fdo.c` sniff length, S527 `gio(1)` info contract); used-by
+  appends on S505/S515/S516/S518/S519/S520/S521/S522/S524/S525; census start/end rc 0. Mistakes M97-1..M97-6;
+  QUALITY 168–169.
+- Assimilation: none (the staged package has no entry on the content-type caller plane; the id-collision check is
+  `.ufo/waves/round-97/assimilation/`). considerthese: no still-unimplemented proposal matched this round's surface;
+  the 2026-11-07 proposal 3 (an exhaustive small-domain sweep) was already mined in round 96.
+- Round shape: wave w1 (14 seats, 5 attack) plus wave w1b (10 seats, 5 attack) re-dispatched after four seats died on
+  a provider 401; round total 24 seats. Dead seats: w1 R97MScoutSources, R97MExecC2, R97MMutC2 (no report; their
+  items were covered by w1b), w1 R97MExecCasesC1/R97MExecToolC1/R97MExecC2/R97MExecCounterC2 died on the 401 and
+  were replaced in w1b; no dead seats in w1b.
