@@ -544,3 +544,7 @@ writes only scratch.
 **Round-94 refinement (C1) — file name → MIME type (read-only); no new write surface.** `tools/mado-mimeglob.py` reads
 `mime.cache`, `globs2` and `globs` under the xdgmime data roots it is given (S515–S518, S505) and writes nothing; it
 never runs `update-mime-database` or edits `~/.local/share/mime`, which stay operator-owned. Content sniffing is outside it.
+
+**Round-94 refinement (C2) — two kill-sets; no new write surface.** `quality/selftest-kills/mado-xdgmime.json` and
+`quality/selftest-kills/mado-mime.json` are data for the unchanged round-93 gate, which copies `tools/mado-xdgmime.py` or
+`tools/mado-mime.py` into scratch, applies a kill there and runs its `--selftest`; nothing outside scratch is written.
