@@ -214,3 +214,17 @@ The desktop-entry launch plane is GIO's (`gdesktopappinfo.c`), the shell grammar
 adjacent lane surfaces are the round-91 default-application plane (which application), round-92
 `xdg-open`'s resolver (which file), and round-94's name-to-type step (which type); this round answers
 the argv those resolutions would launch with. `file(1)`/libmagic is not this surface.
+
+### Round-97 spot-check closure (append-only, this round)
+
+- **D7 (r96 declaration misquotes r95 routed defect 3).** Closed by restatement: the round-98 C2
+  section names the three r95 unguarded tools as the r95 spot-check lists them (`tools/mado-mako.py`,
+  `tools/mado-verify.sh`, `quality/check-receipt-presence.py`) and does not substitute
+  `tools/mado-mimesniff.py`; the r96 text stays as committed and is superseded by this sentence.
+- **D9 (role census drift).** Closed by reporting the census from the registry: round 98's w1 registry
+  holds 4 executor + 2 mutation-tester + 1 scout + 1 scribe + 1 connector + 1 reviewer + 1 critic
+  (11 seats); re-derived for round 97, `w1/swarm-registry.json` holds 6 executor seats, not the 3 the
+  round-97 report said.
+- **D5 (S523 used-by/recheck log).** Logged old -> new in this lesson's `### Rows touched`.
+- **D6 (fleet leftovers).** `f.txt` and `trail-ids.txt` swept byte-exact into
+  `.ufo/waves/round-98/misroot/` and the fleet copies deleted (M98-6).
