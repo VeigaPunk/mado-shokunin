@@ -1164,3 +1164,30 @@ differs from gio's on 378 of 1133 types. A knowledge entry, PROVINCE refinement 
 names the X-side lines (and the desktop value that reaches them) or drops the caller. Shown able to fail: the round-91
 sentence (`corpus/knowledge/mime-default-resolution-r91.md` line 9) names no xdg-open line; the round-92 entry's §1 does.
 Not a mechanical check: the reviewer reads the sentence. (lesson: lessons/round-92.md#mistakes M92-2)
+
+## Round 93 — frozen candidates, exact kill sets, report items, seat locators
+
+**155. A counter measures the frozen candidate's bytes, by sha256, not whatever file sits at the measured path.** A
+frozen mutant set, fresh seed and case labels describe one byte string; a counter that reads `<rev>:<path>` without
+checking it against the frozen candidate can certify different bytes, or SETUP_ERROR on anchors that moved. The
+predicate carries `tool_sha256 == pinned` as a conjunct and the receipt prints it. Shown able to fail:
+`.ufo/waves/round-93/receipts/c1-controls-prefreeze-r93.txt` (base tool and table forgery `tool_pin=FAIL`). Corollary
+of QUALITY 153: a port that removes an earlier frozen set's anchors carries that set re-anchored rule for rule inside its
+own frozen counter (round-93 C1: 50 unchanged, 9 re-anchored, 1 crash-shaped excluded). (lesson: lessons/round-93.md#mistakes M93-1)
+
+**156. A kill-set that guards a selftest names the exact set of checks each kill fails, and covers every check.**
+Uniqueness is not required — a mutant caught by several checks guards each of them when the gate holds the kill only on
+set equality; requiring a unique killer left three of 23 checks unguarded and 6 of 10 hand weakenings unseen. The gate
+also pins the check count and is paired with strength-preserving edits it must leave OK, so a gate that flags every byte
+change is refused. Shown able to fail: the 20-kill unique set's 20/23 neutralisations (R93MReviewC2 §2.2) against the
+32-kill exact set's 23/23 (`.ufo/waves/round-93/receipts/c2-controls-prefreeze-r93.txt`). (lesson: lessons/round-93.md#mistakes M93-2)
+
+**157. A round report carries a "Cross-domain evidence" item, with the owning domain or "none" and the sweep.** PROTOCOL
+minimum content; the round-92 report had none (spot-check routed defect 1). Check before filing:
+`grep -c '^- \*\*Cross-domain evidence' <report>` prints 1. Shown able to fail: 0 on
+`/home/vgpnk/Projects/shokunin/.ufo/reports/round-92/mado.md`. (lesson: lessons/round-93.md#mistakes M93-4)
+
+**158. A source URL written into a seat item comes from a registry row or was fetched by the L1 before dispatch.** The
+round-93 L1 named `src/portal-impl.c` at xdg-desktop-portal 1.22.1, which 404s (renamed twice upstream); the row S501
+already pinned `src/xdp-portal-config.c`. Not a mechanical check yet (no instrument reads dispatch URLs); the reviewer
+reads the dispatch. (lesson: lessons/round-93.md#mistakes M93-5)

@@ -4441,3 +4441,36 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   types have no `xdg-open` default (282 would open in nvim under gio) and 3 open another application
   (`application/vnd.ms-excel`: xdg-open `chatgpt.desktop`, gio `libreoffice-calc.desktop`).
 - Harm watch at `297e2515`: all green (`.ufo/waves/round-92/receipts/harm-final-r92.txt`; SCORECARD round 92).
+
+### Round 93 — portal key-file bytes (edge class) and the selftest-strength gate (2026-11-07, hyaku run 15, attempt 1)
+
+- Inputs: the round-92 non-author spot-check (routed defects: report cross-domain item; land the `tools/mado-portals.py`
+  GKeyFile port under its own frozen counter with regenerated round-90 mutants; a weakened passing selftest assertion is
+  invisible to the lane's instruments); `considerthese/2026-11-06.md` proposals 4 (operator-config gap) and 1 (survivor
+  ledger). Two claims (`.ufo/waves/round-93/claims-declaration-r93.md`): C1 coverage, edge class; C2 operability. Nudge
+  not claimed.
+- Motivating evidence: the round-90 tool voided a whole `portals.conf` or `.portal` on any invalid UTF-8 byte (comments,
+  unread keys, names), stripped VT as whitespace and kept NUL bytes inside values and group lines; GLib 2.90.1 does none
+  of these (S511–S514). The base tool answers 32 of the 80 frozen byte-subset cases as the installed xdg-desktop-portal
+  does (`.ufo/waves/round-93/receipts/c1-controls-prefreeze-r93.txt`). The round-92 seat-report gate's selftest could be
+  weakened (a `want_in` dropped, ids compared as a prefix) with its result line unchanged, and no lane instrument saw it
+  (`do_nothing_flagged=0/39`, `.ufo/waves/round-93/receipts/c2-controls-prefreeze-r93.txt`).
+- Wave w1: 13 seats (scout 1, scribe 1, executor 5, connector 1, reviewer 2, critic 1, mutation-tester 2), attack 5/13,
+  0 dead. Findings changed the candidate (NUL C-string view, continuation bytes after `]`, six selftest checks), the case
+  set (229 + 71 byte + 66 review/L1 = 366), the mutants (59 round-90 carried, 9 re-anchored; 16 byte-class), the C2 kill-set
+  (20 unique → 32 exact-set kills), the gate (exact-set kills, check-count pin), the C2 counter (rewritten by the L1:
+  verdict and exit code, neutral edits, setup panel) and both counters' pins on the frozen bytes — all before the freeze.
+- Landed: freeze `65dac61b0a3097d5f4f6f8ccf7444ea60ab27a77`; C1 `0a85e687048ae24f77f043b268794e408d0cc306` (tool, knowledge
+  entry `corpus/knowledge/portal-keyfile-bytes-r93.md`, S511–S514, PROVINCE/SKILL/ledger/index rows); C2
+  `4fd3b292eb6a96c5c6e471728dbab9ff2a15b99a` (gate, kill-set, SKILL/ledger/PROVINCE rows); records (lesson, QUALITY 155–158,
+  SCORECARD, this entry, S-row used-by updates, measurements, harm watch, census end, w1 results) in the records commit.
+- Measured: C1 at `0a85e687` `TARGET_MET tool_pin=ok cases=366 correct=366 bytes_cases=80 bytes_correct=80 fresh=120/120
+  fresh_bytes=60/60 mutants=75 killed=75`, controls do-nothing 35, r12 74, host-table 10, base 318 / byte subset 32
+  (`.ufo/waves/round-93/receipts/c1-measured-r93.txt`); C2 at `4fd3b292` `TARGET_MET positive=OK:0 neutralised_flagged=23/23
+  hand_flagged=16/16 neutral_ok=6/6 mutants=22 killed=22`, do-nothing 0/39, always-OK 0/39, always-WEAK fails (i), sha-diff
+  0/6 neutrals (`.ufo/waves/round-93/receipts/c2-measured-r93.txt`). Census 445 → 449 rows, rc 0 both ends.
+- Harm watch at `4fd3b292` (`.ufo/waves/round-93/receipts/harm-final-r93.txt`): gate selftest 460/460, file plane CLEAN 29,
+  index 114/114, ledger 179/179, portals 28/28, mime 17/17, xdgmime 12/12, mako 62/62 (first line a harness defect, corrected
+  append-only in the receipt), seat-reports 23/23, receipt-presence 6/6, selftest-strength 11/11 and OK 32/32 on the real
+  gate, round-90 C2 83/83 28/28, round-92 C2 45/45 with its round-91 leg; the round-90 C1 counter stops with
+  `SETUP_ERROR mutant M03 find occurs 0 times` on the ported tool, as declared (QUALITY 155); unchanged-tool diff empty.

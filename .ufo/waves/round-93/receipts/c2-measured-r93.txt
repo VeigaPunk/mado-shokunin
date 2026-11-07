@@ -1,0 +1,84 @@
+# round-93 C2 measurement, MadoR93, 2026-11-07T05:16:25Z; argv = declaration 'Frozen pins and argv' with REV=4fd3b292eb6a96c5c6e471728dbab9ff2a15b99a
+probe N:all present -> OK rc0 WEAK:1
+probe N:missing -> SR01 rc1 WEAK:1
+probe N:empty -> SR02 rc1 WEAK:1
+probe N:unsafe -> SR03 rc1 WEAK:1
+probe N:untrailed -> SR04 rc1 WEAK:1
+probe N:symlinked report -> SR03 rc1 WEAK:1
+probe N:prose Report line is not a trailer -> SR04 WEAK:1
+probe N:plain residual trailer -> SR01 rc1 WEAK:1
+probe N:no dispatch for round -> rc2 WEAK:1
+probe N:bad dispatch json -> rc2 WEAK:1
+probe N:last trailer wins WEAK:1
+probe N:--all scans every round WEAK:1
+probe N:--all with no dispatch -> rc2 WEAK:1
+probe N:rev: present -> OK rc0 WEAK:1
+probe N:rev: symlinked report -> SR03 rc1 WEAK:1
+probe N:rev: empty and missing -> SR02 SR01 rc1 WEAK:1
+probe N:rev: symlinked dispatch -> rc2 (F1) WEAK:1
+probe N:worktree: symlinked dispatch -> rc2 (F1) WEAK:1
+probe N:name with space and non-ASCII path -> ASCII tokens (F2) WEAK:1
+probe N:repeated --round counts once (F3) WEAK:1
+probe N:worktree: FIFO dispatch -> rc2, no hang (F4) WEAK:1
+probe N:worktree: report through a symlinked parent dir -> SR03 (F5) WEAK:1
+probe N:rev: absolute trailer path -> SR03 WEAK:1
+probe W:h01-want-in-drop-f1-rev WEAK:1
+probe W:h02-want-in-drop-f1-worktree WEAK:1
+probe W:h03-want-in-drop-f2 WEAK:1
+probe W:h04-want-in-drop-f3 WEAK:1
+probe W:h05-want-in-drop-f4 WEAK:1
+probe W:h06-widen-ids-to-prefix WEAK:1
+probe W:h07-drop-rc-comparison WEAK:1
+probe W:h08-drop-mode-comparison WEAK:1
+probe W:h09-f3-repeat-removed WEAK:1
+probe W:h10-widen-ids-subset WEAK:1
+probe W:e01-ids-superset WEAK:1
+probe W:e02-rc-off-by-one WEAK:1
+probe W:e03-mode-token WEAK:1
+probe W:e04-ascii-first-line WEAK:1
+probe W:e05-want-in-casefold WEAK:1
+probe W:e06-first-fail-only WEAK:1
+probe Z:n01-selftest-comment OK:0
+probe Z:n02-reorder-two-cases OK:0
+probe Z:n03-lambda-to-def OK:0
+probe Z:n04-tighten-want-in OK:0
+probe Z:n05-header-comment OK:0
+probe Z:n06-blank-lines OK:0
+probe s01-sha-guard SETUP_ERROR:2
+probe s02-broken-tool SETUP_ERROR:2
+probe s03-ambiguous-find SETUP_ERROR:2
+probe s04-timeout-kill WEAK:1
+probe s05-fail-line-exit-0 WEAK:1
+probe s06-result-line-not-failed0 SETUP_ERROR:2
+probe s07-checks-pin SETUP_ERROR:2
+probe s08-wrong-check WEAK:1
+probe s09-crash-kill WEAK:1
+probe s10-bad-kill-entry SETUP_ERROR:2
+probe s11-must-fail-superset WEAK:1
+probe s12-fail-prefix-mid-line WEAK:1
+probe s13-must-fail-subset WEAK:1
+probe s14-selftest-rc1-failed0 SETUP_ERROR:2
+mutant G01-rc-ignored killed at s05-fail-line-exit-0 WEAK:1->OK:0
+mutant G02-must-fail-ignored killed at s08-wrong-check WEAK:1->OK:0
+mutant G03-wrong-check-as-held killed at s08-wrong-check WEAK:1->OK:0
+mutant G04-positive-control-skipped killed at s06-result-line-not-failed0 SETUP_ERROR:2->OK:0
+mutant G05-timeout-as-held killed at s04-timeout-kill WEAK:1->OK:0
+mutant G06-wrong-excluded-from-verdict killed at s08-wrong-check WEAK:1->OK:0
+mutant G07-survived-ignored killed at s04-timeout-kill WEAK:1->OK:0
+mutant G08-sha-guard-removed killed at s01-sha-guard SETUP_ERROR:2->OK:0
+mutant G09-rc-nonnegative-accepted killed at (i) OK:0->WEAK:1
+mutant G10-first-kill-only killed at s03-ambiguous-find SETUP_ERROR:2->OK:0
+mutant G11-survived-not-counted killed at s04-timeout-kill WEAK:1->OK:0
+mutant G12-result-line-unchecked killed at s06-result-line-not-failed0 SETUP_ERROR:2->OK:0
+mutant G13-fail-prefix-anywhere killed at s12-fail-prefix-mid-line WEAK:1->OK:0
+mutant G14-any-to-all killed at s04-timeout-kill WEAK:1->OK:0
+mutant G15-positive-rc-nonfatal killed at s14-selftest-rc1-failed0 SETUP_ERROR:2->OK:0
+mutant G16-find-occurrence-check-dropped killed at s03-ambiguous-find SETUP_ERROR:2->WEAK:1
+mutant G17-sha-mismatch-nonfatal killed at s01-sha-guard SETUP_ERROR:2->OK:0
+mutant G18-survived-as-held killed at s04-timeout-kill WEAK:1->OK:0
+mutant G19-rc-always-zero killed at s04-timeout-kill WEAK:1->WEAK:0
+mutant G20-exact-set-to-subset killed at s13-must-fail-subset WEAK:1->OK:0
+mutant G21-checks-pin-dropped killed at s07-checks-pin SETUP_ERROR:2->OK:0
+mutant G22-bad-entry-accepted killed at s10-bad-kill-entry SETUP_ERROR:2->WEAK:1
+MADO_SELFTEST_STRENGTH: TARGET_MET pred=PRED-C2-r93-v1 rev=4fd3b292eb6a96c5c6e471728dbab9ff2a15b99a checks=23 frozen_pin=ok positive=OK:0 kill_set_pin=ok neutralised_flagged=23/23 hand_flagged=16/16 neutral_ok=6/6 mutants=22 killed=22 crashed_not_killed=0 do_nothing_flagged=0/39 always_ok_flagged=0/39 always_weak_positive=WEAK:1 shadiff_flagged=39/39 shadiff_neutral_ok=0/6 gate_selftest=ok gate_sha256=2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b kills_sha256=00befb3efbe2f4a7c44b14776482e0cac0ab8e219db934af9c25b34f47c516f9 tool_sha256=176fc066b49334921e4fd746de55db8106709c29dfe225430224c9d46ed1663a
+rc=0

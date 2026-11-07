@@ -5352,3 +5352,43 @@ so the lowest-axis duty is a tie. Sourced claim: C1 (S508–S510).
   `quality/check-seat-reports.py` 23/23, `quality/check-receipt-presence.py` 6/6, round-90 C2 TARGET_MET 83/83 28/28,
   round-90 C1 TARGET_MET 229/229 60/60, round-91 C2 TARGET_MET 59/59 55/55 (the C2 measurement's leg), round-91 C1 tool
   unchanged (`git diff d992ef74 297e2515 -- tools/mado-mime.py` empty) (`.ufo/waves/round-92/receipts/harm-final-r92.txt`). No axis harmed.
+
+## Round 93 — portal key-file bytes (edge class), the selftest-strength gate (2026-11-07, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-93/claims-declaration-r93.md` (w1 findings folded in before the freeze, listed in
+`corpus/lessons/round-93.md`). Freeze `65dac61b0a3097d5f4f6f8ccf7444ea60ab27a77`; C1 `0a85e687048ae24f77f043b268794e408d0cc306`
+(C1 measured revision; `tools/mado-portals.py` = frozen candidate, sha256 `e46a861e…c021`); C2
+`4fd3b292eb6a96c5c6e471728dbab9ff2a15b99a` (C2 measured revision; `quality/check-selftest-strength.py` = frozen gate
+`2d6f1219…a61b`, `quality/selftest-kills/check-seat-reports.json` = frozen kill-set `00befb3e…16f9`). Stagnation nudge not
+claimed (a capability entered at round 92); every owned axis at 10, so the lowest-axis duty is a tie. Sourced claim: C1
+(S511–S514). Both claims answer routed defects of the round-92 spot-check (2 and 3).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (edge class): GKeyFile byte classes (invalid UTF-8 and raw name bytes, VT, NUL) in xdg-desktop-portal's `portals.conf`/`.portal` files | `python3 -I quality/counters/c1-r93-portal-bytes.py --repo . --rev 0a85e687048ae24f77f043b268794e408d0cc306 --base-rev 4c6f723f3dca3a26f9d14475d695fe797e2e972c --cases .ufo/waves/round-93/controls/portal-cases-r93.json --expect-cases-sha256 351072d1f5c38f767b2a3dbab6faad3383a4f811ec757a4f245ed1a53ed7d0c1 --mutants .ufo/waves/round-93/controls/portal-mutants-r93-frozen.json --expect-mutants-sha256 7e45edc9b12b5a02ea5aab1eeb9f95ad8cf836114a056448e1a2e548fcce6d26 --oracle .ufo/waves/round-93/controls/portal-oracle-r93.py --expect-oracle-sha256 d50d88bfc6a9964ac2f04a30315473daccf4308991aa3131cfe5e801f8b576f6 --fuzz-bytes-gen .ufo/waves/round-93/controls/fuzz-bytes-r93.py --expect-fuzz-bytes-sha256 94fdfe8f31c21ce42a8e197c585d9d7f9a09b32684c8a265dd4ef7bb1e5d1597 --expect-oracle-binary-sha256 e1429fbe1bf6c2203ba07f478b9e92e9221437b13a92eebafb0982748583a4f8 --expect-tool-sha256 e46a861e6a8ab62e26671169e201b953ca629a3861c6dddc74fd89b73b2ac021 --fresh 120 --fresh-bytes 60 --scratch-root DIR` | byte-subset cases answered as xdg-desktop-portal does: base 32/80 → **80/80**; `TARGET_MET tool_pin=ok cases=366 correct=366 answered=366/366 fresh=120/120 fresh_bytes=60/60 mutants=75 killed=75 crashed_not_killed=0`, controls do-nothing 35, r12 74, host-table 10, base 318 (`.ufo/waves/round-93/receipts/c1-measured-r93.txt`, rc 0) | coverage 10 → 10 (edge class moved; finite-set score unchanged) — **verified (lane)** |
+| C2 **operability**: a gate that fails when a passing selftest assertion of the seat-report gate is weakened | `python3 -I quality/counters/c2-r93-selftest-strength.py --repo . --rev 4fd3b292eb6a96c5c6e471728dbab9ff2a15b99a --panel .ufo/waves/round-93/controls/selftest-panel-r93.json --expect-panel-sha256 a6d2cbe2826868191f3ee980c27fcc3288bbc151ed3ceeb79ca1f11891bc4c10 --mutants .ufo/waves/round-93/controls/selftest-gate-mutants-r93-frozen.json --expect-mutants-sha256 be676929cefa46481e1ea836d29cd65152af23002e9d9dad96cf39295b88770e --expect-r92-counter-sha256 0aa4d1f18c3f309a8ef5a7575f1a4bde84681d9f7843dea03fdca723de30945c --expect-gate-sha256 2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b --expect-kills-sha256 00befb3efbe2f4a7c44b14776482e0cac0ab8e219db934af9c25b34f47c516f9 --workers 16 --scratch-root DIR` | single-check neutralisations flagged by a lane instrument: 0/23 (do-nothing = the round-92 result-line leg) → **23/23**; `TARGET_MET positive=OK:0 hand_flagged=16/16 neutral_ok=6/6 mutants=22 killed=22`, controls do-nothing 0/39, always-OK 0/39, always-WEAK fails (i), sha-diff fails neutrals 0/6, gate selftest ok (`.ufo/waves/round-93/receipts/c2-measured-r93.txt`, rc 0) | operability 10 → 10 (one more gate on a finite set) — **verified (lane)** |
+| separability | C1 counter at the C2 revision; C2 counter at the C1 revision | C1 at `4fd3b292`: `TARGET_MET` 366/366, fresh 120/120 and 60/60, 75/75 (`.ufo/waves/round-93/receipts/c1-at-c2-r93.txt`); C2 at `0a85e687`: `SETUP_ERROR … gate/kill-set/tool absent` rc 2 (`.ufo/waves/round-93/receipts/c2-at-c1-r93.txt`) — C1 landed and measured without C2 | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| selftest-strength gate (mutation of a lane gate's selftest) | Tell, read-only, whether a lane gate's `--selftest` still catches each of a committed set of production mutants with exactly the checks it names — so a weakened assertion that keeps `checks=23 failed=0` is reported WEAK; this lane: 32 kills cover all 23 checks of `quality/check-seat-reports.py` | `.ufo/waves/round-93/receipts/c2-measured-r93.txt`; `quality/check-selftest-strength.py`; `quality/selftest-kills/check-seat-reports.json` | 93 |
+
+### Named limits (append-only, round 93)
+
+- C1: byte classes through routing only — void vs mangle is not visible in a pick; classes c, d, ws are regression
+  only; plain_string UTF-8 and locale-suffix variants are unobservable (equivalents); labels come from the installed
+  xdg-desktop-portal 1.22.1-2 and glib2 2.90.1-1 (a distro patch would be scored as upstream); the round-90 counter can no
+  longer run on the ported tool (nine anchors removed; its receipt stays pinned at `7bec2399`, QUALITY 155).
+- C2: the gate is only as strong as its kill-set — it proves each committed kill is still caught by the same checks, not
+  that the selftest is complete; checks that no production mutant reaches are reported by the kill-set's coverage, not by
+  the gate; the gate is wired for `quality/check-seat-reports.py` only.
+- Round shape: one v1 wave of 13 seats; no residual call (round total 13).
+
+### Harm watch (round 93, at the code tip `4fd3b292eb6a96c5c6e471728dbab9ff2a15b99a`)
+
+`.ufo/waves/round-93/receipts/harm-final-r93.txt`: gate selftest 460/460, file plane CLEAN 29, index 114/114, ledger 179/179,
+portals 28/28, mime 17/17, xdgmime 12/12, mako 62/62, seat-reports 23/23, receipt-presence 6/6, selftest-strength 11/11 and OK
+32/32, round-90 C2 83/83 28/28, round-92 C2 TARGET_MET 45/45 (round-91 leg TARGET_MET); round-90 C1 counter SETUP_ERROR on the
+ported tool as declared (QUALITY 155); unchanged-tool diff empty. No axis harmed.
