@@ -5483,3 +5483,50 @@ receipt-presence 6/6, selftest-strength 11/11 and OK 32/32 (seat-reports), round
 its round-91 leg, round-93 C2 TARGET_MET 23/23 16/16; the new kill-sets on the real gate: mimeglob 22/22, portals 42/42;
 round-94 C1 TARGET_MET 370/370 fresh 120/120 host 9745/9745, round-94 C2 TARGET_MET 29/29 91/91; round-90 C1 counter
 SETUP_ERROR on the ported portal tool as declared in round 93 (QUALITY 155); unchanged-tool diff empty. No axis harmed.
+
+## Round 96 — the TEXT MIME database's magic step (capability), the last gate-compatible tool guarded (2026-11-07, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-96/claims-declaration-r96.md` (freeze `b056290d`, w1 findings folded in before the
+freeze and listed there). C1 measured at `5dd921b3` (`tools/mado-mimetext.py` = frozen candidate `d5f174fc…`, sha256
+`d5f174fc33d0b1f1847897a8e63724c7112137c1bf58a89508d1c1c13b857cbd`); C2 measured at `f54def27`
+(`quality/check-receipt-presence.py` = `be716a63…c962`, kill-set `quality/selftest-kills/check-receipt-presence.json`
+`305d735f…a495`, gate unchanged `2d6f1219…a61b`). Stagnation nudge not claimed (capabilities entered at rounds 88–95);
+every owned axis at 10, so the lowest-axis duty is a tie. Sourced claim: C1 (S524, S525, S505, S520, S521, S522, S523).
+C2 answers the round-95 spot-check's routed defect 3 for the last gate-compatible tool.
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (new surface, capability): what GLib 2.90.1 `g_content_type_guess` answers when the reachable MIME directories hold the TEXT database (`mime/magic`), not a loadable `mime.cache` | `python3 -I quality/counters/c1-r96-magictext.py --repo . --rev 5dd921b3d659585b1ca30611445098d8debced84 --base-rev 9f029f46f01f6cd3a1d29ac39bb548498a1d0c3d --cases .ufo/waves/round-96/controls/magictext-cases-r96-frozen.json --expect-cases-sha256 4b3645ae…f1d565 --mutants .ufo/waves/round-96/controls/magictext-mutants-r96-frozen.json --expect-mutants-sha256 448150e2…bc440 --oracle-src .ufo/waves/round-95/controls/mimesniff-oracle-r95.c --expect-oracle-sha256 99df35f8…d124a --fresh-gen .ufo/waves/round-96/controls/magictext-fresh-r96.py --expect-fresh-gen-sha256 32d38edf…0815da --host-list .ufo/waves/round-95/controls/mimesniff-host-files-r95.txt --expect-host-list-sha256 9d5947a7…35a87 --host-db .ufo/waves/round-96/controls/host-text-db-r96.json --expect-host-db-sha256 9c411d2a…d1ddd7 --expect-tool-sha256 d5f174fc…b857cbd --expect-mimeglob-sha256 65f80a6c…6e2453 --forgery .ufo/waves/round-96/controls/forgery-ctypes-r96.py --expect-forgery-sha256 06800cd1…09fd97 --scratch-root DIR` | no lane tool answered the text database at base (the r95 tool refuses text mode; `git cat-file -e <base>:tools/mado-mimetext.py` absent) **0/0 → 284/284 frozen cases (16/16 classes), 268/268 fresh inputs, 9822/9822 host pairs (4911 files), 84/84 counted mutants, class_kills 16/16**; controls do-nothing 0/259 text-mode (20/20 none-mode answered), name-only 32/284, naive 101/284, memoriser fresh 0/40, forgery rejected; `checks=50 failed=0` | `TARGET_MET` (`.ufo/waves/round-96/receipts/c1-measured-r96.txt`; at the C2 tip `c1-at-c2-r96.txt`) |
+| C2 **operability**: the last gate-compatible tool becomes guardable (six labels, selftest block after `main()`) and is guarded by a kill-set under the unchanged round-93 gate | `python3 -I quality/counters/c2-r96-selftest-kills.py --repo . --rev f54def272d0f9426820a17f226babbd655455f2e --panel .ufo/waves/round-96/controls/selftest-panel-r96-frozen.json --expect-panel-sha256 4332b488…f773982 --expect-gate-sha256 2d6f1219…a61b --expect-kills-sha256 305d735f…a495 --control-kills .ufo/waves/round-96/build/check-receipt-presence-draft.kills.json --expect-control-sha256 0c233a47…d0c7 --r90-argv .ufo/waves/round-96/controls/r90-c2-argv-r96.json --expect-r90-argv-sha256 386a5a18…2ecda0 --scratch-root DIR` | hand weakenings flagged **0/31 → 31/31**; single-check neutralisations **0/6 → 6/6**; singleton labels **0/6 → 6/6**; neutral edits stay OK 6/6; do-nothing 0, always-OK 0, always-WEAK WEAK:1; first-draft control 19/31; round-90 main-path leg TARGET_MET 83/83 | `TARGET_MET` (`.ufo/waves/round-96/receipts/c2-measured-r96.txt`; at the C1 tip `SETUP_ERROR … kill-set absent`, `c2-at-c1-r96.txt`) |
+| separability | C1 counter at the C2 revision; C2 counter at the C1 revision | C1 `TARGET_MET` at `f54def27` (`.ufo/waves/round-96/receipts/c1-at-c2-r96.txt`); C2 `SETUP_ERROR … quality/selftest-kills/check-receipt-presence.json` absent at `5dd921b3` (`.ufo/waves/round-96/receipts/c2-at-c1-r96.txt`) | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| GLib 2.90.1 text-database content-type guess (`tools/mado-mimetext.py`, read-only) | Answer, read-only, which MIME type and uncertainty `g_content_type_guess` gives when the reachable MIME directories hold `mime/magic` and no loadable `mime.cache` — the 12-byte gate, sections, length-prefixed matchlets with mask/word/range, indent trees at exactly indent+1, priority order with file-order ties, the parse-error section drop (and its extra-line eat on the word-length error), the text fallback and the guess combination with round 94's name step; 284 frozen cases, a seeded fresh leg, the host's own text database over 4911 files and 84 counted mutants | `.ufo/waves/round-96/receipts/c1-measured-r96.txt`; `corpus/knowledge/mime-textdb-magic-r96.md` | 96 |
+
+### Named limits (append-only, round 96)
+
+- C1: text mode only (a loadable `mime.cache` in any reachable dir is cache mode → exit 3, round 95 owns that
+  answer); `for_data`'s input only (the `mime_types` elimination loop of `xdg_mime_get_mime_type_for_file` is
+  outside); `max_extent`/buffer truncation outside; labels from glib2 2.90.1-1 and shared-mime-info 2.5.1-2 as
+  installed; the recursion-depth refusal (>4096) is declared, not stack-measured.
+- C1 mutant population: 13 of the wave's 97 mutants are not observable through the frozen case surface and are not
+  counted, each with the probe fixture that kills it in the declaration's `not_observable_not_counted` (ten are
+  case gaps routed to round 97; three are contract-level — one refusal line per file, exit 3, the DIRS mode line —
+  measured directly). The host leg's 4911-path list and the eight host text files are public and fixed, so a
+  precomputed table could pass it; the fresh leg is seeded at measurement time and its labels are written outside
+  the audit allow, which is the non-memorisable leg.
+- C2: the kill-set proves each committed kill is still caught by the same checks, not that the selftest is
+  complete; the panel's 31 weakenings and 6 neutral edits are the wave's design set; `tools/mado-mako.py`
+  (stderr result line), `tools/mado-mimesniff.py` (sibling copy) and `tools/mado-verify.sh` (bash payload) stay
+  unguarded with the gate's structural reason measured, and closing them needs a predicate change carrying the
+  rounds 93/94/95 counters re-anchored (QUALITY 153/155).
+- Round shape: one v1 wave of 14 seats (5 attack, 4 executors, 1 scout, 1 connector, 1 scribe; 2 executors were C2
+  seats); no residual call (round total 14).
+
+### Harm watch (round 96, at the C2 tip `f54def272d0f9426820a17f226babbd655455f2e`)
+
+`.ufo/waves/round-96/receipts/harm-final-r96.txt`: <HARM LINE>
+

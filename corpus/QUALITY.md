@@ -1243,3 +1243,20 @@ sockets and non-libc `dlopen`. Shown able to fail: R95MCritic's sibling-module f
 (`.ufo/waves/round-95/controls/forgery-sibling-ctypes-r95.py`) is rejected by `module-attr:mg.ctypes` and
 `AUDIT_DENY ctypes.dlopen 'libgio-2.0.so.0'` (`c1-controls-prefreeze-r95.txt`). (lesson: lessons/round-95.md, Gate:
 R95MCritic C1-F4)
+
+## Round 96 — refusal conditions, selftest layout
+
+**166. A refusal sentinel in a frozen case set names the condition the library actually tests, not a coarser proxy
+for it.** "A `mime.cache` exists" is not "cache mode": GLib loads a cache only when it opens, is at least 40 bytes
+and carries version 1.1 or 1.2 (`xdgmimecache.c:107-163`), so a junk cache leaves the directory in text mode. A
+refusal label is a declared limit, and its fixture must satisfy the rejecting condition exactly; a sentinel on a
+coarser proxy scores the honest tool `wrong`. Shown able to fail: five round-96 `mode` cases labelled `UNSUPPORTED`
+over a 16-byte junk cache while the oracle answered `app/x-md6`/`app/x-md6g`; the relabelled case scores the tool
+`ok` and the old label `wrong` (lesson M96-2).
+
+**167. A tool's `def selftest(` sits after its production path, so the selftest-strength gate's `non_selftest_prefix`
+covers the code the kill-set must mutate.** The gate cuts at the first literal `def selftest(`; a tool that defines
+its selftest in the middle leaves the main path outside the prefix and every main-path kill is a SETUP_ERROR. Shown
+able to fail: `quality/check-receipt-presence.py` at base (selftest at line 122 of 327) refused a `cited += 1`
+mutant with `find occurs 0 times in non-selftest code`; after the block moved after `main()` the six labels have
+singleton kills and the gate prints `OK kills=7 held=7`.

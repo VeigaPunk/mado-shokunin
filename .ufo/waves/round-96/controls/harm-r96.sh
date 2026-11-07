@@ -64,6 +64,7 @@ leg_ledger() {                 # receipt :56
   python3 -I quality/check-tool-ledger.py --repo . --rev "$REV"
 }
 leg_mako_selftest() {          # receipt :59
+  mkdir -p "$SCRATCH_ROOT/mako"
   python3 -I tools/mado-mako.py --selftest --scratch-root "$SCRATCH_ROOT/mako"
 }
 leg_portals_selftest() {       # receipt :62

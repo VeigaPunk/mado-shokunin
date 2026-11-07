@@ -1,0 +1,430 @@
+round-96 sources verification (seat R96MScoutSources, independent re-open of the L1 receipt)
+Verified 2026-11-07 against the bytes fetched by this seat, NOT against the L1's fetch dir.
+Base revision under test: 9f029f46f01f6cd3a1d29ac39bb548498a1d0c3d (branch master).
+
+=====================================================================
+SECTION 1 - EVERY URL IN sources-open-r96.txt, RE-FETCHED TWICE
+=====================================================================
+Rule applied (QUALITY 164): a body counts only at HTTP 200. A 301/302 is a transport
+event and never the page. Both fetches used
+  curl -sSL -o <file> -w '%{http_code} %{url_effective} %{size_download}'
+and were compared with cmp(1) before digesting.
+
+[1] https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimemagic.c
+    fetch1: 200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimemagic.c 18289
+    fetch2: 200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimemagic.c 18289
+    cmp: identical    sha256: fcb1eafe748d3dc18f7f405d1078c8a32e313d23d2fab86b0f12e609ac2ce742
+    RECEIPT CLAIM: 200 / same url_effective / 18289 / fcb1eafe...ce742
+    VERDICT: CONFIRMED (status, effective URL, size, digest, byte-identity)
+
+[2] https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmime.c
+    fetch1: 200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmime.c 23417
+    fetch2: 200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmime.c 23417
+    cmp: identical    sha256: afb1c1c1ba726a9fb8d8732f4031f5aa85a67ec3b7a2f989b617e4f4f5282410
+    RECEIPT CLAIM: 200 / same url_effective / 23417 / afb1c1c1...2410
+    VERDICT: CONFIRMED
+
+[3] https://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html
+    fetch1: 200 https://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html 59208
+    fetch2: 200 https://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html 59208
+    cmp: identical    sha256: e00fa00e69b1e95ad8642d05fc5023c26f859bdaf8bdda3e091a55feb016c61e
+    RECEIPT CLAIM: 200 / same url_effective / 59208 / e00fa00e...c61e
+    VERDICT: CONFIRMED
+
+Also probed by the receipt, independently re-probed here (each with the status recorder):
+  ar01s03.html  200  7048 bytes  grep -c 'MIME-Magic' = 0            CONFIRMED as stated
+  ar01s04.html  404                                                     CONFIRMED
+  ar01s05.html  404                                                     CONFIRMED
+  ar01s06.html  404                                                     CONFIRMED
+  ar01s07.html  404                                                     CONFIRMED
+  latest/index.html 200 8064 bytes sha256 d93c098e...3513; body line 15 reads
+  "This is version 0.21 of the Shared MIME-info Database specification, last updated
+   2 October 2018."                                                       CONFIRMED as stated
+
+Moved locator (transport event only, never counted as the page):
+  https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html
+  -> 301 http://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html
+  -> 301 https://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html -> 200
+  So the S517 locator is a 2-hop redirect chain; the counting locator is [3] at 200.
+  The receipt's claim "the S517 locator now answers 301 to it" and "No 301 this round"
+  for S523 are CONFIRMED: the canonical S523 URL answers 200 directly (no redirect).
+
+=====================================================================
+SECTION 2 - DISAGREEMENTS WITH THE L1 RECEIPT (first class)
+=====================================================================
+
+D-1  RECEIPT ROW LIES OUTSIDE ITS OWN CITED RANGE (xdgmimemagic.c)
+     The S524 table cites (rule -> cited range -> quote). Four quotes are not at the
+     cited range. Correct raw-source line numbers, re-measured on the fetched bytes:
+       mask equal length        cited 400-419  actual 420
+       value_length % word_size cited 421-450  actual 476
+       parse_error call         cited 749-782  actual 784
+       MIME-Magic memcmp        cited 815      actual 814  (receipt says "line 815")
+     Two quotes are not verbatim single lines:
+       "if (i + matchlet->value_length > len) return FALSE;"  -> spans 525-526
+       "_xdg_mime_magic_matchlet_compare_level (matchlet->next, data, len, indent + 1)"
+         -> the call spans 571-574, one argument per line
+     IMPACT: the corpus row's "located lines" must be the real ones or a reader
+     following the receipt lands on the wrong lines. See SECTION 4 for the correct table.
+
+D-2  THE ACCEPTED WORD-SIZE SET IS WRONG IN THE RECEIPT (and in the shared contract)
+     Receipt S524 row label: "word size 1/2/4, swap at parse".
+     The C at xdgmimemagic.c:440-443 reads
+       if (matchlet->word_size != 0 &&
+           matchlet->word_size != 1 &&
+           matchlet->word_size != 2 &&
+           matchlet->word_size != 4)
+         -> parse error
+     The set is {0,1,2,4}: word_size 0 IS ACCEPTED, and it is treated like 1.
+     The whole swap + modulo block is guarded by xdgmimemagic.c:471
+       if (matchlet->word_size > 1) { ... }
+     so with word_size 0 (or 1) there is NO byte swap AND NO modulo check:
+     value_length % word_size is never evaluated (for 0 that would be a division by
+     zero). The receipt's own quoted rule "rejects value_length % word_size != 0"
+     is therefore true only for word_size 2 and 4.
+     MEASURED (oracle, r95 control, text-mode fixture):
+       >0=\x00\x02AB~0    data "AB" -> text/x-ws0b    (accepted, no swap)
+       >0=\x00\x03ABC~0   data "ABC" -> text/x-ws0odd  (accepted, ODD length, no modulo check)
+       >0=\x00\x03ABC~2   data "ABC" -> text/plain      (rejected: 3 % 2 != 0 -> section dropped)
+     IMPACT: a model that accepts only {1,2,4} would reject a legal `~0` section the
+     oracle matches, and a model that applies the modulo check unconditionally would
+     divide by zero. The C1 draft in build/ states the correct rule ("only 0, 1, 2, 4
+     pass :440-443; the C treats 0 like 1") and agrees with the oracle on all 116
+     non-cache-mode fixtures compared here, so the DRAFT is right and the RECEIPT and
+     the shared contract wording ("1|2|4 only") are wrong.
+
+D-3  THE CACHE-MODE TRIGGER IS "LOADABLE", NOT "PRESENT"
+     Receipt/contract wording: "a reachable mime.cache means cache mode"; "a case that
+     holds a mime.cache is a cache-mode refusal case".
+     The C's rule is stricter, and the receipt's S505 citation does not state it:
+       xdgmimecache.c:63-65  MAJOR_VERSION 1, MINOR_VERSION_MIN 1, MINOR_VERSION_MAX 2
+       xdgmimecache.c:108-146 _xdg_mime_cache_new_from_file: size < 40 -> fail;
+                            major != 1 or minor outside 1..2 -> fail; else a cache
+       xdgmime.c:137-154       per dir: a cache that LOADS is added to _caches and that
+                               dir's text files are not read
+       xdgmime.c:180-190       otherwise DIR/mime/magic is read as text
+       xdgmime.c:532-535       if ANY cache loaded -> cache reader only; else the text
+                               magic reader (global_magic)
+     MEASURED (oracle, text-mode fixtures, one dir):
+       mime.cache  0 bytes  -> text mode (answered from magic)      NOT cache mode
+       mime.cache 14 bytes  -> text mode                          NOT cache mode
+       mime.cache 39 bytes  -> text mode                          NOT cache mode
+       mime.cache 40 bytes, version 1.1 -> CACHE mode
+       mime.cache 40 bytes, bad major version -> text mode
+       real /usr/share/mime/mime.cache -> CACHE mode
+     IMPACT: a case whose fixture holds a SHORT or CORRUPT mime.cache is answered by
+     the oracle in TEXT mode, but the contract's case rule would label it
+     ["UNSUPPORTED",null]. The rule must be "holds a LOADABLE mime.cache" (>=
+     40 bytes AND version 1.1/1.2), otherwise a case label contradicts the oracle.
+
+D-4  THE RECEIPT DESCRIBES FETCH-DIR FILES THAT DO NOT EXIST
+     Receipt "Commands (fetch dir .ufo/waves/round-96/fetch/)" names
+       xdgmimemagic.c.1 / xdgmimemagic.c.2 / xdgmime.c.1 / xdgmime.c.2 /
+       smi-ar01s02.html.1 / smi-ar01s02.html.2
+     and claims "two fetches each, both bodies byte-identical".
+     On disk the fetch dir holds three UNSUFFIXED files, one copy each:
+       smi-ar01s02.html  e00fa00e69b1e95ad8642d05fc5023c26f859bdaf8bdda3e091a55feb016c61e
+       xdgmime.c         afb1c1c1ba726a9fb8d8732f4031f5aa85a67ec3b7a2f989b617e4f4f5282410
+       xdgmimemagic.c    fcb1eafe748d3dc18f7f405d1078c8a32e313d23d2fab86b0f12e609ac2ce742
+     No .1/.2 file exists. The digests are right; the described artifact layout and
+     the "two fetches each" evidence trail are not what is on disk. (The dir was also
+     EMPTY at 11:29 when this seat started; the three files appeared at 11:39.)
+
+D-5  THE SPEC-PAGE LINE NUMBERS ARE INTERNALLY INCONSISTENT
+     S525's header quote ("Located quote (page line 387)") and its first two table
+     rows (389-391, 393-399) ARE raw-HTML line numbers of the fetched bytes. The
+     remaining four table rows are NOT, with the offset growing monotonically
+     through the section 2.5 table:
+       rule              actual raw-HTML   cited        delta
+       line form         398               400-414     +2
+       two-byte length   403               407-410     +4
+       defaults          421               429-433     +8
+       parent rule       426               435-439     +9
+       unknown char      429               441-446     +12
+     The growth is consistent with a table-expanded text extraction, but I could not
+     reproduce the L1's basis with any of: raw-HTML lines, sequential non-empty
+     stripped lines, </td> </tr> </p> </div> <br> split variants, bs4 get_text("\n"),
+     and word-joined windows. All seven quotes ARE verbatim present in the fetched
+     bytes (checked against the whitespace-normalised text: 7/7 PRESENT).
+     IMPACT: a corpus row quoting "page line 429-433" for the defaults rule points at
+     unrelated text in the fetched file. The receipt must state its extraction basis
+     or quote raw-HTML lines.
+
+=====================================================================
+SECTION 3 - LOCATED QUOTES: THE EXACT LINES THE C1 MODEL RESTS ON
+=====================================================================
+File: .ufo/waves/round-96/fetch/xdgmimemagic.c
+sha256 fcb1eafe748d3dc18f7f405d1078c8a32e313d23d2fab86b0f12e609ac2ce742  (819 lines)
+Each quote is verbatim from that file; the line number is the line the quote starts on.
+
+  12-byte header gate
+    812  if (fread (header, 1, 12, magic_file) == 12)
+    814  if (memcmp ("MIME-Magic\0\n", header, 12) == 0)
+
+  [priority:type] section header
+    247  match->priority = _xdg_mime_magic_read_a_number (magic_file, &end_of_file);
+    267  while (*end_ptr != ']' && *end_ptr != '\000' && *end_ptr != '\n')
+
+  two-byte big-endian value length
+    374  matchlet->value_length = 0;
+    382  matchlet->value_length = matchlet->value_length << 8;
+    390  matchlet->value_length = matchlet->value_length + (c & 0xFF);
+
+  mask / word / range suffixes
+    411  if (c == '&') {
+    420  bytes_read = fread (matchlet->mask, 1, matchlet->value_length, magic_file);
+    434  matchlet->word_size = _xdg_mime_magic_read_a_number (magic_file, &end_of_file);
+    440  if (matchlet->word_size != 0 &&
+    453  matchlet->range_length = _xdg_mime_magic_read_a_number (magic_file, &end_of_file);
+    471  if (matchlet->word_size > 1) {
+    473  #if LITTLE_ENDIAN
+    476  if (matchlet->value_length % matchlet->word_size != 0)
+
+  error path (drop the section, skip to the next newline)
+    283  _xdg_mime_magic_parse_error (FILE *magic_file)
+    292  if (c == '\n')
+    774  if (state == XDG_MIME_MAGIC_SECTION ||
+    784  state = _xdg_mime_magic_parse_error (magic_file);
+
+  insert order (priority descending, ties in file order)
+    608  if (match->priority > mime_magic->match_list->priority) {
+    618  if (list->next->priority < match->priority) {
+    777  match->matchlet = _xdg_mime_magic_matchlet_mirror (match->matchlet);
+    778  _xdg_mime_magic_insert_match (mime_magic, match);
+
+  lookup order (first matching section wins)
+    668  if (_xdg_mime_magic_match_compare_to_data (match, data, len))
+    670  prio = match->priority;
+
+  indent recursion (file order, indent 0 is the top level)
+    563  while ((matchlet != NULL) && (matchlet->indent == indent))
+    571  if (_xdg_mime_magic_matchlet_compare_level (matchlet->next,
+
+  bounds rule (i + value_length > len fails the matchlet outright)
+    525  if (i + matchlet->value_length > len)
+    526  return FALSE;
+
+  defaults
+     93  matchlet->indent = 0;
+     94  matchlet->offset = 0;
+     98  matchlet->range_length = 1;
+     99  matchlet->word_size = 1;
+
+Supporting files, same basis (sha256 confirmed by re-fetch, digest in brackets):
+  xdgmime.c [afb1c1c1...2410]
+     57   const char xdg_mime_type_empty[] = "application/x-zerosize";
+    137   file_name = malloc (strlen (directory) + strlen ("/mime.cache") + 1);
+    141   cache = _xdg_mime_cache_new_from_file (file_name);
+    152   return FALSE;
+    180   file_name = malloc (strlen (directory) + strlen ("/magic") + 1);
+    184   _xdg_mime_magic_read_from_file (global_magic, file_name);
+    523   if (len == 0)
+    526   *result_prio = 100;
+    532   if (_caches)
+    535   mime_type = _xdg_mime_magic_lookup_data (global_magic, data, len, result_prio, NULL, 0);
+    540   return _xdg_binary_or_text_fallback(data, len);
+  xdgmimecache.c [ccda4366...298db69]
+     63   #define MAJOR_VERSION 1
+     64   #define MINOR_VERSION_MIN 1
+     65   #define MINOR_VERSION_MAX 2
+    128   if (fstat (fd, &st) < 0 || st.st_size < 40)
+    137   if (GET_UINT16 (buffer, 0) != MAJOR_VERSION ||
+  xdgmimeint.c [c2364aa8...f92f29]
+    177   _xdg_binary_or_text_fallback(const void *data, size_t len)
+    185   if (chardata[i] < 32 && chardata[i] != 9 && chardata[i] != 10 && chardata[i] != 13)
+    189   return XDG_MIME_TYPE_TEXTPLAIN;
+  gcontenttype-fdo.c [8a5b4f47...2a2d7c] (round 95 held row, re-fetched and confirmed)
+    624   sniffed_mimetype = xdg_mime_get_mime_type_for_data (data, data_size, &sniffed_prio);
+    654   if (sniffed_prio >= 80) /* High priority sniffing match, use that */
+    663   if ( xdg_mime_mime_type_subclass (name_mimetypes[i], sniffed_mimetype))
+    680   mimetype = g_strdup (name_mimetypes[0]);
+
+=====================================================================
+SECTION 4 - ORACLE MEASUREMENTS (behaviour the C1 model must reproduce)
+=====================================================================
+Oracle: .ufo/waves/round-95/controls/mimesniff-oracle-r95.c
+sha256 99df35f8b3fd7005f30789f8866984a1bbceaff8dc6c1d326f0132eb7b4d124a (unchanged)
+Built in this seat's scratch: cc -O0 -o "$S/oracle" <src> $(pkg-config --cflags --libs gio-2.0)
+Run: env -i LC_ALL=C HOME=<case>/h XDG_DATA_DIRS=<case>/d1 "$S/oracle" <0|=NAME> <datafile>
+The oracle is the installed glib2 2.90.1-1; it is the labelling authority.
+
+M-1 byte swap, word size 2 (value bytes 01 02, LE host)
+    >0=\x00\x02\x01\x02~2   data 02 01 -> text/x/sw     (value stored byte-swapped)
+    >0=\x00\x02\x01\x02~2   data 01 02 -> octet-stream (no match: unswapped bytes)
+    >0=\x00\x02\x01\x02~1   data 01 02 -> text/x/sw     (word size 1: no swap)
+    CONFIRMED: 2 and 4 byte-swap the value (and the mask) per word at parse time.
+    PROVENANCE (a real gap in the receipt): the swap is under `#if LITTLE_ENDIAN`
+    (473, 482). LITTLE_ENDIAN is NOT defined by glib's own build: the upstream
+    meson.build defines only g_byte_order/G_LITTLE_ENDIAN for the public
+    glibconfig.h; gio/xdgmime/meson.build adds only -DHAVE_CONFIG_H and
+    -DXDG_PREFIX. It comes from glibc's <endian.h> (bits/endian.h under __USE_MISC),
+    which xdgmimemagic.c reaches through its own include set -- verified by compiling
+    that include set standalone: LITTLE_ENDIAN is DEFINED. The receipt's claim "on this
+    LE host 2/4 values and masks are byte-swapped" is TRUE for this host, but the
+    located quote it offers (421-450) is the modulo check, not the swap, and the
+    LITTLE_ENDIAN guard is not cited at all. The corpus row should cite 471-497 and
+    name the guard.
+
+M-2 accepted word sizes {0,1,2,4}; modulo check only when word_size > 1
+    ~0 with even value length  -> accepted, matches
+    ~0 with ODD value length    -> accepted, matches   (no modulo check, no swap)
+    ~2 with odd value length    -> parse error, whole section dropped
+    ~3                        -> parse error, whole section dropped
+    ~5                        -> parse error, whole section dropped
+
+M-3 cache-mode trigger is loadability, not presence
+    see D-3: 0/14/39-byte and bad-version mime.cache -> TEXT mode; >=40 bytes with
+    version 1.1/1.2 -> CACHE mode. Also: a valid cache in dir A makes the whole
+    answer come from the cache; a text magic file in dir B is then ignored.
+
+M-4 error recovery
+    a bad matchlet line drops its whole section and the file continues;
+    a bad header (no ']') also drops the section and consumes the NEXT line as well;
+    a bad header followed by a junk line then a good section -> the good section
+    survives (the junk line absorbs the skip).
+
+M-5 insert / lookup order
+    priorities [10 then 90] -> the 90 section wins (file order irrelevant);
+    equal priorities -> the earlier section in file order wins;
+    two directories, equal priority -> the earlier directory's section wins
+    (one global list across directories, read in XDG_DATA_DIRS order).
+
+M-6 tree / indent rules
+    indent 0 is the top level; a first matchlet at indent 1 -> the section never
+    holds; indent 0 -> indent 2 (skipping a level) -> the section never holds;
+    a parent that holds with a child that does not -> the whole section fails;
+    a child that holds -> the parent holds.
+
+M-7 data path
+    len 0 -> application/x-zerosize (priority 100);
+    no magic match -> text/plain / octet-stream by the 128-byte fallback;
+    a name type plus a sniffed type: sniffed_prio >= 80 wins outright (80 and 90
+    win; 50 and 79 do not), else the first name type that is a subclass of the
+    sniffed type, else the first name type, uncertain.
+
+M-8 header gate
+    a magic file whose first 12 bytes are not exactly "MIME-Magic\0\n" contributes
+    no magic at all; a file shorter than 12 bytes likewise.
+
+C1 draft cross-check (build/mado-mimetext.c1.py, copied read-only into scratch with
+its sibling tools/mado-mimeglob.py): compared against the oracle on 116 fixtures this
+seat constructed, covering M-1..M-8, in both the name=NULL and name=f.txt modes:
+    116 compared, 0 mismatches.
+(The 4 fixtures the draft refuses - a loadable mime.cache present - are the intended
+cache-mode refusals and are excluded; see D-3.)
+
+=====================================================================
+SECTION 5 - HELD ROWS RE-DIGESTED (item 5)
+=====================================================================
+Re-fetched and re-digested from the same raw URL as the corpus row pins:
+  S505  gio/xdgmime/xdgmime.c        afb1c1c1ba726a9fb8d8732f4031f5aa85a67ec3b7a2f989b617e4f4f5282410  MATCHES the pin
+  S505  gio/xdgmime/xdgmimecache.c   ccda4366a1b3d6feb81c6213fde4885b547189e7cfe612f81799d8c1f298db69  MATCHES the pin
+  S505  gio/xdgmime/xdgmimealias.c   a1e67ae3604c437b8516d6bc4c67f31afea6fc58393b9afe1c42a8b424111394  MATCHES the pin
+  S505  gio/xdgmime/xdgmimeparent.c  9c85c35f143b4fbf274ba07f433ad9102270ededf1a95f6cf0cc320d941f35e3  MATCHES the pin
+  S519  gio/xdgmime/xdgmimecache.c   ccda4366a1b3d6feb81c6213fde4885b547189e7cfe612f81799d8c1f298db69  MATCHES the pin
+  S520  gio/xdgmime/xdgmimeint.c      c2364aa825a761255fd6c3390a78c94f06eeaf9babeb07b5ea489ba4cef92f29  MATCHES the pin
+  S521  gio/gcontenttype-fdo.c         8a5b4f475947a9de2e0ca34e60b0dc31f5c56a2d7e0a9fe8cf84002aca8a2d7c  MATCHES the pin
+  S522  gio/glocalfileinfo.c          b006a93d8a9733ad9245aba396ca7e3ee42019e214f3addd6e873dbd7d334497  MATCHES the pin
+  S523  shared-mime-info ar01s02.html e00fa00e69b1e95ad8642d05fc5023c26f859bdaf8bdda3e091a55feb016c61e  MATCHES the pin
+The receipt's held-row claims are CONFIRMED. The round-95 fetch dir copies of the same
+files carry the same digests. The receipt's statement that S519/S520/S521/S522 were
+"not re-fetched this round" is fine - this seat re-fetched all of them anyway and every
+digest still matches.
+
+=====================================================================
+SECTION 6 - LOCAL DOCUMENTATION CHECK (item 4)
+=====================================================================
+man 1 update-mime-database  EXISTS on this host.
+  NAME     update-mime-database  -  a  program  to  build  the  Shared  MIME-Info
+           Database cache
+  DESCRIPTION
+           update-mime-database is a program which is responsible  for  updating  the
+           shared  mime-info  cache  according  to  the  system  described  in  the  Shared
+           MIME-Info  Database specification from the X Desktop Group.
+  So the man page says the tool maintains "the shared mime-info cache" and defers to
+  the Shared MIME-Info Database specification. It does NOT enumerate the text files
+  and does NOT say they are generated; that statement is in the specification, at
+  ar01s02.html raw line 79 "The files created by update-mime-database are:" listing
+  globs, globs2, magic, subclasses, aliases, icons, generic-icons, XMLnamespaces,
+  MEDIA/SUBTYPE.xml and mime.cache, and at 101-104 mime.cache "contains the same
+  information as the globs2, magic, subclasses, aliases, icons, generic-icons and
+  XMLnamespaces files, in a binary, mmappable format".
+  Host-side corroboration that the text files are generated:
+  /usr/share/mime/globs2 line 1-2 begins
+    "# This file was automatically generated by the
+     update-mime-database command. DO NOT EDIT!"
+  while /usr/share/mime/magic carries no such banner (it starts directly with the
+  MIME-Magic\0\n header) - worth noting for the corpus row, since only globs2 is
+  self-labelling.
+man 5 shared-mime-info  DOES NOT EXIST on this host:
+  "No manual entry for shared-mime-info in section 5"
+  /usr/share/man/man5 holds only mime.convs.5.gz and mime.types.5.gz (Apache).
+  CONFIRMS the receipt's local-documentation note exactly.
+
+=====================================================================
+SECTION 7 - EXTRA URLS FETCHED BY THIS SEAT (status recorded per QUALITY 164)
+=====================================================================
+All at 200 unless noted; none is cited as a source row, they were read to check the
+L1's claims and to locate the LITTLE_ENDIAN / cache-loadability facts.
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimecache.c
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimeint.c
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimealias.c
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimeparent.c
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimeint.h
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimemagic.h
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/meson.build
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/meson.build
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/glib/meson.build
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/meson.build
+  404 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/configure.ac
+  404 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/build-aux/ltmain.sh
+  404 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/config.h.in
+  404 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/glibconfig.h.in
+  200 https://gitlab.archlinux.org/archlinux/packaging/packages/glib2/-/raw/2.90.1-1/PKGBUILD
+       (Arch builds glib2 2.90.1-1 with meson; no -DLITTLE_ENDIAN in CFLAGS, and the
+        two downstream patches touch schemas and terminal names only - they do not
+        touch xdgmime. This corroborates D-3/M-1's finding that LITTLE_ENDIAN is not
+        a glib build flag.)
+  200 https://specifications.freedesktop.org/shared-mime-info/latest/ar01s03.html
+  404 .../ar01s04.html .../ar01s05.html .../ar01s06.html .../ar01s07.html
+  200 https://specifications.freedesktop.org/shared-mime-info/latest/index.html
+  301 https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html
+  301 http://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html
+  200 https://www.freedesktop.org/wiki/Software/shared-mime-info/  (3050 bytes on the
+       first fetch; the body was not retained and a retry was refused with
+       "Recv failure: Connection reset by peer", so this locator is NOT relied on
+       anywhere in this receipt)
+
+=====================================================================
+SECTION 8 - OPEN GAPS
+=====================================================================
+G-1 The L1's spec-page extraction basis is not stated and I could not reproduce it
+    (see D-5). The corpus row must either state the basis or quote raw-HTML lines.
+G-2 The fetch dir does not contain the .1/.2 pair the receipt describes (D-4), so
+    the receipt's "two fetches each, byte-identical" claim has no artifact behind
+    it. This seat's independent double fetch establishes byte-identity for all three
+    URLs; the receipt should cite those measurements instead.
+G-3 Whether the shared-mime-info spec's wording for the parse error (spec: ignore
+    the bad line; C: drop the whole section) is also a divergence in the L1's
+    reading is unresolved here. The C's behaviour is measured (M-4); the spec text is
+    at ar01s02.html raw 429-432 "If an unknown character is found where a newline is
+    expected then the whole line should be ignored". This is a SPEC-vs-C divergence,
+    already noted by the L1 for the corpus entry, and it is a property of the C, not
+    a defect in the L1's receipt.
+G-4 Not attempted (out of scope for a sources seat): whether the frozen case file
+    and the mutant set exercise the D-2/D-3 behaviours above.
+
+=====================================================================
+SUMMARY
+=====================================================================
+All three L1 URLs CONFIRMED: HTTP 200, url_effective as claimed, digests exactly as
+recorded, both fetches byte-identical. Held rows S505/S519/S520/S521/S522/S523 all
+re-digested and matching. The spec page does document the MIME-Magic text format at
+an HTTP-200 locator, and the man page / man-5 situation on this host matches the
+receipt's note.
+FIVE disagreements, all first class: D-1 four located lines wrong plus two quotes
+that are not verbatim; D-2 the accepted word-size set is {0,1,2,4} and the modulo
+check is guarded by word_size > 1 (measured); D-3 cache mode requires a LOADABLE
+mime.cache (>= 40 bytes, version 1.1/1.2), not merely a present one (measured);
+D-4 the described .1/.2 fetch files do not exist; D-5 the spec-page line numbers are
+internally inconsistent and not reproducible.

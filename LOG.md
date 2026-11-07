@@ -4536,3 +4536,36 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   rc 2 (`.ufo/waves/round-95/receipts/c2-at-c1-r95.txt`). Census 453 → 458 rows, rc 0 both ends.
 - Harm watch at `6f6955f9` (`.ufo/waves/round-95/receipts/harm-final-r95.txt`): all green as listed in SCORECARD round 95;
   the round-90 C1 counter's declared SETUP_ERROR on the ported portal tool unchanged.
+
+## Round 96 — the TEXT MIME database's magic step (capability), the last gate-compatible tool guarded (2026-11-07, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-96/claims-declaration-r96.md` (freeze `b056290d`, w1 findings folded in before the
+freeze and listed there; lesson `corpus/lessons/round-96.md`). C1 measured at `5dd921b3` (`tools/mado-mimetext.py` =
+frozen candidate, sha256 `d5f174fc33d0b1f1847897a8e63724c7112137c1bf58a89508d1c1c13b857cbd`; counter
+`quality/counters/c1-r96-magictext.py` `9d3e1e76…a7f7`); C2 measured at `f54def27`
+(`quality/check-receipt-presence.py` = `be716a63…c962`; kill-set `305d735f…a495`; gate unchanged `2d6f1219…a61b`).
+Stagnation nudge not claimed (capabilities entered at rounds 88–95); every owned axis at 10, so the lowest-axis duty
+is a tie. Sourced claim: C1 (S524, S525, S505, S520, S521, S522, S523 — S524/S525 opened this round). C2 answers the
+round-95 spot-check's routed defect 3 for the last gate-compatible tool.
+
+- C1 — coverage, new surface (capability): no lane tool answered the text `mime/magic` database at base (the r95 tool
+  refuses text mode); `tools/mado-mimetext.py` now answers 284/284 frozen cases (16/16 classes), 268/268 seeded fresh
+  inputs, 9822/9822 host pairs over the round-95 4911-file list against the host's own cache-free text database, and
+  84/84 counted mutants (class_kills 16/16); controls: do-nothing 0/259 text-mode, name-only 32/284, naive 101/284,
+  memoriser 0/40 fresh, ctypes-libgio forgery rejected (`audit_denials=5`); `checks=50 failed=0`
+  (`.ufo/waves/round-96/receipts/c1-measured-r96.txt`). Entry `corpus/knowledge/mime-textdb-magic-r96.md`; index and
+  frontier rows; SKILL and PROVINCE rows.
+- C2 — operability: `quality/check-receipt-presence.py` gains six distinct selftest labels and its selftest block
+  after `main()` (the gate's `non_selftest_prefix` then covers the production path), and
+  `quality/selftest-kills/check-receipt-presence.json` guards it under the unchanged round-93 gate: hand weakenings
+  flagged 0/31 → 31/31, single-check neutralisations 0/6 → 6/6, singleton labels 6/6, neutral edits OK 6/6, controls
+  (do-nothing 0, always-OK 0, always-WEAK WEAK:1, first draft 19/31), round-90 main-path leg TARGET_MET 83/83
+  (`.ufo/waves/round-96/receipts/c2-measured-r96.txt`).
+- Separability: C1 TARGET_MET at the C2 tip (`receipts/c1-at-c2-r96.txt`); C2 SETUP_ERROR (kill-set absent) at the
+  C1 tip (`receipts/c2-at-c1-r96.txt`).
+- Frontier: SOURCES 458 → 460 rows (S524 `xdgmimemagic.c`, S525 spec §2.5); used-by appends on S505/S519–S523;
+  {C1} = S524/S525; census start/end rc 0. Mistakes: M96-1 (63-hex oracle pin), M96-2 (a `mime.cache` proxy read as
+  cache mode, five mislabelled refusal cases) → QUALITY 166; QUALITY 167 (selftest after the production path).
+- Assimilation: none (94 staged-id collisions; no staged entry on this plane). considerthese 2026-11-07 proposal 3
+  (an exhaustive small-domain sweep; here the oracle-labelled case set) is the mined proposal.
+
