@@ -17,6 +17,8 @@ over the frozen panel and over each planted control, and evaluates:
               AND mismatches == 0
               AND planted_dropped_leg_flagged == 1
               AND planted_wrong_expect_flagged == 1
+              AND planted_wrong_marker_flagged == 1
+              AND marker_blind_flagged == 1
               AND stub_flagged == 1
               AND selftest_checks >= 12 AND selftest_failed == 0
 
@@ -40,10 +42,17 @@ verdict disagrees with the real gate's verdict on that red panel.
 
 Planted controls (names fixed): clean.json (the panel itself),
 dropped-leg.json (one row removed, expect_legs unchanged),
-wrong-expect.json (one leg's expect_rc flipped), extra-leg.json (one row
-whose id no round declares).  Each must produce exactly one finding:
-PANEL_LEG_MISSING <id>, exactly one LEG rc mismatch, PANEL_LEG_UNKNOWN
-<id>; clean.json must stay green.
+wrong-expect.json (one leg's expect_rc flipped),
+wrong-marker.json (one leg's expect_marker made unmatchable),
+extra-leg.json (one row whose id no round declares).  Each must produce
+exactly one finding: PANEL_LEG_MISSING <id>, exactly one LEG rc
+mismatch, PANEL_LEG_UNKNOWN <id>; clean.json must stay green.
+
+Cost control: clean.json reuses the main run's verdict (same panel
+semantics), dropped/extra are census-only (the gate exits 2 before any
+leg runs), and the wrong-expect/wrong-marker runs plus the marker-blind
+copy are scoped with the gate's `--only ID` to the single flipped leg,
+so a heavy panel is never replayed five times.
 
 Scratch: every directory this counter creates carries the marker file
 `.c2-r99-harm-watch`; a reused --scratch-root is cleared of marked
@@ -120,6 +129,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo"); ap.add_argument("--rev"); ap.add_argument("--panel")
     ap.add_argument("--scratch-root"); ap.add_argument("--json", action="store_true")
+    ap.add_argument("--only", action="append", default=[])
     a = ap.parse_args()
     panel = json.load(open(a.panel))
     f = census(panel)
@@ -127,9 +137,11 @@ def main():
         for fid, d in f:
             print("PANEL %s %s" % (fid, d))
         return 2
+    only = set(a.only or [])
+    legs = [r for r in panel["legs"] if not only or r["id"] in only]
     ok = 0
     results = []
-    for row in panel["legs"]:
+    for row in legs:
         p = subprocess.run(row["argv"], cwd=a.repo, stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT)
         out = p.stdout.decode("utf-8", "replace")
@@ -146,7 +158,7 @@ def main():
         results.append({"id": row["id"], "rc": p.returncode,
                         "expect_rc": row["expect_rc"], "marker_ok": mok,
                         "ok": good, "detail": "ok" if good else "mismatch"})
-    n = len(panel["legs"])
+    n = len(legs)
     print("HARM_WATCH: legs=%d ok=%d mismatch=%d" % (n, ok, n - ok))
     if a.json:
         print(json.dumps({"legs_run": n, "ok": ok, "mismatch": n - ok,
@@ -207,9 +219,12 @@ def fresh_scratch(root):
     return root
 
 
-def run_gate(gate_path, repo, rev, panel_path, scratch_dir, timeout=7200):
+def run_gate(gate_path, repo, rev, panel_path, scratch_dir, timeout=7200,
+             only=None):
     argv = [sys.executable, "-I", gate_path, "--repo", repo, "--rev", rev,
             "--panel", panel_path, "--scratch-root", scratch_dir, "--json"]
+    for oid in (only or []):
+        argv += ["--only", oid]
     try:
         r = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                            timeout=timeout)
@@ -582,8 +597,17 @@ def main():
             ("wrong-expect.json", "wrong", wrong_flipped[0]),
             ("wrong-marker.json", "wrong-marker", marker_flipped[0]),
             ("extra-leg.json", "extra", extra_added[0])):
-        res = run_gate(gate_path, repo, a.rev, os.path.join(pl_dir, name),
-                       mark_dir(os.path.join(root, "run-" + kind)))
+        # clean.json is the panel itself: reuse the main run's verdict
+        # rather than paying for a second identical gate run.  The
+        # defect plants that need a leg verdict are scoped with --only
+        # to the single flipped leg; the census-only plants (dropped,
+        # extra) exit before any leg runs.
+        if kind == "clean":
+            res = main_res
+        else:
+            only = [ident] if kind in ("wrong", "wrong-marker") else None
+            res = run_gate(gate_path, repo, a.rev, os.path.join(pl_dir, name),
+                           mark_dir(os.path.join(root, "run-" + kind)), only=only)
         flags[kind], details[kind] = eval_planted(res, kind, ident)
 
     # stub control: an always-OK gate must be distinguishable on a red panel
@@ -611,7 +635,8 @@ def main():
         os.chmod(blind_path, 0o755)
         blind_res = run_gate(blind_path, repo, a.rev,
                              os.path.join(pl_dir, "wrong-marker.json"),
-                             mark_dir(os.path.join(root, "run-blind")))
+                             mark_dir(os.path.join(root, "run-blind")),
+                             only=[marker_flipped[0]])
         blind_accepts = (blind_res.get("rc") == 0 and blind_res.get("mismatch") == 0)
         marker_blind_flagged = 1 if (blind_accepts and flags.get("wrong-marker") == 1) else 0
     else:

@@ -46,6 +46,13 @@ reused by clearing it, any other non-empty directory is refused (setup, 2).
 The captured output of every leg is copied to <scratch-root>/<leg-id>.log.
 The tool writes nothing else and never writes inside --repo.
 
+--only ID (repeatable) runs the census over the FULL panel first (the
+census findings are unchanged), then runs only the named legs; the
+summary `HARM_WATCH: legs=N ok=M mismatch=K` counts the legs that ran.
+An --only id the panel does not declare is a setup error (exit 2).  The
+planted-control runs of the C2 counter use this to scope a heavy panel to
+its single defect leg.
+
 --selftest builds its own fixture panels and stub legs in a private temp
 directory and prints `HARM_WATCH_SELFTEST: checks=N failed=M` (exit 0 when
 failed == 0, else 1).
@@ -286,6 +293,14 @@ def run_panel(args):
             return setup_error("PANEL_SETUP", "scratch-root-required-by-leg-argv")
     else:
         os.makedirs(args.scratch_root, exist_ok=True)
+    only = [x for x in (args.only or [])]
+    if only:
+        declared = {row["id"] for row in panel["legs"] if isinstance(row, dict)}
+        bad = [x for x in only if x not in declared]
+        if bad:
+            return setup_error("PANEL_SETUP", "only-unknown-id=" + ",".join(bad))
+        panel = dict(panel)
+        panel["legs"] = [row for row in panel["legs"] if row["id"] in only]
     timeout = leg_timeout(panel, args)
     results = []
     nok = 0
@@ -559,6 +574,24 @@ def selftest():
                     if f != "leg.py" and not f.startswith("scr") and
                     not f.endswith(".json")]
         record("repo-untouched", repo_new == [], str(repo_new))
+
+
+        p_only, _ = base_panel(fix)
+        only_panel = fix.write_panel("only.json", p_only)
+        # 16 --only scopes the run after the census over the full panel
+        rc, out = run_gate(gate(only_panel,
+                                scratch=os.path.join(root, "scr3"),
+                                extra=["--only", "good", "--only", "second"]))
+        record("only-scoped", rc == 0 and "HARM_WATCH: legs=2 ok=2 mismatch=0" in out and
+               "LEG good" in out and "LEG second" in out and "LEG third" not in out,
+               out[-300:])
+
+        # 17 --only with an undeclared id is a setup error
+        rc, out = run_gate(gate(only_panel,
+                                scratch=os.path.join(root, "scr4"),
+                                extra=["--only", "nosuch"]))
+        record("only-unknown-id", rc == 2 and "PANEL_SETUP only-unknown-id=nosuch" in out,
+               out[-300:])
     finally:
         shutil.rmtree(root, ignore_errors=True)
     print("HARM_WATCH_SELFTEST: checks=%d failed=%d" % (len(checks), len(failed)))
@@ -575,6 +608,8 @@ def main():
     ap.add_argument("--panel")
     ap.add_argument("--scratch-root")
     ap.add_argument("--timeout", type=float)
+    ap.add_argument("--only", action="append", default=[], metavar="ID",
+                    help="run the census over the full panel, then only the named legs")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()

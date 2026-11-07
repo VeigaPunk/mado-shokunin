@@ -292,7 +292,7 @@
    "expect_marker": "MADO_GATE_DEFECTS: TARGET_MET",
    "expect_rc": 0,
    "id": "r92_gate_defects",
-   "note": "round-92 C2 counting command, pins verbatim from harm-r97.sh leg_r92_gate_defects; rc 0 in both r98 harm receipts",
+   "note": "round-92 C2 counting command, pins verbatim from harm-r97.sh leg_r92_gate_defects; rc 0 in both r98 harm receipts; measured wall ~309 s in receipt pass 2 at 2cbaa141, timeout_s=600 bounds it",
    "round": "r92"
   },
   {
@@ -434,7 +434,7 @@
    "expect_marker": "MADO_SELFTEST_STRENGTH: TARGET_MET",
    "expect_rc": 0,
    "id": "r93c2_selftest_strength",
-   "note": "round-93 C2 counting command, pins verbatim from harm-r97.sh leg_r93c2_selftest_strength; rc 0 in both r98 harm receipts",
+   "note": "round-93 C2 counting command, pins verbatim from harm-r97.sh leg_r93c2_selftest_strength; rc 0 in both r98 harm receipts; measured wall ~124 s in receipt pass 2 at 2cbaa141, timeout_s=600 bounds it",
    "round": "r93"
   },
   {
@@ -544,7 +544,7 @@
    "expect_marker": "MADO_FILETYPE_COUNT: TARGET_MET",
    "expect_rc": 0,
    "id": "r97c1_filetype",
-   "note": "round-97 C1 counting command via run-decl-counter; the r98 first-run leg (harm-base-r98.txt) was rc 0; the final 26-leg run dropped it (r98 spot-check defect 5) and this panel replays it",
+   "note": "round-97 C1 counting command via run-decl-counter; the r98 first-run leg (harm-base-r98.txt) was rc 0; the final 26-leg run dropped it (r98 spot-check defect 5) and this panel replays it; measured wall ~281 s in receipt pass 2 at 2cbaa141, timeout_s=600 bounds it",
    "round": "r97"
   },
   {
@@ -578,26 +578,21 @@
    "expect_marker": "MADO_COUNTER_SELFTEST_COUNT: TARGET_MET",
    "expect_rc": 0,
    "id": "r97c2_counter_selftest",
-   "note": "the r97 C2 counting command with the SKILL-AT-MEASURED-REV / LEDGER-AT-MEASURED-REV placeholders filled at 2cbaa141 (git show of SKILL.md and quality/tool-ledger.md); --rev is pinned to that same rev because the counter validates both pins against its own --rev; the r98 first run left the placeholders literal and failed rc 1 (r98 spot-check defect 5)",
+   "note": "the r97 C2 counting command with the SKILL-AT-MEASURED-REV / LEDGER-AT-MEASURED-REV placeholders filled at 2cbaa141 (git show of SKILL.md and quality/tool-ledger.md); --rev is pinned to that same rev because the counter validates both pins against its own --rev; the r98 first run left the placeholders literal and failed rc 1 (r98 spot-check defect 5); measured wall ~79 s in receipt pass 2 at 2cbaa141, timeout_s=600 bounds it",
    "round": "r97"
   },
   {
    "argv": [
     "python3",
     "-I",
-    "quality/check-selftest-strength.py",
-    "--tool",
-    "tools/mado-xdgmime.py",
-    "--kills",
-    "quality/selftest-kills/mado-xdgmime.json",
-    "--scratch-root",
-    "SCRATCH"
+    "-c",
+    "print('planted')"
    ],
-   "expect_marker": "SELFTEST_STRENGTH: OK tool=tools/mado-xdgmime.py",
+   "expect_marker": "",
    "expect_rc": 0,
    "id": "gate_xdgmime",
-   "note": "planted control: a well-formed row whose id no round declares; the census must refuse the panel with exactly PANEL_LEG_UNKNOWN id=gate_xdgmime",
-   "round": "r96"
+   "note": "planted control: undeclared leg id; the census must flag exactly PANEL_LEG_UNKNOWN id=gate_xdgmime and exit 2 before any leg runs",
+   "round": "r98"
   }
  ],
  "rounds": {
@@ -646,5 +641,5 @@
    "r97c2_counter_selftest"
   ]
  },
- "timeout_s": 3600
+ "timeout_s": 600
 }
