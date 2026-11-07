@@ -209,3 +209,12 @@ sweep re-run.
 Shown able to fail: `cmp /home/vgpnk/Projects/shokunin/dropped-volatile.txt mado-shokunin/dropped-volatile.txt`
 exited 0 before the fleet copy was removed; after the sweep `git -C /home/vgpnk/Projects/shokunin status
 --porcelain` no longer lists it.
+
+**M97-8 - a second seat scratch file landed at the fleet root.**
+Class: misroot, same family as M97-7. `host-list-final.txt` (772,157 B, the host seat's pre-filter census, mtime
+13:59) was written to `/home/vgpnk/Projects/shokunin/`; it is byte-identical to the seat's wave copy
+`.ufo/waves/round-97/controls/filetype-host-r97.txt` (`cmp` clean). Evidence: the fleet root's
+`git status --porcelain` listed `?? host-list-final.txt`; `cmp` against the wave copy exits 0. Captured-by: the L1's
+second sweep pass. Fix: copied byte-exact into the lane, fleet copy deleted, sweep re-run.
+Shown able to fail: `cmp /home/vgpnk/Projects/shokunin/host-list-final.txt mado-shokunin/.ufo/waves/round-97/controls/filetype-host-r97.txt`
+exits 0 before the deletion; the fleet status no longer lists it after.
