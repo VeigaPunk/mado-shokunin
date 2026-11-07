@@ -1,0 +1,146 @@
+{
+ "tool": "tools/mado-mime.py",
+ "tool_sha256": "2532ccb57cf9d67f6590e4aac2e8d0a9f9eb011b25eb42e45118a6ff51871a5e",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "MADO_MIME_SELFTEST_FAIL: ",
+ "result_line_prefix": "MADO_MIME_SELFTEST: ",
+ "selftest_checks": 17,
+ "note": "round-94 C2 kills by R94MExecKillsC2: 15 production mutants covering all 17 selftest labels (label 'added group is read before removed whatever the file order' is reached only by the multi-label kill a01; three narrow single-label attempts survived and were dropped); must_fail = the exact FAIL-label set of the mutant on the unweakened --selftest (DRAFT runs)",
+ "kills": [
+  {
+   "id": "a01-default-additions-off",
+   "find": "                self._mime_lookup(j, t, results, block)",
+   "replace": "                pass",
+   "must_fail": [
+    "added group is read before removed whatever the file order",
+    "alias unaliased",
+    "cache addition is default",
+    "masked lower addition skipped, hidden one taken",
+    "subdir id",
+    "unloadable list skipped"
+   ]
+  },
+  {
+   "id": "a02-lists-keep-hidden",
+   "find": "                return not hidden",
+   "replace": "                return True",
+   "must_fail": [
+    "hidden and unloadable dropped from lists",
+    "parent in registered not recommended",
+    "removal blocks lower addition"
+   ]
+  },
+  {
+   "id": "a03-subdir-prefix-flat",
+   "find": "                self._walk(fn, prefix + base + \"-\", names)",
+   "replace": "                self._walk(fn, prefix + base, names)",
+   "must_fail": [
+    "alias unaliased",
+    "desktop list wins",
+    "parent in registered not recommended",
+    "subdir id"
+   ]
+  },
+  {
+   "id": "a04-alias-never-resolves",
+   "find": "            self._unalias[t] = r if r is not None else t",
+   "replace": "            self._unalias[t] = t",
+   "must_fail": [
+    "alias unaliased"
+   ]
+  },
+  {
+   "id": "a05-no-parent-fallback",
+   "find": "        if fallback:",
+   "replace": "        if False and fallback:",
+   "must_fail": [
+    "parent in registered not recommended"
+   ]
+  },
+  {
+   "id": "a06-default-first-holder",
+   "find": "                    if self._get_app(k, app)[0]:",
+   "replace": "                    if self.dirs[k].app_names and app in self.dirs[k].app_names:",
+   "must_fail": [
+    "desktop list additions ignored",
+    "unloadable only -> none"
+   ]
+  },
+  {
+   "id": "a07-default-rejects-hidden",
+   "find": "                    if self._get_app(k, app)[0]:",
+   "replace": "                    if self._get_app(k, app) == (True, False):",
+   "must_fail": [
+    "hidden default accepted",
+    "masked lower addition skipped, hidden one taken",
+    "other desktop ignores it"
+   ]
+  },
+  {
+   "id": "a08-mimeapps-before-desktop-list",
+   "find": "        for d in desktops:\n            self._read(os.path.join(path, f\"{d}-mimeapps.list\"), ADDED, False, mime)\n        self._read(os.path.join(path, \"mimeapps.list\"), ADDED, True, mime)",
+   "replace": "        self._read(os.path.join(path, \"mimeapps.list\"), ADDED, True, mime)\n        for d in desktops:\n            self._read(os.path.join(path, f\"{d}-mimeapps.list\"), ADDED, False, mime)",
+   "must_fail": [
+    "desktop list wins"
+   ]
+  },
+  {
+   "id": "a09-desktop-list-additions-on",
+   "find": "            self._read(os.path.join(path, f\"{d}-mimeapps.list\"), ADDED, False, mime)",
+   "replace": "            self._read(os.path.join(path, f\"{d}-mimeapps.list\"), ADDED, True, mime)",
+   "must_fail": [
+    "desktop list additions ignored"
+   ]
+  },
+  {
+   "id": "a10-hyprland-read-always",
+   "find": "        for d in desktops:",
+   "replace": "        for d in desktops + [\"hyprland\"]:",
+   "must_fail": [
+    "other desktop ignores it"
+   ]
+  },
+  {
+   "id": "a11-removals-ignored",
+   "find": "        for r in tw.removals or []:",
+   "replace": "        for r in []:",
+   "must_fail": [
+    "removal blocks lower addition"
+   ]
+  },
+  {
+   "id": "a14-mask-off",
+   "find": "            if names and app in names:",
+   "replace": "            if False and names and app in names:",
+   "must_fail": [
+    "masked lower addition skipped, hidden one taken"
+   ]
+  },
+  {
+   "id": "a15-default-first-holder-load",
+   "find": "            for app in results:\n                for k in range(len(self.dirs)):\n                    if self._get_app(k, app)[0]:\n                        return app",
+   "replace": "            for app in results:\n                for k in range(len(self.dirs)):\n                    names_hold = self.dirs[k].app_names\n                    if names_hold and app in names_hold:\n                        return app if self.load(names_hold[app])[0] else None",
+   "must_fail": [
+    "default from masked id still loads in a lower dir"
+   ]
+  },
+  {
+   "id": "a16-desktops-filter-loose",
+   "find": "        if t and all(c.isascii() and (c.isalnum() or c in \"-_\") for c in t):",
+   "replace": "        if t and all(c.isascii() for c in t):",
+   "must_fail": [
+    "desktops"
+   ]
+  },
+  {
+   "id": "a17-fgets-empty-line",
+   "find": "    pairs = []\n    for line in _fgets_lines(data):",
+   "replace": "    pairs = []\n    for line in _fgets_lines(data) or [b\"mado x\\n\"]:",
+   "must_fail": [
+    "fgets chop"
+   ]
+  }
+ ]
+}

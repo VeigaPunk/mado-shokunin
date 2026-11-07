@@ -1,0 +1,110 @@
+{
+ "tool": "tools/mado-xdgmime.py",
+ "tool_sha256": "4e7fff9efbd32d101d1383099566008fc49ba626be5bcc53a20766d71bc7fd88",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "MADO_XDGMIME_SELFTEST_FAIL: ",
+ "result_line_prefix": "MADO_XDGMIME_SELFTEST: ",
+ "selftest_checks": 12,
+ "note": "round-94 C2 kills by R94MExecKillsC2: 12 production mutants, one+ per selftest label; must_fail = the exact FAIL-label set of the mutant on the unweakened --selftest (DRAFT runs)",
+ "kills": [
+  {
+   "id": "x01-m03-second-id",
+   "find": "            for app in expand(ifs_split(result, b\";\"), self.cwd):",
+   "replace": "            for app in expand(ifs_split(result, b\";\"), self.cwd)[:1]:",
+   "must_fail": [
+    "m03 list: second id installed"
+   ]
+  },
+  {
+   "id": "x02-m05-desktop-file-first",
+   "find": "            prefix = bytes(c + 32 if 65 <= c <= 90 else c for c in desktop) + b\"-\" if desktop else b\"\"",
+   "replace": "            prefix = b\"\"",
+   "must_fail": [
+    "m05 desktop-specific file first"
+   ]
+  },
+  {
+   "id": "x03-m09-last-line-wins",
+   "find": "            elif result is None and indefault and ln.startswith(pre):",
+   "replace": "            elif indefault and ln.startswith(pre):",
+   "must_fail": [
+    "m09 only a file's first matching line counts; the next file is read"
+   ]
+  },
+  {
+   "id": "x04-m16-cr-stripped",
+   "find": "    ls = data.split(b\"\\n\")",
+   "replace": "    ls = data.split(b\"\\n\")\n    ls = [x[:-1] if x.endswith(b\"\\r\") else x for x in ls]",
+   "must_fail": [
+    "m16 CR kept in the id"
+   ]
+  },
+  {
+   "id": "x05-d09-builtins-dropped",
+   "find": "        if s in KEYWORDS or s in BUILTINS or s in FUNCTIONS:",
+   "replace": "        if s in KEYWORDS or s in FUNCTIONS:",
+   "must_fail": [
+    "d09 Exec=true is a builtin: not installed"
+   ]
+  },
+  {
+   "id": "x06-f06b02-grep-anchored",
+   "find": "        return re.compile(out)",
+   "replace": "        return re.compile(b\"^\" + out)",
+   "must_fail": [
+    "b02 InitialPreference picks",
+    "f06 unanchored grep in mimeinfo.cache"
+   ]
+  },
+  {
+   "id": "x07-f09-echo-flags-kept",
+   "find": "    if re.fullmatch(rb\"-[neE]+\", arg):",
+   "replace": "    if False and re.fullmatch(rb\"-[neE]+\", arg):",
+   "must_fail": [
+    "f09 a cache value -n is an echo option"
+   ]
+  },
+  {
+   "id": "x08-b02-initialpref-ignored",
+   "find": "        if b\"InitialPreference=\" in ln:",
+   "replace": "        if False and b\"InitialPreference=\" in ln:",
+   "must_fail": [
+    "b02 InitialPreference picks"
+   ]
+  },
+  {
+   "id": "x09-s01-lxqt-branch-dead",
+   "find": "        if de == \"lxqt\":",
+   "replace": "        if de == \"lxqt-x\":",
+   "must_fail": [
+    "s01 LXQt: rc 3"
+   ]
+  },
+  {
+   "id": "x10-s05-no-slash-rc0",
+   "find": "            return None, 1",
+   "replace": "            return None, 0",
+   "must_fail": [
+    "s05 no slash: rc 1"
+   ]
+  },
+  {
+   "id": "x11-s08-version-string",
+   "find": "            return b\"xdg-mime 1.2.1\", 0",
+   "replace": "            return b\"xdg-mime 1.2.0\", 0",
+   "must_fail": [
+    "s08 --version"
+   ]
+  },
+  {
+   "id": "x12-rfc-guard-off",
+   "find": "        if not TYPE_CHARS.fullmatch(mime):",
+   "replace": "        if False and not TYPE_CHARS.fullmatch(mime):",
+   "must_fail": [
+    "type outside RFC 6838 refused"
+   ]
+  }
+ ]
+}

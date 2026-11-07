@@ -1,0 +1,148 @@
+### control: --draft-tool .ufo/waves/round-94/build/mado-mimeglob.c1b.py (sha256 65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453) 2026-11-07T06:58:31Z
+$ python3 -I quality/counters/c1-r94-mimeglob.py --rev master --repo . --base-rev a3de997289014e7dbf1d73ae206be1d6f8cdadd0 --cases .ufo/waves/round-94/controls/mimeglob-cases-r94-frozen.json --expect-cases-sha256 c7b693d240479ed63af24f426ae184bc4a13489a38f587620d9e1224dca5856c --mutants .ufo/waves/round-94/controls/mimeglob-mutants-r94-frozen.json --expect-mutants-sha256 0e74c57d233d2440f903466e959488705a58fdcda4f14d920caef0d2859133c2 --oracle-src .ufo/waves/round-94/controls/mimeglob-oracle-r94.c --expect-oracle-sha256 9c4337b36f93fa71bce13938f93d2e9758bb752815a67c57eb934a70bbfa6b11 --fresh-gen .ufo/waves/round-94/controls/mimeglob-fresh-r94.py --expect-fresh-gen-sha256 ab76b97e0c37d92ddb0b03a733745b1089be2a083379d9cabee050689ed57e2c --host-names .ufo/waves/round-94/controls/mimeglob-host-names-r94.txt --expect-host-names-sha256 4b6d6a6cc67a4ad59eb91c9e8af1cc605f2f278d2a2ecf57b4a81edad9344fa3 --expect-tool-sha256 65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453 --fresh 60 --workers 24 --fresh-seed 4242 --scratch-root DIR --draft-tool .ufo/waves/round-94/build/mado-mimeglob.c1b.py
+oracle_binary_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2
+pacman -Q glib2 shared-mime-info:
+glib2 2.90.1-1
+shared-mime-info 2.5.1-2
+per_class dirs=27 mode=19 literal=19 simple=18 full=28 fold=17 cs=26 deep=19 weight=26 dupe=17 order=18 multi=14 nomatch=11 slash=13 bytes=17 fgets=15 v1=14 noglobs=10 cachefmt=22 mixed=20
+static_findings=none
+fresh seed=4242 cases=60 correct=60
+host env HOME='/home/vgpnk' XDG_DATA_HOME='/home/vgpnk/.local/share' XDG_DATA_DIRS='/usr/local/share:/usr/share' names=9745
+host_db /home/vgpnk/.local/share/mime/mime.cache sha256=8da45fc9bed83aa991eab35b0ba90e432bbd9793b622e6e4865068c422725f3a
+host_db /home/vgpnk/.local/share/mime/globs2 sha256=760713a2d74a19b2b05548500c5e00329f92c6c1db0aeaf24229ab5cff17f9a0
+host_db /usr/share/mime/mime.cache sha256=b988d3d27bda7500ba4eb8e88d78e61049796d94ef79745dd366bacf5460bb47
+host_db /usr/share/mime/globs2 sha256=556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e
+mutant dirs-01-home-default killed by dirs-04-home-dir-first-when-unset
+mutant dirs-02-first-order killed by dirs-04-home-dir-first-when-unset
+mutant dirs-04-data-home-empty killed by mt-dirs-04-data-home-empty
+mutant dirs-05-default-dirs killed by dirs-12-host-default-dirs
+mutant mode-01-version-minor killed by cachefmt-05-version-1-3-invalid
+mutant mode-02-version-major killed by dirs-09-two-caches-dir-order
+mutant mode-03-size-40 killed by mode-05-short-cache-falls-to-globs
+mutant mode-04-cache-only killed by mode-06-bad-cache-sibling-cache-wins
+mutant mode-06-globs2-before-globs killed by v1-05-v1-ignored-when-globs2-present
+mutant fgets-02-chunk-end killed by fgets-01-long-pattern-truncated-at-254
+mutant fgets-03-comment-skip killed by fgets-09-comment-line-ignored
+mutant atoi-01-sign killed by rv-weight-02-negative
+mutant atoi-02-whitespace killed by mt-weight-03-whitespace
+mutant v1-01-weight-50 killed by mt-weight-01-v1-default
+mutant cs-01-prefix killed by rv-cs-03-flag-forms
+mutant cs-02-suffix killed by cs-04-flag-csx-not-cs
+mutant cs-03-second-colon killed by cs-05-flag-cs-colon-extra
+mutant glob-01-any-star killed by full-09-full-tie-first-line
+mutant glob-02-second-star killed by full-09-full-tie-first-line
+mutant glob-03-question killed by full-01-fnmatch-question-mark
+mutant glob-04-backslash killed by mt-full-05-backslash
+mutant glob-05-first-k killed by mt-full-02-unfolded-name
+mutant literal-01-dedupe killed by full-09-full-tie-first-line
+mutant literal-02-fold-first killed by pb-literal-01-text
+mutant literal-03-fold-cs killed by pb-cs-01-text
+mutant trie-01-deepest killed by deep-01-text-targz-over-gz
+mutant trie-02-extra-order killed by rv-multi-01-cap12-text
+mutant trie-03-extra-break killed by fgets-01-long-pattern-truncated-at-254
+mutant trie-04-signed-char killed by bytes-04-invalid-utf8-in-pattern
+mutant trie-05-sibling-merge killed by dirs-02-suffix-order-s1-first
+mutant pass-01-second-threshold killed by full-06-full-runs-after-one-suffix-hit
+mutant pass-02-second-check killed by simple-05-cs-suffix-lowercase-raw-pass
+mutant pass-03-first-check killed by simple-04-cs-suffix-raw-pass
+mutant pass-04-full-threshold killed by full-06-full-runs-after-one-suffix-hit
+mutant pass-05-full-unfolded killed by rv-full-02-text-fnmatch-no-fold
+mutant cache-01-fnmatch-threshold killed by mt-cache-04-fnmatch-threshold
+mutant cache-02-literal-cs-stop killed by cs-08-cache-cs-literal-early-stop
+mutant cache-03-weight-mask killed by cs-10-cache-cs-suffix-weighted
+mutant cache-04-cs-bit-suffix killed by simple-08-cache-cs-glob-from-update
+mutant cache-05-cs-bit-fnmatch killed by mt-cache-07-cs-bit-fnmatch
+mutant cache-06-per-cache killed by dirs-09-two-caches-dir-order
+mutant cache-07-fnmatch-unfolded killed by mt-cache-07-cs-bit-fnmatch
+mutant cache-08-literal-order killed by pb-literal-01-cache
+mutant dupe-01-max-weight killed by mt-dupe-01-max-weight
+mutant dupe-02-swap-from-end killed by pb-dirs-01-cache
+mutant dupe-03-sort-descending killed by dirs-12-host-default-dirs
+mutant dupe-04-cap-10 killed by dirs-02-suffix-order-s1-first
+mutant guess-01-trailing-slash killed by slash-01-trailing-slash-beats-glob
+mutant guess-02-one-certain killed by dirs-02-suffix-order-s1-first
+mutant guess-03-none-uncertain killed by dirs-07-empty-xdg-data-dirs-string
+mutant guess-04-several-uncertain killed by dirs-02-suffix-order-s1-first
+mutant guess-05-basename killed by slash-06-basename-literal
+mutant guess-06-empty-name killed by mt-literal-05-empty-name
+mutant dirs-05-home-concat killed by rv-dirs-04-home-empty-relative
+mutant utf8-01-signed-lead killed by bytes-04-invalid-utf8-in-pattern
+mutant utf8-02-continuation killed by l1-bytes-01-lone-continuation
+mutant cache-10-deep-order killed by deep-08-cache-deep-beats-shallow
+mutant dirs-06b-home-unset killed by l1-dirs-01-home-unset
+mutant glob-06b-bare-star killed by rv-simple-02-empty-suffix-star
+mutant utf8-03b-skip-two killed by l1-bytes-02-skip-swallows-bracket
+base: tool absent at base-rev (answered=0)
+MADO_MIMEGLOB_COUNT: DRAFT_TARGET_MET pred=PRED-C1-r94-v1 rev=draft:.ufo/waves/round-94/build/mado-mimeglob.c1b.py tool_pin=ok cases=370 correct=370 answered=370 text=220/220 cache=122/122 mixed=28/28 classes=20/20 static_no_external_resolver=ok fresh=60/60 fresh_seed=4242 host=9745/9745 mutants=60 killed=60 crashed_not_killed=0 survived=0 do_nothing_correct=43 naive_correct=63 naive_exact_correct=58 naive_folded_correct=63 base_correct=0 oracle_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2 tool_sha256=65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453
+rc=3
+### control: --draft-tool .ufo/waves/round-94/build/mado-mimeglob.c1.py (sha256 0700915a260627cd521ea14b61dbb15aa7c3b067c0d287f04c07b39dfa72d63e) 2026-11-07T06:59:29Z
+$ python3 -I quality/counters/c1-r94-mimeglob.py --rev master --repo . --base-rev a3de997289014e7dbf1d73ae206be1d6f8cdadd0 --cases .ufo/waves/round-94/controls/mimeglob-cases-r94-frozen.json --expect-cases-sha256 c7b693d240479ed63af24f426ae184bc4a13489a38f587620d9e1224dca5856c --mutants .ufo/waves/round-94/controls/mimeglob-mutants-r94-frozen.json --expect-mutants-sha256 0e74c57d233d2440f903466e959488705a58fdcda4f14d920caef0d2859133c2 --oracle-src .ufo/waves/round-94/controls/mimeglob-oracle-r94.c --expect-oracle-sha256 9c4337b36f93fa71bce13938f93d2e9758bb752815a67c57eb934a70bbfa6b11 --fresh-gen .ufo/waves/round-94/controls/mimeglob-fresh-r94.py --expect-fresh-gen-sha256 ab76b97e0c37d92ddb0b03a733745b1089be2a083379d9cabee050689ed57e2c --host-names .ufo/waves/round-94/controls/mimeglob-host-names-r94.txt --expect-host-names-sha256 4b6d6a6cc67a4ad59eb91c9e8af1cc605f2f278d2a2ecf57b4a81edad9344fa3 --expect-tool-sha256 65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453 --fresh 60 --workers 24 --fresh-seed 4242 --scratch-root DIR --draft-tool .ufo/waves/round-94/build/mado-mimeglob.c1.py
+oracle_binary_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2
+pacman -Q glib2 shared-mime-info:
+glib2 2.90.1-1
+shared-mime-info 2.5.1-2
+per_class dirs=27 mode=19 literal=19 simple=18 full=28 fold=17 cs=26 deep=19 weight=26 dupe=17 order=18 multi=14 nomatch=11 slash=13 bytes=17 fgets=15 v1=14 noglobs=10 cachefmt=22 mixed=20
+static_findings=none
+case bytes-04-invalid-utf8-in-pattern CRASH
+case bytes-05-invalid-utf8-literal CRASH
+case rv-simple-02-empty-suffix-star CRASH
+case rv-simple-03-star-plus-glob CRASH
+case rv-bytes-01-invalid-utf8-glob CRASH
+case rv-dirs-04-home-empty-relative WRONG
+case rv-cachefmt-06-oob-literal-string CRASH
+case rv-mixed-01-cache-plus-star-globs2 CRASH
+case rv-mixed-02-cache-plus-invalid-globs2 CRASH
+case rv-deep-03-cache-1000-char-suffix CRASH
+case l1-dirs-01-home-unset CRASH
+case l1-dirs-02-home-unset-datahome CRASH
+case l1-bytes-01-lone-continuation CRASH
+case l1-bytes-02-skip-swallows-bracket CRASH
+case l1-bytes-03-skip-swallows-star CRASH
+fresh seed=4242 cases=60 correct=60
+host env HOME='/home/vgpnk' XDG_DATA_HOME='/home/vgpnk/.local/share' XDG_DATA_DIRS='/usr/local/share:/usr/share' names=9745
+host_db /home/vgpnk/.local/share/mime/mime.cache sha256=8da45fc9bed83aa991eab35b0ba90e432bbd9793b622e6e4865068c422725f3a
+host_db /home/vgpnk/.local/share/mime/globs2 sha256=760713a2d74a19b2b05548500c5e00329f92c6c1db0aeaf24229ab5cff17f9a0
+host_db /usr/share/mime/mime.cache sha256=b988d3d27bda7500ba4eb8e88d78e61049796d94ef79745dd366bacf5460bb47
+host_db /usr/share/mime/globs2 sha256=556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e
+mutant leg skipped: the mutants are anchored to the frozen candidate and the tool is not it (killed=0)
+base: tool absent at base-rev (answered=0)
+MADO_MIMEGLOB_COUNT: DRAFT_TARGET_MISSED pred=PRED-C1-r94-v1 rev=draft:.ufo/waves/round-94/build/mado-mimeglob.c1.py tool_pin=FAIL cases=370 correct=355 answered=356 text=209/220 cache=118/122 mixed=28/28 classes=20/20 static_no_external_resolver=ok fresh=60/60 fresh_seed=4242 host=9745/9745 mutants=60 killed=0 crashed_not_killed=0 survived=0 do_nothing_correct=43 naive_correct=63 naive_exact_correct=58 naive_folded_correct=63 base_correct=0 oracle_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2 tool_sha256=0700915a260627cd521ea14b61dbb15aa7c3b067c0d287f04c07b39dfa72d63e
+rc=3
+### control: --draft-tool .ufo/waves/round-94/w1/R94MCritic/evidence/wrapper-tool.py (sha256 d0ab4a12a8b99cf80ed6bda0a9afb3f0fc83adaefe7b75fb5ec56b57c013eb3f) 2026-11-07T06:59:32Z
+$ python3 -I quality/counters/c1-r94-mimeglob.py --rev master --repo . --base-rev a3de997289014e7dbf1d73ae206be1d6f8cdadd0 --cases .ufo/waves/round-94/controls/mimeglob-cases-r94-frozen.json --expect-cases-sha256 c7b693d240479ed63af24f426ae184bc4a13489a38f587620d9e1224dca5856c --mutants .ufo/waves/round-94/controls/mimeglob-mutants-r94-frozen.json --expect-mutants-sha256 0e74c57d233d2440f903466e959488705a58fdcda4f14d920caef0d2859133c2 --oracle-src .ufo/waves/round-94/controls/mimeglob-oracle-r94.c --expect-oracle-sha256 9c4337b36f93fa71bce13938f93d2e9758bb752815a67c57eb934a70bbfa6b11 --fresh-gen .ufo/waves/round-94/controls/mimeglob-fresh-r94.py --expect-fresh-gen-sha256 ab76b97e0c37d92ddb0b03a733745b1089be2a083379d9cabee050689ed57e2c --host-names .ufo/waves/round-94/controls/mimeglob-host-names-r94.txt --expect-host-names-sha256 4b6d6a6cc67a4ad59eb91c9e8af1cc605f2f278d2a2ecf57b4a81edad9344fa3 --expect-tool-sha256 65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453 --fresh 60 --workers 24 --fresh-seed 4242 --scratch-root DIR --draft-tool .ufo/waves/round-94/w1/R94MCritic/evidence/wrapper-tool.py
+oracle_binary_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2
+pacman -Q glib2 shared-mime-info:
+glib2 2.90.1-1
+shared-mime-info 2.5.1-2
+per_class dirs=27 mode=19 literal=19 simple=18 full=28 fold=17 cs=26 deep=19 weight=26 dupe=17 order=18 multi=14 nomatch=11 slash=13 bytes=17 fgets=15 v1=14 noglobs=10 cachefmt=22 mixed=20
+static_findings=import:subprocess:3
+case l1-dirs-01-home-unset CRASH
+case l1-dirs-02-home-unset-datahome CRASH
+fresh seed=4242 cases=60 correct=60
+host env HOME='/home/vgpnk' XDG_DATA_HOME='/home/vgpnk/.local/share' XDG_DATA_DIRS='/usr/local/share:/usr/share' names=9745
+host_db /home/vgpnk/.local/share/mime/mime.cache sha256=8da45fc9bed83aa991eab35b0ba90e432bbd9793b622e6e4865068c422725f3a
+host_db /home/vgpnk/.local/share/mime/globs2 sha256=760713a2d74a19b2b05548500c5e00329f92c6c1db0aeaf24229ab5cff17f9a0
+host_db /usr/share/mime/mime.cache sha256=b988d3d27bda7500ba4eb8e88d78e61049796d94ef79745dd366bacf5460bb47
+host_db /usr/share/mime/globs2 sha256=556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e
+mutant leg skipped: the mutants are anchored to the frozen candidate and the tool is not it (killed=0)
+base: tool absent at base-rev (answered=0)
+MADO_MIMEGLOB_COUNT: DRAFT_TARGET_MISSED pred=PRED-C1-r94-v1 rev=draft:.ufo/waves/round-94/w1/R94MCritic/evidence/wrapper-tool.py tool_pin=FAIL cases=370 correct=368 answered=368 text=218/220 cache=122/122 mixed=28/28 classes=20/20 static_no_external_resolver=FAIL fresh=60/60 fresh_seed=4242 host=9745/9745 mutants=60 killed=0 crashed_not_killed=0 survived=0 do_nothing_correct=43 naive_correct=63 naive_exact_correct=58 naive_folded_correct=63 base_correct=0 oracle_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2 tool_sha256=d0ab4a12a8b99cf80ed6bda0a9afb3f0fc83adaefe7b75fb5ec56b57c013eb3f
+rc=3
+### control: --draft-tool .ufo/waves/round-94/controls/forgery-ctypes-gio-r94.py (sha256 7115dfda9fc57251d27f6c79b536ffed77f6a7102836f313ef3e40143f1b3fa3) 2026-11-07T06:59:34Z
+$ python3 -I quality/counters/c1-r94-mimeglob.py --rev master --repo . --base-rev a3de997289014e7dbf1d73ae206be1d6f8cdadd0 --cases .ufo/waves/round-94/controls/mimeglob-cases-r94-frozen.json --expect-cases-sha256 c7b693d240479ed63af24f426ae184bc4a13489a38f587620d9e1224dca5856c --mutants .ufo/waves/round-94/controls/mimeglob-mutants-r94-frozen.json --expect-mutants-sha256 0e74c57d233d2440f903466e959488705a58fdcda4f14d920caef0d2859133c2 --oracle-src .ufo/waves/round-94/controls/mimeglob-oracle-r94.c --expect-oracle-sha256 9c4337b36f93fa71bce13938f93d2e9758bb752815a67c57eb934a70bbfa6b11 --fresh-gen .ufo/waves/round-94/controls/mimeglob-fresh-r94.py --expect-fresh-gen-sha256 ab76b97e0c37d92ddb0b03a733745b1089be2a083379d9cabee050689ed57e2c --host-names .ufo/waves/round-94/controls/mimeglob-host-names-r94.txt --expect-host-names-sha256 4b6d6a6cc67a4ad59eb91c9e8af1cc605f2f278d2a2ecf57b4a81edad9344fa3 --expect-tool-sha256 65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453 --fresh 60 --workers 24 --fresh-seed 4242 --scratch-root DIR --draft-tool .ufo/waves/round-94/controls/forgery-ctypes-gio-r94.py
+oracle_binary_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2
+pacman -Q glib2 shared-mime-info:
+glib2 2.90.1-1
+shared-mime-info 2.5.1-2
+per_class dirs=27 mode=19 literal=19 simple=18 full=28 fold=17 cs=26 deep=19 weight=26 dupe=17 order=18 multi=14 nomatch=11 slash=13 bytes=17 fgets=15 v1=14 noglobs=10 cachefmt=22 mixed=20
+static_findings=lib:libgio-2.0.so.0:23
+fresh seed=4242 cases=60 correct=60
+host env HOME='/home/vgpnk' XDG_DATA_HOME='/home/vgpnk/.local/share' XDG_DATA_DIRS='/usr/local/share:/usr/share' names=9745
+host_db /home/vgpnk/.local/share/mime/mime.cache sha256=8da45fc9bed83aa991eab35b0ba90e432bbd9793b622e6e4865068c422725f3a
+host_db /home/vgpnk/.local/share/mime/globs2 sha256=760713a2d74a19b2b05548500c5e00329f92c6c1db0aeaf24229ab5cff17f9a0
+host_db /usr/share/mime/mime.cache sha256=b988d3d27bda7500ba4eb8e88d78e61049796d94ef79745dd366bacf5460bb47
+host_db /usr/share/mime/globs2 sha256=556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e
+mutant leg skipped: the mutants are anchored to the frozen candidate and the tool is not it (killed=0)
+base: tool absent at base-rev (answered=0)
+MADO_MIMEGLOB_COUNT: DRAFT_TARGET_MISSED pred=PRED-C1-r94-v1 rev=draft:.ufo/waves/round-94/controls/forgery-ctypes-gio-r94.py tool_pin=FAIL cases=370 correct=370 answered=370 text=220/220 cache=122/122 mixed=28/28 classes=20/20 static_no_external_resolver=FAIL fresh=60/60 fresh_seed=4242 host=9745/9745 mutants=60 killed=0 crashed_not_killed=0 survived=0 do_nothing_correct=43 naive_correct=63 naive_exact_correct=58 naive_folded_correct=63 base_correct=0 oracle_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2 tool_sha256=7115dfda9fc57251d27f6c79b536ffed77f6a7102836f313ef3e40143f1b3fa3
+rc=3

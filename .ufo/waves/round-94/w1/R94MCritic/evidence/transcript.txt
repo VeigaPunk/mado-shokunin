@@ -1,0 +1,120 @@
+++ pkg-config --cflags --libs gio-2.0
++ gcc -O1 -o oracle /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-94/controls/mimeglob-oracle-r94.c -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/sysprof-6 -pthread -lgio-2.0 -lgobject-2.0 -lglib-2.0
++ echo 'gcc rc=0'
+gcc rc=0
++ sha256sum oracle /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-94/build/mado-mimeglob.c1.py /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-94/controls/mimeglob-oracle-r94.c
+38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2  oracle
+0700915a260627cd521ea14b61dbb15aa7c3b067c0d287f04c07b39dfa72d63e  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-94/build/mado-mimeglob.c1.py
+9c4337b36f93fa71bce13938f93d2e9758bb752815a67c57eb934a70bbfa6b11  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-94/controls/mimeglob-oracle-r94.c
++ set +x
+===== A. text mode: candidate vs oracle (12 names, one >254-byte globs2 line present)
+text/plain	0
+text/plain	0
+text/x-c++	0
+app/x-tgz	0
+app/hi	1
+text/x-make	0
+application/octet-stream	1
+app/full	0
+application/octet-stream	1
+inode/directory	1
+text/plain	0
+application/octet-stream	1
+MADO_MIMEGLOB_DIRS: mode=text dirs=/fast/scratch/hyaku/mado-r94/critic-repro/fx/dh/mime/
+MADO_MIMEGLOB: text/plain uncertain=0 name=a.txt
+MADO_MIMEGLOB: text/plain uncertain=0 name=A.TXT
+MADO_MIMEGLOB: text/x-c++ uncertain=0 name=x.C
+MADO_MIMEGLOB: app/x-tgz uncertain=0 name=x.tar.gz
+MADO_MIMEGLOB: app/hi uncertain=1 name=x.dup
+MADO_MIMEGLOB: text/x-make uncertain=0 name=Makefile
+MADO_MIMEGLOB: application/octet-stream uncertain=1 name=MAKEFILE
+MADO_MIMEGLOB: app/full uncertain=0 name=xzy
+MADO_MIMEGLOB: application/octet-stream uncertain=1 name=zz
+MADO_MIMEGLOB: inode/directory uncertain=1 name=dir/
+MADO_MIMEGLOB: text/plain uncertain=0 name=D.TXT
+MADO_MIMEGLOB: application/octet-stream uncertain=1 name=x.one
+===== B. cache mode + mixed mode (update-mime-database on a scratch dir)
+
+Note that '/fast/scratch/hyaku/mado-r94/critic-repro/fx2' is not in the search path
+set by the XDG_DATA_HOME and XDG_DATA_DIRS
+environment variables, so applications may not
+be able to find it until you set them. The
+directories currently searched are:
+
+- /home/vgpnk/.local/share
+- /usr/local/share
+- /usr/share
+
+update-mime-database rc=0
+text/x-c1	0
+text/x-c1	0
+text/x-c2	0
+text/x-c1	0
+text/x-c1	0
+text/x-c1	0
+application/octet-stream	1
+{"dirs": ["/fast/scratch/hyaku/mado-r94/critic-repro/fx2/mime/"], "mode": "cache", "results": [{"name": "a.c1", "type": "text/x-c1", "types": ["text/x-c1"], "uncertain": 0}, {"name": "A.C1", "type": "text/x-c1", "types": ["text/x-c1"], "uncertain": 0}, {"name": "a.c2", "type": "text/x-c2", "types": ["text/x-c2"], "uncertain": 0}, {"name": "x.tar.c1", "type": "text/x-c1", "types": ["text/x-c1"], "uncertain": 0}, {"name": "Makefile.c1", "type": "text/x-c1", "types": ["text/x-c1"], "uncertain": 0}, {"name": "MAKEFFILE.c1", "type": "text/x-c1", "types": ["text/x-c1"], "uncertain": 0}, {"name": "a.gon", "type": "application/octet-stream", "types": [], "uncertain": 1}]}
+-- mixed: a cache dir plus a globs2-only dir (globs2-only must be ignored)
+text/x-c1	0
+application/octet-stream	1
+{"dirs": ["/fast/scratch/hyaku/mado-r94/critic-repro/fx2/mime/", "/fast/scratch/hyaku/mado-r94/critic-repro/fx2/mime-globs/mime/"], "mode": "cache", "results": [{"name": "a.c1", "type": "text/x-c1", "types": ["text/x-c1"], "uncertain": 0}, {"name": "a.gon", "type": "application/octet-stream", "types": [], "uncertain": 1}]}
+===== C. fgets class discriminator: the >254-byte line makes one glob case-sensitive only when chunked
+text/x-lf	0
+text/x-lf	0
+MADO_MIMEGLOB_DIRS: mode=text dirs=/fast/scratch/hyaku/mado-r94/critic-repro/fx3/dh/mime/
+MADO_MIMEGLOB: text/x-lf uncertain=0 name=A.LF
+MADO_MIMEGLOB: text/x-lf uncertain=0 name=a.lf
+MADO_MIMEGLOB_DIRS: mode=text dirs=/fast/scratch/hyaku/mado-r94/critic-repro/fx3/dh/mime/
+MADO_MIMEGLOB: application/octet-stream uncertain=1 name=A.LF
+MADO_MIMEGLOB: text/x-lf uncertain=0 name=a.lf
+-- the two naive extension maps on the same case (folded is RIGHT, exact is WRONG: the control's strength is not pinned)
+A.LF	application/octet-stream	1
+A.LF	text/x-lf	0
+-- and on the fx fixture the two variants differ: exact vs folded against the oracle labels printed in section A
+a.txt	text/plain	0
+A.TXT	application/octet-stream	1
+x.C	text/x-c++	0
+x.tar.gz	app/x-gz	0
+x.dup	app/hi	0
+Makefile	application/octet-stream	1
+MAKEFILE	application/octet-stream	1
+xzy	application/octet-stream	1
+zz	application/octet-stream	1
+dir/	application/octet-stream	1
+D.TXT	application/octet-stream	1
+x.one	application/octet-stream	1
+a.txt	text/plain	0
+A.TXT	text/plain	0
+x.C	text/x-c	0
+x.tar.gz	app/x-gz	0
+x.dup	app/hi	0
+Makefile	application/octet-stream	1
+MAKEFILE	application/octet-stream	1
+xzy	application/octet-stream	1
+zz	application/octet-stream	1
+dir/	application/octet-stream	1
+D.TXT	text/plain	0
+x.one	application/octet-stream	1
+-- naive variant correctness against the oracle on the fx fixture (same 12 names as section A)
+naive-exact: 5 of 12 names equal to the oracle
+naive-folded: 6 of 12 names equal to the oracle
+===== D. oracle-exec wrapper: behaviourally identical to the oracle on every layout, including fresh random ones
+wrapper text fixture: mismatches 0 of 12
+wrapper cache/mixed fixture: mismatches 0 of 9
+wrapper fresh random layouts: mismatches 0 of 300
+===== E. C2: a 2-kill universal kill-set passes the gate and flags every single-check neutralisation
+X1 FAIL set (9): ['m03 list: second id installed', 'm05 desktop-specific file first', "m09 only a file's first matching line counts; the next file is read", 'f06 unanchored grep in mimeinfo.cache', 'b02 InitialPreference picks', 's01 LXQt: rc 3', 's05 no slash: rc 1', 's08 --version', 'type outside RFC 6838 refused']
+X2 FAIL set (6): ['m05 desktop-specific file first', 'm16 CR kept in the id', 'd09 Exec=true is a builtin: not installed', 'f06 unanchored grep in mimeinfo.cache', 'f09 a cache value -n is an echo option', 'b02 InitialPreference picks']
+gate on the unmodified tool with 2 universal kills: (0, 'SELFTEST_STRENGTH: OK tool=tools/mado-xdgmime.py kills=2 held=2 survived=0 wrong_check=0')
+union of the two FAIL sets = 12 labels
+neutralised_flagged with those 2 kills: 12 / 12
+a real LOOSENING of check m03 under the 2 universal kills: (0, 'SELFTEST_STRENGTH: OK tool=tools/mado-xdgmime.py kills=2 held=2 survived=0 wrong_check=0')
+the same loosened tool under a m03-specific kill: (1, 'SELFTEST_STRENGTH: WEAK tool=tools/mado-xdgmime.py kills=1 held=0 survived=0 wrong_check=1')
+===== F. do-nothing instrument is blind to a neutralised check (result line unchanged)
+neutralised result line: ['MADO_XDGMIME_SELFTEST: checks=12 failed=0']
+FAIL lines seen by a result-line watcher: []
+===== G. base: the C1 tool does not exist at a3de9972
+fatal: path 'tools/mado-mimeglob.py' does not exist in 'a3de997289014e7dbf1d73ae206be1d6f8cdadd0'
+git show rc=128
+check-seat-reports.json
+all sections ran

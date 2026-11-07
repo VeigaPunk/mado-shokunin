@@ -1,0 +1,134 @@
+{
+ "pred": "PRED-C2-r94-v1",
+ "note": "round 94 panel by R94MExecCounterC2: hand = weakenings that keep the selftest green (checks=N failed=0) but stop it constraining the dimension its label names (expected value replaced by the observed one / one tuple element dropped), so any kill-set kill that fails under exactly that label survives the weakened selftest and the gate prints WEAK; neutral = strength-preserving byte changes (comment, reorder of independent checks) that must leave the gate at OK. All finds occur exactly once in the named tool at <rev>.",
+ "hand": [
+  {
+   "tool": "tools/mado-xdgmime.py",
+   "id": "xdg-w01-m03-id-observed",
+   "what": "m03 list: second id installed — expected id replaced by the observed id; only rc is still constrained",
+   "find": "q(\"text/plain\") == (\"a.desktop\", 0)",
+   "replace": "q(\"text/plain\") == (q(\"text/plain\")[0], 0)"
+  },
+  {
+   "tool": "tools/mado-xdgmime.py",
+   "id": "xdg-w02-m05-id-observed",
+   "what": "m05 desktop-specific file first — expected id replaced by the observed id",
+   "find": "q(\"image/png\") == (\"h.desktop\", 0)",
+   "replace": "q(\"image/png\") == (q(\"image/png\")[0], 0)"
+  },
+  {
+   "tool": "tools/mado-xdgmime.py",
+   "id": "xdg-w03-s01-rc-observed",
+   "what": "s01 LXQt: rc 3 — expected tuple replaced by the observed tuple (the label constrains nothing)",
+   "find": "q(\"text/plain\", XDG_CURRENT_DESKTOP=\"LXQt\") == (None, 3)",
+   "replace": "q(\"text/plain\", XDG_CURRENT_DESKTOP=\"LXQt\") == q(\"text/plain\", XDG_CURRENT_DESKTOP=\"LXQt\")"
+  },
+  {
+   "tool": "tools/mado-xdgmime.py",
+   "id": "xdg-w04-s08-version-observed",
+   "what": "s08 --version — expected version string replaced by the observed one; only rc is still constrained",
+   "find": "q(\"--version\") == (\"xdg-mime 1.2.1\", 0)",
+   "replace": "q(\"--version\") == (q(\"--version\")[0], 0)"
+  },
+  {
+   "tool": "tools/mado-xdgmime.py",
+   "id": "xdg-w05-f06-id-observed",
+   "what": "f06 unanchored grep in mimeinfo.cache — expected id replaced by the observed id",
+   "find": "q(\"text/csv\") == (\"un.desktop\", 0)",
+   "replace": "q(\"text/csv\") == (q(\"text/csv\")[0], 0)"
+  },
+  {
+   "tool": "tools/mado-xdgmime.py",
+   "id": "xdg-w06-d09-id-observed",
+   "what": "d09 Exec=true is a builtin: not installed — expected id replaced by the observed id (tautology on the id arm)",
+   "find": "q(\"x-scheme-handler/x\") == (None, 0)",
+   "replace": "q(\"x-scheme-handler/x\") == (q(\"x-scheme-handler/x\")[0], 0)"
+  },
+  {
+   "tool": "tools/mado-mime.py",
+   "id": "mime-w01-cache-addition-observed",
+   "what": "cache addition is default — expected default replaced by the observed default",
+   "find": "r.default(\"text/plain\") == \"a.desktop\"",
+   "replace": "r.default(\"text/plain\") == r.default(\"text/plain\")"
+  },
+  {
+   "tool": "tools/mado-mime.py",
+   "id": "mime-w02-hidden-list-observed",
+   "what": "hidden and unloadable dropped from lists — expected registered list replaced by the observed list",
+   "find": "r.resolve(\"text/plain\")[\"registered\"] == [\"a.desktop\"]",
+   "replace": "r.resolve(\"text/plain\")[\"registered\"] == r.resolve(\"text/plain\")[\"registered\"]"
+  },
+  {
+   "tool": "tools/mado-mime.py",
+   "id": "mime-w03-subdir-id-observed",
+   "what": "subdir id — expected default replaced by the observed default",
+   "find": "r.default(\"text/x-src\") == \"sub-d.desktop\"",
+   "replace": "r.default(\"text/x-src\") == r.default(\"text/x-src\")"
+  },
+  {
+   "tool": "tools/mado-mime.py",
+   "id": "mime-w04-alias-widened",
+   "what": "alias unaliased — equality widened to a set that contains the observed value",
+   "find": "r.default(\"text/x-alias\") == \"sub-d.desktop\"",
+   "replace": "r.default(\"text/x-alias\") in (\"sub-d.desktop\", r.default(\"text/x-alias\"))"
+  },
+  {
+   "tool": "tools/mado-mime.py",
+   "id": "mime-w05-desktops-observed",
+   "what": "desktops — expected list replaced by the observed list",
+   "find": "current_desktops(\"KDE::bad/x:GNOME-Classic\") == [\"kde\", \"gnome-classic\"]",
+   "replace": "current_desktops(\"KDE::bad/x:GNOME-Classic\") == current_desktops(\"KDE::bad/x:GNOME-Classic\")"
+  },
+  {
+   "tool": "tools/mado-mime.py",
+   "id": "mime-w06-fgets-observed",
+   "what": "fgets chop — expected pair list replaced by the observed pair list",
+   "find": "[p for p in _pairs_from_text(\"/dev/null\")] == []",
+   "replace": "[p for p in _pairs_from_text(\"/dev/null\")] == [p for p in _pairs_from_text(\"/dev/null\")]"
+  }
+ ],
+ "neutral": [
+  {
+   "tool": "tools/mado-xdgmime.py",
+   "id": "xdg-z01-docstring-note",
+   "what": "docstring sentence added; no behavior",
+   "find": "named in the check.\"\"\"",
+   "replace": "named in the check. Probe.\"\"\""
+  },
+  {
+   "tool": "tools/mado-xdgmime.py",
+   "id": "xdg-z02-reorder-s01-s05",
+   "what": "two independent pure checks reordered inside the checks += list",
+   "find": "            (\"s01 LXQt: rc 3\", q(\"text/plain\", XDG_CURRENT_DESKTOP=\"LXQt\") == (None, 3)),\n            (\"s05 no slash: rc 1\", q(\"plain\") == (None, 1)),",
+   "replace": "            (\"s05 no slash: rc 1\", q(\"plain\") == (None, 1)),\n            (\"s01 LXQt: rc 3\", q(\"text/plain\", XDG_CURRENT_DESKTOP=\"LXQt\") == (None, 3)),"
+  },
+  {
+   "tool": "tools/mado-xdgmime.py",
+   "id": "xdg-z03-comment-failed-line",
+   "what": "trailing comment on the failed-list line; no behavior",
+   "find": "    failed = [n for n, ok in checks if not ok]",
+   "replace": "    failed = [n for n, ok in checks if not ok]  # verdict = FAIL lines + rc"
+  },
+  {
+   "tool": "tools/mado-mime.py",
+   "id": "mime-z01-comment-app",
+   "what": "trailing comment on the desktop-entry template line; no behavior",
+   "find": "    app = \"[Desktop Entry]\\nType=Application\\nName=X\\nExec=sh %f\\n\"",
+   "replace": "    app = \"[Desktop Entry]\\nType=Application\\nName=X\\nExec=sh %f\\n\"  # desktop template"
+  },
+  {
+   "tool": "tools/mado-mime.py",
+   "id": "mime-z02-reorder-desktops-fgets",
+   "what": "two independent checks reordered",
+   "find": "    chk(\"desktops\", current_desktops(\"KDE::bad/x:GNOME-Classic\") == [\"kde\", \"gnome-classic\"])\n    chk(\"fgets chop\", [p for p in _pairs_from_text(\"/dev/null\")] == [])",
+   "replace": "    chk(\"fgets chop\", [p for p in _pairs_from_text(\"/dev/null\")] == [])\n    chk(\"desktops\", current_desktops(\"KDE::bad/x:GNOME-Classic\") == [\"kde\", \"gnome-classic\"])"
+  },
+  {
+   "tool": "tools/mado-mime.py",
+   "id": "mime-z03-comment-chk-def",
+   "what": "trailing comment on the chk helper definition; no behavior",
+   "find": "    def chk(name: str, cond: bool) -> None:",
+   "replace": "    def chk(name: str, cond: bool) -> None:  # accumulate (label, ok)"
+  }
+ ]
+}

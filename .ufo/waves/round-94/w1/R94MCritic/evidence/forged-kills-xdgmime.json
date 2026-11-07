@@ -1,0 +1,41 @@
+{
+ "tool": "tools/mado-xdgmime.py",
+ "tool_sha256": "",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "MADO_XDGMIME_SELFTEST_FAIL: ",
+ "result_line_prefix": "MADO_XDGMIME_SELFTEST: ",
+ "selftest_checks": 12,
+ "kills": [
+  {
+   "id": "k-x1",
+   "find": "        if mime in (b\"--help\", b\"--manual\"):",
+   "replace": "        return None, 0\n        if mime in (b\"--help\", b\"--manual\"):",
+   "must_fail": [
+    "m03 list: second id installed",
+    "m05 desktop-specific file first",
+    "m09 only a file's first matching line counts; the next file is read",
+    "f06 unanchored grep in mimeinfo.cache",
+    "b02 InitialPreference picks",
+    "s01 LXQt: rc 3",
+    "s05 no slash: rc 1",
+    "s08 --version",
+    "type outside RFC 6838 refused"
+   ]
+  },
+  {
+   "id": "k-x2",
+   "find": "        out = self.defapp_generic(mime)",
+   "replace": "        return b\"a.desktop\", 0",
+   "must_fail": [
+    "m05 desktop-specific file first",
+    "m16 CR kept in the id",
+    "d09 Exec=true is a builtin: not installed",
+    "f06 unanchored grep in mimeinfo.cache",
+    "f09 a cache value -n is an echo option",
+    "b02 InitialPreference picks"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,458 @@
+{
+ "mutants": [
+  {
+   "id": "dirs-01-home-default",
+   "rule": "dirs: XDG_DATA_HOME unset falls back to $HOME/.local/share",
+   "find": "        out.append(home + \"/.local/share/mime/\")",
+   "replace": "        out.append(home + \"/.share/mime/\")",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "dirs-02-first-order",
+   "rule": "dirs: XDG_DATA_HOME is the first element of the directory list",
+   "find": "    return out + [d + \"/mime/\" for d in raw.split(\":\") if d]",
+   "replace": "    return [d + \"/mime/\" for d in raw.split(\":\") if d] + out",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "dirs-03-empty-element",
+   "rule": "dirs: empty XDG_DATA_DIRS elements are skipped",
+   "find": "for d in raw.split(\":\") if d]",
+   "replace": "for d in raw.split(\":\")]"
+  },
+  {
+   "id": "dirs-04-data-home-empty",
+   "rule": "dirs: a set-but-empty XDG_DATA_HOME is used as-is, not the HOME default",
+   "find": "    if data_home_env is not None:\n        out.append(data_home_env + \"/mime/\")",
+   "replace": "    if data_home_env:\n        out.append(data_home_env + \"/mime/\")",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "dirs-05-default-dirs",
+   "rule": "dirs: XDG_DATA_DIRS unset means /usr/local/share/:/usr/share/",
+   "find": "raw = data_dirs_env if data_dirs_env is not None else \"/usr/local/share/:/usr/share/\"",
+   "replace": "raw = data_dirs_env if data_dirs_env is not None else \"\""
+  },
+  {
+   "id": "mode-01-version-minor",
+   "rule": "mode: a cache is valid for major 1 and minor 1..2",
+   "find": "if major != 1 or not (1 <= minor <= 2):",
+   "replace": "if major != 1 or not (1 <= minor <= 3):"
+  },
+  {
+   "id": "mode-02-version-major",
+   "rule": "mode: a cache is valid only for major version 1",
+   "find": "if major != 1 or not (1 <= minor <= 2):",
+   "replace": "if major != 2 or not (1 <= minor <= 2):"
+  },
+  {
+   "id": "mode-03-size-40",
+   "rule": "mode: a cache shorter than 40 bytes is rejected",
+   "find": "if len(buf) < 40:",
+   "replace": "if len(buf) < 4:"
+  },
+  {
+   "id": "mode-04-cache-only",
+   "rule": "mode: any loaded cache means only the caches are consulted",
+   "find": "        if caches:\n            # xdgmime.c:645-646",
+   "replace": "        if caches and not texts:\n            # xdgmime.c:645-646",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "mode-05-cache-continue",
+   "rule": "mode: a dir with a valid cache does not also read its globs",
+   "find": "                if c is not None:\n                    caches.append(c)\n                    continue",
+   "replace": "                if c is not None:\n                    caches.append(c)"
+  },
+  {
+   "id": "mode-06-globs2-before-globs",
+   "rule": "mode: globs2 is read instead of globs in one dir",
+   "find": "            elif os.path.exists(g1):",
+   "replace": "            if os.path.exists(g1):"
+  },
+  {
+   "id": "fgets-01-chunk-find",
+   "rule": "text: fgets line chunks are at most 254 bytes (newline search window)",
+   "find": "nl = data.find(b\"\\n\", i, i + 254)",
+   "replace": "nl = data.find(b\"\\n\", i, i + 255)"
+  },
+  {
+   "id": "fgets-02-chunk-end",
+   "rule": "text: fgets chunk without a newline ends at 254 bytes",
+   "find": "end = nl + 1 if nl >= 0 else min(i + 254, len(data))",
+   "replace": "end = nl + 1 if nl >= 0 else min(i + 255, len(data))"
+  },
+  {
+   "id": "fgets-03-comment-skip",
+   "rule": "text: a line starting with '#' is a comment",
+   "find": "if chunk[:1] in (b\"#\", b\"\\0\"):",
+   "replace": "if chunk[:1] in (b\"\\0\",):"
+  },
+  {
+   "id": "fgets-04-nul-skip",
+   "rule": "text: a chunk starting with NUL is skipped",
+   "find": "if chunk[:1] in (b\"#\", b\"\\0\"):",
+   "replace": "if chunk[:1] in (b\"#\",):"
+  },
+  {
+   "id": "atoi-01-sign",
+   "rule": "atoi: a leading '-' negates the weight",
+   "find": "sign = -1 if b[i] == 45 else 1",
+   "replace": "sign = 1"
+  },
+  {
+   "id": "atoi-02-whitespace",
+   "rule": "atoi: leading whitespace is skipped",
+   "find": "while i < len(b) and b[i] in b\" \\t\\n\\v\\f\\r\":",
+   "replace": "while False:"
+  },
+  {
+   "id": "v1-01-weight-50",
+   "rule": "text v1: a globs line has weight 50",
+   "find": "                weight = 50",
+   "replace": "                weight = 0"
+  },
+  {
+   "id": "cs-01-prefix",
+   "rule": "cs flags: a flag token starts at 0 or after a comma",
+   "find": "if f >= 0 and (f == 0 or flags[f - 1:f] == b\",\") and flags[f + 2:f + 3] in (b\"\", b\",\"):",
+   "replace": "if f >= 0 and flags[f + 2:f + 3] in (b\"\", b\",\"):"
+  },
+  {
+   "id": "cs-02-suffix",
+   "rule": "cs flags: a flag token ends at the end or before a comma",
+   "find": "if f >= 0 and (f == 0 or flags[f - 1:f] == b\",\") and flags[f + 2:f + 3] in (b\"\", b\",\"):",
+   "replace": "if f >= 0 and (f == 0 or flags[f - 1:f] == b\",\"):"
+  },
+  {
+   "id": "cs-03-second-colon",
+   "rule": "cs flags: the flag field ends at a second colon",
+   "find": "                if k2 >= 0:\n                    flags = flags[:k2]",
+   "replace": "                if k2 >= 0:\n                    pass"
+  },
+  {
+   "id": "glob-01-any-star",
+   "rule": "glob classification: only a leading '*' sets maybe-simple",
+   "find": "        if ch == b\"*\" and k == 0:",
+   "replace": "        if ch == b\"*\":",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "glob-02-second-star",
+   "rule": "glob classification: a second '*' makes a full glob",
+   "find": "        elif ch in (b\"\\\\\", b\"[\", b\"?\", b\"*\"):",
+   "replace": "        elif ch in (b\"\\\\\", b\"[\", b\"?\"):",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "glob-03-question",
+   "rule": "glob classification: '?' makes a full glob",
+   "find": "        elif ch in (b\"\\\\\", b\"[\", b\"?\", b\"*\"):",
+   "replace": "        elif ch in (b\"\\\\\", b\"[\", b\"*\"):",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "glob-04-backslash",
+   "rule": "glob classification: '\\\\' makes a full glob",
+   "find": "        elif ch in (b\"\\\\\", b\"[\", b\"?\", b\"*\"):",
+   "replace": "        elif ch in (b\"[\", b\"?\", b\"*\"):",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "glob-05-first-k",
+   "rule": "glob classification: a '*' at index 0 only",
+   "find": "        if ch == b\"*\" and k == 0:",
+   "replace": "        if ch == b\"*\" and k <= 1:",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "literal-01-dedupe",
+   "rule": "text literals: the duplicate key is the (glob, mime) pair",
+   "find": "            if d == data and m == mime:",
+   "replace": "            if d == data:"
+  },
+  {
+   "id": "literal-02-fold-first",
+   "rule": "text literals: the exact pass runs before the folded pass",
+   "find": "        for d, m, _w, _c in self.literals:\n            if d == name:\n                return [m]\n        for d, m, _w, c in self.literals:\n            if not c and d == lower:\n                return [m]",
+   "replace": "        for d, m, _w, c in self.literals:\n            if not c and d == lower:\n                return [m]\n        for d, m, _w, _c in self.literals:\n            if d == name:\n                return [m]"
+  },
+  {
+   "id": "literal-03-fold-cs",
+   "rule": "text literals: the folded pass skips cs literals",
+   "find": "            if not c and d == lower:",
+   "replace": "            if d == lower:"
+  },
+  {
+   "id": "trie-01-deepest",
+   "rule": "trie: the deepest matching node that yields a type wins (a shallower node only when the deeper yield nothing)",
+   "find": "    for node in reversed(path):",
+   "replace": "    for node in path:",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "trie-02-extra-order",
+   "rule": "trie: extra types precede ordinary children",
+   "find": "                node.children.insert(0, extra)",
+   "replace": "                node.children.append(extra)"
+  },
+  {
+   "id": "trie-03-extra-break",
+   "rule": "trie: the extra-type scan stops at the first non-zero child",
+   "find": "            if len(out) >= cap or c.char != 0:",
+   "replace": "            if len(out) >= cap:",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "trie-04-signed-char",
+   "rule": "trie: a name byte >= 0x80 widens to a negative 32-bit char",
+   "find": "    return byte if byte < 0x80 else (byte - 256) & 0xFFFFFFFF",
+   "replace": "    return byte"
+  },
+  {
+   "id": "trie-05-sibling-merge",
+   "rule": "trie: an equal character reuses the existing sibling node",
+   "find": "    while pos < len(siblings) and siblings[pos].char < ch:",
+   "replace": "    while pos < len(siblings) and siblings[pos].char <= ch:"
+  },
+  {
+   "id": "pass-01-second-threshold",
+   "rule": "text: the case-sensitive second pass runs while fewer than 2 types",
+   "find": "        if len(mimes) < 2:\n            mimes += _lookup(self.trie, name, len(name), True, N_MIMES - len(mimes))",
+   "replace": "        if len(mimes) < 1:\n            mimes += _lookup(self.trie, name, len(name), True, N_MIMES - len(mimes))"
+  },
+  {
+   "id": "pass-02-second-check",
+   "rule": "text: the second pass includes cs globs",
+   "find": "            mimes += _lookup(self.trie, name, len(name), True, N_MIMES - len(mimes))",
+   "replace": "            mimes += _lookup(self.trie, name, len(name), False, N_MIMES - len(mimes))"
+  },
+  {
+   "id": "pass-03-first-check",
+   "rule": "text: the first (folded-name) pass excludes cs globs",
+   "find": "        mimes = _lookup(self.trie, lower, len(name), False, N_MIMES)",
+   "replace": "        mimes = _lookup(self.trie, lower, len(name), True, N_MIMES)"
+  },
+  {
+   "id": "pass-04-full-threshold",
+   "rule": "text: full globs run only while fewer than 2 types",
+   "find": "        if len(mimes) < 2:\n            for d, m, w, _c in self.full:",
+   "replace": "        if len(mimes) < 3:\n            for d, m, w, _c in self.full:"
+  },
+  {
+   "id": "pass-05-full-unfolded",
+   "rule": "text: fnmatch receives the unfolded name",
+   "find": "                if fnmatch_c(d, name):",
+   "replace": "                if fnmatch_c(d, lower):"
+  },
+  {
+   "id": "cache-01-fnmatch-threshold",
+   "rule": "cache: the fnmatch pass runs only when the suffix pass found nothing",
+   "find": "        if not mimes:\n            mimes = _cache_fnmatch(self.caches, lower, False, N_MIMES)",
+   "replace": "        if len(mimes) < 2:\n            mimes += _cache_fnmatch(self.caches, lower, False, N_MIMES)"
+  },
+  {
+   "id": "cache-02-literal-cs-stop",
+   "rule": "cache literals: a cs hit on the folded pass ends the literal search",
+   "find": "                if check or not (w & 0x100):\n                    return [c.cstr(c.u32(lo + 4 + 12 * mid + 4)).decode(\"utf-8\", \"surrogateescape\")]\n                return []",
+   "replace": "                if check or not (w & 0x100):\n                    return [c.cstr(c.u32(lo + 4 + 12 * mid + 4)).decode(\"utf-8\", \"surrogateescape\")]\n                mn = mid + 1"
+  },
+  {
+   "id": "cache-03-weight-mask",
+   "rule": "cache: a suffix entry weight is the low 8 bits",
+   "find": "                out.append((c.cstr(mo).decode(\"utf-8\", \"surrogateescape\"), w & 0xFF))\n            i += 1",
+   "replace": "                out.append((c.cstr(mo).decode(\"utf-8\", \"surrogateescape\"), w))\n            i += 1",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "cache-04-cs-bit-suffix",
+   "rule": "cache: 0x100 in a suffix weight is the case-sensitive flag",
+   "find": "            if check or not (w & 0x100):\n                out.append((c.cstr(mo)",
+   "replace": "            if check or not (w & 0x200):\n                out.append((c.cstr(mo)",
+   "reanchored_r94_L1": "c1b"
+  },
+  {
+   "id": "cache-05-cs-bit-fnmatch",
+   "rule": "cache: 0x100 in an fnmatch weight is the case-sensitive flag",
+   "find": "            if (check or not (w & 0x100)) and fnmatch_c(c.cstr(po), name):",
+   "replace": "            if (check or not (w & 0x200)) and fnmatch_c(c.cstr(po), name):"
+  },
+  {
+   "id": "cache-06-per-cache",
+   "rule": "cache: every cache adds its own deepest suffix match",
+   "find": "        out += _cache_suffix_node(c, n_entries, offset, name, length, check, cap - len(out))",
+   "replace": "        out = _cache_suffix_node(c, n_entries, offset, name, length, check, cap - len(out))"
+  },
+  {
+   "id": "cache-07-fnmatch-unfolded",
+   "rule": "cache: the second fnmatch pass receives the unfolded name",
+   "find": "            mimes += _cache_fnmatch(self.caches, name, True, N_MIMES - len(mimes))",
+   "replace": "            mimes += _cache_fnmatch(self.caches, lower, True, N_MIMES - len(mimes))"
+  },
+  {
+   "id": "cache-08-literal-order",
+   "rule": "cache literals: the folded pass runs before the exact pass",
+   "find": "        r = _cache_literal(self.caches, lower, False)\n        if r:\n            return r\n        r = _cache_literal(self.caches, name, True)",
+   "replace": "        r = _cache_literal(self.caches, name, True)\n        if r:\n            return r\n        r = _cache_literal(self.caches, lower, False)"
+  },
+  {
+   "id": "dupe-01-max-weight",
+   "rule": "dupes: the merged weight is the larger of the two",
+   "find": "                a[i][1] = max(a[i][1], a[j][1])",
+   "replace": "                a[i][1] = a[j][1]"
+  },
+  {
+   "id": "dupe-02-swap-from-end",
+   "rule": "dupes: the duplicate slot is refilled from the end of the list",
+   "find": "                last -= 1\n                a[j] = list(a[last])",
+   "replace": "                a[j] = list(a[i])\n                last -= 1"
+  },
+  {
+   "id": "dupe-03-sort-descending",
+   "rule": "sort: higher weight sorts first",
+   "find": "    a.sort(key=lambda x: -x[1])",
+   "replace": "    a.sort(key=lambda x: x[1])"
+  },
+  {
+   "id": "dupe-04-cap-10",
+   "rule": "cap: at most 10 mime types are returned",
+   "find": "N_MIMES = 10",
+   "replace": "N_MIMES = 1"
+  },
+  {
+   "id": "guess-01-trailing-slash",
+   "rule": "guess: a trailing '/' is inode/directory, uncertain",
+   "find": "        if filename.endswith(b\"/\"):",
+   "replace": "        if False:"
+  },
+  {
+   "id": "guess-02-one-certain",
+   "rule": "guess: exactly one type is certain",
+   "find": "        if len(types) == 1:",
+   "replace": "        if len(types) >= 1:"
+  },
+  {
+   "id": "guess-03-none-uncertain",
+   "rule": "guess: no type is application/octet-stream, uncertain",
+   "find": "            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}",
+   "replace": "            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}"
+  },
+  {
+   "id": "guess-04-several-uncertain",
+   "rule": "guess: several types means the first, uncertain",
+   "find": "        if not types:\n            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}\n        return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+   "replace": "        if not types:\n            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}\n        return {\"type\": types[0], \"uncertain\": 0, \"types\": types}"
+  },
+  {
+   "id": "guess-05-basename",
+   "rule": "basename: only the last path element is looked up",
+   "find": "    return q.rsplit(b\"/\", 1)[-1]",
+   "replace": "    return q"
+  },
+  {
+   "id": "guess-06-empty-name",
+   "rule": "basename: an empty path becomes '.'",
+   "find": "    if not p:\n        return b\".\"",
+   "replace": "    if not p:\n        return b\"\""
+  },
+  {
+   "id": "dirs-05-home-concat",
+   "rule": "dirs: HOME is concatenated, not path-joined (empty HOME -> /.local/share/mime/)",
+   "find": "        out.append(home + \"/.local/share/mime/\")",
+   "replace": "        out.append(os.path.join(home, \".local/share/mime/\"))",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "dirs-06-home-unset",
+   "rule": "dirs: an unset HOME adds no user dir",
+   "find": "    elif home is not None:\n        out.append(home",
+   "replace": "    else:\n        home = home if home is not None else \"/\"\n        out.append(home",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "glob-06-bare-star",
+   "rule": "text: a bare * glob is inert",
+   "find": "                if not suffix:\n                    # `*`",
+   "replace": "                if not suffix:\n                    suffix = [0]\n                if False:\n                    # `*`",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "utf8-01-signed-lead",
+   "rule": "text: a 0xFE/0xFF glob byte decodes to its sign-extended value",
+   "find": "        r, n = _s8(c), 1",
+   "replace": "        r, n = c, 1",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "utf8-02-continuation",
+   "rule": "text: a lone continuation byte decodes to its sign-extended value",
+   "find": "    if not c & 0x80 or not c & 0x40:\n        return _s8(c)",
+   "replace": "    if not c & 0x80 or not c & 0x40:\n        return c",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "utf8-03-skip-table",
+   "rule": "text: character starts follow the xdgmime skip table (0xFE/0xFF skip 1)",
+   "find": "[6] * 2 + [1] * 2  #",
+   "replace": "[6] * 2 + [6] * 2  #",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "utf8-04-multibyte",
+   "rule": "text: a multi-byte glob character decodes to its code point",
+   "find": "        r = ((r << 6) | (b[i + k] & 0x3F)) & 0xFFFFFFFF",
+   "replace": "        r = ((r << 6) | (b[i + k] & 0x7F)) & 0xFFFFFFFF",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "cache-08-page-zero",
+   "rule": "cache: a read past st_size inside the last page sees zeros",
+   "find": "        self.buf = buf + b\"\\0\" * (-len(buf) % page)",
+   "replace": "        self.buf = buf",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "cache-09-oob-size",
+   "rule": "cache: bounds checks use the file size",
+   "find": "        if oob(child_offset, n_children, 12, c.size):",
+   "replace": "        if oob(child_offset, n_children, 12, len(c.buf)) and False:",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "mode-06-lazy-text",
+   "rule": "mode: text files are parsed only when no cache loaded (a bad globs2 beside a cache cannot refuse)",
+   "find": "        if caches:\n            # xdgmime.c:645-646",
+   "replace": "        for path, v2 in texts:\n            TextDB().read(path, v2)\n        if caches:\n            # xdgmime.c:645-646",
+   "added_r94_L1": "c1b"
+  },
+  {
+   "id": "cache-10-deep-order",
+   "rule": "cache: the deepest node that yields a type wins",
+   "find": "    for n_children, child_offset in reversed(path):",
+   "replace": "    for n_children, child_offset in path:",
+   "added_r94_L1": "c1b"
+  }
+ ],
+ "equivalent_not_counted": [
+  {
+   "id": "dirs-03-empty-element",
+   "rule": "dirs: empty XDG_DATA_DIRS elements are skipped",
+   "argument": "The mutant keeps the empty element and appends the literal directory '/mime/' (d + '/mime/' with d = ''). The only way that changes an answer is if a database exists under /mime; the case schema materialises files only below {root}, and /mime does not exist on the measurement host (tested: `test -d /mime` false), so the extra directory is inert. Order of the real directories is unchanged, so no case can distinguish it. Measured: identical (type, uncertain) on all 55 cases."
+  },
+  {
+   "id": "mode-05-cache-continue",
+   "rule": "mode: a dir with a valid cache does not also read its globs",
+   "argument": "Without the `continue`, a dir with a valid mime.cache also parses its globs2 into TextDB. TextDB is only consulted when `caches` is empty (`self.db = CacheDB(caches) if caches else text`), and a dir that produced a cache guarantees `caches` is non-empty; `self.mode` is computed from the same list. The extra parse therefore cannot reach any answer. Measured: identical on all 55 cases, including mode-06-cache-ignores-globs (cache + globs2 in one dir)."
+  },
+  {
+   "id": "fgets-01-chunk-find",
+   "rule": "text: fgets line chunks are at most 254 bytes (newline search window)",
+   "argument": "The 255-byte window differs only when a '\\n' sits at exactly offset 254 of a chunk: the 254-window then ends the chunk before it (end = i+254) and the next chunk is the bare '\\n'; the 255-window ends the chunk after it (end = nl+1 = i+255). Both parse to the same globs, because a chunk ending in '\\n' has that byte stripped and a one-byte '\\n' chunk is neither a comment nor a ':' line, so it is skipped, and the following chunk starts at the same byte in both models. Measured: identical (type, uncertain) for newline offsets 240..265 in a 400-byte line, over 4 names (eq harness, 26 fixtures). fgets-02 (the 254-byte chunk end) IS killed by fgets-01-chunk-254, so the chunk length itself stays covered."
+  },
+  {
+   "id": "fgets-04-nul-skip",
+   "rule": "text: a chunk starting with NUL is skipped",
+   "argument": "A chunk whose first byte is NUL is truncated to b'' by `line = chunk.split(b'\\0', 1)[0]`, then fails `k = p.find(b':') < 0` and is skipped, exactly as the explicit NUL test would do. The mutation only removes an early exit, not a parse. Measured: identical on NUL bytes at offsets 0, 1, 253, 254, 255, 508 of a globs2 file (eq harness, 6 fixtures, 2 names each) and on all 55 cases."
+  }
+ ]
+}
