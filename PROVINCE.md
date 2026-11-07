@@ -511,3 +511,6 @@ data roots (`~/.config`, `/etc/xdg`, `~/.local/share/applications`, `/usr/local/
 entries; it launches nothing and calls the C library's `qsort`/`bsearch` only to replay xdgmime's alias lookup.
 Writing an association (`gio mime TYPE HANDLER`, `xdg-mime default`, `xdg-settings set`, `update-desktop-database`)
 is operator-owned and never run by the lane.
+
+**Round-91 refinement (C2) — one record gate; no new write surface.** `quality/check-seat-reports.py` reads the lane's own wave
+dispatches (`--rev` reads committed bytes; `--worktree` reads the lane tree) and writes nothing.
