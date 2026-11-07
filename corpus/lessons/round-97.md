@@ -218,3 +218,9 @@ Class: misroot, same family as M97-7. `host-list-final.txt` (772,157 B, the host
 second sweep pass. Fix: copied byte-exact into the lane, fleet copy deleted, sweep re-run.
 Shown able to fail: `cmp /home/vgpnk/Projects/shokunin/host-list-final.txt mado-shokunin/.ufo/waves/round-97/controls/filetype-host-r97.txt`
 exits 0 before the deletion; the fleet status no longer lists it after.
+
+**Correction to M97-8 (appended, same round).** The sentence "it is byte-identical to the seat's wave copy (`cmp`
+clean)" is false as committed: `cmp` reports the two files differ at byte 1 (the wave copy carries a header block and
+the filtered list; the fleet-root file is the seat's intermediate census, 772,157 B vs 779,066 B). The misroot and
+its fix stand (the file was copied into the lane and the fleet copy deleted); what is corrected is the identity
+claim, which the L1 wrote before running `cmp`. Shown able to fail: `cmp` on the two files exits 1, not 0.
