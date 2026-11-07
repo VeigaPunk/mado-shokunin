@@ -536,3 +536,7 @@ file instead of skipping or blocking on it, and in `--worktree` it resolves real
 `portals.conf` and `.portal` files as bytes and applies GLib 2.90.1 GKeyFile's byte rules (S511–S514): UTF-8 is checked
 when a value is read, VT is not whitespace, a NUL ends a line's C string. It still reads only the XDG config/data roots it is
 given and writes nothing; editing `~/.config/xdg-desktop-portal/portals.conf` stays operator-owned.
+
+**Round-93 refinement (C2) — one record gate; no new write surface.** `quality/check-selftest-strength.py` copies a lane
+gate into scratch, applies the committed kill-set's mutants there and runs its `--selftest`; it reads only the lane tree and
+writes only scratch.

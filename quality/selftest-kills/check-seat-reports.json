@@ -1,0 +1,357 @@
+{
+ "tool": "quality/check-seat-reports.py",
+ "tool_sha256": "176fc066b49334921e4fd746de55db8106709c29dfe225430224c9d46ed1663a",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "SEAT_REPORTS_SELFTEST_FAIL: ",
+ "result_line_prefix": "SEAT_REPORTS_SELFTEST: ",
+ "selftest_checks": 23,
+ "note": "round 93: 20 kills by R93MExecGateC2 + 12 by the L1 from R93MReviewC2 \u00a72.3/\u00a73.3 and R93MMutC2 \u00a76; must_fail = the exact FAIL set of the mutant on the unweakened selftest",
+ "kills": [
+  {
+   "id": "k-unsafe-abs",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "return path.startswith(\"/\") or \"..\" in path.split(\"/\")",
+   "replace": "return \"..\" in path.split(\"/\")",
+   "must_fail": [
+    "rev: absolute trailer path -> SR03"
+   ]
+  },
+  {
+   "id": "k-tok-ascii",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "if s and all(33 <= ord(ch) <= 126 for ch in s) and not s.startswith('\"'):",
+   "replace": "if s and all(33 <= ord(ch) <= 255 for ch in s) and not s.startswith('\"'):",
+   "must_fail": [
+    "name with space and non-ASCII path -> ASCII tokens (F2)"
+   ]
+  },
+  {
+   "id": "k-round-dedup",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "rounds = sorted(set(rounds))  # a repeated --round counts once (r91 F3)",
+   "replace": "rounds = sorted(rounds)",
+   "must_fail": [
+    "repeated --round counts once (F3)"
+   ]
+  },
+  {
+   "id": "k-plain-prose",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "PLAIN = re.compile(r\"^Report: (\\S+)\\s*$\", re.M)  # residual calls: no rendered trailer, one plain line",
+   "replace": "PLAIN = re.compile(r\"^Report: (\\S+)\", re.M)  # residual calls: no rendered trailer, one plain line",
+   "must_fail": [
+    "prose Report line is not a trailer -> SR04"
+   ]
+  },
+  {
+   "id": "k-plain-no-M",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "PLAIN = re.compile(r\"^Report: (\\S+)\\s*$\", re.M)  # residual calls: no rendered trailer, one plain line",
+   "replace": "PLAIN = re.compile(r\"^Report: (\\S+)\\s*$\")  # residual calls: no rendered trailer, one plain line",
+   "must_fail": [
+    "plain residual trailer -> SR01 rc1"
+   ]
+  },
+  {
+   "id": "k-missing-tasks",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "            for t in tasks:",
+   "replace": "            for t in (tasks if not isinstance(tree, WorkTree) else tasks[:1]):",
+   "must_fail": [
+    "missing -> SR01 rc1"
+   ]
+  },
+  {
+   "id": "k-git-size",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "            self.sizes[name] = int(parts[3])",
+   "replace": "            self.sizes[name] = 0",
+   "must_fail": [
+    "rev: present -> OK rc0"
+   ]
+  },
+  {
+   "id": "k-rev-size-plus",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "            self.sizes[name] = int(parts[3])",
+   "replace": "            self.sizes[name] = int(parts[3]) + 1",
+   "must_fail": [
+    "rev: empty and missing -> SR02 SR01 rc1"
+   ]
+  },
+  {
+   "id": "k-wt-size-plus",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "        return os.path.getsize(p)",
+   "replace": "        return os.path.getsize(p) + 1",
+   "must_fail": [
+    "empty -> SR02 rc1"
+   ]
+  },
+  {
+   "id": "k-all-rounds",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "        rounds = sorted(dispatches)",
+   "replace": "        rounds = sorted(dispatches)[:1]",
+   "must_fail": [
+    "--all scans every round"
+   ]
+  },
+  {
+   "id": "k-wt-islink-noleaf",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "        return os.path.islink(os.path.join(self.repo, path)) or not self.inside(path)",
+   "replace": "        return not self.inside(path)",
+   "must_fail": [
+    "symlinked report -> SR03 rc1"
+   ]
+  },
+  {
+   "id": "k-wt-islink-noinside",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "        return os.path.islink(os.path.join(self.repo, path)) or not self.inside(path)",
+   "replace": "        return os.path.islink(os.path.join(self.repo, path))",
+   "must_fail": [
+    "worktree: report through a symlinked parent dir -> SR03 (F5)"
+   ]
+  },
+  {
+   "id": "k-git-islink",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "def is_link(self, path: str) -> bool:\n        return path in self.links",
+   "replace": "def is_link(self, path: str) -> bool:\n        return False",
+   "must_fail": [
+    "rev: symlinked report -> SR03 rc1"
+   ]
+  },
+  {
+   "id": "k-git-check-dispatch-link",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "if path in self.links:\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")",
+   "replace": "if False:\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")",
+   "must_fail": [
+    "rev: symlinked dispatch -> rc2 (F1)"
+   ]
+  },
+  {
+   "id": "k-wt-check-dispatch-link",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "if os.path.islink(p):\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")",
+   "replace": "if False:\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")",
+   "must_fail": [
+    "worktree: symlinked dispatch -> rc2 (F1)"
+   ]
+  },
+  {
+   "id": "k-nodispatch-filter",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "    for n in rounds:\n        if n not in dispatches:\n            raise SetupError(f\"round {n}: no <wave>-dispatch.json in .ufo/waves/round-{n}/\")",
+   "replace": "    rounds = [n for n in rounds if n in dispatches]\n    for n in rounds:\n        pass",
+   "must_fail": [
+    "no dispatch for round -> rc2"
+   ]
+  },
+  {
+   "id": "k-badjson-cont",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "            except (ValueError, KeyError, TypeError, UnicodeDecodeError):\n                raise SetupError(f\"{p}: not a dispatch (taskCall.tasks)\") from None",
+   "replace": "            except (ValueError, KeyError, TypeError, UnicodeDecodeError):\n                c[\"waves\"] += 1\n                continue",
+   "must_fail": [
+    "bad dispatch json -> rc2"
+   ]
+  },
+  {
+   "id": "k-all-nodispatch",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "        if not dispatches:\n            raise SetupError(\"--all: no <wave>-dispatch.json under .ufo/waves/\")",
+   "replace": "        if not dispatches:\n            rounds = []",
+   "must_fail": [
+    "--all with no dispatch -> rc2"
+   ]
+  },
+  {
+   "id": "k-fifo-msg",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "        if not stat.S_ISREG(st.st_mode):\n            raise SetupError(f\"{path}: dispatch is not a regular file\")",
+   "replace": "        if not stat.S_ISREG(st.st_mode):\n            raise SetupError(f\"{path}: dispatch is a regular file\")",
+   "must_fail": [
+    "worktree: FIFO dispatch -> rc2, no hang (F4)"
+   ]
+  },
+  {
+   "id": "k-found-last",
+   "what": "R93MExecGateC2 unique killer",
+   "find": "                rp = found[-1]",
+   "replace": "                rp = found[0]",
+   "must_fail": [
+    "last trailer wins"
+   ]
+  },
+  {
+   "id": "x-present-none",
+   "what": "size = None: the present-report path breaks (review C2 \u00a72.3)",
+   "find": "                size = tree.size(rp)",
+   "replace": "                size = None",
+   "must_fail": [
+    "all present -> OK rc0",
+    "missing -> SR01 rc1",
+    "empty -> SR02 rc1",
+    "--all scans every round",
+    "rev: present -> OK rc0",
+    "rev: empty and missing -> SR02 SR01 rc1"
+   ]
+  },
+  {
+   "id": "x-unsafe-or",
+   "what": "unsafe() bypassed unless the path starts with .. (review C2 \u00a72.3)",
+   "find": "                if unsafe(rp) or tree.is_link(rp):",
+   "replace": "                if tree.is_link(rp) and not rp.startswith(\"..\"):",
+   "must_fail": [
+    "unsafe -> SR03 rc1",
+    "rev: absolute trailer path -> SR03"
+   ]
+  },
+  {
+   "id": "x-untrailed-found",
+   "what": "an untrailed seat is treated as trailered (review C2 \u00a72.3)",
+   "find": "                if not found:\n                    c[\"untrailed\"] += 1\n                    lines.append(f\"SR04 untrailed {where} {name}\")\n                    continue",
+   "replace": "                if not found:\n                    found = [\"x\"]",
+   "must_fail": [
+    "untrailed -> SR04 rc1",
+    "prose Report line is not a trailer -> SR04"
+   ]
+  },
+  {
+   "id": "x-wt-symlink-msg",
+   "what": "worktree symlink-dispatch message loses 'symlink' (review C2 M18; MutC2 H2)",
+   "find": "dispatch is a symlink, not a regular file\")\n        if not self.inside(path):",
+   "replace": "dispatch is a link, not a regular file\")\n        if not self.inside(path):",
+   "must_fail": [
+    "worktree: symlinked dispatch -> rc2 (F1)"
+   ]
+  },
+  {
+   "id": "x-wt-symlink-upper",
+   "what": "worktree symlink-dispatch message upper-cased (MutC2 E5)",
+   "find": "raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")\n        if not self.inside(path):",
+   "replace": "raise SetupError(f\"{path}: DISPATCH IS A SYMLINK, not a regular file\")\n        if not self.inside(path):",
+   "must_fail": [
+    "worktree: symlinked dispatch -> rc2 (F1)"
+   ]
+  },
+  {
+   "id": "x-space-quoting",
+   "what": "spaces in tokens no longer escaped (review C2 M19; MutC2 N2)",
+   "find": "return json.dumps(s, ensure_ascii=True).replace(\" \", \"\\\\u0020\")",
+   "replace": "return json.dumps(s, ensure_ascii=True)",
+   "must_fail": [
+    "name with space and non-ASCII path -> ASCII tokens (F2)"
+   ]
+  },
+  {
+   "id": "x-summary-waves",
+   "what": "summary waves count off by one (review C2 M20)",
+   "find": "f\"waves={c['waves']} seats=",
+   "replace": "f\"waves={c['waves'] + 1} seats=",
+   "must_fail": [
+    "repeated --round counts once (F3)"
+   ]
+  },
+  {
+   "id": "x-mode-fixed",
+   "what": "summary always says mode=rev (MutC2 E3)",
+   "find": "    out(f\"SEAT_REPORTS: mode={'worktree' if worktree else 'rev'} rev=",
+   "replace": "    out(f\"SEAT_REPORTS: mode=rev rev=",
+   "must_fail": [
+    "all present -> OK rc0",
+    "missing -> SR01 rc1",
+    "empty -> SR02 rc1",
+    "unsafe -> SR03 rc1",
+    "untrailed -> SR04 rc1",
+    "symlinked report -> SR03 rc1",
+    "prose Report line is not a trailer -> SR04",
+    "plain residual trailer -> SR01 rc1",
+    "last trailer wins",
+    "--all scans every round",
+    "name with space and non-ASCII path -> ASCII tokens (F2)",
+    "repeated --round counts once (F3)",
+    "worktree: report through a symlinked parent dir -> SR03 (F5)"
+   ]
+  },
+  {
+   "id": "x-dup-sr01",
+   "what": "every SR01 finding printed twice (review C2 M22)",
+   "find": "                    lines.append(f\"SR01 missing {where} {name} {rp}\")",
+   "replace": "                    lines.append(f\"SR01 missing {where} {name} {rp}\")\n                    lines.append(f\"SR01 missing {where} {name} {rp}\")",
+   "must_fail": [
+    "missing -> SR01 rc1",
+    "plain residual trailer -> SR01 rc1",
+    "last trailer wins",
+    "--all scans every round",
+    "rev: empty and missing -> SR02 SR01 rc1",
+    "name with space and non-ASCII path -> ASCII tokens (F2)",
+    "repeated --round counts once (F3)"
+   ]
+  },
+  {
+   "id": "x-extra-sr04",
+   "what": "a bogus extra SR04 line on every run (MutC2 E1)",
+   "find": "    return lines, c",
+   "replace": "    lines.append(\"SR04 bogus round-7/w1 A\")\n    return lines, c",
+   "must_fail": [
+    "all present -> OK rc0",
+    "missing -> SR01 rc1",
+    "empty -> SR02 rc1",
+    "unsafe -> SR03 rc1",
+    "untrailed -> SR04 rc1",
+    "symlinked report -> SR03 rc1",
+    "prose Report line is not a trailer -> SR04",
+    "plain residual trailer -> SR01 rc1",
+    "last trailer wins",
+    "--all scans every round",
+    "rev: present -> OK rc0",
+    "rev: symlinked report -> SR03 rc1",
+    "rev: empty and missing -> SR02 SR01 rc1",
+    "name with space and non-ASCII path -> ASCII tokens (F2)",
+    "repeated --round counts once (F3)",
+    "worktree: report through a symlinked parent dir -> SR03 (F5)",
+    "rev: absolute trailer path -> SR03"
+   ]
+  },
+  {
+   "id": "x-rc-always-1",
+   "what": "the check exits 1 even when every report is present (MutC2 E2)",
+   "find": "    return 1 if bad else 0",
+   "replace": "    return 1",
+   "must_fail": [
+    "all present -> OK rc0",
+    "rev: present -> OK rc0"
+   ]
+  },
+  {
+   "id": "x-nonascii-tail",
+   "what": "a non-ASCII line appended after the findings (MutC2 E4)",
+   "find": "    return lines, c",
+   "replace": "    if lines:\n        lines.append(\"\\u00e9\")\n    return lines, c",
+   "must_fail": [
+    "missing -> SR01 rc1",
+    "empty -> SR02 rc1",
+    "unsafe -> SR03 rc1",
+    "untrailed -> SR04 rc1",
+    "symlinked report -> SR03 rc1",
+    "prose Report line is not a trailer -> SR04",
+    "plain residual trailer -> SR01 rc1",
+    "last trailer wins",
+    "--all scans every round",
+    "rev: symlinked report -> SR03 rc1",
+    "rev: empty and missing -> SR02 SR01 rc1",
+    "name with space and non-ASCII path -> ASCII tokens (F2)",
+    "repeated --round counts once (F3)",
+    "worktree: report through a symlinked parent dir -> SR03 (F5)",
+    "rev: absolute trailer path -> SR03"
+   ]
+  }
+ ]
+}
