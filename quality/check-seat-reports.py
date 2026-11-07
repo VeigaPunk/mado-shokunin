@@ -29,7 +29,12 @@ Findings (one line each, stable ids):
 Summary: `SEAT_REPORTS: mode=… rev=… rounds=R waves=W seats=N trailered=T
 present=P missing=M empty=E unsafe=U untrailed=X verdict=OK|MISSING`.
 Exit 0 OK, 1 any finding, 2 setup error (no repo, bad rev, named round without
-a dispatch, a dispatch that is not JSON or lacks taskCall.tasks).
+a dispatch, a dispatch that is not JSON or lacks taskCall.tasks, a dispatch that is not a regular file —
+a symlink or a directory in either mode, a gitlink in --rev, a FIFO/device in --worktree — so neither mode skips or blocks on one).
+Round 92: a seat name or path that is not one printable ASCII token is rendered as a JSON string (so every
+line is ASCII and splits into the same fields); `--round N` given twice counts once; in --worktree a report
+or dispatch whose real path leaves the repository (a symlinked parent directory) is SR03 unsafe / a setup
+error, as --rev already says for the same tree.
 `--selftest` checks the exit codes and finding ids on throwaway fixtures.
 """
 from __future__ import annotations
@@ -38,6 +43,7 @@ import argparse
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 import tempfile
@@ -65,6 +71,7 @@ class GitTree:
         # regular blobs (100644/100755) are reports; a symlink (120000) is recorded as unsafe, as in --worktree mode
         self.sizes: dict[str, int] = {}
         self.links: set[str] = set()
+        self.others: set[str] = set()  # gitlinks (160000) and anything else that is neither blob nor symlink
         for rec in r.stdout.split(b"\0"):
             if not rec:
                 continue
@@ -75,9 +82,24 @@ class GitTree:
                 self.links.add(name)
             elif parts[1] == b"blob":
                 self.sizes[name] = int(parts[3])
+            else:
+                self.others.add(name)
+            # a tree named like a dispatch (its files are listed, the tree itself is not) is recorded too
+            parts_ = name.split("/")
+            for k in range(1, len(parts_)):
+                prefix = "/".join(parts_[:k])
+                if DISPATCH.match(prefix):
+                    self.others.add(prefix)
 
     def paths(self) -> list[str]:
-        return [p for p in self.sizes if p.startswith(".ufo/waves/")]
+        # blobs and symlinks: a dispatch stored as a symlink must be seen (and refused), not skipped (r91 F1)
+        return [p for p in list(self.sizes) + sorted(self.links) + sorted(self.others) if p.startswith(".ufo/waves/")]
+
+    def check_dispatch(self, path: str) -> None:
+        if path in self.links:
+            raise SetupError(f"{path}: dispatch is a symlink, not a regular file")
+        if path not in self.sizes:
+            raise SetupError(f"{path}: dispatch is not a regular file")
 
     def size(self, path: str) -> int | None:
         return self.sizes.get(path)
@@ -97,13 +119,33 @@ class WorkTree:
         if not os.path.isdir(repo):
             raise SetupError(f"no such directory: {repo}")
         self.repo = repo
+        self.real = os.path.realpath(repo)
         self.rev = "worktree"
 
+    def inside(self, path: str) -> bool:
+        r = os.path.realpath(os.path.join(self.repo, path))
+        return r == self.real or r.startswith(self.real + os.sep)
+
+    def check_dispatch(self, path: str) -> None:
+        p = os.path.join(self.repo, path)
+        if os.path.islink(p):
+            raise SetupError(f"{path}: dispatch is a symlink, not a regular file")
+        if not self.inside(path):
+            raise SetupError(f"{path}: dispatch resolves outside the repository")
+        try:
+            st = os.stat(p)
+        except OSError as e:
+            raise SetupError(f"cannot stat {path}: {e}") from None
+        if not stat.S_ISREG(st.st_mode):
+            raise SetupError(f"{path}: dispatch is not a regular file")
     def paths(self) -> list[str]:
         out = []
         base = os.path.join(self.repo, ".ufo", "waves")
-        for d, _, files in os.walk(base):
-            for f in files:
+        for d, dirs, files in os.walk(base):
+            # a directory (or a symlink to one) named like a dispatch is listed too, so check_dispatch refuses it
+            # instead of the wave vanishing (round-92 w1 R92MReviewC2 finding 1)
+            for f in files + [x for x in dirs if DISPATCH.match(
+                    os.path.relpath(os.path.join(d, x), self.repo).replace(os.sep, "/"))]:
                 out.append(os.path.relpath(os.path.join(d, f), self.repo).replace(os.sep, "/"))
         return out
 
@@ -114,7 +156,8 @@ class WorkTree:
         return os.path.getsize(p)
 
     def is_link(self, path: str) -> bool:
-        return os.path.islink(os.path.join(self.repo, path))
+        # a leaf symlink, or a path whose parent directories lead out of the repository (r91 F5)
+        return os.path.islink(os.path.join(self.repo, path)) or not self.inside(path)
 
     def read(self, path: str) -> bytes:
         try:
@@ -128,12 +171,21 @@ def unsafe(path: str) -> bool:
     return path.startswith("/") or ".." in path.split("/")
 
 
+def tok(s: str) -> str:
+    """One printable-ASCII token as is; anything else as a JSON string (ASCII, no spaces split it) (r91 F2)."""
+    if s and all(33 <= ord(ch) <= 126 for ch in s) and not s.startswith('"'):
+        return s
+    return json.dumps(s, ensure_ascii=True).replace(" ", "\\u0020")
+
+
 def check(tree, rounds: list[int] | None) -> tuple[list[str], dict]:
     dispatches: dict[int, list[tuple[str, str]]] = {}
     for p in tree.paths():
         m = DISPATCH.match(p)
         if m:
             dispatches.setdefault(int(m.group(1)), []).append((m.group(2), p))
+    if rounds is not None:
+        rounds = sorted(set(rounds))  # a repeated --round counts once (r91 F3)
     if rounds is None:
         if not dispatches:
             raise SetupError("--all: no <wave>-dispatch.json under .ufo/waves/")
@@ -146,6 +198,7 @@ def check(tree, rounds: list[int] | None) -> tuple[list[str], dict]:
          "unsafe": 0, "untrailed": 0}
     for n in rounds:
         for wave, p in sorted(dispatches[n]):
+            tree.check_dispatch(p)
             try:
                 d = json.loads(tree.read(p).decode("utf-8"))
                 tasks = d["taskCall"]["tasks"]
@@ -156,7 +209,7 @@ def check(tree, rounds: list[int] | None) -> tuple[list[str], dict]:
             c["waves"] += 1
             for t in tasks:
                 c["seats"] += 1
-                name = str(t.get("name", "?")) if isinstance(t, dict) else "?"
+                name = tok(str(t.get("name", "?")) if isinstance(t, dict) else "?")
                 text = t.get("task", "") if isinstance(t, dict) else ""
                 body = text if isinstance(text, str) else ""
                 found = TRAILER.findall(body) or PLAIN.findall(body)
@@ -169,9 +222,11 @@ def check(tree, rounds: list[int] | None) -> tuple[list[str], dict]:
                 rp = found[-1]
                 if unsafe(rp) or tree.is_link(rp):
                     c["unsafe"] += 1
+                    rp = tok(rp)  # printed as one ASCII token (r91 F2); checks above read the raw path
                     lines.append(f"SR03 unsafe {where} {name} {rp}")
                     continue
                 size = tree.size(rp)
+                rp = tok(rp)
                 if size is None:
                     c["missing"] += 1
                     lines.append(f"SR01 missing {where} {name} {rp}")
@@ -210,13 +265,19 @@ def selftest() -> int:
             body += f"\nReport: write your scoped findings to {path}"
         return {"name": name, "agent": "scout", "task": body}
 
-    def case(label: str, files: dict, rounds, want_rc: int, want_ids: list[str], git: bool = False) -> None:
-        with tempfile.TemporaryDirectory() as d:
+    def case(label: str, files: dict, rounds, want_rc: int, want_ids: list[str], git: bool = False,
+             want_in: str = "") -> None:
+        with tempfile.TemporaryDirectory() as d, tempfile.TemporaryDirectory() as outside:
+            with open(os.path.join(outside, "A.md"), "w") as fh:
+                fh.write("outside")
             for rel, body in files.items():
                 p = os.path.join(d, rel)
                 os.makedirs(os.path.dirname(p), exist_ok=True)
+                if isinstance(body, dict) and "fifo" in body:
+                    os.mkfifo(p)
+                    continue
                 if isinstance(body, dict):
-                    os.symlink(body["symlink"], p)
+                    os.symlink(body["symlink"].replace("{OUTSIDE}", outside), p)
                     continue
                 with open(p, "wb") as fh:
                     fh.write(body if isinstance(body, bytes) else body.encode())
@@ -243,6 +304,7 @@ def selftest() -> int:
             ids = [g.split()[0] for g in got if re.match(r"^SR0[1-4] ", g)]
             mode = "rev" if git else "worktree"
             ok = rc == want_rc and ids == want_ids and (rc == 2 or got[-1].startswith(f"SEAT_REPORTS: mode={mode}"))
+            ok = ok and all(g.isascii() for g in got) and (not want_in or any(want_in in g for g in got))
             results.append((label, ok))
 
     W = ".ufo/waves/round-7"
@@ -277,6 +339,23 @@ def selftest() -> int:
          [7], 1, ["SR03"], git=True)
     case("rev: empty and missing -> SR02 SR01 rc1", {f"{W}/w1-dispatch.json": disp(task("A", f"{W}/w1/A.md"),
          task("B", f"{W}/w1/B.md")), f"{W}/w1/A.md": ""}, [7], 1, ["SR02", "SR01"], git=True)
+    # round 92: the five r91 residual defects (R91MResidC2 F1-F5), one fixture each at least
+    case("rev: symlinked dispatch -> rc2 (F1)", {f"{W}/w1-dispatch.json": disp(task("A", f"{W}/w1/A.md")), f"{W}/w1/A.md": "x",
+         f"{W}/real.json": disp(task("B", f"{W}/w2/B.md")), f"{W}/w2-dispatch.json": {"symlink": "real.json"}},
+         [7], 2, [], git=True, want_in="dispatch is a symlink")
+    case("worktree: symlinked dispatch -> rc2 (F1)", {f"{W}/w1-dispatch.json": disp(task("A", f"{W}/w1/A.md")),
+         f"{W}/w1/A.md": "x", f"{W}/real.json": disp(task("B", f"{W}/w2/B.md")),
+         f"{W}/w2-dispatch.json": {"symlink": "real.json"}}, [7], 2, [], want_in="dispatch is a symlink")
+    case("name with space and non-ASCII path -> ASCII tokens (F2)", {f"{W}/r1-dispatch.json": disp({"name": "A b\nc",
+         "task": f"Report: {W}/r1/\u00e9.md\n"})}, [7], 1, ["SR01"], want_in='"A\\u0020b\\nc"')
+    case("repeated --round counts once (F3)", {f"{W}/w1-dispatch.json": disp(task("A", f"{W}/w1/A.md"))}, [7, 7], 1,
+         ["SR01"], want_in="rounds=1 waves=1 seats=1")
+    case("worktree: FIFO dispatch -> rc2, no hang (F4)", {f"{W}/w1-dispatch.json": {"fifo": True}}, [7], 2, [],
+         want_in="not a regular file")
+    case("worktree: report through a symlinked parent dir -> SR03 (F5)", {f"{W}/w1-dispatch.json":
+         disp(task("A", f"{W}/out/A.md")), f"{W}/out": {"symlink": "{OUTSIDE}"}}, [7], 1, ["SR03"])
+    case("rev: absolute trailer path -> SR03", {f"{W}/w1-dispatch.json": disp(task("A", "/etc/hostname"))}, [7], 1,
+         ["SR03"], git=True)
     failed = [n for n, ok in results if not ok]
     for n in failed:
         print(f"SEAT_REPORTS_SELFTEST_FAIL: {n}")

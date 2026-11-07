@@ -527,3 +527,7 @@ pathname expansions xdg-mime performs, and stats `PATH` entries and the working 
 xdg-mime, not a shell) and writes nothing (`--selftest` writes only ephemeral fixtures in a private temporary
 directory). Launching (`xdg-open`, `gtk-launch`) and writing associations (`xdg-mime default`, `xdg-settings set`)
 stay operator-owned and are never run by the lane.
+
+**Round-92 refinement (C2) — the record gate fails closed; no new write surface.** `quality/check-seat-reports.py` still reads
+only the lane's own wave dispatches and writes nothing; it now refuses (setup error) a dispatch path that is not a regular
+file instead of skipping or blocking on it, and in `--worktree` it resolves real paths to keep reports inside the lane.
