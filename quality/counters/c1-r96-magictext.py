@@ -1324,5 +1324,313 @@ def main() -> int:
     return 0 if met else 1
 
 
-if __name__ == "__main__":
+# ===== mado counter self-invocation (added round-97 C2, seat R97MExecC2b) =====================
+# Contract-4 self-invocation for this counter: `python3 -I <this file> --selftest
+# [--fixtures DIR]` runs the counter's own main() over the committed fixture tree
+# .ufo/waves/round-97/selftest-fixtures-v2/ and asserts, per check, an exit code and a
+# stable finding id.  Fixture resolution: explicit --fixtures/--fixture-dir is terminal
+# (an absent or unparseable tree there fails the checks, never falls back); without the
+# flag the tree is derived from this file's own location (parents[2]/.ufo/waves/round-97/
+# selftest-fixtures-v2, then the legacy selftest-fixtures), never from the cwd.  Fail
+# lines are `MADO_COUNTER_SELFTEST_FAIL: <id>`; the result line is
+# `MADO_COUNTER_SELFTEST: checks=N failed=0`; exit 0 green / 1 failed.  The mini runs
+# rebind this module's census thresholds to the fixture scale; the production path (the
+# code above this block) is byte-identical to the base counter.  Strip protocol: delete
+# everything from the marker line to EOF and append exactly
+#     if __name__ == "__main__":
+#         sys.exit(main())
+# to recover the base production bytes (the report prints added/removed line counts).
+
+_ST_FAIL_PREFIX = "MADO_COUNTER_SELFTEST_FAIL: "
+_ST_IDS = ("st-fixture-dir", "st-tool-pin", "st-gate-target-met", "st-setup-missing-input",
+           "st-setup-wrong-pin", "st-setup-wrong-rev", "st-target-missed-case",
+           "st-target-missed-mutant", "st-result-line-format", "st-scratch-clean")
+_ST_FIXTURE_SUBDIRS = ("selftest-fixtures-v2", "selftest-fixtures")
+_ST_PINS_REL = "pins.json"
+_ST_PIN_REQUIRED = ("c1/mado-mimetext.py", "c1/mado-mimeglob.py", "c1/mado-mimesniff.py",
+                    "c1/cases-mini.json", "c1/mutants-mini.json", "c1/mutants-mini2.json",
+                    "c1/freshgen.py", "c1/hostdb-manifest.json", "c1/hostlist.txt",
+                    "c1/bugtool-mutation.json",
+                    "common/mimesniff-oracle-r95.c", "common/forgery-ctypes-r96.py",
+                    "common/canary.txt", "common/canary.png", "common/canary.pk")
+# unique weakening anchors, one per check (each name occurs once in this block)
+_ST_GREEN_RC_WANT = 0                        # st-gate-target-met (rc anchor, unique)
+_ST_GREEN_MARK = "TARGET_MET"                # st-gate-target-met (mark anchor, unique)
+_ST_LINE_RC_WANT = 0                         # st-result-line-format (rc anchor, unique)
+_ST_LINE_PREFIX = "MADO_MAGICTEXT_COUNT: TARGET_MET pred=PRED-C1-r96-v1 "
+_ST_LINE_TOKENS = ("tool_pin=ok", "cases=2 correct=2", "selftest=ok", "audit_denials=0")
+_ST_MISSING_RC_WANT = 2                      # st-setup-missing-input (rc anchor, unique)
+_ST_MISSING_MARK = "SETUP_ERROR"             # st-setup-missing-input (mark anchor, unique)
+_ST_PINRUN_RC_WANT = 2                       # st-setup-wrong-pin (rc anchor, unique)
+_ST_PINRUN_MARK = "SETUP_ERROR"              # st-setup-wrong-pin (mark anchor, unique)
+_ST_BADREV_RC_WANT = 2                       # st-setup-wrong-rev (rc anchor, unique)
+_ST_BADREV_MARK = "SETUP_ERROR"              # st-setup-wrong-rev (mark anchor, unique)
+_ST_WRONGPIN_TOKEN = "0" * 64                # st-setup-wrong-pin
+_ST_BADREV_TOKEN = "0" * 40                  # st-setup-wrong-rev
+_ST_MISSED_CASE_RC_WANT = 1                 # st-target-missed-case (rc anchor, unique)
+_ST_MISSED_CASE_MARK = "TARGET_MISSED"      # st-target-missed-case (mark anchor, unique)
+_ST_MISSED_MUT_RC_WANT = 1                  # st-target-missed-mutant (rc anchor, unique)
+_ST_MISSED_MUT_MARK = "TARGET_MISSED"       # st-target-missed-mutant (mark anchor, unique)
+_ST_MINI_REBIND = {"MIN_CASES": 2, "MIN_PER_CLASS": 1, "CLASSES": ("mini",),
+                   "MIN_FRESH_INPUTS": 2, "MIN_HOST_PATHS": 3, "HOST_DB_FILES": 2,
+                   "TEXT_DB_FILES": ("globs2", "magic")}
+
+
+class _STOut:
+    """stdout stand-in for in-process main() runs (main reconfigures line buffering)."""
+
+    def __init__(self):
+        import io
+        self._buf = io.StringIO()
+
+    def reconfigure(self, *args, **kwargs):
+        return None
+
+    def write(self, text):
+        return self._buf.write(text)
+
+    def flush(self):
+        return None
+
+    def getvalue(self):
+        return self._buf.getvalue()
+
+
+def _st_resolve_fixtures(explicit):
+    if explicit is not None:
+        p = os.path.abspath(explicit)
+        return p if os.path.isdir(p) else None
+    node = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(8):
+        for sub in _ST_FIXTURE_SUBDIRS:
+            p = os.path.join(node, ".ufo", "waves", "round-97", sub)
+            if os.path.isdir(os.path.join(p, "c1")):
+                return p
+        nxt = os.path.dirname(node)
+        if nxt == node:
+            break
+        node = nxt
+    return None
+
+
+def _st_run_main(argv, rebind):
+    """One in-process production run: sys.argv + rebound census thresholds, stdout captured."""
+    saved = {k: globals()[k] for k in rebind}
+    old_argv, old_out = sys.argv, sys.stdout
+    out = _STOut()
+    try:
+        globals().update(rebind)
+        sys.argv = ["c1-r96-magictext"] + [str(a) for a in argv]
+        sys.stdout = out
+        rc = main()
+        return rc, out.getvalue()
+    finally:
+        sys.stdout = old_out
+        sys.argv = old_argv
+        globals().update(saved)
+        globals()["_ORACLE_BIN"] = ""
+        globals()["_MG"] = None
+        globals()["EMPTY_PATH"] = ""
+
+
+def _st_git(args, cwd):
+    return subprocess.run(["git"] + list(args), cwd=cwd, capture_output=True, text=True)
+
+
+def _st_build_repo(root, fixtures, mimetext_b):
+    d = tempfile.mkdtemp(prefix="strepo-", dir=root)
+    if _st_git(["init", "-q"], d).returncode != 0:
+        raise RuntimeError("fixture repo git init failed")
+    top = _st_git(["rev-parse", "--show-toplevel"], d)
+    if os.path.realpath(top.stdout.strip()) != os.path.realpath(d):
+        raise RuntimeError("fixture repo toplevel mismatch")
+    tdir = os.path.join(d, "tools")
+    os.makedirs(tdir)
+    for name in ("mado-mimeglob.py", "mado-mimesniff.py"):
+        with open(os.path.join(tdir, name), "wb") as fh:
+            fh.write(open(os.path.join(fixtures, "c1", name), "rb").read())
+    if _st_git(["add", "-A"], d).returncode != 0:
+        raise RuntimeError("fixture repo add failed")
+    if _st_git(["-c", "user.name=mado-selftest", "-c", "user.email=selftest@mado",
+                "commit", "-q", "-m", "base"], d).returncode != 0:
+        raise RuntimeError("fixture repo base commit failed")
+    with open(os.path.join(tdir, "mado-mimetext.py"), "wb") as fh:
+        fh.write(mimetext_b)
+    _st_git(["add", "-A"], d)
+    if _st_git(["-c", "user.name=mado-selftest", "-c", "user.email=selftest@mado",
+                "commit", "-q", "-m", "candidate"], d).returncode != 0:
+        raise RuntimeError("fixture repo candidate commit failed")
+    base_rev = _st_git(["rev-parse", "HEAD~1"], d).stdout.strip()
+    rev = _st_git(["rev-parse", "HEAD"], d).stdout.strip()
+    return d, base_rev, rev
+
+
+def _st_c1_argv(repo, base_rev, rev, scr, fixtures, mutants_rel, expect_tool_sha):
+    def fx(rel):
+        return os.path.join(fixtures, rel)
+
+    hostlist = os.path.join(repo, "hostlist.txt")
+    with open(hostlist, "w", encoding="utf-8") as fh:
+        fh.write(open(fx("c1/hostlist.txt"), encoding="utf-8").read().replace("{FIXTURES}", fixtures))
+    manifest = os.path.join(repo, "hostdb-manifest.json")
+    with open(manifest, "w", encoding="utf-8") as fh:
+        fh.write(open(fx("c1/hostdb-manifest.json"), encoding="utf-8").read().replace("{FIXTURES}", fixtures))
+    mutp = fx(mutants_rel)
+    sha = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
+    return ["--repo", repo, "--rev", rev, "--base-rev", base_rev,
+            "--cases", fx("c1/cases-mini.json"), "--expect-cases-sha256", sha(fx("c1/cases-mini.json")),
+            "--mutants", mutp, "--expect-mutants-sha256", sha(mutp),
+            "--oracle-src", fx("common/mimesniff-oracle-r95.c"),
+            "--expect-oracle-sha256", sha(fx("common/mimesniff-oracle-r95.c")),
+            "--fresh-gen", fx("c1/freshgen.py"), "--expect-fresh-gen-sha256", sha(fx("c1/freshgen.py")),
+            "--host-list", hostlist, "--expect-host-list-sha256", sha(hostlist),
+            "--host-db", manifest, "--expect-host-db-sha256", sha(manifest),
+            "--expect-tool-sha256", expect_tool_sha,
+            "--expect-mimeglob-sha256", sha(fx("c1/mado-mimeglob.py")),
+            "--forgery", fx("common/forgery-ctypes-r96.py"),
+            "--expect-forgery-sha256", sha(fx("common/forgery-ctypes-r96.py")),
+            "--scratch-root", scr, "--workers", "8"]
+
+
+def _mado_counter_selftest(argv):
+    fixtures_arg = None
+    for i, tok in enumerate(argv):
+        if tok in ("--fixtures", "--fixture-dir") and i + 1 < len(argv):
+            fixtures_arg = argv[i + 1]
+            break
+    checks = []
+
+    def add(cid, ok):
+        checks.append((cid, bool(ok)))
+
+    fixtures = _st_resolve_fixtures(fixtures_arg)
+    print("FIXTURES: " + (fixtures if fixtures else "UNRESOLVED"))
+    add("st-fixture-dir", fixtures is not None
+        and os.path.isfile(os.path.join(fixtures, _ST_PINS_REL)))
+    pins_ok = False
+    pins = {}
+    if fixtures is not None:
+        try:
+            doc = json.load(open(os.path.join(fixtures, _ST_PINS_REL), encoding="utf-8"))
+            pins = doc["files"]
+            pins_ok = isinstance(pins, dict)
+        except (OSError, ValueError, KeyError):
+            pins_ok = False
+    pin_bad = []
+    for rel in _ST_PIN_REQUIRED:
+        want = pins.get(rel)
+        p = os.path.join(fixtures or ".", rel)
+        try:
+            got = hashlib.sha256(open(p, "rb").read()).hexdigest()
+        except OSError:
+            pin_bad.append(rel)
+            continue
+        if not isinstance(want, str) or got != want:
+            pin_bad.append(rel)
+    add("st-tool-pin", pins_ok and not pin_bad)
+
+    fx_bytes = lambda rel: open(os.path.join(fixtures, rel), "rb").read() if fixtures else b""
+    tool_sha = lambda: hashlib.sha256(fx_bytes("c1/mado-mimetext.py")).hexdigest()
+
+    if fixtures is not None and pins_ok:
+        base = tempfile.mkdtemp(prefix="stc1-")
+        try:
+            tool_b = fx_bytes("c1/mado-mimetext.py")
+            repo, base_rev, rev = _st_build_repo(base, fixtures, tool_b)
+            # ---- green scene: feeds st-gate-target-met, st-result-line-format, st-scratch-clean
+            scr = os.path.join(base, "run-green")
+            os.makedirs(scr)
+            try:
+                grc, gout = _st_run_main(_st_c1_argv(repo, base_rev, rev, scr, fixtures,
+                                                     "c1/mutants-mini.json", tool_sha()),
+                                         _ST_MINI_REBIND)
+            except Exception:
+                grc, gout = None, ""
+            add("st-gate-target-met", grc == _ST_GREEN_RC_WANT and _ST_GREEN_MARK in gout)
+            glines = [ln for ln in gout.splitlines() if ln.startswith(_ST_LINE_PREFIX[:24])]
+            glast = glines[-1] if glines else ""
+            add("st-result-line-format", grc == _ST_LINE_RC_WANT and glast.startswith(_ST_LINE_PREFIX)
+                and all(tok in glast for tok in _ST_LINE_TOKENS))
+            add("st-scratch-clean", grc is not None and os.path.isdir(scr) and os.listdir(scr) == [])
+            # ---- setup scenes (fast: they stop at pins/rev verification)
+            scr2 = os.path.join(base, "run-missing")
+            os.makedirs(scr2)
+            av = _st_c1_argv(repo, base_rev, rev, scr2, fixtures, "c1/mutants-mini.json", tool_sha())
+            ai = av.index("--cases") + 1
+            av[ai] = os.path.join(scr2, "missing-cases.json")
+            try:
+                rc, out = _st_run_main(av, _ST_MINI_REBIND)
+            except Exception:
+                rc, out = None, ""
+            add("st-setup-missing-input", rc == _ST_MISSING_RC_WANT and _ST_MISSING_MARK in out)
+            scr3 = os.path.join(base, "run-pin")
+            os.makedirs(scr3)
+            av = _st_c1_argv(repo, base_rev, rev, scr3, fixtures, "c1/mutants-mini.json", tool_sha())
+            ai = av.index("--expect-mimeglob-sha256") + 1
+            av[ai] = _ST_WRONGPIN_TOKEN
+            try:
+                rc, out = _st_run_main(av, _ST_MINI_REBIND)
+            except Exception:
+                rc, out = None, ""
+            add("st-setup-wrong-pin", rc == _ST_PINRUN_RC_WANT and _ST_PINRUN_MARK in out)
+            scr4 = os.path.join(base, "run-rev")
+            os.makedirs(scr4)
+            av = _st_c1_argv(repo, base_rev, _ST_BADREV_TOKEN, scr4, fixtures,
+                             "c1/mutants-mini.json", tool_sha())
+            try:
+                rc, out = _st_run_main(av, _ST_MINI_REBIND)
+            except Exception:
+                rc, out = None, ""
+            add("st-setup-wrong-rev", rc == _ST_BADREV_RC_WANT and _ST_BADREV_MARK in out)
+            # ---- missed scene 1: a deliberately mismatched tool (the bugtool mutation applied;
+            # its anchor is absent from both mutants files, so their finds stay unique)
+            bugmu = json.loads(fx_bytes("c1/bugtool-mutation.json").decode("ascii"))
+            bug_b = tool_b.replace(bugmu["find"].encode("ascii"), bugmu["replace"].encode("ascii"), 1)
+            if bug_b != tool_b:
+                repo2, base2, rev2 = _st_build_repo(base, fixtures, bug_b)
+                scr5 = os.path.join(base, "run-missed-case")
+                os.makedirs(scr5)
+                try:
+                    rc, out = _st_run_main(_st_c1_argv(repo2, base2, rev2, scr5, fixtures,
+                                                       "c1/mutants-mini.json", tool_sha()),
+                                           _ST_MINI_REBIND)
+                except Exception:
+                    rc, out = None, ""
+                add("st-target-missed-case", rc == _ST_MISSED_CASE_RC_WANT and _ST_MISSED_CASE_MARK in out)
+            else:
+                add("st-target-missed-case", False)
+            # ---- missed scene 2: a surviving (no-op) mutant in the mutant file
+            scr6 = os.path.join(base, "run-missed-mut")
+            os.makedirs(scr6)
+            try:
+                rc, out = _st_run_main(_st_c1_argv(repo, base_rev, rev, scr6, fixtures,
+                                                   "c1/mutants-mini2.json", tool_sha()),
+                                       _ST_MINI_REBIND)
+            except Exception:
+                rc, out = None, ""
+            add("st-target-missed-mutant", rc == _ST_MISSED_MUT_RC_WANT and _ST_MISSED_MUT_MARK in out)
+        except Exception:
+            for cid in ("st-gate-target-met", "st-result-line-format", "st-scratch-clean",
+                        "st-setup-missing-input", "st-setup-wrong-pin", "st-setup-wrong-rev",
+                        "st-target-missed-case", "st-target-missed-mutant"):
+                if cid not in [c for c, _ in checks]:
+                    add(cid, False)
+        finally:
+            shutil.rmtree(base, ignore_errors=True)
+    else:
+        for cid in ("st-gate-target-met", "st-result-line-format", "st-scratch-clean",
+                    "st-setup-missing-input", "st-setup-wrong-pin", "st-setup-wrong-rev",
+                    "st-target-missed-case", "st-target-missed-mutant"):
+            add(cid, False)
+
+    failed = [cid for cid, ok in checks if not ok]
+    for cid in failed:
+        print(_ST_FAIL_PREFIX + cid)
+    print("MADO_COUNTER_SELFTEST: checks=%d failed=%d" % (len(checks), len(failed)))
+    return 0 if not failed else 1
+
+
+if __name__ == "__main__":  # replaces the base guard verbatim; production argv path unchanged
+    if "--selftest" in sys.argv[1:]:
+        sys.exit(_mado_counter_selftest(sys.argv[1:]))
     sys.exit(main())
