@@ -5304,3 +5304,51 @@ entered at rounds 88–90); every owned axis at 10, so the lowest-axis duty is a
   `Report:` lines inside the report files it is given and fails an absent named path; no check at `cc0381db` reads a
   dispatch's seats, so a seat that wrote nothing is invisible to it. The before→after row reads "lane checks that detect a
   missing seat report for a dispatched seat 0 → 1"; measured values unchanged (lesson M91-4).
+
+## Round 92 — xdg-open's resolver (capability), the seat-report gate fails closed (2026-11-06, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-92/claims-declaration-r92.md` (w1 findings folded in before the freeze, listed in
+`corpus/lessons/round-92.md`). Freeze `6a0134acb08b26b1cd3c6f0a4b8c63495ca89e3e`; C1 `243326cb884b04bf91c36e6c7565b6f079a8fb7f`
+(C1 measured revision; `tools/mado-xdgmime.py` = frozen candidate bytes, sha256 `4e7fff9e…fd88`); C2
+`297e25153ceb3a4e119eed5b377d7547828d01b6` (C2 measured revision; `quality/check-seat-reports.py` = frozen candidate bytes,
+sha256 `176fc066…663a`). Stagnation nudge not claimed (capabilities entered at rounds 88–91); every owned axis at 10,
+so the lowest-axis duty is a tie. Sourced claim: C1 (S508–S510).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (capability): what `xdg-open` launches on Hyprland (xdg-utils 1.2.1 `xdg-mime query default`) | `python3 -I quality/counters/c1-r92-xdgmime-default.py --repo . --rev 243326cb884b04bf91c36e6c7565b6f079a8fb7f --base-rev d992ef7494b054591ee9104df1da49264678df5d --cases .ufo/waves/round-92/controls/xdgmime-cases-r92.json --mutants .ufo/waves/round-92/controls/xdgmime-mutants-r92.json --oracle .ufo/waves/round-92/controls/xdgmime-oracle-r92.py --fuzz-gen .ufo/waves/round-92/controls/fuzz-gen-r92.py --expect-cases-sha256 3cb0cf4556171845af21b75ee50f62de64af91e9eefd948d27957010d3031594 --expect-mutants-sha256 f0d934f2dca4c6a9a8d442b20569cb9d8b226eff792c6eed1c462208185ab524 --expect-oracle-sha256 e51603991450305d6c6168624d7f635a67a3906e512851f3542896b8ef32f87b --expect-fuzz-sha256 891704bf7cb42e44b89066210eec5227174597e4f76c6309d1114ddcbd6c5c01 --expect-bin-sha256 a587107ff995a5f907ab1b731316a169348c6b0383caf8fd151ff21f89615f3f,c14c8f498f3be96f076ceb07d65dba584a86dca3c86b5dce65ed0f6cae73358d,19280b0e0714dadf0c100cdbc7f4823d254dd8facba64deeff5ec50d39fecf84,3ac64468ec05bde58b4294771f0afd9c626d4e95cc7a97efd7e7f7a55230febd,5f6c63c5105c0ec3f0e50a31f225be8dc95fbd7b8af0e7f0dd14867f345cc7f7,a21add5faf3a48efe8f4ff8e193216f4273d0842770a913171df5d4522648e06 --fresh 120 --scratch-root DIR` | MIME types a lane tool answers xdg-open's default for 0 → every RFC 6838 type (base: tool absent, `base_tool_correct=0`); frozen 270 cases 0 → **270/270**, fresh **120/120**, mutants **81/81**, oracle re-agreement 270/270, bytes clause ok; controls do-nothing 101, naive 78, GLib resolver 139 (`.ufo/waves/round-92/receipts/c1-measured-r92.txt`, rc 0); host 1133/1133 (`.ufo/waves/round-92/receipts/host-run-r92.txt`) | **TARGET_MET** — coverage improved |
+| C2 **operability**: the seat-report gate closes round-91 residual defects F1–F5 | `python3 -I quality/counters/c2-r92-gate-defects.py --repo . --rev 297e25153ceb3a4e119eed5b377d7547828d01b6 --base-rev d992ef7494b054591ee9104df1da49264678df5d --battery .ufo/waves/round-92/controls/gate-defects-battery-r92.json --mutants .ufo/waves/round-92/controls/gate-defects-mutants-r92.json --expect-battery-sha256 a0cfaeb36c5423678696629569019dece0d2138dc5e980df0ba7a9ad7ef2fdd6 --expect-mutants-sha256 fe931e76f778e318771486458336d53dbf8933dd5444fa0beba07d53196f1e26 --r91-argv .ufo/waves/round-92/controls/r91-c2-argv-r92.json --expect-r91-argv-sha256 d21b1979b8b42203c8d9c8d033ec71af8027ff79911adc348cddb9685df4b604 --expect-r91-counter-sha256 c74f5baae915a4669ece5033a35ba16f5db0131a2db9a6e83a702de9e932d486 --fresh 60 --scratch-root DIR` | battery fixtures met by the lane's gate 19/45 → **45/45** (F1 9/9, F2 5/5, F3 3/3, F4 3/3, F5 4/4, regressions 21/21), fresh **60/60**, selftest `checks=23 failed=0`, mutants **37/37**, controls base 19, always-OK 7, always-refuse 15, round-91 counter at the revision TARGET_MET 59/59 60/60 55/55 (`.ufo/waves/round-92/receipts/c2-measured-r92.txt`, rc 0) | **TARGET_MET** — operability improved |
+| separability | C1 counter at the C2 revision; C2 counter at the C1 revision | C1 TARGET_MET 270/270 at `297e2515` (`.ufo/waves/round-92/receipts/c1-at-c2-r92.txt`); C2 at `243326cb` = `SETUP_ERROR mutant N01: find occurs 0 times` rc 2 — the round-91 check at that revision has none of the fixes (`.ufo/waves/round-92/receipts/c2-at-c1-r92.txt`) | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| xdg-utils 1.2.1 default-application resolution (`xdg-open` on Hyprland) | Answer, read-only, what `xdg-mime query default TYPE` prints — the application `xdg-open` launches on a desktop xdg-utils does not recognise — from the mimeapps lists (line matching, first matching line per file, install check by the first `Exec` word through `command -v`), the defaults.list/mimeinfo.cache BRE grep, the MimeType/InitialPreference scan and the session dispatch; this host: 1133 types agree, 378 differ from gio (375 with no xdg-open default) | `.ufo/waves/round-92/receipts/c1-measured-r92.txt`; `.ufo/waves/round-92/receipts/host-run-r92.txt`; `corpus/knowledge/xdg-mime-default-resolution-r92.md` | 92 |
+
+### Routed work (round-91 spot-check, not claims)
+
+- Defect 1: round-90 entry §12 correction (append-only); `tools/mado-portals.py` re-proved on 16 byte-class cases
+  (R92MExecD1: 8/16; a port answers 16/16 and keeps 229/229 but removes eight round-90 mutant anchors) — port routed to
+  a later round with its own frozen counter (QUALITY 153).
+- Defect 2: C2.
+- Defect 3: the round-92 lesson's candidates table lists every gate decision.
+
+### Named limits (append-only, round 92)
+
+- C1: `query default` only (`query filetype` / MIME sniffing and the launch itself out of scope); asked types limited to
+  RFC 6838 restricted-name bytes; D-Bus/X probes of detectDE assumed negative; PATH must reach GNU coreutils/grep/gawk;
+  labels come from the installed xdg-mime, bash, grep, gawk, coreutils (pinned), so a downstream patch would be scored
+  as upstream; the bytes clause refuses shipped interpreters, it does not prove a tool models anything — the mutant
+  anchors do.
+- C2: the battery's expectations come from the defect reports and the docstring; the selftest leg pins only its result
+  line (R92MMutC2 §4: a weakened passing selftest assertion is invisible); F6 not claimed.
+- Round shape: one v1 wave of 13 seats; no residual call (round total 13).
+
+### Harm watch (round 92, at the code tip `297e25153ceb3a4e119eed5b377d7547828d01b6`)
+
+- gate selftest 460/460, file plane CLEAN 29, index 113/113, ledger 176/176 uncovered 0, `tools/mado-mako.py` selftest
+  62/62, `tools/mado-portals.py` 22/22, `tools/mado-mime.py` 17/17, `tools/mado-xdgmime.py` 12/12,
+  `quality/check-seat-reports.py` 23/23, `quality/check-receipt-presence.py` 6/6, round-90 C2 TARGET_MET 83/83 28/28,
+  round-90 C1 TARGET_MET 229/229 60/60, round-91 C2 TARGET_MET 59/59 55/55 (the C2 measurement's leg), round-91 C1 tool
+  unchanged (`git diff d992ef74 297e2515 -- tools/mado-mime.py` empty) (`.ufo/waves/round-92/receipts/harm-final-r92.txt`). No axis harmed.

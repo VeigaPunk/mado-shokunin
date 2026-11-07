@@ -1141,3 +1141,26 @@ the frozen mutants X24, X36, M28 and M29 that put the old readings back are kill
 `54a0683ce5c1c746fa02fa9f36b530c44772bfa2` (`.ufo/waves/round-91/receipts/c1-measured-r91.txt`). Limits: a class the new
 consumer's oracle cannot reach stays unproved; the earlier tool (`tools/mado-portals.py`) is not re-proved by this
 criterion until its own counter carries such cases (routed to round 92). (lesson: lessons/round-91.md#mistakes M91-1)
+
+
+## Round 92 — frozen instruments of earlier rounds, and who calls a resolver
+
+**153. A change to a lane tool that an earlier round's frozen counter measures is gated by that counter on the new
+bytes, read from the measured revision and pinned, and an anchor that no longer occurs is a setup error.** A fix to a
+gate or tool can silently invalidate the earlier round's measurement: an edited line removes the bytes a frozen
+mutant anchors on (the old counter stops with `SETUP_ERROR … find occurs 0 times`), or the fix makes a frozen mutant
+equivalent (it survives). The new claim's predicate carries the old counter as a leg, read with `git show <rev>:` and
+pinned by sha256, and the new counter reports the old leg's setup error as its own setup error — never as a pass, never
+as a miss. Shown able to fail: the round-91 C2 counter on the first round-92 C2 draft printed `SETUP_ERROR mutant MC05`
+and, after the anchors were restored, `mutant MC08 SURVIVED` (`.ufo/waves/round-92/receipts/prefreeze-draft-transcripts-r92.txt`
+D-a, D-b); the measured round-92 C2 receipt carries the leg (`r91_counter=…`). Limits: the leg proves the old frozen set
+still holds, not that the old set was complete. The same coupling is why the round-92 port of `tools/mado-portals.py`
+(eight round-90 mutant anchors removed) is routed, not landed. (lesson: lessons/round-92.md#mistakes M92-1)
+
+**154. A sentence that names who calls a resolver cites that caller's own dispatch lines for the host's desktop.**
+"`xdg-open` reduces to `g_app_info_get_default_for_type`" was admitted in round 91 from GLib's side alone; xdg-utils
+1.2.1 `xdg-open` on Hyprland never calls GLib (xdg-open.in:595-596, :664-665, :392-412) and on this host its answer
+differs from gio's on 378 of 1133 types. A knowledge entry, PROVINCE refinement or index row that says "X uses Y"
+names the X-side lines (and the desktop value that reaches them) or drops the caller. Shown able to fail: the round-91
+sentence (`corpus/knowledge/mime-default-resolution-r91.md` line 9) names no xdg-open line; the round-92 entry's §1 does.
+Not a mechanical check: the reviewer reads the sentence. (lesson: lessons/round-92.md#mistakes M92-2)

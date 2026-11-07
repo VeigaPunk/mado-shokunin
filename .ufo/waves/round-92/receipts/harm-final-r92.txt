@@ -1,0 +1,46 @@
+# round-92 harm watch at the code tip 297e25153ceb3a4e119eed5b377d7547828d01b6 (C2 commit; records commit adds no code), MadoR92, 2026-11-06T23:45:19-03:00
+$ bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+rc=0
+$ bash tools/mado-verify.sh --no-live
+theme     theme.parts.declared_only       NOTE    declared-only, consumer absent: foot.ini(foot) kitty.conf(kitty) ghostty.conf(ghostty) helix.toml(helix) vscode.json(code) keyboard.rgb(asusctl)
+gate      boundary.readonly               PASS    config plane byte-identical before/after (combined sha 900502e24c8a…)
+counts: pass=29 fail=0 unknown=0 skip=8 note=4
+MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)
+rc=0
+$ python3 -I quality/check-index.py --repo . --rev 297e25153ceb3a4e119eed5b377d7547828d01b6
+MADO_INDEX: rev=297e25153ceb3a4e119eed5b377d7547828d01b6 indexed=113/113 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+$ python3 -I quality/check-tool-ledger.py --repo . --rev 297e25153ceb3a4e119eed5b377d7547828d01b6
+LEDGER: population=176 ledger_rows=176 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=297e25153ceb3a4e119eed5b377d7547828d01b6
+rc=0
+$ python3 -I tools/mado-mako.py --selftest --scratch-root /fast/scratch/hyaku/mado-r92/l1/harm
+MADO_MAKO_SELFTEST: checks=62 failed=0
+rc=0
+$ python3 -I tools/mado-portals.py --selftest
+MADO_PORTALS_SELFTEST: checks=22 failed=0
+rc=0
+$ python3 -I tools/mado-mime.py --selftest
+MADO_MIME_SELFTEST: checks=17 failed=0
+rc=0
+$ python3 -I tools/mado-xdgmime.py --selftest
+MADO_XDGMIME_SELFTEST: checks=12 failed=0
+rc=0
+$ env TMPDIR=/fast/scratch/hyaku/mado-r92/l1/harm python3 -I quality/check-seat-reports.py --selftest
+SEAT_REPORTS_SELFTEST: checks=23 failed=0
+rc=0
+$ env TMPDIR=/fast/scratch/hyaku/mado-r92/l1/harm python3 -I quality/check-receipt-presence.py --selftest
+RECEIPT_PRESENCE_SELFTEST: checks=6 failed=0
+rc=0
+$ python3 -I quality/counters/c2-r90-receipt-presence.py --repo . --rev 297e25153ceb3a4e119eed5b377d7547828d01b6 --base-rev 5041acf99e27263872bf0441ad5f9d4316152605 --set .ufo/waves/round-90/controls/receipt-presence-set-r90.json --mutants .ufo/waves/round-90/controls/receipt-mutants-r90.json --expect-set-sha256 f7ab86c25edbb806a9f947af09fab5cf971a42602c252966c0075b9aeefa7939 --expect-mutants-sha256 68b39a805755f7685c00c847a48b0f8f679fdca2710773efb5f4469b7bebe82d --scratch-root /fast/scratch/hyaku/mado-r92/l1/harm/r90c2
+mutant K26 killed by X2-hyphen-continuation-not-a-receipt@clean (citation continued by a hyphen still counted)
+mutant K27 killed by X5-ignored-untracked-not-scanned@clean (ignored untracked records scanned)
+mutant K28 killed by X10-nested-lesson-not-a-record@clean (nested lesson directories scanned as records)
+MADO_RECEIPT_PRESENCE: TARGET_MET rev=297e25153ceb3a4e119eed5b377d7547828d01b6 expectations=83 met=83 defects_detected=4/4 population=38 mutants=28 killed=28 base_check=absent base_met=0 do_nothing_met=44 smart_always_ok_met=46 always_missing_met=0 check_sha256=38a2ea60dc698c45957a3ad4af3132297dd2edb354d815e7ff3433c42bab47ca
+rc=0
+$ python3 -I quality/counters/c1-r90-portal-routing.py --repo . --rev 297e25153ceb3a4e119eed5b377d7547828d01b6 --base-rev 5041acf99e27263872bf0441ad5f9d4316152605 --cases .ufo/waves/round-90/controls/portal-cases-r90.json --mutants .ufo/waves/round-90/controls/portal-mutants-r90.json --expect-cases-sha256 66d4ffff70bd092bd2c900658b3b9a7566f8dedc2aacd4b334102acebc192da2 --expect-mutants-sha256 e761a4e44ec6d8a692d8ac9b2feec7ef8609b4d30f5ed40c11f7c332129c2451 --expect-oracle-binary-sha256 e1429fbe1bf6c2203ba07f478b9e92e9221437b13a92eebafb0982748583a4f8 --scratch-root /fast/scratch/hyaku/mado-r92/l1/harm/r90c1
+mutant X26 killed by a06-settings-usein-all (Settings UseIn fallback does not deduplicate backends)
+mutant X27 killed by d06-desktop-two-hypr-first (desktops split on ';' rather than ':')
+mutant X29 killed by mc-n29-tab-escape (\t escape drops the character instead of emitting a tab)
+MADO_PORTAL_ROUTING: TARGET_MET rev=297e25153ceb3a4e119eed5b377d7547828d01b6 cases=229 correct=229 blind=66/66 fresh=120/120 fresh_seed=3518864282 mutants=60 killed=60 r12_rule_correct=70 host_table_correct=10 do_nothing_correct=35 base_tool=absent base_correct=0 host_tail_sha256=4a4cf31921e25dc6e60b283cc1aa1b79f743096bfdfc9dbb77df887c16f0fbf9 tool_sha256=d1bd9b9a7c98f9e573bf8ba0594d796853f81539eed1d87052aa7906195e6ab1
+rc=0

@@ -4412,3 +4412,32 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
 - Residual r1 (2 seats, measured bytes): C1 and C2 re-measured identically; 18 new C1 fixtures agree with gio; six C2 gate
   defects outside the frozen set routed to round 92 (SCORECARD round-91 errata); all 16 seats left report files
   (`.ufo/waves/round-91/receipts/c2-gate-round91-r91.txt`).
+
+### Round 92 — xdg-open's resolver (capability) and the seat-report gate failing closed (2026-11-06, hyaku run 15, attempt 1)
+
+- Inputs: the round-91 non-author spot-check (routed defects: round-90 GKeyFile statement and portal re-proof; seat-report
+  gate F1/F4 and F2/F3/F5/F6; one gate table per lesson); `considerthese/2026-11-06.md` proposal 4 (widen past bar + mako;
+  prefer an operator-config gap). Two claims (`.ufo/waves/round-92/claims-declaration-r92.md`): C1 capability, coverage;
+  C2 operability. Nudge not claimed.
+- Motivating evidence: the lane's round-91 entry, PROVINCE and index said `xdg-open` reduces to GLib; xdg-utils 1.2.1
+  `xdg-open` on Hyprland asks `xdg-mime query default` (xdg-open.in:595-596, :664-665, :392-412), and no lane file models
+  it (`git grep -l defapp_generic d992ef74 -- tools corpus` empty). On this host the two answers differ for 378 of 1133
+  types. The seat-report gate as landed in round 91 skipped a symlinked dispatch in `--rev` with `verdict=OK` and hung on
+  a FIFO (R91MResidC2 F1, F4).
+- Wave w1: 13 seats (scout 1, scribe 1, executor 5, connector 1, reviewer 2, critic 1, mutation-tester 2), attack 5/13.
+  Findings changed the candidate (RFC 6838 type scope, glob escapes and reversed ranges, gawk escapes, `--selftest`,
+  directory/gitlink dispatches refused), the counters (bytes clause against shipped interpreters, C2 sandbox and fresh
+  leg, pinned round-91 leg with setup-error mapping) and the sets (270 cases from five sources, 81 C1 mutants; 45
+  fixtures, 37 C2 mutants) before the freeze. No residual call.
+- Landed: freeze `6a0134acb08b26b1cd3c6f0a4b8c63495ca89e3e`; C1 `243326cb884b04bf91c36e6c7565b6f079a8fb7f` (tool, knowledge
+  entry, S508–S510, round-91 entry correction, PROVINCE/SKILL/ledger/index rows, host replay); C2
+  `297e25153ceb3a4e119eed5b377d7547828d01b6` (gate and its rows); records (lesson, QUALITY 153–154, SCORECARD, this entry,
+  round-90 entry correction, S-row used-by updates, measurements, harm watch, census end, w1 evidence) in the records commit.
+- Measured: C1 at `243326cb` `TARGET_MET cases=270 correct=270 fresh=120/120 mutants=81 killed=81 oracle_agree=270/270`,
+  controls do-nothing 101, naive 78, GLib resolver 139, base 0, bytes clause ok (`.ufo/waves/round-92/receipts/c1-measured-r92.txt`);
+  C2 at `297e2515` `TARGET_MET fixtures=45 met=45 fresh=60/60 selftest checks=23 failed=0 mutants=37 killed=37`, controls
+  19/7/15, round-91 counter TARGET_MET (`.ufo/waves/round-92/receipts/c2-measured-r92.txt`). Census 442 → 445 rows, rc 0 both ends.
+- Host answer (`.ufo/waves/round-92/receipts/host-run-r92.txt`): 1133 types, tool and xdg-mime agree on all; against gio, 375
+  types have no `xdg-open` default (282 would open in nvim under gio) and 3 open another application
+  (`application/vnd.ms-excel`: xdg-open `chatgpt.desktop`, gio `libreoffice-calc.desktop`).
+- Harm watch at `297e2515`: all green (`.ufo/waves/round-92/receipts/harm-final-r92.txt`; SCORECARD round 92).

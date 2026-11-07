@@ -360,3 +360,19 @@ Limits:
   (case n02, n03, x04).
 - **"`*` means every backend."** Rejected for the twenty non-Settings interfaces: `*` returns one backend and
   stops the list (:749-753). Only Settings' `find_all` collects every match (:801, :927-1004).
+
+## 12. Correction (round 92, append-only; routed by the round-91 spot-check, defect 1)
+
+§9's second bullet is wrong for GLib 2.90.1. `g_key_file_load_from_file` does not fail on invalid UTF-8; the
+check sits in the value getters (S502 gkeyfile.c:2310 `g_key_file_get_string`, :2427 `g_key_file_get_string_list`),
+so only the key read fails. Re-proved against the installed xdg-desktop-portal with the round-90 oracle on 16 new
+fixtures (`.ufo/waves/round-92/controls/portals-gkeyfile-cases-r92.json`, R92MExecD1, DRAFT runs):
+`tools/mado-portals.py` as landed answers 8/16. Wrong: invalid UTF-8 in a comment, in another group or in an unread
+`.portal` key (xdp loads the file; the tool voids it — cases d1-a1…a4) and `\v` before a group, before a key, around
+`=` (xdp voids the config, `g_ascii_isspace` excludes `\v`; the tool strips it and parses — d1-b1…b4). Right by
+coincidence: an invalid `[preferred]` value (xdp reads every preferred key at load, so the config is void either
+way — d1-a5), a repeated key (xdp looks keys up by name, so key order is not observable through routing — d1-c1/c2)
+and `key[]` (kept as a plain key by GLib, dropped by the tool; neither ever matches `default`/`DBusName` — d1-d1…d4).
+A port of the four `tools/mado-mime.py` rules (`.ufo/waves/round-92/build/mado-portals.d1.py`) answers 16/16 and
+keeps the round-90 frozen set at 229/229, but it removes the bytes eight round-90 frozen mutants anchor on; landing
+it is routed to a later round with its own frozen counter, so the tool is unchanged at round 92.
