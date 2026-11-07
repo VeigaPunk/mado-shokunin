@@ -4650,3 +4650,24 @@ cases `21cccc3a…e370e`; mutants `32c207b3…53bb`; renderer `182cf06c…e3d4`)
   surface.
 - Round shape: one v1 wave w1 of 11 seats (4 executors, 2 mutation-testers, 1 scout, 1 scribe, 1 connector,
   1 reviewer, 1 critic; attack 4/11 = 36 %); no residual call; no dead seats; round total 11.
+
+## Correction (round 99 — the round-98 entry above)
+
+The round-98 entry's own numbers are corrected here, append-only; the entry's claims and verdicts are not
+rewritten. Source: `corpus/lessons/round-98-verifier-spotcheck.md` section 5 (D4, D8) and the receipts it
+names.
+
+- **Fresh seed.** The entry says the C1 fresh leg ran at seed `e2bf4d1b757e2e7b`; the receipt
+  `.ufo/waves/round-98/receipts/c1-measured-r98.txt` and the report both print
+  `fresh_seed=f00d3edcdb285ac0`. The measured value is `f00d3edcdb285ac0`; `e2bf4d1b757e2e7b` is the
+  generator's *input* seed line, not the frozen run's seed. Re-derive:
+  `grep -o 'fresh_seed=[0-9a-f]*' .ufo/waves/round-98/receipts/c1-measured-r98.txt`.
+- **Mistake count.** The entry says "Mistakes M98-1..M98-6"; `corpus/lessons/round-98.md` holds M98-1
+  through M98-12. Re-derive: `grep -c '^\*\*M98-' corpus/lessons/round-98.md` -> 12.
+- **C2 commit attribution (D8).** The entry's prose attributes the 21-path repair and the
+  S504/S506/S527 `used-by` additions to one commit. They are two: the 16-row/21-path repair landed at
+  `06b6bf2a` and the entry plus the three `used-by` cells landed at `020af865`. Re-derive:
+  `git log --oneline 06b6bf2a..020af865 -- corpus/SOURCES.md corpus/knowledge/gio-exec-argv-r98.md`.
+- **Registry numbers (D2).** The entry's "466 rows / 119 entries" is the *records* state (`020af865`+),
+  not the gated revision: the gate ran at `a3471631`, which has 462 rows / 118 entries. Round 99 re-runs
+  the gate at the records tip and commits the receipt; the numbers are not rewritten here.

@@ -1283,3 +1283,24 @@ revision. Shown able to fail: `gio info -a standard::content-type` on a file und
 sentence); `git show e6152b58:SKILL.md | grep -c 'mado-mimetext'` prints 1 (contradicts the second). The fix is the
 same in both halves: the sentence is derived from a measurement of the exact artifact it names, and the predicate
 carries the measured base value. (lesson: lessons/round-97.md#mistakes M97-2, M97-4)
+
+## Round 99 — an instrument's own race, and a record's own pins
+
+**170. A model rule is admitted only after the instrument that produced it has been shown not to alias its own
+observation.** Round 98 froze "the last argument wins" as the launch rule because the probe wrote every spawn's
+argv to one output file; the three children of a `%f` launch overwrote each other and the reader saw the last
+writer. The rule: when a measured sentence describes a *sequence*, a *count* or a *multiset*, the probe must
+produce one independently addressable record per observation (append-only, atomic per line, or one file per
+spawn) and the oracle must wait for quiescence before parsing; a single shared sink is a named limit, never a
+model. Shown able to fail: with one `probe.sh.out`, `%f` + `a,b,c` reads `A1=c.txt` (one argv); with the
+appended-record probe the same command reads three spawns `a`, `b`, `c` (lesson M98-1; the round-98 lesson's
+`## Gate` and the round-99 entry's `## 12. Named limits` carry the corrected rule).
+
+**171. A registry row's pins are re-derived from the committed artifact they name, at the revision the row
+declares, before the row is committed.** A row that carries `--expect-<kind>-sha256` values is a claim about
+bytes; a value copied from a pre-freeze draft makes every reader's run a `SETUP_ERROR`. The rule: for each pin,
+`git show <row's --rev>:<the artifact the flag names>` is hashed and compared, and a row whose pins disagree
+with the freeze block is corrected append-only with both values named. Shown able to fail: the round-98
+`mado-r98-execargv` row carried `acfcc4f7…`/`5f074f70…` while `git show master:tools/mado-execargv.py` hashes
+`49f7fecd…` and the mutants file `32c207b3…`; the outside spot-check (D3) found it, no lane instrument did
+(lesson: lessons/round-99.md#mistakes M99-1).

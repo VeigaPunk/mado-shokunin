@@ -602,3 +602,28 @@ entry's `source:` frontmatter cites but whose `used-by` does not name that entry
 no row) and R6 (a duplicate id); it writes nothing. The 21 repaired `used-by` cells are registry
 records, not a new write surface: the registry is the lane's own corpus file and every change is
 logged old -> new in `corpus/lessons/round-98.md`.
+
+**Round-99 refinement (C1) - the launch spawn environment (read-only); no new write surface.**
+`tools/mado-launchenv.py` models, from a desktop file's bytes, a FILE argument list and a `PATH`
+string, what surrounds the argv vectors `tools/mado-execargv.py` already answers: the load gate
+(`TryExec` then `Exec`, each through `g_find_program_for_path(program, process PATH, Path=)`, whose
+failure is `Unable to load application information`), the `Terminal=true` prepend (the twelve
+`known_terminals` in table order, each searched with the entry's `Path=` as working dir, the
+`exec_arg` column, and `Unable to find terminal required for application` when none is found), the
+post-prepend `argv[0]` lookup (`Program '<x>' not found in $PATH`), the child's cwd (`Path=`, with an
+empty value inheriting and an unenterable one failing the spawn), and `GIO_LAUNCHED_DESKTOP_FILE`
+(S532, S533, S534). It reads the desktop file and performs the same filesystem tests
+`g_find_program_for_path` performs; it writes nothing, never launches a process, never reads
+`~/.config`, and never asks `gio` or a shell to answer a modelled question. `gio launch` on a fixture
+desktop file under a case-controlled PATH is the *oracle* the committed case set was measured
+against, never a runtime dependency of the tool. Whether the launched process survives, the
+`gio-launch-desktop` wrapper's own environment handling, `DBusActivatable` activation and the portal
+path stay frontier.
+
+**Round-99 refinement (C2) - the harm watch as an instrument (read-only); no new write surface.**
+`quality/harm-watch.py` replays a frozen panel of the lane's prior counting-command legs, each with a
+frozen expected exit status and a stdout marker, and its census fails closed on a leg the panel
+declares but does not carry (`PANEL_LEG_COUNT`, `PANEL_DUPLICATE`, `PANEL_ROUND_MISSING`,
+`PANEL_LEG_UNKNOWN`, `PANEL_LEG_MISSING`). It runs each leg as a child process in the lane tree and
+writes nothing outside the caller's scratch; the panel is the record, and a leg whose expectation
+must change is re-frozen in the round that changes it.
