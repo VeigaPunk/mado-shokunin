@@ -1,0 +1,62 @@
+# round-92 sources opened by L1 MadoR92, 2026-11-06T22:58:55-03:00
+$ curl -sSfL https://gitlab.freedesktop.org/xdg/xdg-utils/-/raw/v1.2.1/scripts/xdg-mime.in
+rc=0 bytes=26440 sha256=11e7d91eebeeb9ae9f77c4cf66a837d5eba4ce91ef2fce105ff8fda786b95c7e
+$ curl -sSfL https://gitlab.freedesktop.org/xdg/xdg-utils/-/raw/v1.2.1/scripts/xdg-utils-common.in
+rc=0 bytes=12983 sha256=1f6969b54e012f75fea629eb54fd817ab8795b99ee0a28e2e819ffdaf19cc532
+$ curl -sSfL https://gitlab.freedesktop.org/xdg/xdg-utils/-/raw/v1.2.1/scripts/xdg-open.in
+rc=0 bytes=15104 sha256=a6b0c7afd27300e633d674243d892978db81c625471b57183cc6f3331280790b
+$ curl -sSfL https://gitlab.freedesktop.org/xdg/xdg-utils/-/archive/v1.2.1/xdg-utils-v1.2.1.tar.gz
+rc=0 bytes=307637 sha256=f6b648c064464c2636884c05746e80428110a576f8daacf46ef2e554dcfdae75
+$ curl -sSfL https://www.gnu.org/software/bash/manual/bash.html
+curl: (28) Failed to connect to www.gnu.org:443 after 136466 ms: Could not connect to server
+error: failed to redirect to /fast/scratch/hyaku/mado-r92/l1/src/bash.html: No such file or directory (os error 2)
+error: failed to redirect to /fast/scratch/hyaku/mado-r92/l1/src/bash.html: No such file or directory (os error 2)
+rc=28 bytes= sha256=
+$ curl -sSfL https://www.gnu.org/software/grep/manual/grep.html
+curl: (28) Failed to connect to www.gnu.org:443 after 136453 ms: Could not connect to server
+error: failed to redirect to /fast/scratch/hyaku/mado-r92/l1/src/grep.html: No such file or directory (os error 2)
+error: failed to redirect to /fast/scratch/hyaku/mado-r92/l1/src/grep.html: No such file or directory (os error 2)
+rc=28 bytes= sha256=
+$ sha256sum /usr/bin/xdg-mime /usr/bin/xdg-open
+a587107ff995a5f907ab1b731316a169348c6b0383caf8fd151ff21f89615f3f  /usr/bin/xdg-mime
+7d759d54f0d4ce1beeb34ee62c587985b5042374e8de237b0dcb8cd47aa698cf  /usr/bin/xdg-open
+$ pacman -Q xdg-utils bash grep gawk coreutils
+xdg-utils 1.2.1-2
+bash 5.3.20-1
+grep 3.12-2
+gawk 5.4.1-1
+coreutils 9.12-2
+$ for fn in ...: diff upstream function text vs /usr/bin/xdg-mime
+check_mimeapps_list identical (xdg-mime.in)
+defapp_generic identical (xdg-mime.in)
+defapp_fallback identical (xdg-mime.in)
+search_desktop_file identical (xdg-mime.in)
+desktop_file_to_binary identical (xdg-utils-common.in)
+xdg_realpath identical (xdg-utils-common.in)
+detectDE identical (xdg-utils-common.in)
+first_word identical (xdg-utils-common.in)
+
+# gnu.org unreachable (curl rc=28 twice); the installed manuals are opened instead (2026-11-06T23:03:49-03:00)
+$ sha256sum /usr/share/man/man1/bash.1.gz; zcat /usr/share/man/man1/bash.1.gz | sha256sum
+b68beb3e385f7d8aead26bf7887c12f93ca769dcd528fd7282d70938b09bdffe container; 23f7bd155c57125864094d2cb4e1f6ec9f8c2ea002e18bebeb3ed4bcfaad1971 decompressed
+$ sha256sum /usr/share/man/man1/grep.1.gz; zcat /usr/share/man/man1/grep.1.gz | sha256sum
+9b027d022ae9533ff3e140ba8d96ccd58955bdf9d1c818c327fd992e575c85ba container; f48970ff6a00e6c80a2affcd58a4460c0832d60efcbfc55f89fbe56716f613ef decompressed
+$ sha256sum /usr/share/man/man1/gawk.1.gz; zcat /usr/share/man/man1/gawk.1.gz | sha256sum
+1ecfea3215b33b4e7a7e3f0a2a9a6902a09e62dfbf31bf37b67911522ffcee33 container; db0f483e496c8cf3bceb5848f52726f5020210518cbd3f9c56b3223f39c23df6 decompressed
+$ MANWIDTH=120 man -P cat bash | grep -n (quotes)
+1029:            value  is  the number of consecutive EOF characters which must be typed as the first characters on an input
+1679:     If no matching filenames are found, and the shell option nullglob is not enabled, the word is left unchanged.   If
+270:     The period . matches any single character.  It is unspecified whether it matches an encoding error.
+328:   Basic vs Extended Regular Expressions
+329:     In basic regular expressions the meta-characters ?, +, {, |, (, and ) lose their special meaning; instead use  the
+224:     Gawk executes AWK programs in the following order.  First, all variable assignments specified via  the  -v  option
+451:     The escape sequences described in the  manual  may  also  be  used  inside  constant  regular  expressions  (e.g.,
+$ quotes located (MANWIDTH=120 man -P cat <page>, line numbers of that rendering)
+bash.1 1679: If no matching filenames are found, and the shell option nullglob is not enabled, the word is left unchanged.   If
+bash.1 3878-3879:  standard utilities.  
+bash.1 4611-4612:  -r Backslash does not act as an escape character. The backslash is considered to be part of the line.  In particular, a backslash-newline pair may not then be used as a line continuation. 
+grep.1 270: The period . matches any single character.  It is unspecified whether it matches an encoding error.
+grep.1 329-330:  In basic regular expressions the meta-characters ?, +, {, |, (, and ) lose their special meaning; instead use the  backslashed versions \?, \+, \{, \|, \(, and \). 
+(correction: the 3878-3879 line above is the wrong range; the command -v quote is 3880-3881)
+bash.1 3880-3881:  If either the -V or -v option is supplied, command prints a description of command. The -v option displays  a single word indicating the command or filename used to invoke command; the -V option produces a more ver‐ 
+bash.1 1660-1662:  If IFS contains a non-whitespace character, then any character in the value of IFS that is not IFS whitespace,  along with any adjacent IFS whitespace characters, delimits a field. This means that adjacent non-IFS-whitespace  delimiters produce a null field. A sequence of IFS whitespace characters also delimits a field. 

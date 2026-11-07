@@ -1,0 +1,490 @@
+{
+ "mutants": [
+  {
+   "id": "M01",
+   "what": "lowercase of the desktop name skipped",
+   "find": "prefix = bytes(c + 32 if 65 <= c <= 90 else c for c in desktop) + b\"-\" if desktop else b\"\"",
+   "replace": "prefix = desktop + b\"-\" if desktop else b\"\""
+  },
+  {
+   "id": "M02",
+   "what": "plain mimeapps.list not tried after desktop files",
+   "find": "for desktop in expand(ifs_split(xcd, b\":\"), self.cwd) + [b\"\"]:",
+   "replace": "for desktop in expand(ifs_split(xcd, b\":\"), self.cwd):"
+  },
+  {
+   "id": "M03",
+   "what": "other group header does not end [Default Applications]",
+   "find": "                elif ln.startswith(b\"[\"):\n                    indefault = False",
+   "replace": "                elif ln.startswith(b\"[\") and False:\n                    indefault = False"
+  },
+  {
+   "id": "M04",
+   "what": "header must equal the line",
+   "find": "if ln.startswith(b\"[Default Applications]\"):",
+   "replace": "if ln == b\"[Default Applications]\":"
+  },
+  {
+   "id": "M05",
+   "what": "last matching line in a file wins",
+   "find": "elif result is None and indefault and ln.startswith(pre):",
+   "replace": "elif indefault and ln.startswith(pre):"
+  },
+  {
+   "id": "M06",
+   "what": "key compared after stripping leading space",
+   "find": "elif result is None and indefault and ln.startswith(pre):",
+   "replace": "elif result is None and indefault and ln.lstrip().startswith(pre):"
+  },
+  {
+   "id": "M07",
+   "what": "vendor is the text before the first dash",
+   "find": "vendor = desktop[:desktop.rfind(b\"-\")]",
+   "replace": "vendor = desktop[:desktop.find(b\"-\")]"
+  },
+  {
+   "id": "M08",
+   "what": "no subdirectory search",
+   "find": "indirs = [d + b\"/applications/\"] + self.subdirs(d + b\"/applications/\") + [d + b\"/applnk/\"] + \\",
+   "replace": "indirs = [d + b\"/applications/\"] + [d + b\"/applnk/\"] + \\"
+  },
+  {
+   "id": "M09",
+   "what": "builtins resolved through PATH",
+   "find": "if s in KEYWORDS or s in BUILTINS or s in FUNCTIONS:",
+   "replace": "if s in KEYWORDS or s in FUNCTIONS:"
+  },
+  {
+   "id": "M10",
+   "what": "Exec[locale]= lines not matched",
+   "find": "EXEC = re.compile(rb\"^Exec(\\[[^]=]*\\])?=\")",
+   "replace": "EXEC = re.compile(rb\"^Exec=\")"
+  },
+  {
+   "id": "M11",
+   "what": "read without backslash processing",
+   "find": "        if c == 0x5C:\n            if i + 1 >= len(text):",
+   "replace": "        if c == 0x5C and False:\n            if i + 1 >= len(text):"
+  },
+  {
+   "id": "M12",
+   "what": "echo options not honoured",
+   "find": "    if re.fullmatch(rb\"-[neE]+\", arg):",
+   "replace": "    if False:"
+  },
+  {
+   "id": "M13",
+   "what": "slash names need no execute bit",
+   "find": "return name if (os.access(q, os.X_OK) and not os.path.isdir(q)) else b\"\"",
+   "replace": "return name if os.path.exists(q) else b\"\""
+  },
+  {
+   "id": "M14",
+   "what": "PATH search accepts non-executable files",
+   "find": "if os.path.isfile(q) and os.access(q, os.X_OK):",
+   "replace": "if os.path.isfile(q):"
+  },
+  {
+   "id": "M15",
+   "what": "a resolved name always exists",
+   "find": "return cmd != b\"\" and os.path.exists(self.p(cmd))",
+   "replace": "return cmd != b\"\""
+  },
+  {
+   "id": "M16",
+   "what": "a bad first desktop file does not stop the search",
+   "find": "                cmd = self.command_v(read_first(text))\n                return self.exists_path(cmd)",
+   "replace": "                cmd = self.command_v(read_first(text))\n                if self.exists_path(cmd):\n                    return True\n                file_path = b\"\""
+  },
+  {
+   "id": "M17",
+   "what": "XDG_MENU_PREFIX ignored",
+   "find": "for prefix in (self.get(\"XDG_MENU_PREFIX\"), b\"\"):",
+   "replace": "for prefix in (b\"\",):"
+  },
+  {
+   "id": "M18",
+   "what": "cut takes the last = field",
+   "find": "v = parts[1] if len(parts) > 1 else first",
+   "replace": "v = parts[-1] if len(parts) > 1 else first"
+  },
+  {
+   "id": "M19",
+   "what": "dot is literal in the type",
+   "find": "        if c == b\".\":\n            out += b\".\"",
+   "replace": "        if c == b\".\":\n            out += b\"\\\\.\""
+  },
+  {
+   "id": "M20",
+   "what": "grep anchored at line start",
+   "find": "return [ln for ln in lines_of(data) if rx.search(ln)]",
+   "replace": "return [ln for ln in lines_of(data) if rx.match(ln)]"
+  },
+  {
+   "id": "M21",
+   "what": "an empty cache value stops the search",
+   "find": "                if v:\n                    return echo_out(v)",
+   "replace": "                return echo_out(v) if v else b\"\""
+  },
+  {
+   "id": "M22",
+   "what": "InitialPreference ties go to the last file",
+   "find": "if v is not None and v > preference:",
+   "replace": "if v is not None and v >= preference:"
+  },
+  {
+   "id": "M23",
+   "what": "test integers take no trailing whitespace",
+   "find": "m = re.fullmatch(rb\"[ \\t\\n\\r\\x0b\\x0c]*([+-]?)([0-9]+)[ \\t\\n\\r\\x0b\\x0c]*\", s)",
+   "replace": "m = re.fullmatch(rb\"[ \\t\\n\\r\\x0b\\x0c]*([+-]?)([0-9]+)\", s)"
+  },
+  {
+   "id": "M24",
+   "what": "only InitialPreference= at line start counts",
+   "find": "if b\"InitialPreference=\" in ln:",
+   "replace": "if ln.startswith(b\"InitialPreference=\"):"
+  },
+  {
+   "id": "M25",
+   "what": "LXQt answered like any session",
+   "find": "            return None, 3",
+   "replace": "            pass"
+  },
+  {
+   "id": "M26",
+   "what": "flatpak-info not considered",
+   "find": "if os.path.isfile(self.p(self.get(\"XDG_RUNTIME_DIR\") + b\"/flatpak-info\")):",
+   "replace": "if False:"
+  },
+  {
+   "id": "M27",
+   "what": "a type without slash is queried",
+   "find": "if mime == b\"\" or mime.startswith(b\"-\") or b\"/\" not in mime:",
+   "replace": "if mime == b\"\" or mime.startswith(b\"-\"):"
+  },
+  {
+   "id": "M29",
+   "what": "CR stripped from mimeapps values",
+   "find": "result = cmdsub(result + b\"\\n\") if result is not None else b\"\"",
+   "replace": "result = cmdsub(result.rstrip(b\"\\r\") + b\"\\n\") if result is not None else b\"\""
+  },
+  {
+   "id": "M30",
+   "what": "hidden subdirectories searched",
+   "find": "out = [prefix + n + b\"/\" for n in names if not n.startswith(b\".\") and os.path.isdir(os.path.join(base, fs(n)))]",
+   "replace": "out = [prefix + n + b\"/\" for n in names if os.path.isdir(os.path.join(base, fs(n)))]"
+  },
+  {
+   "id": "M31",
+   "what": "basename accepts a leading dash",
+   "find": "    if s.startswith(b\"-\") and s != b\"-\":\n        return b\"\"",
+   "replace": "    if False:\n        return b\"\""
+  },
+  {
+   "id": "M32",
+   "what": "unquoted words are not globbed",
+   "find": "    if not re.search(rb\"(?:^|[^\\\\])(?:\\\\\\\\)*[*?[]\", word):\n        return [word]",
+   "replace": "    if True:\n        return [word]"
+  },
+  {
+   "id": "M33",
+   "what": "no recursion into applications subdirectories for MimeType scan",
+   "find": "            if os.path.isdir(self.p(sub)):\n                out += self.search_desktop_file(rx, sub)",
+   "replace": "            if False:\n                out += self.search_desktop_file(rx, sub)"
+  },
+  {
+   "id": "M34",
+   "what": "hidden .desktop files scanned",
+   "find": "out = [prefix + n for n in names if not n.startswith(b\".\") and n.endswith(b\".desktop\")]",
+   "replace": "out = [prefix + n for n in names if n.endswith(b\".desktop\")]"
+  },
+  {
+   "id": "M35",
+   "what": "file names split only on newline",
+   "find": "            for x in expand(ws_split(self.search_desktop_file(rx2, d + b\"/applications\")), self.cwd):",
+   "replace": "            for x in expand([y for y in self.search_desktop_file(rx2, d + b\"/applications\").split(b\"\\n\") if y], self.cwd):"
+  },
+  {
+   "id": "M37",
+   "what": "defaults.list answer needs no '=' cut",
+   "find": "parts = first.split(b\"=\")",
+   "replace": "parts = [b\"\", first.split(b\":\", 1)[-1].split(b\"=\", 1)[-1]]"
+  },
+  {
+   "id": "M38",
+   "what": "applnk not searched",
+   "find": "                elif readable(self.p(d + b\"/applnk/\" + vendor + b\"/\" + rest)):",
+   "replace": "                elif False:"
+  },
+  {
+   "id": "M39",
+   "what": "a data dir must hold applications/ (applnk alone not enough)",
+   "find": "if not ((d != b\"\" and os.path.isdir(self.p(d + b\"/applications\"))) or os.path.isdir(self.p(d + b\"/applnk\"))):",
+   "replace": "if not (d != b\"\" and os.path.isdir(self.p(d + b\"/applications\"))):"
+  },
+  {
+   "id": "M40",
+   "what": "Exec's first word split on spaces only after unescaping nothing (quotes stripped)",
+   "find": "    return cmdsub(echo_out(bytes(first)))",
+   "replace": "    return cmdsub(echo_out(bytes(first).strip(b'\"')))"
+  },
+  {
+   "id": "MC01",
+   "what": "echo: only an exact -n argument suppresses the newline (other flag words print)",
+   "find": "    if re.fullmatch(rb\"-[neE]+\", arg):\n        return b\"\" if b\"n\" in arg else b\"\\n\"",
+   "replace": "    if arg == b\"-n\":\n        return b\"\""
+  },
+  {
+   "id": "MC02",
+   "what": "command -v: a name containing / is resolved as a path, never through PATH",
+   "find": "        if b\"/\" in name:\n            q = self.p(name)\n            return name if (os.access(q, os.X_OK) and not os.path.isdir(q)) else b\"\"",
+   "replace": "        if False:\n            q = self.p(name)\n            return name if (os.access(q, os.X_OK) and not os.path.isdir(q)) else b\"\""
+  },
+  {
+   "id": "MC03",
+   "what": "command -v: an empty PATH element means the working directory",
+   "find": "            cand = (d if d else bb(self.cwd)) + b\"/\" + name",
+   "replace": "            cand = (d if d else b\"/nonexistent\") + b\"/\" + name"
+  },
+  {
+   "id": "MC04",
+   "what": "command -v: xdg-mime's own function names resolve to the bare name",
+   "find": "        if s in KEYWORDS or s in BUILTINS or s in FUNCTIONS:",
+   "replace": "        if s in KEYWORDS or s in BUILTINS:"
+  },
+  {
+   "id": "MC05",
+   "what": "command -v: reserved words resolve to the bare name",
+   "find": "        if s in KEYWORDS or s in BUILTINS or s in FUNCTIONS:",
+   "replace": "        if s in BUILTINS or s in FUNCTIONS:"
+  },
+  {
+   "id": "MC06",
+   "what": "command -v: a PATH hit is the path printed, and it is that path that must exist",
+   "find": "                return cand",
+   "replace": "                return name"
+  },
+  {
+   "id": "MC07",
+   "what": "install check: XDG_DATA_HOME defaults to $HOME/.local/share",
+   "find": "        dh = self.get(\"XDG_DATA_HOME\") or home + b\"/.local/share\"\n        dd = self.get(\"XDG_DATA_DIRS\") or b\"/usr/local/share:/usr/share\"",
+   "replace": "        dh = self.get(\"XDG_DATA_HOME\") or home\n        dd = self.get(\"XDG_DATA_DIRS\") or b\"/usr/local/share:/usr/share\""
+  },
+  {
+   "id": "MC08",
+   "what": "vendor split: the app part starts after the FIRST dash while the vendor stops before the LAST",
+   "find": "                rest = desktop[desktop.find(b\"-\") + 1:]",
+   "replace": "                rest = desktop[desktop.rfind(b\"-\") + 1:]"
+  },
+  {
+   "id": "MC09",
+   "what": "a readable vendor-path desktop file suppresses the flat/subdir search",
+   "find": "            if file_path == b\"\":",
+   "replace": "            if True:"
+  },
+  {
+   "id": "MC10",
+   "what": "applications subdirectories are searched in sorted order",
+   "find": "            names = sorted(bb(n) for n in os.listdir(base))\n        except OSError:\n            return [prefix + b\"*/\"]",
+   "replace": "            names = sorted([bb(n) for n in os.listdir(base)], reverse=True)\n        except OSError:\n            return [prefix + b\"*/\"]"
+  },
+  {
+   "id": "MC11",
+   "what": "the *.desktop scan visits names in sorted order",
+   "find": "            names = sorted(bb(n) for n in os.listdir(self.p(prefix)))",
+   "replace": "            names = sorted([bb(n) for n in os.listdir(self.p(prefix))], reverse=True)"
+  },
+  {
+   "id": "MC12",
+   "what": "the mimeapps key match includes the trailing =",
+   "find": "            pre = awk_v(mime) + b\"=\"",
+   "replace": "            pre = awk_v(mime)"
+  },
+  {
+   "id": "MC13",
+   "what": "check_mimeapps_list echoes the list token, not its basename",
+   "find": "                        return echo_out(app)",
+   "replace": "                        return echo_out(basename(app))"
+  },
+  {
+   "id": "MC14",
+   "what": "desktop-specific mimeapps.list files are tried before the plain one",
+   "find": "        for desktop in expand(ifs_split(xcd, b\":\"), self.cwd) + [b\"\"]:",
+   "replace": "        for desktop in [b\"\"] + expand(ifs_split(xcd, b\":\"), self.cwd):"
+  },
+  {
+   "id": "MC15",
+   "what": "defaults.list is consulted before mimeinfo.cache",
+   "find": "                    for f in (x + b\"/applications/\" + prefix + b\"defaults.list\",\n                              x + b\"/applications/\" + prefix + b\"mimeinfo.cache\"):",
+   "replace": "                    for f in (x + b\"/applications/\" + prefix + b\"mimeinfo.cache\",\n                              x + b\"/applications/\" + prefix + b\"defaults.list\"):"
+  },
+  {
+   "id": "MC16",
+   "what": "the defaults/cache search includes the first (user) data dir",
+   "find": "        for x in datadirs:\n            for prefix in (self.get(\"XDG_MENU_PREFIX\"), b\"\"):",
+   "replace": "        for x in datadirs[1:]:\n            for prefix in (self.get(\"XDG_MENU_PREFIX\"), b\"\"):"
+  },
+  {
+   "id": "MC17",
+   "what": "the MimeType scan searches for the type WITH its trailing semicolon",
+   "find": "        rx2 = bre(mime + b\";\")",
+   "replace": "        rx2 = bre(mime)"
+  },
+  {
+   "id": "MC18",
+   "what": "the fallback preference starts below zero, so a zero preference can win",
+   "find": "        preference = -1",
+   "replace": "        preference = 0"
+  },
+  {
+   "id": "MC19",
+   "what": "the fallback preference is read as 0 followed by the InitialPreference text",
+   "find": "                v = bash_int(b\"0\" + self.initial_preference(x))",
+   "replace": "                v = bash_int(self.initial_preference(x))"
+  },
+  {
+   "id": "MC20",
+   "what": "the fallback prints the basename of the selected desktop file",
+   "find": "            b = basename(desktop_file)\n            return b + b\"\\n\" if b else b\"\"",
+   "replace": "            b = desktop_file\n            return b + b\"\\n\" if b else b\"\""
+  },
+  {
+   "id": "MC21",
+   "what": "LXQT_SESSION_CONFIG selects the LXQt session",
+   "find": "            elif self.get(\"LXQT_SESSION_CONFIG\"):\n                de = \"lxqt\"",
+   "replace": "            elif False:\n                de = 'lxqt'"
+  },
+  {
+   "id": "MC22",
+   "what": "--version prints the xdg-utils version string",
+   "find": "            return b\"xdg-mime 1.2.1\", 0",
+   "replace": "            return b\"xdg-mime 1.2.2\", 0"
+  },
+  {
+   "id": "MC23",
+   "what": "a type starting with - is a syntax error with rc 1",
+   "find": "        if mime == b\"\" or mime.startswith(b\"-\") or b\"/\" not in mime:",
+   "replace": "        if mime == b\"\" or b\"/\" not in mime:"
+  },
+  {
+   "id": "MC24",
+   "what": "read strips leading IFS whitespace before the first word",
+   "find": "    while k < len(chars) and not chars[k][1] and chars[k][0] in WS:\n        k += 1",
+   "replace": "    while False:\n        k += 1"
+  },
+  {
+   "id": "MC25",
+   "what": "a data dir's mimeapps.list lives under applications/",
+   "find": "            r = self.check_mimeapps_list(mime, d + b\"/applications\")",
+   "replace": "            r = self.check_mimeapps_list(mime, d)"
+  },
+  {
+   "id": "MC26",
+   "what": "a mimeapps value keeps a leading space",
+   "find": "                    result = ln[len(pre):]",
+   "replace": "                    result = ln[len(pre):].lstrip(b\" \")"
+  },
+  {
+   "id": "MC27",
+   "what": "the first matching defaults/cache line of the combined grep output is used",
+   "find": "                            first = f + b\":\" + hits[0]",
+   "replace": "                            first = f + b\":\" + hits[-1]"
+  },
+  {
+   "id": "MC28",
+   "what": "the defaults/cache answer is the first ; field",
+   "find": "                v = cmdsub(v.split(b\";\")[0] + b\"\\n\")",
+   "replace": "                v = cmdsub(v.split(b\";\")[-1] + b\"\\n\")"
+  },
+  {
+   "id": "MC43",
+   "what": "pathname expansion yields names in sorted order, so the first matching dir is used",
+   "find": "                names = sorted(bb(n) for n in os.listdir(base))",
+   "replace": "                names = sorted([bb(n) for n in os.listdir(base)], reverse=True)"
+  },
+  {
+   "id": "MC44",
+   "what": "the defaults/cache grep pattern ends with the = of the key",
+   "find": "        rx = bre(mime + b\"=\")",
+   "replace": "        rx = bre(mime)"
+  },
+  {
+   "id": "MC45",
+   "what": "field splitting keeps empty middle fields of a :-list",
+   "find": "    f = v.split(sep)",
+   "replace": "    f = [x for x in v.split(sep) if x]"
+  },
+  {
+   "id": "MC42",
+   "what": "an absolute word in pathname expansion stays absolute",
+   "find": "    absolute = word.startswith(b\"/\")",
+   "replace": "    absolute = False"
+  },
+  {
+   "id": "MC29",
+   "what": "basename strips trailing slashes",
+   "find": "    t = s.rstrip(b\"/\")",
+   "replace": "    t = s"
+  },
+  {
+   "id": "MC30",
+   "what": "the MimeType scan lists a directory's *.desktop files before recursing into its subdirectories",
+   "find": "        if rx is not None:\n            for f in self.desktop_glob(d + b\"/\"):\n                if self.grep_lines(rx, f):\n                    out += f + b\"\\n\"\n        for sub in self.subdirs(d + b\"/\"):\n            if os.path.isdir(self.p(sub)):\n                out += self.search_desktop_file(rx, sub)",
+   "replace": "        for sub in self.subdirs(d + b\"/\"):\n            if os.path.isdir(self.p(sub)):\n                out += self.search_desktop_file(rx, sub)\n        if rx is not None:\n            for f in self.desktop_glob(d + b\"/\"):\n                if self.grep_lines(rx, f):\n                    out += f + b\"\\n\""
+  },
+  {
+   "id": "MC31",
+   "what": "config home is consulted before config dirs",
+   "find": "        for d in expand(ifs_split(ch, b\":\") + ifs_split(cd, b\":\"), self.cwd):",
+   "replace": "        for d in expand(ifs_split(cd, b\":\") + ifs_split(ch, b\":\"), self.cwd):"
+  },
+  {
+   "id": "MC32",
+   "what": "read stops at the first newline of the Exec pipeline",
+   "find": "        if c == 0x0A:\n            break",
+   "replace": "        if c == 0x0A:\n            c = 0x20"
+  },
+  {
+   "id": "MC33",
+   "what": "a bash test integer outside int64 is not a number",
+   "find": "    if v > 2 ** 63 - 1 or v < -(2 ** 63):\n        return None",
+   "replace": "    if False:\n        return None"
+  },
+  {
+   "id": "MC34",
+   "what": "BRE: ^ anchors only at the start of the pattern",
+   "find": "        if c == b\"^\" and at_start:\n            out += b\"^\"",
+   "replace": "        if c == b\"^\":\n            out += b\"^\""
+  },
+  {
+   "id": "MC35",
+   "what": "BRE: $ anchors only at the end of the pattern",
+   "find": "        if c == b\"$\" and (i + 1 == n or pat[i + 1:i + 3] in (b\"\\\\)\", b\"\\\\|\")):\n            out += b\"$\"",
+   "replace": "        if c == b\"$\":\n            out += b\"$\""
+  },
+  {
+   "id": "MC37",
+   "what": "pathname expansion does not match hidden names unless the pattern starts with a dot",
+   "find": "                if n.startswith(b\".\") and not comp.startswith(b\".\"):\n                    continue",
+   "replace": "                if False:\n                    continue"
+  },
+  {
+   "id": "MC38",
+   "what": "InitialPreference is awk field 2 (between the first and second =)",
+   "find": "                f = ln.split(b\"=\")\n                out += (f[1] if len(f) > 1 else b\"\") + b\"\\n\"",
+   "replace": "                out += ln.split(b\"InitialPreference=\", 1)[1] + b\"\\n\""
+  },
+  {
+   "id": "MC40",
+   "what": "glob bracket: both ! and ^ negate",
+   "find": "            r = _bracket(pat, i + 1, b\"!^\")",
+   "replace": "            r = _bracket(pat, i + 1, b\"!\")"
+  },
+  {
+   "id": "MC41",
+   "what": "the MimeType scan only visits *.desktop names",
+   "find": "        out = [prefix + n for n in names if not n.startswith(b\".\") and n.endswith(b\".desktop\")]",
+   "replace": "        out = [prefix + n for n in names if not n.startswith(b\".\")]"
+  }
+ ]
+}

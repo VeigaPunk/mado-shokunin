@@ -1,0 +1,106 @@
+{
+ "mutants": [
+  {
+   "id": "N01",
+   "what": "rev mode enumerates blobs only (F1 back)",
+   "find": "        return [p for p in list(self.sizes) + sorted(self.links) + sorted(self.others) if p.startswith(\".ufo/waves/\")]",
+   "replace": "        return [p for p in self.sizes if p.startswith(\".ufo/waves/\")]"
+  },
+  {
+   "id": "N15",
+   "what": "rev mode ignores gitlinks and trees",
+   "find": "        return [p for p in list(self.sizes) + sorted(self.links) + sorted(self.others) if p.startswith(\".ufo/waves/\")]",
+   "replace": "        return [p for p in list(self.sizes) + sorted(self.links) if p.startswith(\".ufo/waves/\")]"
+  },
+  {
+   "id": "N16",
+   "what": "worktree lists no dispatch-named directories",
+   "find": "            for f in files + [x for x in dirs if DISPATCH.match(",
+   "replace": "            for f in files + [x for x in [] if DISPATCH.match("
+  },
+  {
+   "id": "N17",
+   "what": "a dispatch-named tree is not recorded in rev mode",
+   "find": "                if DISPATCH.match(prefix):\n                    self.others.add(prefix)",
+   "replace": "                if False:\n                    self.others.add(prefix)"
+  },
+  {
+   "id": "N02",
+   "what": "rev dispatch symlink accepted",
+   "find": "        if path in self.links:\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")\n        if path not in self.sizes:",
+   "replace": "        if False:\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")\n        if path not in self.sizes and path not in self.links:"
+  },
+  {
+   "id": "N03",
+   "what": "worktree dispatch symlink accepted",
+   "find": "        if os.path.islink(p):\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")",
+   "replace": "        if False:\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")"
+  },
+  {
+   "id": "N04",
+   "what": "worktree dispatch type unchecked (F4 back)",
+   "find": "        if not stat.S_ISREG(st.st_mode):\n            raise SetupError(f\"{path}: dispatch is not a regular file\")",
+   "replace": "        if False:\n            raise SetupError(f\"{path}: dispatch is not a regular file\")"
+  },
+  {
+   "id": "N05",
+   "what": "dispatch check never called",
+   "find": "            tree.check_dispatch(p)\n",
+   "replace": "\n"
+  },
+  {
+   "id": "N06",
+   "what": "tokens printed raw (F2 back)",
+   "find": "    if s and all(33 <= ord(ch) <= 126 for ch in s) and not s.startswith('\"'):\n        return s",
+   "replace": "    if True:\n        return s"
+  },
+  {
+   "id": "N07",
+   "what": "JSON tokens not ASCII-escaped",
+   "find": "    return json.dumps(s, ensure_ascii=True).replace(\" \", \"\\\\u0020\")",
+   "replace": "    return json.dumps(s, ensure_ascii=False).replace(\" \", \"\\\\u0020\")"
+  },
+  {
+   "id": "N08",
+   "what": "spaces left inside JSON tokens",
+   "find": "    return json.dumps(s, ensure_ascii=True).replace(\" \", \"\\\\u0020\")",
+   "replace": "    return json.dumps(s, ensure_ascii=True)"
+  },
+  {
+   "id": "N09",
+   "what": "repeated --round counted again (F3 back)",
+   "find": "        rounds = sorted(set(rounds))  # a repeated --round counts once (r91 F3)",
+   "replace": "        rounds = list(rounds)"
+  },
+  {
+   "id": "N10",
+   "what": "containment test always true (F5 back)",
+   "find": "        return r == self.real or r.startswith(self.real + os.sep)",
+   "replace": "        return True"
+  },
+  {
+   "id": "N11",
+   "what": "report containment unchecked",
+   "find": "        return os.path.islink(os.path.join(self.repo, path)) or not self.inside(path)",
+   "replace": "        return os.path.islink(os.path.join(self.repo, path))"
+  },
+  {
+   "id": "N12",
+   "what": "name never tokenised",
+   "find": "                name = tok(str(t.get(\"name\", \"?\")) if isinstance(t, dict) else \"?\")",
+   "replace": "                name = str(t.get(\"name\", \"?\")) if isinstance(t, dict) else \"?\""
+  },
+  {
+   "id": "N13",
+   "what": "path never tokenised for SR01/SR02",
+   "find": "                size = tree.size(rp)\n                rp = tok(rp)",
+   "replace": "                size = tree.size(rp)"
+  },
+  {
+   "id": "N14",
+   "what": "prefix containment by string (sibling dir passes)",
+   "find": "        return r == self.real or r.startswith(self.real + os.sep)",
+   "replace": "        return r.startswith(self.real)"
+  }
+ ]
+}

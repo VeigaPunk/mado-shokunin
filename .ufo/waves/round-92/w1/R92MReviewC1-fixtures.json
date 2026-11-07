@@ -1,0 +1,512 @@
+{
+ "note": "R92MReviewC1 review fixtures, oracle schema of controls/xdgmime-oracle-r92.py. expect = labels from /usr/bin/xdg-mime (a587107f...). 'candidate' = build/mado-xdgmime.c1.py b6497a0a0b395dc94402444a857d0cc8cc6e289f5f664447079ccb96db921fa3 under the counter argv (--json --cwd ROOT --env=... -- TYPE).",
+ "cases": [
+  {
+   "id": "rv-stale-file-path-second-app",
+   "group": "rv",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/plain=app1.desktop;app2.desktop\n"
+    },
+    "data/applications": {
+     "dir": true
+    },
+    "data/applications/app1.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nExec=nosuchprog %U\n"
+    },
+    "share/applications/app2.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "app2.desktop",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "text/plain": {
+     "default": "app2.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "rv-stale-file-path-empty-app",
+   "group": "rv",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/plain=;app2.desktop\n"
+    },
+    "data/applications": {
+     "dir": true
+    },
+    "data/applications/app1.desktop": {
+     "text": "[Desktop Entry]\nExec=nosuchprog\n"
+    },
+    "share/applications/app2.desktop": {
+     "text": "[Desktop Entry]\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "app2.desktop",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "text/plain": {
+     "default": "app2.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "rv-type-help",
+   "group": "rv",
+   "files": {
+    "cfg": {
+     "dir": true
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "--help"
+   ],
+   "expect": {
+    "--help": {
+     "default": "   xdg-mime -- command line tool for querying information about\n   file type handling and adding descriptions for new file types\n\nSynopsis\n\n   xdg-mime query { filetype FILE | default mimetype }\n\n   xdg-mime default application mimetype(s)\n\n   xdg-mime install [--mode mode] [--novendor] mimetypes-file\n\n   xdg-mime uninstall [--mode mode] mimetypes-file\n\n   xdg-mime { --help | --manual | --version }\n\nUse 'man xdg-mime' or 'xdg-mime --manual' for additional info.",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "--help": {
+     "candidate_rc": 2,
+     "candidate_stdout": ""
+    }
+   }
+  },
+  {
+   "id": "rv-type-manual",
+   "group": "rv",
+   "files": {
+    "cfg": {
+     "dir": true
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "--manual"
+   ],
+   "expect": {
+    "--manual": {
+     "default": "Name\n\n   xdg-mime -- command line tool for querying information about\n   file type handling and adding descriptions for new file types\n\nSynopsis\n\n   xdg-mime query { filetype FILE | default mimetype }\n\n   xdg-mime default application mimetype(s)\n\n   xdg-mime install [--mode mode] [--novendor] mimetypes-file\n\n   xdg-mime uninstall [--mode mode] mimetypes-file\n\n   xdg-mime { --help | --manual | --version }\n\nDescription\n\n   The xdg-mime program can be used to query information about\n   file types and to add descriptions for new file types.\n\nCommands\n\n   query file\n          Returns the file type of FILE in the form of a MIME\n          type.\n\n          Please note that FILE names starting with a - will be\n          rejected, this can be mitigated:\n\n          + Pass absolute paths, i.e. by using realpath as a\n            preprocessor.\n          + Prefix known relative filepaths with a \"./\". For\n            example using sed -E 's|^[^/]|./\\0|' as a\n            preprocessor.\n\n          The query file option is for use inside a desktop\n          session only. It is not recommended to use xdg-mime\n          query file as root.\n\n   query default\n          Returns the default application that the desktop\n          environment uses for opening files of type mimetype. The\n          default application is identified by its *.desktop file.\n\n          The value returned by this command may or may not match\n          the application launched by xdg-open as xdg-open hands\n          over to desktop specific openers most of the time which\n          may implement their own logic.\n\n          The query default option is for use inside a desktop\n          session only. It is not recommended to use xdg-mime\n          query default as root.\n\n   default\n          Ask the desktop environment to make application the\n          default application for opening files of type mimetype.\n          An application can be made the default for several file\n          types by specifying multiple mimetypes.\n\n          application is the desktop file id of the application\n          and has the form vendor-name.desktop. application must\n          already be installed in the desktop menu before it can\n          be made the default handler. The application's desktop\n          file must list support for all the MIME types that it\n          wishes to be the default handler for.\n\n          Requests to make an application a default handler may be\n          subject to system policy or approval by the end-user.\n          xdg-mime query can be used to verify whether an\n          application is the actual default handler for a specific\n          file type.\n\n          Security Note: Never set a handler that will blindly\n          execute code or commands from the file being handled.\n          Such behaviour will sooner than later lead to unintended\n          code execution i.e. through a curious user trying to\n          inspect a freshly downloaded file but running it by\n          accident.\n\n          Keeping opening and executing separate actions helps\n          with people protecting themselves from malware, the\n          default handler is an opener, not a runner.\n\n          The default option is for use inside a desktop session\n          only. It is not recommended to use xdg-mime default as\n          root.\n\n   install\n          Adds the file type descriptions provided in\n          mimetypes-file to the desktop environment.\n          mimetypes-file must be a XML file that follows the\n          freedesktop.org Shared MIME-info Database specification\n          and that has a mime-info element as its document root.\n          For each new file type one or more icons with name\n          type-subtype must be installed with the\n          xdg-icon-resource command in the mimetypes context. For\n          example the filetype\n          application/vnd.oasis.opendocument.text requires an icon\n          named application-vnd.oasis.opendocument.text to be\n          installed (unless the file type recommends another icon\n          name).\n\n   uninstall\n          Removes the file type descriptions provided in\n          mimetypes-file and previously added with xdg-mime\n          install from the desktop environment. mimetypes-file\n          must be a XML file that follows the freedesktop.org\n          Shared MIME-info Database specification and that has a\n          mime-info element as its document root.\n\nOptions\n\n   --mode mode\n          mode can be user or system. In user mode the file is\n          (un)installed for the current user only. In system mode\n          the file is (un)installed for all users on the system.\n          Usually only root is allowed to install in system mode.\n\n          The default is to use system mode when called by root\n          and to use user mode when called by a non-root user.\n\n   --novendor\n          Normally, xdg-mime checks to ensure that the\n          mimetypes-file to be installed has a proper vendor\n          prefix. This option can be used to disable that check.\n\n          A vendor prefix consists of alpha characters ([a-zA-Z])\n          and is terminated with a dash (\"-\"). Companies and\n          organizations are encouraged to use a word or phrase,\n          preferably the organizations name, for which they hold a\n          trademark as their vendor prefix. The purpose of the\n          vendor prefix is to prevent name conflicts.\n\n   --help\n          Show command synopsis.\n\n   --manual\n          Show this manual page.\n\n   --version\n          Show the xdg-utils version information.\n\nEnvironment Variables\n\n   xdg-mime honours the following environment variables:\n\n   XDG_UTILS_DEBUG_LEVEL\n          Setting this environment variable to a non-zero\n          numerical value makes xdg-mime do more verbose reporting\n          on stderr. Setting a higher value increases the\n          verbosity.\n\n   XDG_UTILS_INSTALL_MODE\n          This environment variable can be used by the user or\n          administrator to override the installation mode. Valid\n          values are user and system.\n\nExit Codes\n\n   An exit code of 0 indicates success while a non-zero exit code\n   indicates failure. The following failure codes can be returned:\n\n   1\n          Error in command line syntax.\n\n   2\n          One of the files passed on the command line did not\n          exist.\n\n   3\n          A required tool could not be found.\n\n   4\n          The action failed.\n\n   5\n          No permission to read one of the files passed on the\n          command line.\n\nSee Also\n\n   xdg-icon-resource(1), xdg-desktop-menu(1), Shared MIME database\n   specification, MIME applications associations specification\n\nExamples\n\nxdg-mime query filetype /tmp/foobar.png\n\n   Prints the MIME type of the file /tmp/foobar.png, in this case\n   image/png\n\nxdg-mime query default image/png\n\n   Prints the .desktop filename of the application which is\n   registered to open PNG files.\n\nxdg-mime install shinythings-shiny.xml\n\n   Adds a file type description for \"shiny\"-files. \"shinythings-\"\n   is used as the vendor prefix. The file type description could\n   look as follows.\nshinythings-shiny.xml:\n\n<?xml version=\"1.0\"?>\n<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'\n>\n  <mime-type type=\"text/x-shiny\">\n    <comment>Shiny new file type</comment>\n    <glob pattern=\"*.shiny\"/>\n    <glob pattern=\"*.shi\"/>\n  </mime-type>\n</mime-info>\n\n   An icon for this new file type must also be installed, for\n   example with:\nxdg-icon-resource install --context mimetypes --size 64 shiny-file-icon.\npng text-x-shiny",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "--manual": {
+     "candidate_rc": 2,
+     "candidate_stdout": ""
+    }
+   }
+  },
+  {
+   "id": "rv-flatpak-cwd-lxqt",
+   "group": "rv",
+   "files": {
+    "flatpak-info": {
+     "text": ""
+    },
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/plain=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "LXQt"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": null,
+     "rc": 3
+    }
+   },
+   "candidate": {
+    "text/plain": {
+     "default": null,
+     "rc": 3
+    }
+   }
+  },
+  {
+   "id": "rv-path-unset",
+   "group": "rv",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/plain=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nExec=/usr/bin/env %U\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "text/plain": {
+     "candidate_rc": 2,
+     "candidate_stdout": ""
+    }
+   }
+  },
+  {
+   "id": "rv-initialpref-multiline",
+   "group": "rv",
+   "files": {
+    "data/applications/aa/x.desktop": {
+     "text": "[Desktop Entry]\nMimeType=text/plain;\nInitialPreference=5\nInitialPreference=3\nExec=a %U\n"
+    },
+    "data/applications/bb/y.desktop": {
+     "text": "[Desktop Entry]\nMimeType=text/plain;\nInitialPreference=9\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "y.desktop",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "text/plain": {
+     "default": "y.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "rv-app-id-glob",
+   "group": "rv",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/plain=*.desktop\n"
+    },
+    "q.desktop": {
+     "text": "[Desktop Entry]\nExec=nosuchprog\n"
+    },
+    "data/applications/q.desktop": {
+     "text": "[Desktop Entry]\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "q.desktop",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "text/plain": {
+     "default": "q.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "rv-fallback-space-name",
+   "group": "rv",
+   "files": {
+    "data/applications/my app.desktop": {
+     "text": "[Desktop Entry]\nMimeType=text/plain;\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "my",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "text/plain": {
+     "default": "my",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "rv-empty-type",
+   "group": "rv",
+   "files": {
+    "cfg": {
+     "dir": true
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    ""
+   ],
+   "expect": {
+    "": {
+     "default": null,
+     "rc": 1
+    }
+   },
+   "candidate": {
+    "": {
+     "default": null,
+     "rc": 1
+    }
+   }
+  },
+  {
+   "id": "rv-awk-unknown-escape",
+   "group": "rv",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/qplain=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/\\qplain"
+   ],
+   "expect": {
+    "text/\\qplain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "text/\\qplain": {
+     "candidate_rc": 2
+    }
+   }
+  },
+  {
+   "id": "rv-glob-backslash-star",
+   "group": "rv",
+   "files": {
+    "c*/mimeapps.list": {
+     "text": "[Default Applications]\ntext/plain=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/c\\*",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": null,
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "text/plain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "rv-type-newline-grep",
+   "group": "rv",
+   "files": {
+    "data/applications/defaults.list": {
+     "text": "text/plain=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain\nx-scheme"
+   ],
+   "expect": {
+    "text/plain\nx-scheme": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   },
+   "candidate": {
+    "text/plain\nx-scheme": {
+     "candidate_rc": 2
+    }
+   }
+  }
+ ]
+}

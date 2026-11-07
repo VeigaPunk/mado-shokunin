@@ -1,0 +1,124 @@
+{
+ "mutants": [
+  {
+   "id": "MC01",
+   "what": "worktree paths() drops dirs named like a dispatch: a directory dispatch vanishes (review finding 1 back)",
+   "find": "            for f in files + [x for x in dirs if DISPATCH.match(\n                    os.path.relpath(os.path.join(d, x), self.repo).replace(os.sep, \"/\"))]:\n                out.append(os.path.relpath(os.path.join(d, f), self.repo).replace(os.sep, \"/\"))",
+   "replace": "            for f in files:\n                out.append(os.path.relpath(os.path.join(d, f), self.repo).replace(os.sep, \"/\"))"
+  },
+  {
+   "id": "MC02",
+   "what": "worktree size() accepts any existing path as a report: a directory counts as present",
+   "find": "        if os.path.islink(p) or not os.path.isfile(p):\n            return None",
+   "replace": "        if os.path.islink(p) or not os.path.exists(p):\n            return None"
+  },
+  {
+   "id": "MC03",
+   "what": "dispatch regular-file check moved after the read: a FIFO dispatch blocks again (F4 hang back)",
+   "find": "            tree.check_dispatch(p)\n            try:\n                d = json.loads(tree.read(p).decode(\"utf-8\"))",
+   "replace": "            try:\n                d = json.loads(tree.read(p).decode(\"utf-8\"))\n                tree.check_dispatch(p)"
+  },
+  {
+   "id": "MC04",
+   "what": "dispatch parse error types narrowed: a non-list tasks / missing taskCall escapes as a traceback",
+   "find": "            except (ValueError, KeyError, TypeError, UnicodeDecodeError):",
+   "replace": "            except (ValueError, UnicodeDecodeError):"
+  },
+  {
+   "id": "MC05",
+   "what": "path tokenised before the file lookup: a present non-ASCII report is reported missing",
+   "find": "                size = tree.size(rp)\n                rp = tok(rp)",
+   "replace": "                rp = tok(rp)\n                size = tree.size(rp)"
+  },
+  {
+   "id": "MC06",
+   "what": "rendered trailer loses CRLF tolerance: a CRLF rendered trailer is untrailed",
+   "find": "TRAILER = re.compile(r\"^Report: write your scoped findings to (\\S+)\\s*$\", re.M)",
+   "replace": "TRAILER = re.compile(r\"^Report: write your scoped findings to (\\S+)$\", re.M)"
+  },
+  {
+   "id": "MC07",
+   "what": "plain trailer loses CRLF tolerance: a CRLF residual trailer is untrailed",
+   "find": "PLAIN = re.compile(r\"^Report: (\\S+)\\s*$\", re.M)  # residual calls: no rendered trailer, one plain line",
+   "replace": "PLAIN = re.compile(r\"^Report: (\\S+)$\", re.M)  # residual calls: no rendered trailer, one plain line"
+  },
+  {
+   "id": "MC08",
+   "what": "rendered trailer accepts a path followed by prose as a path",
+   "find": "TRAILER = re.compile(r\"^Report: write your scoped findings to (\\S+)\\s*$\", re.M)",
+   "replace": "TRAILER = re.compile(r\"^Report: write your scoped findings to (.+?)\\s*$\", re.M)"
+  },
+  {
+   "id": "MC09",
+   "what": "rendered trailer no longer line-anchored: an inline mention counts",
+   "find": "TRAILER = re.compile(r\"^Report: write your scoped findings to (\\S+)\\s*$\", re.M)",
+   "replace": "TRAILER = re.compile(r\"Report: write your scoped findings to (\\S+)\\s*$\", re.M)"
+  },
+  {
+   "id": "MC10",
+   "what": "rendered/plain precedence swapped: the plain line wins when both are present",
+   "find": "                found = TRAILER.findall(body) or PLAIN.findall(body)",
+   "replace": "                found = PLAIN.findall(body) or TRAILER.findall(body)"
+  },
+  {
+   "id": "MC11",
+   "what": "discovery regex widened: a nested *-dispatch.json payload counts as a wave",
+   "find": "DISPATCH = re.compile(r\"^\\.ufo/waves/round-(\\d+)/([A-Za-z0-9_-]+)-dispatch\\.json$\")",
+   "replace": "DISPATCH = re.compile(r\"^\\.ufo/waves/round-(\\d+)/(\\S+)-dispatch\\.json$\")"
+  },
+  {
+   "id": "MC12",
+   "what": "a '..' component no longer unsafe: a normalising in-tree path is accepted",
+   "find": "    return path.startswith(\"/\") or \"..\" in path.split(\"/\")",
+   "replace": "    return path.startswith(\"/\")"
+  },
+  {
+   "id": "MC13",
+   "what": "non-list tasks no longer a setup error: the seat loop crashes instead",
+   "find": "                if not isinstance(tasks, list):\n                    raise TypeError",
+   "replace": "                if False:\n                    raise TypeError"
+  },
+  {
+   "id": "MC14",
+   "what": "non-string task body not guarded: SR04 becomes a traceback",
+   "find": "                body = text if isinstance(text, str) else \"\"",
+   "replace": "                body = text"
+  },
+  {
+   "id": "MC15",
+   "what": "unsafe findings excluded from the verdict and exit code (F5 rc back)",
+   "find": "    bad = c[\"missing\"] + c[\"empty\"] + c[\"unsafe\"] + c[\"untrailed\"]",
+   "replace": "    bad = c[\"missing\"] + c[\"empty\"] + c[\"untrailed\"]"
+  },
+  {
+   "id": "MC18",
+   "what": "inside() no longer resolves symlinks: a report through a parent link looks inside",
+   "find": "    def inside(self, path: str) -> bool:\n        r = os.path.realpath(os.path.join(self.repo, path))\n        return r == self.real or r.startswith(self.real + os.sep)",
+   "replace": "    def inside(self, path: str) -> bool:\n        r = os.path.join(self.real, path)\n        return r == self.real or r.startswith(self.real + os.sep)"
+  },
+  {
+   "id": "MC19",
+   "what": "rounds dedupe removed (kept in reverse order): a repeated --round counts again",
+   "find": "        rounds = sorted(set(rounds))  # a repeated --round counts once (r91 F3)",
+   "replace": "        rounds = sorted(rounds, reverse=True)  # a repeated --round counts once (r91 F3)"
+  },
+  {
+   "id": "MC20",
+   "what": "worktree dispatch symlink refused only when it leaves the repository (internal links followed)",
+   "find": "        if os.path.islink(p):\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")\n        if not self.inside(path):",
+   "replace": "        if os.path.islink(p) and not self.inside(path):\n            raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")\n        if not self.inside(path):"
+  },
+  {
+   "id": "MC21",
+   "what": "rev mode drops non-blob dispatch paths (trees/gitlinks): a tree dispatch vanishes",
+   "find": "        return [p for p in list(self.sizes) + sorted(self.links) + sorted(self.others) if p.startswith(\".ufo/waves/\")]",
+   "replace": "        return [p for p in list(self.sizes) + sorted(self.links) if p.startswith(\".ufo/waves/\")]"
+  },
+  {
+   "id": "MC22",
+   "what": "rev tree-prefix recording removed: a directory dispatch is never enumerated",
+   "find": "            parts_ = name.split(\"/\")\n            for k in range(1, len(parts_)):\n                prefix = \"/\".join(parts_[:k])\n                if DISPATCH.match(prefix):\n                    self.others.add(prefix)",
+   "replace": "            parts_ = name.split(\"/\")\n            for k in range(1, len(parts_)):\n                prefix = \"/\".join(parts_[:k])"
+  }
+ ]
+}

@@ -1,0 +1,112 @@
+R92MScribeEntry — DRAFT runs (not measurements; no receipt under receipts/)
+date: 2026-11-06  revision: d992ef74  python: 3.14.8
+
+inputs (sha256):
+  4121d583d42fd5eead93034d78c8ee0cd86d557b223249bc7424cad1c705a8bd  .ufo/waves/round-92/build/mado-xdgmime.c1.py (the candidate; draft)
+  d519993cc2a617ab56a13ac63695740e94790ca34c831e6026a51071304d12d9  .ufo/waves/round-92/controls/xdgmime-cases-r92-l1.json (128 cases, 131 type rows)
+  e51603991450305d6c6168624d7f635a67a3906e512851f3542896b8ef32f87b  .ufo/waves/round-92/controls/xdgmime-oracle-r92.py
+  2532ccb57cf9d67f6590e4aac2e8d0a9f9eb011b25eb42e45118a6ff51871a5e  tools/mado-mime.py (round-91 GLib resolver)
+  a587107ff995a5f907ab1b731316a169348c6b0383caf8fd151ff21f89615f3f  /usr/bin/xdg-mime
+  ce3cbb7c65368cb98563f21f793054cd97d09b8abf7df14bf9abc050ce9faf9c  corpus/knowledge/mime-default-resolution-r91.md
+
+sources fetched read-only (curl, https://gitlab.freedesktop.org/xdg/xdg-utils/-/raw/v1.2.1/scripts/<file>):
+  11e7d91eebeeb9ae9f77c4cf66a837d5eba4ce91ef2fce105ff8fda786b95c7e  xdg-mime.in
+  1f6969b54e012f75fea629eb54fd817ab8795b99ee0a28e2e819ffdaf19cc532  xdg-utils-common.in
+  a6b0c7afd27300e633d674243d892978db81c625471b57183cc6f3331280790b  xdg-open.in
+
+1) DRAFT tool-vs-label check (candidate script, direct; NOT the counter):
+   python3 -I toolcmp.py   -> DRAFT_TOOL_CHECK rows=131 mismatches=0
+2) DRAFT GLib-vs-xdg-mime comparison (round-91 tools/mado-mime.py on the same fixtures):
+   python3 -I cmp-glib.py  -> cases 128 rows 131 differ 70 errors 2 (two harness argparse
+   errors on types beginning with '-' — s06-leading-dash, s08-version — not divergences)
+
+differing rows (case id | type | xdg-mime label | GLib answer):
+  m09-first-line-only-in-file                    | text/plain               | 'e.desktop'                        | 'a.desktop'
+  m10-header-trailing-text                       | text/plain               | 'a.desktop'                        | None
+  m12-leading-space-key                          | text/plain               | None                               | 'a.desktop'
+  m13-space-before-equals                        | text/plain               | None                               | 'a.desktop'
+  m14-added-group-ignored                        | text/plain               | None                               | 'a.desktop'
+  m16-crlf-value                                 | text/plain               | None                               | 'a.desktop'
+  m26-list-space-kept                            | text/plain               | None                               | 'a.desktop'
+  m32-colon-config-home                          | text/plain               | 'b.desktop'                        | None
+  m34-group-header-col0-only                     | text/plain               | None                               | 'a.desktop'
+  d02-vendor-two-dashes                          | text/plain               | 'a-b-c.desktop'                    | None
+  d04-subdir-search                              | text/plain               | 'x.desktop'                        | None
+  d06-applnk                                     | text/plain               | 'x.desktop'                        | None
+  d09-exec-builtin-true                          | text/plain               | None                               | 'x.desktop'
+  d10-exec-builtin-echo                          | text/plain               | None                               | 'x.desktop'
+  d12-exec-quoted                                | text/plain               | None                               | 'x.desktop'
+  d13-exec-backslash-space                       | text/plain               | 'x.desktop'                        | None
+  d15-exec-action-first                          | text/plain               | 'x.desktop'                        | None
+  d16-no-exec                                    | text/plain               | None                               | 'x.desktop'
+  d18-exec-dash-n                                | text/plain               | None                               | 'x.desktop'
+  d20-first-dir-bad-exec-stops                   | text/plain               | None                               | 'x.desktop'
+  d21-applnk-only-dir                            | text/plain               | 'x.desktop'                        | None
+  d22-id-with-slash                              | text/plain               | 'sub/x.desktop'                    | None
+  d23-id-leading-dash                            | text/plain               | None                               | '-x.desktop'
+  d25-exec-function-name                         | text/plain               | None                               | 'x.desktop'
+  d26-exec-keyword                               | text/plain               | None                               | 'x.desktop'
+  d28-exec-continuation                          | text/plain               | 'x.desktop'                        | None
+  d30-desktop-is-dir                             | text/plain               | None                               | 'x.desktop'
+  f01-defaults-list                              | text/plain               | 'dl.desktop'                       | None
+  f02-mimeinfo-cache                             | text/plain               | 'mc.desktop'                       | None
+  f03-defaults-before-cache                      | text/plain               | 'dl.desktop'                       | None
+  f04-menu-prefix                                | text/plain               | 'hp.desktop'                       | None
+  f05-regex-dot                                  | text/x.y                 | 'dot.desktop'                      | None
+  f06-unanchored                                 | text/plain               | 'un.desktop'                       | None
+  f07-removed-group-matches                      | text/plain               | 'rm.desktop'                       | None
+  f08-empty-value-moves-on                       | text/plain               | 'next.desktop'                     | None
+  f10-echo-dash-e                                | text/plain               | ''                                 | None
+  f11-no-semicolon                               | text/plain               | 'plain.desktop'                    | None
+  f12-second-equals                              | text/plain               | 'a'                                | None
+  f13-path-with-equals                           | text/plain               | 'are/applications/defaults.list:text/plain' | None
+  f15-data-home-first                            | text/plain               | 'home.desktop'                     | None
+  f16-not-installed-ok                           | text/plain               | 'ghost.desktop'                    | None
+  f17-star-in-type                               | text/p*lain              | 'st.desktop'                       | None
+  f18-crlf                                       | text/plain               | 'cr.desktop\r'                     | None
+  f19-plus-literal                               | application/xhtml+xml    | 'xh.desktop'                       | None
+  f20-menu-prefix-cache                          | text/plain               | 'hc.desktop'                       | None
+  f21-first-match-wins-line                      | text/plain               | 't.desktop'                        | None
+  b01-mimetype-scan                              | text/plain               | 'a.desktop'                        | None
+  b02-initial-preference                         | text/plain               | 'b.desktop'                        | None
+  b03-tie-first-sorted                           | text/plain               | 'a.desktop'                        | None
+  b04-subdir-recursion                           | text/plain               | 'deep.desktop'                     | None
+  b05-nonnumeric-pref                            | text/plain               | 'b.desktop'                        | None
+  b06-x-initial-preference                       | text/plain               | 'b.desktop'                        | None
+  b07-two-pref-lines                             | text/plain               | 'a.desktop'                        | None
+  b08-match-anywhere                             | text/plain               | 'a.desktop'                        | None
+  b10-space-in-name                              | text/plain               | 'my'                               | None
+  b11-cr-pref                                    | text/plain               | 'b.desktop'                        | None
+  b12-negative-pref                              | text/plain               | 'a.desktop'                        | None
+  b13-data-home-scanned                          | text/plain               | 'h.desktop'                        | None
+  b15-higher-pref-later-dir                      | text/plain               | 'b.desktop'                        | None
+  s01-lxqt                                       | text/plain               | None                               | 'a.desktop'
+  s03-lxqt-session-config                        | text/plain               | None                               | 'a.desktop'
+  g01-desktop-glob                               | text/plain               | 'z.desktop'                        | None
+  g02-app-glob                                   | text/plain               | 'q.desktop'                        | None
+  g04-config-dirs-glob                           | text/plain               | 'e.desktop'                        | None
+  g05-awk-v-escape                               | text/x\tz                | 'a.desktop'                        | None
+  g06-awk-v-escape-defaults                      | text/x\tz                | 't.desktop'                        | None
+  d38-first-dir-bad-exec-later-dir-other-name    | text/plain               | None                               | 'v-x.desktop'
+  d39-vendor-applnk                              | text/plain               | 'v-x.desktop'                      | None
+
+3) provenance bridge (DRAFT, read-only): function blocks of the tag .in files vs the installed script
+   xdg-mime.in / xdg-utils-common.in -> /usr/bin/xdg-mime, exact block comparison:
+     defapp_generic True, check_mimeapps_list True, defapp_fallback True, defapp_kde True,
+     defapp_lxqt True, search_desktop_file True, desktop_file_to_binary True, detectDE True,
+     first_word True, has_display True, xdg_realpath True, exit_success True;
+     exit_failure_syntax False only in its two "@NAME@" strings (installed: "xdg-mime").
+   installed script: 1794 lines vs 1079 + 463 upstream lines (common inlined, @NAME@ substituted),
+   sha256 a587107ff995a5f907ab1b731316a169348c6b0383caf8fd151ff21f89615f3f.
+
+correction (append-only): line "differ 70" counts the two harness argparse errors; real divergent
+rows = 68 (70 - 2). The guarded re-run read `cases 128 rows 131 differ 70 errors 2`, exit 0
+(the first run's print loop exited 1 on the two error rows after writing cmp.json; no count changed).
+
+re-run recipes (copied next to this file; both create their own /fast/scratch working dirs and are DRAFT):
+  a6e02b1b-draft  R92MScribeEntry-toolcmp.py   -> DRAFT_TOOL_CHECK rows=131 mismatches=0
+  R92MScribeEntry-cmp-glib.py                  -> cases 128 rows 131 differ 70 errors 2
+re-run recipe digests (correcting the placeholder token on the line above):
+  R92MScribeEntry-toolcmp.py    sha256 73e4d129fad2b086edb1b933637f5a823c32eee6822b2c565173b53657c8de97
+  R92MScribeEntry-cmp-glib.py   sha256 7a0943ba9cafabf146ee78e1061915ca18eb3eb95f2d5ead07c03903f4724b3b
+Both seds/re-writes are scratch-only; the entry cites only this file's path and the two counts.

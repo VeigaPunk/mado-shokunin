@@ -1,0 +1,1449 @@
+{
+ "cases": [
+  {
+   "id": "gr-01-bre-star-stack",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/aaa=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/a**"
+   ],
+   "expect": {
+    "text/a**": {
+     "default": "z.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-02-bre-star-stack-miss",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/bbb=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/a**"
+   ],
+   "expect": {
+    "text/a**": {
+     "default": null,
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-03-bre-brace-star",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/aa=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/a\\{2\\}*"
+   ],
+   "expect": {
+    "text/a\\{2\\}*": {
+     "default": "z.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-04-bre-plus-backtrack",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/aaab=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/a\\+\\+ab"
+   ],
+   "expect": {
+    "text/a\\+\\+ab": {
+     "default": "z.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-05-bre-brace-at-start",
+   "group": "gr",
+   "files": {
+    "share/applications/defaults.list": {
+     "text": "[Default Applications]\n{2}x/y=w.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "\\{2}x/y"
+   ],
+   "expect": {
+    "\\{2}x/y": {
+     "default": "w.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-06-bre-brace-at-start-anchor",
+   "group": "gr",
+   "files": {
+    "share/applications/defaults.list": {
+     "text": "[Default Applications]\n{2}x/y=w.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "^\\{2}x/y"
+   ],
+   "expect": {
+    "^\\{2}x/y": {
+     "default": "w.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-07-bre-brace-at-start-paren",
+   "group": "gr",
+   "files": {
+    "share/applications/defaults.list": {
+     "text": "[Default Applications]\n{2}x/y=w.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "\\(\\{2}x\\)/y"
+   ],
+   "expect": {
+    "\\(\\{2}x\\)/y": {
+     "default": "w.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-08-bre-collating-dot",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/.=w.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/[[.a.]]"
+   ],
+   "expect": {
+    "text/[[.a.]]": {
+     "default": null,
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-09-bre-equiv-dot",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/.=w.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/[[=a=]]"
+   ],
+   "expect": {
+    "text/[[=a=]]": {
+     "default": null,
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-10-bre-invalid-brace-empty",
+   "group": "gr",
+   "files": {
+    "share/applications/defaults.list": {
+     "text": "[Default Applications]\ntext/x{}=w.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\{\\}"
+   ],
+   "expect": {
+    "text/x\\{\\}": {
+     "default": null,
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-11-bre-invalid-brace-alpha",
+   "group": "gr",
+   "files": {
+    "share/applications/defaults.list": {
+     "text": "[Default Applications]\ntext/x{a}=w.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\{a\\}"
+   ],
+   "expect": {
+    "text/x\\{a\\}": {
+     "default": null,
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-12-bre-huge-brace",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/a=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/a\\{999999999999999999999\\}"
+   ],
+   "expect": {
+    "text/a\\{999999999999999999999\\}": {
+     "default": null,
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-13-bre-star-at-type-start",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\n*x/y=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "*x/y"
+   ],
+   "expect": {
+    "*x/y": {
+     "default": "z.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-14-bre-caret-mid",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\nx^y/z=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "x^y/z"
+   ],
+   "expect": {
+    "x^y/z": {
+     "default": "z.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-15-bre-dollar-mid",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\nx$y/z=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "x$y/z"
+   ],
+   "expect": {
+    "x$y/z": {
+     "default": "z.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-16-bre-bad-backref",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/x=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/\\1x"
+   ],
+   "expect": {
+    "text/\\1x": {
+     "default": null,
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-17-bre-bracket-class",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/paain=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/p[abc]ain"
+   ],
+   "expect": {
+    "text/p[abc]ain": {
+     "default": "z.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-18-bre-dot-not-slash",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/x=y=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x.y"
+   ],
+   "expect": {
+    "text/x.y": {
+     "default": "y",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-19-bre-star-zero",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/lain=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/p*lain"
+   ],
+   "expect": {
+    "text/p*lain": {
+     "default": "z.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-20-bre-slash-esc",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/x/y=z.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\/y"
+   ],
+   "expect": {
+    "text/x\\/y": {
+     "default": "z.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-21-cut-path-equals",
+   "group": "gr",
+   "files": {
+    "share=/applications/defaults.list": {
+     "text": "[Default Applications]\ntext/plain=w.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share=",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "/applications/defaults.list:text/plain",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-22-cut-value-multi-eq",
+   "group": "gr",
+   "files": {
+    "share/applications/defaults.list": {
+     "text": "[Default Applications]\ntext/plain=a=b;c.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "a",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-23-grep-head-first-file",
+   "group": "gr",
+   "files": {
+    "share/applications/defaults.list": {
+     "text": "[Default Applications]\nother/type=o.desktop;\ntext/plain=d.desktop;\n"
+    },
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/plain=c.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "d.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-24-menu-prefix-falls-through",
+   "group": "gr",
+   "files": {
+    "share/applications/defaults.list": {
+     "text": "[Default Applications]\ntext/plain=u.desktop;\n"
+    },
+    "share/applications/lxde-defaults.list": {
+     "text": "[Default Applications]\ntext/plain=m.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland",
+    "XDG_MENU_PREFIX": "lxde-"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "m.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-25-first-dir-wins-switch",
+   "group": "gr",
+   "files": {
+    "share/applications/defaults.list": {
+     "text": "[Default Applications]\ntext/plain=s.desktop;\n"
+    },
+    "share2/applications/defaults.list": {
+     "text": "[Default Applications]\ntext/plain=t.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share:{ROOT}/share2",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "s.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-26-octal-flip",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=010\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=9\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-27-octal-flip-rev",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=9\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=010\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "b.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-28-octal-8-present",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=08\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=7\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-29-pref-leading-space",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference= 5\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=3\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "b.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-30-pref-trailing-space",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=5 \n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=3\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-31-pref-plus-sign",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=+5\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=3\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "b.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-32-pref-two-lines",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=5\nInitialPreference=3\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=3\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "b.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-33-pref-x-initial",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nX-InitialPreference=5\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=3\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-34-pref-overflow",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=9223372036854775808\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=3\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "b.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-35-pref-max-int",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=9223372036854775807\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=3\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-36-octal-big",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=0123\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=100\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-37-pref-tab",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=\t5\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=3\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "b.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-38-pref-eq-in-value",
+   "group": "gr",
+   "files": {
+    "share/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=5=0\n"
+    },
+    "share/applications/b.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=x\nMimeType=text/plain;\nInitialPreference=3\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/plain"
+   ],
+   "expect": {
+    "text/plain": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-39-awk-unknown-q",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/xqb=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\qb"
+   ],
+   "expect": {
+    "text/x\\qb": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-40-awk-unknown-dollar",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/x$y=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\$y"
+   ],
+   "expect": {
+    "text/x\\$y": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-41-awk-unknown-e",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/xey=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\ey"
+   ],
+   "expect": {
+    "text/x\\ey": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-42-awk-unknown-space",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/x y=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\ y"
+   ],
+   "expect": {
+    "text/x\\ y": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-43-awk-unknown-slash",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/x/y=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\/y"
+   ],
+   "expect": {
+    "text/x\\/y": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-44-awk-x-nohex",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/xxzy=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\xzy"
+   ],
+   "expect": {
+    "text/x\\xzy": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-45-awk-octal-4digits",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/a\u00ffb=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/a\\7777b"
+   ],
+   "expect": {
+    "text/a\\7777b": {
+     "default": null,
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-46-awk-known-t",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/x\tz=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\tz"
+   ],
+   "expect": {
+    "text/x\\tz": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-47-awk-unknown-z",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/xzy=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\zy"
+   ],
+   "expect": {
+    "text/x\\zy": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-48-awk-backslash-real",
+   "group": "gr",
+   "files": {
+    "cfg/mimeapps.list": {
+     "text": "[Default Applications]\ntext/x\\y=a.desktop\n"
+    },
+    "data/applications/a.desktop": {
+     "text": "[Desktop Entry]\nType=Application\nName=x\nExec=a %U\n"
+    },
+    "bin/a": {
+     "text": "#!/bin/sh\nexit 0\n",
+     "mode": "755"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\\\y"
+   ],
+   "expect": {
+    "text/x\\\\y": {
+     "default": "a.desktop",
+     "rc": 0
+    }
+   }
+  },
+  {
+   "id": "gr-49-bre-awk-parity",
+   "group": "gr",
+   "files": {
+    "share/applications/mimeinfo.cache": {
+     "text": "[MIME Cache]\ntext/xqb=w.desktop;\n"
+    }
+   },
+   "env": {
+    "HOME": "{ROOT}/home",
+    "XDG_CONFIG_HOME": "{ROOT}/cfg",
+    "XDG_CONFIG_DIRS": "{ROOT}/etc",
+    "XDG_DATA_HOME": "{ROOT}/data",
+    "XDG_DATA_DIRS": "{ROOT}/share",
+    "PATH": "{ROOT}/bin:/usr/bin",
+    "XDG_CURRENT_DESKTOP": "Hyprland"
+   },
+   "types": [
+    "text/x\\qb"
+   ],
+   "expect": {
+    "text/x\\qb": {
+     "default": "w.desktop",
+     "rc": 0
+    }
+   }
+  }
+ ],
+ "oracle": {
+  "xdg_mime_sha256": "a587107ff995a5f907ab1b731316a169348c6b0383caf8fd151ff21f89615f3f"
+ }
+}

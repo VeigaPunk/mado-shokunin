@@ -1,0 +1,60 @@
+# round-92 pre-freeze DRAFT runs, transcribed by L1 MadoR92 from its own tool output (2026-11-06/07).
+# DRAFT runs, never measurements. Each block: the command (abbreviated where the argv is the counter's full
+# pinned argv) and the tail the L1 kept. These are the evidence pointers of lesson M92-1 and M92-3.
+
+## D-a  round-91 frozen C2 counter on the first C2 candidate draft (before anchors were restored)
+$ python3 -I quality/counters/c2-r91-seat-reports.py --repo . --rev d992ef7494b054591ee9104df1da49264678df5d \
+    --base-rev cc0381db585cc44c3dfc13ced807409c32c45bb0 --set .ufo/waves/round-91/controls/seat-reports-set-r91.json \
+    --mutants .ufo/waves/round-91/controls/seat-reports-mutants-r91.json --expect-set-sha256 9a05fa8a… \
+    --expect-mutants-sha256 7cf06df7… --fresh 60 --scratch-root $S/c2 --draft-check .ufo/waves/round-92/build/check-seat-reports.c2.py
+MADO_SEAT_REPORTS: SETUP_ERROR mutant MC05: find occurs 0 times
+# after restoring MC05 by display-variable rebinding, a scan found K01, K05, MC06, MC10 anchors also broken;
+# all five restored (rp kept as the checked name; `rp = tok(rp)` after the checks).
+
+## D-b  same counter, anchors restored, before the rev-mode absolute-path selftest was added
+mutant MC08 SURVIVED met=59 selftest=same
+MADO_SEAT_REPORTS: DRAFT_TARGET_MISSED pred=PRED-C2-r91-v1 rev=draft:.ufo/waves/round-92/build/check-seat-reports.c2.py
+  base_rev=cc0381db585cc44c3dfc13ced807409c32c45bb0 expectations=59 met=59 fresh=60/60 fresh_seed=1188329269
+  selftest=ok:SEAT_REPORTS_SELFTEST: checks=22 failed=0 mutants=55 killed=54 base_met=0 always_ok_met=5
+  always_missing_met=0 receipt_presence_met=11 check_sha256=46d477352660312f15f01b2c0852c7729c8e2253186370a5924550c654053a78
+# MC08 drops the absolute-path test in unsafe(); the F5 containment test now also catches absolute paths in
+# --worktree, so only a --rev absolute trailer separates them: selftest case "rev: absolute trailer path -> SR03" added.
+
+## D-c  round-92 C2 counter, draft, before fixture F5-04 (prefix sibling)
+mutant N14 SURVIVED met=27 selftest=same
+MADO_GATE_DEFECTS: DRAFT_TARGET_MISSED pred=PRED-C2-r92-v1 rev=draft:.ufo/waves/round-92/build/check-seat-reports.c2.py
+  base_rev=d992ef7494b054591ee9104df1da49264678df5d fixtures=27 met=27 F1=5/5 F2=5/5 F3=3/3 F4=3/3 F5=3/3 P=8/8
+  selftest=ok:SEAT_REPORTS_SELFTEST: checks=23 failed=0 mutants=14 killed=13 base_met=8 always_ok_met=3
+  always_refuse_met=8 r91_counter=TARGET_MET check_sha256=be47235bf6b8d2cb8f38bd1740e977ccdc4066dd33e732876625b66546e4a876
+r91: MADO_SEAT_REPORTS: DRAFT_TARGET_MET pred=PRED-C2-r91-v1 … expectations=59 met=59 fresh=60/60 … mutants=55 killed=55 …
+
+## D-d  round-92 C1 counter, draft, first L1 mutant set (40)
+mutant M06 SURVIVED / M13 SURVIVED / M14 SURVIVED / M16 SURVIVED / M28 SURVIVED / M38 SURVIVED
+MADO_XDGMIME_DEFAULT: DRAFT_TARGET_MISSED pred=PRED-C1-r92-v1 rev=draft:.ufo/waves/round-92/build/mado-xdgmime.c1.py
+  base_rev=d992ef7494b054591ee9104df1da49264678df5d cases=123 correct=123 b=16/16 d=35/35 f=21/21 g=6/6 m=35/35 s=10/10
+  fresh=60/60 fresh_seed=1092736387 mutants=40 killed=34 crashed_not_killed=0 oracle_agree=123/123 do_nothing_correct=29
+  naive_mimeapps_correct=43 glib_resolver_correct=56 base_tool_correct=0 base_tool=absent
+# M16 was equivalent in the candidate (file_path persists across the loop, so "continue" re-reads the same file):
+# rewritten to also reset file_path; M28 (trailing empty IFS field) is equivalent on this host (an empty dir field
+# names /mimeapps.list, /applications/… and /applnk, none of which exist): dropped with that reason. Cases m36,
+# d36–d39 added for M06, M13, M14, M16, M38.
+
+## D-e  C1 label-table forgery, first build (generator wrote JSON `null` into Python source)
+MADO_XDGMIME_DEFAULT: DRAFT_TARGET_MISSED … cases=128 correct=0 … fresh=0/30 … do_nothing_correct=33 …
+# correct=0 is below do-nothing (33): the forgery crashed on every case (NameError: name 'null' is not defined),
+# it was not defeated. Fixed (json.loads of a repr'd string); rerun:
+MADO_XDGMIME_DEFAULT: DRAFT_TARGET_MISSED … cases=128 correct=128 … fresh=13/30 … do_nothing_correct=33
+  naive_mimeapps_correct=44 glib_resolver_correct=59 …
+# The counter now prints answered=<non-crashed>/<cases> for the scored tool (lesson M92-3).
+
+## D-f  C1 shell-out forgery (execs /usr/bin/xdg-mime, falls back to /bin/sh)
+MADO_XDGMIME_DEFAULT: DRAFT_TARGET_MISSED … cases=128 correct=33 … fresh=7/30 … do_nothing_correct=33 …
+# = do-nothing: the sandbox masks xdg-mime and every shell.
+
+## D-g  first --selftest of the C1 candidate (added after R92MConnector §5)
+$ python3 -I .ufo/waves/round-92/build/mado-xdgmime.c1.py --selftest
+MADO_XDGMIME_SELFTEST_FAIL: m09 first matching file stops the search
+MADO_XDGMIME_SELFTEST: checks=12 failed=1
+# the L1 wrote the expectation from belief; the labelled case m09 (xdg-mime: e.desktop) says only a file's FIRST
+# matching line counts and the next file is still read ("first found stops" is d20, the desktop-file search).
+# The check now names m09's labelled behaviour; rerun: MADO_XDGMIME_SELFTEST: checks=12 failed=0 (lesson M92-4).
