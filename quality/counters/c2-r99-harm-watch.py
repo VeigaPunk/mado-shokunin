@@ -120,6 +120,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo"); ap.add_argument("--rev"); ap.add_argument("--panel")
     ap.add_argument("--scratch-root"); ap.add_argument("--json", action="store_true")
+    ap.add_argument("--timeout", type=float)
+    ap.add_argument("--only", action="append", default=None)
     a = ap.parse_args()
     panel = json.load(open(a.panel))
     f = census(panel)
@@ -129,7 +131,10 @@ def main():
         return 2
     ok = 0
     results = []
-    for row in panel["legs"]:
+    rows = panel["legs"]
+    if a.only:
+        rows = [r for r in rows if r["id"] in set(a.only)]
+    for row in rows:
         p = subprocess.run(row["argv"], cwd=a.repo, stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT)
         out = p.stdout.decode("utf-8", "replace")
@@ -146,7 +151,7 @@ def main():
         results.append({"id": row["id"], "rc": p.returncode,
                         "expect_rc": row["expect_rc"], "marker_ok": mok,
                         "ok": good, "detail": "ok" if good else "mismatch"})
-    n = len(panel["legs"])
+    n = len(rows)
     print("HARM_WATCH: legs=%d ok=%d mismatch=%d" % (n, ok, n - ok))
     if a.json:
         print(json.dumps({"legs_run": n, "ok": ok, "mismatch": n - ok,
@@ -207,9 +212,12 @@ def fresh_scratch(root):
     return root
 
 
-def run_gate(gate_path, repo, rev, panel_path, scratch_dir, timeout=7200):
+def run_gate(gate_path, repo, rev, panel_path, scratch_dir, timeout=7200,
+             only=None):
     argv = [sys.executable, "-I", gate_path, "--repo", repo, "--rev", rev,
             "--panel", panel_path, "--scratch-root", scratch_dir, "--json"]
+    for lid in (only or []):
+        argv.extend(["--only", lid])
     try:
         r = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                            timeout=timeout)
@@ -582,8 +590,16 @@ def main():
             ("wrong-expect.json", "wrong", wrong_flipped[0]),
             ("wrong-marker.json", "wrong-marker", marker_flipped[0]),
             ("extra-leg.json", "extra", extra_added[0])):
+        if kind == "clean":
+            # the clean plant is the panel itself: reuse the main run instead
+            # of paying for a second full replay
+            flags[kind], details[kind] = eval_planted(main_res, kind, ident)
+            continue
+        # the rc/marker plants are leg-scoped so the counter does not replay
+        # the whole panel for each control; the census still covers the panel
+        only = [ident] if kind in ("wrong", "wrong-marker") else None
         res = run_gate(gate_path, repo, a.rev, os.path.join(pl_dir, name),
-                       mark_dir(os.path.join(root, "run-" + kind)))
+                       mark_dir(os.path.join(root, "run-" + kind)), only=only)
         flags[kind], details[kind] = eval_planted(res, kind, ident)
 
     # stub control: an always-OK gate must be distinguishable on a red panel
@@ -611,7 +627,8 @@ def main():
         os.chmod(blind_path, 0o755)
         blind_res = run_gate(blind_path, repo, a.rev,
                              os.path.join(pl_dir, "wrong-marker.json"),
-                             mark_dir(os.path.join(root, "run-blind")))
+                             mark_dir(os.path.join(root, "run-blind")),
+                             only=[marker_flipped[0]])
         blind_accepts = (blind_res.get("rc") == 0 and blind_res.get("mismatch") == 0)
         marker_blind_flagged = 1 if (blind_accepts and flags.get("wrong-marker") == 1) else 0
     else:

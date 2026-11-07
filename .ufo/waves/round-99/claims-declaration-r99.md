@@ -137,7 +137,7 @@ PRED-C2-r99-v1:
 ```
 
 - Counting command:
-  `python3 -I quality/counters/c2-r99-harm-watch.py --repo . --rev <rev> --base-rev 2cbaa141… --panel .ufo/waves/round-99/controls/harm-panel-r99.json --expect-panel-sha256 … --planted-dir .ufo/waves/round-99/controls/harm-planted --expect-gate-sha256 … --scratch-root DIR`
+  `python3 -I quality/counters/c2-r99-harm-watch.py --repo . --rev <rev> --base-rev 2cbaa141… --panel .ufo/waves/round-99/controls/harm-panel-r99.json --expect-panel-sha256 160763ce… --planted-dir .ufo/waves/round-99/controls/harm-planted --expect-gate-sha256 … --scratch-root DIR`
 - Separability at base: `SETUP_ERROR … quality/harm-watch.py absent at 2cbaa141` (exit 2).
 - The before is the r98 receipts: `receipts/harm-base-r98.txt` has 28 `LEG` lines,
   `receipts/harm-final-r98.txt` has 26, and no committed instrument reads either count.

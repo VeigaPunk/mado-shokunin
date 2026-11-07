@@ -287,9 +287,17 @@ def run_panel(args):
     else:
         os.makedirs(args.scratch_root, exist_ok=True)
     timeout = leg_timeout(panel, args)
+    only = set(args.only or [])
+    if only:
+        unknown = sorted(only - {row["id"] for row in panel["legs"]})
+        if unknown:
+            return setup_error("PANEL_ONLY_UNKNOWN", "id=%s" % unknown[0])
+        rows = [row for row in panel["legs"] if row["id"] in only]
+    else:
+        rows = list(panel["legs"])
     results = []
     nok = 0
-    for row in panel["legs"]:
+    for row in rows:
         res = run_leg(row, args.repo, args.rev, args.scratch_root, timeout)
         rc_ok, marker_ok, detail = check_leg(row, res)
         rc = res.get("rc")
@@ -316,7 +324,7 @@ def run_panel(args):
                     "exit": 2, "setup_error": detail,
                 }))
             return 2
-    n = len(panel["legs"])
+    n = len(rows)
     k = n - nok
     sys.stdout.write("HARM_WATCH: legs=%d ok=%d mismatch=%d\n" % (n, nok, k))
     if args.json:
@@ -575,6 +583,9 @@ def main():
     ap.add_argument("--panel")
     ap.add_argument("--scratch-root")
     ap.add_argument("--timeout", type=float)
+    ap.add_argument("--only", action="append", default=None,
+                    help="run only this leg id (repeatable); the census still "
+                         "covers the full panel")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
