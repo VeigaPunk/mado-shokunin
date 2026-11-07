@@ -5436,3 +5436,50 @@ mako 62/62, portals 28/28, mime 17/17, xdgmime 12/12, mimeglob 19/19, seat-repor
 selftest-strength 11/11 and OK 32/32 (seat-reports), OK 19/19 (xdgmime), OK 27/27 (mime), round-90 C2 83/83 28/28, round-92 C2
 45/45 with its round-91 leg, round-93 C2 TARGET_MET 23/23 16/16; round-90 C1 counter SETUP_ERROR on the ported portal tool as
 declared in round 93 (QUALITY 155); unchanged-tool diff empty. No axis harmed.
+
+## Round 95 — GLib content-type guess given file bytes (capability), the selftest-strength gate on two more tools (2026-11-07, hyaku run 15, attempt 3)
+
+Declaration `.ufo/waves/round-95/claims-declaration-r95.md` (w1 findings folded in before the freeze, listed in
+`corpus/lessons/round-95.md`). Freeze `a689d2e3dc968c6909a7dce0575cd392ecc57109`; C1
+`9afa39f5342fe19b661513b4de9854324508da84` (C1 measured revision; `tools/mado-mimesniff.py` = frozen candidate
+`build/mado-mimesniff.c1c.py`, sha256 `4ef019c6…af24`); C2 `6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3` (C2 measured
+revision; `quality/selftest-kills/mado-mimeglob.json` `fab72daf…a593` 22 kills, `mado-portals.json` `4c7fc2b3…c83d`
+42 kills; gate unchanged `2d6f1219…a61b`). Stagnation nudge not claimed (a capability entered at round 94); every owned
+axis at 10, so the lowest-axis duty is a tie. Sourced claim: C1 (S519–S523, S505 re-opened). C2 answers the round-94
+spot-check's routed defect 3 (two of the five unguarded tools; the remaining three are `tools/mado-mako.py`,
+`tools/mado-verify.sh`, `quality/check-receipt-presence.py`). Inputs: round-94 spot-check plus
+`considerthese/2026-11-06.md` proposal 4 (a content-sniffing step).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (new surface): the MIME type and uncertain flag GLib 2.90.1 `g_content_type_guess` gives file bytes, name and cache, the `g_content_type_guess_for_data` path | `python3 -I quality/counters/c1-r95-mimesniff.py --repo . --rev 9afa39f5342fe19b661513b4de9854324508da84 --base-rev 4a2af6817024f6ed47084a5217c1825ae247f4fe --cases .ufo/waves/round-95/controls/mimesniff-cases-r95-frozen.json --expect-cases-sha256 ee815b4fca636640358366a2e9f4c252d74bb9626e0a45e1d2de3bcae14ea8a2 --mutants .ufo/waves/round-95/controls/mimesniff-mutants-r95-frozen.json --expect-mutants-sha256 0e45964a6a19982af55cafc5549d8eabcab9bd6ec77b17acc0ce6d3f8f44bf07 --oracle-src .ufo/waves/round-95/controls/mimesniff-oracle-r95.c --expect-oracle-sha256 99df35f8b3fd7005f30789f8866984a1bbceaff8dc6c1d326f0132eb7b4d124a --fresh-gen .ufo/waves/round-95/controls/mimesniff-fresh-r95.py --expect-fresh-gen-sha256 15396113ad8f0198c56253d2f03f0e2ff05ca9fa15601ce042de8046f438b809 --host-files .ufo/waves/round-95/controls/mimesniff-host-files-r95.txt --expect-host-files-sha256 9d5947a70d112796f39c3e309c5a25e5ff333b5ebeb51867ebe748af1135ba87 --expect-tool-sha256 4ef019c69ea8ae4147f83d1558683f012fb4aac0815d36770304717aaca6af24 --expect-mimeglob-sha256 65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453 --forgery .ufo/waves/round-95/controls/forgery-sibling-ctypes-r95.py --expect-forgery-sha256 5cb0fbad4d366d8811b00519b4952f2f9cedc2aeda160dd530cf79100668f75c --fresh 120 --workers 28 --scratch-root DIR` | frozen cases answered as GLib does: base **0/300** (no tool) → **300/300**; fresh 120/120; host 9822/9822; mutants 94/94 killed; class_kills 20/20; real_rebuild 11/11 | TARGET_MET (`.ufo/waves/round-95/receipts/c1-measured-r95.txt`) |
+| C2 **operability**: a weakened, still-passing selftest assertion of `tools/mado-mimeglob.py` or `tools/mado-portals.py` is WEAK | `python3 -I quality/counters/c2-r95-selftest-kills.py --repo . --rev 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 --panel .ufo/waves/round-95/controls/selftest-panel-r95-frozen.json --expect-panel-sha256 8c6dfdac1ddf5b2c95e9c8ac381f29101161da8b566dc8e5c9039763c74fb0f5 --expect-gate-sha256 2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b --expect-kills-sha256 fab72dafd67d2bf6d056ed0a2d2a77fcad0a5c2d65b93babcb9539cb6e47a593,4c7fc2b3b5e47b6e1cd1541fa30eb8c971320538bb6b3246d4dde0243556c83d --control-kills .ufo/waves/round-95/build/mado-mimeglob-kills.c2.json,.ufo/waves/round-95/build/mado-portals-kills.c2.json --expect-control-kills-sha256 f4b80be6ffbbe47d1280edb2858a7528182679d2f232c8c1a4e818de3ab521c7,64b3c10d22da05cd9da5f2200ded96e058fee5d913a07e2d509ff153c8a5c8f4 --workers 16 --scratch-root DIR` | hand weakenings of the two tools' selftests flagged by a lane instrument: before, no kill-set exists (do-nothing instrument **0/75**, first drafts 28/75) → after, **75/75** hand weakenings and **47/47** single-check neutralisations | TARGET_MET (`.ufo/waves/round-95/receipts/c2-at-tip-r95.txt`) |
+| separability | C1 counter at the C2 revision; C2 counter at the C1 revision | C1 at `6f6955f9`: `TARGET_MET` 300/300, fresh 120/120, host 9822/9822, 94/94, memoriser_fresh=1/120 (`.ufo/waves/round-95/receipts/c1-at-tip-r95.txt`); C2 at `9afa39f5`: `SETUP_ERROR … kill-sets absent` rc 2 (`.ufo/waves/round-95/receipts/c2-at-c1-r95.txt`) | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| GLib 2.90.1 content-type guess given file bytes (`tools/mado-mimesniff.py`, read-only) | Say which MIME type and uncertainty GLib's `g_content_type_guess_for_data` gives a byte string with a name, cache and text mode — the magic/alias/parent sections of `mime.cache` plus round 94's filename step; 300/300 frozen, fresh 120/120, host 9822/9822 | `.ufo/waves/round-95/receipts/c1-measured-r95.txt`; `corpus/knowledge/mime-magic-sniff-r95.md` | 95 |
+
+### Named limits (append-only, round 95)
+
+- C1: reads at most the first 4096 bytes (`range` mutants beyond it are unanswered, matching the oracle's buffer);
+  undefined-behaviour reads in the oracle's fixed tables are refused rather than guessed; the text-magic path
+  (`g_content_type_guess_for_data` with a text hint) is covered by frozen `mode` cases but the counter's host leg runs
+  data-only; labels from glib2 2.90.1-1 and shared-mime-info as installed; 5 mutants excluded with arguments; the tool
+  loads `tools/mado-mimeglob.py` from its own directory (a moved copy breaks it).
+- C2: the panel's 75 hand weakenings and the 47 single-check neutralisations come from the wave seats (design set;
+  the first-draft control shows discrimination, unseen weakening families are not measured); 11 labels have no
+  singleton kill; `tools/mado-mako.py`, `tools/mado-verify.sh`, `quality/check-receipt-presence.py` and the gate's own
+  selftest remain without kill-sets.
+- Round shape: one v1 wave of 14 seats; no residual call (round total 14).
+
+### Harm watch (round 95, at the code tip `6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3`)
+
+.ufo/waves/round-95/receipts/harm-final-r95.txt`: gate selftest 460/460, file plane CLEAN 29, index 116/116, ledger
+185/185, mako 62/62, portals 28/28, mime 17/17, xdgmime 12/12, mimeglob 19/19, mimesniff 26/26, seat-reports 23/23,
+receipt-presence 6/6, selftest-strength 11/11 and OK 32/32 (seat-reports), round-90 C2 83/83 28/28, round-92 C2 45/45 with
+its round-91 leg, round-93 C2 TARGET_MET 23/23 16/16; the new kill-sets on the real gate: mimeglob 22/22, portals 42/42;
+round-94 C1 TARGET_MET 370/370 fresh 120/120 host 9745/9745, round-94 C2 TARGET_MET 29/29 91/91; round-90 C1 counter
+SETUP_ERROR on the ported portal tool as declared in round 93 (QUALITY 155); unchanged-tool diff empty. No axis harmed.

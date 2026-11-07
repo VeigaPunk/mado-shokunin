@@ -1217,3 +1217,29 @@ Behavioural legs cannot tell a model from a wrapper around the oracle; the count
 dynamic-import machinery; ctypes only for libc) and runs it with an empty `PATH`. Shown able to fail: a subprocess
 wrapper and a ctypes libgio forgery both print `static_no_external_resolver=FAIL` while the ctypes one is otherwise
 370/370 (`c1-controls-prefreeze-r94.txt`). (lesson: lessons/round-94.md#mistakes M94-4)
+
+## Round 95 — library predicates, transport status, sibling imports
+
+**163. A port of a library predicate is checked byte by byte against the library, not written from the C standard's
+namesake.** `g_ascii_isspace` is a table, and its space bit leaves out VT (0x0b) where C `isspace` includes it; the
+L1's draft took the C reading and wrote a selftest from the same reading, so the selftest passed the bug. A predicate
+over bytes gets an exhaustive 256-value sweep against the oracle before it is frozen, and its selftest expectations come
+from that sweep, not from the author. Shown able to fail: the wave candidate `build/mado-mimesniff.c1.py` misses the
+frozen `lltext` cases (`.ufo/waves/round-95/receipts/c1-controls-prefreeze-r95.txt`); the sweep (R95MCritic C1-F1)
+finds exactly one differing byte. (lesson: lessons/round-95.md#mistakes M95-1)
+
+**164. A source digest counts only from an HTTP 200 at the recorded URL.** `curl -f` fails only on 4xx/5xx, so a 301
+stub hashes cleanly and passes for the page; a fetch receipt records `%{http_code}` and `%{url_effective}`, and a moved
+page is registered at its new locator (the old row keeps its cells). Shown able to fail: the status gate exits 1 on the
+S517 locator where `curl -fsS` exits 0 (`.ufo/waves/round-95/receipts/sources-open-r95.txt` CORRECTION;
+`locator-status-r95.txt`: S507 and S517 both 301). Extends QUALITY 158, which asked for a status only for unregistered
+URLs. (lesson: lessons/round-95.md#mistakes M95-2)
+
+**165. A sibling-module import in a re-implementation is pinned by shape and by use, and the run is audited.** Loading
+a lane module by path hands the tool everything that module imported (round 94's `ctypes`); QUALITY 162's import list
+does not see it. The structural conjunct pins the one `spec_from_file_location` call and the module attributes the tool
+may touch, and every scored run goes through an audit-hook launcher that refuses opens outside the run, spawns,
+sockets and non-libc `dlopen`. Shown able to fail: R95MCritic's sibling-module forgery
+(`.ufo/waves/round-95/controls/forgery-sibling-ctypes-r95.py`) is rejected by `module-attr:mg.ctypes` and
+`AUDIT_DENY ctypes.dlopen 'libgio-2.0.so.0'` (`c1-controls-prefreeze-r95.txt`). (lesson: lessons/round-95.md, Gate:
+R95MCritic C1-F4)

@@ -1,0 +1,256 @@
+# round-95 harm watch at 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3, MadoR95a3, 2026-11-07T11:11:44Z
+$ bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+rc=0
+$ bash tools/mado-verify.sh --no-live
+mado-verify.sh v1 (mado-shokunin round 5 / M5-2)
+mode: file-plane only | root: /home/vgpnk | live layer: skipped (--no-live)
+plane     check                           status  detail
+hypr      hypr.file.root                  PASS    hyprland.conf present (32 L)
+hypr      hypr.root.orchestrator          PASS    0 settings lines (pure orchestrator)
+hypr      hypr.root.include_graph         PASS    18/18 sources, order exact, set exact
+hypr      hypr.root.sources_resolve       PASS    declared targets exist, member set exact
+hypr      hypr.local.inventory            PASS    13/13 active local confs, set exact
+hypr      hypr.local.envs_orphan          PASS    sourced by nothing; declares 3 env vars (F3 stays open)
+hypr      hypr.toggle.no_gaps             PASS    toggle declares gaps_in/gaps_out/border_size = 0
+hypr      hypr.file.sha_pin               NOTE    hyprland.conf sha256 ce7483f35ab5… drifted from round-1 pin 4f52854a3c14…; re-verify anchors
+hypr      hypr.backups                    NOTE    2 backup file(s) under ~/.config/hypr (S3 litter class)
+hypr-live live.plane                      SKIP    live layer skipped (--no-live) — file plane only
+waybar    waybar.config.parse             PASS    JSONC parses (260 L, 6354 B)
+waybar    waybar.config.reload_style      PASS    reload_style_on_change = true (style reloads; modules need restart)
+waybar    waybar.config.bar_globals       PASS    layer=top, position=top, height=26
+waybar    waybar.style                    PASS    style.css imports the theme css
+walker    walker.config                   PASS    TOML parses; 4/4 keys match (focus/wrap/theme/hints)
+terms     term.alacritty.toml             PASS    TOML parses
+terms     term.alacritty.theme_import     PASS    imports omarchy/current/theme/alacritty.toml
+terms     term.cross.font_size            PASS    12.5 in all 4 present configs (MADO-3 §3)
+terms     term.cross.padding              PASS    padding 14 on both axes in all 4 present configs
+omarchy   omarchy.version.file            PASS    HELD: version file '3.8.3' (P2 pin; == HEAD:version blob at the pinned HEAD)
+omarchy   omarchy.skill.link              PASS    HELD: symlink into the checkout (one file; nothing to drift)
+omarchy   omarchy.skill.sha               PASS    HELD: leaf sha256 becd149e4d1c… (P4 pin)
+omarchy   omarchy.version.cmd             SKIP    live layer skipped (--no-live)
+omarchy   omarchy.git.tag                 SKIP    live layer skipped (--no-live)
+omarchy   omarchy.git.head                SKIP    live layer skipped (--no-live)
+omarchy   omarchy.skill.vs_head           SKIP    live layer skipped (--no-live)
+omarchy   omarchy.cmd.groups              SKIP    live layer skipped (--no-live)
+omarchy   omarchy.cmd.surface             SKIP    live layer skipped (--no-live)
+omarchy   omarchy.theme                   SKIP    live layer skipped (--no-live)
+omarchy   omarchy.doc.drifts              NOTE    R2 carried: 5 *.d hook dirs live vs flat files in the skill text (MADO-3 §7); R1 route-table drift declared in the note, not re-derived here
+theme     theme.name.read                 PASS    theme.name = 'matte-black' (one line, machine-name shape)
+theme     theme.chain.hypr_include        PASS    line 13 imports current/theme/hyprland.conf (target exists)
+theme     theme.chain.hyprlock            PASS    line 1 imports current/theme/hyprlock.conf (target exists)
+theme     theme.chain.waybar_css          PASS    line 1 imports current/theme/waybar.css (target exists)
+theme     theme.chain.alacritty           PASS    line 1 imports current/theme/alacritty.toml (target exists)
+theme     theme.chain.mako_link           PASS    symlink → .config/omarchy/current/theme/mako.ini (inside .config/omarchy/current/theme)
+theme     theme.chain.walker_css          PASS    package 'omarchy-default' style.css imports current/theme/walker.css (target exists)
+theme     theme.chain.swayosd_css         PASS    style.css imports current/theme/swayosd.css (target exists)
+theme     theme.wallpaper.link            PASS    symlink → .config/omarchy/current/theme/backgrounds/0-ship-at-sea.jpg (inside .config/omarchy/current/theme/backgrounds)
+theme     theme.parts.declared_only       NOTE    declared-only, consumer absent: foot.ini(foot) kitty.conf(kitty) ghostty.conf(ghostty) helix.toml(helix) vscode.json(code) keyboard.rgb(asusctl)
+gate      boundary.readonly               PASS    config plane byte-identical before/after (combined sha 900502e24c8a…)
+counts: pass=29 fail=0 unknown=0 skip=8 note=4
+MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)
+rc=0
+$ python3 -I quality/check-index.py --repo . --rev 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3
+MADO_INDEX: rev=6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 indexed=116/116 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+$ python3 -I quality/check-tool-ledger.py --repo . --rev 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3
+LEDGER: population=185 ledger_rows=185 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3
+rc=0
+$ python3 -I tools/mado-mako.py --selftest --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/mako
+MADO_MAKO_SELFTEST: checks=62 failed=0
+rc=0
+$ python3 -I tools/mado-portals.py --selftest
+MADO_PORTALS_SELFTEST: checks=28 failed=0
+rc=0
+$ python3 -I tools/mado-mime.py --selftest
+MADO_MIME_SELFTEST: checks=17 failed=0
+rc=0
+$ python3 -I tools/mado-xdgmime.py --selftest
+MADO_XDGMIME_SELFTEST: checks=12 failed=0
+rc=0
+$ python3 -I tools/mado-mimeglob.py --selftest
+MADO_MIMEGLOB_SELFTEST: checks=19 failed=0
+rc=0
+$ python3 -I tools/mado-mimesniff.py --selftest
+MADO_MIMESNIFF_SELFTEST: checks=26 failed=0
+rc=0
+$ python3 -I quality/check-seat-reports.py --selftest
+SEAT_REPORTS_SELFTEST: checks=23 failed=0
+rc=0
+$ python3 -I quality/check-receipt-presence.py --selftest
+RECEIPT_PRESENCE_SELFTEST: checks=6 failed=0
+rc=0
+$ python3 -I quality/check-selftest-strength.py --selftest
+SELFTEST_STRENGTH_SELFTEST: checks=11 failed=0
+rc=0
+$ python3 -I quality/check-selftest-strength.py --tool quality/check-seat-reports.py --kills quality/selftest-kills/check-seat-reports.json --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/gate
+SELFTEST_STRENGTH: OK tool=quality/check-seat-reports.py kills=32 held=32 survived=0 wrong_check=0
+rc=0
+$ python3 -I quality/counters/c2-r90-receipt-presence.py --repo . --rev 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 --base-rev 5041acf99e27263872bf0441ad5f9d4316152605 --set .ufo/waves/round-90/controls/receipt-presence-set-r90.json --mutants .ufo/waves/round-90/controls/receipt-mutants-r90.json --expect-set-sha256 f7ab86c25edbb806a9f947af09fab5cf971a42602c252966c0075b9aeefa7939 --expect-mutants-sha256 68b39a805755f7685c00c847a48b0f8f679fdca2710773efb5f4469b7bebe82d --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/r90c2
+expect D88@clean ok rc=1 missing=['receipts/harm-final-r88.txt'] cited=11 present=10 locs=['SCORECARD.md:5140']
+expect D89@clean ok rc=1 missing=['receipts/census-end-r89.txt', 'receipts/harm-final-r89.txt'] cited=13 present=11 locs=['SCORECARD.md:5179', 'corpus/lessons/round-89.md:144']
+expect D85@clean ok rc=1 missing=['.ufo/waves/round-85/receipts/independent-score-r85.txt', 'receipts/frozen-input-crosswalk-r85.json', 'receipts/harm-watch-r85.txt', 'receipts/independent-score-r85.txt'] cited=15 present=5 locs=['corpus/knowledge/runbook-status-classes-r85.md:148', 'corpus/knowledge/runbook-status-classes-r85.md:152', 'corpus/lessons/round-85.md:158', 'corpus/lessons/round-85.md:165', 'corpus/lessons/round-85.md:21', 'corpus/lessons/round-85.md:23', 'corpus/lessons/round-85.md:24', 'corpus/lessons/round-85.md:27', 'corpus/lessons/round-85.md:29']
+expect D86@clean ok rc=1 missing=['receipts/census-end-r86.txt', 'receipts/cleanup-r86.json'] cited=12 present=10 locs=['corpus/lessons/round-86.md:51', 'corpus/lessons/round-86.md:95']
+expect C88@clean ok rc=0 missing=[] cited=2 present=2 locs=[]
+expect C89@clean ok rc=0 missing=[] cited=8 present=8 locs=[]
+expect W1-carried@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect W2-on-disk-not-carried@clean ok rc=1 missing=['receipts/harm-final-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect W3-absent@clean ok rc=1 missing=['.ufo/waves/round-90/receipts/census-end-r90.txt'] cited=1 present=0 locs=['LOG.md:2']
+expect W4-already-in-base@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect W5-quality-receipts-fallback@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect W6-removed-line-not-cited@clean ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect W7-json-receipt-missing@clean ok rc=1 missing=['receipts/w1-results-r90.json'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect W8-bare-name-uses-round@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect W9-new-untracked-lesson@clean ok rc=1 missing=['receipts/census-end-r90.txt'] cited=1 present=0 locs=['corpus/lessons/round-90.md:2']
+expect W10-non-record-file-ignored@clean ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect W11-bare-name-suffix-round@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect X1-slash-prefixed-path-not-a-citation@clean ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X2-hyphen-continuation-not-a-receipt@clean ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X3-png-not-a-receipt@clean ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X4-untracked-non-record-ignored@clean ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X5-ignored-untracked-not-scanned@clean ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X6-quality-on-disk-not-carried@clean ok rc=1 missing=['quality/receipts/qr-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect X7-commit-path-trailing-slash@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect X8-full-path-no-quality-fallback@clean ok rc=1 missing=['.ufo/waves/round-90/receipts/shared-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect X9-suffix-round-wins@clean ok rc=1 missing=['receipts/ghost-r89.txt'] cited=1 present=0 locs=['LOG.md:2']
+expect X10-nested-lesson-not-a-record@clean ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X11-repo-root-not-a-receipt-home@clean ok rc=1 missing=['receipts/harm-final-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect X12-full-path-present@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect X13-suffixed-csv-name@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y1-receipt-deleted-in-change@clean ok rc=1 missing=['receipts/keep-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect Y2-brace-one-missing@clean ok rc=1 missing=['receipts/census-end-r90.txt'] cited=2 present=1 locs=['SCORECARD.md:2']
+expect Y3-brace-all-present@clean ok rc=0 missing=[] cited=2 present=2 locs=[]
+expect Y4-glob-no-match@clean ok rc=1 missing=['receipts/ledger-*-r90.txt'] cited=1 present=0 locs=['LOG.md:2']
+expect Y5-glob-match-carried@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y6-ignored-under-listed-dir@clean ok rc=1 missing=['receipts/x-ignored-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect Y7-ignored-named-file-carried@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y8-sentence-final-period@clean ok rc=1 missing=['receipts/census-end-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect Y9-mid-name-round-token@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y10-commit-path-dot-slash@clean ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y11-bak-not-a-receipt@clean ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect D88@mnemonic ok rc=1 missing=['receipts/harm-final-r88.txt'] cited=11 present=10 locs=['SCORECARD.md:5140']
+expect D89@mnemonic ok rc=1 missing=['receipts/census-end-r89.txt', 'receipts/harm-final-r89.txt'] cited=13 present=11 locs=['SCORECARD.md:5179', 'corpus/lessons/round-89.md:144']
+expect D85@mnemonic ok rc=1 missing=['.ufo/waves/round-85/receipts/independent-score-r85.txt', 'receipts/frozen-input-crosswalk-r85.json', 'receipts/harm-watch-r85.txt', 'receipts/independent-score-r85.txt'] cited=15 present=5 locs=['corpus/knowledge/runbook-status-classes-r85.md:148', 'corpus/knowledge/runbook-status-classes-r85.md:152', 'corpus/lessons/round-85.md:158', 'corpus/lessons/round-85.md:165', 'corpus/lessons/round-85.md:21', 'corpus/lessons/round-85.md:23', 'corpus/lessons/round-85.md:24', 'corpus/lessons/round-85.md:27', 'corpus/lessons/round-85.md:29']
+expect D86@mnemonic ok rc=1 missing=['receipts/census-end-r86.txt', 'receipts/cleanup-r86.json'] cited=12 present=10 locs=['corpus/lessons/round-86.md:51', 'corpus/lessons/round-86.md:95']
+expect C88@mnemonic ok rc=0 missing=[] cited=2 present=2 locs=[]
+expect C89@mnemonic ok rc=0 missing=[] cited=8 present=8 locs=[]
+expect W1-carried@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect W2-on-disk-not-carried@mnemonic ok rc=1 missing=['receipts/harm-final-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect W3-absent@mnemonic ok rc=1 missing=['.ufo/waves/round-90/receipts/census-end-r90.txt'] cited=1 present=0 locs=['LOG.md:2']
+expect W4-already-in-base@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect W5-quality-receipts-fallback@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect W6-removed-line-not-cited@mnemonic ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect W7-json-receipt-missing@mnemonic ok rc=1 missing=['receipts/w1-results-r90.json'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect W8-bare-name-uses-round@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect W9-new-untracked-lesson@mnemonic ok rc=1 missing=['receipts/census-end-r90.txt'] cited=1 present=0 locs=['corpus/lessons/round-90.md:2']
+expect W10-non-record-file-ignored@mnemonic ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect W11-bare-name-suffix-round@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect X1-slash-prefixed-path-not-a-citation@mnemonic ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X2-hyphen-continuation-not-a-receipt@mnemonic ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X3-png-not-a-receipt@mnemonic ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X4-untracked-non-record-ignored@mnemonic ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X5-ignored-untracked-not-scanned@mnemonic ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X6-quality-on-disk-not-carried@mnemonic ok rc=1 missing=['quality/receipts/qr-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect X7-commit-path-trailing-slash@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect X8-full-path-no-quality-fallback@mnemonic ok rc=1 missing=['.ufo/waves/round-90/receipts/shared-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect X9-suffix-round-wins@mnemonic ok rc=1 missing=['receipts/ghost-r89.txt'] cited=1 present=0 locs=['LOG.md:2']
+expect X10-nested-lesson-not-a-record@mnemonic ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect X11-repo-root-not-a-receipt-home@mnemonic ok rc=1 missing=['receipts/harm-final-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect X12-full-path-present@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect X13-suffixed-csv-name@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y1-receipt-deleted-in-change@mnemonic ok rc=1 missing=['receipts/keep-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect Y2-brace-one-missing@mnemonic ok rc=1 missing=['receipts/census-end-r90.txt'] cited=2 present=1 locs=['SCORECARD.md:2']
+expect Y3-brace-all-present@mnemonic ok rc=0 missing=[] cited=2 present=2 locs=[]
+expect Y4-glob-no-match@mnemonic ok rc=1 missing=['receipts/ledger-*-r90.txt'] cited=1 present=0 locs=['LOG.md:2']
+expect Y5-glob-match-carried@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y6-ignored-under-listed-dir@mnemonic ok rc=1 missing=['receipts/x-ignored-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect Y7-ignored-named-file-carried@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y8-sentence-final-period@mnemonic ok rc=1 missing=['receipts/census-end-r90.txt'] cited=1 present=0 locs=['SCORECARD.md:2']
+expect Y9-mid-name-round-token@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y10-commit-path-dot-slash@mnemonic ok rc=0 missing=[] cited=1 present=1 locs=[]
+expect Y11-bak-not-a-receipt@mnemonic ok rc=0 missing=[] cited=0 present=0 locs=[]
+expect POPULATION ok commits=38 flagged=['01be4234', '498855cb', '51bf076f', '942365c8'] rc_other=0
+MADO_RECEIPT_PRESENCE: TARGET_MET rev=6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 expectations=83 met=83 defects_detected=4/4 population=38 mutants=28 killed=28 base_check=absent base_met=0 do_nothing_met=44 smart_always_ok_met=46 always_missing_met=0 check_sha256=38a2ea60dc698c45957a3ad4af3132297dd2edb354d815e7ff3433c42bab47ca
+rc=0
+$ python3 -I quality/counters/c2-r92-gate-defects.py --repo . --rev 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 --base-rev d992ef7494b054591ee9104df1da49264678df5d --battery .ufo/waves/round-92/controls/gate-defects-battery-r92.json --mutants .ufo/waves/round-92/controls/gate-defects-mutants-r92.json --expect-battery-sha256 a0cfaeb36c5423678696629569019dece0d2138dc5e980df0ba7a9ad7ef2fdd6 --expect-mutants-sha256 fe931e76f778e318771486458336d53dbf8933dd5444fa0beba07d53196f1e26 --r91-argv .ufo/waves/round-92/controls/r91-c2-argv-r92.json --expect-r91-argv-sha256 d21b1979b8b42203c8d9c8d033ec71af8027ff79911adc348cddb9685df4b604 --expect-r91-counter-sha256 c74f5baae915a4669ece5033a35ba16f5db0131a2db9a6e83a702de9e932d486 --fresh 60 --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/r92c2
+fixture F1-01-rev-second-wave-link ok
+fixture F1-02-worktree-second-wave-link ok
+fixture F1-03-rev-only-wave-link ok
+fixture F1-04-rev-all-link-in-round-8 ok
+fixture F1-05-rev-dangling-link ok
+fixture F1-06-worktree-dir-dispatch ok
+fixture F1-07-worktree-link-to-dir-dispatch ok
+fixture F1-09-rev-dir-dispatch ok
+fixture F1-08-rev-gitlink-dispatch ok
+fixture F2-01-name-with-space ok
+fixture F2-02-name-with-newline ok
+fixture F2-03-non-ascii-path ok
+fixture F2-04-lone-surrogate-path ok
+fixture F2-05-name-with-tab-rev ok
+fixture F3-01-round-twice ok
+fixture F3-02-round-twice-rev ok
+fixture F3-03-round-thrice-ok ok
+fixture F4-01-fifo-only-wave ok
+fixture F4-02-fifo-second-wave ok
+fixture F4-03-fifo-all ok
+fixture F5-01-parent-link-outside ok
+fixture F5-02-grandparent-link-outside ok
+fixture F5-03-parent-link-outside-and-ok ok
+fixture F5-04-parent-link-to-prefix-sibling ok
+fixture P-01-worktree-ok ok
+fixture P-02-rev-missing ok
+fixture P-03-rev-symlinked-report ok
+fixture P-04-untrailed-and-empty ok
+fixture P-05-parent-link-inside ok
+fixture P-06-rev-parent-link-outside ok
+fixture P-07-plain-name-unquoted ok
+fixture P-08-rev-all-ok ok
+fixture MC02-dir-report ok
+fixture MC04-nonlist-tasks ok
+fixture MC05-nonascii-present ok
+fixture MC06-crlf-rendered ok
+fixture MC07-crlf-plain ok
+fixture MC08-trailing-prose ok
+fixture MC09-inline-mention ok
+fixture MC10-rendered-beats-plain ok
+fixture MC11-nested-payload ok
+fixture MC12-dotdot-inside ok
+fixture MC14-nonstring-task ok
+fixture MC01-worktree-dir-dispatch ok
+fixture MC21-rev-tree-dispatch ok
+MADO_GATE_DEFECTS: TARGET_MET pred=PRED-C2-r92-v1 rev=6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 base_rev=d992ef7494b054591ee9104df1da49264678df5d fixtures=45 met=45 F1=9/9 F2=5/5 F3=3/3 F4=3/3 F5=4/4 MC=13/13 P=8/8 fresh=60/60 selftest=ok:SEAT_REPORTS_SELFTEST: checks=23 failed=0 mutants=37 killed=37 base_met=19 always_ok_met=7 always_refuse_met=15 r91_counter=TARGET_MET check_sha256=176fc066b49334921e4fd746de55db8106709c29dfe225430224c9d46ed1663a
+r91: MADO_SEAT_REPORTS: TARGET_MET pred=PRED-C2-r91-v1 rev=6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 base_rev=cc0381db585cc44c3dfc13ced807409c32c45bb0 expectations=59 met=59 fresh=60/60 fresh_seed=393199718 selftest=ok:SEAT_REPORTS_SELFTEST: checks=23 failed=0 mutants=55 killed=55 base_met=0 always_ok_met=5 always_missing_met=0 receipt_presence_met=11 check_sha256=176fc066b49334921e4fd746de55db8106709c29dfe225430224c9d46ed1663a
+rc=0
+# round-90 C1 counter on the ported tool: expected SETUP_ERROR (nine anchors removed by the port; declaration 'QUALITY 153')
+$ python3 -I quality/counters/c1-r90-portal-routing.py --repo . --rev 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 --base-rev 5041acf99e27263872bf0441ad5f9d4316152605 --cases .ufo/waves/round-90/controls/portal-cases-r90.json --mutants .ufo/waves/round-90/controls/portal-mutants-r90.json --expect-cases-sha256 66d4ffff70bd092bd2c900658b3b9a7566f8dedc2aacd4b334102acebc192da2 --expect-mutants-sha256 e761a4e44ec6d8a692d8ac9b2feec7ef8609b4d30f5ed40c11f7c332129c2451 --expect-oracle-binary-sha256 e1429fbe1bf6c2203ba07f478b9e92e9221437b13a92eebafb0982748583a4f8 --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/r90c1
+MADO_PORTAL_ROUTING: SETUP_ERROR mutant M03 find occurs 0 times
+rc=2
+$ python3 -I quality/counters/c1-r94-mimeglob.py --repo . --rev 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 --base-rev a3de997289014e7dbf1d73ae206be1d6f8cdadd0 --cases .ufo/waves/round-94/controls/mimeglob-cases-r94-frozen.json --expect-cases-sha256 c7b693d240479ed63af24f426ae184bc4a13489a38f587620d9e1224dca5856c --mutants .ufo/waves/round-94/controls/mimeglob-mutants-r94-frozen.json --expect-mutants-sha256 0e74c57d233d2440f903466e959488705a58fdcda4f14d920caef0d2859133c2 --oracle-src .ufo/waves/round-94/controls/mimeglob-oracle-r94.c --expect-oracle-sha256 9c4337b36f93fa71bce13938f93d2e9758bb752815a67c57eb934a70bbfa6b11 --fresh-gen .ufo/waves/round-94/controls/mimeglob-fresh-r94.py --expect-fresh-gen-sha256 ab76b97e0c37d92ddb0b03a733745b1089be2a083379d9cabee050689ed57e2c --host-names .ufo/waves/round-94/controls/mimeglob-host-names-r94.txt --expect-host-names-sha256 4b6d6a6cc67a4ad59eb91c9e8af1cc605f2f278d2a2ecf57b4a81edad9344fa3 --expect-tool-sha256 65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453 --fresh 120 --workers 24 --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/r94c1
+oracle_binary_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2
+pacman -Q glib2 shared-mime-info:
+glib2 2.90.1-1
+shared-mime-info 2.5.1-2
+per_class dirs=27 mode=19 literal=19 simple=18 full=28 fold=17 cs=26 deep=19 weight=26 dupe=17 order=18 multi=14 nomatch=11 slash=13 bytes=17 fgets=15 v1=14 noglobs=10 cachefmt=22 mixed=20
+static_findings=none
+host env HOME='/home/vgpnk' XDG_DATA_HOME='/home/vgpnk/.local/share' XDG_DATA_DIRS='/usr/local/share:/usr/share' names=9745
+host_db /home/vgpnk/.local/share/mime/mime.cache sha256=8da45fc9bed83aa991eab35b0ba90e432bbd9793b622e6e4865068c422725f3a
+host_db /home/vgpnk/.local/share/mime/globs2 sha256=760713a2d74a19b2b05548500c5e00329f92c6c1db0aeaf24229ab5cff17f9a0
+host_db /usr/share/mime/mime.cache sha256=b988d3d27bda7500ba4eb8e88d78e61049796d94ef79745dd366bacf5460bb47
+host_db /usr/share/mime/globs2 sha256=556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e
+base: tool absent at base-rev (answered=0)
+MADO_MIMEGLOB_COUNT: TARGET_MET pred=PRED-C1-r94-v1 rev=6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 tool_pin=ok cases=370 correct=370 answered=370 text=220/220 cache=122/122 mixed=28/28 classes=20/20 static_no_external_resolver=ok fresh=120/120 fresh_seed=4066481265 host=9745/9745 mutants=60 killed=60 crashed_not_killed=0 survived=0 do_nothing_correct=43 naive_correct=63 naive_exact_correct=58 naive_folded_correct=63 base_correct=0 oracle_sha256=38cea1b00dd65bb2531921aeaf7f586f3524a62fa6823b4f2c49c910724239e2 tool_sha256=65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453
+rc=0
+$ python3 -I quality/counters/c2-r94-selftest-kills.py --repo . --rev 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 --panel .ufo/waves/round-94/controls/selftest-panel-r94-frozen.json --expect-panel-sha256 2d35e83bd9bcdd821accda43b39b5302cb508e15602019a34c89d7e418eed7e0 --expect-gate-sha256 2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b --expect-kills-sha256 d8a450bfb3bd67a6f5be399dece1ddc3d1b0922ae9c4b1f8bcff9a37afddd4ad,1a0c4fe8cec8ac4d0b33aaaf3c803e37ef168cc86f1f5cf914d35182051100b6 --control-kills .ufo/waves/round-94/build/mado-xdgmime-kills.c2.json,.ufo/waves/round-94/build/mado-mime-kills.c2.json --expect-control-kills-sha256 126b508aa1841ba99fa17ecaef46a5a79cdee99956ac2a605479b96122f09ea9,d930689e6ff82e51722195e0c8d209fe46fb4697fd10f01f33cec30e98e81601 --workers 16 --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/r94c2
+MADO_SELFTEST_KILLS: TARGET_MET pred=PRED-C2-r94-v1 rev=6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 gate_pin=ok kills_pin=ok,ok tools=2 checks=29 positive=OK:0,OK:0 neutralised_flagged=29/29 hand_flagged=91/91 neutral_ok=6/6 do_nothing_flagged=0 always_ok_flagged=0 always_weak_positive=WEAK:1,WEAK:1 shadiff_neutral_ok=0/6 gate_selftest=ok control_hand_flagged=45/91 singleton_labels=22/29 tool_pin=ok,ok kill_paths=quality/selftest-kills/mado-xdgmime.json,quality/selftest-kills/mado-mime.json gate_sha256=2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b kills_sha256=d8a450bfb3bd67a6f5be399dece1ddc3d1b0922ae9c4b1f8bcff9a37afddd4ad,1a0c4fe8cec8ac4d0b33aaaf3c803e37ef168cc86f1f5cf914d35182051100b6
+rc=0
+$ python3 -I quality/counters/c2-r93-selftest-strength.py --repo . --rev 6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 --panel .ufo/waves/round-93/controls/selftest-panel-r93.json --expect-panel-sha256 a6d2cbe2826868191f3ee980c27fcc3288bbc151ed3ceeb79ca1f11891bc4c10 --mutants .ufo/waves/round-93/controls/selftest-gate-mutants-r93-frozen.json --expect-mutants-sha256 be676929cefa46481e1ea836d29cd65152af23002e9d9dad96cf39295b88770e --expect-r92-counter-sha256 0aa4d1f18c3f309a8ef5a7575f1a4bde84681d9f7843dea03fdca723de30945c --expect-gate-sha256 2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b --expect-kills-sha256 00befb3efbe2f4a7c44b14776482e0cac0ab8e219db934af9c25b34f47c516f9 --workers 16 --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/r93c2
+MADO_SELFTEST_STRENGTH: TARGET_MET pred=PRED-C2-r93-v1 rev=6f6955f9cf6ff9bf8f5e769f6b8d8ff79ac55ce3 checks=23 frozen_pin=ok positive=OK:0 kill_set_pin=ok neutralised_flagged=23/23 hand_flagged=16/16 neutral_ok=6/6 mutants=22 killed=22 crashed_not_killed=0 do_nothing_flagged=0/39 always_ok_flagged=0/39 always_weak_positive=WEAK:1 shadiff_flagged=39/39 shadiff_neutral_ok=0/6 gate_selftest=ok gate_sha256=2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b kills_sha256=00befb3efbe2f4a7c44b14776482e0cac0ab8e219db934af9c25b34f47c516f9 tool_sha256=176fc066b49334921e4fd746de55db8106709c29dfe225430224c9d46ed1663a
+rc=0
+rc=0 (only tools/mado-mimesniff.py is new; mimeglob/portals must be unchanged since 4a2af681)
+# L1 additions: round-95 kill-sets on the real gate, round-94 C1 counter, round-94 C2 counter, round-93 C2 counter
+$ python3 -I quality/check-selftest-strength.py --tool tools/mado-mimeglob.py --kills quality/selftest-kills/mado-mimeglob.json --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/gate-mg
+SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=22 held=22 survived=0 wrong_check=0
+rc=0
+$ python3 -I quality/check-selftest-strength.py --tool tools/mado-portals.py --kills quality/selftest-kills/mado-portals.json --scratch-root /fast/scratch/hyaku/mado-r95/L1/harm2/gate-pt
+SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=42 held=42 survived=0 wrong_check=0
+rc=0
