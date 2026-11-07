@@ -1,0 +1,145 @@
+# round 95 sources opened by the L1 MadoR95, two fetches each, 2026-11-07T07:57:11Z (xdgmimeint.c, gcontenttype.c, xdgmime.h ~07:59Z)
+ccda4366a1b3d6feb81c6213fde4885b547189e7cfe612f81799d8c1f298db69 ccda4366a1b3d6feb81c6213fde4885b547189e7cfe612f81799d8c1f298db69 xdgmimecache.c
+afb1c1c1ba726a9fb8d8732f4031f5aa85a67ec3b7a2f989b617e4f4f5282410 afb1c1c1ba726a9fb8d8732f4031f5aa85a67ec3b7a2f989b617e4f4f5282410 xdgmime.c
+c2364aa825a761255fd6c3390a78c94f06eeaf9babeb07b5ea489ba4cef92f29 c2364aa825a761255fd6c3390a78c94f06eeaf9babeb07b5ea489ba4cef92f29 xdgmimeint.c
+8a5b4f475947a9de2e0ca34e60b0dc31f5c56a2d7e0a9fe8cf84002aca8a2d7c 8a5b4f475947a9de2e0ca34e60b0dc31f5c56a2d7e0a9fe8cf84002aca8a2d7c gcontenttype-fdo.c
+fb9c68782af7c266f22551ef11e328f9d2491c262efd3de7336dbbfc36554664 fb9c68782af7c266f22551ef11e328f9d2491c262efd3de7336dbbfc36554664 gcontenttype.c
+8df6f21259a2cfe578358b2b22a62d3ab8a067aaec9fdb6527531492599dad12 8df6f21259a2cfe578358b2b22a62d3ab8a067aaec9fdb6527531492599dad12 xdgmime.h
+fcb1eafe748d3dc18f7f405d1078c8a32e313d23d2fab86b0f12e609ac2ce742 fcb1eafe748d3dc18f7f405d1078c8a32e313d23d2fab86b0f12e609ac2ce742 xdgmimemagic.c
+3e00ec92c99614a210e3bb11a91055f44bac02b174269d6def516c6efbef702f 3e00ec92c99614a210e3bb11a91055f44bac02b174269d6def516c6efbef702f xdgmimeint.h
+1566c4594b825fde8bda64c8136a856e46df6e645a13236f1356097fdc6a3c66 1566c4594b825fde8bda64c8136a856e46df6e645a13236f1356097fdc6a3c66 smi-s02.html
+URLs: https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/{xdgmimecache.c,xdgmime.c,xdgmimeint.c,xdgmime.h,xdgmimemagic.c,xdgmimeint.h} https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/{gcontenttype-fdo.c,gcontenttype.c} https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html
+NOTE: smi-s02.html served 1566c459… at 07:57Z; round 94 receipts and the round-94 spot-check recorded e00fa00e… for the same URL (served bytes vary over time).
+## located lines
+--- xdgmimecache.c:167-210
+static int
+cache_magic_matchlet_compare_to_data (XdgMimeCache *cache, 
+				      xdg_uint32_t  offset,
+				      const void   *data,
+				      size_t        len)
+{
+  xdg_uint32_t range_start = GET_UINT32 (cache->buffer, offset);
+  xdg_uint32_t range_length = GET_UINT32 (cache->buffer, offset + 4);
+--- xdgmimecache.c:212-239
+static int
+cache_magic_matchlet_compare (XdgMimeCache *cache, 
+			      xdg_uint32_t  offset,
+			      const void   *data,
+			      size_t        len)
+{
+  xdg_uint32_t n_children = GET_UINT32 (cache->buffer, offset + 24);
+  xdg_uint32_t child_offset = GET_UINT32 (cache->buffer, offset + 28);
+--- xdgmimecache.c:241-274
+static const char *
+cache_magic_compare_to_data (XdgMimeCache *cache, 
+			     xdg_uint32_t  offset,
+			     const void   *data, 
+			     size_t        len, 
+			     int          *prio)
+{
+  xdg_uint32_t priority, mimetype_offset, n_matchlets, matchlet_offset;
+--- xdgmimecache.c:276-312
+static const char *
+cache_magic_lookup_data (XdgMimeCache *cache, 
+			 const void   *data, 
+			 size_t        len, 
+			 int          *prio)
+{
+  xdg_uint32_t list_offset;
+  xdg_uint32_t n_entries;
+--- xdgmimecache.c:751-807
+static const char *
+cache_get_mime_type_for_data (const void *data,
+			      size_t      len,
+			      int        *result_prio,
+			      const char *mime_types[],
+			      int         n_mime_types)
+{
+  const char *mime_type;
+--- xdgmimecache.c:937-1046
+int
+_xdg_mime_cache_mime_type_subclass (const char *mime,
+				    const char *base,
+				    const char ***seen)
+{
+  const char *umime, *ubase, *parent;
+  const char **first_seen = NULL, **new_seen;
+
+--- xdgmimecache.c:314-361
+static const char *
+cache_alias_lookup (const char *alias)
+{
+  const char *ptr;
+  int i, min, max, mid, cmp;
+
+  for (i = 0; _caches[i]; i++)
+    {
+--- xdgmimecache.c:83-84
+#define OUT_OF_BOUNDS(offset,n,record_size,max) \
+  (((offset) & 0x3) || (offset) > (max) || (n) > ((max) - (offset)) / (record_size))
+--- xdgmime.c:516-541
+const char *
+xdg_mime_get_mime_type_for_data (const void *data,
+				 size_t      len,
+				 int        *result_prio)
+{
+  const char *mime_type;
+
+  if (len == 0)
+--- xdgmime.c:781-792
+xdg_mime_media_type_equal (const char *mime_a,
+			   const char *mime_b)
+{
+  const char *sep;
+
+  sep = strchr (mime_a, '/');
+  
+  if (sep && strncmp (mime_a, mime_b, sep - mime_a + 1) == 0)
+--- xdgmime.c:821-831
+_xdg_mime_mime_type_subclass (const char *mime,
+			      const char *base,
+			      const char ***seen)
+{
+  const char *umime, *ubase, *parent;
+  const char **parents, **first_seen = NULL, **new_seen;
+
+  int i, ret = 0;
+--- xdgmimeint.c:176-190
+const char *
+_xdg_binary_or_text_fallback(const void *data, size_t len)
+{
+  unsigned char *chardata;
+  size_t i;
+
+  chardata = (unsigned char *) data;
+  for (i = 0; i < 128 && i < len; ++i)
+--- gcontenttype-fdo.c:532-548
+static gboolean
+looks_like_text (const guchar *data, gsize data_size)
+{
+  gsize i;
+  char c;
+
+  for (i = 0; i < data_size; i++)
+    {
+--- gcontenttype-fdo.c:567-690
+gchar *
+g_content_type_guess_impl (const gchar  *filename,
+                           const guchar *data,
+                           gsize         data_size,
+                           gboolean     *result_uncertain)
+{
+  char *basename;
+  const char *name_mimetypes[10], *sniffed_mimetype;
+--- gcontenttype.c:315-321
+g_content_type_guess (const gchar  *filename,
+                      const guchar *data,
+                      gsize         data_size,
+                      gboolean     *result_uncertain)
+{
+  return g_content_type_guess_impl (filename, data, data_size, result_uncertain);
+}
+--- xdgmime.h:68-70
+#define XDG_MIME_TYPE_UNKNOWN xdg_mime_type_unknown
+#define XDG_MIME_TYPE_EMPTY xdg_mime_type_empty
+#define XDG_MIME_TYPE_TEXTPLAIN xdg_mime_type_textplain
