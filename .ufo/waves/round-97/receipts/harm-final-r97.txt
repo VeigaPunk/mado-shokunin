@@ -1,0 +1,36 @@
+# round-97 harm watch (MadoR97, 2026-11-07)
+# 23 harness legs from controls/harm-r97.sh at 1b9bad52 (22 instruments + the declared r90c1 SETUP_ERROR),
+# plus the two round-96 counter replays at the tip (their bytes gained the --selftest block this round).
+LEG verify_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/verify_selftest.log
+LEG verify_file_plane rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/verify_file_plane.log
+LEG index rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/index.log
+LEG ledger rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/ledger.log
+LEG mako_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/mako_selftest.log
+LEG portals_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/portals_selftest.log
+LEG mime_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/mime_selftest.log
+LEG xdgmime_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/xdgmime_selftest.log
+LEG mimeglob_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/mimeglob_selftest.log
+LEG mimesniff_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/mimesniff_selftest.log
+LEG seat_reports_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/seat_reports_selftest.log
+LEG receipt_presence_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/receipt_presence_selftest.log
+LEG gate_selftest rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/gate_selftest.log
+LEG gate_seat_reports rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/gate_seat_reports.log
+LEG gate_mimeglob rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/gate_mimeglob.log
+LEG gate_portals rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/gate_portals.log
+LEG r90c2_receipt_presence rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/r90c2_receipt_presence.log
+LEG r92_gate_defects rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/r92_gate_defects.log
+LEG r90c1_portal_routing rc=2 log=/fast/scratch/hyaku/mado-r97/l1/harm/r90c1_portal_routing.log
+LEG r94c1_mimeglob rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/r94c1_mimeglob.log
+LEG r94c2_selftest_kills rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/r94c2_selftest_kills.log
+LEG r93c2_selftest_strength rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/r93c2_selftest_strength.log
+LEG r96c2_selftest_kills rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/r96c2_selftest_kills.log
+LEG r96c1_magictext rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/r96c1 (replayed at the tip from the round-96 report's command, --force-rev)
+LEG r96c2_selftest_kills rc=0 log=/fast/scratch/hyaku/mado-r97/l1/harm/r96c2 (same)
+# round-97 legs: C1 TARGET_MET at 4541d94b (receipts/c1-measured-r97.txt) and again at 65ff5591
+# (receipts/c1-at-c2-r97.txt); C2 TARGET_MET at 65ff5591 (receipts/c2-measured-r97.txt). The five instrument bytes are
+# byte-identical at the tip (git diff 65ff5591..d421fd77 -- tools/mado-filetype.py quality/counters/c1-r97-filetype.py
+# quality/counters/c1-r96-magictext.py quality/counters/c2-r96-selftest-kills.py quality/counters/c2-r97-counter-selftest.py
+# prints nothing), so those verdicts stand at the tip.
+# round-95 legs: the round-95 report publishes its two counter commands with elided digests, so they are not
+# replayable verbatim; the round-95 tools' selftests are the harness's mimeglob_selftest/mimesniff_selftest legs
+# (rc 0), and the round-95 measured receipts stand unchanged.

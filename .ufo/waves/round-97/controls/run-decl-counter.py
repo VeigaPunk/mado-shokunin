@@ -18,9 +18,10 @@ def main():
     ap.add_argument("--repo", default=None)
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--index", type=int, default=0, help="1-based counting-command block; 0 = last")
+    ap.add_argument("--force-rev", action="store_true", help="replace any --rev <hex> with --rev REV")
     a = ap.parse_args()
     text = open(a.decl, encoding="utf-8", errors="replace").read()
-    blocks = list(re.finditer(r"\*\*Counting command[^\n]*\n+```sh\n(.*?)```", text, re.S))
+    blocks = list(re.finditer(r"Counting command[^\n]*\n(?:[^`\n][^\n]*\n|\n)*?```sh\n(.*?)```", text, re.S))
     if not blocks:
         print("SETUP_ERROR no counting-command block", file=sys.stderr)
         return 2
@@ -29,6 +30,8 @@ def main():
         print("SETUP_ERROR no counting-command block %d of %d" % (a.index, len(blocks)), file=sys.stderr)
         return 2
     cmd = blocks[idx].group(1)
+    if a.force_rev:
+        cmd = re.sub(r"--rev\s+[0-9a-f]{40}", "--rev " + a.rev, cmd)
     cmd = re.sub(r"--rev\s+<[^>]*>", "--rev " + a.rev, cmd)
     cmd = re.sub(r"--rev\s+REV\b", "--rev " + a.rev, cmd)
     cmd = re.sub(r"--scratch-root\s+<[^>]*>", "--scratch-root " + a.scratch_root, cmd)
