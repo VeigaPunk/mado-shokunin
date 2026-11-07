@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "round": 97,
+  "wave": "w1",
+  "seat": "R97MExecHostC1",
+  "generated_utc": "2026-11-07",
+  "base_rev": "e6152b589c2c6a28426c28263c4bcc3c46398be4",
+  "purpose": "Host MIME database manifest for the round-97 C1 filetype counter: the eight text files of /usr/share/mime plus mime.cache with bytes+sha256, so the counter can copy a declared text-mode database and know when a cache-mode database must NOT be used.",
+  "source": {
+    "dir": "/usr/share/mime",
+    "access": "read-only: sha256sum + stat only; the source tree was never written",
+    "glib2": "2.90.1-1",
+    "shared_mime_info": "2.5.1-2",
+    "file_1_version": "5.48 (/usr/share/misc/magic)"
+  },
+  "files": [
+    {"name": "magic",          "kind": "text", "bytes": 47524,  "sha256": "2942f4adfca98c1816177f056d566e925e96e1c3dd562964dada066bf4a8a35c"},
+    {"name": "globs",          "kind": "text", "bytes": 47137,  "sha256": "54eb042dc1a2f2caba8e09ff79eda184ea0063d50dd796ea3f3726a20e96c40d"},
+    {"name": "globs2",         "kind": "text", "bytes": 52100,  "sha256": "556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e"},
+    {"name": "aliases",        "kind": "text", "bytes": 13687,  "sha256": "74cde6689d6161332df5e89358fb68c23959f230aa4f1ee0bcf03f2fa062c5df"},
+    {"name": "subclasses",     "kind": "text", "bytes": 24981,  "sha256": "3dc5ff5773867381cedc84523738d8ee11ccd95618e5157be05cefdc6f9cfa62"},
+    {"name": "icons",          "kind": "text", "bytes": 232,    "sha256": "7198dd2150a591c2c2f4d0fa91599823871c4ee1017993b1e06f9094a9702a30"},
+    {"name": "generic-icons",  "kind": "text", "bytes": 22921,  "sha256": "ad2a08102009507566ac25c79b0fdc1a35fc89dfb2e983672d6ccf5297260f3a"},
+    {"name": "XMLnamespaces",  "kind": "text", "bytes": 2672,   "sha256": "706cfd7efe0632b7f5abb55fa5626f47efb63a42cdad9ff6ed7360a259bb98cc"},
+    {"name": "mime.cache",     "kind": "cache", "bytes": 207520, "sha256": "b988d3d27bda7500ba4eb8e88d78e61049796d94ef79745dd366bacf5460bb47"}
+  ],
+  "file_count": 9,
+  "text_file_count": 8,
+  "total_bytes": 439744,
+  "cache_validity": "mime.cache is 207520 bytes; GLib's cache reader requires >= 40 bytes and version 1.1 or 1.2 at offsets 0..3 (xdgmimecache.c:107-163). The host's /usr/share/mime carries a loadable cache, so XDG_DATA_DIRS=/usr/share/mime puts the oracle in cache mode; a text-mode case must copy ONLY the eight text files into a fresh mime/ dir.",
+  "copy_recipe_text_mode": [
+    "S=${HYAKU_SCRATCH:-/fast/scratch/hyaku}/mado-r97/R97MExecHostC1",
+    "mkdir -p \"$S/hostdb/mime\" \"$S/empty-h\" \"$S/empty-dh\"",
+    "for f in magic globs globs2 aliases subclasses icons generic-icons XMLnamespaces; do cp \"/usr/share/mime/$f\" \"$S/hostdb/mime/$f\"; done",
+    "find \"$S/hostdb\" -name mime.cache  # must print nothing"
+  ],
+  "cross_check": "globs2 sha256 556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e equals the round-94/95/96 pins; the DB has not drifted since round 94."
+}

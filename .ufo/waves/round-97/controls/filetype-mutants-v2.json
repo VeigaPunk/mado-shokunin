@@ -1,0 +1,875 @@
+{
+ "version": 1,
+ "tool": "tools/mado-filetype.py",
+ "anchored_to": ".ufo/waves/round-97/build/mado-filetype.v2.py",
+ "anchor_tool_sha256": "da6af7a0789265187f6b2c2462bf5104a7c0b780baed3235300f89978a44d2d8",
+ "cases": ".ufo/waves/round-97/controls/filetype-cases-v2.json",
+ "cases_sha256": "fc710b94df67391c392d95aeabd6dfa4c016081019d732f5c373fb990844be20",
+ "cases_count": 157,
+ "counter_pairing": ".ufo/waves/round-97/build/c1-r97-filetype.v2.py sha256 745a341e8a2aaefc7283d1ad4090ebde01d631d118f788ddd1dcc7b5195ba9e0 (the freeze counter; the w1 6536b0ae draft predates the dir-unreadable/missing/trailing-slash case types)",
+ "gio_sha256": "d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462",
+ "scored_with": "counter-equal scorer + the C1 counter's own LAUNCHER_SRC audit hook; MADO_FILETYPE type+attr+mode and MADO_FILETYPE_DIRS db; 157 frozen cases; baseline 157/157",
+ "counts": {
+  "mutants": 101,
+  "not_observable": 11,
+  "equivalents": 8,
+  "total_probes": 120
+ },
+ "mutants": [
+  {
+   "id": "blk-01-wrong-chr",
+   "class": "blk",
+   "find": "        return \"inode/blockdevice\"",
+   "replace": "        return \"inode/chardevice\"",
+   "expect": "kill"
+  },
+  {
+   "id": "blk-04-swap-bodies",
+   "class": "blk",
+   "find": "    if stat.S_ISCHR(mode):\n        return \"inode/chardevice\"\n    if stat.S_ISBLK(mode):\n        return \"inode/blockdevice\"",
+   "replace": "    if stat.S_ISCHR(mode):\n        return \"inode/blockdevice\"\n    if stat.S_ISBLK(mode):\n        return \"inode/chardevice\"",
+   "expect": "kill"
+  },
+  {
+   "id": "brok-01-broken-directory",
+   "class": "brok",
+   "find": "            st = os.stat(path)\n        except OSError as e:\n            return \"inode/symlink\"",
+   "replace": "            st = os.stat(path)\n        except OSError as e:\n            return \"inode/directory\"",
+   "expect": "kill"
+  },
+  {
+   "id": "brok-02-broken-raises",
+   "class": "brok",
+   "find": "        except OSError as e:\n            return \"inode/symlink\"\n        mode = st.st_mode",
+   "replace": "        except OSError as e:\n            raise\n        mode = st.st_mode",
+   "expect": "kill"
+  },
+  {
+   "id": "brok-03-broken-octet",
+   "class": "brok",
+   "find": "        except OSError as e:\n            return \"inode/symlink\"",
+   "replace": "        except OSError as e:\n            return \"application/octet-stream\"",
+   "expect": "kill"
+  },
+  {
+   "id": "certain-01-guess-no-name",
+   "class": "certain",
+   "find": "        return _guess(self.sniffer, base, data, len(data))",
+   "replace": "        return _guess(self.sniffer, None, data, len(data))",
+   "expect": "kill"
+  },
+  {
+   "id": "certain-02-gate-suffix",
+   "class": "certain",
+   "find": "        if not res[\"uncertain\"]:\n            return res[\"type\"]",
+   "replace": "        if not res[\"uncertain\"]:\n            return res[\"type\"] + \"x\"",
+   "expect": "kill"
+  },
+  {
+   "id": "certain-03-fast-uncertain-field",
+   "class": "certain",
+   "find": "            return self.name_only(base)[\"type\"]",
+   "replace": "            return self.name_only(base)[\"uncertain\"]",
+   "expect": "kill"
+  },
+  {
+   "id": "certain-05-name-only-sniffer",
+   "class": "certain",
+   "find": "    def name_only(self, basename):\n        return self.resolver.guess(basename)",
+   "replace": "    def name_only(self, basename):\n        return self.sniffer.guess(basename, b\"\")",
+   "expect": "kill"
+  },
+  {
+   "id": "certain-08-type-suffix",
+   "class": "certain",
+   "find": "            print(f\"MADO_FILETYPE: {x['type']} attr={'fast' if a.fast else 'full'} \"",
+   "replace": "            print(f\"MADO_FILETYPE: {x['type']}X attr={'fast' if a.fast else 'full'} \"",
+   "expect": "kill"
+  },
+  {
+   "id": "certain-09-type-upper",
+   "class": "certain",
+   "find": "        results.append({\"path\": _esc(pb), \"type\": t})",
+   "replace": "        results.append({\"path\": _esc(pb), \"type\": t.upper()})",
+   "expect": "kill"
+  },
+  {
+   "id": "chr-01-wrong-block",
+   "class": "chr",
+   "find": "        return \"inode/chardevice\"",
+   "replace": "        return \"inode/blockdevice\"",
+   "expect": "kill"
+  },
+  {
+   "id": "chr-02-drop-branch",
+   "class": "chr",
+   "find": "    if stat.S_ISCHR(mode):\n        return \"inode/chardevice\"\n",
+   "replace": "    if False and stat.S_ISCHR(mode):\n        return \"inode/chardevice\"\n",
+   "expect": "kill"
+  },
+  {
+   "id": "chr-03-as-reg",
+   "class": "chr",
+   "find": "    if stat.S_ISCHR(mode):",
+   "replace": "    if stat.S_ISREG(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "chr-04-always",
+   "class": "chr",
+   "find": "    if stat.S_ISCHR(mode):\n        return \"inode/chardevice\"\n    if stat.S_ISBLK(mode):",
+   "replace": "    if True:\n        return \"inode/chardevice\"\n    if stat.S_ISBLK(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "dir-01-wrong-symlink",
+   "class": "dir",
+   "find": "    if stat.S_ISDIR(mode):\n        return \"inode/directory\"",
+   "replace": "    if stat.S_ISDIR(mode):\n        return \"inode/symlink\"",
+   "expect": "kill"
+  },
+  {
+   "id": "dir-02-drop-branch",
+   "class": "dir",
+   "find": "    if stat.S_ISDIR(mode):\n        return \"inode/directory\"\n",
+   "replace": "    if False and stat.S_ISDIR(mode):\n        return \"inode/directory\"\n",
+   "expect": "kill"
+  },
+  {
+   "id": "dir-03-as-reg",
+   "class": "dir",
+   "find": "    if stat.S_ISDIR(mode):",
+   "replace": "    if stat.S_ISREG(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "dir-04-always",
+   "class": "dir",
+   "find": "        return \"inode/directory\"\n    if stat.S_ISCHR(mode):",
+   "replace": "        return \"inode/directory\"\n    if True:\n        return \"inode/directory\"\n    if stat.S_ISCHR(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "dir-05-name-before-branch",
+   "class": "dir",
+   "find": "        if fixed is not None:\n            return fixed",
+   "replace": "        if fixed is not None and self.name_only(self.name_base(os.fsencode(path)))[\"uncertain\"]:\n            return fixed",
+   "expect": "kill"
+  },
+  {
+   "id": "dir-06-branch-only-fast",
+   "class": "dir",
+   "find": "        if fixed is not None:\n            return fixed\n        base = self.name_base(os.fsencode(path))",
+   "replace": "        if fixed is not None and fast:\n            return fixed\n        base = self.name_base(os.fsencode(path))",
+   "expect": "kill"
+  },
+  {
+   "id": "empty-01-branch-disabled",
+   "class": "empty",
+   "find": "        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"",
+   "replace": "        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0 and False:\n        return \"application/x-zerosize\"",
+   "expect": "kill"
+  },
+  {
+   "id": "fast-01-gate-false",
+   "class": "fast",
+   "find": "        if fast:",
+   "replace": "        if fast and False:",
+   "expect": "kill"
+  },
+  {
+   "id": "fast-02-gate-invert",
+   "class": "fast",
+   "find": "        base = self.name_base(os.fsencode(path))\n        if fast:",
+   "replace": "        base = self.name_base(os.fsencode(path))\n        if not fast:",
+   "expect": "kill"
+  },
+  {
+   "id": "fast-03-answer-const-full",
+   "class": "fast",
+   "find": "t = ft.answer(p, a.follow, a.fast)\n        except OSError:",
+   "replace": "t = ft.answer(p, a.follow, False)\n        except OSError:",
+   "expect": "kill"
+  },
+  {
+   "id": "fast-04-argparse-store-false",
+   "class": "fast",
+   "find": "    ap.add_argument(\"--fast\", action=\"store_true\", help=\"standard::fast-content-type (never sniffs)\")",
+   "replace": "    ap.add_argument(\"--fast\", action=\"store_false\", help=\"standard::fast-content-type (never sniffs)\")",
+   "expect": "kill"
+  },
+  {
+   "id": "fast-05-attr-invert",
+   "class": "fast",
+   "find": "attr={'fast' if a.fast else 'full'}",
+   "replace": "attr={'full' if a.fast else 'fast'}",
+   "expect": "kill"
+  },
+  {
+   "id": "fast-06-types-first-fallback",
+   "class": "fast",
+   "find": "        if fast:\n            return self.name_only(base)[\"type\"]\n        res = self.name_only(base)",
+   "replace": "        if fast:\n            return self.name_only(base)[\"types\"][0] if self.name_only(base)[\"types\"] else \"text/plain\"\n        res = self.name_only(base)",
+   "expect": "kill"
+  },
+  {
+   "id": "fifo-01-wrong-sock",
+   "class": "fifo",
+   "find": "        return \"inode/fifo\"",
+   "replace": "        return \"inode/socket\"",
+   "expect": "kill"
+  },
+  {
+   "id": "fifo-02-reg-or-fifo",
+   "class": "fifo",
+   "find": "    if stat.S_ISFIFO(mode):",
+   "replace": "    if stat.S_ISFIFO(mode) or stat.S_ISREG(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "fifo-03-zero-size-fifo",
+   "class": "fifo",
+   "find": "    if stat.S_ISFIFO(mode):\n        return \"inode/fifo\"",
+   "replace": "    if stat.S_ISFIFO(mode) or st.st_size == 0:\n        return \"inode/fifo\"",
+   "expect": "kill"
+  },
+  {
+   "id": "fifo-04-sock-or-fifo",
+   "class": "fifo",
+   "find": "    if stat.S_ISFIFO(mode):\n        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0:",
+   "replace": "    if stat.S_ISFIFO(mode) or stat.S_ISSOCK(mode):\n        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0:",
+   "expect": "kill"
+  },
+  {
+   "id": "follow-01-answer-false",
+   "class": "follow",
+   "find": "        fixed = _stat_branch(path, follow)\n        if fixed is not None:\n            return fixed",
+   "replace": "        fixed = _stat_branch(path, False)\n        if fixed is not None:\n            return fixed",
+   "expect": "kill"
+  },
+  {
+   "id": "follow-02-symlink-and-follow",
+   "class": "follow",
+   "find": "    if stat.S_ISLNK(mode):",
+   "replace": "    if stat.S_ISLNK(mode) and follow:",
+   "expect": "kill"
+  },
+  {
+   "id": "follow-03-symlink-invert",
+   "class": "follow",
+   "find": "    mode = st.st_mode\n    if stat.S_ISLNK(mode):",
+   "replace": "    mode = st.st_mode\n    if not stat.S_ISLNK(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "nofollow-01-answer-const-follow",
+   "class": "nofollow",
+   "find": "            t = ft.answer(p, a.follow, a.fast)",
+   "replace": "            t = ft.answer(p, True, a.fast)",
+   "expect": "kill"
+  },
+  {
+   "id": "nofollow-02-answer-invert",
+   "class": "nofollow",
+   "find": "            t = ft.answer(p, a.follow, a.fast)\n        except OSError:",
+   "replace": "            t = ft.answer(p, not a.follow, a.fast)\n        except OSError:",
+   "expect": "kill"
+  },
+  {
+   "id": "nofollow-03-argparse-action",
+   "class": "nofollow",
+   "find": "    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_false\")",
+   "replace": "    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_true\")",
+   "expect": "kill"
+  },
+  {
+   "id": "readerr-01-none-octet",
+   "class": "readerr",
+   "find": "        if data is None:\n            return res[\"type\"]",
+   "replace": "        if data is None:\n            return \"application/octet-stream\"",
+   "expect": "kill"
+  },
+  {
+   "id": "readerr-02-none-suffix",
+   "class": "readerr",
+   "find": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:\n            return res[\"type\"]",
+   "replace": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:\n            return res[\"type\"] + \"x\"",
+   "expect": "kill"
+  },
+  {
+   "id": "readerr-03-open-nofollow",
+   "class": "readerr",
+   "find": "        fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC)",
+   "replace": "        fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW)",
+   "expect": "kill"
+  },
+  {
+   "id": "readerr-04-open-empty-bytes",
+   "class": "readerr",
+   "find": "    except OSError:\n        return None\n    try:",
+   "replace": "    except OSError:\n        return b\"\"\n    try:",
+   "expect": "kill"
+  },
+  {
+   "id": "readerr-05-open-empty-or",
+   "class": "readerr",
+   "find": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:",
+   "replace": "        data = _read_sniff(path, _clamp(self.max_buffer_extents)) or b\"\"\n        if data is None:",
+   "expect": "kill"
+  },
+  {
+   "id": "sock-01-wrong-fifo",
+   "class": "sock",
+   "find": "        return \"inode/socket\"",
+   "replace": "        return \"inode/fifo\"",
+   "expect": "kill"
+  },
+  {
+   "id": "sock-02-drop-branch",
+   "class": "sock",
+   "find": "    if stat.S_ISSOCK(mode):\n        return \"inode/socket\"\n",
+   "replace": "    if False and stat.S_ISSOCK(mode):\n        return \"inode/socket\"\n",
+   "expect": "kill"
+  },
+  {
+   "id": "sock-03-as-reg",
+   "class": "sock",
+   "find": "    if stat.S_ISSOCK(mode):",
+   "replace": "    if stat.S_ISREG(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "sym-01-nofollow-invert",
+   "class": "sym",
+   "find": "        if not follow:\n            return \"inode/symlink\"\n        try:\n            st = os.stat(path)",
+   "replace": "        if follow:\n            return \"inode/symlink\"\n        try:\n            st = os.stat(path)",
+   "expect": "kill"
+  },
+  {
+   "id": "sym-02-nofollow-false",
+   "class": "sym",
+   "find": "    if stat.S_ISLNK(mode):\n        if not follow:",
+   "replace": "    if stat.S_ISLNK(mode):\n        if False:",
+   "expect": "kill"
+  },
+  {
+   "id": "sym-03-nofollow-true",
+   "class": "sym",
+   "find": "        if not follow:\n            return \"inode/symlink\"",
+   "replace": "        if True:\n            return \"inode/symlink\"",
+   "expect": "kill"
+  },
+  {
+   "id": "sym-04-stat-to-lstat",
+   "class": "sym",
+   "find": "            st = os.stat(path)",
+   "replace": "            st = os.lstat(path)",
+   "expect": "kill"
+  },
+  {
+   "id": "sym-05-mode-relstat",
+   "class": "sym",
+   "find": "        mode = st.st_mode\n    if stat.S_ISDIR(mode):",
+   "replace": "        mode = os.lstat(path).st_mode\n    if stat.S_ISDIR(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "sym-06-basename-realpath",
+   "class": "sym",
+   "find": "        base = self.name_base(os.fsencode(path))\n        if fast:\n            return self.name_only(base)[\"type\"]",
+   "replace": "        base = self.name_base(os.fsencode(os.path.realpath(path)))\n        if fast:\n            return self.name_only(base)[\"type\"]",
+   "expect": "kill"
+  },
+  {
+   "id": "sym-07-lstat-to-stat",
+   "class": "sym",
+   "find": "    try:\n        st = os.lstat(path)",
+   "replace": "    try:\n        st = os.stat(path)",
+   "expect": "kill"
+  },
+  {
+   "id": "sym-08-answer-follow-true",
+   "class": "sym",
+   "find": "        fixed = _stat_branch(path, follow)\n        if fixed is not None:",
+   "replace": "        fixed = _stat_branch(path, True)\n        if fixed is not None:",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-01-gate-invert",
+   "class": "uncertain",
+   "find": "        res = self.name_only(base)\n        if not res[\"uncertain\"]:",
+   "replace": "        res = self.name_only(base)\n        if res[\"uncertain\"]:",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-02-gate-true",
+   "class": "uncertain",
+   "find": "        if not res[\"uncertain\"]:\n            return res[\"type\"]\n        data = _read_sniff(path, _clamp(self.max_buffer_extents))",
+   "replace": "        if True:\n            return res[\"type\"]\n        data = _read_sniff(path, _clamp(self.max_buffer_extents))",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-03-read-zero",
+   "class": "uncertain",
+   "find": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))",
+   "replace": "        data = _read_sniff(path, 0)",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-04-empty-data",
+   "class": "uncertain",
+   "find": "        return res[\"type\"]\n        return _guess(self.sniffer, base, data, len(data))",
+   "replace": "        return res[\"type\"]\n        return _guess(self.sniffer, base, b\"\", len(data))",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-05-types-first",
+   "class": "uncertain",
+   "find": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:\n            return res[\"type\"]\n        return _guess(self.sniffer, base, data, len(data))",
+   "replace": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:\n            return res[\"type\"]\n        g = self.sniffer.guess(base, data)\n        return g[\"types\"][0] if g[\"types\"] else g[\"type\"]",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-06-guess-uncertain-field",
+   "class": "uncertain",
+   "find": "    return sniffer.guess(name_bytes, data)[\"type\"]",
+   "replace": "    return sniffer.guess(name_bytes, data)[\"uncertain\"]",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-07-guess-empty",
+   "class": "uncertain",
+   "find": "    if data is None:\n        return sniffer.guess(name_bytes, b\"\")[\"type\"]\n    return sniffer.guess(name_bytes, data)[\"type\"]",
+   "replace": "    if data is None:\n        return sniffer.guess(name_bytes, b\"\")[\"type\"]\n    return sniffer.guess(name_bytes, b\"\")[\"type\"]",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-12-read-no-directory",
+   "class": "uncertain",
+   "find": "    try:\n        fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC)",
+   "replace": "    try:\n        fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_DIRECTORY)",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-13-fixed-or-octet",
+   "class": "uncertain",
+   "find": "        fixed = _stat_branch(path, follow)",
+   "replace": "        fixed = _stat_branch(path, follow) or \"application/octet-stream\"",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-14-basename-split-first",
+   "class": "uncertain",
+   "find": "        self.name_base = mg.g_path_get_basename",
+   "replace": "        self.name_base = lambda b: b.split(b\"/\")[0]",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-15-name-only-octet",
+   "class": "uncertain",
+   "find": "        return self.resolver.guess(basename)",
+   "replace": "        return {\"type\": \"application/octet-stream\", \"uncertain\": 0, \"types\": []}",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-16-fast-const-true",
+   "class": "uncertain",
+   "find": "        if fast:\n            return self.name_only(base)[\"type\"]",
+   "replace": "        if fast is None:\n            return self.name_only(base)[\"type\"]",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-20-cache-extent-constant",
+   "class": "uncertain",
+   "find": "        self.max_buffer_extents = _cache_max_extents(self.sniffer.caches)",
+   "replace": "        self.max_buffer_extents = SNIFF_CAP",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-21-cache-extent-zero",
+   "class": "uncertain",
+   "find": "            self.max_buffer_extents = _cache_max_extents(self.sniffer.caches)",
+   "replace": "            self.max_buffer_extents = 0",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-22-cache-extent-empty",
+   "class": "uncertain",
+   "find": "max_buffer_extents = _cache_max_extents(self.sniffer.caches)",
+   "replace": "max_buffer_extents = _cache_max_extents([])",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-23-cache-header-word28",
+   "class": "uncertain",
+   "find": "        magic_offset = c.u32(24)\n        if (magic_offset & 0x3)",
+   "replace": "        magic_offset = c.u32(28)\n        if (magic_offset & 0x3)",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-24-cache-extent-plus8",
+   "class": "uncertain",
+   "find": "max(max_extent, c.u32(magic_offset + 4))",
+   "replace": "max(max_extent, c.u32(magic_offset + 8))",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-25-cache-extent-plus0",
+   "class": "uncertain",
+   "find": "        max_extent = max(max_extent, c.u32(magic_offset + 4))\n    return max_extent",
+   "replace": "        max_extent = max(max_extent, c.u32(magic_offset))\n    return max_extent",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-26-cache-guard-off",
+   "class": "uncertain",
+   "find": "        if (magic_offset & 0x3) or magic_offset > c.size or 1 > (c.size - magic_offset) // 8:\n            continue",
+   "replace": "        if False:\n            continue",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-27-cache-guard-alignment-drop",
+   "class": "uncertain",
+   "find": "(magic_offset & 0x3) or magic_offset > c.size or 1 > (c.size - magic_offset) // 8",
+   "replace": "magic_offset > c.size or 1 > (c.size - magic_offset) // 8",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-32-text-extent-constant",
+   "class": "uncertain",
+   "find": "            self.max_buffer_extents = _text_max_extents(self.sniffer.matches)",
+   "replace": "            self.max_buffer_extents = SNIFF_CAP",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-33-text-extent-zero",
+   "class": "uncertain",
+   "find": "        self.max_buffer_extents = _text_max_extents(self.sniffer.matches)",
+   "replace": "        self.max_buffer_extents = 0",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-34-text-extent-fixed9",
+   "class": "uncertain",
+   "find": "self.max_buffer_extents = _text_max_extents(self.sniffer.matches)",
+   "replace": "self.max_buffer_extents = 9",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-35-text-drop-range",
+   "class": "uncertain",
+   "find": "extent = len(ml[\"value\"]) + ml[\"offset\"] + ml[\"range\"]",
+   "replace": "extent = len(ml[\"value\"]) + ml[\"offset\"]",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-36-text-drop-range-substr",
+   "class": "uncertain",
+   "find": "len(ml[\"value\"]) + ml[\"offset\"] + ml[\"range\"]",
+   "replace": "len(ml[\"value\"]) + ml[\"offset\"]",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-38-text-value-only",
+   "class": "uncertain",
+   "find": "extent = len(ml[\"value\"]) + ml[\"offset\"] + ml[\"range\"]\n            if max_extent",
+   "replace": "extent = len(ml[\"value\"])\n            if max_extent",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-39-text-max-invert",
+   "class": "uncertain",
+   "find": "            if max_extent < extent:",
+   "replace": "            if max_extent > extent:",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-40-text-init-cap",
+   "class": "uncertain",
+   "find": "    max_extent = 0\n    for match in matches:",
+   "replace": "    max_extent = SNIFF_CAP\n    for match in matches:",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-43-text-halve",
+   "class": "uncertain",
+   "find": "        max_extent = extent\n    return max_extent",
+   "replace": "        max_extent = extent\n    return max_extent // 2",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-44-text-return-plus1",
+   "class": "uncertain",
+   "find": "    return max_extent\n\n\ndef _stat_branch",
+   "replace": "    return max_extent + 1\n\n\ndef _stat_branch",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-45-clamp-invert",
+   "class": "uncertain",
+   "find": "    return SNIFF_CAP if n == 0 or n > SNIFF_CAP else n",
+   "replace": "    return n if n == 0 or n > SNIFF_CAP else SNIFF_CAP",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-46-clamp-always-cap",
+   "class": "uncertain",
+   "find": "return SNIFF_CAP if n == 0 or n > SNIFF_CAP else n",
+   "replace": "return SNIFF_CAP",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-47-clamp-zero-off",
+   "class": "uncertain",
+   "find": "if n == 0 or n > SNIFF_CAP else n",
+   "replace": "if n < 0 or n > SNIFF_CAP else n",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-48-cap-65536",
+   "class": "uncertain",
+   "find": "SNIFF_CAP = 16384",
+   "replace": "SNIFF_CAP = 65536",
+   "expect": "kill"
+  },
+  {
+   "id": "uncertain-50-read-extent-plus1",
+   "class": "uncertain",
+   "find": "        return os.read(fd, n)",
+   "replace": "        return os.read(fd, n + 1)",
+   "expect": "kill"
+  },
+  {
+   "id": "zero-01-wrong-empty",
+   "class": "zero",
+   "find": "        return \"application/x-zerosize\"",
+   "replace": "        return \"application/x-empty\"",
+   "expect": "kill"
+  },
+  {
+   "id": "zero-02-drop-size-guard",
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:",
+   "replace": "    if stat.S_ISREG(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "zero-03-size-ne",
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"",
+   "replace": "    if stat.S_ISREG(mode) and st.st_size != 0:\n        return \"application/x-zerosize\"",
+   "expect": "kill"
+  },
+  {
+   "id": "zero-04-size-one",
+   "class": "zero",
+   "find": "st.st_size == 0:\n        return \"application/x-zerosize\"",
+   "replace": "st.st_size == 1:\n        return \"application/x-zerosize\"",
+   "expect": "kill"
+  },
+  {
+   "id": "zero-05-drop-reg-guard",
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):",
+   "replace": "    if st.st_size == 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):",
+   "expect": "kill"
+  },
+  {
+   "id": "zero-06-size-negative",
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):\n        return \"inode/socket\"",
+   "replace": "    if stat.S_ISREG(mode) and st.st_size < 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):\n        return \"inode/socket\"",
+   "expect": "kill"
+  },
+  {
+   "id": "zero-07-reg-or-size",
+   "class": "zero",
+   "find": "        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0:",
+   "replace": "        return \"inode/fifo\"\n    if stat.S_ISREG(mode) or st.st_size == 0:",
+   "expect": "kill"
+  },
+  {
+   "id": "zero-08-branch-fifo-type",
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):\n        return \"inode/socket\"\n    return None",
+   "replace": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"inode/fifo\"\n    if stat.S_ISSOCK(mode):\n        return \"inode/socket\"\n    return None",
+   "expect": "kill"
+  },
+  {
+   "id": "zero-09-truncate-results",
+   "class": "zero",
+   "find": "        for x in results:",
+   "replace": "        for x in results[:1]:",
+   "expect": "kill"
+  },
+  {
+   "id": "dir-40-trailing-trim-off",
+   "class": "dir",
+   "find": "    return posixpath.normpath(path).rstrip(\"/\") or \"/\"\n\n\ndef _read_sniff",
+   "replace": "    return path\n\n\ndef _read_sniff",
+   "expect": "kill"
+  },
+  {
+   "id": "dir-42-norm-all-off",
+   "class": "dir",
+   "find": "posixpath.normpath(path).rstrip(\"/\")",
+   "replace": "path",
+   "expect": "kill"
+  },
+  {
+   "id": "readerr-40-eacces-tolerance-off",
+   "class": "readerr",
+   "find": "        if e.errno == errno.EACCES:\n            return None",
+   "replace": "        if False:\n            return None",
+   "expect": "kill"
+  }
+ ],
+ "not_observable": [
+  {
+   "id": "dir-41-normpath-off",
+   "class": "dir",
+   "find": "    return posixpath.normpath(path).rstrip(\"/\") or \"/\"",
+   "replace": "    return path.rstrip(\"/\") or \"/\"",
+   "expect": "survive",
+   "why_not_observable": "Drops posixpath.normpath but keeps rstrip. No frozen path contains '//', '/./' or '/../' (cases scan), so normalisation is the identity on every scored path. Frozen-suite probe: 0/150 wrong."
+  },
+  {
+   "id": "follow-04-follow-default-false",
+   "class": "follow",
+   "find": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=True)",
+   "replace": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=False)",
+   "expect": "survive",
+   "why_not_observable": "Changes the argparse default for --follow. The counter's tool_flags always passes an explicit --follow or --nofollow for every case (manifest flags), so the default is never selected; the flag parser's default is outside the scored CLI surface. Frozen-suite probe: 0/150 wrong."
+  },
+  {
+   "id": "nofollow-04-follow-default",
+   "class": "nofollow",
+   "find": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=True)\n    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_false\")",
+   "replace": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=False)\n    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_false\")",
+   "expect": "survive",
+   "why_not_observable": "Same argparse-default mutation as follow-04 (the counter always passes one of the two flags explicitly), so no case can observe it. Frozen-suite probe: 0/150 wrong."
+  },
+  {
+   "id": "uncertain-28-cache-guard-bounds-drop",
+   "class": "uncertain",
+   "find": "(magic_offset & 0x3) or magic_offset > c.size",
+   "replace": "(magic_offset & 0x3)",
+   "expect": "survive",
+   "why_not_observable": "Drops the bounds part of the OUT_OF_BOUNDS guard but keeps the alignment clause. The only malformed cache in the frozen set (uncertain-14-cache-guard-badcache, d2) has magic_section_offset = 5, misaligned, so the surviving alignment clause still skips it and the extent stays 8. A case with an aligned-but-out-of-bounds magic offset is the missing probe."
+  },
+  {
+   "id": "uncertain-29-cache-last-wins",
+   "class": "uncertain",
+   "find": "max_extent = max(max_extent, c.u32(magic_offset + 4))",
+   "replace": "max_extent = c.u32(magic_offset + 4)",
+   "expect": "survive",
+   "why_not_observable": "Assigns instead of taking max, so the last admissible cache wins. Every frozen fixture has at most one cache that passes the guard (uncertain-13/08: one cache; uncertain-14: d1 passes, d2 is skipped), so last == max. A second aligned cache with a different max_extent is the missing probe."
+  },
+  {
+   "id": "uncertain-30-cache-halve",
+   "class": "uncertain",
+   "find": "        max_extent = max(max_extent, c.u32(magic_offset + 4))",
+   "replace": "        max_extent = max(max_extent, c.u32(magic_offset + 4) // 2)",
+   "expect": "survive",
+   "why_not_observable": "Halves the cache max_extent. uncertain-13/14: 8 -> 4; the control byte sits at index 8 and is not seen by a 4-byte read either, so both answer text/plain. uncertain-08: 18730 -> 9365; its README magic matchlet needs only a low offset inside 9365, so both answer text/x-readme. A matchlet whose window lies in (extent/2, extent] is the missing probe. (The first form of this mutant had an unbalanced parenthesis and merely crashed; this corrected form is the semantic probe.)"
+  },
+  {
+   "id": "uncertain-31-cache-first-only",
+   "class": "uncertain",
+   "find": "    for c in caches:",
+   "replace": "    for c in caches[:1]:",
+   "expect": "survive",
+   "why_not_observable": "Iterates caches[:1]. In uncertain-14 the first cache (d1) is the good extent-8 cache and d2 is skipped by the guard anyway; all other cache fixtures hold one cache. First == max on every frozen fixture."
+  },
+  {
+   "id": "uncertain-37-text-drop-offset",
+   "class": "uncertain",
+   "find": "            extent = len(ml[\"value\"]) + ml[\"offset\"] + ml[\"range\"]\n            if max_extent < extent:",
+   "replace": "            extent = len(ml[\"value\"]) + ml[\"range\"]\n            if max_extent < extent:",
+   "expect": "survive",
+   "why_not_observable": "Drops '+ matchlet offset' from the text extent. Every frozen text magic database uses offset 0 except the clamp leg uncertain-12 (offset 16385), and there both the correct extent (16390, clamped to 16384) and the mutated one (5) leave the matchlet window unreachable, so both answer text/plain. A non-zero-offset matchlet whose window is under the clamp is the missing probe."
+  },
+  {
+   "id": "uncertain-41-text-first-matchlet",
+   "class": "uncertain",
+   "find": "        for ml in match[\"matchlets\"]:",
+   "replace": "        for ml in match[\"matchlets\"][:1]:",
+   "expect": "survive",
+   "why_not_observable": "Takes only the first matchlet of each section. Every frozen text magic section (custom fixture DBs and the extent additions) contains exactly one matchlet; the cache fixtures do not use _text_max_extents. A section with a later, larger matchlet is the missing probe."
+  },
+  {
+   "id": "uncertain-42-text-first-match",
+   "class": "uncertain",
+   "find": "    for match in matches:",
+   "replace": "    for match in matches[:1]:",
+   "expect": "survive",
+   "why_not_observable": "Takes only the first magic section. Every frozen text magic file has exactly one section; a text database with two sections whose second carries the maximum extent is the missing probe."
+  },
+  {
+   "id": "uncertain-49-cap-8192",
+   "class": "uncertain",
+   "find": "SNIFF_CAP = 16384   # glocalfileinfo.c:1349",
+   "replace": "SNIFF_CAP = 8192   # glocalfileinfo.c:1349",
+   "expect": "survive",
+   "why_not_observable": "Lowers the sniff buffer to 8192. Small extents (8/9) are unaffected; the clamp leg uncertain-12 has a 16390 window that is unreachable under both 8192 and 16384, so both answer text/plain. A matchlet window in (8192, 16384] that is reachable in the true model is the missing probe."
+  }
+ ],
+ "equivalents": [
+  {
+   "id": "eq-01-clamp-ge-boundary",
+   "class": "uncertain",
+   "find": "n > SNIFF_CAP else n",
+   "replace": "n >= SNIFF_CAP else n",
+   "argument": "at n == 16384 both branches yield 16384; for n > 16384 both yield 16384; identical values."
+  },
+  {
+   "id": "eq-02-max-le",
+   "class": "uncertain",
+   "find": "if max_extent < extent:",
+   "replace": "if max_extent <= extent:",
+   "argument": "when max_extent == extent assigning extent leaves the value unchanged; max is identical."
+  },
+  {
+   "id": "eq-03-cache-order",
+   "class": "uncertain",
+   "find": "for c in caches:",
+   "replace": "for c in reversed(caches):",
+   "argument": "max over the caches is commutative; the guard is per cache; the result is the same maximum."
+  },
+  {
+   "id": "eq-04-no-cloexec",
+   "class": "readerr",
+   "find": "os.O_RDONLY | os.O_CLOEXEC",
+   "replace": "os.O_RDONLY",
+   "argument": "the tool never forks or execs, so O_CLOEXEC has no observable effect on the answer or the descriptor use."
+  },
+  {
+   "id": "eq-05-read-n-nonzero",
+   "class": "readerr",
+   "find": "return os.read(fd, n)",
+   "replace": "return os.read(fd, n if n else 0)",
+   "argument": "n is _clamp(extent) and clamp maps 0 to 16384, so the branch n==0 is unreachable; identical read length."
+  },
+  {
+   "id": "eq-06-extent-add-order",
+   "class": "uncertain",
+   "find": "+ ml[\"offset\"] + ml[\"range\"]",
+   "replace": "+ ml[\"range\"] + ml[\"offset\"]",
+   "argument": "integer addition is commutative; the computed extent is identical."
+  },
+  {
+   "id": "eq-07-guard-int-shift",
+   "class": "uncertain",
+   "find": "magic_offset > c.size",
+   "replace": "magic_offset >= c.size + 1",
+   "argument": "for integer offsets, offset > size is exactly offset >= size + 1."
+  },
+  {
+   "id": "eq-08-norm-conditional",
+   "class": "dir",
+   "find": "posixpath.normpath(path).rstrip(\"/\") or \"/\"",
+   "replace": "posixpath.normpath(path).rstrip(\"/\") if posixpath.normpath(path).rstrip(\"/\") else \"/\"",
+   "argument": "a or b with truthy a is a; the same value is selected when a is empty."
+  }
+ ]
+}

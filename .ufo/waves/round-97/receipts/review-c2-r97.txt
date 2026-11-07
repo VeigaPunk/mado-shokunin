@@ -1,0 +1,251 @@
+review-c2-r97.txt -- R97MReviewC2 receipt (round 97 w1, C2 attack)
+Base revision: e6152b589c2c6a28426c28263c4bcc3c46398be4 (branch master)
+Measured: 2026-11-07 14:12-14:30 local. All probes read-only; nothing installed or upgraded.
+Only throwaway scratch repositories under $HYAKU_SCRATCH/mado-r97/R97MReviewC2 were created
+(git -C "$D" rev-parse --show-toplevel == $D asserted); the lane repo was never mutated.
+
+Final artifacts measured:
+  build/c1-r96-magictext-selftest.py        cc39301e67845723058cc478b7eb90d35be5c094d804a64dc1a13783509528aa
+  build/c2-r96-selftest-kills-selftest.py   c5aadb87b1edbe6ca7be09c1b6dec7dfcb2a383bd0165296a1923e1a5eba4109
+  build/c2-r97-counter-selftest.v2.py       97783bf8bf0038c14b4573f1b7cc5461279f4069b0e6440fa8cbb17b197bc1fa
+    (re-checked at 05fa7910c71ac001a32ad0a0c7ced3c8bdacf628e7275e2b09c7077e4dd59652, 14:31:
+     real panel still -> "SETUP_ERROR ... broken row 'missing-input' malformed" rc=2;
+     uncovered_ok = "uncovered=0" in out; met requires reg_base==1 and reg_rev==3;
+     stub credit still gated on stub_src.count(chk["find"]) == 1)
+  controls/counter-selftest-panel-r97.json  a672c9fcce52de9edf966a5bb5f6aede1134bcdec35424dc4d5c8b5dc08221ec
+
+== 0. Base counter state =====================================================
+$ python3 -I quality/counters/c1-r96-magictext.py --selftest
+  rc=2, stdout empty, stderr "error: the following arguments are required: --repo, --rev, ..."
+$ python3 -I quality/counters/c2-r96-selftest-kills.py --selftest
+  rc=2, stdout empty, stderr "... required: --repo, --rev, --panel, ..."
+base sha c1-r96-magictext.py      9d3e1e76f2acf8c2219dd03157496363ddf9ff1a0089cc9aa090e5d0af42a7f7
+base sha c2-r96-selftest-kills.py 2bd9e5628993ceccf2739d0782a9cef7ff9ed5c6247336f5f3d07188eb4eb895
+
+== 1. Strip the added block, diff against the base blob ======================
+harness: stripdiff.py <repo> <base> <rel> <draft>   (difflib autojunk=False; strip = keep only
+lines equal to the base blob, so any deleted base line makes the result differ)
+
+$ python3 stripdiff.py . e6152b58 quality/counters/c1-r96-magictext.py \
+    .ufo/waves/round-97/build/c1-r96-magictext-selftest.py
+draft_sha256=cc39301e67845723058cc478b7eb90d35be5c094d804a64dc1a13783509528aa
+added=220 removed=0 hunks=4
+stripped_equal_base=True stripped_sha256=9d3e1e76f2acf8c2219dd03157496363ddf9ff1a0089cc9aa090e5d0af42a7f7
+
+$ python3 stripdiff.py . e6152b58 quality/counters/c2-r96-selftest-kills.py \
+    .ufo/waves/round-97/build/c2-r96-selftest-kills-selftest.py
+draft_sha256=c5aadb87b1edbe6ca7be09c1b6dec7dfcb2a383bd0165296a1923e1a5eba4109
+added=174 removed=0 hunks=4
+stripped_equal_base=True stripped_sha256=2bd9e5628993ceccf2739d0782a9cef7ff9ed5c6247336f5f3d07188eb4eb895
+
+Timeline of revisions (drafts moved during the wave):
+  4b8ba55d (14:15) c1 added=186 removed=1 hunks=4, stripped_equal_base=False: deleted
+     `draft = bool(a.draft_tool)` while 1316/1318/1335 still read `draft`; symtable:
+     main().draft = {local: False, global_: True, assigned: False, referenced: True};
+     module scope assigns no draft -> NameError on the verdict line. Its --selftest was green
+     (checks=7 failed=0). Bytes since overwritten; this measurement is transcript-only.
+  c362fde6 (14:13) c2 --selftest red "MADO_COUNTER_SELFTEST_FAIL: C2-mutant-mismatch" rc=1:
+     UnicodeDecodeError 'ascii' codec can't decode byte 0xe2 in position 52 reading
+     quality/check-receipt-presence.py.
+  8acd1fbe (14:21) c1 restored the line: added=189 removed=0 stripped_equal_base=True.
+  66b4979c / dafb7a8b (14:24, executor-reported), then 940ad723 / c995cadf, then the final pair.
+
+== 2. --selftest runs ========================================================
+$ (cd /tmp; python3 -I <lane>/build/c1-r96-magictext-selftest.py --selftest)
+MADO_COUNTER_SELFTEST: checks=7 failed=0        rc=0
+$ (cd /tmp; python3 -I <lane>/build/c2-r96-selftest-kills-selftest.py --selftest)
+MADO_COUNTER_SELFTEST: checks=7 failed=0        rc=0
+(result line on stdout; 7 >= 6)
+
+Absent fixture dir (could-not-evaluate no longer wears a green spelling):
+  --selftest --fixture-dir /nonexistent-xyz
+  MADO_COUNTER_SELFTEST_FAIL: C1-fixture-could-not-evaluate / checks=0 failed=1  rc=2
+  MADO_COUNTER_SELFTEST_FAIL: C2-fixture-could-not-evaluate / checks=0 failed=1  rc=2
+
+Fixture break (one file corrupted, all files present):
+  c1 c1-cases.json = {"cases":[]}     -> FAIL C1-green-target-met    rc=1
+  c2 control-kills.json = "not json"  -> FAIL C2-fixture-parses      rc=1
+
+The selftest is NOT self-contained for c2 (see 4b):
+  scene sc2/quality/counters/c2.py + sc2/.ufo/waves/round-97/selftest-fixtures (lane fixtures)
+  $ (cd sc2 && python3 -I quality/counters/c2.py --selftest --fixture-dir .ufo/waves/round-97/selftest-fixtures)
+  MADO_COUNTER_SELFTEST_FAIL: C2-green-target-met
+  MADO_COUNTER_SELFTEST_FAIL: C2-missing-panel
+  MADO_COUNTER_SELFTEST_FAIL: C2-wrong-rev-pin
+  MADO_COUNTER_SELFTEST_FAIL: C2-mutant-mismatch
+  MADO_COUNTER_SELFTEST: checks=7 failed=4        rc=1
+  cause: REPO = normpath(FIX/../../../..) (line 460) and checks read
+  <REPO>/quality/check-selftest-strength.py (line 492) and
+  <REPO>/quality/check-receipt-presence.py (line 508). The same scene for c1 is green (7/0).
+
+== 3. Id stability ===========================================================
+moved fixture dir (full copy) + cwd=/tmp + --fixture-dir <copy>: identical green line, both.
+cwd=/tmp with lane fixtures and absolute script paths: same green line.
+renamed GUARDED input (c1-cases.json): rc=2, no FAIL id (early guard).
+renamed UNGUARDED input: c1 host-list.txt -> FAIL C1-missing-cases + C1-wrong-rev-pin rc=1
+(exception in _sha(HOST)); c2 c2-kills.json -> FAIL C2-mutant-mismatch rc=1 (exception).
+Ids are hardcoded strings; they never change under relocation.
+
+== 4. The landed panel =======================================================
+sha256 a672c9fc... (4690 B), keys counters/broken
+8 entries per counter for 7 checks; duplicate ids: C1-green-target-met x2, C2-missing-panel x2
+all 16 find anchors occur exactly once in the final bytes (stale anchors: 0)
+neutralisations on the final bytes: 16/16 credited (rc=1 and the declared id printed)
+  not single-check: C1-wrong-rev-pin -> [C1-missing-cases, C1-wrong-rev-pin];
+  second C2-missing-panel -> [C2-missing-panel, C2-wrong-rev-pin]
+broken rows: 3 total, no counter/path, expect_line = "MADO_COUNTER_SELFTEST_COUNT: SETUP_ERROR":
+  {'id':'missing-input','counter':None,'mode':'missing-input','path':None,'expect_exit':2,...}
+  {'id':'wrong-rev', ...} {'id':'mutated-tool', ...}
+counters' real setup prefixes: MADO_MAGICTEXT_COUNT: SETUP_ERROR (c1), MADO_SELFTEST_KILLS: SETUP_ERROR (c2)
+
+4a. instrument with the real panel (scratch repo R, rev 7145377, base bcbdc37):
+$ python3 -I build/c2-r97-counter-selftest.v2.py --repo R --rev 7145377 --base-rev bcbdc37 \
+    --panel <lane>/controls/counter-selftest-panel-r97.json --expect-panel-sha256 a672c9fc... ...
+MADO_COUNTER_SELFTEST_COUNT: SETUP_ERROR pred=PRED-C2-r97-v1 broken row 'missing-input' malformed
+rc=2
+
+4b. instrument with a corrected synthetic panel (6 broken rows carrying counter/path/expect_line/
+expect_exit), current drafts + current fixtures in the layout:
+selftest c1 rc=0 checks=7 failed=0 green=True
+selftest c2 rc=1 checks=7 failed=4 green=False          <- F1
+MADO_COUNTER_SELFTEST_COUNT: TARGET_MISSED ... selftest_green=1/2 ... negative_ids=10/14 ...
+broken_modes=4/6 ... rc=1
+
+4c. same instrument, older pair whose selftest still read the lane (rev c30a1a6):
+TARGET_MET ... selftest_green=2/2 checks=7,7 negative_ids=14/14 broken_modes=6/6
+broken_c1=3/3 broken_c2=3/3 base_refuse=ok always_ok_flagged=0 stub_uncredited=14/14
+registry=1->3 ledger_members=2/2 ledger_uncovered_ok=True   rc=0
+  (ledger leg printed rc=1 verdict=TARGET_MISSED bad_pointer=182 and was still accepted)
+
+4d. stub counter (c1 replaced by a file printing the result line and exiting 0):
+MADO_COUNTER_SELFTEST_COUNT: TARGET_MISSED ... negative_ids=3/14 broken_c1=0/3
+  ("neutralise ... find occurs 0 times" for all c1 entries; the anchor conjunct is what rejects it)
+
+broken-mode responses measured directly (scenes as the runner builds them, final drafts):
+  wrong-rev (every fixture truncated to 0 bytes):
+    c1 rc=1 [C1-green-target-met, C1-mutant-mismatch, C1-fixture-parses]
+    c2 rc=1 [C2-green-target-met, C2-missing-panel, C2-wrong-rev-pin, C2-mutant-mismatch,
+             C2-fixture-parses]
+  mutated-tool (append "# mutated-tool probe" to c1-cases.json / control-kills.json):
+    c1 rc=1 [C1-green-target-met, C1-fixture-parses]
+    c2 rc=1 [C2-green-target-met, C2-missing-panel, C2-wrong-rev-pin, C2-mutant-mismatch,
+             C2-fixture-parses]
+  missing-input: c1 rc=2 [C1-fixture-could-not-evaluate, checks=0 failed=1]
+                 c2 rc=2 [C2-fixture-could-not-evaluate, checks=0 failed=1]
+
+== 5. Registry and ledger, re-derived independently =========================
+$ git show e6152b58:SKILL.md   (table rows starting '|': 469)
+  tools/mado-mimetext.py                              1  (line 887; added by 5dd921b3, round 96)
+  quality/counters/c1-r96-magictext.py                0
+  quality/counters/c2-r96-selftest-kills.py           0
+  quality/selftest-kills/check-receipt-presence.json  0
+  => covered artifacts at base = 1, not 0.
+$ python3 -I quality/check-tool-ledger.py --repo . --rev e6152b58
+LEDGER: population=188 ledger_rows=188 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 \
+verdict=TARGET_MET rev=e6152b589c2c6a28426c28263c4bcc3c46398be4     rc=0
+Both counters are ledger rows at base (git show e6152b58:quality/tool-ledger.md:225-226) and
+satisfy is_population (quality/counters/*.py, check-tool-ledger.py:172-180).
+
+== 6. Instrument and draft code facts =======================================
+c2-r97-counter-selftest.v2.py
+  :485-488  stub_flagged = (stub_src.count(chk["find"]) == 1 and src_rc == 1 and ... )
+            ECHO_STUB carries no anchor -> always_ok_flagged == 0 by construction
+  uncovered_ok = "uncovered=0" in out          (rc and verdict ignored)
+  :607      met requires reg_base == 1 and reg_rev == 3
+  --min-checks default 6; panel_total >= 2*min_checks; no panel-entries == checks-count condition
+  published C2 counting command flags (declaration):
+    --repo --rev --panel --expect-panel-sha256 --expect-c1-sha256 --expect-c2-sha256
+    --expect-registry-sha256 --expect-ledger-sha256 --scratch-root      (no --base-rev)
+  v2 CLI requires --base-rev and --expect-base-registry-sha256 -> the published command exits 2.
+
+draft selftest blocks (final bytes)
+  grep -c '/home/vgpnk/Projects/shokunin/mado-shokunin' -> 1, 1 (the _committed fallback path)
+  fixture resolution precedence: MADO_SELFTEST_FIXTURE_DIR env > --fixture-dir > --repo > walk-up
+  (c1:1344, c2:408)  -> ambient env overrides the explicit flag
+  c2 REPO = normpath(FIX/../../../..) (line 460)
+
+== 7. Re-measurement of the executor's 14:31 revision ========================
+new bytes: c1 377a34fe822bb567717f28a51d48db3fdcd3978714bafa5c6dd100c4cc15aeb9
+           c2 861883b3a823106377fb76f9dd1e8a5b184c1843361de244c4730b29c3dcb9ae
+           instrument c2-r97-counter-selftest.v2.py abb17a019141c57635f1c9771ad449a4348dfdc75a0bb57af3776075fe06b879
+           panel unchanged a672c9fc...
+
+strip/diff (base e6152b58):
+  c1 added=175 removed=0 hunks=4 stripped_equal_base=True
+  c2 added=177 removed=0 hunks=4 stripped_equal_base=True
+
+lane --selftest: both "MADO_COUNTER_SELFTEST: checks=7 failed=0" rc=0
+bare scene (quality/counters/c{1,2}.py + .ufo/.../selftest-fixtures only):
+  both "MADO_COUNTER_SELFTEST: checks=7 failed=0" rc=0     (c2 self-containment FIXED)
+env precedence: MADO_SELFTEST_FIXTURE_DIR=<empty> + --fixture-dir <good> -> green
+  ("checks=7 failed=0" rc=0)                               (flag now wins)
+empty fixture lists: c1-mutants.json {} -> FAIL C1-mutant-mismatch rc=1;
+  c2-kills.json kills [] -> FAIL C2-mutant-mismatch rc=1    (vacuity fixed)
+
+panel anchors on the new bytes: 10 of 16 occur 0 times
+  (C1/C2-green-target-met, -mutant-mismatch, -result-format, -no-scratch-left, -fixture-parses)
+  => the landed panel is stale and must be re-anchored.
+
+broken modes on the new bytes (scenes as the runner builds them):
+  wrong-rev   c1 rc=1 [C1-green-target-met, C1-mutant-mismatch, C1-fixture-parses]
+              c2 rc=1 [C2-green-target-met, C2-mutant-mismatch, C2-fixture-parses]
+  mutated-tool c1 rc=1 [C1-green-target-met, C1-fixture-parses]
+              c2 rc=1 [C2-green-target-met, C2-fixture-parses]
+  missing-input c1/c2 rc=2 [*-fixture-could-not-evaluate, checks=0 failed=1]
+
+instrument with the REAL panel on a scratch layout (newest instrument):
+  MADO_COUNTER_SELFTEST_COUNT: SETUP_ERROR pred=PRED-C2-r97-v1 broken row 'missing-input' malformed
+  rc=2                                        (F2 unchanged)
+
+instrument with a RE-ANCHORED panel (7 entries/counter, 6 broken rows carrying
+counter/path/expect_line/expect_exit; panel sha 96335f5c29ca2f0850f8167c41f5ef648829d193824d0b8265a4d815a87434a1):
+  selftest c1 rc=0 checks=7 failed=0 green=True
+  selftest c2 rc=0 checks=7 failed=0 green=True
+  broken 6/6 ok (line_ok=True); base-control rc=2 green=False both
+  registry covered base=1 rev=3 ; ledger rc=1 uncovered_ok=True
+  MADO_COUNTER_SELFTEST_COUNT: TARGET_MET ... selftest_green=2/2 checks=7,7 negative_ids=14/14
+  broken_modes=6/6 broken_c1=3/3 broken_c2=3/3 base_refuse=ok registry=1->3 ledger_members=2/2
+  ledger_uncovered_ok=True                                   rc=0
+  (ledger leg still accepts rc=1 / verdict!=TARGET_MET -> F6 open)
+
+== 8. Third pass: executor's F4 fix ==========================================
+new bytes: c1 3cb53f2c31d2e22a017d4319061bd1dd2a3407919e686dee4c42412f6a95762c
+           c2 5bb32d0a2c0f8b8be7950c3927abe8892d900cea1a50353aba2e63a00efbdd20
+strip/diff (base e6152b58):
+  c1 added=176 removed=0 hunks=4 stripped_equal_base=True
+  c2 added=178 removed=0 hunks=4 stripped_equal_base=True
+lane --selftest: both "MADO_COUNTER_SELFTEST: checks=7 failed=0" rc=0
+bare counter+fixtures scene: both green (checks=7 failed=0) rc=0
+result-format bite: find '        return src.count(needle) == 2' occurs once; replacing with
+  '== 3' yields "MADO_COUNTER_SELFTEST_FAIL: C1-result-format" / "C2-result-format" rc=1
+panel staleness on these bytes: 10 of 16 anchors occur 0 times
+  ['C1-mutant-mismatch','C1-result-format','C1-no-scratch-left','C1-fixture-parses',
+   'C1-green-target-met','C2-mutant-mismatch','C2-result-format','C2-no-scratch-left',
+   'C2-fixture-parses','C2-green-target-met']
+reply sent to R97MExecC2: drop the absolute committed fallback (keep --fixture-dir > --repo >
+  walk-ups > __file__ sibling); freeze counters before the panel is re-anchored.
+
+== 9. Frozen bytes (c1 dd9b5a0b, c2 d4689f5a) ================================
+c1 dd9b5a0ba09dc490e286522e9d4d55d60f04dec4274bf456c0a891fa630f61d6
+c2 d4689f5a43b3bc38ef45a1eca354169cf5de4b91846bed336b8d15c0ae79f7a3
+strip/diff (base e6152b58):
+  c1 added=173 removed=0 hunks=4 stripped_equal_base=True
+  c2 added=175 removed=0 hunks=4 stripped_equal_base=True
+grep -c '/home/vgpnk' -> 0, 0
+resolver order: --fixture-dir > env > --repo > walk-up __file__ > walk-up cwd > sibling
+lane --selftest: both "MADO_COUNTER_SELFTEST: checks=7 failed=0" rc=0
+bare scene with --fixture-dir: both green rc=0
+lone copy, no fixtures, no env, no flag:
+  MADO_COUNTER_SELFTEST_FAIL: C1-fixture-could-not-evaluate / checks=0 failed=1 rc=2
+  MADO_COUNTER_SELFTEST_FAIL: C2-fixture-could-not-evaluate / checks=0 failed=1 rc=2
+bites:
+  neutralise `        return src.count(needle) == 2` -> `== 3`:
+    FAIL C1-result-format rc=1 ; FAIL C2-result-format rc=1
+  empty c1-mutants.json -> FAIL C1-mutant-mismatch rc=1
+  empty c2-kills.json   -> FAIL C2-mutant-mismatch rc=1
+panel staleness on these bytes: 10 of 16 anchors occur 0 times
+  ['C1-mutant-mismatch','C1-result-format','C1-no-scratch-left','C1-fixture-parses',
+   'C1-green-target-met','C2-mutant-mismatch','C2-result-format','C2-no-scratch-left',
+   'C2-fixture-parses','C2-green-target-met']
+verdict sent to R97MExecC2: ACCEPT for landing, counters' scope only; conditions: re-anchor the
+  panel to exactly these shas, and make the c2-r97 instrument accept the panel shape it is given.

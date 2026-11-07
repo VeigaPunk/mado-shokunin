@@ -1,0 +1,157 @@
+R97MReviewC1 review receipt - round 97 w1, mado lane
+base revision e6152b589c2c6a28426c28263c4bcc3c46398be4
+lane root /home/vgpnk/Projects/shokunin/mado-shokunin
+scratch /fast/scratch/hyaku/mado-r97/R97MReviewC1 (deleted before yield)
+reviewer writes: w1/R97MReviewC1.md and this receipt only. No tool installed or upgraded.
+
+1. PINNED INPUTS
+   tool        .ufo/waves/round-97/build/mado-filetype.py
+               e68150b553ee7b93550fabb0a57221b51a4fc71ec43da7c9dff71d318c7e070c  18594 B  mtime 13:50
+   sibling     tools/mado-mimeglob.py   65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453
+   sibling     tools/mado-mimesniff.py  4ef019c69ea8ae4147f83d1558683f012fb4aac0815d36770304717aaca6af24
+   sibling     tools/mado-mimetext.py   d5f174fc33d0b1f1847897a8e63724c7112137c1bf58a89508d1c1c13b857cbd
+   case draft  .ufo/waves/round-97/controls/filetype-cases-r97.json
+               c88c06aacf447880bf44052fdf69219a8bcbee59024a81938cbeeffd13e088f8  140 cases, 196 paths
+   generator   .ufo/waves/round-97/controls/filetype-fresh-r97.py, two shas seen:
+               59db603e54b7e6da57db455308336181edf50937060b91948b8d97eccddf0829  (13:58)
+               d286ac6b78562f9c5db14bf0aa7d5901eb8e67f0a72b3bb879004b3119b4b0a0  (later)
+   host list   .ufo/waves/round-97/controls/filetype-host-r97.txt, three generations observed:
+               8499d0c8...  13:53  12042 paths      (case: 5 volatile mismatches)
+               e8cdfc96...  14:01  11837 paths      (case: 0 mismatches)
+               4f28035b4cfea0b3f6d8d9f5eb3efb630b2a09db4fc06fa141555e76a9a829a4  later, 11834
+   oracle      /usr/bin/gio sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+               gio --version 2.90.1; glib2 2.90.1-1; shared-mime-info 2.5.1-2; file 5.48-1
+   earlier in-wave draft used only as "the leg bites" evidence: tool 15ddaf03... (name_only API
+   mismatch in text/none mode and ELOOP re-raise), case 4f296ae5... (prefixed labels).
+   ABSENT at review time: filetype-cases-r97-frozen.json, filetype-mutants-r97*.json,
+   forgery-ctypes-r97.py, quality/counters/c1-r97-filetype.py.
+   Precedent for the structural conjunct: quality/counters/c1-r96-magictext.py static_check
+   (_OK_IMPORTS = __future__, argparse, importlib.util, json, os, struct, sys, tempfile).
+
+2. FROZEN CASE LEG (draft c88c06aa)
+   $ python3 case_harness.py oracle cases-pin-c88c06aa.json --scratch $S/c2-oracle --all
+     {"mode":"oracle","cases":140,"paths":196,"bad_paths":0}
+   $ python3 case_harness.py tool cases-pin-c88c06aa.json --scratch $S/c2-tool \
+       --tool $S/pin-e68150b553ee/mado-filetype.py --all
+     {"mode":"tool","cases":140,"paths":196,"bad_paths":0}
+   Class tally: dir 10, chr 9, blk 9, fifo 9, sock 9, zero 9, empty 9, sym 9, brok 9,
+   nofollow 9, follow 9, certain 10, uncertain 10, fast 10, readerr 10.
+   Earlier draft (tool 15ddaf0 + case 4f296ae5): 94/196 paths and 62/140 cases wrong; the four
+   loop paths (brok-03, brok-04, nofollow-04, follow-04) answered ERROR where the label is
+   inode/symlink, and every text/none case crashed with
+   TypeError: list indices must be integers or slices, not str  (rc=1, no output).
+
+3. FRESH LEG (generator 59db603e)
+   $ python3 -I controls/filetype-fresh-r97.py --seed 0000000000000097 --dir $S/fresh \
+       --out $S/fresh.jsonl --count 120
+     -> 120 cases, 425 paths; $ python3 fresh_check.py pin-e68150b553ee fresh.jsonl fresh
+     {"fresh_cases":120,"paths":425,"bad":0}
+   $ python3 -I ... --seed 0000000000005eed --dir $S/fresh2 --out $S/fresh2.jsonl --count 120
+     -> 120 cases, 426 paths; fresh_check -> {"fresh_cases":120,"paths":426,"bad":0}
+   $ python3 -I ... (generator d286ac6b) --seed 00000000000000aa --dir $S/fresh3 \
+       --out $S/fresh3.jsonl --count 120
+     -> 120 cases, 437 paths; fresh_check -> {"fresh_cases":120,"paths":437,"bad":0}
+   The 0xaa seed carries follow-mode loop cases (brok-33/42/66/91, label inode/symlink) and
+   follow-mode trailing-slash symlinks (fldir/ in eight follow cases, label inode/directory);
+   the tool matches the measured label on every one of them.
+   Each run re-derives every label with gio (label provenance) and runs the candidate on the
+   generated roots (tool agreement).
+
+4. HOST LEG (11837-path sanitized list e8cdfc96)
+   $ python3 host_compare.py pin-e68150b553ee 0
+     {"paths":11837,"pin":"pin-e68150b553ee"}   (stderr)
+     {"tool_rc":0,"tool_lines":11837,"tool_map":11837}   (stderr)
+     {"host_total":11837,"mismatches":0}
+   Earlier list (8499d0c8, 12042 paths): 5 mismatches, all /home/vgpnk/.config/chromium/
+   Safe Browsing/Url{Billing,MalBin,Malware,Soceng,Uws}.store.4_* -> oracle ERROR, tool a type;
+   each of the five is ENOENT on stat and on gio seconds later (chromium rotates them).
+   The third run (final list 4f28035b, 11834 paths) was CANCELLED by this seat: the list carries
+   76 /home/vgpnk/.config/1Password/ paths (53 regular non-zero, 19 name-uncertain regular
+   non-zero), so the host leg reads password-manager bytes on the sniff path. My first two host
+   runs executed gio on such paths; labels are types only, no content printed or stored. The list
+   must be regenerated with the password-manager tree denied before any further host run.
+   Census of 4f28035b (11834 paths): chardev 94, symlink 850, blkdev 11, file 6403, dir 4473,
+   sock 3, lstat errors 0. The tool exits 2 on the leg (missing paths) and prints 11837 lines.
+
+5. ATTACK TABLE (compare.py; 51 rows, 46 match)
+   mismatches, pin e68150b5:
+     eacces parent, no name type   $R/sub/denied/child    oracle application/octet-stream (rc0)  tool ERROR (rc2)
+     eacces parent, .txt name      $R/sub/denied2/child.txt  oracle text/plain (rc0)           tool ERROR (rc2)
+     dir link trailing slash -n    $R/dlink/              oracle inode/symlink (rc0)            tool inode/directory (rc0)
+     regular file trailing slash   $R/blob/               oracle image/png (rc0)                tool ERROR (rc2)
+     regular file triple slash     $R/fake.png///         oracle image/png (rc0)                tool ERROR (rc2)
+   plus $R/blob/. -> oracle image/png rc0, tool ERROR rc2 (same class).
+   matched rows include: --fast on uncertain (octet-stream), live link follow/nofollow, dangling,
+   link to denied target, fifo (no hang), socket, /dev/null, /dev/nvme1n1p2, /proc/self/status,
+   zero.desktop, empty.png, secretblob (open failure keeps name-only), fake.png (certain name, no
+   sniff), .doc/.png/.html several types, space/newline escaping (\x20, \x0a), "." and "/".
+   loop: gio $R/l -> inode/symlink rc0; tool -> inode/symlink rc0 (docstring lines 34-35 still say
+   ERROR stat for a loop; rule 7 of the declaration says the same and "no case scores it"; the
+   frozen case file scores four loop cases and the fresh generator's brok class carries follow-mode
+   loop paths in seed 0xaa; its comment repeats the false "a loop answers only under NOFOLLOW"
+   premise).
+
+6. SELFTEST
+   $ python3 .ufo/waves/round-97/build/mado-filetype.py --selftest
+     MADO_FILETYPE_SELFTEST: checks=25 failed=0   rc=0
+   $ env -i /usr/bin/python3 -I <pin>/mado-filetype.py --selftest
+     MADO_FILETYPE_SELFTEST: checks=25 failed=0   rc=0
+   Always-true checks: f08 returns a tuple (t[0]==..., t[1]==0) (non-empty tuple is truthy);
+   f17 is "... if False else True"; f21 is chr(0) == "\x00". Weakened: f13 accepts app/child or
+   app/zz; f24 accepts text/plain or app/hi. No check invokes main, so none asserts exit 2.
+
+7. NAME-ONLY CONTROL (tools/mado-mimeglob.py at every path's basename)
+   $ python3 case_harness.py control cases-pin-c88c06aa.json --scratch $S/c3-ctl \
+       --mimeglob .../tools/mado-mimeglob.py --all
+     {"mode":"control","cases":140,"paths":196,"bad_paths":137}
+     per-path exact 59/196; per-case exact 34/140 (strictly fewer than both totals).
+
+8. MEMORISER CONTROL (input identity = kind, basename, content sha256 / link target)
+   $ python3 memo_check.py cases-pin-c88c06aa.json fresh2.jsonl fresh2
+     {"fresh_paths":426,"memo_hits":80,"memo_keys":82}
+     hits by kind {"chardev":32,"blkdev":24,"dir":16,"fifo":8}
+   Under an input-identity keying the declared "memoriser 0 on the fresh leg" is false (80/426,
+   all correct labels: fixed devices/dirs/fifos recur). Under an env-inclusive keying the fresh
+   env ({root}/db+{root}/dh) is disjoint from the frozen envs ({root}/d1, null), so it is 0 by
+   construction and tests nothing. Either way the control does not demonstrate what it claims.
+
+9. SNIFF-LENGTH EQUIVALENCE (crafted cache + text DBs via update-mime-database)
+   magic at offset 5000, 5007-byte file, name "farfile":
+     oracle cache -> application/x-far ; tool cache -> application/x-far
+     oracle text  -> application/x-far ; tool text  -> application/x-far
+   magic at offset 16500, 17000-byte file:
+     oracle cache -> application/octet-stream ; tool -> application/octet-stream
+     oracle text  -> application/octet-stream ; tool -> application/octet-stream
+   (read length >= min(max_extent,16384) is observationally identical; 16384 always satisfies it)
+   Host extents: cache max_extent = 18730 (u32 at file offset 24 -> magic section 112992, +4;
+   section words 689, 18730, 113004, 90), text parser maximum = 4104; both clamp to 16384.
+   Functional proof the read is > 128: a file with "Microsoft Excel 5.0 Worksheet" at offset 2080
+   answers application/vnd.ms-excel from gio (cache) and from the tool. R97MCritic's C1-3 "host
+   extent 128" measures the 128-byte binary/text fallback window, not the sniff length; its
+   crafted-inconsistent-cache falsifier still stands in principle.
+
+10. ORACLE IDENTITY
+    sha256sum /usr/bin/gio -> d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+    gio --version -> 2.90.1 ; pacman -Q glib2 shared-mime-info xdg-utils file ->
+    glib2 2.90.1-1, shared-mime-info 2.5.1-2, xdg-utils 1.2.1-2, file 5.48-1
+    Case file gio_sha256 equals this value; every frozen label (196/196) and every fresh label
+    (425 + 426) was reproduced by this binary in this review.
+
+11. CLAUSE VERDICTS (detail in w1/R97MReviewC1.md section 4)
+    (i)   green at e68150b5 x c88c06aa (196/196); falsified at 15ddaf0 (94/196 paths)
+    (ii)  not measurable: no mutants file, no counter
+    (iii) green: 120/120 cases and 851/851 paths over two seeds, labels re-derived
+    (iv)  arithmetic green: 11837/11837 on the sanitized list; 5 volatile-path races on the earlier
+          list; NOT ship-ready: the shipped list carries 76 1Password paths (19 name-uncertain
+          regular non-zero) that the sniff reads; final-list run cancelled by this seat
+    (v)   green: gio sha/version match; labels reproduced
+    (vi)  name-only < total (34/140); memoriser false (input keying) / vacuous (env keying);
+          naive [INFERENCE]; counterfeit artifact absent; STRUCTURAL CONJUNCT RED under the r96
+          static_check: ["import:errno:52","import:stat:56","import:socket:343",
+          "spec_location-not-sibling-mimeglob:64"]
+    (vii) green standalone: checks=25 failed=0, rc 0 (also env -i); 3 tautologies + 2 weakened
+          checks; under the structural launcher the import:socket:343 finding may deny the leg
+
+12. WRITES
+    w1/R97MReviewC1.md (report), receipts/review-c1-r97.txt (this receipt). Nothing committed.
+    Scratch deleted. No pacman/uv/npx installs; no host sysctl/service/config touched.

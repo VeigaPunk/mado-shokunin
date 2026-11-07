@@ -1,0 +1,480 @@
+{
+ "mutants": [
+  {
+   "class": "blk",
+   "find": "        return \"inode/blockdevice\"",
+   "id": "blk-01-wrong-chr",
+   "replace": "        return \"inode/chardevice\""
+  },
+  {
+   "class": "blk",
+   "find": "    if stat.S_ISBLK(mode):\n        return \"inode/blockdevice\"\n",
+   "id": "blk-02-drop-branch",
+   "replace": "    if False and stat.S_ISBLK(mode):\n        return \"inode/blockdevice\"\n"
+  },
+  {
+   "class": "blk",
+   "find": "    if stat.S_ISBLK(mode):",
+   "id": "blk-03-as-chr",
+   "replace": "    if stat.S_ISCHR(mode):"
+  },
+  {
+   "class": "blk",
+   "find": "    if stat.S_ISCHR(mode):\n        return \"inode/chardevice\"\n    if stat.S_ISBLK(mode):\n        return \"inode/blockdevice\"",
+   "id": "blk-04-swap-bodies",
+   "replace": "    if stat.S_ISCHR(mode):\n        return \"inode/blockdevice\"\n    if stat.S_ISBLK(mode):\n        return \"inode/chardevice\""
+  },
+  {
+   "class": "brok",
+   "find": "            st = os.stat(path)\n        except OSError as e:\n            return \"inode/symlink\"",
+   "id": "brok-01-broken-directory",
+   "replace": "            st = os.stat(path)\n        except OSError as e:\n            return \"inode/directory\""
+  },
+  {
+   "class": "brok",
+   "find": "        except OSError as e:\n            return \"inode/symlink\"\n        mode = st.st_mode",
+   "id": "brok-02-broken-raises",
+   "replace": "        except OSError as e:\n            raise\n        mode = st.st_mode"
+  },
+  {
+   "class": "brok",
+   "find": "        except OSError as e:\n            return \"inode/symlink\"",
+   "id": "brok-03-broken-octet",
+   "replace": "        except OSError as e:\n            return \"application/octet-stream\""
+  },
+  {
+   "class": "certain",
+   "find": "        return _guess(self.sniffer, base, data, len(data))",
+   "id": "certain-01-guess-no-name",
+   "replace": "        return _guess(self.sniffer, None, data, len(data))"
+  },
+  {
+   "class": "certain",
+   "find": "        if not res[\"uncertain\"]:\n            return res[\"type\"]",
+   "id": "certain-02-gate-suffix",
+   "replace": "        if not res[\"uncertain\"]:\n            return res[\"type\"] + \"x\""
+  },
+  {
+   "class": "certain",
+   "find": "            return self.name_only(base)[\"type\"]",
+   "id": "certain-03-fast-uncertain-field",
+   "replace": "            return self.name_only(base)[\"uncertain\"]"
+  },
+  {
+   "class": "certain",
+   "find": "    def name_only(self, basename):\n        return self.resolver.guess(basename)",
+   "id": "certain-05-name-only-sniffer",
+   "replace": "    def name_only(self, basename):\n        return self.sniffer.guess(basename, b\"\")"
+  },
+  {
+   "class": "certain",
+   "find": "            print(f\"MADO_FILETYPE: {x['type']} attr={'fast' if a.fast else 'full'} \"",
+   "id": "certain-08-type-suffix",
+   "replace": "            print(f\"MADO_FILETYPE: {x['type']}X attr={'fast' if a.fast else 'full'} \""
+  },
+  {
+   "class": "certain",
+   "find": "        results.append({\"path\": _esc(pb), \"type\": t})",
+   "id": "certain-09-type-upper",
+   "replace": "        results.append({\"path\": _esc(pb), \"type\": t.upper()})"
+  },
+  {
+   "class": "chr",
+   "find": "        return \"inode/chardevice\"",
+   "id": "chr-01-wrong-block",
+   "replace": "        return \"inode/blockdevice\""
+  },
+  {
+   "class": "chr",
+   "find": "    if stat.S_ISCHR(mode):\n        return \"inode/chardevice\"\n",
+   "id": "chr-02-drop-branch",
+   "replace": "    if False and stat.S_ISCHR(mode):\n        return \"inode/chardevice\"\n"
+  },
+  {
+   "class": "chr",
+   "find": "    if stat.S_ISCHR(mode):",
+   "id": "chr-03-as-reg",
+   "replace": "    if stat.S_ISREG(mode):"
+  },
+  {
+   "class": "chr",
+   "find": "    if stat.S_ISCHR(mode):\n        return \"inode/chardevice\"\n    if stat.S_ISBLK(mode):",
+   "id": "chr-04-always",
+   "replace": "    if True:\n        return \"inode/chardevice\"\n    if stat.S_ISBLK(mode):"
+  },
+  {
+   "class": "dir",
+   "find": "    if stat.S_ISDIR(mode):\n        return \"inode/directory\"",
+   "id": "dir-01-wrong-symlink",
+   "replace": "    if stat.S_ISDIR(mode):\n        return \"inode/symlink\""
+  },
+  {
+   "class": "dir",
+   "find": "    if stat.S_ISDIR(mode):\n        return \"inode/directory\"\n",
+   "id": "dir-02-drop-branch",
+   "replace": "    if False and stat.S_ISDIR(mode):\n        return \"inode/directory\"\n"
+  },
+  {
+   "class": "dir",
+   "find": "    if stat.S_ISDIR(mode):",
+   "id": "dir-03-as-reg",
+   "replace": "    if stat.S_ISREG(mode):"
+  },
+  {
+   "class": "dir",
+   "find": "        return \"inode/directory\"\n    if stat.S_ISCHR(mode):",
+   "id": "dir-04-always",
+   "replace": "        return \"inode/directory\"\n    if True:\n        return \"inode/directory\"\n    if stat.S_ISCHR(mode):"
+  },
+  {
+   "class": "dir",
+   "find": "        if fixed is not None:\n            return fixed",
+   "id": "dir-05-name-before-branch",
+   "replace": "        if fixed is not None and self.name_only(self.name_base(os.fsencode(path)))[\"uncertain\"]:\n            return fixed"
+  },
+  {
+   "class": "dir",
+   "find": "        if fixed is not None:\n            return fixed\n        base = self.name_base(os.fsencode(path))",
+   "id": "dir-06-branch-only-fast",
+   "replace": "        if fixed is not None and fast:\n            return fixed\n        base = self.name_base(os.fsencode(path))"
+  },
+  {
+   "class": "empty",
+   "find": "        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"",
+   "id": "empty-01-branch-disabled",
+   "replace": "        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0 and False:\n        return \"application/x-zerosize\""
+  },
+  {
+   "class": "fast",
+   "find": "        if fast:",
+   "id": "fast-01-gate-false",
+   "replace": "        if fast and False:"
+  },
+  {
+   "class": "fast",
+   "find": "        base = self.name_base(os.fsencode(path))\n        if fast:",
+   "id": "fast-02-gate-invert",
+   "replace": "        base = self.name_base(os.fsencode(path))\n        if not fast:"
+  },
+  {
+   "class": "fast",
+   "find": "            t = ft.answer(p, a.follow, a.fast)\n        except OSError:",
+   "id": "fast-03-answer-const-full",
+   "replace": "            t = ft.answer(p, a.follow, False)\n        except OSError:"
+  },
+  {
+   "class": "fast",
+   "find": "    ap.add_argument(\"--fast\", action=\"store_true\", help=\"standard::fast-content-type (never sniffs)\")",
+   "id": "fast-04-argparse-store-false",
+   "replace": "    ap.add_argument(\"--fast\", action=\"store_false\", help=\"standard::fast-content-type (never sniffs)\")"
+  },
+  {
+   "class": "fast",
+   "find": "attr={'fast' if a.fast else 'full'}",
+   "id": "fast-05-attr-invert",
+   "replace": "attr={'full' if a.fast else 'fast'}"
+  },
+  {
+   "class": "fast",
+   "find": "        if fast:\n            return self.name_only(base)[\"type\"]\n        res = self.name_only(base)",
+   "id": "fast-06-types-first-fallback",
+   "replace": "        if fast:\n            return self.name_only(base)[\"types\"][0] if self.name_only(base)[\"types\"] else \"text/plain\"\n        res = self.name_only(base)"
+  },
+  {
+   "class": "fifo",
+   "find": "        return \"inode/fifo\"",
+   "id": "fifo-01-wrong-sock",
+   "replace": "        return \"inode/socket\""
+  },
+  {
+   "class": "fifo",
+   "find": "    if stat.S_ISFIFO(mode):",
+   "id": "fifo-02-reg-or-fifo",
+   "replace": "    if stat.S_ISFIFO(mode) or stat.S_ISREG(mode):"
+  },
+  {
+   "class": "fifo",
+   "find": "    if stat.S_ISFIFO(mode):\n        return \"inode/fifo\"",
+   "id": "fifo-03-zero-size-fifo",
+   "replace": "    if stat.S_ISFIFO(mode) or st.st_size == 0:\n        return \"inode/fifo\""
+  },
+  {
+   "class": "fifo",
+   "find": "    if stat.S_ISFIFO(mode):\n        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0:",
+   "id": "fifo-04-sock-or-fifo",
+   "replace": "    if stat.S_ISFIFO(mode) or stat.S_ISSOCK(mode):\n        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0:"
+  },
+  {
+   "class": "follow",
+   "find": "        fixed = _stat_branch(path, follow)\n        if fixed is not None:\n            return fixed",
+   "id": "follow-01-answer-false",
+   "replace": "        fixed = _stat_branch(path, False)\n        if fixed is not None:\n            return fixed"
+  },
+  {
+   "class": "follow",
+   "find": "    if stat.S_ISLNK(mode):",
+   "id": "follow-02-symlink-and-follow",
+   "replace": "    if stat.S_ISLNK(mode) and follow:"
+  },
+  {
+   "class": "follow",
+   "find": "    mode = st.st_mode\n    if stat.S_ISLNK(mode):",
+   "id": "follow-03-symlink-invert",
+   "replace": "    mode = st.st_mode\n    if not stat.S_ISLNK(mode):"
+  },
+  {
+   "class": "follow",
+   "find": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=True)",
+   "id": "follow-04-follow-default-false",
+   "replace": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=False)"
+  },
+  {
+   "class": "nofollow",
+   "find": "            t = ft.answer(p, a.follow, a.fast)",
+   "id": "nofollow-01-answer-const-follow",
+   "replace": "            t = ft.answer(p, True, a.fast)"
+  },
+  {
+   "class": "nofollow",
+   "find": "            t = ft.answer(p, a.follow, a.fast)\n        except OSError:\n            print(f\"MADO_FILETYPE: ERROR stat path={_esc(pb)}\")",
+   "id": "nofollow-02-answer-invert",
+   "replace": "            t = ft.answer(p, not a.follow, a.fast)\n        except OSError:\n            print(f\"MADO_FILETYPE: ERROR stat path={_esc(pb)}\")"
+  },
+  {
+   "class": "nofollow",
+   "find": "    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_false\")",
+   "id": "nofollow-03-argparse-action",
+   "replace": "    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_true\")"
+  },
+  {
+   "class": "nofollow",
+   "find": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=True)\n    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_false\")",
+   "id": "nofollow-04-follow-default",
+   "replace": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=False)\n    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_false\")"
+  },
+  {
+   "class": "readerr",
+   "find": "        if data is None:\n            return res[\"type\"]",
+   "id": "readerr-01-none-octet",
+   "replace": "        if data is None:\n            return \"application/octet-stream\""
+  },
+  {
+   "class": "readerr",
+   "find": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:\n            return res[\"type\"]",
+   "id": "readerr-02-none-suffix",
+   "replace": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:\n            return res[\"type\"] + \"x\""
+  },
+  {
+   "class": "readerr",
+   "find": "        fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC)",
+   "id": "readerr-03-open-nofollow",
+   "replace": "        fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW)"
+  },
+  {
+   "class": "readerr",
+   "find": "    except OSError:\n        return None\n    try:",
+   "id": "readerr-04-open-empty-bytes",
+   "replace": "    except OSError:\n        return b\"\"\n    try:"
+  },
+  {
+   "class": "readerr",
+   "find": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:",
+   "id": "readerr-05-open-empty-or",
+   "replace": "        data = _read_sniff(path, _clamp(self.max_buffer_extents)) or b\"\"\n        if data is None:"
+  },
+  {
+   "class": "sock",
+   "find": "        return \"inode/socket\"",
+   "id": "sock-01-wrong-fifo",
+   "replace": "        return \"inode/fifo\""
+  },
+  {
+   "class": "sock",
+   "find": "    if stat.S_ISSOCK(mode):\n        return \"inode/socket\"\n",
+   "id": "sock-02-drop-branch",
+   "replace": "    if False and stat.S_ISSOCK(mode):\n        return \"inode/socket\"\n"
+  },
+  {
+   "class": "sock",
+   "find": "    if stat.S_ISSOCK(mode):",
+   "id": "sock-03-as-reg",
+   "replace": "    if stat.S_ISREG(mode):"
+  },
+  {
+   "class": "sym",
+   "find": "        if not follow:\n            return \"inode/symlink\"\n        try:\n            st = os.stat(path)",
+   "id": "sym-01-nofollow-invert",
+   "replace": "        if follow:\n            return \"inode/symlink\"\n        try:\n            st = os.stat(path)"
+  },
+  {
+   "class": "sym",
+   "find": "    if stat.S_ISLNK(mode):\n        if not follow:",
+   "id": "sym-02-nofollow-false",
+   "replace": "    if stat.S_ISLNK(mode):\n        if False:"
+  },
+  {
+   "class": "sym",
+   "find": "        if not follow:\n            return \"inode/symlink\"",
+   "id": "sym-03-nofollow-true",
+   "replace": "        if True:\n            return \"inode/symlink\""
+  },
+  {
+   "class": "sym",
+   "find": "            st = os.stat(path)",
+   "id": "sym-04-stat-to-lstat",
+   "replace": "            st = os.lstat(path)"
+  },
+  {
+   "class": "sym",
+   "find": "        mode = st.st_mode\n    if stat.S_ISDIR(mode):",
+   "id": "sym-05-mode-relstat",
+   "replace": "        mode = os.lstat(path).st_mode\n    if stat.S_ISDIR(mode):"
+  },
+  {
+   "class": "sym",
+   "find": "        base = self.name_base(os.fsencode(path))\n        if fast:\n            return self.name_only(base)[\"type\"]",
+   "id": "sym-06-basename-realpath",
+   "replace": "        base = self.name_base(os.fsencode(os.path.realpath(path)))\n        if fast:\n            return self.name_only(base)[\"type\"]"
+  },
+  {
+   "class": "sym",
+   "find": "    st = os.lstat(path)\n    mode = st.st_mode",
+   "id": "sym-07-lstat-to-stat",
+   "replace": "    st = os.stat(path)\n    mode = st.st_mode"
+  },
+  {
+   "class": "sym",
+   "find": "        fixed = _stat_branch(path, follow)\n        if fixed is not None:",
+   "id": "sym-08-answer-follow-true",
+   "replace": "        fixed = _stat_branch(path, True)\n        if fixed is not None:"
+  },
+  {
+   "class": "uncertain",
+   "find": "        res = self.name_only(base)\n        if not res[\"uncertain\"]:",
+   "id": "uncertain-01-gate-invert",
+   "replace": "        res = self.name_only(base)\n        if res[\"uncertain\"]:"
+  },
+  {
+   "class": "uncertain",
+   "find": "        if not res[\"uncertain\"]:\n            return res[\"type\"]\n        data = _read_sniff(path, _clamp(self.max_buffer_extents))",
+   "id": "uncertain-02-gate-true",
+   "replace": "        if True:\n            return res[\"type\"]\n        data = _read_sniff(path, _clamp(self.max_buffer_extents))"
+  },
+  {
+   "class": "uncertain",
+   "find": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))",
+   "id": "uncertain-03-read-zero",
+   "replace": "        data = _read_sniff(path, 0)"
+  },
+  {
+   "class": "uncertain",
+   "find": "        return res[\"type\"]\n        return _guess(self.sniffer, base, data, len(data))",
+   "id": "uncertain-04-empty-data",
+   "replace": "        return res[\"type\"]\n        return _guess(self.sniffer, base, b\"\", len(data))"
+  },
+  {
+   "class": "uncertain",
+   "find": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:\n            return res[\"type\"]\n        return _guess(self.sniffer, base, data, len(data))",
+   "id": "uncertain-05-types-first",
+   "replace": "        data = _read_sniff(path, _clamp(self.max_buffer_extents))\n        if data is None:\n            return res[\"type\"]\n        g = self.sniffer.guess(base, data)\n        return g[\"types\"][0] if g[\"types\"] else g[\"type\"]"
+  },
+  {
+   "class": "uncertain",
+   "find": "    return sniffer.guess(name_bytes, data)[\"type\"]",
+   "id": "uncertain-06-guess-uncertain-field",
+   "replace": "    return sniffer.guess(name_bytes, data)[\"uncertain\"]"
+  },
+  {
+   "class": "uncertain",
+   "find": "    if data is None:\n        return sniffer.guess(name_bytes, b\"\")[\"type\"]\n    return sniffer.guess(name_bytes, data)[\"type\"]",
+   "id": "uncertain-07-guess-empty",
+   "replace": "    if data is None:\n        return sniffer.guess(name_bytes, b\"\")[\"type\"]\n    return sniffer.guess(name_bytes, b\"\")[\"type\"]"
+  },
+  {
+   "class": "uncertain",
+   "find": "    try:\n        fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC)",
+   "id": "uncertain-12-read-no-directory",
+   "replace": "    try:\n        fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_DIRECTORY)"
+  },
+  {
+   "class": "uncertain",
+   "find": "        fixed = _stat_branch(path, follow)",
+   "id": "uncertain-13-fixed-or-octet",
+   "replace": "        fixed = _stat_branch(path, follow) or \"application/octet-stream\""
+  },
+  {
+   "class": "uncertain",
+   "find": "        self.name_base = mg.g_path_get_basename",
+   "id": "uncertain-14-basename-split-first",
+   "replace": "        self.name_base = lambda b: b.split(b\"/\")[0]"
+  },
+  {
+   "class": "uncertain",
+   "find": "        return self.resolver.guess(basename)",
+   "id": "uncertain-15-name-only-octet",
+   "replace": "        return {\"type\": \"application/octet-stream\", \"uncertain\": 0, \"types\": []}"
+  },
+  {
+   "class": "uncertain",
+   "find": "        if fast:\n            return self.name_only(base)[\"type\"]",
+   "id": "uncertain-16-fast-const-true",
+   "replace": "        if fast is None:\n            return self.name_only(base)[\"type\"]"
+  },
+  {
+   "class": "zero",
+   "find": "        return \"application/x-zerosize\"",
+   "id": "zero-01-wrong-empty",
+   "replace": "        return \"application/x-empty\""
+  },
+  {
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:",
+   "id": "zero-02-drop-size-guard",
+   "replace": "    if stat.S_ISREG(mode):"
+  },
+  {
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"",
+   "id": "zero-03-size-ne",
+   "replace": "    if stat.S_ISREG(mode) and st.st_size != 0:\n        return \"application/x-zerosize\""
+  },
+  {
+   "class": "zero",
+   "find": "st.st_size == 0:\n        return \"application/x-zerosize\"",
+   "id": "zero-04-size-one",
+   "replace": "st.st_size == 1:\n        return \"application/x-zerosize\""
+  },
+  {
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):",
+   "id": "zero-05-drop-reg-guard",
+   "replace": "    if st.st_size == 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):"
+  },
+  {
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):\n        return \"inode/socket\"",
+   "id": "zero-06-size-negative",
+   "replace": "    if stat.S_ISREG(mode) and st.st_size < 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):\n        return \"inode/socket\""
+  },
+  {
+   "class": "zero",
+   "find": "        return \"inode/fifo\"\n    if stat.S_ISREG(mode) and st.st_size == 0:",
+   "id": "zero-07-reg-or-size",
+   "replace": "        return \"inode/fifo\"\n    if stat.S_ISREG(mode) or st.st_size == 0:"
+  },
+  {
+   "class": "zero",
+   "find": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"application/x-zerosize\"\n    if stat.S_ISSOCK(mode):\n        return \"inode/socket\"\n    return None",
+   "id": "zero-08-branch-fifo-type",
+   "replace": "    if stat.S_ISREG(mode) and st.st_size == 0:\n        return \"inode/fifo\"\n    if stat.S_ISSOCK(mode):\n        return \"inode/socket\"\n    return None"
+  },
+  {
+   "class": "zero",
+   "find": "        for x in results:",
+   "id": "zero-09-truncate-results",
+   "replace": "        for x in results[:1]:"
+  }
+ ],
+ "tool": "tools/mado-filetype.py",
+ "version": 1
+}

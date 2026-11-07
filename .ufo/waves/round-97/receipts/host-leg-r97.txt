@@ -1,0 +1,372 @@
+Receipt: R97MExecHostC1 host leg, round 97 (hyaku run 15, attempt 1)
+Seat: R97MExecHostC1; generated 2026-11-07; base rev e6152b589c2c6a28426c28263c4bcc3c46398be4.
+Artifacts (lane-relative): controls/filetype-host-r97.txt, controls/host-db-r97.json,
+controls/filetype-fresh-r97.py.  Scratch: /fast/scratch/hyaku/mado-r97/R97MExecHostC1
+(deleted at seat completion; the frozen artifacts and this receipt carry everything).
+
+## 1. Host list census (controls/filetype-host-r97.txt, sha256
+   4f28035b4cfea0b3f6d8d9f5eb3efb630b2a09db4fc06fa141555e76a9a829a4, 11834 paths)
+
+Walk + filter chain: 135293 raw walk candidates -> 12278 reasoned raw list
+-> 12042 after the credential filter (236 dropped, section 4) -> 11837 after the
+volatility pass (67 unreadable-at-freeze, 138 volatile /proc/<pid> != 1)
+-> 11834 after dropping the 3 self-referential fd symlinks
+(/dev/stdin /dev/stdout /dev/stderr) -> SHIPPED 11834.
+
+Kind census (lstat at generation): file 6403, dir 4473, symlink 850, chardev 94,
+blkdev 11, socket 3, fifo 0 (host /dev carries no fifo; fifo coverage lives in the
+fresh generator).  Unreadable entries skipped: 205 total (counted notes above; 0 at
+lstat time in the shipped list - every shipped path lstat-verified twice).
+
+Per-root census:
+  /home  5640  (~/.config filenames only, never contents; credential-filtered)
+  /usr   5234  (hostdb 1170 = the whole /usr/share/mime tree depth<=3 incl. all 9
+          DB files; hostdoc 1739; hosticon 600; usrbin 987 every-4th; usrlib 593;
+          applications 122; pixmaps 23)
+  /etc    771  (depth<=2 sample)
+  /dev    111  (declared specials, chardev/blkdev/socket samples, symlinks)
+  /sys     64  (/sys/class sample + declared)
+  /proc    14  (declared only: self/status, self, version, cpuinfo, meminfo, mounts,
+          uptime, loadavg, stat, cmdline, 1, sys, net, driver; NO per-pid entries)
+
+Oracle leg (evidence the shipped list is answerable, measured 2026-11-07):
+  env -i LC_ALL=C HOME=<scratch>/empty-h XDG_DATA_DIRS=/usr/share/mime \
+      /usr/bin/gio info -a standard::content-type <path>   (12 workers, follow)
+  Result: 11837/11837 answered, 0 errors (run against the 11837-path intermediate;
+  the 3 paths dropped afterwards are the only context-dependent ones).
+  Label census: text/plain 4984, inode/directory 4492, application/octet-stream 1899,
+  application/x-zerosize 245, inode/symlink 96, inode/chardevice 95,
+  inode/blockdevice 14, inode/socket 9, inode/fifo 3.
+  The 3 fifo answers were /dev/stdin /dev/stdout /dev/stderr followed through the
+  querying process's own /proc/<pid>/fd/pipe - exactly why they are dropped: the
+  label depends on the measuring process's fd wiring, not on the filesystem.
+
+## 2. Host DB manifest (controls/host-db-r97.json, sha256
+   0c6c0c0c7f62353777053bb77b33bca4cb01a23d0e5ab81eaa5c8d9d00518562)
+
+Nine files, bytes + sha256, measured 2026-11-07:
+
+  magic          47524 B  2942f4adfca98c1816177f056d566e925e96e1c3dd562964dada066bf4a8a35c
+  globs          47137 B  54eb042dc1a2f2caba8e09ff79eda184ea0063d50dd796ea3f3726a20e96c40d
+  globs2         52100 B  556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e
+  aliases        13687 B  74cde6689d6161332df5e89358fb68c23959f230aa4f1ee0bcf03f2fa062c5df
+  subclasses     24981 B  3dc5ff5773867381cedc84523738d8ee11ccd95618e5157be05cefdc6f9cfa62
+  icons            232 B  7198dd2150a591c2c2f4d0fa91599823871c4ee1017993b1e06f9094a9702a30
+  generic-icons  22921 B  ad2a08102009507566ac25c79b0fdc1a35fc89dfb2e983672d6ccf5297260f3a
+  XMLnamespaces   2672 B  706cfd7efe0632b7f5abb55fa5626f47efb63a42cdad9ff6ed7360a259bb98cc
+  mime.cache    207520 B  b988d3d27bda7500ba4eb8e88d78e61049796d94ef79745dd366bacf5460bb47
+
+All eight text hashes equal the round-96 pins (host-text-db-r96.json); globs2 equals
+the round-94/95/96 pin chain - the DB has not drifted since round 94.  mime.cache is
+207520 B (>= 40 B, so loadable): a reachable /usr/share/mime means cache mode; a
+text-mode leg must copy ONLY the eight text files into a fresh mime/ dir.
+
+## 3. Fresh generator (controls/filetype-fresh-r97.py, sha256
+   c3143775d346921085a4f312eb596bc9b062abb11c3257aed47d9bba50bf7bf2)
+
+CLI: --seed HEX --dir D [--out FILE] [--count N] (default 120).
+stdout = one JSON object per case (id, class, db_kind, env, files, mode, attr, paths,
+labels, dropped_paths); stdout is pure JSONL (no progress lines); census notes on
+stderr.  The labels list follows shared contract 2: one one-element list ["<type>"]
+per path (length == len(paths), each case 1..12 paths; no "ERROR" label ever).
+Labels measured live per case by
+running /usr/bin/gio (pinned sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462)
+on the BUILT root; never copied from a frozen file.  ERROR-labelled paths are dropped
+from the case with a counted note (refusal leg covered by the frozen case file + host
+list), so every shipped fresh case is scoreable end-to-end.  Deterministic for a
+given seed (verified: two 20-case runs byte-identical).
+
+Coverage machinery: 15 classes x 8 = 120 cases (>=120 floor met); db cycle
+text/cache/none across occurrences; canonical combos guarantee the key legs -
+uncertain #0 = text DB + full + follow (magic hit), #1 = cache DB + full,
+#2 = none DB + full, #3 = text DB + fast (the never-sniffs gate);
+certain #0 = none DB (a name win needs no database); brok #0 = nofollow
+(a symlink loop answers inode/symlink only under NOFOLLOW; in follow mode the
+oracle refuses and the generic drop rule removes it); every other class #0 =
+text DB + full.  Fixtures: chmod 000 (readerr), mkfifo, bound AF_UNIX socket files,
+live + broken + loop symlinks, dir-named-sub.png, trailing-slash paths, absolute
+host chardev/blkdev paths declared in the case's paths, both modes and both attrs
+(randomized on later occurrences).
+
+Full 120-case run (seed 97a1): 120 cases, 430 paths, 0 dropped, 0 empty,
+classes 15x8, db_modes text 49 / cache 33 / none 38,
+label census: application/octet-stream 64, application/pdf 5, application/x-desktop 5,
+application/x-executable 3, application/x-zerosize 40, application/zip 5,
+audio/ogg 5, image/png 32, inode/blockdevice 24, inode/chardevice 48,
+inode/directory 70, inode/fifo 21, inode/socket 9, inode/symlink 52, text/plain 39,
+text/x-readme 3, text/x-shellscript 5.
+
+20-case dry run (seed 97a1, --count 20): 20 cases, 72 paths, 0 dropped, 0 empty,
+classes 15 present (blk/brok/certain/chr/dir/empty/fast/fifo/follow/nofollow/
+readerr/sock/sym/uncertain/zero), db_modes text 16 / cache 1 / none 3,
+label census: application/octet-stream 7, application/x-executable 1,
+application/x-zerosize 5, image/png 5, inode/blockdevice 6, inode/chardevice 12,
+inode/directory 14, inode/fifo 4, inode/socket 3, inode/symlink 8, text/plain 6,
+text/x-shellscript 1.
+
+## 4. Dropped credential-shaped paths (236; r56 rule, L1 instruction 2026-11-07)
+
+Filter: basename or any dirname segment (case-insensitive) contains .ssh, .gnupg,
+agent.db, credential, keyring, token, secret, .netrc, hosts.yml, auth, .pem, .key,
+id_rsa, shadow, passwd; or the path sits under ~/.config/gh, ~/.config/anthropic,
+~/.config/elevenlabs, ~/.config/omp, ~/.local/share/keyrings, ~/.aws, ~/.docker.
+Breakdown: token:token 74, token:auth 71, token:.pem 53, token:shadow 4, token:.key 4,
+token:passwd 4, token:keyring 4, token:secret 4, token:credential 3, token:.gnupg 1,
+dir-prefix 14.  Per-path list below (path TAB reason).
+
+DROP-CRED /etc/apparmor.d/abstractions/authentication	token:auth
+DROP-CRED /etc/ca-certificates/extracted/tls-ca-bundle.pem	token:.pem
+DROP-CRED /etc/gshadow-	token:shadow
+DROP-CRED /etc/pacman.d/gnupg/S.keyboxd	token:.key
+DROP-CRED /etc/pam.d/passwd	token:passwd
+DROP-CRED /etc/passwd	token:passwd
+DROP-CRED /etc/pki/fwupd-metadata/LVFS-CA-2025PQ.pem	token:.pem
+DROP-CRED /etc/pki/fwupd/LVFS-CA-2025PQ.pem	token:.pem
+DROP-CRED /etc/shadow	token:shadow
+DROP-CRED /etc/ssl/certs/AC_RAIZ_FNMT-RCM.pem	token:.pem
+DROP-CRED /etc/ssl/certs/ANF_Secure_Server_Root_CA.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Amazon_Root_CA_1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Amazon_Root_CA_3.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Atos_TrustedRoot_Root_CA_ECC_TLS_2021.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.pem	token:.pem
+DROP-CRED /etc/ssl/certs/BJCA_Global_Root_CA2.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Buypass_Class_3_Root_CA.pem	token:.pem
+DROP-CRED /etc/ssl/certs/CFCA_EV_ROOT.pem	token:.pem
+DROP-CRED /etc/ssl/certs/COMODO_RSA_Certification_Authority.pem	token:auth
+DROP-CRED /etc/ssl/certs/Certainly_Root_R1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Certum_EC-384_CA.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Certum_Trusted_Network_CA_2.pem	token:.pem
+DROP-CRED /etc/ssl/certs/D-TRUST_BR_Root_CA_1_2020.pem	token:.pem
+DROP-CRED /etc/ssl/certs/D-TRUST_EV_Root_CA_1_2020.pem	token:.pem
+DROP-CRED /etc/ssl/certs/D-TRUST_Root_Class_3_CA_2_2009.pem	token:.pem
+DROP-CRED /etc/ssl/certs/DigiCert_Assured_ID_Root_G2.pem	token:.pem
+DROP-CRED /etc/ssl/certs/DigiCert_Global_Root_G2.pem	token:.pem
+DROP-CRED /etc/ssl/certs/DigiCert_TLS_ECC_P384_Root_G5.pem	token:.pem
+DROP-CRED /etc/ssl/certs/DigiCert_Trusted_Root_G4.pem	token:.pem
+DROP-CRED /etc/ssl/certs/GTS_Root_R1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/GTS_Root_R4.pem	token:.pem
+DROP-CRED /etc/ssl/certs/GlobalSign_ECC_Root_CA_-_R5.pem	token:.pem
+DROP-CRED /etc/ssl/certs/GlobalSign_Root_CA_-_R6.pem	token:.pem
+DROP-CRED /etc/ssl/certs/GlobalSign_Root_R46.pem	token:.pem
+DROP-CRED /etc/ssl/certs/HARICA_TLS_ECC_Root_CA_2021.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Hellenic_Academic_and_Research_Institutions_ECC_RootCA_2015.pem	token:.pem
+DROP-CRED /etc/ssl/certs/HiPKI_Root_CA_-_G1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/ISRG_Root_X1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/IdenTrust_Commercial_Root_CA_1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Izenpe.com.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Microsoft_ECC_Root_Certificate_Authority_2017.pem	token:auth
+DROP-CRED /etc/ssl/certs/NAVER_Global_Root_Certification_Authority.pem	token:auth
+DROP-CRED /etc/ssl/certs/OISTE_Server_Root_ECC_G1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/OISTE_WISeKey_Global_Root_GB_CA.pem	token:.pem
+DROP-CRED /etc/ssl/certs/QuoVadis_Root_CA_1_G3.pem	token:.pem
+DROP-CRED /etc/ssl/certs/QuoVadis_Root_CA_3_G3.pem	token:.pem
+DROP-CRED /etc/ssl/certs/SECOM_TLS_RSA_Root_CA_2024.pem	token:.pem
+DROP-CRED /etc/ssl/certs/SSL.com_EV_Root_Certification_Authority_RSA_R2.pem	token:auth
+DROP-CRED /etc/ssl/certs/SSL.com_Root_Certification_Authority_RSA.pem	token:auth
+DROP-CRED /etc/ssl/certs/SSL.com_TLS_RSA_Root_CA_2022.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Sectigo_Public_Server_Authentication_Root_E46.pem	token:auth
+DROP-CRED /etc/ssl/certs/SecureSign_Root_CA14.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Security_Communication_ECC_RootCA1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Starfield_Root_Certificate_Authority_-_G2.pem	token:auth
+DROP-CRED /etc/ssl/certs/SwissSign_RSA_TLS_Root_CA_2022_-_1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/T-TeleSec_GlobalRoot_Class_3.pem	token:.pem
+DROP-CRED /etc/ssl/certs/TWCA_CYBER_Root_CA.pem	token:.pem
+DROP-CRED /etc/ssl/certs/TWCA_Root_Certification_Authority.pem	token:auth
+DROP-CRED /etc/ssl/certs/Telekom_Security_TLS_RSA_Root_2023.pem	token:.pem
+DROP-CRED /etc/ssl/certs/Telia_RSA_TLS_Root_CA_v3.pem	token:.pem
+DROP-CRED /etc/ssl/certs/TrustAsia_Global_Root_CA_G3.pem	token:.pem
+DROP-CRED /etc/ssl/certs/TrustAsia_TLS_ECC_Root_CA.pem	token:.pem
+DROP-CRED /etc/ssl/certs/TunTrust_Root_CA.pem	token:.pem
+DROP-CRED /etc/ssl/certs/UCA_Global_G2_Root.pem	token:.pem
+DROP-CRED /etc/ssl/certs/USERTrust_RSA_Certification_Authority.pem	token:auth
+DROP-CRED /etc/ssl/certs/e-Szigno_Root_CA_2017.pem	token:.pem
+DROP-CRED /etc/ssl/certs/emSign_Root_CA_-_G1.pem	token:.pem
+DROP-CRED /etc/ssl/certs/vTrus_ECC_Root_CA.pem	token:.pem
+DROP-CRED /etc/xdg/autostart/gnome-keyring-pkcs11.desktop	token:keyring
+DROP-CRED /home/vgpnk/.config/.android/debug.keystore	token:.key
+DROP-CRED /home/vgpnk/.config/.android/debug.keystore.lock	token:.key
+DROP-CRED /home/vgpnk/.config/1Password/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/1Password/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/Codex/Default/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/Codex/Default/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/Codex/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/Codex/TrustTokenKeyCommitments/2026.10.12.1	token:token
+DROP-CRED /home/vgpnk/.config/Grok Bot/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/Grok Bot/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/Grok Bot/box-secrets-push-state.v1.json	token:secret
+DROP-CRED /home/vgpnk/.config/Grok Bot/sand-secrets.json	token:secret
+DROP-CRED /home/vgpnk/.config/OpenBot/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/OpenBot/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/OpenBot/automation/token	token:token
+DROP-CRED /home/vgpnk/.config/OpenBot/openbot-central-auth-v1.bin	token:auth
+DROP-CRED /home/vgpnk/.config/OpenBot/openbot-provider-credentials-v1.json	token:credential
+DROP-CRED /home/vgpnk/.config/Typora/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/Typora/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/VoiceStudio/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/VoiceStudio/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/ZCode/session/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/ZCode/session/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/ai-usage/env.bak.token-plan	token:token
+DROP-CRED /home/vgpnk/.config/alma/.claude_subscription_token	token:token
+DROP-CRED /home/vgpnk/.config/alma/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/alma/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/anthropic	dir-prefix:/home/vgpnk/.config/anthropic
+DROP-CRED /home/vgpnk/.config/anthropic/active_config	dir-prefix:/home/vgpnk/.config/anthropic
+DROP-CRED /home/vgpnk/.config/anthropic/configs	dir-prefix:/home/vgpnk/.config/anthropic
+DROP-CRED /home/vgpnk/.config/anthropic/configs/default.json	dir-prefix:/home/vgpnk/.config/anthropic
+DROP-CRED /home/vgpnk/.config/anthropic/credentials	dir-prefix:/home/vgpnk/.config/anthropic
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dir1lfJoK/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dir3kcYXY/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dir4ESauS/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dir8RnqNZ/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirA4XehQ/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirCnycGo/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirGxXCvi/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirHz1Lsj/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirIkWgNi/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirKm5DUU/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirLS8Kmk/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirLoVlLr/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirPJZ9iG/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirSHeU8K/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirVZ6epz/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirWnh5U2/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirYwO73s/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirZKax5q/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirhUk0Rp/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirm9OvLw/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirofDEK2/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_diroiC1GW/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirpfdGa3/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirqpWFdx/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirrrMDDy/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_dirtdTYxM/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium-headless/scoped_diryv2cec/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Default/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Default/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Guest Profile/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Guest Profile/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Profile 1/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Profile 1/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Profile 2/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Profile 2/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Profile 3/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Profile 3/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Profile 4/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/chromium/Profile 4/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/chromium/TrustTokenKeyCommitments	token:token
+DROP-CRED /home/vgpnk/.config/chromium/TrustTokenKeyCommitments/2026.10.12.1	token:token
+DROP-CRED /home/vgpnk/.config/cursor/auth.json	token:auth
+DROP-CRED /home/vgpnk/.config/elevenlabs	dir-prefix:/home/vgpnk/.config/elevenlabs
+DROP-CRED /home/vgpnk/.config/elevenlabs/api_key	dir-prefix:/home/vgpnk/.config/elevenlabs
+DROP-CRED /home/vgpnk/.config/elevenlabs/auth-keyring.json	dir-prefix:/home/vgpnk/.config/elevenlabs
+DROP-CRED /home/vgpnk/.config/gh	dir-prefix:/home/vgpnk/.config/gh
+DROP-CRED /home/vgpnk/.config/gh/config.yml	dir-prefix:/home/vgpnk/.config/gh
+DROP-CRED /home/vgpnk/.config/gh/hosts.yml	dir-prefix:/home/vgpnk/.config/gh
+DROP-CRED /home/vgpnk/.config/kimi-code-app/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/kimi-code-app/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/obsidian/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/obsidian/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/omp	dir-prefix:/home/vgpnk/.config/omp
+DROP-CRED /home/vgpnk/.config/omp/secrets	dir-prefix:/home/vgpnk/.config/omp
+DROP-CRED /home/vgpnk/.config/omp/secrets/mistral.keys	dir-prefix:/home/vgpnk/.config/omp
+DROP-CRED /home/vgpnk/.config/orca/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/orca/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/orca/agent-session-authority.key	token:auth
+DROP-CRED /home/vgpnk/.config/origin-cli/credentials.json	token:credential
+DROP-CRED /home/vgpnk/.config/r5-electron/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/r5-electron/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/unityhub/Trust Tokens	token:token
+DROP-CRED /home/vgpnk/.config/unityhub/Trust Tokens-journal	token:token
+DROP-CRED /home/vgpnk/.config/unityhub/keyringFallbackHarvestComplete.json	token:keyring
+DROP-CRED /usr/bin/chgpasswd	token:passwd
+DROP-CRED /usr/bin/fido2-token	token:token
+DROP-CRED /usr/bin/gnome-keyring-3	token:keyring
+DROP-CRED /usr/bin/gpasswd	token:passwd
+DROP-CRED /usr/bin/xauth	token:auth
+DROP-CRED /usr/lib/cmake/FreeRDP-Shadow3	token:shadow
+DROP-CRED /usr/lib/libQt6NetworkAuth.prl	token:auth
+DROP-CRED /usr/lib/libfreerdp-shadow3.so	token:shadow
+DROP-CRED /usr/lib/pkgconfig/libsecret-1.pc	token:secret
+DROP-CRED /usr/lib/python3.14/token.py	token:token
+DROP-CRED /usr/lib/samba/libcliauth-private-samba.so	token:auth
+DROP-CRED /usr/lib/samba/libgss-preauth-private-samba.so	token:auth
+DROP-CRED /usr/share/applications/org.gnupg.pinentry-qt.desktop	token:.gnupg
+DROP-CRED /usr/share/applications/org.kde.ksecretd.desktop	token:secret
+DROP-CRED /usr/share/applications/polkit-gnome-authentication-agent-1.desktop	token:auth
+DROP-CRED /usr/share/doc/Kdenlive/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/Linux-PAM/adg-author.html	token:auth
+DROP-CRED /usr/share/doc/bison/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/c-ares/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/cryptsetup/Keyring.txt	token:keyring
+DROP-CRED /usr/share/doc/cups-browsed/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/cups-filters/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/debuginfod/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/dmidecode/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/efibootmgr/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/elfutils/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/expat/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/fftw/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/flex/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/fluidsynth/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/gc/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/gdbm/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/gnutls/gnutls-modauth.png	token:auth
+DROP-CRED /usr/share/doc/gperftools/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/graphviz/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/jq/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libao/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libassuan/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libcupsfilters/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libdvdnav/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libdvdread/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libelf/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libexif/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libgit2/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libmpdclient/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libnsl/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libppd/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libsamplerate/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libsndfile/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libusb/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/libuv/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/lzo/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/mpfr/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/opusfile/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/pcre/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/pcre2/AUTHORS.md	token:auth
+DROP-CRED /usr/share/doc/pkgconf/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/python-ptrace/authors.txt	token:auth
+DROP-CRED /usr/share/doc/raptor/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/rnnoise/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/serd/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/smartmontools/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/snapper/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/sord/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/sox/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/suil/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/twolame/AUTHORS	token:auth
+DROP-CRED /usr/share/doc/xz/AUTHORS	token:auth
+DROP-CRED /usr/share/mime/application/vnd.apple.keynote.xml	token:.key
+DROP-CRED /usr/share/mime/application/x.systemd-credential.xml	token:credential
+DROP-CRED /usr/share/mime/text/x-authors.xml	token:auth
+
+## 5. Volatility drops after the credential filter (counted notes)
+
+- unreadable-at-freeze: 67 (transient ~/.config session stores mid-rotation and
+  exited /proc/<pid> dirs seen ERR at lstat).
+- volatile-pid: 138 (every /proc/<pid> with pid != 1; they rotate by design).
+- selfref-fd: 3 (/dev/stdin /dev/stdout /dev/stderr; see section 1).
+The frozen list therefore contains no path whose existence or label depends on the
+measuring process beyond the filesystem itself.  Residual risk: a ~/.config file
+present now could still vanish before the counter runs (chromium/Brave session
+rotation); the counter's host leg would then see one ERROR stat - re-run the walk
+recipe in the report at freeze time if that happens.
+
+## 6. Producer/inputs
+
+- gio oracle: /usr/bin/gio sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+  (glib2 2.90.1-1; shared-mime-info 2.5.1-2; file 5.48-1; xdg-utils 1.2.1-2).
+- No tools installed or upgraded for this seat (uv/pacman untouched); no services
+  touched; every probe read-only.
+- Scratch hygiene: S deleted at completion; receipts copied into the wave dir first.

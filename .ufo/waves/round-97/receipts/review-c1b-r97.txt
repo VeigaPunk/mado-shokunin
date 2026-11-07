@@ -1,0 +1,151 @@
+R97MReviewC1b receipt -- C1 final-bytes attack (mado round 97, wave w1b)
+Seat: R97MReviewC1b (reviewer, leaf member). Date: 2026-11-07.
+Lane root: /home/vgpnk/Projects/shokunin/mado-shokunin
+Base revision: e6152b589c2c6a28426c28263c4bcc3c46398be4 (branch master)
+Measurement uid: 1000 (non-root); python 3.14.8; glib2 2.90.1-1; shared-mime-info 2.5.1-2;
+xdg-utils 1.2.1-2. Host database mode: cache. All probes read-only; the only lane writes are the seat report and this receipt; no commit.
+
+================================================================================
+0. PINS (sha256sum, exactly as measured)
+================================================================================
+da6af7a0789265187f6b2c2462bf5104a7c0b780baed3235300f89978a44d2d8  build/mado-filetype.v2.py
+fc710b94df67391c392d95aeabd6dfa4c016081019d732f5c373fb990844be20  controls/filetype-cases-v2.json
+c3143775d346921085a4f312eb596bc9b062abb11c3257aed47d9bba50bf7bf2  controls/filetype-fresh-r97.py
+4f28035b4cfea0b3f6d8d9f5eb3efb630b2a09db4fc06fa141555e76a9a829a4  controls/filetype-host-r97.txt
+d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462  /usr/bin/gio
+745a341e8a2aaefc7283d1ad4090ebde01d631d118f788ddd1dcc7b5195ba9e0  build/c1-r97-filetype.v2.py
+  (last checked; counter v2 is not frozen; used only for static_check/validate_cases; may move)
+
+Candidate shape: 606 lines, 29646 bytes, 0 non-ASCII bytes. gio --version = 2.90.1.
+Host list: 11834 non-comment paths; 0 trailing-slash, 0 './'/'..' segments, 0 '//', 0 non-ASCII.
+Case file: 157 cases, 201 paths, 15 classes (min 9 cases), 1 ERROR label.
+
+================================================================================
+1-2. ORACLE RE-DERIVATION + CANDIDATE DIFF
+================================================================================
+Method: rebuild each case root from the case JSON; per path
+  env -i LC_ALL=C HOME=<root>/h [XDG_DATA_HOME=<root>/dh] XDG_DATA_DIRS=<root>/db[:..] \
+    /usr/bin/gio info -a standard::content-type|standard::fast-content-type [-n] <raw path>
+Candidate: same roots/mode/attr, one invocation per path, from the case-root cwd.
+
+30-case deterministic sample (first two cases of each class):
+  cases=30 paths=36 label_rederived=36/36 candidate=36/36 nameonly=13/36
+
+All 157 cases:
+  cases=157 paths=201 label_rederived=201/201 candidate=201/201 nameonly=67/201
+  No label mismatch, no candidate mismatch. ERROR label (readerr-13-missing) reproduced as
+  "MADO_FILETYPE: ERROR stat path=nope.txt" rc 2.
+
+Per-class case/path counts: dir 12/18, chr 9/9, blk 10/10, fifo 9/10, sock 9/10, zero 11/12,
+empty 9/9, sym 12/22, brok 10/11, nofollow 9/17, follow 9/17, certain 11/12, uncertain 14/14,
+fast 10/10, readerr 13/14.
+
+================================================================================
+3. NO-WORK CONTROL (r94 name-only, tools/mado-mimeglob.py, basename per path)
+================================================================================
+sample30: 13/36 (candidate 36/36)
+all157:    67/201 (candidate 201/201)
+Name-only misses at least one path in every class:
+  dir 12, chr 9, blk 10, fifo 10, sock 10, zero 12, empty 5, sym 10, brok 11,
+  nofollow 13, follow 13, certain 1, uncertain 9, fast 1, readerr 2 (of 201).
+
+================================================================================
+4. EXTENT-RULE ATTACK (gio vs final v2 vs base draft e68150b5 = constant 16384)
+================================================================================
+Fixtures are review-built in scratch; "base draft" is build/mado-filetype.py.
+
+A. cache whose magic section max_extent word = 8; file = "SQLite format 3\0" + 80 NUL
+   gio                          -> standard::content-type: text/plain
+   final v2                     -> MADO_FILETYPE: text/plain
+   base draft (constant 16384)  -> MADO_FILETYPE: application/vnd.sqlite3
+   (8-byte read sees only printable "SQLite f"; a 16384-byte read matches the 16-byte rule)
+
+B. text db magic "MIME-Magic\0\n[90:app/x-short]\n0>0=\x000\003ZZZ\n" (extent 4);
+   file = "ABCD" + 16000 NUL
+   gio -> text/plain; final v2 -> text/plain; base draft -> application/octet-stream
+
+C. cache extent word = 0 -> clamp 16384; same sqlite file
+   gio -> application/vnd.sqlite3; final v2 -> application/vnd.sqlite3
+
+D. two caches d1:d2 (patched extent 8 + host 18730) -> max -> clamp 16384; sqlite file
+   gio -> application/vnd.sqlite3; final v2 -> application/vnd.sqlite3 (both dir orders)
+
+E. frozen uncertain-14-cache-guard-badcache (d1 extent 8; d2 header word24=5 -> OOB skip)
+   gio -> text/plain; final v2 -> text/plain; base draft -> application/octet-stream
+   d2 alone: gio -> application/octet-stream; final v2 -> application/octet-stream
+   guard removal would read d2 u32@(5+4)=9998336 -> clamp 16384 -> octet-stream (killable)
+
+F. text db nested indents 0>0=AB, 1>6=CD (extent 2+6+1=9); file "ABxxxxCDyy"
+   gio -> app/x-nest; final v2 -> app/x-nest
+
+G. frozen extent cases individually: base draft fails uncertain-10 (octet vs text/plain),
+   uncertain-13 (octet vs text/plain), uncertain-14 (octet vs text/plain); final v2 passes
+   uncertain-10/11/12/13/14.
+
+================================================================================
+5. TWO-STAGE-STAT ATTACK (gio vs final v2; diff_total: 0)
+================================================================================
+probe                                  gio                              cand
+self symlink loop, follow              inode/symlink rc0                inode/symlink rc0
+mutual symlink loop, follow            inode/symlink rc0                inode/symlink rc0
+mutual symlink loop, nofollow          inode/symlink rc0                inode/symlink rc0
+dangling symlink, follow/nofollow      inode/symlink rc0                inode/symlink rc0
+symlink to fifo, follow                inode/fifo rc0                   inode/fifo rc0
+symlink to dir, follow / nofollow      inode/directory / symlink rc0    same
+symlink to /dev/null, follow           inode/chardevice rc0             same
+symlink to file, follow / nofollow     text/plain / symlink rc0         same
+000-dir child, untyped / *.txt         octet-stream / text/plain rc0    same
+hardlink first / second name           text/plain rc0                   same
+trailing slash on a file t.txt/        text/plain rc0                   text/plain rc0
+t.txt/x (ENOTDIR inside path)          rc2, no attribute                ERROR stat rc2
+missing path                           rc2, no attribute                ERROR stat rc2
+dir named *.png / socket / fifo        directory / socket / fifo rc0    same
+Normalisation edges (all equal): ".", "..", "./t.txt", "sub/../t.txt", "t.txt/.", "t.txt/..",
+"sub/./a.txt", "//", "///", "".
+Earlier-pin defects (superseded): 6454d3db refused lstat EACCES (ERROR rc2 vs gio rc0) and raw
+trailing slash; e0086e3f trimmed only and answered ERROR on "t.txt/." vs gio text/plain. Final
+da6af7a0 matches in all cases above.
+Measured claim contradiction: gio does NOT refuse a trailing-slash file; it trims/normalises and
+answers (text/plain rc0; /dev/null/ -> inode/chardevice; link/ -n -> inode/symlink).
+
+================================================================================
+6. SELFTEST / STRUCTURAL / FRESH / HOST
+================================================================================
+--selftest (sibling layout): MADO_FILETYPE_SELFTEST: checks=40 failed=0, rc 0
+--selftest (lone copy):      MADO_FILETYPE_SELFTEST: checks=38 failed=0, rc 0
+counter v2 static_check(candidate) = [] ; validate_cases(final cases) = 0 errors
+  (counter sha 745a341e...; w1 counter lacks posixpath/contextlib in its allowlist)
+fresh: filetype-fresh-r97.py --seed a11ce97 --count 120
+  cases=120 paths=432 labels_rederived=432/432 candidate=432/432; db modes text 49/cache 35/none 36
+  memoriser control (key = kind, basename, content sha256, symlink target; frozen labels):
+    hits 80/432, correct 80/432 = 18.5% -- strictly fewer than the fresh total (not zero)
+  full-case fingerprint collisions frozen-vs-fresh: 0
+host sample: seed 97 = 150 paths, seed 971 = 300 paths, gio vs final v2 on /usr/share cache db
+  host_sample 150 diffs 0; host_sample 300 diffs 0 (450 of 11834)
+
+================================================================================
+7. OWN MUTANTS (single-occurrence find/replace on the final candidate, all 201 paths)
+================================================================================
+13 single-replacement mutants of the final candidate, run over all 201 frozen paths:
+  const cache extent 16384      KILLED uncertain-13-cache-extent-small (text/plain vs octet-stream)
+  text extent drop range        KILLED uncertain-11-text-extent-range (app/x-rangehit vs text/plain)
+  clamp removed (return n)      KILLED empty-07-empty-none-db (octet-stream vs zerosize)
+  OOB guard removed             KILLED uncertain-14-cache-guard-badcache (text/plain vs octet-stream)
+  dir branch -> symlink         KILLED dir-01-plain-subdir
+  chr branch -> block           KILLED dir-12-trailing-slash-chardev (/dev/null/)
+  nofollow inverted             KILLED zero-10-proc-self-status
+  size-0 branch dropped         KILLED zero-01-empty-png-name
+  socket branch dropped         KILLED sock-01-plain
+  fast sniffs                   KILLED empty-05-text-fast
+  read failure sniffs empty     KILLED readerr-01-000-uncertain-png
+  _norm -> identity             KILLED dir-11-trailing-slash-file (a.txt/)
+  EACCES guard removed          KILLED readerr-11-dir-unreadable (sub/note.txt)
+  (the earlier 150-case file had no trailing-slash non-dir path and no dir-unreadable type;
+   the final 157-case file kills both)
+
+================================================================================
+8. WRITES / SCRATCH
+================================================================================
+Written: .ufo/waves/round-97/w1b/R97MReviewC1b.md and this receipt only.
+Scratch /fast/scratch/hyaku/mado-r97/R97MReviewC1b removed before yield.
+No lane tool/counter/case/control file was edited; no commit, push or git/jj mutation.

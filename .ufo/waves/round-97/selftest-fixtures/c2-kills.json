@@ -1,0 +1,28 @@
+{
+ "tool": "quality/check-receipt-presence.py",
+ "tool_sha256": "",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "RECEIPT_PRESENCE_SELFTEST: FAIL ",
+ "result_line_prefix": "RECEIPT_PRESENCE_SELFTEST: ",
+ "selftest_checks": 6,
+ "kills": [
+  {
+   "id": "fixture-neutral-check",
+   "find": "return 0 if missing == 0 else 1",
+   "replace": "return 0 if missing == 0 else 1  # neutral",
+   "must_fail": [
+    "OK-rc"
+   ]
+  },
+  {
+   "id": "fixture-wrong-check",
+   "find": "verdict = \"OK\" if missing == 0 else \"MISSING\"",
+   "replace": "verdict = \"MISSING\" if missing == 0 else \"MISSING\"",
+   "must_fail": [
+    "WRONG"
+   ]
+  }
+ ]
+}
