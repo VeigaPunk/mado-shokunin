@@ -548,3 +548,9 @@ never runs `update-mime-database` or edits `~/.local/share/mime`, which stay ope
 **Round-94 refinement (C2) — two kill-sets; no new write surface.** `quality/selftest-kills/mado-xdgmime.json` and
 `quality/selftest-kills/mado-mime.json` are data for the unchanged round-93 gate, which copies `tools/mado-xdgmime.py` or
 `tools/mado-mime.py` into scratch, applies a kill there and runs its `--selftest`; nothing outside scratch is written.
+
+**Round-95 refinement (C1) — file bytes → MIME type (read-only); no new write surface.** `tools/mado-mimesniff.py`
+reads `mime.cache` (its magic, alias and parent sections, plus round 94's name step) under the xdgmime data roots it is
+given and the files it is asked to sniff (S519–S523, S505), and writes nothing; it never runs `update-mime-database`
+and never reads text `magic` files (that mode is refused). Its caller on this host is GIO's `standard::content-type`;
+`xdg-open` on Hyprland uses `file(1)` (revenger's ground for libmagic rules) and is outside it.
