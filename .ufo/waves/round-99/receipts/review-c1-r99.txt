@@ -1,0 +1,171 @@
+# round 99 C1 review receipt (seat R99MReviewC1, reviewer)
+
+Host: glib2 2.90.1-1; /usr/bin/gio sha256
+d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 (re-hashed at every run);
+/usr/lib/gio-launch-desktop present. Lane base 2cbaa141f42df9dfeee4d207cae6558a4dd59863.
+Every gio call below ran under `env -i` with a PATH holding only the case's own bin dirs (or
+with PATH absent for the path-unset cases). No host application was launched; the only children
+spawned are the case fixtures, which are shell scripts that append one record line and exit.
+
+Reviewer instruments (scratch copies; all deleted before yield):
+  rev-oracle.py        295d335b22f264ffdbbe0e706e39736f76f5b2b2de21e610387948a401aab584
+  frozen-recheck.py    e5102898140c48e54faf139c996391bcfb8f191f897b1d660b18665a11fe4001
+  frozen-candidate.py  f38c0c872bac19ed2c24cd13f3587dd0546da9f581a56bb1f896a298713f4688
+  frozen-controls.py   5fa4aeefffa4366b381ef4354e02eb562c3607c50b5fe0b12bfc1a578e1431c7
+  run-candidate.py     15080806b81b5332efc7f531448750dbeb0a0bf8ae9ed6633cc730e5102ec027
+  score-controls.py    d6804e29c9ebad2c96a480287a36e1d4d59841438fc07f675d141244e74247d6
+
+## 1. Reviewer's own case plane (independent of the seat's)
+
+92 cases, 41 classes, in five batches (attack-cases.json 40 cases, attack2-cases.json 31,
+attack3-cases.json 11, attack4-cases.json 4, attack5-cases.json 6). Every label was
+measured with the reviewer's own probe (one record file per spawn, named by the child's PID, so
+concurrent spawns cannot alias each other - QUALITY 170) and the roots were built by the
+reviewer's own materialiser.
+
+Two-run agreement (fresh roots, same bytes): batch 1 40/40, batch 2 31/31, batch 3 11/11, batch 4
+4/4 - zero semantic disagreements (`stderr` excluded; it carries the transient root). Batch 5 was
+measured once (its labels are deterministic: a resolution of a relative argument).
+
+Attack-surface measurements (the seat item's seven probes, plus the edges found while pinning
+them). All labels are the measured child argv / cwd / env, canonicalised to {root}/{probe}:
+
+  probe                                   measured
+  Terminal=true + %f + two args           2 launches, [term, exec_arg?, prog, arg] each
+  terminal only via a relative PATH entry found and returned ABSOLUTE against the process cwd
+  Path= empty                             child cwd = the launcher's cwd (root)
+  Path= absent                            child cwd = the launcher's cwd (root)
+  Path= nonexistent                       cwd-failed, after no-terminal/program-not-found
+  Path= a file                            cwd-failed ("Not a directory")
+  Path= mode 000                          cwd-failed ("Permission denied")
+  Path= symlink to a dir                  child cwd = the PHYSICAL target (pwd -P)
+  Path= dangling symlink                  cwd-failed
+  Path= trailing slash / ".." / "."       child cwd = the canonical directory
+  Exec naming a directory                 load refusal
+  Exec absolute, not executable           load refusal
+  bare Exec + absolute Path=, prog only   launches, argv[0] = <Path>/prog
+    under <Path>/
+  bare Exec + RELATIVE Path=, prog only   LOAD refusal (the working_dir join does not survive
+    under <Path>/                           the reset to the original program before the walk)
+  Exec "bin/probe" + Path=<root>/work      gate tests <root>/work/bin/probe; a hit there is
+                                            argv[0] = <root>/work/bin/probe
+  Exec "./probe" + Path=<root>/work        argv[0] = <root>/work/./probe (the "./" is kept)
+  PATH unset                               default /bin:/usr/bin:. ; the "." entry yields
+                                            <cwd>/./probe (the "./" is NOT normalised away)
+  PATH leading colon                       the empty entry is the cwd: <root>/probe
+  PATH trailing / double colon             same
+  PATH relative entry "bin"                <root>/bin/probe (returned absolute)
+  PATH relative entry + Path=<root>/work   <root>/work/bin/probe (the entry is joined again)
+  PATH entry naming a directory            skipped (IS_DIR half), walk continues
+  desktop arg absolute / relative / ./..   GIO_LAUNCHED_DESKTOP_FILE and %k are the SAME
+                                            lexical canonical path in all three
+  Exec = %f / %k / %F / %u / %c / %i      load refusal (the gate parses the RAW Exec value,
+                                            before any macro expansion)
+  Exec = (empty) + executable arg          LAUNCH, argv[0] = the argument
+  Exec = (empty) + non-executable arg      program-not-found
+  Exec key absent                          gio: "Desktop file didn't specify Exec field", rc 1
+  Exec with an unbalanced quote            load refusal ("Unable to load application information")
+  Exec with a bad GKeyFile escape          load refusal (same line)
+  Terminal=true + bare Exec + Path= join   argv[1] stays the bare name (not rewritten)
+  terminal row is a directory / mode 644   skipped, next table row wins
+  table order kgx before xterm             kgx wins (table order, not PATH order)
+  relative file argument                   resolved lexically against the process cwd:
+                                            args/a.txt, ./args/a.txt, args/../args/a.txt ->
+                                            <root>/args/a.txt ; args/../a.txt -> <root>/a.txt
+
+## 2. Independent re-derivation of the FROZEN labels
+
+Frozen case file snapshot (the bytes measured):
+  .ufo/waves/round-99/controls/launchenv-cases-r99.json
+  sha256 14b4cc571a35bb5b4c6996a4a3fde19ff71ce9f26dabe3dd4142eec162f82acd
+  67 cases, 31 classes, 49 launch expects + 18 refusal expects; every launch expect carries
+  cwd and env_gdf (checked: 0 missing).
+Oracle module named by the envelope: .ufo/waves/round-99/controls/launchenv-probe-r99.py
+sha256 cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199 = the envelope's
+oracle_sha256 = renderer_sha256.
+
+Reviewer re-derivation (own roots, own runner, the envelope's probe bytes so the fixtures and
+the probe agree): 67/67 reproduce BEHAVIOURALLY - every frozen refusal refuses with rc 1, every
+frozen launch launches with the frozen count, argv multiset, cwd and env_gdf.
+
+Three rows differ only in the CAUSE NAME when the cause is derived from gio's stderr alone
+(all three refuse either way, and the candidate agrees with the frozen label in all three):
+  rf-badescape   frozen desktop-file  gio stderr "Unable to load application information"
+  rf-quote       frozen exec-parse    gio stderr "Unable to load application information"
+  rf-notkeyfile  frozen desktop-file  gio stderr "Unable to load '<path>': Key file contains
+                                       line \"hello\" which is not a key-value pair, group, or
+                                       comment"
+The frozen file's taxonomy is construction-first (the r98 vocabulary); gio's load-time refusals
+share one stderr line, so a stderr-only reader cannot separate them. This is a vocabulary
+observation, not a label defect: the frozen labels are reproducible from the case's construction.
+
+## 2b. The candidate on the reviewer's plane (a63c20c8)
+
+86/92 with six rows, none of them candidate behaviour: at3-bad-escape and at3-unbalanced-quote
+are the cause-name vocabulary (F2); at2-exec-absent and at3-no-exec-key are the reviewer's
+stderr-only classifier lacking a no-exec mapping (gio's line is "Desktop file didn't specify Exec
+field"; the candidate's no-exec is the frozen construction label); at2-unset-path-bare-exec is the
+runner omitting --path while inheriting a host PATH (re-run under `env -i` with PATH unset the
+candidate answers <root>/./probe exactly); ar-dotdot-up is the case carrying a literal {root}
+token inside the argument. Behaviourally clean on the whole plane.
+
+## 3. The candidate on the frozen cases
+
+Scored with the counter's OWN scorer (c1-r99-launchenv.py, sha256
+faf1136e5bbff93b8ff13cb1bac040cbcf27107887bc4811acdff395c8c4162e, `score_case(...,
+mode="candidate")` with `_BUILDER["mod"]` set to the oracle module; the counter's own
+`--selftest` is green: `MADO_COUNTER_SELFTEST: checks=18 failed=0`):
+
+  candidate sha256 70fe43d0e711e52a97d10351ada0c825e07f9b12f26d9702dc8333b4c2627979
+    ok=65 wrong=2  (ac-rel, ac-dot: argv carried "args/a.txt" / "./args/a.txt" where gio
+                    resolves both to <root>/args/a.txt)
+  candidate sha256 a63c20c886a2bd840d80966d531e055e9c4f5d3accb431e4b0e317e04523eb16
+    ok=67 wrong=0  (the arg canonicalisation fix; selftest 90 checks / 0 failed)
+
+The reviewer's own runner (roots built by the reviewer, candidate invoked with cwd = the case
+root, env {PATH:"", LC_ALL:"C", HOME:<root>/h}, `--path <pathstr>` always) reproduces the same
+two rows on 70fe43d0 and 67/67 on a63c20c8.
+
+## 4. The declaration's two controls, scored on the frozen cases
+
+Reviewer comparator, strict on every field the frozen expect names:
+
+  control_naive      = Exec.split() + no environment model        1/67  (only rf-noexec)
+  control_held_r98   = committed tools/mado-execargv.py           4/67  (rf-noexec,
+                       sha256 49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713,
+                       argv only)                                   rf-badescape, rf-quote,
+                                                                    rf-notkeyfile)
+
+Both are strictly below 67, so `control_naive_correct < cases_total` and
+`control_held_r98_correct < cases_total` hold. Note the r98 control's four hits are all
+refusals: it answers no cwd and no env, so it can never pass a launch case on a frozen set
+where every launch expect carries both. The conjunct is true but its discriminating power on
+the launch plane is zero; the naive control is the one that carries the claim.
+
+## 5. Candidate source read (spawn / IO)
+
+`mado-launchenv.py` (a63c20c8): imports importlib.util, json, os, shutil, sys, tempfile. No
+subprocess, no socket, no network, no ctypes, no os.system/exec*/eval. File reads: the DESKTOP
+bytes named on the command line (one `open(...,'rb')`), the execargv sibling by path
+(importlib), and - through g_find_program_for_path's port - `os.access(X_OK)` / `os.path.isdir`
+on candidate paths named by the desktop entry or the PATH string, plus the Path= enterability
+test. Process state read: `os.getcwd()` (the launcher's cwd, for the inherited-cwd answer and
+the relative joins), `os.environ.get('PATH')` only when `--path` is absent, and the locale
+variables for the Name/Icon locale-keyed reads. It never spawns anything. The selftest writes
+only under tempfile.mkdtemp().
+
+## 5b. Empty-Exec forms (reviewer plane, at6-*)
+
+  Exec= (empty), no args          gio: "Text was empty (or contained only whitespace)", rc 1
+                                  candidate: exec-parse
+  Exec= (one space), no args      same
+  Exec key absent, no args        gio: "Desktop file didn't specify Exec field", rc 1
+                                  candidate: no-exec (the frozen construction label)
+  Exec= (empty), executable arg   launch, argv[0] = the argument (measured earlier)
+  Exec= (empty), non-executable   program-not-found (measured earlier)
+
+## 6. Host and tooling
+
+No tool was installed or upgraded for this seat. No pacman transaction was run. The reviewer
+wrote only its scratch dir, this receipt, and its report; no lane tool, corpus, quality or
+index file was touched.

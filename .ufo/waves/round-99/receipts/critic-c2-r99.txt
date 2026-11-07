@@ -1,0 +1,156 @@
+# R99MCriticC2 receipt — C2 falsification (round 99, wave w1)
+
+Seat: critic C2. Lane `/home/vgpnk/Projects/shokunin/mado-shokunin`, base
+`2cbaa141f42df9dfeee4d207cae6558a4dd59863`. Report: `.ufo/waves/round-99/w1/R99MCriticC2.md`.
+Scratch: `/fast/scratch/hyaku/mado-r99/R99MCriticC2` (deleted before yield).
+
+## Measured artifacts (hashes at measurement)
+
+```
+8ad90bed84eb31bfc3d2d98ae0ea630530bb3bb0a83d7bcdec383c2b11a34574  build/harm-watch.py (gate draft)
+007072dd8486f53c3b2776eece7c33a5a99648b4f9736e37ec507a3717e797bb  build/c2-r99-harm-watch.py (counter draft)
+7bf25b73bc868fba685bed9381f09be26f7e16ef72980aaac8fd61512827ec2a  controls/harm-panel-r99.json (28 legs)
+```
+
+Base absence: `git cat-file -e 2cbaa141:quality/harm-watch.py` -> rc 128 (absent).
+
+## A. Legs re-derived and re-run (committed harness, my scratch)
+
+Runner: `bash .ufo/waves/round-97/controls/harm-r97.sh --rev 2cbaa141… --scratch-root <mine>
+--legs <subset>`; every leg writes only under my scratch root.
+
+```
+LEG verify_selftest rc=0          MADO_SELFTEST: 460/460 assertions passed
+LEG verify_file_plane rc=0        MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only)
+LEG index rc=0                    MADO_INDEX: rev=2cbaa141… indexed=119/119 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+LEG ledger rc=0                   LEDGER: population=195 ledger_rows=195 uncovered=0 … verdict=TARGET_MET rev=2cbaa141…
+LEG mako_selftest rc=0            MADO_MAKO_SELFTEST: checks=62 failed=0
+LEG portals_selftest rc=0         MADO_PORTALS_SELFTEST: checks=28 failed=0
+LEG mime_selftest rc=0            MADO_MIME_SELFTEST: checks=17 failed=0
+LEG xdgmime_selftest rc=0         MADO_XDGMIME_SELFTEST: checks=12 failed=0
+LEG mimeglob_selftest rc=0        MADO_MIMEGLOB_SELFTEST: checks=19 failed=0
+LEG mimesniff_selftest rc=0       MADO_MIMESNIFF_SELFTEST: checks=26 failed=0
+LEG seat_reports_selftest rc=0    SEAT_REPORTS_SELFTEST: checks=23 failed=0
+LEG receipt_presence_selftest rc=0 RECEIPT_PRESENCE_SELFTEST: checks=6 failed=0
+LEG gate_selftest rc=0            SELFTEST_STRENGTH_SELFTEST: checks=11 failed=0
+LEG r90c1_portal_routing rc=2     MADO_PORTAL_ROUTING: SETUP_ERROR mutant M03 find occurs 0 times
+LEG r95c1_mimesniff rc=2          SETUP_ERROR no counting-command block
+LEG r96c1_magictext rc=2          MADO_MAGICTEXT_COUNT: SETUP_ERROR … mutants sha256 448150e2… != pinned f8d461e8…
+LEG r97c1_filetype rc=0           MADO_FILETYPE_COUNT: TARGET_MET … cases=157 correct=157 classes=15/15 mutants=101 killed=101
+LEG r97c2_counter_selftest rc=1   bash: line 1: SKILL-AT-MEASURED-REV: No such file or directory (harness placeholder)
+```
+
+All 12 legs of the first batch, 6 of the second and 6 of the third agree with the panel's frozen
+rc and marker (r97c2 via the panel's re-pinned row, below).
+
+## B. The dropped leg r97c2 with its r97 pins (not replayable later)
+
+```
+python3 -I quality/counters/c2-r97-counter-selftest.py --repo . --rev 2cbaa141… \
+  --base-rev e6152b58… --expect-base-registry-sha256 6a8754df… \
+  --panel .ufo/waves/round-97/controls/counter-selftest-panel-r97.json --expect-panel-sha256 87ba2f41… \
+  --expect-c1-sha256 4f678384… --expect-c2-sha256 54143b8a… \
+  --expect-registry-sha256 fab1ff74944e9ecc3f9f4ef52e31e1af899ee9588a9c0a41ee29545ce3ce944e \
+  --expect-ledger-sha256 fb0f2f3c818c81978fe35814697c44764a6b31796ea8baa0290406df7559d624 \
+  --scratch-root <mine>
+-> MADO_COUNTER_SELFTEST_COUNT: SETUP_ERROR pred=PRED-C2-r97-v1 SKILL.md sha256 != --expect-registry-sha256
+```
+
+The r97 pins are the `65ff5591` bytes (`git show 65ff5591:SKILL.md` = fab1ff74…,
+`…:quality/tool-ledger.md` = fb0f2f3c…). The r99 base bytes are 2597e936… / 7c7037d3….
+
+## C. The panel's r97c2 row (base-rev replay) — green
+
+```
+python3 -I quality/counters/c2-r97-counter-selftest.py --repo . --rev 2cbaa141… \
+  --base-rev e6152b58… --expect-base-registry-sha256 6a8754df… \
+  --panel .ufo/waves/round-97/controls/counter-selftest-panel-r97.json --expect-panel-sha256 87ba2f41… \
+  --expect-c1-sha256 4f678384… --expect-c2-sha256 54143b8a… \
+  --expect-registry-sha256 2597e936… --expect-ledger-sha256 7c7037d3… --scratch-root <mine>
+-> MADO_COUNTER_SELFTEST_COUNT: TARGET_MET pred=PRED-C2-r97-v1 rev=2cbaa141… (exit 0)
+```
+
+## D. Panel consistency and planted controls on the real panel
+
+```
+len(legs)=28 expect_legs=28 rounds-union=28 duplicates=0 unknown=0 missing=0
+rounds = base 16, r90 2, r92 1, r93 1, r94 2, r95 2, r96 2, r97 2
+```
+
+Gate on the real planted panels (census only, instant):
+
+```
+dropped-leg (r97c1_filetype removed, expect_legs unchanged):
+  PANEL PANEL_LEG_MISSING id=r97c1_filetype round=r97          exit 2
+extra-leg (gate_xdgmime added):
+  PANEL PANEL_LEG_UNKNOWN id=gate_xdgmime                      exit 2
+```
+
+## E. Gate fixtures (20 panels, mine; `ref-harm-watch.py` is a critic reference, not a candidate)
+
+```
+fail-count                rc=2  PANEL PANEL_LEG_COUNT rows=1 expect_legs=3
+fail-dropped-unchanged    rc=2  PANEL PANEL_LEG_MISSING id=b round=97      (no LEG_COUNT: suppression)
+fail-duplicate            rc=2  PANEL PANEL_DUPLICATE id=a
+fail-leg-missing          rc=2  PANEL PANEL_LEG_MISSING id=b round=97
+fail-leg-unknown          rc=2  PANEL PANEL_LEG_UNKNOWN id=b
+fail-round-mismatch       rc=2  PANEL PANEL_LEG_UNKNOWN id=a
+fail-round-missing        rc=2  PANEL PANEL_LEG_MISSING id=z round=98
+fail-round-silent         rc=2  PANEL PANEL_LEG_UNKNOWN id=b
+pass-dash-marker          rc=0  LEG a rc=0 expect=0 marker=ok ok
+pass-dash-noliteral       rc=1  LEG a rc=0 expect=0 marker=MISS marker-missing   ("-" is literal)
+pass-empty-marker         rc=0  LEG a rc=0 expect=0 marker=ok ok                 (empty marker vacuous)
+pass-empty-panel          rc=2  PANEL PANEL_UNREADABLE legs-missing-or-empty
+pass-marker-twice         rc=0  LEG a rc=0 expect=0 marker=ok ok
+pass-rc-string            rc=2  PANEL PANEL_ROW id=a expect_rc-not-int
+pass-round-int            rc=2  PANEL PANEL_ROW id=a round-not-str; PANEL PANEL_LEG_UNKNOWN id=a
+pass-two-legs-one-round   rc=0  legs=2 ok=2 mismatch=0
+run-census-norun          rc=2  PANEL PANEL_LEG_MISSING id=b round=97      (no leg ran: marker file absent)
+run-rev-sub               rc=0  LEG a rc=0 expect=0 marker=ok ok           (PREVIEW untouched)
+run-timeout               rc=1  LEG a rc=124 expect=0 marker=MISS rc-and-marker-mismatch+timeout-after-1s
+run-wrong-marker          rc=1  LEG a rc=0 expect=0 marker=MISS marker-missing
+run-wrong-rc              rc=1  LEG a rc=0 expect=5 marker=ok rc-mismatch
+```
+
+## F. Selftests of the measured drafts
+
+```
+setsid -w python3 -I build/harm-watch.py --selftest
+-> HARM_WATCH_SELFTEST: checks=26 failed=0        (exit 0)
+setsid -w python3 -I build/c2-r99-harm-watch.py --selftest
+-> MADO_COUNTER_SELFTEST: checks=15 failed=0      (exit 0)
+```
+
+## G. Counter discrimination (3-leg panel + my planted panels, `--gate` draft mode)
+
+```
+real gate 8ad90bed:
+  panel_legs=3 declared_legs=3 legs_run=3 mismatches=0
+  planted_dropped_leg=1 planted_wrong_expect=1 planted_extra_leg=1 stub_flagged=1
+  selftest=checks=15 failed=0   missed=panel_legs_ge_20        (only the 3-leg size)
+always-OK stub:
+  planted_dropped_leg=0 planted_wrong_expect=0 planted_extra_leg=0 stub_flagged=0 -> TARGET_MISSED
+row-counting stub (never runs a leg):
+  planted_dropped_leg=0 planted_wrong_expect=0 planted_extra_leg=0 stub_flagged=0 -> TARGET_MISSED
+gate with rc_ok = True:
+  planted_dropped_leg=1 planted_wrong_expect=0 planted_extra_leg=1 stub_flagged=1 -> TARGET_MISSED
+gate with marker_ok = True:
+  planted_dropped_leg=1 planted_wrong_expect=1 planted_extra_leg=1 stub_flagged=1
+  mismatches=0 -> only panel_legs_ge_20 misses: TARGET_MET on a 28-leg panel
+```
+
+The marker-ignoring mutant is the counterexample: the counter has no marker control.
+
+## H. Draft instability observed (build-time, fixed in the measured shas)
+
+```
+gate 6d18d8c3 (18:28):  HARM_WATCH_SELFTEST: checks=26 failed=9   (fixture read sys.argv[3])
+counter 7d179c76:       TypeError: %d format: a real number is required, not list
+                        (selftest_txt = "checks=%d failed=%d" % (len(st_checks), st_failed))
+```
+
+## I. Tool ledger
+
+No install, no upgrade, no pacman transaction, no host mutation. Instruments: host `python3`,
+read-only `git show`/`cat-file`, `setsid`/`timeout`, the committed `harm-r97.sh`, and my scratch
+fixtures (`mkfix.py`, `ref-harm-watch.py`, `attack.py`, `stub-*.py`, `mut-*.py`).

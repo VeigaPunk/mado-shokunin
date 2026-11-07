@@ -1,0 +1,555 @@
+round 99 - seat R99MScoutEnv - reconnaissance of the C1 launch-environment surface
+seat: R99MScoutEnv (scout, leaf)          lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+base revision: 2cbaa141f42df9dfeee4d207cae6558a4dd59863 (branch master)
+measured: 2026-11-07  host: linux 7.2.11-arch1-1 x86_64
+oracle: /usr/bin/gio (glib2 2.90.1-1), sha256
+  d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+every gio call ran under `env -i LC_ALL=C HOME=<root>/h PROBE_OUT=<root>/out/rec
+PATH=<case bin only>` with the launch cwd <root>/work; no host application was
+launched, no host terminal was reachable (the case PATH never contained
+/usr/bin), no network call was made beyond the one source fetch recorded below.
+
+================================================================================
+1. SOURCE DIGEST VERIFICATION  (against .ufo/waves/round-99/receipts/sources-open-r99.txt)
+================================================================================
+
+  file                     sha256 in receipt                     sha256 on disk      verdict
+  gutils.c                 65086c293646bf83884f56f54bb5e2e872adb28ee77f1223d6d9f095a75e3771
+                                                                       = same           MATCH (100534 B)
+  gio-tool-launch.c        16b4c8683b00407670f600eda0e65e9d929a59daac499cbe8f3d1fd532f6595a
+                                                                       = same           MATCH (3991 B)
+  spec-recognized-keys.html 7bc0b6401cda9c019d5b89a2fab053d216eb937c83602df838a6c0a1175c03d9
+                                                                       = same           MATCH (24174 B)
+
+  gdesktopappinfo.c        8e9ce1a8327a2daf6bc16e8dcfb653c482afde7bebc2ca2621747626b5495b0d
+                                                                       FILE ABSENT      MISMATCH (see below)
+  gshell.c                 640a0d0fbc9c50d0c70eb8f9ff2c4994392515c6174f76ade9292d7500e60442
+                                                                       FILE ABSENT      MISMATCH (see below)
+
+DEFECT (records, not a claim): the round-99 fetch receipt states that
+gdesktopappinfo.c and gshell.c are "carried byte-identically from
+.ufo/waves/round-98/fetch/ and re-hashed here", and the table lists them with
+digests, but the two files are NOT PRESENT in .ufo/waves/round-99/fetch/.
+The receipt's digests for them are nonetheless CORRECT: the round-98 copies in
+.ufo/waves/round-98/fetch/ hash to exactly the values the round-99 receipt
+claims (re-hashed here, on this host):
+
+  .ufo/waves/round-98/fetch/gdesktopappinfo.c  8e9ce1a8327a2daf6bc16e8dcfb653c482afde7bebc2ca2621747626b5495b0d  163369 B
+  .ufo/waves/round-98/fetch/gshell.c           640a0d0fbc9c50d0c70eb8f9ff2c4994392515c6174f76ade9292d7500e60442   21464 B
+
+So: the DIGESTS are right, the CARRY did not happen. Every source line cited in
+this report was read from the round-98 copies, whose bytes match the pinned
+digest. The fix is to copy the two files into .ufo/waves/round-99/fetch/ (or to
+drop the carry claim from the receipt). Routed to the L1 as a records item; it
+is not a C1 predicate issue.
+
+ONE NEW SOURCE was fetched for this seat (not a registry row, not opened by the
+L1 this round), fetched with the mandated command and counted only at HTTP 200:
+  curl -sSL -o gspawn-posix.c -w '%{http_code} %{url_effective}'
+  https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/glib/gspawn-posix.c
+  -> 200  https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/glib/gspawn-posix.c
+  62824 B  sha256 60d8a2d727fd346d0a2ffb76b6dd1eb1a00f8e1d0c03f0fbbfe1c3c78fbe4ab3
+It is cited for exactly one line (:725, the chdir of the working directory) and
+needs a registry row before any committed artefact may cite it.
+
+================================================================================
+2. THE RULES, WITH file:line  (gdesktopappinfo.c / gutils.c as pinned above)
+================================================================================
+
+R1  LOAD GATE.  g_desktop_app_info_load_from_keyfile (gdesktopappinfo.c:1893);
+    the Exec lookup is at :1974-2006 and the program lookup at :1993.
+      :1924  path = g_key_file_get_string (key_file, DESKTOP_GROUP, "Path", &err)
+      :1928  is_invalid_key_error(local_error) -> return FALSE  (a bad Path escape
+             refuses the LOAD, it is not a launch refusal)
+      :1947  if (try_exec && try_exec[0] != '\0')      <- TryExec, read FIRST
+      :1951  t = g_find_program_for_path (try_exec, NULL, path)
+      :1952  if (t == NULL) return FALSE                <- the same load refusal
+      :1963  exec = g_key_file_get_string (..., "Exec", &err)
+      :1974  if (exec && exec[0] != '\0')
+      :1985  g_shell_parse_argv (exec, &argc, &argv, NULL)
+      :1993  t = g_find_program_for_path (argv[0], NULL, path)
+      :1994  if (t == NULL) { ... return FALSE; }       <- the load refusal
+    The PATH argument is NULL in both calls, so g_find_program_for_path uses the
+    PROCESS PATH (gutils.c:370-373); the WORKING DIR argument is `path`, i.e.
+    the entry's Path= value.
+    The refusal text is printed by the CLI, not by GIO:
+      gio-tool-launch.c:100  print_error (_("Unable to load '%s': %s"), ...)
+      gio-tool-launch.c:109  print_error (_("Unable to load application information for '%s'"), desktop_file)
+    (measured: a bad desktop file gives the :100 text, an app-level refusal
+    gives the :109 text; the two are DIFFERENT causes.)
+
+R1b TryExec order.  :1947 TryExec is tested before the Exec test (:1974), and
+    both failures are the same load refusal.
+
+R2  TERMINAL.  prepend_terminal_to_vector (gdesktopappinfo.c:2748).
+      :2762-2778  the twelve known_terminals rows, in table order:
+         0 xdg-terminal-exec (exec_arg NULL)
+         1 kgx          (-e)
+         2 gnome-terminal (--)
+         3 mate-terminal  (-x)
+         4 xfce4-terminal (-x)
+         5 tilix       (-e)
+         6 konsole     (-e)
+         7 nxterm      (-e)
+         8 color-xterm (-e)
+         9 rxvt        (-e)
+        10 dtterm      (-e)
+        11 xterm       (-e)
+      :2797-2806  for each row, in order:
+                  found_terminal = g_find_program_for_path (row.exec, path, working_dir)
+                  first non-NULL wins; term_arg = row.exec_arg; break
+      :2808-2812  no row matched -> return FALSE
+      :2814-2815  term_argc = term_arg ? 2 : 1
+      :2820-2830  real_argv = [found_terminal] (+ [exec_arg]) + the old argv
+    The PATH argument is g_environ_getenv (envp, "PATH") (gdesktopappinfo.c:3028)
+    and the working dir is info->path (:3029).
+    The refusal text is gdesktopappinfo.c:3031-3032
+      _("Unable to find terminal required for application"), surfaced by
+      gio-tool-launch.c:121 as "Unable to launch application '%s': %s".
+
+R3  argv[0] AFTER THE PREPEND.  gdesktopappinfo.c:3064-3101.
+      :3066-3068  if (!g_path_is_absolute (argv[0]) ||
+                        !g_file_test (argv[0], G_FILE_TEST_IS_EXECUTABLE) ||
+                         g_file_test (argv[0], G_FILE_TEST_IS_DIR))
+      :3070       program = g_strdup (argv[0])
+      :3073-3080  if (!g_path_is_absolute (program)) {
+                      env_path = g_environ_getenv (envp, "PATH");
+                      program_path = g_find_program_for_path (program, env_path, info->path); }
+      :3082-3086  on a hit, argv[0] is REPLACED by program_path
+      :3092-3094  on a miss: "Program '%s' not found in $PATH"
+    NOTE (measured, and it is the sharpest fact in this report): the prepend at
+    :3027 runs BEFORE this block, so when Terminal=true argv[0] is ALREADY the
+    terminal's absolute path, the :3066 test is false, and the PROGRAM TOKEN IS
+    NEVER LOOKED UP.  The program token stays raw in the vector.
+
+R4  CWD.  g_spawn_async_with_fds (info->path, ...) at gdesktopappinfo.c:3134
+    (the declaration cites :3116-3126; the call is at :3134-3144 and the
+    wrapped_argv is built at :3124-3130).  The first argument is info->path,
+    i.e. the Path= value, so the child's cwd is Path=.  gspawn-posix.c:725
+    does `if (working_directory && chdir (working_directory) < 0)`; a Path= that
+    cannot be entered therefore fails the spawn and gio-tool-launch.c:121
+    prints "Unable to launch application '%s': Failed to change to directory
+    "%s" (No such file or directory)" (or "(Not a directory)").
+
+R5  ENV.  gdesktopappinfo.c:3036-3040
+      envp = g_environ_setenv (envp, "GIO_LAUNCHED_DESKTOP_FILE", info->filename, TRUE);
+    info->filename is the desktop file path as given to gio launch (the CLI
+    canonicalises it first, gio-tool-launch.c:91 g_canonicalize_filename), so
+    the value the child sees is the CANONICALISED path.
+
+R6  g_find_program_for_path (gutils.c:300-519).  Decision tree, numbered:
+    G1  :322-327  working_dir && !g_path_is_absolute (program)
+                 -> program = g_build_filename (working_dir, program)
+                 (the working-dir join; it makes the program ABSOLUTE when the
+                  working dir is absolute, which decides G2 below)
+    G2  :332-337  g_path_is_absolute (program) || strchr (original_program, '/')
+                 -> take the ABSOLUTE branch: no PATH walk at all
+    G3  :339-340  the executable test: g_file_test (program, IS_EXECUTABLE) &&
+                    !g_file_test (program, IS_DIR)
+    G4  :344-357  on a hit: absolute -> strdup; relative -> cwd + "/" + program
+    G5  :359-365  on a miss: if the ORIGINAL program was absolute -> return NULL
+                 (an absolute program that fails G3 is a hard refusal; a
+                  relative one falls through to the PATH walk)
+    G6  :368      program = original_program   (the working-dir join is undone)
+    G7  :370-373  path = original_path ? original_path : g_getenv ("PATH")
+    G8  :376-389  PATH UNSET -> the default "/bin:/usr/bin:."  (GLib puts "."
+                 last, for security)
+    G9  :462-477  the PATH walk; an EMPTY entry (a leading colon, two adjacent
+                 colons, or a trailing colon) means the CURRENT DIRECTORY
+    G10 :479-484  working_dir && !g_path_is_absolute (startp)
+                 -> startp = g_build_filename (working_dir, startp)
+                 (a RELATIVE PATH CANDIDATE is joined with the working dir)
+    G11 :486-487  the same executable-and-not-a-directory test as G3
+    G12 :490-497  on a hit: absolute -> strdup; relative -> cwd + "/" + startp
+                 (a RELATIVE HIT IS ABSOLUTISED against the PROCESS cwd)
+    G13 :518      no entry matched -> return NULL
+
+R7  the load gate refuses an Exec whose argv[0] names a DIRECTORY.  This is the
+    !IS_DIR half of gutils.c:339-340 (and, on the PATH, of :486-487); for an
+    absolute program it is G3+G5, so the refusal is a load refusal, not a
+    launch refusal.  (The declaration cites gutils.c:352-356; the test is at
+    :339-340.  :352-356 is the cwd-absolutisation arm of G4.)
+
+EMPTY Path=.  gdesktopappinfo.c:2062-2066: after the load,
+      if (info->path && info->path[0] == '\0') { g_free (info->path); info->path = NULL; }
+    so an empty Path= is normalised to NULL -> the child inherits the launcher's
+    cwd, exactly like an absent Path=.  This is why the two are the same case.
+
+================================================================================
+3. THE MEASUREMENTS  (every case measured TWICE, both labels agreeing)
+================================================================================
+
+Probe design: the probe is a COMPILED C PROGRAM (probe.c), not a shell script,
+because a shell script's $0 is the script path as exec'd, not the argv[0] the
+program received.  Each spawn writes ONE record into its own file, named with a
+sequence number assigned under an exclusive fcntl lock (round-98 lessons
+M98-1/M98-7: a shared output file races and a multi-spawn launch then looks
+like "the last argument wins").  The terminal stand-in is a second compiled C
+program that records the vector it was handed and then execvp's the program, so
+the PROGRAM's own argv0/cwd are observed under a terminal.
+Cross-check: 54 cases x 2 passes in the v6 set -> agree=54 disagree=0; the v8,
+v9, v10, v11 sets were re-run the same way and agreed.
+
+The three measured facts that decide the C1 model:
+
+  (a) UNDER A TERMINAL THE PROGRAM TOKEN IS NOT ABSOLUTISED.
+      v8_token_relative_kgx   (Exec=probe, Terminal=true, probe on the PATH):
+        the terminal receives  TERM_ARGV0={root}/bin/kgx
+                              TERM_ARGC=2  TERM_A0=-e  TERM_A1=probe
+        the program receives  ARGV0=probe      <-- RAW, not {root}/bin/probe
+      v8_token_absolute_kgx   (Exec={root}/bin/probe):
+        TERM_A1={root}/bin/probe ; the program receives ARGV0={root}/bin/probe
+      Contrast, no terminal (v6 base_ok): the program receives
+        ARGV0={root}/bin/probe  <-- ABSOLUTE.
+      => The candidate must NOT absolutise argv[0] when Terminal=true.  The
+         vector handed to the terminal is [terminal_abs, exec_arg?, token, ...]
+         with the token RAW; the terminal resolves it itself.
+
+  (b) THE PREPEND COMES FIRST, SO THE TERMINAL WINS THE TABLE ORDER EVEN WHEN
+      IT IS ONLY IN THE WORKING DIR, BUT THE WORKING DIR DOES NOT OVERRIDE THE
+      TABLE ORDER.
+      v9_wd_kgx_vs_path_xdg  (kgx=row 1 in Path=, xdg-terminal-exec=row 0 on PATH)
+        -> the terminal is {root}/bin/xdg-terminal-exec  (row 0 wins)
+      v9_wd_kgx_vs_path_xterm (kgx=row 1 in Path=, xterm=row 11 on PATH)
+        -> the terminal is {root}/wd/kgx                (row 1 beats row 11)
+      v9_wd_xdg_vs_path_kgx  (xdg-terminal-exec=row 0 in Path=, kgx=row 1 on PATH)
+        -> the terminal is {root}/wd/xdg-terminal-exec
+      => the per-row search order is: table order first, and WITHIN one row the
+         working dir is tried before the PATH walk (gutils.c G10 + G1).
+
+  (c) THE PROGRAM LOOKUP PREFERS THE WORKING DIR OVER THE PATH.
+      v10_load_gate_working_dir_wins (probe in both {root}/wd and {root}/bin):
+        ARGV0={root}/wd/probe     <-- the working dir wins
+      v10_load_gate_path_only     (probe only in {root}/bin):
+        the load gate PASSES (the program is found on the PATH) and the launch
+        then fails on the cwd: "Failed to change to directory "{root}/wd"".
+      v9_working_dir_only         (probe only in {root}/wd, PATH has no probe):
+        ARGV0={root}/wd/probe     <-- the load gate finds it in the working dir
+      => g_find_program_for_path(program, PATH, Path=) resolves the program
+         against Path= FIRST (G1 makes the program absolute), and only falls
+         back to the PATH walk when that misses.
+
+Full label set (the eight edge shapes the item named, plus the rest):
+
+  1. TERMINAL ORDER, TWO TERMINALS PRESENT
+     v8_order_00_xdg-terminal-exec_over_kgx  -> {root}/bin/xdg-terminal-exec, TERM_ARGC=1
+     v8_order_01_kgx_over_gnome-terminal     -> {root}/bin/kgx,  TERM_A0=-e
+     v8_order_02_gnome-terminal_over_mate-terminal -> {root}/bin/gnome-terminal, TERM_A0=--
+     v8_order_03_mate-terminal_over_xfce4-terminal -> {root}/bin/mate-terminal, TERM_A0=-x
+     v8_order_04_xfce4-terminal_over_tilix   -> {root}/bin/xfce4-terminal, TERM_A0=-x
+     v8_order_05_tilix_over_konsole          -> {root}/bin/tilix,  TERM_A0=-e
+     v8_order_06_konsole_over_nxterm         -> {root}/bin/konsole, TERM_A0=-e
+     v8_order_07_nxterm_over_color-xterm     -> {root}/bin/nxterm,  TERM_A0=-e
+     v8_order_08_color-xterm_over_rxvt       -> {root}/bin/color-xterm, TERM_A0=-e
+     v8_order_09_rxvt_over_dtterm            -> {root}/bin/rxvt,   TERM_A0=-e
+     v8_order_10_dtterm_over_xterm           -> {root}/bin/dtterm, TERM_A0=-e
+     All twelve rows measured alone: v8_row_00..v8_row_11.  exec_arg is NULL for
+     row 0 only; every other row contributes exactly one extra argv element.
+
+  2. kgx -e
+     v8_row_01_kgx_only: TERM_ARGV0={root}/bin/kgx, TERM_ARGC=2,
+                         TERM_A0=-e, TERM_A1=probe
+     The vector GIO builds (v8_vector_kgx, Exec="probe --flag val"):
+       TERM_ARGC=4  TERM_A0=-e  TERM_A1=probe  TERM_A2=--flag  TERM_A3=val
+     The program then receives ARGC=2, A0=--flag, A1=val.
+
+  3. NO TERMINAL
+     v6 term_none: rc=1,
+       stderr: gio: Unable to launch application '{root}/app.desktop':
+               Unable to find terminal required for application
+     v8 path_nonexistent_terminal: with Terminal=true and no terminal on PATH
+       the SAME no-terminal refusal comes first, ahead of the cwd failure.
+
+  4. Path= EMPTY
+     v6 path_empty (Path= present but empty): rc=0, ARGV0={root}/bin/probe,
+       CWD={root}/work   <-- the launcher's cwd (inherited), NOT the case root
+     v6 path_absent (no Path key): byte-identical label.
+     => the two are the same case (gdesktopappinfo.c:2062-2066).
+
+  5. Path= NONEXISTENT
+     v6 path_nonexistent_abs_exec (Exec={root}/bin/probe, Path={root}/nodir):
+       rc=1, stderr: gio: Unable to launch application '{root}/app.desktop':
+               Failed to change to directory "{root}/nodir" (No such file or directory)
+     v6 path_nonexistent_rel_exec (Exec=probe, relative): the LOAD GATE still
+       finds the program on the PATH, so the SAME cwd refusal is the outcome.
+     v9_path_is_a_file_control (Path= naming a regular file):
+       rc=1, "Failed to change to directory "{root}/afile" (Not a directory)"
+
+  6. Exec NAMING A DIRECTORY
+     v6 exec_is_directory_abs (Exec={root}/adir): rc=1,
+       stderr: gio: Unable to load application information for '{root}/app.desktop'
+     v6 exec_is_directory_on_path (Exec=adir, a directory on the PATH): the same
+       refusal.  v6 exec_file_on_path_control (the same name as a regular file):
+       rc=0 and a launch.  => the !IS_DIR half is what refuses.
+
+  7. A RELATIVE PATH ENTRY RESOLVED THROUGH Path=
+     v6 relpath_entry_via_path (Path={root}/wd, PATH="relbin", probe at
+     {root}/wd/relbin/probe):
+       ARGV0={root}/wd/relbin/probe, CWD={root}/wd
+     => the relative PATH entry is joined with Path= (G10), and the working dir
+        beats the PATH walk (G1).
+     v6 relpath_entry_no_path (no Path=, PATH="relbin", probe at
+     {root}/work/relbin/probe): ARGV0={root}/work/relbin/probe
+     => with no working dir the relative entry is resolved against the PROCESS
+        cwd and the hit is absolutised against it (G12).
+     v6 relpath_entry_trailing_slash (PATH="relbin/"): ARGV0={root}/wd/relbin//probe
+     v6 abspath_entry_with_path_set (PATH={root}/bin, absolute): the absolute
+       entry ignores Path=; ARGV0={root}/bin/probe, CWD={root}/wd.
+
+  8. %f WITH TWO ARGUMENTS UNDER Terminal=true
+     v6 pctf_two_args_terminal (Exec="probe %f", args f1.txt f2.txt):
+       TWO spawns, in argument order:
+         seq 1: TERM_ARGC=3  TERM_A0=-e  TERM_A1=probe  TERM_A2={root}/f1.txt
+         seq 2: TERM_ARGC=3  TERM_A0=-e  TERM_A1=probe  TERM_A2={root}/f2.txt
+       (the same launch WITHOUT a terminal, v6 pctf_two_args_plain, gives two
+        spawns whose programs receive ARGC=1 and A0={root}/f1.txt / f2.txt)
+     v6 pctF_two_args_terminal (Exec="probe %F"): ONE spawn, TERM_ARGC=4 with
+       both files in one vector.
+
+THE REST OF THE MEASURED SET (all measured twice, all agreeing):
+
+  baseline
+    v6 base_ok            ARGV0={root}/bin/probe  CWD={root}/work
+    v6 base_abs_exec      ARGV0={root}/bin/probe  (an absolute Exec is kept)
+    v6 exec_with_args     ARGC=2  A0=--flag  A1=val
+    v6 exec_quoted_name   Exec="probe" -> ARGV0={root}/bin/probe (quoting is
+                          resolved by g_shell_parse_argv before the lookup)
+  terminal
+    v6 term_false         Terminal=false -> no prepend at all
+    v8_terminal_in_working_dir      -> {root}/wd/kgx   (the terminal is in the
+                          working dir and NOT on the PATH)
+    v8_terminal_via_relative_entry   -> {root}/wd/relbin/kgx (a relative PATH
+                          entry joined with Path=)
+    v8 path_nonexistent_terminal     -> the no-terminal refusal wins over the
+                          cwd failure
+  path
+    v8 path_set_cwd_is_path          CWD={root}/wd
+    v8 path_trailing_slash           Path={root}/wd/ -> CWD={root}/wd
+    v8 path_dot                      Path=. -> CWD={root}/work (the launcher cwd)
+    v8 path_relative                 Path=wd (relative, not present under the
+                          launcher cwd) -> rc=1 "Failed to change to directory
+                          "wd" (No such file or directory)"
+    v11 path_relative_exists         Path=wd with {root}/work/wd present ->
+                          CWD={root}/work/wd  (a relative Path= is resolved
+                          against the LAUNCHER's cwd, and the child's cwd is
+                          reported absolute)
+    v11 path_relative_exists_control the same cwd, the program only on the PATH
+  load gate / argv[0]
+    v6 exec_missing_program          rc=1 "Unable to load application information"
+    v6 exec_abs_nonexistent          the same
+    v6 exec_nonexec_absolute         the same (a non-executable absolute file)
+    v6 exec_nonexec_relative         the same (a non-executable PATH entry)
+    v6 exec_nonexec_control          rc=0 (the same role, executable)
+    v6 exec_relative_with_slash      Exec=sub/probe -> ARGV0={root}/work/sub/probe
+                          (a name with a separator takes the absolute branch,
+                           G2: no PATH walk; relative -> cwd + name, G4)
+    v9_sep_with_working_dir          Exec=sub/probe, Path={root}/wd ->
+                          ARGV0={root}/wd/sub/probe (G1 makes it absolute)
+    v9_sep_control                   Exec=sub/probe, no Path= ->
+                          ARGV0={root}/work/sub/probe
+    v6 r3_program_not_found          Exec=%f with a program literally named %f
+                          on the PATH: the load gate passes (it looks up the
+                          literal "%f") and then
+                          rc=1 "Unable to launch application '{root}/app.desktop':
+                          Program '{root}/f1.txt' not found in $PATH"
+                          => the R3 refusal is REACHABLE and its text is
+                          "Program '%s' not found in $PATH".
+    v10_r3_control_no_terminal       the same shape without a terminal: R3
+                          absolutises the token, ARGV0={root}/wd/probe
+    v10_r3_skipped_under_terminal    the same shape WITH a terminal: the token
+                          stays raw and the terminal cannot resolve it
+  tryexec
+    v6 tryexec_missing               rc=1 "Unable to load application information"
+    v6 tryexec_present               rc=0
+    v6 tryexec_empty                 rc=0 (an empty TryExec is skipped, :1947)
+    v6 tryexec_is_directory          rc=1 (a TryExec naming a directory refuses)
+    v10_tryexec_working_dir_only     rc=0, ARGV0={root}/wd/probe (TryExec and
+                          Exec both resolve through the working dir)
+    v10_tryexec_missing_control      rc=1 (a missing TryExec refuses even
+                          though the working dir holds the program)
+  path unset / empty entry
+    v6 path_unset_default            PATH unset -> the default "/bin:/usr/bin:.";
+                          ARGV0={root}/work/./probe   <-- the "." entry, resolved
+                          against the cwd, keeping the "./" in the result
+    v6 path_empty_entry_cwd          PATH=":" -> ARGV0={root}/work/probe
+                          (an empty entry means the current directory, no "./")
+    v6 path_double_colon             PATH="::" -> the same
+    v6 path_empty_entry_with_path    PATH=":" + Path={root}/wd ->
+                          ARGV0={root}/wd/probe  (the empty entry is joined
+                          with the working dir, G10)
+  gdf
+    v6 gdf_value                     GDF={root}/app.desktop
+    v10_gdf_relative_arg             a RELATIVE desktop argument "app.desktop"
+                          -> GDF={root}/work/app.desktop  (canonicalised)
+    v10_gdf_dotdot_arg               "../app.desktop" -> GDF={root}/app.desktop
+    v8_token_gdf_kgx                 GDF reaches the PROGRAM under a terminal
+    v8_token_cwd_kgx                 CWD={root}/wd under a terminal
+  refusals
+    v11_no_exec_key        rc=1 "Unable to launch application '{root}/app.desktop':
+                             Desktop file didn't specify Exec field"
+    v11_exec_empty_key     rc=1 "... : Text was empty (or contained only whitespace)"
+    v11_exec_empty / v11_exec_whitespace (v6) the same
+    v11_bad_escape         rc=1 "Unable to load application information for ..."
+    v11_wrong_type         rc=1 "Unable to load application information for ..."
+    v11_no_type            rc=1 "Unable to load application information for ..."
+    v11_not_a_keyfile      rc=1 "Unable to load '{root}/app.desktop': Key file
+                             contains line "this is not a key file" which is not a
+                             key-value pair, group, or comment"
+    v11_missing_desktop    rc=1 "Unable to load '{root}/work/nosuch.desktop':
+                             No such file or directory"
+  spawn order
+    v9_spawn_order        three arguments -> THREE spawns, in argument order
+                          (a.txt, b.txt, c.txt), one record each.
+
+================================================================================
+4. THE CAUSE TAXONOMY, AS MEASURED
+================================================================================
+  load             "Unable to load application information for '<desktop>'"   rc=1
+                   (the app-level refusal: the load gate, R1/R1b/R7, a bad
+                    Exec escape, a wrong Type, a directory Exec)
+  desktop-file     "Unable to load '<desktop>': <reason>"                      rc=1
+                   (a keyfile-level refusal: the file is missing, or it is not
+                    a key file.  DIFFERENT text from `load`.)
+  no-exec          "Unable to launch application '<desktop>': Desktop file didn't
+                    specify Exec field"                                        rc=1
+  exec-parse       "Unable to launch application '<desktop>': Text was empty (or
+                    contained only whitespace)"                                rc=1
+  no-terminal      "Unable to launch application '<desktop>': Unable to find
+                    terminal required for application"                        rc=1
+  program-not-found "Unable to launch application '<desktop>': Program '<x>'
+                    not found in $PATH"                                       rc=1
+  cwd-failed       "Unable to launch application '<desktop>': Failed to change
+                    to directory "<path>" (No such file or directory)"      rc=1
+                   (also "(Not a directory)")
+
+Every refusal text above was read off the actual stderr of /usr/bin/gio.  Note
+that gio's own messages use the U+2018/U+2019 quotation marks; a candidate that
+compares its messages byte-for-byte must reproduce them (the committed
+artefacts must be ASCII, so the CASE FILE should carry the message with the
+ASCII apostrophes, or the comparison must normalise).
+
+================================================================================
+5. SHAPES I COULD NOT MAKE gio ANSWER  (command + observed output)
+================================================================================
+Nothing in the eight named shapes failed.  These are the shapes the surface
+cannot reach, each with the command and the observed output:
+
+  (i) A RELATIVE PATH ENTRY RESOLVED *WITHOUT* a working dir, where the entry
+       does not exist under the launcher cwd.  Command:
+         env -i LC_ALL=C HOME=<root>/h PROBE_OUT=<root>/out/rec PATH=nosuchrel \
+           /usr/bin/gio launch <root>/app.desktop
+       Observed: gio: Unable to load application information for
+       '<root>/app.desktop'  (rc=1).  The shape is unreachable as a LAUNCH:
+       gutils.c:486-487 tests the candidate relative to the process cwd, so a
+       relative PATH entry can only ever hit under the launcher cwd.  The
+       relative-entry shape is therefore only meaningful WITH a working dir.
+
+  (ii) AN ABSOLUTE Exec THAT IS A DIRECTORY, WHERE THE DIRECTORY IS ALSO
+       REACHABLE AS A RELATIVE PATH ENTRY.  Command:
+         env -i ... PATH=<root>/relbin /usr/bin/gio launch <root>/app.desktop
+       with Exec=adir and <root>/relbin/adir a directory.  Observed: the load
+       refusal ("Unable to load application information").  I could not separate
+       "the directory was rejected" from "the program was not found" in the
+       relative-PATH-entry form: BOTH produce the identical refusal text, so
+       this shape carries no signal.  The signal is only in the absolute form
+       (v6 exec_is_directory_abs), where the :359-365 arm returns NULL on its
+       own.
+
+  (iii) THE ORDER OF THE R3 LOOKUP RELATIVE TO THE PREPEND, ISOLATED.  A case
+       that would show it needs argv[0] to change identity between the two
+       blocks, which GIO does not do: the prepend at :3027 replaces argv[0]
+       with the terminal, and the R3 test at :3066 then sees the terminal.  I
+       could not build a case where BOTH the prepend and a lookup of the
+       PROGRAM token happen; the source order settles it, and the measurement
+       in (a) above is the observable consequence.
+
+  (iv) A TERMINAL THAT RESOLVES THE PROGRAM TOKEN ITSELF.  Every real
+       terminal would, but the stand-in has to be told where the program is;
+       the vector GIO hands the terminal is fully measured (the TERM_ARGV*
+       records), and the PROGRAM's own argv0 under a terminal is therefore a
+       property of the terminal, not of GIO.  The C1 model must answer the
+       vector, not the terminal's re-exec.
+
+  (v) THE SPAWN ORDER OF A MULTI-SPAWN LAUNCH *UNDER A TERMINAL*.  Measured:
+       the two spawns are sequential and in argument order (v6
+       pctf_two_args_terminal: seq 1 = f1.txt, seq 2 = f2.txt), but the
+       ORDINAL of concurrent spawns is not observable here because the two
+       children are sequential by construction.  The r98 limit carries.
+
+  (vi) GIO_LAUNCHED_DESKTOP_FILE WHEN THE DESKTOP FILE IS LOADED BY ID
+       (g_desktop_app_info_new_from_desktop_id) rather than by filename.  The
+       `gio launch` CLI only takes a path (gio-tool-launch.c:91), so this
+       shape is not reachable from the CLI at all.
+
+  (vii) THE PORTAL / DBusActivatable PATH.  Not reachable from `gio launch`
+       with a plain desktop file and no session bus; the r98 limit carries.
+
+  (viii) A Path= THAT IS AN ABSOLUTE SYMLINK TO A DIRECTORY.  Not measured:
+       chdir() resolves it and the child reports the RESOLVED path, but I did
+       not build the fixture, so I make no claim about it.
+
+  (ix) THE "cwd-failed" CAUSE WHEN PATH= IS RELATIVE AND EXISTS RELATIVE TO A
+       DIFFERENT cwd.  Measured only in the two forms above (relative Path=
+       that does not exist under the launcher cwd -> "No such file or
+       directory"; Path= naming a regular file -> "Not a directory").  The
+       errno text for a relative Path= that exists but is not searchable was
+       not exercised.
+
+  (x)  THE EXACT BYTES OF A TERMINAL'S OWN ARGV0 WHEN THE TERMINAL IS
+       FOUND *ONLY* THROUGH A RELATIVE PATH ENTRY JOINED WITH Path=:
+       measured as {root}/wd/relbin/kgx (v8_terminal_via_relative_entry).
+
+================================================================================
+6. WHAT THIS MEANS FOR THE C1 CANDIDATE (the five rules, as they must be coded)
+================================================================================
+  R1  the load gate: TryExec first (:1947-1959), then Exec's argv[0] (:1974-2006);
+      both through g_find_program_for_path(token, NULL, Path=); a miss is a LOAD
+      refusal ("Unable to load application information for '<desktop>'"), rc 1.
+  R2  the terminal: the twelve rows in table order; per row the working dir is
+      tried BEFORE the PATH walk; first hit wins; the vector becomes
+      [terminal_abs_path, exec_arg?, <the ORIGINAL argv...>] and the exec_arg is
+      present for every row except xdg-terminal-exec.
+  R3  the argv[0] lookup at :3066-3101 RUNS ONLY WHEN THERE IS NO TERMINAL.
+      With a terminal, argv[0] is the terminal and the program token is passed
+      through RAW.  Without a terminal, a relative token is replaced by the
+      absolute path g_find_program_for_path returns, and a miss is
+      "Program '%s' not found in $PATH".
+  R4  the cwd: the child's cwd is Path=, and an empty Path= is normalised to
+      NULL (:2062-2066) so it inherits the launcher's cwd.  A Path= that cannot
+      be entered is a spawn failure ("Failed to change to directory ...").
+  R5  the env: GIO_LAUNCHED_DESKTOP_FILE = the canonicalised desktop path.
+  R6  the lookup semantics: the working-dir join first (G1), the absolute
+      branch without a PATH walk (G2), the executable-and-not-a-directory test
+      (G3/G11), the PATH default when PATH is unset (G8), an empty PATH entry
+      meaning the current directory (G9), a relative PATH candidate joined with
+      the working dir (G10), a relative hit absolutised against the process cwd
+      (G12).
+
+The single most likely mutant to survive a naive implementation: absolutising
+the program token under a terminal (measured to be wrong: ARGV0=probe, not the
+absolute path).  The second: resolving the program against the PATH before the
+working dir (measured: the working dir wins).
+
+================================================================================
+7. TOOLING
+================================================================================
+No package was installed, upgraded or removed by this seat, so there is no
+install to record (channel / version / reason).  The C probes were built with
+the host's existing /usr/bin/cc (gcc, Arch glib2 2.90.1-1 era toolchain):
+`cc -O1 -static -o probe.bin probe.c` and `cc -O1 -static -o termfake.bin
+termfake.c`, both local to the seat scratch.  No pacman transaction was run
+(the round-99 host guard pauses all pacman transactions).  No host service was
+restarted, no sysctl was touched, no ~/.config was written, no credential file
+was read.
+
+================================================================================
+8. ARTEFACTS
+================================================================================
+  receipt: .ufo/waves/round-99/receipts/scout-env-r99.txt   (this file)
+  report:  .ufo/waves/round-99/w1/R99MScoutEnv.md
+  scratch (deleted before the yield): /fast/scratch/hyaku/mado-r99/R99MScoutEnv
+           probe.c, termfake.c, probe6.py, gen6..gen11.py, compare.py,
+           cases6..cases11.json, out6..out11/ (the per-case labels),
+           gspawn-posix.c (the one fetched source, sha256 in section 1)
+  The candidate (tools/mado-launchenv.py) was NOT touched: this seat is
+  reconnaissance only.

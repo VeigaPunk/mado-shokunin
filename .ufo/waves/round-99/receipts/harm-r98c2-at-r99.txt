@@ -1,0 +1,18 @@
+# r98 C2 counter replayed at the round-99 base tip (L1 MadoR99a2, 2026-11-07)
+# command: python3 -I quality/counters/c2-r98-sources-readback.py --repo . --rev 2cbaa141f42df9dfeee4d207cae6558a4dd59863 \
+#   --base-rev 35f3ce808788b11c063309b1b5ad0192754795ea --expect-gate-sha256 f1000bf1… --expect-base-mismatches 21 \
+#   --planted-dir .ufo/waves/round-98/controls/readback-planted --fleet-root /home/vgpnk/Projects/shokunin --scratch-root /fast/scratch/hyaku/mado-r99/l1/r98c2
+rev_mismatches=0
+entry_set=CHANGED
+row_set=CHANGED
+citations_superset=ok
+added_paths=28
+added_paths_match=MISMATCH want=21
+repaired=21/21
+MADO_SOURCES_READBACK_COUNT: SETUP_ERROR planted-drift SOURCES-r1-path-in-recheck.md
+
+# Reading: the round-98 C2 counter is bound to its measured revision (a3471631). At a later tip its
+# planted copies drift (the planted registries were cut from the measured revision) and its
+# added_paths leg counts the four new rows' used-by cells (28 = 21 repaired + 3 new-entry + 4 new-row),
+# so it fails closed by design. This is a declared limit of a round counter, not harm to the gate:
+# `quality/check-sources-readback.py` itself is green at the tip (rows=466 entries=119 findings=0).

@@ -1,0 +1,39 @@
+# round 99 — sources opened (L1 MadoR99a2, 2026-11-07)
+
+Every URL below was fetched with `curl -sSL -o <file> -w '%{http_code} %{url_effective}'` and counts
+only at HTTP 200. The bytes are committed under `.ufo/waves/round-99/fetch/` (the two round-98 files
+are carried byte-identically from `.ufo/waves/round-98/fetch/` and re-hashed here).
+
+| file | url | http | bytes | sha256 | opened |
+|---|---|---|---|---|---|
+| gdesktopappinfo.c | https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gdesktopappinfo.c | 200 (round 98) | 163369 | `8e9ce1a8327a2daf6bc16e8dcfb653c482afde7bebc2ca2621747626b5495b0d` | re-opened r99 (carried from r98) |
+| gshell.c | https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/glib/gshell.c | 200 (round 98) | 21464 | `640a0d0fbc9c50d0c70eb8f9ff2c4994392515c6174f76ade9292d7500e60442` | re-opened r99 (carried from r98) |
+| gutils.c | https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/glib/gutils.c | 200 | 100534 | `65086c293646bf83884f56f54bb5e2e872adb28ee77f1223d6d9f095a75e3771` | 2026-11-07 |
+| gio-tool-launch.c | https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gio-tool-launch.c | 200 | 3991 | `16b4c8683b00407670f600eda0e65e9d929a59daac499cbe8f3d1fd532f6595a` | 2026-11-07 |
+| spec-recognized-keys.html | https://specifications.freedesktop.org/desktop-entry/latest/recognized-keys.html | 200 | 24174 | `7bc0b6401cda9c019d5b89a2fab053d216eb937c83602df838a6c0a1175c03d9` | 2026-11-07 |
+
+Host facts measured this round (L1 probes under
+`/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-99/probe/`):
+
+- glib2 2.90.1-1; `/usr/bin/gio` sha256 `d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462`.
+- `/usr/bin/xdg-terminal-exec` exists on the host; `gio-launch-desktop` is `/usr/lib/gio-launch-desktop`.
+  A `gio launch` oracle call MUST use `env -i` with a PATH holding only the case's own bin dirs, or
+  `Terminal=true` starts a real terminal (measured: a host PATH reached the real xdg-terminal-exec and
+  a terminal failed on the missing display).
+- `Terminal=true` prepends the first of the twelve known terminals found on the launch PATH
+  (`xdg-terminal-exec` with no argument; the other rows with their `exec_arg`).
+- `Path=` becomes the child's cwd; an empty `Path=` inherits the launcher's cwd (measured).
+- `GIO_LAUNCHED_DESKTOP_FILE` reaches the child and equals the desktop file path given to `gio launch`.
+- A bare `Exec` program that is not found makes `gio launch` print
+  `Unable to load application information for '<desktop>'` and exit 1 (the load gate).
+- `Terminal=true` with no known terminal prints
+  `Unable to launch application '<desktop>': Unable to find terminal required for application` and
+  exits 1.
+
+Located quotes used by this round's rows:
+
+- gutils.c `:280-281`: `Locates the first executable named @program in @path, in the same way that execvp() would locate it.`
+- gutils.c `:322`: `Use the working dir as program path if provided`
+- gio-tool-launch.c `:116`: `args = g_list_append (args, g_file_new_for_commandline_arg (argv[i]));`
+- spec-recognized-keys.html `:128`: `If entry is of type Application, the working directory to run the program in.`
+- spec-recognized-keys.html `:130`: `Whether the program runs in a terminal window.`

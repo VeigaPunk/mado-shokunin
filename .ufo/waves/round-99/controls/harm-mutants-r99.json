@@ -1,0 +1,561 @@
+{
+ "version": 1,
+ "tool": ".ufo/waves/round-99/build/harm-watch.py",
+ "anchor_sha256": "8ad90bed84eb31bfc3d2d98ae0ea630530bb3bb0a83d7bcdec383c2b11a34574",
+ "non_selftest_region": "source up to the first literal `def selftest(` (line 399 of 594)",
+ "counts": {
+  "mutants": 32,
+  "equivalents": 3,
+  "not_observable": 28,
+  "outside_region": 4
+ },
+ "kill_basis": "a well-formed semantic difference from the pristine run on the committed panel, a planted panel, or --selftest; a traceback or an exit outside {0,1,2} is a crash and is never a kill",
+ "panel_roles": [
+  "committed panel",
+  "planted dropped-leg",
+  "planted wrong-expect",
+  "planted extra-leg",
+  "selftest"
+ ],
+ "mutants": [
+  {
+   "id": "census-leg-count-invert",
+   "rule": "census-leg-count",
+   "replace": "    if delta == 0 or delta == explained:",
+   "expect": "kill",
+   "find": "    if delta != 0 and delta != explained:",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 2; planted_dropped: c: census_ids ['PANEL_LEG_MISSING'] -> ['PANEL_LEG_COUNT', 'PANEL_LEG_MISSING']; planted_wrong: c: rc 1 -> 2; planted_extra: c: census_ids ['PANEL_LEG_UNKNOWN'] -> ['PANEL_LEG_COUNT', 'PANEL_LEG_UNKNOWN']"
+  },
+  {
+   "id": "census-duplicate-invert",
+   "rule": "census-duplicate",
+   "replace": "        if lid in seen:\n            seen[lid] += 1\n        else:\n            findings.append((\"PANEL_DUPLICATE\", \"id=%s\" % lid))\n            seen[lid] = 1",
+   "expect": "kill",
+   "find": "        if lid in seen:\n            findings.append((\"PANEL_DUPLICATE\", \"id=%s\" % lid))\n            seen[lid] += 1\n        else:\n            seen[lid] = 1",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 2; planted_dropped: c: census_ids ['PANEL_LEG_MISSING'] -> ['PANEL_DUPLICATE', 'PANEL_LEG_MISSING']; planted_wrong: c: rc 1 -> 2; planted_extra: c: census_ids ['PANEL_LEG_UNKNOWN'] -> ['PANEL_DUPLICATE', 'PANEL_LEG_UNKNOWN']"
+  },
+  {
+   "id": "census-round-missing-invert",
+   "rule": "census-round-missing",
+   "replace": "        if ids:",
+   "expect": "kill",
+   "find": "        if not ids:",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 2; planted_dropped: c: census_ids ['PANEL_LEG_MISSING'] -> ['PANEL_LEG_MISSING', 'PANEL_ROUND_MISSING']; planted_wrong: c: rc 1 -> 2; planted_extra: c: census_ids ['PANEL_LEG_UNKNOWN'] -> ['PANEL_LEG_UNKNOWN', 'PANEL_ROUND_MISSING']"
+  },
+  {
+   "id": "census-leg-unknown-drop",
+   "rule": "census-leg-unknown",
+   "replace": "        rounds_has = isinstance(row.get(\"round\"), str) and row[\"round\"] in rounds",
+   "expect": "kill",
+   "find": "        rounds_has = isinstance(row.get(\"round\"), str) and row[\"round\"] in rounds\n        if rounds_has and lid not in rounds[row[\"round\"]]:\n            unknown.append(lid)\n            findings.append((\"PANEL_LEG_UNKNOWN\", \"id=%s\" % lid))\n        elif not rounds_has:\n            unknown.append(lid)\n            findings.append((\"PANEL_LEG_UNKNOWN\", \"id=%s\" % lid))",
+   "killed_by": "planted_extra",
+   "observed": "planted_extra: c: census_ids ['PANEL_LEG_UNKNOWN'] -> ['PANEL_LEG_COUNT']; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "census-leg-unknown-invert",
+   "rule": "census-leg-unknown",
+   "replace": "        if rounds_has and lid in rounds[row[\"round\"]]:",
+   "expect": "kill",
+   "find": "        if rounds_has and lid not in rounds[row[\"round\"]]:",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 2; planted_dropped: c: census_ids ['PANEL_LEG_MISSING'] -> ['PANEL_LEG_COUNT', 'PANEL_LEG_MISSING', 'PANEL_LEG_UNKNOWN']; planted_wrong: c: rc 1 -> 2; planted_extra: c: census_ids ['PANEL_LEG_UNKNOWN'] -> ['PANEL_LEG_COUNT', 'PANEL_LEG_UNKNOWN']"
+  },
+  {
+   "id": "census-leg-missing-drop",
+   "rule": "census-leg-missing",
+   "replace": "            if False:\n                findings.append((\"PANEL_LEG_MISSING\", \"id=%s round=%s\" % (lid, rnd)))",
+   "expect": "kill",
+   "find": "            if lid not in seen:\n                findings.append((\"PANEL_LEG_MISSING\", \"id=%s round=%s\" % (lid, rnd)))",
+   "killed_by": "planted_dropped",
+   "observed": "planted_dropped: c: rc 2 -> 0; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "census-leg-missing-invert",
+   "rule": "census-leg-missing",
+   "replace": "            if lid in seen:",
+   "expect": "kill",
+   "find": "            if lid not in seen:",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 2; planted_wrong: c: rc 1 -> 2; planted_extra: c: census_ids ['PANEL_LEG_UNKNOWN'] -> ['PANEL_LEG_MISSING', 'PANEL_LEG_UNKNOWN']"
+  },
+  {
+   "id": "census-skip",
+   "rule": "census",
+   "replace": "    findings = []\n    if findings:",
+   "expect": "kill",
+   "find": "    findings = census(panel)\n    if findings:",
+   "killed_by": "planted_dropped",
+   "observed": "planted_dropped: c: rc 2 -> 0; planted_extra: c: rc 2 -> 0; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "census-exit-zero",
+   "rule": "census-exit",
+   "replace": "    if findings:\n        for fid, detail in findings:\n            panel_line(fid, detail)\n        return 0",
+   "expect": "kill",
+   "find": "    if findings:\n        for fid, detail in findings:\n            panel_line(fid, detail)\n        return 2",
+   "killed_by": "planted_dropped",
+   "observed": "planted_dropped: c: rc 2 -> 0; planted_extra: c: rc 2 -> 0; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "census-exit-one",
+   "rule": "census-exit",
+   "replace": "    if findings:\n        for fid, detail in findings:\n            panel_line(fid, detail)\n        return 1",
+   "expect": "kill",
+   "find": "    if findings:\n        for fid, detail in findings:\n            panel_line(fid, detail)\n        return 2",
+   "killed_by": "planted_dropped",
+   "observed": "planted_dropped: c: rc 2 -> 1; planted_extra: c: rc 2 -> 1; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "census-continue",
+   "rule": "census-exit",
+   "replace": "    if findings:\n        for fid, detail in findings:\n            panel_line(fid, detail)\n        pass",
+   "expect": "kill",
+   "find": "    if findings:\n        for fid, detail in findings:\n            panel_line(fid, detail)\n        return 2",
+   "killed_by": "planted_dropped",
+   "observed": "planted_dropped: c: rc 2 -> 0; planted_extra: c: rc 2 -> 0; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "marker-invert",
+   "rule": "marker",
+   "replace": "    marker_ok = (not marker) or ((marker not in res[\"out\"]) and (marker not in res[\"err\"]))",
+   "expect": "kill",
+   "find": "    marker_ok = (not marker) or (marker in res[\"out\"]) or (marker in res[\"err\"])",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 0, 14]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "marker-prefix",
+   "rule": "marker",
+   "replace": "(res[\"out\"].startswith(marker))",
+   "expect": "kill",
+   "find": "(marker in res[\"out\"])",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 12, 2]"
+  },
+  {
+   "id": "rc-drop",
+   "rule": "rc",
+   "replace": "    rc_ok = True",
+   "expect": "kill",
+   "find": "    rc_ok = rc == row[\"expect_rc\"]",
+   "killed_by": "planted_wrong",
+   "observed": "planted_wrong: c: rc 1 -> 0; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "rc-invert",
+   "rule": "rc",
+   "replace": "    rc_ok = rc != row[\"expect_rc\"]",
+   "expect": "kill",
+   "find": "    rc_ok = rc == row[\"expect_rc\"]",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 1, 13]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "rc-off-by-one",
+   "rule": "rc",
+   "replace": "    rc_ok = rc == row[\"expect_rc\"] + 1",
+   "expect": "kill",
+   "find": "    rc_ok = rc == row[\"expect_rc\"]",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 0, 14]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "timeout-zero",
+   "rule": "timeout",
+   "replace": "        outb, errb = p.communicate(timeout=0)",
+   "expect": "kill",
+   "find": "        outb, errb = p.communicate(timeout=timeout)",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 0, 14]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "rev-drop",
+   "rule": "rev",
+   "replace": "        if False:\n            out.append(rev)",
+   "expect": "kill",
+   "find": "        if el == \"REV\":\n            out.append(rev)",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 12, 2]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "rev-empty",
+   "rule": "rev",
+   "replace": "            out.append(\"\")",
+   "expect": "kill",
+   "find": "            out.append(rev)",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 11, 3]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "cwd-wrong",
+   "rule": "cwd",
+   "replace": "        p = subprocess.Popen(argv, cwd=scratch_root or \".\", stdout=subprocess.PIPE,",
+   "expect": "kill",
+   "find": "        p = subprocess.Popen(argv, cwd=repo, stdout=subprocess.PIPE,",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 0, 14]"
+  },
+  {
+   "id": "exit-mismatch-zero",
+   "rule": "exit",
+   "replace": "    return 0",
+   "expect": "kill",
+   "find": "    return 0 if k == 0 else 1",
+   "killed_by": "planted_wrong",
+   "observed": "planted_wrong: c: rc 1 -> 0; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "exit-green-one",
+   "rule": "exit",
+   "replace": "    return 1",
+   "expect": "kill",
+   "find": "    return 0 if k == 0 else 1",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "exit-mismatch-two",
+   "rule": "exit",
+   "replace": "    return 0 if k == 0 else 2",
+   "expect": "kill",
+   "find": "    return 0 if k == 0 else 1",
+   "killed_by": "planted_wrong",
+   "observed": "planted_wrong: c: rc 1 -> 2; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "summary-legs-plus-one",
+   "rule": "summary",
+   "replace": "    sys.stdout.write(\"HARM_WATCH: legs=%d ok=%d mismatch=%d\\n\" % (n + 1, nok, k))",
+   "expect": "kill",
+   "find": "    sys.stdout.write(\"HARM_WATCH: legs=%d ok=%d mismatch=%d\\n\" % (n, nok, k))",
+   "killed_by": "panel",
+   "observed": "panel: c: summary [14, 14, 0] -> [15, 14, 0]; planted_wrong: c: summary [14, 13, 1] -> [15, 13, 1]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "summary-ok-eq-legs",
+   "rule": "summary",
+   "replace": "    sys.stdout.write(\"HARM_WATCH: legs=%d ok=%d mismatch=%d\\n\" % (n, n, k))",
+   "expect": "kill",
+   "find": "    sys.stdout.write(\"HARM_WATCH: legs=%d ok=%d mismatch=%d\\n\" % (n, nok, k))",
+   "killed_by": "planted_wrong",
+   "observed": "planted_wrong: c: summary [14, 13, 1] -> [14, 14, 1]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "summary-mismatch-zero",
+   "rule": "summary",
+   "replace": "    sys.stdout.write(\"HARM_WATCH: legs=%d ok=%d mismatch=%d\\n\" % (n, nok, 0))",
+   "expect": "kill",
+   "find": "    sys.stdout.write(\"HARM_WATCH: legs=%d ok=%d mismatch=%d\\n\" % (n, nok, k))",
+   "killed_by": "planted_wrong",
+   "observed": "planted_wrong: c: summary [14, 13, 1] -> [14, 13, 0]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "summary-swap",
+   "rule": "summary",
+   "replace": "    sys.stdout.write(\"HARM_WATCH: legs=%d ok=%d mismatch=%d\\n\" % (n, k, nok))",
+   "expect": "kill",
+   "find": "    sys.stdout.write(\"HARM_WATCH: legs=%d ok=%d mismatch=%d\\n\" % (n, nok, k))",
+   "killed_by": "panel",
+   "observed": "panel: c: summary [14, 14, 0] -> [14, 0, 14]; planted_wrong: c: summary [14, 13, 1] -> [14, 1, 13]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "summary-ok-count-drop",
+   "rule": "summary",
+   "replace": "        if False:\n            nok += 1",
+   "expect": "kill",
+   "find": "        if rc_ok and marker_ok:\n            nok += 1",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 0, 14]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "summary-k-from-n",
+   "rule": "summary",
+   "replace": "    k = n",
+   "expect": "kill",
+   "find": "    k = n - nok",
+   "killed_by": "panel",
+   "observed": "panel: c: rc 0 -> 1; planted_wrong: c: summary [14, 13, 1] -> [14, 13, 14]; selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "leg-line-rc-expect",
+   "rule": "leg-line",
+   "replace": "            row[\"id\"], row[\"expect_rc\"], rc if rc is not None else \"SETUP\",",
+   "expect": "kill",
+   "find": "            row[\"id\"], rc if rc is not None else \"SETUP\", row[\"expect_rc\"],",
+   "killed_by": "planted_wrong",
+   "observed": "planted_wrong: c: leg index ['0', '1', 'ok'] -> ['1', '0', 'ok'] (1 changed); selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "leg-line-id-length",
+   "rule": "leg-line",
+   "replace": "        line = \"LEG %s rc=%s expect=%s marker=%s %s\" % (\n            len(row[\"id\"]), rc if rc is not None else \"SETUP\", row[\"expect_rc\"],",
+   "expect": "kill",
+   "find": "        line = \"LEG %s rc=%s expect=%s marker=%s %s\" % (\n            row[\"id\"], rc if rc is not None else \"SETUP\", row[\"expect_rc\"],",
+   "killed_by": "panel",
+   "observed": "panel: c: leg ids 14 -> 10 (missing=['gate_selftest', 'index', 'ledger', 'mako_selftest'] extra=['13', '15', '16', '17']); planted_wrong: c: leg ids 14 -> 10 (missing=['gate_selftest', 'index', 'ledger', 'mako_selftest'] extra=['13', '15', '16', '17']); selftest: c: rc 0 -> 1"
+  },
+  {
+   "id": "leg-line-only-mismatch",
+   "rule": "leg-line",
+   "replace": "        if not (rc_ok and marker_ok):\n            sys.stdout.write(line + \"\\n\")\n            sys.stdout.flush()",
+   "expect": "kill",
+   "find": "        sys.stdout.write(line + \"\\n\")\n        sys.stdout.flush()",
+   "killed_by": "panel",
+   "observed": "panel: c: leg ids 14 -> 0 (missing=['gate_selftest', 'index', 'ledger', 'mako_selftest'] extra=[]); planted_wrong: c: leg ids 14 -> 1 (missing=['gate_selftest', 'ledger', 'mako_selftest', 'mime_selftest'] extra=[]); selftest: c: rc 0 -> 1"
+  }
+ ],
+ "equivalents": [
+  {
+   "id": "eq-cwd-drop",
+   "rule": "cwd",
+   "replace": "        p = subprocess.run(argv, stdout=subprocess.PIPE,",
+   "argument": "The counter invokes the tool with cwd=--repo (the tool contract only says the legs run with cwd=--repo, and the tool is itself started from the repo), so dropping the explicit cwd changes no leg on any control. Verified: the equivalent row is byte-identical to mutant cwd-drop, which survived.",
+   "find": "        p = subprocess.Popen(argv, cwd=repo, stdout=subprocess.PIPE,"
+  },
+  {
+   "id": "eq-census-first-only",
+   "rule": "census",
+   "replace": "        panel_line(*findings[0])",
+   "argument": "Every control that reaches the census prints exactly one finding (the explained-delta rule keeps the planted dropped-leg and extra-leg panels at one line, and the selftest's duplicate/round-empty/count fixtures each produce one), so printing only the first finding is identical on every control.",
+   "find": "        for fid, detail in findings:\n            panel_line(fid, detail)"
+  },
+  {
+   "id": "eq-census-row-guard",
+   "rule": "census",
+   "replace": "        if False:\n            findings.append((\"PANEL_ROW\", \"row-not-object\"))\n            continue",
+   "argument": "No control panel carries a non-object row; every row is a dict, so the guard is dead on the control set (and dropping it would crash, not answer).",
+   "find": "        if not isinstance(row, dict):\n            findings.append((\"PANEL_ROW\", \"row-not-object\"))\n            continue"
+  }
+ ],
+ "not_observable": [
+  {
+   "id": "no-census-unreadable-legs",
+   "rule": "census",
+   "replace": "        return []",
+   "why_not_observable": "No control panel has an empty or non-list legs field; the selftest's unreadable check uses an absent file (load_panel fails before census), so the guard is dead on the control set. Removing it with a bad panel would crash (TypeError), which is never a kill.",
+   "find": "        return [(\"PANEL_UNREADABLE\", \"legs-missing-or-empty\")]"
+  },
+  {
+   "id": "no-scratch-escape",
+   "rule": "scratch",
+   "replace": "            pass",
+   "why_not_observable": "No control leg id escapes the scratch root (all ids are plain alphanumerics), so the guard is dead on the control set.",
+   "find": "            return None, \"scratch-escape\""
+  },
+  {
+   "id": "no-bad-leg-id",
+   "rule": "scratch",
+   "replace": "    if False:",
+   "why_not_observable": "No control leg id contains a path separator or a leading dot; the guard is dead on the control set.",
+   "find": "    if not all(c.isalnum() or c in \"._-\" for c in leg_id) or leg_id.startswith(\".\"):"
+  },
+  {
+   "id": "no-json-exit-field",
+   "rule": "json",
+   "replace": "            \"legs\": results, \"exit\": 0,",
+   "why_not_observable": "The selftest's json-mode check reads legs_run, mismatch and the leg array, never the exit field; the counter reads the text face. No control reads the JSON exit field.",
+   "find": "            \"legs\": results, \"exit\": 0 if k == 0 else 1,"
+  },
+  {
+   "id": "no-json-census-field",
+   "rule": "json",
+   "replace": "            \"census\": [\"x\"], \"legs_run\": n, \"ok\": nok, \"mismatch\": k,",
+   "why_not_observable": "The JSON census field is a constant empty list in production (census findings return before the JSON face); no control reads it.",
+   "find": "            \"census\": [], \"legs_run\": n, \"ok\": nok, \"mismatch\": k,"
+  },
+  {
+   "id": "panel-pin-expect-legs-drop",
+   "rule": "census-leg-count",
+   "find": "    if delta != 0 and delta != explained:\n        findings.insert(0, (\"PANEL_LEG_COUNT\", \"rows=%d expect_legs=%d\" % (n_rows, expect_legs)))",
+   "replace": "    if False:\n        findings.insert(0, (\"PANEL_LEG_COUNT\", \"rows=%d expect_legs=%d\" % (n_rows, expect_legs)))",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "census-duplicate-drop",
+   "rule": "census-duplicate",
+   "find": "        if lid in seen:",
+   "replace": "        if False:",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "census-round-missing-drop",
+   "rule": "census-round-missing",
+   "find": "        if not ids:\n            findings.append((\"PANEL_ROUND_MISSING\", \"round=%s\" % rnd))",
+   "replace": "        if False:\n            findings.append((\"PANEL_ROUND_MISSING\", \"round=%s\" % rnd))",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "census-legcount-detail",
+   "rule": "census-leg-count",
+   "find": "(\"PANEL_LEG_COUNT\", \"rows=%d expect_legs=%d\" % (n_rows, expect_legs))",
+   "replace": "(\"PANEL_LEG_COUNT\", \"rows=%d expect=%d\" % (n_rows, expect_legs))",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "census-roundmissing-detail",
+   "rule": "census-round-missing",
+   "find": "(\"PANEL_ROUND_MISSING\", \"round=%s\" % rnd)",
+   "replace": "(\"PANEL_ROUND_MISSING\", \"r=%s\" % rnd)",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "census-duplicate-detail",
+   "rule": "census-duplicate",
+   "find": "(\"PANEL_DUPLICATE\", \"id=%s\" % lid)",
+   "replace": "(\"PANEL_DUPLICATE\", \"row=%s\" % lid)",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "census-missing-detail",
+   "rule": "census-leg-missing",
+   "find": "                findings.append((\"PANEL_LEG_MISSING\", \"id=%s round=%s\" % (lid, rnd)))",
+   "replace": "                findings.append((\"PANEL_LEG_MISSING\", \"id=%s\" % lid))",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "census-unknown-detail",
+   "rule": "census-leg-unknown",
+   "find": "        if rounds_has and lid not in rounds[row[\"round\"]]:\n            unknown.append(lid)\n            findings.append((\"PANEL_LEG_UNKNOWN\", \"id=%s\" % lid))",
+   "replace": "        if rounds_has and lid not in rounds[row[\"round\"]]:\n            unknown.append(lid)\n            findings.append((\"PANEL_LEG_UNKNOWN\", \"leg=%s\" % lid))",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "marker-drop",
+   "rule": "marker",
+   "find": "    marker_ok = (not marker) or (marker in res[\"out\"]) or (marker in res[\"err\"])",
+   "replace": "    marker_ok = True",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "rc-marker-detail-and",
+   "rule": "rc",
+   "find": "    if rc_ok and marker_ok:\n        detail = \"ok\"",
+   "replace": "    if rc_ok or marker_ok:\n        detail = \"ok\"",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "leg-setup-detail-drop",
+   "rule": "rc",
+   "find": "    if res.get(\"setup\"):\n        return False, False, \"setup:\" + res[\"setup\"]",
+   "replace": "    if False:\n        return False, False, \"setup:\" + res[\"setup\"]",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "stdout-not-captured",
+   "rule": "capture",
+   "find": "        p = subprocess.Popen(argv, cwd=repo, stdout=subprocess.PIPE,",
+   "replace": "        p = subprocess.Popen(argv, cwd=repo, stdout=subprocess.DEVNULL,",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted. The selftest's FAIL is a crash inside its inner gate run (the leg capture returns None and .decode raises), not a modelled answer; the production path crashes, so this is not a kill."
+  },
+  {
+   "id": "stderr-not-merged",
+   "rule": "capture",
+   "find": "                             stderr=subprocess.PIPE, start_new_session=True)",
+   "replace": "                             stderr=subprocess.DEVNULL, start_new_session=True)",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted. The selftest's FAIL is a crash inside its inner gate run (the leg capture returns None and .decode raises), not a modelled answer; the production path crashes, so this is not a kill."
+  },
+  {
+   "id": "timeout-drop",
+   "rule": "timeout",
+   "find": "        outb, errb = p.communicate(timeout=timeout)",
+   "replace": "        outb, errb = p.communicate()",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "timeout-huge",
+   "rule": "timeout",
+   "find": "        outb, errb = p.communicate(timeout=timeout)",
+   "replace": "        outb, errb = p.communicate(timeout=10 ** 6)",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "leg-timeout-cli-ignored",
+   "rule": "timeout",
+   "find": "    if args.timeout is not None:\n        return args.timeout",
+   "replace": "    if False:\n        return args.timeout",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "cwd-drop",
+   "rule": "cwd",
+   "find": "        p = subprocess.Popen(argv, cwd=repo, stdout=subprocess.PIPE,",
+   "replace": "        p = subprocess.Popen(argv, stdout=subprocess.PIPE,",
+   "why_not_observable": "No control observed a well-formed difference (sweep verdict survived; rcs {\"panel\": 0, \"planted_dropped\": 2, \"planted_extra\": 2, \"planted_wrong\": 1, \"selftest\": 0}). The mutation changes only a path the committed panel, the three planted panels and --selftest do not exercise."
+  },
+  {
+   "id": "leg-line-marker-always-ok",
+   "rule": "leg-line",
+   "find": "            \"ok\" if marker_ok else \"MISS\", detail)",
+   "replace": "            \"ok\", detail)",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "scratch-refuse-drop",
+   "rule": "scratch",
+   "find": "        else:\n            return None, \"scratch-not-ours\"",
+   "replace": "        else:\n            shutil.rmtree(legdir)",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "scratch-marker-drop",
+   "rule": "scratch",
+   "find": "    open(os.path.join(legdir, LEG_SCRATCH_MARKER), \"w\").close()",
+   "replace": "    pass",
+   "why_not_observable": "The gate's --selftest crashes on it (traceback: without the marker the foreign scratch dir is refused and a later fixture run aborts), and a crash is not a kill; no panel or planted control observes it."
+  },
+  {
+   "id": "log-not-written",
+   "rule": "log",
+   "find": "    if scratch_root:",
+   "replace": "    if False:",
+   "why_not_observable": "Observed only by the gate's --selftest (selftest rc 0 -> 1). The C2 counter never runs the gate's --selftest (finding F3: its --selftest flag is its own; run_gate's argv carries no --selftest), and no panel or planted control observes it, so it is not counted."
+  },
+  {
+   "id": "json-legs-run",
+   "rule": "json",
+   "find": "            \"legs\": results, \"exit\": 0 if k == 0 else 1,",
+   "replace": "            \"legs\": results, \"exit\": 0,",
+   "why_not_observable": "No control observed a well-formed difference (sweep verdict survived; rcs {\"panel\": 0, \"planted_dropped\": 2, \"planted_extra\": 2, \"planted_wrong\": 1, \"selftest\": 0}). The mutation changes only a path the committed panel, the three planted panels and --selftest do not exercise."
+  },
+  {
+   "id": "json-mismatch",
+   "rule": "json",
+   "find": "            \"legs\": results, \"exit\": 0 if k == 0 else 1,",
+   "replace": "            \"legs\": results, \"exit\": 1,",
+   "why_not_observable": "No control observed a well-formed difference (sweep verdict survived; rcs {\"panel\": 0, \"planted_dropped\": 2, \"planted_extra\": 2, \"planted_wrong\": 1, \"selftest\": 0}). The mutation changes only a path the committed panel, the three planted panels and --selftest do not exercise."
+  }
+ ],
+ "outside_region": [
+  {
+   "id": "outside-selftest-line-renamed",
+   "rule": "selftest",
+   "replace": "    print(\"HARM_WATCH_SELFTESTX: checks=%d failed=%d\" % (len(checks), len(failed)))",
+   "argument": "Inside def selftest(, so outside the declared non-selftest mutant region; the lane's check-selftest-strength.py cuts at `def selftest(` and a kill-set mutant there could silence its own check. Listed for coverage, never counted.",
+   "find": "    print(\"HARM_WATCH_SELFTEST: checks=%d failed=%d\" % (len(checks), len(failed)))"
+  },
+  {
+   "id": "outside-selftest-checks-zero",
+   "rule": "selftest",
+   "replace": "% (0, len(failed)))",
+   "argument": "Inside def selftest(; outside the declared region. It would be killed by a counter that ran the gate's --selftest, but the C2 counter does not (finding F3), and the region rule forbids counting it anyway.",
+   "find": "% (len(checks), len(failed)))"
+  },
+  {
+   "id": "outside-selftest-fail-silent",
+   "rule": "selftest",
+   "replace": "    return 0",
+   "argument": "Inside def selftest(; outside the declared region. Not observable anyway: the pristine selftest is green, so no control forces failed>0.",
+   "find": "    return 0 if not failed else 1"
+  },
+  {
+   "id": "outside-selftest-vacuous",
+   "rule": "selftest",
+   "replace": "    if a.selftest:\n        print(\"HARM_WATCH_SELFTEST: checks=99 failed=0\")\n        return 0",
+   "argument": "Inside main() but it replaces the selftest dispatch; the region rule is about the selftest body, and this row is the coverage finding: a vacuous selftest printing checks=99 failed=0 is indistinguishable to the counter, which reads only the count. Outside the counted region by the same rule.",
+   "find": "    if a.selftest:\n        return selftest()"
+  }
+ ]
+}

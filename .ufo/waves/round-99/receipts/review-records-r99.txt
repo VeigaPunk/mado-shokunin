@@ -1,0 +1,198 @@
+# round 99 - records review receipt (R99MReviewRecords, 2026-11-07)
+# Read-only: no lane gate or counter was executed. Every count below is this seat's own
+# parser (stdlib; git show for the bytes at a revision).
+# Snapshot: rev 2cbaa141f42df9dfeee4d207cae6558a4dd59863 + working tree at
+# 2026-11-07T18:26:30-03:00. Working tree: M LOG.md, M PROVINCE.md, M SKILL.md,
+# M corpus/QUALITY.md; ?? .ufo/waves/round-99/, ?? corpus/lessons/round-99.md.
+# corpus/SOURCES.md is unmodified (`git status --porcelain corpus/SOURCES.md` -> empty).
+# The lsp device is not available in this seat's toolset; caller/definition checks are
+# text/git only, never presented as semantic proof.
+
+## D1 - the S532 registry row
+
+$ grep -c 'S532' corpus/SOURCES.md
+0
+$ grep -nE '^\| *S5[0-9][0-9] *\|' corpus/SOURCES.md | tail -1 | cut -c1-40
+483:| S531 | `gio(1)` manual, GLib 2.90.1
+$ grep -n 'S532' corpus/lessons/round-99.md corpus/lessons/round-98.md PROVINCE.md
+corpus/lessons/round-99.md:15 (the Gate table row)
+corpus/lessons/round-98.md:162 (the Gate table row), :193 (Candidates)
+PROVINCE.md:591 (S528-S532), :621 (S532, S533, S534 in the round-99 refinement)
+
+Re-fetch of the row's URL (this seat, 2026-11-07):
+$ curl -sSL -o gio-tool-launch.c -w '%{http_code} %{url_effective}' \
+    https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gio-tool-launch.c
+200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gio-tool-launch.c
+$ sha256sum gio-tool-launch.c; stat -c%s gio-tool-launch.c
+16b4c8683b00407670f600eda0e65e9d929a59daac499cbe8f3d1fd532f6595a  3991
+$ sed -n '116p' gio-tool-launch.c
+              args = g_list_append (args, g_file_new_for_commandline_arg (argv[i]));
+
+The lesson's S533 locator is wrong (quote at :280-281, not :274-276):
+$ grep -n 'Locates the first executable named' .ufo/waves/round-99/fetch/gutils.c
+280: * Locates the first executable named @program in @path, in the
+The receipt's second gutils locator is wrong (quote at :322, not :345-347):
+$ grep -n 'Use the working dir as program path' .ufo/waves/round-99/fetch/gutils.c
+322:  /* Use the working dir as program path if provided */
+479:      /* Use the working dir as program path if provided */
+The S534 locators are right:
+$ sed -n '128p;130p' .ufo/waves/round-99/fetch/spec-recognized-keys.html
+(Path sentence at :128, Terminal sentence at :130)
+
+## D2 - the registry gate at the records tip
+
+$ ls .ufo/waves/round-99/receipts/
+connector-sweep-r99.txt  harm-r98c1-at-r99.txt  harm-r98c2-at-r99.txt  sources-open-r99.txt
+(no receipt of quality/check-sources-readback.py; grep -rl SOURCES_READBACK over the
+wave dir matches only make-spec.py, the two harm receipts' prose, and the dispatch/spec
+JSON - no gate output line)
+
+Own parser (rows = 11-column S-id rows in the ## Registry section, 0-3 leading spaces;
+entries = corpus/knowledge/*.md):
+  35f3ce80  rows=462 entries=118 findings=21  (all R4; ids S457 S459 S460 S464 S465 S466
+                                               S470 S481 S484 S485 S493 S501 S502 S511
+                                               S512 S517 = 16 rows / 21 pairs)
+  a3471631  rows=462 entries=118 findings=0
+  020af865  rows=466 entries=119 findings=0
+  6f61eff0  rows=466 entries=119 findings=0
+  2cbaa141  rows=466 entries=119 findings=0
+The 21 at 35f3ce80 reproduce the round-98 receipt's base_mismatches=21 and the 21
+BASE_MISMATCH ids; the 462/118 at a3471631 reproduces c2-measured-r98.txt:33.
+
+## D3 - the two r98 SKILL rows' pins
+
+$ for rev in 2cbaa141 6f61eff0 a3471631 020af865; do git show $rev:<path> | sha256sum; done
+tools/mado-execargv.py                       49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713  (all four)
+.ufo/waves/round-98/controls/execargv-cases-r98.json    21cccc3ad94e99dff9cdb281a38b32579e9d3e6be14799a83b09499e466e370e  (all four)
+.ufo/waves/round-98/controls/execargv-mutants-r98.json  32c207b32d8aa6126ee949383e7ab992f53c76369310a3e7d88c2b6240ce53bb  (all four)
+.ufo/waves/round-98/controls/execargv-fresh-r98.py      b7bc137a643c771f1cd88a3909d1650205b37a155869ade84adc419e3515357c  (all four)
+quality/check-sources-readback.py            f1000bf11e88149695aa96229fcf2155929ebbb72a2cfa215d8c24e2f37bd8f5  (all four)
+$ sha256sum /usr/bin/gio
+d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+$ grep -n 'MADO_COUNTER_SELFTEST' .ufo/waves/round-98/receipts/review-c1-r98.txt
+49:  counter --selftest at the pin: MADO_COUNTER_SELFTEST: checks=16 failed=0 rc=0
+$ grep -c '@check(' quality/check-sources-readback.py
+21
+Row lines: SKILL.md:2980 (mado-r98-execargv), SKILL.md:2982 (mado-r98-sources-readback).
+
+## D4 - the LOG round-98 correction
+
+$ grep -o 'fresh_seed=[0-9a-f]*' .ufo/waves/round-98/receipts/c1-measured-r98.txt
+fresh_seed=f00d3edcdb285ac0   (twice)
+$ git show 020af865:.ufo/waves/round-98/receipts/c1-measured-r98.txt | grep -o 'fresh_seed=[0-9a-f]*'
+fresh_seed=f00d3edcdb285ac0   (the receipt has one commit, 020af865)
+$ git log --oneline -S'e2bf4d1b757e2e7b' --name-only
+020af865 ... LOG.md, SCORECARD.md
+2cbaa141 ... corpus/lessons/round-98-verifier-spotcheck.md
+$ grep -rn 'e2bf4d1b757e2e7b' --exclude-dir=.git .
+LOG.md:4631, LOG.md:4660, LOG.md:4662, SCORECARD.md:5590, the spot-check:146
+$ grep -c '^\*\*M98-' corpus/lessons/round-98.md
+12
+The fresh generator has no seed line in its output (its stdout is FRESH_GEN: cases=N ok=A
+refused=B plus FRESH_GEN_PIN); the counter prints fresh_seed=<the same hex it passes as
+--seed> (quality/counters/c1-r98-execargv.py:1088-1101).
+
+## D6 - the QUALITY criterion for M98-1's class
+
+$ grep -n '^\*\*170\.\|^\*\*171\.' corpus/QUALITY.md
+1289:**170.  (M98-1's class)
+1299:**171.  (M99-1)
+$ grep -n '^## ' corpus/lessons/round-98.md
+9:## Mistakes
+151:## Gate
+$ grep -n '^## ' corpus/knowledge/gio-exec-argv-r98.md | tail -2
+461:## 12. Measured probes
+620:## 13. Named limits
+$ ls corpus/knowledge/ | grep -c 'r99\|round-99'
+0
+Criterion 170's shown-able-to-fail names no command, file or revision; criteria 168
+(QUALITY.md:1266) and 169 (:1276) both carry exact commands.
+
+## D8 - the C2 commit attribution
+
+$ git show --stat --oneline 06b6bf2a -- corpus/SOURCES.md
+ corpus/SOURCES.md | 32 ++++++++++++++++----------------   (16 insertions, 16 deletions)
+$ git show 020af865 -- corpus/SOURCES.md | grep -E '^[+-]\| S[0-9]+'
+-/+ S504, -/+ S506, -/+ S527, + S528, + S529, + S530, + S531
+$ git show --stat --oneline 020af865 -- corpus/knowledge/
+ corpus/knowledge/gio-exec-argv-r98.md | 690 ++++++++++++++++++++++++++++++++++
+$ git log --oneline 06b6bf2a..020af865 -- corpus/SOURCES.md corpus/knowledge/gio-exec-argv-r98.md
+020af865 ...   (only the second half is re-derivable from this command)
+
+## Round-99 declaration - line citations
+
+$ grep -n 'g_spawn_async_with_fds' .ufo/waves/round-98/fetch/gdesktopappinfo.c
+3134:      if (!g_spawn_async_with_fds (info->path,
+$ sed -n '3116,3126p' .ufo/waves/round-98/fetch/gdesktopappinfo.c
+(the gio-launch-desktop wrapper path and wrapped_argv construction; no spawn call)
+$ grep -n 'G_FILE_TEST_IS_DIR' .ufo/waves/round-99/fetch/gutils.c
+340:      !g_file_test (program, G_FILE_TEST_IS_DIR))
+487:      !g_file_test (startp, G_FILE_TEST_IS_DIR))
+Declaration lines: R4 at claims-declaration-r99.md:45-48 (cites :3116-3126; declares the
+cause cwd-failed at :48); R7 at :50-51 (cites gutils.c:352-356). The CLI contract's cause
+list (Shared contract 1) is load / no-terminal / program-not-found plus the r98 causes
+no-exec / desktop-file / exec-parse; cwd-failed is not in it, and the oracle's error map
+(Shared contract 2) has no cwd-failed entry.
+Verified correct: R1 :1976-2004 (call at :1993), R1b :1946-1960, R2 :2765-2778 (12 table
+rows), :2797-2806, :2814-2830, :3027-3032 (message at :3032), R3 :3053-3084 (test at
+:3066-3068, lookup at :3077; the message is at :3093), R5 :3036-3040, R6 gutils.c:300-500
+(default PATH "/bin:/usr/bin:." at :388; empty entry at :469-476; working_dir join at
+:479-484).
+
+## Round-99 fetch dir and receipt
+
+$ ls .ufo/waves/round-99/fetch/
+gio-tool-launch.c  gutils.c  spec-recognized-keys.html  spec-terminal-path.html
+$ sha256sum .ufo/waves/round-99/fetch/spec-*.html
+7bc0b6401cda9c019d5b89a2fab053d216eb937c83602df838a6c0a1175c03d9  spec-recognized-keys.html
+7bc0b6401cda9c019d5b89a2fab053d216eb937c83602df838a6c0a1175c03d9  spec-terminal-path.html
+$ sha256sum .ufo/waves/round-98/fetch/gdesktopappinfo.c .ufo/waves/round-98/fetch/gshell.c
+8e9ce1a8327a2daf6bc16e8dcfb653c482afde7bebc2ca2621747626b5495b0d  gdesktopappinfo.c
+640a0d0fbc9c50d0c70eb8f9ff2c4994392515c6174f76ade9292d7500e60442  gshell.c
+sources-open-r99.txt:4-5 says the bytes are committed under .ufo/waves/round-99/fetch/;
+gdesktopappinfo.c and gshell.c are only in .ufo/waves/round-98/fetch/. The receipt has no
+line for spec-terminal-path.html, and spec-terminal-path.html is byte-identical to
+spec-recognized-keys.html (the same URL under a second name).
+
+## Round-99 probe evidence
+
+$ stat -c '%y %n' .ufo/waves/round-99/probe/c2/out.txt .ufo/waves/round-99/probe/c4/work/h.desktop
+2026-11-07 18:12:35.560114644 -0300 .ufo/waves/round-99/probe/c2/out.txt
+2026-11-07 18:12:35.556375333 -0300 .ufo/waves/round-99/probe/c4/work/h.desktop
+$ cat .ufo/waves/round-99/probe/c2/out.txt
+PROG argc=0
+CWD=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-99/probe
+GDF=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-99/probe/c4/work/h.desktop
+c2/work holds a.desktop (Terminal=true) and b.desktop (Exec=nosuchprog-xyz %f); neither
+has a surviving record. c1/out.txt is a clean c1 record (GDF=c1/work/app.desktop).
+
+## SCORECARD round-98 rows
+
+$ sed -n '5590p' SCORECARD.md | grep -o 'fresh 60/60 at seed `[0-9a-f]*`'
+fresh 60/60 at seed `e2bf4d1b757e2e7b`
+$ sed -n '5591p' SCORECARD.md | grep -o 'gate findings 0 over [0-9]* rows / [0-9]* entries'
+gate findings 0 over 466 rows / 119 entries
+The 5591 row's own counting command pins --rev a3471631 (462 rows / 118 entries).
+
+## Round-98 harm-final note (the declaration's "noticed only by the spot-check")
+
+$ sed -n '41,42p' .ufo/waves/round-98/receipts/harm-final-r98.txt
+#   r97c2_counter_selftest is not in this run's 26 legs; the first run's leg carried the literal
+#   placeholder `SKILL-AT-MEASURED-REV` (see harm-base-r98.txt's note).
+$ git log --oneline -1 -- .ufo/waves/round-98/receipts/harm-final-r98.txt
+fa4445af ...   (before the spot-check commit 2cbaa141)
+
+## Connector sweep spot-check
+
+$ for l in audio-shokunin kaidoku-shokunin tsukuroi-shokunin kotodama-shokunin; do
+    wc -l < $l/PROVINCE.md; ls $l/corpus/knowledge/*.md | wc -l; done
+53/18, 779/184, 573/106, 31/0 - all four match connector-sweep-r99.txt.
+
+## Assimilation locator
+
+$ ls /home/vgpnk/Projects/shokuknow/merge/mado/
+MERGE-REPORT.json  MERGE-REPORT.md  SOURCES.append.md  amendments/  knowledge/
+$ grep -ci 'launch\|terminal\|desktop entry\|Exec' /home/vgpnk/Projects/shokuknow/merge/mado/MERGE-REPORT.md
+0
+The package exists at the external root the round prompt names; no launch-environment
+theme is staged (the closest entry, uwsm-app-daemon-unit-r7.md, is the systemd unit plane).

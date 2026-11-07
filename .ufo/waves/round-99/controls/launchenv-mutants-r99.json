@@ -1,0 +1,708 @@
+{
+ "version": 1,
+ "tool": "tools/mado-launchenv.py",
+ "candidate_sha256": "a63c20c886a2bd840d80966d531e055e9c4f5d3accb431e4b0e317e04523eb16",
+ "classes": [
+  "term-xte",
+  "term-kgx",
+  "term-order",
+  "term-none",
+  "term-path",
+  "cwd-path",
+  "cwd-empty",
+  "cwd-missing",
+  "prog-abs",
+  "prog-bare",
+  "prog-missing",
+  "prog-dir",
+  "prog-rel",
+  "multi-term",
+  "path-empty-entry",
+  "path-unset",
+  "tryexec",
+  "exec-test",
+  "prog-notfound",
+  "refuse-shape",
+  "arg-conv",
+  "env-gdf",
+  "term-mate",
+  "term-xfce4",
+  "term-tilix",
+  "term-konsole",
+  "term-nxterm",
+  "term-color-xterm",
+  "term-rxvt",
+  "term-dtterm",
+  "term-xterm-row"
+ ],
+ "mutants": [
+  {
+   "id": "order-01-swap-kgx-gnome",
+   "find": "    ('kgx', '-e'),\n    ('gnome-terminal', '--'),",
+   "replace": "    ('gnome-terminal', '--'),\n    ('kgx', '-e'),",
+   "class": "term-order",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "order-03-xterm-first",
+   "find": "    ('xdg-terminal-exec', None),\n    ('kgx', '-e'),\n    ('gnome-terminal', '--'),",
+   "replace": "    ('xterm', '-e'),\n    ('kgx', '-e'),\n    ('gnome-terminal', '--'),",
+   "class": "term-xte",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "order-04-walk-reversed",
+   "find": "    for name, exec_arg in KNOWN_TERMINALS:",
+   "replace": "    for name, exec_arg in reversed(KNOWN_TERMINALS):",
+   "class": "term-order",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "order-06-drop-xterm-row",
+   "find": "    ('dtterm', '-e'),\n    ('xterm', '-e')",
+   "replace": "    ('dtterm', '-e')",
+   "class": "term-xterm-row",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "order-07-drop-xte-row",
+   "find": "    ('xdg-terminal-exec', None),\n    ('kgx', '-e'),\n    ('gnome-terminal', '--'),\n    ('mate-terminal', '-x'),",
+   "replace": "    ('kgx', '-e'),\n    ('gnome-terminal', '--'),\n    ('mate-terminal', '-x'),",
+   "class": "term-xte",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "order-08-drop-kgx-row",
+   "find": "    ('kgx', '-e'),\n    ('gnome-terminal', '--'),\n    ('mate-terminal', '-x'),",
+   "replace": "    ('gnome-terminal', '--'),\n    ('mate-terminal', '-x'),",
+   "class": "term-kgx",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "term-01-always-false",
+   "find": "    terminal = m.bool_value(vals.get('Terminal'))",
+   "replace": "    terminal = False",
+   "class": "term-xte",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "term-02-inverted",
+   "find": "    term = _resolve_terminal(path_env, wd) if terminal else None\n    if terminal and term is None:",
+   "replace": "    term = _resolve_terminal(path_env, wd) if not terminal else None\n    if terminal and term is None:",
+   "class": "term-xte",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "term-03-no-refusal",
+   "find": "    if terminal and term is None:",
+   "replace": "    if False:",
+   "class": "term-none",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "term-04-no-wd",
+   "find": "    terminal = m.bool_value(vals.get('Terminal'))\n    term = _resolve_terminal(path_env, wd) if terminal else None",
+   "replace": "    terminal = m.bool_value(vals.get('Terminal'))\n    term = _resolve_terminal(path_env, None) if terminal else None",
+   "class": "term-path",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "term-05-null-path",
+   "find": "    term = _resolve_terminal(path_env, wd) if terminal else None\n    if terminal and term is None:\n        # :3027-3032, per launch - the first launch refuses the whole launch.",
+   "replace": "    term = _resolve_terminal(None, wd) if terminal else None\n    if terminal and term is None:\n        # :3027-3032, per launch - the first launch refuses the whole launch.",
+   "class": "term-xte",
+   "defect": "term-order",
+   "expect": "kill"
+  },
+  {
+   "id": "execarg-01-drop-prepend",
+   "find": "            # :2814-2830: [found_terminal, exec_arg?] + the launch argv.\n            argv = [term_path] + ([term_arg] if term_arg is not None else []) + argv",
+   "replace": "            # :2814-2830: [found_terminal, exec_arg?] + the launch argv.\n            argv = [term_path] + argv",
+   "class": "term-kgx",
+   "defect": "exec-arg-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "execarg-02-drop-resolve",
+   "find": "        if found is not None:\n            return name, found, exec_arg\n    return None",
+   "replace": "        if found is not None:\n            return name, found, None\n    return None",
+   "class": "term-kgx",
+   "defect": "exec-arg-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "execarg-03-add-prepend",
+   "find": "            argv = [term_path] + ([term_arg] if term_arg is not None else []) + argv\n        # R3 (:3053-3084): keep argv[0] only when absolute, executable and not",
+   "replace": "            argv = [term_path] + [term_arg if term_arg is not None else '-e'] + argv\n        # R3 (:3053-3084): keep argv[0] only when absolute, executable and not",
+   "class": "term-xte",
+   "defect": "exec-arg-added",
+   "expect": "kill"
+  },
+  {
+   "id": "execarg-04-add-resolve",
+   "find": "        if found is not None:\n            return name, found, exec_arg",
+   "replace": "        if found is not None:\n            return name, found, exec_arg if exec_arg is not None else '-e'",
+   "class": "term-xte",
+   "defect": "exec-arg-added",
+   "expect": "kill"
+  },
+  {
+   "id": "execarg-05-kgx-dashdash",
+   "find": "    ('kgx', '-e'),",
+   "replace": "    ('kgx', '--'),",
+   "class": "term-kgx",
+   "defect": "exec-arg-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "execarg-06-gnome-dash-e",
+   "find": "    ('gnome-terminal', '--'),",
+   "replace": "    ('gnome-terminal', '-e'),",
+   "class": "term-order",
+   "defect": "exec-arg-added",
+   "expect": "kill"
+  },
+  {
+   "id": "xgterm-01-option",
+   "find": "    ('xdg-terminal-exec', None),",
+   "replace": "    ('xdg-terminal-exec', '-e'),",
+   "class": "term-xte",
+   "defect": "xgterm-null-arg",
+   "expect": "kill"
+  },
+  {
+   "id": "xgterm-02-empty-string",
+   "find": "KNOWN_TERMINALS = (\n    ('xdg-terminal-exec', None),",
+   "replace": "KNOWN_TERMINALS = (\n    ('xdg-terminal-exec', ''),",
+   "class": "term-xte",
+   "defect": "xgterm-null-arg",
+   "expect": "kill"
+  },
+  {
+   "id": "xgterm-03-dashdash",
+   "find": "KNOWN_TERMINALS = (\n    ('xdg-terminal-exec', None),\n    ('kgx', '-e'),",
+   "replace": "KNOWN_TERMINALS = (\n    ('xdg-terminal-exec', '--'),\n    ('kgx', '-e'),",
+   "class": "term-xte",
+   "defect": "xgterm-null-arg",
+   "expect": "kill"
+  },
+  {
+   "id": "wdjoin-01-drop",
+   "find": "    if working_dir is not None and not _is_abs(program):\n        program = _join2(working_dir, program)",
+   "replace": "    if False:\n        program = _join2(working_dir, program)",
+   "class": "tryexec",
+   "defect": "working-dir-join-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "wdjoin-03-noop",
+   "find": "        program = _join2(working_dir, program)",
+   "replace": "        program = program",
+   "class": "tryexec",
+   "defect": "working-dir-join-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "absbranch-02-drop-abs",
+   "find": "    if _is_abs(program) or '/' in original_program:",
+   "replace": "    if '/' in original_program:",
+   "class": "tryexec",
+   "defect": "absolute-or-slash-branch-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "absbranch-03-abs-original",
+   "find": "    if _is_abs(program) or '/' in original_program:\n        if _exec_file(program):",
+   "replace": "    if _is_abs(original_program):\n        if _exec_file(program):",
+   "class": "prog-rel",
+   "defect": "absolute-or-slash-branch-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "empty-01-absolute",
+   "find": "        if entry == '':\n            startp = program",
+   "replace": "        if entry == '':\n            startp = '/' + program",
+   "class": "path-empty-entry",
+   "defect": "empty-entry-rule",
+   "expect": "kill"
+  },
+  {
+   "id": "empty-02-dot",
+   "find": "        if entry == '':\n            startp = program\n        else:",
+   "replace": "        if entry == '':\n            startp = './' + program\n        else:",
+   "class": "path-empty-entry",
+   "defect": "empty-entry-rule",
+   "expect": "kill"
+  },
+  {
+   "id": "empty-03-empty-startp",
+   "find": "        if entry == '':\n            startp = program\n        else:\n            startp = entry + '/' + program",
+   "replace": "        if entry == '':\n            startp = ''\n        else:\n            startp = entry + '/' + program",
+   "class": "path-empty-entry",
+   "defect": "empty-entry-rule",
+   "expect": "kill"
+  },
+  {
+   "id": "reljoin-01-drop",
+   "find": "        if working_dir is not None and not _is_abs(startp):\n            startp = _join2(working_dir, startp)",
+   "replace": "        if False:\n            startp = _join2(working_dir, startp)",
+   "class": "term-path",
+   "defect": "relative-candidate-join",
+   "expect": "kill"
+  },
+  {
+   "id": "join-01-no-sep",
+   "find": "    if out and not out.endswith('/') and not b.startswith('/'):\n        out += '/'",
+   "replace": "    if False:\n        out += '/'",
+   "class": "term-path",
+   "defect": "relative-candidate-join",
+   "expect": "kill"
+  },
+  {
+   "id": "absol-01-return-relative",
+   "find": "            if _is_abs(startp):\n                return startp\n            return _join2(os.getcwd(), startp)",
+   "replace": "            return startp",
+   "class": "path-empty-entry",
+   "defect": "relative-hit-absolutisation",
+   "expect": "kill"
+  },
+  {
+   "id": "exectest-01-drop",
+   "find": "    X_OK, with directories excluded even though they carry the x bit.\"\"\"\n    return os.access(p, os.X_OK) and not os.path.isdir(p)",
+   "replace": "    X_OK, with directories excluded even though they carry the x bit.\"\"\"\n    return not os.path.isdir(p)",
+   "class": "term-xte",
+   "defect": "executable-test-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "exectest-02-exists",
+   "find": "    return os.access(p, os.X_OK) and not os.path.isdir(p)\n\n\ndef find_program",
+   "replace": "    return os.access(p, os.F_OK) and not os.path.isdir(p)\n\n\ndef find_program",
+   "class": "tryexec",
+   "defect": "executable-test-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "exectest-03-readable",
+   "find": "    return os.access(p, os.X_OK) and not os.path.isdir(p)",
+   "replace": "    return os.access(p, os.R_OK) and not os.path.isdir(p)",
+   "class": "tryexec",
+   "defect": "executable-test-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "isdir-01-drop",
+   "find": "def _exec_file(p):\n    \"\"\"g_file_test(p, IS_EXECUTABLE) && !g_file_test(p, IS_DIR): access(2)\n    X_OK, with directories excluded even though they carry the x bit.\"\"\"\n    return os.access(p, os.X_OK) and not os.path.isdir(p)",
+   "replace": "def _exec_file(p):\n    \"\"\"g_file_test(p, IS_EXECUTABLE) && !g_file_test(p, IS_DIR): access(2)\n    X_OK, with directories excluded even though they carry the x bit.\"\"\"\n    return os.access(p, os.X_OK)",
+   "class": "prog-dir",
+   "defect": "is-dir-test-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "isdir-03-symlink",
+   "find": "    return os.access(p, os.X_OK) and not os.path.isdir(p)\n\n\ndef find_program(program, path, working_dir):",
+   "replace": "    return os.access(p, os.X_OK) and not os.path.islink(p)\n\n\ndef find_program(program, path, working_dir):",
+   "class": "prog-dir",
+   "defect": "is-dir-test-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "load-01-drop-exec",
+   "find": "        if find_program(static[0], path_env, wd) is None:\n            return {'error': 'load', 'detail': 'exec-argv0'}",
+   "replace": "        if False:\n            return {'error': 'load', 'detail': 'exec-argv0'}",
+   "class": "prog-missing",
+   "defect": "load-gate-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "load-02-drop-tryexec",
+   "find": "        # BEFORE the Exec check (:1946-1960).\n        if try_v != '' and find_program(try_v, path_env, wd) is None:",
+   "replace": "        # BEFORE the Exec check (:1946-1960).\n        if False:",
+   "class": "tryexec",
+   "defect": "load-gate-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "load-03-wrong-cause",
+   "find": "            return {'error': 'load', 'detail': 'exec-argv0'}\n\n    # ---- launch time",
+   "replace": "            return {'error': 'program-not-found', 'detail': 'exec-argv0'}\n\n    # ---- launch time",
+   "class": "prog-missing",
+   "defect": "load-gate-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "load-06-tryexec-ignored",
+   "find": "    if 'TryExec' in vals:",
+   "replace": "    if False:",
+   "class": "tryexec",
+   "defect": "load-gate-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "load-07-no-wd",
+   "find": "        if find_program(static[0], path_env, wd) is None:",
+   "replace": "        if find_program(static[0], path_env, None) is None:",
+   "class": "path-empty-entry",
+   "defect": "load-gate-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "load-08-tryexec-no-wd",
+   "find": "        if try_v != '' and find_program(try_v, path_env, wd) is None:",
+   "replace": "        if try_v != '' and find_program(try_v, path_env, None) is None:",
+   "class": "tryexec",
+   "defect": "load-gate-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "loadpath-01-exec",
+   "find": "        # R1: the static argv[0] must resolve, with Path= as working dir and\n        # the process PATH (:1976-2004). A directory fails the !IS_DIR half.\n        if find_program(static[0], path_env, wd) is None:",
+   "replace": "        # R1: the static argv[0] must resolve, with Path= as working dir and\n        # the process PATH (:1976-2004). A directory fails the !IS_DIR half.\n        if find_program(static[0], os.environ.get('PATH'), wd) is None:",
+   "class": "prog-bare",
+   "defect": "load-gate-launch-path",
+   "expect": "kill"
+  },
+  {
+   "id": "loadpath-02-tryexec",
+   "find": "        if try_v != '' and find_program(try_v, path_env, wd) is None:\n            return {'error': 'load', 'detail': 'try-exec'}",
+   "replace": "        if try_v != '' and find_program(try_v, os.environ.get('PATH'), wd) is None:\n            return {'error': 'load', 'detail': 'try-exec'}",
+   "class": "tryexec",
+   "defect": "load-gate-launch-path",
+   "expect": "kill"
+  },
+  {
+   "id": "prepend-01-tail",
+   "find": "        if term is not None:\n            # :2814-2830: [found_terminal, exec_arg?] + the launch argv.\n            argv = [term_path] + ([term_arg] if term_arg is not None else []) + argv",
+   "replace": "        if term is not None:\n            # :2814-2830: [found_terminal, exec_arg?] + the launch argv.\n            argv = argv + [term_path] + ([term_arg] if term_arg is not None else [])",
+   "class": "term-xte",
+   "defect": "prepend-order-reversed",
+   "expect": "kill"
+  },
+  {
+   "id": "prepend-02-arg-first",
+   "find": "        argv = list(launch)\n        if term is not None:\n            # :2814-2830: [found_terminal, exec_arg?] + the launch argv.\n            argv = [term_path] + ([term_arg] if term_arg is not None else []) + argv",
+   "replace": "        argv = list(launch)\n        if term is not None:\n            # :2814-2830: [found_terminal, exec_arg?] + the launch argv.\n            argv = ([term_arg] if term_arg is not None else []) + [term_path] + argv",
+   "class": "term-kgx",
+   "defect": "prepend-order-reversed",
+   "expect": "kill"
+  },
+  {
+   "id": "argv0-01-drop-r3",
+   "find": "        a0 = argv[0]\n        if not _is_abs(a0) or not _exec_file(a0) or os.path.isdir(a0):",
+   "replace": "        a0 = argv[0]\n        if False:",
+   "class": "prog-bare",
+   "defect": "argv0-lookup-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "argv0-02-no-lookup",
+   "find": "            if not _is_abs(a0):\n                repl = find_program(a0, path_env, wd)",
+   "replace": "            if False:\n                repl = find_program(a0, path_env, wd)",
+   "class": "prog-bare",
+   "defect": "argv0-lookup-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "argv0-03-no-replace",
+   "find": "            argv[0] = repl",
+   "replace": "            argv[0] = a0",
+   "class": "prog-bare",
+   "defect": "argv0-lookup-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "r3-06-no-wd",
+   "find": "                repl = find_program(a0, path_env, wd)",
+   "replace": "                repl = find_program(a0, path_env, None)",
+   "class": "path-empty-entry",
+   "defect": "argv0-lookup-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "cwd-01-process",
+   "find": "        'cwd': _child_cwd(wd),",
+   "replace": "        'cwd': os.getcwd(),",
+   "class": "term-xte",
+   "defect": "cwd-from-process",
+   "expect": "kill"
+  },
+  {
+   "id": "cwd-02-child-process",
+   "find": "    target = wd if _is_abs(wd) else _join2(os.getcwd(), wd)",
+   "replace": "    target = os.getcwd()",
+   "class": "term-xte",
+   "defect": "cwd-from-process",
+   "expect": "kill"
+  },
+  {
+   "id": "r4-01-drop-enterable",
+   "find": "    # R4: the first spawn enters info->path; failure aborts the launch.\n    if not _cwd_enterable(wd):",
+   "replace": "    # R4: the first spawn enters info->path; failure aborts the launch.\n    if False:",
+   "class": "cwd-missing",
+   "defect": "cwd-from-process",
+   "expect": "kill"
+  },
+  {
+   "id": "r4-02-empty-only",
+   "find": "    if not _cwd_enterable(wd):\n        return {'error': 'cwd-failed'",
+   "replace": "    if not wd:\n        return {'error': 'cwd-failed'",
+   "class": "term-xte",
+   "defect": "cwd-from-process",
+   "expect": "kill"
+  },
+  {
+   "id": "r4-03-no-isdir",
+   "find": "    return os.path.isdir(wd) and os.access(wd, os.X_OK)",
+   "replace": "    return os.access(wd, os.X_OK)",
+   "class": "cwd-missing",
+   "defect": "cwd-from-process",
+   "expect": "kill"
+  },
+  {
+   "id": "empty-path-01-empty-cwd",
+   "find": "    if not wd:\n        return os.getcwd()",
+   "replace": "    if not wd:\n        return ''",
+   "class": "term-xte",
+   "defect": "empty-path-inheritance",
+   "expect": "kill"
+  },
+  {
+   "id": "empty-path-02-enterable",
+   "find": "    if not wd:\n        return True",
+   "replace": "    if wd is None:\n        return True",
+   "class": "cwd-empty",
+   "defect": "empty-path-inheritance",
+   "expect": "kill"
+  },
+  {
+   "id": "gdf-01-empty-env",
+   "find": "        'env': {'GIO_LAUNCHED_DESKTOP_FILE': result['gdf']},",
+   "replace": "        'env': {},",
+   "class": "term-xte",
+   "defect": "gdf-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "gdf-02-none",
+   "find": "    gdf = desktop_resolved\n    return {",
+   "replace": "    gdf = None\n    return {",
+   "class": "term-xte",
+   "defect": "gdf-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "gdf-03-result-none",
+   "find": "        'gdf': gdf,",
+   "replace": "        'gdf': None,",
+   "class": "term-xte",
+   "defect": "gdf-dropped",
+   "expect": "kill"
+  },
+  {
+   "id": "gdf-04-basename",
+   "find": "    gdf = desktop_resolved",
+   "replace": "    gdf = os.path.basename(desktop_resolved)",
+   "class": "term-xte",
+   "defect": "gdf-desktop-id",
+   "expect": "kill"
+  },
+  {
+   "id": "gdf-05-id",
+   "find": "    gdf = desktop_resolved\n    return {\n        'launches': len(resolved),",
+   "replace": "    gdf = os.path.basename(desktop_resolved)[:-8] if desktop_resolved.endswith('.desktop') else os.path.basename(desktop_resolved)\n    return {\n        'launches': len(resolved),",
+   "class": "term-xte",
+   "defect": "gdf-desktop-id",
+   "expect": "kill"
+  },
+  {
+   "id": "gdf-06-no-canon",
+   "find": "    desktop_resolved = _canonicalise_arg(desktop_path)",
+   "replace": "    desktop_resolved = desktop_path",
+   "class": "env-gdf",
+   "defect": "gdf-desktop-id",
+   "expect": "kill"
+  },
+  {
+   "id": "cause-01-load",
+   "find": "        if find_program(static[0], path_env, wd) is None:\n            return {'error': 'load', 'detail': 'exec-argv0'}\n\n    # ---- launch time",
+   "replace": "        if find_program(static[0], path_env, wd) is None:\n            return {'error': 'load-refused', 'detail': 'exec-argv0'}\n\n    # ---- launch time",
+   "class": "prog-missing",
+   "defect": "refusal-cause-token",
+   "expect": "kill"
+  },
+  {
+   "id": "cause-02-noterm",
+   "find": "        return {'error': 'no-terminal', 'detail': 'no-known-terminal'}",
+   "replace": "        return {'error': 'no-term', 'detail': 'no-known-terminal'}",
+   "class": "term-none",
+   "defect": "refusal-cause-token",
+   "expect": "kill"
+  },
+  {
+   "id": "cause-03-pnf",
+   "find": "                return {'error': 'program-not-found', 'detail': a0}",
+   "replace": "                return {'error': 'not-found', 'detail': a0}",
+   "class": "prog-notfound",
+   "defect": "refusal-cause-token",
+   "expect": "kill"
+  },
+  {
+   "id": "cause-04-cwd",
+   "find": "        return {'error': 'cwd-failed', 'detail': wd if wd is not None else ''}",
+   "replace": "        return {'error': 'cwd', 'detail': wd if wd is not None else ''}",
+   "class": "cwd-missing",
+   "defect": "refusal-cause-token",
+   "expect": "kill"
+  },
+  {
+   "id": "cause-05-noexec",
+   "find": "        return {'error': 'no-exec', 'detail': 'missing-exec'}",
+   "replace": "        return {'error': 'missing-exec', 'detail': 'missing-exec'}",
+   "class": "refuse-shape",
+   "defect": "refusal-cause-token",
+   "expect": "kill"
+  },
+  {
+   "id": "cause-07-execparse",
+   "find": "        return {'error': 'exec-parse', 'detail': 'static'}",
+   "replace": "        return {'error': 'parse', 'detail': 'static'}",
+   "class": "refuse-shape",
+   "defect": "refusal-cause-token",
+   "expect": "kill"
+  },
+  {
+   "id": "cause-08-tryexec",
+   "find": "            return {'error': 'load', 'detail': 'try-exec'}",
+   "replace": "            return {'error': 'try-exec', 'detail': 'try-exec'}",
+   "class": "tryexec",
+   "defect": "refusal-cause-token",
+   "expect": "kill"
+  }
+ ],
+ "not_observable": [
+  {
+   "id": "no-direct-relative-return",
+   "find": "            return _join2(os.getcwd(), program)",
+   "replace": "            return program",
+   "class": "relative-hit-absolutisation",
+   "argument": "the direct branch returns a RELATIVE program only when the program contains '/' and the working_dir join does not make it absolute; every frozen slash-program case (pr-sub, pr-dot) carries Path= so the join yields an absolute path and the call is never reached with a relative value"
+  },
+  {
+   "id": "no-group-token",
+   "find": "        return {'error': 'desktop-file', 'detail': 'no-desktop-entry-group'}",
+   "replace": "        return {'error': 'desktop', 'detail': 'no-desktop-entry-group'}",
+   "class": "refusal-cause-token",
+   "argument": "no frozen case reaches the group check: rf-notkeyfile's raw bytes 'hello\n' hit the earlier key-before-group refusal, so the token at this site is unobservable (the observable sibling is cause-14-early-key)"
+  },
+  {
+   "id": "no-swap-xte-kgx",
+   "find": "    ('xdg-terminal-exec', None),\n    ('kgx', '-e'),",
+   "replace": "    ('kgx', '-e'),\n    ('xdg-terminal-exec', None),",
+   "class": "term-order",
+   "argument": "no frozen case has BOTH xdg-terminal-exec and kgx on the case PATH: xte-plain carries only xte, kgx-plain and order-kgx-gnome only kgx (plus gnome-terminal). With one of the two rows present the swap cannot change which row is found, so the answer is identical on every frozen case"
+  },
+  {
+   "id": "no-slash-branch",
+   "find": "    if _is_abs(program) or '/' in original_program:\n        if _exec_file(program):\n            if _is_abs(program):",
+   "replace": "    if _is_abs(program):\n        if _exec_file(program):\n            if _is_abs(program):",
+   "class": "absolute-or-slash-branch-dropped",
+   "argument": "the slash half is load-bearing only when the program contains '/' and the working_dir join does not make it absolute; every frozen slash-program case (pr-sub, pm-slash) either carries Path= (join -> absolute, branch entered anyway) or refuses for another reason, so dropping the half changes no answer"
+  },
+  {
+   "id": "no-empty-exec",
+   "find": "    if exec_v != '':\n        static, _err = m.shell_parse_argv(exec_v)",
+   "replace": "    if True:\n        static, _err = m.shell_parse_argv(exec_v)",
+   "class": "load-gate-dropped",
+   "argument": "no frozen case carries an EMPTY Exec= (rf-noexec is a MISSING key, tx-empty is TryExec=''), so the guard that skips the static parse for an empty Exec is never exercised"
+  },
+  {
+   "id": "no-realpath-cwd",
+   "find": "        return os.path.realpath(target)",
+   "replace": "        return target",
+   "class": "cwd-from-process",
+   "argument": "realpath differs from the joined value only for a trailing-slash Path=, a '.'/'..' component or a symlinked Path=; every frozen Path= is an absolute normalised directory (cp-work, pa-work, xte-work, tpath-*, pe-trailing, cm-gone, cm-file), so the two answers are identical"
+  },
+  {
+   "id": "no-type-token",
+   "find": "        return {'error': 'desktop-file', 'detail': 'type'}",
+   "replace": "        return {'error': 'desktop', 'detail': 'type'}",
+   "class": "refusal-cause-token",
+   "argument": "no frozen case carries a non-Application Type= (rf-notkeyfile has no group at all and refuses earlier at the group check), so the type-refusal token is unobservable"
+  },
+  {
+   "id": "no-join-always-sep",
+   "find": "    if out and not out.endswith('/') and not b.startswith('/'):",
+   "replace": "    if out and not b.startswith('/'):",
+   "class": "relative-candidate-join",
+   "argument": "the extra separator appears only when the first element ends with '/', i.e. a trailing-slash Path=; no frozen case has one, so the two joins agree"
+  },
+  {
+   "id": "no-execparse-launch-site",
+   "find": "        return {'error': 'exec-parse', 'detail': err}",
+   "replace": "        return {'error': 'parse', 'detail': err}",
+   "class": "refusal-cause-token",
+   "argument": "the second exec-parse site (build_launches returned None after a successful static parse) has no frozen case: every frozen exec-parse case fails at the static parse, which returns earlier"
+  },
+  {
+   "id": "no-unset-default",
+   "find": "DEFAULT_SEARCH_PATH = '/bin:/usr/bin:.'",
+   "replace": "DEFAULT_SEARCH_PATH = '/usr/bin:/bin:.'",
+   "class": "unset-PATH-default",
+   "argument": "the default is entered only when the model PATH is unset; the counter always passes --path (set, possibly empty) and the probe always sets PATH, so the branch is unreachable on the frozen plane (R99MExecCounter and R99MExecOracle both pinned that an unset PATH is not expressible)"
+  },
+  {
+   "id": "no-empty-path-takes-default",
+   "find": "    if path is None:\n        path = DEFAULT_SEARCH_PATH",
+   "replace": "    if not path:\n        path = DEFAULT_SEARCH_PATH",
+   "class": "unset-PATH-default",
+   "argument": "the only frozen case with --path '' is pe-empty-str, whose program does not exist in the cwd: the empty-entry walk and the default's '.' entry both miss, so both answers are `load`"
+  },
+  {
+   "id": "no-terminal-field",
+   "find": "        'terminal': result['terminal'],",
+   "replace": "        'terminal': None,",
+   "class": "gdf-dropped",
+   "argument": "the counter compares launches, argv, cwd and env only; the --json terminal field is never read, so a wrong terminal name cannot be observed"
+  },
+  {
+   "id": "no-detail-token",
+   "find": "        return {'error': 'desktop-file', 'detail': 'unreadable'}",
+   "replace": "        return {'error': 'desktop-file', 'detail': 'zzz'}",
+   "class": "refusal-cause-token",
+   "argument": "the counter compares the error cause and ignores detail (pinned by R99MExecCounter), so any detail-only change is unobservable"
+  }
+ ],
+ "equivalents": [
+  {
+   "id": "eq-r3-isdir-dead",
+   "find": "        if not _is_abs(a0) or not _exec_file(a0) or os.path.isdir(a0):",
+   "replace": "        if not _is_abs(a0) or not _exec_file(a0) or False:",
+   "class": "is-dir-test-dropped",
+   "argument": "_exec_file already returns False for a directory (access X_OK and not isdir), so 'not _exec_file(a0)' fires before the isdir conjunct; the conjunct is dead code and removing it cannot change any answer. The load-bearing is-dir test is _exec_file's, covered by isdir-01-drop"
+  },
+  {
+   "id": "eq-absol-normpath",
+   "find": "            return _join2(os.getcwd(), startp)",
+   "replace": "            return os.path.normpath(_join2(os.getcwd(), startp))",
+   "class": "relative-hit-absolutisation",
+   "argument": "this call is reached only for a relative hit, and a relative hit on the frozen plane arises only from an EMPTY path entry, where startp is the bare program (no './' or '//'); the './' preservation is observed through pr-dot's absolute Path= join, which returns before this call, so normpath here is a no-op"
+  },
+  {
+   "id": "eq-reljoin-reversed",
+   "find": "            startp = _join2(working_dir, startp)",
+   "replace": "            startp = _join2(startp, working_dir)",
+   "class": "relative-candidate-join",
+   "argument": "the walk's working_dir join is reached only when working_dir+program is NOT executable; the reversed join yields program/working_dir, which cannot be executable in any frozen case, so both directions miss and the answer is identical"
+  }
+ ]
+}
