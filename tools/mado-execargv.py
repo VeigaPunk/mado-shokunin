@@ -221,9 +221,22 @@ def arg_model(raw):
     return (local_uri_of(local), local)
 
 
+_URI_PATH_SAFE = frozenset(
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    "-._~!$&'()*+,;=:@/")
+
+
 def local_uri_of(path):
-    """file URI a local path maps to; '#' is escaped so the force-bypass never fires."""
-    return 'file://' + path.replace('%', '%25').replace('#', '%23')
+    """file URI a local path maps to (g_filename_to_uri / g_uri_escape_string with
+    G_URI_RESERVED_CHARS_ALLOWED_IN_PATH): every byte outside the path-safe set is
+    percent-encoded, so '#' and '?' never reach the force-bypass and a space or a
+    literal '%' in a name round-trips as %20 / %25 (measured: a file named
+    'with space.txt' answers file:///.../with%20space.txt under X-GIO-NoFuse)."""
+    out = []
+    for b in path.encode('utf-8', 'surrogateescape'):
+        c = chr(b)
+        out.append(c if c in _URI_PATH_SAFE else '%%%02X' % b)
+    return 'file://' + ''.join(out)
 
 
 def expand_single(code, uri, local):

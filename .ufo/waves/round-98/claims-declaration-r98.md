@@ -279,12 +279,12 @@ artifacts commit; a counter refuses SETUP on any mismatch.
 
 | artifact | path | sha256 |
 |---|---|---|
-| C1 candidate | `tools/mado-execargv.py` | `acfcc4f7d75162d8035ac26e7ecf48ace8b78dcc8255775e8bab347cfa70ab61` |
+| C1 candidate | `tools/mado-execargv.py` | `49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713` |
 | C1 counter | `quality/counters/c1-r98-execargv.py` | `7ed2f8f62ca9bb0fe2706f1e6c09ad20d6276404f7f5112507842b0eee0a64c5` |
 | C2 gate | `quality/check-sources-readback.py` | `f1000bf11e88149695aa96229fcf2155929ebbb72a2cfa215d8c24e2f37bd8f5` |
 | C2 counter | `quality/counters/c2-r98-sources-readback.py` | `e944fdacd1285a44e3026b0c8ccccf9dce5f6ec687ec047c2327e8cec61e6e0a` |
 | C1 cases | `.ufo/waves/round-98/controls/execargv-cases-r98.json` | `21cccc3ad94e99dff9cdb281a38b32579e9d3e6be14799a83b09499e466e370e` |
-| C1 mutants | `.ufo/waves/round-98/controls/execargv-mutants-r98.json` | `5f074f70e6c30339ea61daf2e3f7d849c5ffd181f1e94d1adcca3222eee8438e` |
+| C1 mutants | `.ufo/waves/round-98/controls/execargv-mutants-r98.json` | `32c207b32d8aa6126ee949383e7ab992f53c76369310a3e7d88c2b6240ce53bb` |
 | C1 fresh generator | `.ufo/waves/round-98/controls/execargv-fresh-r98.py` | `b7bc137a643c771f1cd88a3909d1650205b37a155869ade84adc419e3515357c` |
 | C1 renderer/oracle builder | `.ufo/waves/round-98/controls/execargv-probe-r98.py` | `182cf06cecf1a9d19436d18ca26792568839b6d4e2be7e6dce880d19ea88e3d4` |
 | C2 mutants | `.ufo/waves/round-98/controls/readback-mutants-r98.json` | `78b7840b3b63a1c256f3093f0876f8e80a5ef0a51b9a74f3eba96c088826885d` |
