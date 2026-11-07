@@ -514,3 +514,16 @@ is operator-owned and never run by the lane.
 
 **Round-91 refinement (C2) — one record gate; no new write surface.** `quality/check-seat-reports.py` reads the lane's own wave
 dispatches (`--rev` reads committed bytes; `--worktree` reads the lane tree) and writes nothing.
+
+**Round-92 refinement — `xdg-open`'s own resolver (read-only); no new write surface; corrects the round-91 refinement.**
+The round-91 sentence "`xdg-open`, file managers and OpenURI reduce to GLib's `g_app_info_get_default_for_type`" is
+wrong for `xdg-open` on this host: xdg-utils 1.2.1 maps the unrecognised `XDG_CURRENT_DESKTOP=Hyprland` to `generic`
+(xdg-open.in:595-596) and asks `xdg-mime query default TYPE`, whose shell resolver `defapp_generic` differs from GLib
+on 378 of the host's 1133 types (S508; `.ufo/waves/round-92/receipts/host-run-r92.txt`). Both resolvers are in
+province: GLib's (`tools/mado-mime.py`) answers `gio open`, GTK and portal callers; xdg-utils' (`tools/mado-xdgmime.py`)
+answers `xdg-open` and every program that shells out to it. `tools/mado-xdgmime.py` reads, read-only, the same
+mimeapps/defaults/mimeinfo.cache/`*.desktop` files under the XDG config and data roots, lists directories for the
+pathname expansions xdg-mime performs, and stats `PATH` entries and the working directory; it runs no program (not
+xdg-mime, not a shell) and writes nothing (`--selftest` writes only ephemeral fixtures in a private temporary
+directory). Launching (`xdg-open`, `gtk-launch`) and writing associations (`xdg-mime default`, `xdg-settings set`)
+stay operator-owned and are never run by the lane.

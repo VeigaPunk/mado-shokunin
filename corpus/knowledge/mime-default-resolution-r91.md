@@ -381,3 +381,14 @@ contribution — `libreoffice-writer` is registered through `text/plain` and is 
   disagreed with gio in 7 classes (`#` mid-word, tab before `#`, backslash-newline, `\$`/`` \` `` inside double
   quotes, CR inside a word, the PATH fallback for a `/`-bearing name, the `Hidden` whitespace set); the landed tool
   ports S506 instead (sh cases 65/65).
+
+## 15. Correction (round 92, append-only) — `xdg-open` does not reduce to this call on Hyprland
+
+The opening paragraph's "`xdg-open` … reduce[s] to `g_app_info_get_default_for_type()`" is wrong on this host.
+xdg-utils 1.2.1 `xdg-open` maps an `XDG_CURRENT_DESKTOP` it does not know (Hyprland) to `DE=generic`
+(xdg-open.in:595-596) and runs `open_generic` (:664-665), which asks `xdg-mime query default TYPE`
+(`open_generic_xdg_mime`, :392-412; file paths at :486-489, URL schemes at :506-507). xdg-mime answers with its own
+shell resolver `defapp_generic` (xdg-mime.in), not GLib (S508). On this host, 2026-11-06, the two answers differ for
+378 of 1133 types (`.ufo/waves/round-92/w1/R92MExecHost-host-run.txt`: `glib_agree=755 glib_disagree=378`). What
+`xdg-open` launches is modelled in `corpus/knowledge/xdg-mime-default-resolution-r92.md` (`tools/mado-xdgmime.py`);
+this entry stays the model for `gio mime`, `gio open` and GLib/GTK callers.
