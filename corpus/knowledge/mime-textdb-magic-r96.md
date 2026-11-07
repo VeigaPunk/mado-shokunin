@@ -679,3 +679,13 @@ and priority 0 -> `order`; the bad-line whole-section drop -> `drop`; several ma
 several matchlets -> `multi`; the name-step arbitration -> `glob`; the text alias/parent walk ->
 `alias`; the binary/text fallback and VT -> `fallback`; `len == 0` -> `zerosize`; text vs none vs
 cache refusal -> `mode`; the desktop rewrite -> `desktop`.
+
+## 10. Erratum (round 96, after the freeze)
+
+The sentence in §9 that places the cache version "at bytes 4..7" is wrong; the version is at **offsets 0..3** —
+`GET_UINT16(buffer, 0)` is the major and `GET_UINT16(buffer, 2)` the minor (`xdgmimecache.c` validity check, mirrored
+by `tools/mado-mimeglob.py` `load_cache` and by this tool). Bytes 4..7 hold the flags and content count. The rule as
+measured is: a cache loads only when the file is at least 40 bytes and the big-endian u16 at offset 0 is 1 with the
+u16 at offset 2 in {1, 2}; the frozen case set's five refusal fixtures carry `0001 0001`/`0001 0002` headers at offset 0
+(R96MExecCasesC1 measured; `R96MExecCounterC1`'s `loadable_cache` already uses offset 0, so no measurement moves).
+This correction is append-only; the superseded sentence stays above.

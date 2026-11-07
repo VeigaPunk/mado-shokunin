@@ -4569,3 +4569,6 @@ round-95 spot-check's routed defect 3 for the last gate-compatible tool.
 - Assimilation: none (94 staged-id collisions; no staged entry on this plane). considerthese 2026-11-07 proposal 3
   (an exhaustive small-domain sweep; here the oracle-labelled case set) is the mined proposal.
 
+- **Correction (appended, round 96):** the r96 entry's §9 first said the cache version sits "at bytes 4..7"; the
+  library reads it at offsets 0..3 (BE u16 major, then minor), which is what the frozen counter's `loadable_cache`
+  and the five refusal fixtures use. Corrected by the entry's §10 erratum; no measurement moves.
