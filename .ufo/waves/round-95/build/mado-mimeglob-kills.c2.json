@@ -1,0 +1,156 @@
+{
+ "tool": "tools/mado-mimeglob.py",
+ "tool_sha256": "65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "MADO_MIMEGLOB_SELFTEST_FAIL: ",
+ "result_line_prefix": "MADO_MIMEGLOB_SELFTEST: ",
+ "selftest_checks": 19,
+ "note": "round-95 C2 kills by R95MExecKillsC2 (DRAFT until L1 freeze): 17 production mutants covering all 19 selftest labels; must_fail = the exact FAIL-label set of each mutant on the unweakened --selftest, measured in scratch (find occurs exactly once in the whole tool and lies before 'def selftest(' at line 585). Labels t01/t10/t13/t17 have no singleton: t01+t17 are covered by g14 (dedupe off), t10+t13 by g15 (no-match return certain). Round-1 mutants g05/g11/g17 crashed or survived and were replaced by g05b/g11b/g17b before any file was frozen.",
+ "kills": [
+  {
+   "id": "g01-t02-folded-literal-lower",
+   "find": "    def lookup(self, name: bytes) -> list[str]:\n        lower = ascii_tolower(name)\n        for d, m, _w, _c in self.literals:",
+   "replace": "    def lookup(self, name: bytes) -> list[str]:\n        lower = name\n        for d, m, _w, _c in self.literals:",
+   "must_fail": [
+    "t02 folded suffix"
+   ]
+  },
+  {
+   "id": "g02-t03-cs-flag-ignored",
+   "find": "                    cs = True",
+   "replace": "                    cs = False",
+   "must_fail": [
+    "t03 cs glob only on the exact case"
+   ]
+  },
+  {
+   "id": "g03-t04-shallowest-node-wins",
+   "find": "    for node in reversed(path):",
+   "replace": "    for node in path:",
+   "must_fail": [
+    "t04 deepest suffix wins"
+   ]
+  },
+  {
+   "id": "g04-t05-ascending-weight-sort",
+   "find": "    a.sort(key=lambda x: -x[1])",
+   "replace": "    a.sort(key=lambda x: x[1])",
+   "must_fail": [
+    "t05 weight orders two types"
+   ]
+  },
+  {
+   "id": "g05b-t07-folded-glob-matches-folded-name",
+   "find": "            if not c and d == lower:",
+   "replace": "            if not c and ascii_tolower(d) == lower:",
+   "must_fail": [
+    "t07 literal is not folded"
+   ]
+  },
+  {
+   "id": "g06-t08-full-globs-become-literals",
+   "find": "                self._append(self.full, glob_b, mime, weight, cs)",
+   "replace": "                self._append(self.literals, glob_b, mime, weight, cs)",
+   "must_fail": [
+    "t08 fnmatch full glob"
+   ]
+  },
+  {
+   "id": "g07-t09-trailing-slash-ignored",
+   "find": "        if filename.endswith(b\"/\"):",
+   "replace": "        if False and filename.endswith(b\"/\"):",
+   "must_fail": [
+    "t09 trailing slash"
+   ]
+  },
+  {
+   "id": "g08-t11-globs-v1-parsed-as-v2",
+   "find": "            elif os.path.exists(g1):\n                texts.append((g1, False))",
+   "replace": "            elif os.path.exists(g1):\n                texts.append((g1, True))",
+   "must_fail": [
+    "t11 globs v1 file"
+   ]
+  },
+  {
+   "id": "g09-t12-extra-type-first",
+   "find": "                out.append((c.mime, c.weight))",
+   "replace": "                out.insert(0, (c.mime, c.weight))",
+   "must_fail": [
+    "t12 equal weight keeps file order"
+   ]
+  },
+  {
+   "id": "g10-t14-basename-first-slash-piece",
+   "find": "    return q.rsplit(b\"/\", 1)[-1]",
+   "replace": "    return q.split(b\"/\", 1)[0]",
+   "must_fail": [
+    "t14 basename only"
+   ]
+  },
+  {
+   "id": "g11b-t15-overrun-silently-truncated",
+   "find": "    while i < len(b):",
+   "replace": "    while i < len(b) and i + _SKIP[b[i]] <= len(b):",
+   "must_fail": [
+    "t15 truncated multi-byte glob refused"
+   ]
+  },
+  {
+   "id": "g12-t16-unsigned-name-char",
+   "find": "    return byte if byte < 0x80 else (byte - 256) & 0xFFFFFFFF",
+   "replace": "    return byte if byte < 0x80 else byte",
+   "must_fail": [
+    "t16 a 0xff glob byte matches the same name byte"
+   ]
+  },
+  {
+   "id": "g13-t06-literal-type-mangled",
+   "find": "            if d == name:\n                return [m]",
+   "replace": "            if d == name:\n                return [m + \"x\"]",
+   "must_fail": [
+    "t06 literal"
+   ]
+  },
+  {
+   "id": "g14-t01t04t11t16t17-dedupe-off",
+   "find": "            if a[i][0] == a[j][0]:",
+   "replace": "            if False:",
+   "must_fail": [
+    "t01 simple suffix",
+    "t04 deepest suffix wins",
+    "t11 globs v1 file",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ]
+  },
+  {
+   "id": "g15-t07t10t13-nomatch-certain",
+   "find": "            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}",
+   "replace": "            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}",
+   "must_fail": [
+    "t07 literal is not folded",
+    "t10 no match",
+    "t13 non-ASCII byte never matches a suffix"
+   ]
+  },
+  {
+   "id": "g16-t18-home-mime-no-slash",
+   "find": "        out.append(home + \"/.local/share/mime/\")",
+   "replace": "        out.append(home + \"/.local/share/mime\")",
+   "must_fail": [
+    "t18 empty HOME is /.local/share/mime/"
+   ]
+  },
+  {
+   "id": "g17b-t18t19-home-fallback-tilde",
+   "find": "    elif home is not None:\n        out.append(home + \"/.local/share/mime/\")",
+   "replace": "    else:\n        out.append((home or \"~\") + \"/.local/share/mime/\")",
+   "must_fail": [
+    "t18 empty HOME is /.local/share/mime/",
+    "t19 unset HOME adds no user dir"
+   ]
+  }
+ ]
+}

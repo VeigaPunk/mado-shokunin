@@ -1,0 +1,38 @@
+{
+ "tool": "tools/mado-mimeglob.py",
+ "tool_sha256": "65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "MADO_MIMEGLOB_SELFTEST_FAIL: ",
+ "result_line_prefix": "MADO_MIMEGLOB_SELFTEST: ",
+ "selftest_checks": 19,
+ "kills": [
+  {
+   "id": "blanket-mimeglob",
+   "find": "def esc(b: bytes) -> str:",
+   "replace": "def _forge_guess(self, filename):\n    return {\"type\": \"x/forge\", \"uncertain\": 0, \"types\": [\"x/forge\"]}\n\n\ndef _forge_dirs(data_home_env=None, home=None, data_dirs_env=None):\n    return [\"x/forge/mime/\"]\n\n\ndef _forge_init_m(self, dirs):\n    self.dirs = dirs\n    self.mode = \"text\"\n    self.db = None\n\n\nResolver.__init__ = _forge_init_m\nResolver.guess = _forge_guess\nxdgmime_dirs = _forge_dirs\n\n\ndef esc(b: bytes) -> str:",
+   "must_fail": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t05 weight orders two types",
+    "t06 literal",
+    "t07 literal is not folded",
+    "t08 fnmatch full glob",
+    "t09 trailing slash",
+    "t10 no match",
+    "t11 globs v1 file",
+    "t12 equal weight keeps file order",
+    "t13 non-ASCII byte never matches a suffix",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert",
+    "t15 truncated multi-byte glob refused",
+    "t18 empty HOME is /.local/share/mime/",
+    "t19 unset HOME adds no user dir"
+   ]
+  }
+ ]
+}

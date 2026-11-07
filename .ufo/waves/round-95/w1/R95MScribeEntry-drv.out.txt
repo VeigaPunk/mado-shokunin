@@ -1,0 +1,53 @@
+case             note                                           name         data                       oracle             tool               verdict
+f-vt             VT 0x0b only byte between text and binary classes NULL         b'ab\x0bcd'                application/octet-stream	1 text/plain	0       DIFF
+f-ff             FF 0x0c                                        NULL         b'ab\x0ccd'                text/plain	0       text/plain	0       ok
+f-bs             BS 0x08                                        NULL         b'ab\x08cd'                text/plain	0       text/plain	0       ok
+f-del            DEL 0x7f                                       NULL         b'ab\x7fcd'                text/plain	0       text/plain	0       ok
+f-soh            SOH 0x01                                       NULL         b'ab\x01cd'                application/octet-stream	1 application/octet-stream	1 ok
+f-nul            NUL 0x00                                       NULL         b'ab\x00cd'                application/octet-stream	1 application/octet-stream	1 ok
+f-tab            TAB 0x09                                       NULL         b'ab\tcd'                  text/plain	0       text/plain	0       ok
+f-128            0x01 after the first 128 bytes                 NULL         b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa text/plain	0       text/plain	0       ok
+f-127            0x01 at index 127                              NULL         b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa application/octet-stream	1 application/octet-stream	1 ok
+f-empty          empty data, no name                            NULL         b''                        application/x-zerosize	0 application/x-zerosize	0 ok
+f-high           high-bit byte (UTF-8 continuation)             NULL         b'caf\xc3\xa9\n'           text/plain	0       text/plain	0       ok
+f-vt130          VT past the 128-byte fallback window           NULL         b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa text/plain	0       text/plain	0       ok
+f-nul130         NUL past the 128-byte fallback window          NULL         b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa text/plain	0       text/plain	0       ok
+f-us             US 0x1f                                        NULL         b'ab\x1fcd'                application/octet-stream	1 application/octet-stream	1 ok
+f-vt-early       VT plus BS: looks_like_text looks at the whole data NULL         b'ab\x08c\x0bd'            application/octet-stream	1 text/plain	0       DIFF
+n-one            one name type: data not read (binary bytes)    'x.one'      b'\x01\x02HI'              t/single	0         t/single	0         ok
+n-dir            trailing slash with data                       'd/'         b'HI'                      inode/directory	1  inode/directory	1  ok
+n-two-empty      empty data beats two name types                'x.two'      b''                        application/x-zerosize	0 application/x-zerosize	0 ok
+n-none-text      no name type, text data                        'zz'         b'plain words\n'           text/plain	0       text/plain	0       ok
+n-none-bin       no name type, binary data                      'zz'         b'\x01\x02'                application/octet-stream	1 application/octet-stream	1 ok
+n-single-noname  text data, name NULL                           NULL         b'plain words\n'           text/plain	0       text/plain	0       ok
+n-dot            name with no extension, text data              'README'     b'hello\n'                 text/plain	0       text/plain	0       ok
+n-basename       directory component in the name                'dir.txt/f.one' b'\x01HI'                  t/single	0         t/single	0         ok
+m-prio90         magic prio 90 with no name                     NULL         b'HI there'                app/hi	0           app/hi	0           ok
+m-prio79-name    magic prio 79, two name types, no subclass     'x.two'      b'MI x'                    app/x-a	1          app/x-a	1          ok
+m-prio79-sub     magic prio 79, name type is a subclass         'x.dup'      b'BA x'                    app/child	0        app/child	0        ok
+m-prio79-sub-alias magic prio 79, alias in subclass               'x.dup'      b'plain\n'                 text/x-old	0       text/x-old	0       ok
+m-prio0          magic prio 0 is discarded                      NULL         b'Z0 x'                    text/plain	0       text/plain	0       ok
+m-negative       magic prio 2^31 (negative int)                 NULL         b'NG x'                    text/plain	0       text/plain	0       ok
+m-range          range start 2 length 3                         NULL         b'\x01\x01\x01\x01RG'      app/range	0        app/range	0        ok
+m-range          range start 2 length 3                         NULL         b'\x01\x01RG'              app/range	0        app/range	0        ok
+m-mask           mask on the first byte                         NULL         b'\x1f\x99'                app/masked	0       app/masked	0       ok
+m-nest           child must hold                                NULL         b'NE\x01\x01Y'             app/nest	0         app/nest	0         ok
+m-nest           child must hold                                NULL         b'NE\x01\x01Z'             application/octet-stream	1 application/octet-stream	1 ok
+m-word           word_size 4 in the cache, raw byte compare     NULL         b'WDxx'                    app/word	0         app/word	0         ok
+m-order          same cache: lower prio first in list           NULL         b'LO x'                    app/lo	0           app/lo	0           ok
+m-caches         across caches: strictly greater wins, equal keeps first NULL         b'AA'                      app/b95	0          app/b95	0          ok
+m-caches         across caches: strictly greater wins, equal keeps first NULL         b'EQ'                      app/a60	0          app/a60	0          ok
+m-desktop        desktop sniff with and without a name          NULL         b'[Desktop Entry]\n'       application/x-desktop	0 application/x-desktop	0 ok
+m-desktop        desktop sniff with and without a name          'zz.nomatch' b'[Desktop Entry]\n'       text/plain	0       text/plain	0       ok
+m-desktop        desktop sniff with and without a name          'zz.desktop' b'[Desktop Entry]\n'       text/plain	0       text/plain	0       ok
+m-short          value longer than data, offset past data       NULL         b'ABC'                     text/plain	0       text/plain	0       ok
+m-short          value longer than data, offset past data       NULL         b'AB'                      text/plain	0       text/plain	0       ok
+m-short          value longer than data, offset past data       NULL         b'X'                       text/plain	0       text/plain	0       ok
+n-single-beats-hi one name type wins over a prio-90 magic match  'x.one'      b'HI'                      t/single	0         t/single	0         ok
+n-two-hi         two name types, prio-90 magic wins             'x.two'      b'HI'                      app/hi	0           app/hi	0           ok
+n-two-bin        two name types, binary data, no magic          'x.two'      b'\x01\x02'                app/x-a	1          app/x-a	1          ok
+n-textplain-sub  sniffed text/plain rescues a text/* name type  'x.tt'       b'TP x'                    text/x-a	0         text/x-a	0         ok
+n-two-zero-name  name with no type, magic prio 60               'zz'         b'EQ x'                    app/b-eq	0         app/b-eq	0         ok
+m-unknown-literal a magic entry naming application/octet-stream is a real type NULL         b'OB\x01'                  application/octet-stream	0 application/octet-stream	0 ok
+n-one-empty      one name type beats even empty data            'x.one'      b''                        t/single	0         t/single	0         ok
+ROWS=51 DIFFS=2

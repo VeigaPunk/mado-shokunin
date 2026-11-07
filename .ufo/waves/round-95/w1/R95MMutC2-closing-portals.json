@@ -1,0 +1,185 @@
+{
+ "tool": "tools/mado-portals.py",
+ "tool_sha256": "e46a861e6a8ab62e26671169e201b953ca629a3861c6dddc74fd89b73b2ac021",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "MADO_PORTALS_SELFTEST_FAIL: ",
+ "result_line_prefix": "MADO_PORTALS_SELFTEST: ",
+ "selftest_checks": 28,
+ "note": "R95MMutC2 closing kills for escapes from the round-95 DRAFT C2 kill-set; each verified WEAK:1 on its escaped weakening and OK:0 on the pristine tool with the same kill-set",
+ "kills": [
+  {
+   "id": "r95m-close-p04-usein-any",
+   "find": "                if i.use_in is not None and any(u.lower() == d for u in i.use_in):",
+   "replace": "                if i.use_in is not None:",
+   "must_fail": [
+    "list items keep inner spaces",
+    "gtk last resort",
+    "key before group voids file",
+    "invalid escape voids file",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "a VT before a key voids the file"
+   ],
+   "closes": 4
+  },
+  {
+   "id": "r95m-close-p06-desktop-no-lower",
+   "find": "            out.append(tok.lower())",
+   "replace": "            out.append(tok)",
+   "must_fail": [
+    "default list falls to second backend",
+    "default list first backend",
+    "interface key wins",
+    "interface key beats default none",
+    "default none stops",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise",
+    "UseIn fallback",
+    "desktops dropped/lowercased"
+   ],
+   "closes": 2
+  },
+  {
+   "id": "r95m-close-p08-list-trailing",
+   "find": "    if cur:\n        pieces.append(\"\".join(cur))",
+   "replace": "    pieces.append(\"\".join(cur))",
+   "must_fail": [
+    "default list falls to second backend",
+    "default list first backend",
+    "interface key wins",
+    "interface key beats default none",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise",
+    "list items keep inner spaces",
+    "UseIn fallback",
+    "gtk last resort",
+    "non-specific portals.conf used",
+    "find_all star collects all",
+    "key before group voids file",
+    "invalid escape voids file",
+    "string list trailing empty dropped",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "unparsable UseIn keeps the backend",
+    "invalid UTF-8 in a comment keeps the file",
+    "a VT before a key voids the file",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped"
+   ],
+   "closes": 1
+  },
+  {
+   "id": "r95m-close-p32-bus-tail",
+   "find": "_ELEM_BUS = re.compile(r\"^[A-Za-z_-][A-Za-z0-9_-]*$\")",
+   "replace": "_ELEM_BUS = re.compile(r\"^[A-Za-z_-][A-Za-z0-9_-]*[A-Za-z]$\")",
+   "must_fail": [
+    "bus name validity"
+   ],
+   "closes": 1
+  },
+  {
+   "id": "r95m-close-p33-elem-digit",
+   "find": "_ELEM_BUS = re.compile(r\"^[A-Za-z_-][A-Za-z0-9_-]*$\")",
+   "replace": "_ELEM_BUS = re.compile(r\"^[A-Za-z0-9_-]+$\")",
+   "must_fail": [
+    "bus name validity"
+   ],
+   "closes": 1
+  },
+  {
+   "id": "r95m-close-p35-default-picks-first",
+   "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+   "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"default config\"",
+   "must_fail": [
+    "default list falls to second backend",
+    "star takes name order otherwise",
+    "non-specific portals.conf used",
+    "unparsable UseIn keeps the backend",
+    "invalid UTF-8 in a comment keeps the file",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped"
+   ],
+   "closes": 5
+  },
+  {
+   "id": "r95m-close-p36-iface-picks-first",
+   "find": "            i = self._by_list(c.ifaces.get(iface), iface)\n            if i is not None:\n                return [i.source], \"interface specific config\"",
+   "replace": "            i = self._by_list(c.ifaces.get(iface), iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"interface specific config\"",
+   "must_fail": [
+    "interface key wins",
+    "interface key beats default none"
+   ],
+   "closes": 2
+  },
+  {
+   "id": "r95m-close-p37-none-picks",
+   "find": "            if self._prefers_none(c, iface):\n                return [], \"none-key\"",
+   "replace": "            if self._prefers_none(c, iface):\n                return [self.impls[0].source] if self.impls else [], \"none-key\"",
+   "must_fail": [
+    "default none stops"
+   ],
+   "closes": 1
+  },
+  {
+   "id": "r95m-close-p38-usein-picks-last",
+   "find": "        u = self._usein(iface, False)\n        if u:\n            return [u[0].source], \"usein\"",
+   "replace": "        u = self._usein(iface, False)\n        if u:\n            return [self.impls[-1].source if self.impls else u[0].source], \"usein\"",
+   "must_fail": [
+    "UseIn fallback"
+   ],
+   "closes": 1
+  },
+  {
+   "id": "r95m-close-p39-no-backend-picks",
+   "find": "        return [], \"no-backend\"\n\n    def _all_by_list",
+   "replace": "        return [self.impls[0].source] if self.impls else [], \"no-backend\"\n\n    def _all_by_list",
+   "must_fail": [
+    "no backend"
+   ],
+   "closes": 1
+  },
+  {
+   "id": "r95m-close-p42-reason-usein",
+   "find": "            return [u[0].source], \"usein\"",
+   "replace": "            return [u[0].source], \"default config\"",
+   "must_fail": [
+    "UseIn fallback"
+   ],
+   "closes": 1
+  },
+  {
+   "id": "r95m-close-p43-reason-findall",
+   "find": "            return [i.source for i in out], \"config\"",
+   "replace": "            return [i.source for i in out], \"default config\"",
+   "must_fail": [
+    "find_all star collects all"
+   ],
+   "closes": 1
+  },
+  {
+   "id": "r95m-close-p44-default-picks-last",
+   "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+   "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[-1].source if self.impls else i.source], \"default config\"",
+   "must_fail": [
+    "default list falls to second backend",
+    "default list first backend",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise"
+   ],
+   "closes": 1
+  }
+ ],
+ "unclosable": [
+  {
+   "weakening_id": "portals-629-drop-picks",
+   "label": "Encoding other than UTF-8 in the first group voids the file",
+   "find": "chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC)[1] == \"gtk-last-resort\")",
+   "gate_with_draft_kills": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "why": "On that fixture the KDE backend is voided by the Encoding rule, so gtk is the only FileChooser-capable backend and _gtk requires supports(iface): whenever the reason is 'gtk-last-resort' the picks are ['gtk']. No production mutant can make the reason right and the picks wrong, and every mutant that changes the fallback backend (p34) never enters this check's FAIL set. All 41 usable portal mutants were tried.",
+   "latent_not_live": "only exploitable by a fixture change (a second FileChooser-capable backend); the frozen fixture cannot produce it"
+  }
+ ]
+}

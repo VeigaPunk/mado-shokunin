@@ -1,0 +1,79 @@
+{
+ "tool": "tools/mado-mimeglob.py",
+ "tool_sha256": "65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "MADO_MIMEGLOB_SELFTEST_FAIL: ",
+ "result_line_prefix": "MADO_MIMEGLOB_SELFTEST: ",
+ "selftest_checks": 19,
+ "note": "R95MMutC2 closing kills for escapes from the round-95 DRAFT C2 kill-set; each verified WEAK:1 on its escaped weakening and OK:0 on the pristine tool with the same kill-set",
+ "kills": [
+  {
+   "id": "r95m-close-g02-always-uncertain",
+   "find": "            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+   "replace": "            return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+   "must_fail": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "closes": 5
+  },
+  {
+   "id": "r95m-close-g18-plain-unknown",
+   "find": "        if not types:\n            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}",
+   "replace": "        if not types:\n            return {\"type\": \"text/plain\", \"uncertain\": 1, \"types\": types}",
+   "must_fail": [
+    "t07 literal is not folded",
+    "t10 no match",
+    "t13 non-ASCII byte never matches a suffix"
+   ],
+   "closes": 3
+  },
+  {
+   "id": "r95m-close-g30-single-unknown",
+   "find": "        if len(types) == 1:\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+   "replace": "        if len(types) == 1:\n            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}",
+   "must_fail": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "closes": 7
+  },
+  {
+   "id": "r95m-close-g31-multi-certain",
+   "find": "            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}\n        return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+   "replace": "            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}\n        return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+   "must_fail": [
+    "t05 weight orders two types",
+    "t12 equal weight keeps file order"
+   ],
+   "closes": 2
+  },
+  {
+   "id": "r95m-close-g32-slash-certain",
+   "find": "            types = [\"inode/directory\"]\n            return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+   "replace": "            types = [\"inode/directory\"]\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+   "must_fail": [
+    "t09 trailing slash"
+   ],
+   "closes": 2
+  }
+ ]
+}

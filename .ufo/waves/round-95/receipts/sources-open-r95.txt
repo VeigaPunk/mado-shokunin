@@ -143,3 +143,21 @@ g_content_type_guess (const gchar  *filename,
 #define XDG_MIME_TYPE_UNKNOWN xdg_mime_type_unknown
 #define XDG_MIME_TYPE_EMPTY xdg_mime_type_empty
 #define XDG_MIME_TYPE_TEXTPLAIN xdg_mime_type_textplain
+
+## CORRECTION (L1, 2026-11-07T08:09:10Z, append-only)
+The smi-s02.html line above (1566c459…) is NOT the spec page: the registered locator now answers HTTP 301 (Moved Permanently) to https://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html and 1566c459… is the redirect stub body (sha256 now 1566c4594b825fde8bda64c8136a856e46df6e645a13236f1356097fdc6a3c66). `curl -fsS` exits 0 on it (-f fails only on >= 400).
+Status-gated fetch (`test http_code = 200`) on the old locator: rc 1 (fails, as it must).
+Re-fetched with -L at the moved URL, twice, HTTP 200, url_effective = the moved URL:
+  e00fa00e69b1e95ad8642d05fc5023c26f859bdaf8bdda3e091a55feb016c61e  fetch/smi2-s02.html
+  e00fa00e69b1e95ad8642d05fc5023c26f859bdaf8bdda3e091a55feb016c61e  fetch/smi2-s02.html.2
+  d93c098ee0d4bb5fa479927135469034640e8f3a0e8c88013748fb510c913513  fetch/smi2-index.html
+= round 94's e00fa00e… (same page bytes, moved URL); index.html states version 0.21.
+HTTP status of every GLib locator (no -L), 2026-11-07T08:09:14Z:
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimecache.c
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmime.c
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimeint.c
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmime.h
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimemagic.c
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimeint.h
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gcontenttype-fdo.c
+  200 https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gcontenttype.c

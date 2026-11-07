@@ -1,0 +1,651 @@
+{
+ "pred": "PRED-C2-r95-v1",
+ "note": "round 95 frozen panel (L1): R95MExecCounterC2 24 tautologies + 6 neutral edits, R95MMutC2's green escapes of the first-draft kill-sets, R95MCritic's drop-component pairs; entries that are not green on the unmutated tool are listed under not_green and not counted",
+ "hand": [
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w01-t01-tautology",
+   "what": "t01 simple suffix: expected tuple replaced by the observed tuple; the check constrains nothing",
+   "find": "(\"t01 simple suffix\", g(b\"a.txt\", [\"a/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "(\"t01 simple suffix\", g(b\"a.txt\", [\"a/mime\"]) == g(b\"a.txt\", [\"a/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w02-t02-tautology",
+   "what": "t02 folded suffix: expected tuple replaced by the observed tuple",
+   "find": "(\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "(\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"]) == g(b\"A.TXT\", [\"a/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w03-t03-tautology",
+   "what": "t03 cs glob only on the exact case: expected tuple replaced by the observed tuple",
+   "find": "(\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"]) == (\"text/x-c++\", 0)),",
+   "replace": "(\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"]) == g(b\"x.C\", [\"a/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w04-t05-tautology",
+   "what": "t05 weight orders two types: expected tuple replaced by the observed tuple",
+   "find": "(\"t05 weight orders two types\", g(b\"x.dup\", [\"a/mime\"]) == (\"app/hi\", 1)),",
+   "replace": "(\"t05 weight orders two types\", g(b\"x.dup\", [\"a/mime\"]) == g(b\"x.dup\", [\"a/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w05-t07-tautology",
+   "what": "t07 literal is not folded: expected tuple replaced by the observed tuple",
+   "find": "(\"t07 literal is not folded\", g(b\"MAKEFILE\", [\"a/mime\"]) == (UNKNOWN, 1)),",
+   "replace": "(\"t07 literal is not folded\", g(b\"MAKEFILE\", [\"a/mime\"]) == g(b\"MAKEFILE\", [\"a/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w06-t09-tautology",
+   "what": "t09 trailing slash: expected tuple replaced by the observed tuple",
+   "find": "(\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"]) == (\"inode/directory\", 1)),",
+   "replace": "(\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"]) == g(b\"d/\", [\"a/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w07-t10-tautology",
+   "what": "t10 no match: expected tuple replaced by the observed tuple",
+   "find": "(\"t10 no match\", g(b\"zz\", [\"a/mime\"]) == (UNKNOWN, 1)),",
+   "replace": "(\"t10 no match\", g(b\"zz\", [\"a/mime\"]) == g(b\"zz\", [\"a/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w08-t11-tautology",
+   "what": "t11 globs v1 file: expected tuple replaced by the observed tuple",
+   "find": "(\"t11 globs v1 file\", g(b\"f.old\", [\"b/mime\"]) == (\"text/old\", 0)),",
+   "replace": "(\"t11 globs v1 file\", g(b\"f.old\", [\"b/mime\"]) == g(b\"f.old\", [\"b/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w09-t13-tautology",
+   "what": "t13 non-ASCII byte never matches a suffix: expected tuple replaced by the observed tuple",
+   "find": "(\"t13 non-ASCII byte never matches a suffix\", g(b\"x.t\\xc3\\xa9\", [\"a/mime\"]) == (UNKNOWN, 1)),",
+   "replace": "(\"t13 non-ASCII byte never matches a suffix\", g(b\"x.t\\xc3\\xa9\", [\"a/mime\"]) == g(b\"x.t\\xc3\\xa9\", [\"a/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w10-t15-arm-inverted",
+   "what": "t15 truncated multi-byte glob refused: the no-exception arm records success, so an accepted truncated glob still passes (on the unmutated tool g() raises Unsupported before the append, so the selftest stays green)",
+   "find": "checks.append((\"t15 truncated multi-byte glob refused\", False))",
+   "replace": "checks.append((\"t15 truncated multi-byte glob refused\", not False))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w11-t17-tautology",
+   "what": "t17 a bare * is inert: expected tuple replaced by the observed tuple",
+   "find": "(\"t17 a bare * is inert\", g(b\"a.txt\", [\"c/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "(\"t17 a bare * is inert\", g(b\"a.txt\", [\"c/mime\"]) == g(b\"a.txt\", [\"c/mime\"])),",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-w12-t18-tautology",
+   "what": "t18 empty HOME is /.local/share/mime/: expected list replaced by the observed list",
+   "find": "checks.append((\"t18 empty HOME is /.local/share/mime/\", xdgmime_dirs(None, \"\", \"\") == [\"/.local/share/mime/\"]))",
+   "replace": "checks.append((\"t18 empty HOME is /.local/share/mime/\", xdgmime_dirs(None, \"\", \"\") == xdgmime_dirs(None, \"\", \"\")))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w01-default-list-second",
+   "what": "default list falls to second backend: expected tuple replaced by the observed tuple",
+   "find": "chk(\"default list falls to second backend\", r.resolve(FC) == ([\"gtk\"], \"default config\"))",
+   "replace": "chk(\"default list falls to second backend\", r.resolve(FC) == r.resolve(FC))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w02-default-list-first",
+   "what": "default list first backend: expected tuple replaced by the observed tuple",
+   "find": "chk(\"default list first backend\", r.resolve(SS) == ([\"hyprland\"], \"default config\"))",
+   "replace": "chk(\"default list first backend\", r.resolve(SS) == r.resolve(SS))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w03-interface-key-wins",
+   "what": "interface key wins: expected tuple replaced by the observed tuple",
+   "find": "chk(\"interface key wins\", r.resolve(FC) == ([\"kde\"], \"interface specific config\"))",
+   "replace": "chk(\"interface key wins\", r.resolve(FC) == r.resolve(FC))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w04-default-none-stops",
+   "what": "default none stops: expected tuple replaced by the observed tuple",
+   "find": "chk(\"default none stops\", r.resolve(SS) == ([], \"none-key\"))",
+   "replace": "chk(\"default none stops\", r.resolve(SS) == r.resolve(SS))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w05-star-usein-first",
+   "what": "star takes first sorted backend (UseIn first): expected tuple replaced by the observed tuple",
+   "find": "chk(\"star takes first sorted backend (UseIn first)\", r.resolve(SS) == ([\"hyprland\"], \"default config\"))",
+   "replace": "chk(\"star takes first sorted backend (UseIn first)\", r.resolve(SS) == r.resolve(SS))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w06-list-inner-spaces",
+   "what": "list items keep inner spaces: expected tuple replaced by the observed tuple",
+   "find": "chk(\"list items keep inner spaces\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "chk(\"list items keep inner spaces\", r.resolve(FC) == r.resolve(FC))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w07-desktops",
+   "what": "desktops dropped/lowercased: expected list replaced by the observed list",
+   "find": "chk(\"desktops dropped/lowercased\", current_desktops(\"KDE::bad/x:GNOME-Classic\") == [\"kde\", \"gnome-classic\"])",
+   "replace": "chk(\"desktops dropped/lowercased\", current_desktops(\"KDE::bad/x:GNOME-Classic\") == current_desktops(\"KDE::bad/x:GNOME-Classic\"))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w08-bus-name-arms-dropped",
+   "what": "bus name validity: both negative branches dropped; the check can no longer fail on a wrongly accepted bus name",
+   "find": "chk(\"bus name validity\", is_bus_name(\"org.a.b\") and not is_bus_name(\"org\") and not is_bus_name(\"org.1a\"))",
+   "replace": "chk(\"bus name validity\", is_bus_name(\"org.a.b\") or not is_bus_name(\"org.a.b\"))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w09-non-portal-voids",
+   "what": "non-portal interface voids backend: expected empty impls replaced by the observed impls",
+   "find": "chk(\"non-portal interface voids backend\", r.impls == [])",
+   "replace": "chk(\"non-portal interface voids backend\", r.impls == r.impls)",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w10-final-cr",
+   "what": "final CR without LF is kept: expected dict replaced by the observed dict",
+   "find": "chk(\"final CR without LF is kept\", parse_keyfile(\"[g]\\na=b\\r\\nc=d\\r\") == {\"g\": {\"a\": \"b\", \"c\": \"d\\r\"}})",
+   "replace": "chk(\"final CR without LF is kept\", parse_keyfile(\"[g]\\na=b\\r\\nc=d\\r\") == parse_keyfile(\"[g]\\na=b\\r\\nc=d\\r\"))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w11-vt-before-key",
+   "what": "a VT before a key voids the file: expected tuple replaced by the observed tuple",
+   "find": "chk(\"a VT before a key voids the file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "chk(\"a VT before a key voids the file\", r.resolve(FC) == r.resolve(FC))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-w12-encoding-nul",
+   "what": "Encoding counts the bytes after a NUL: the _raises result compared with itself; the check can no longer fail",
+   "find": "chk(\"Encoding counts the bytes after a NUL\", _raises(lambda: parse_keyfile(\"[g]\\nEncoding=UTF-8\\x00x\\n\")))",
+   "replace": "chk(\"Encoding counts the bytes after a NUL\", _raises(lambda: parse_keyfile(\"[g]\\nEncoding=UTF-8\\x00x\\n\")) is _raises(lambda: parse_keyfile(\"[g]\\nEncoding=UTF-8\\x00x\\n\")))",
+   "origin": "R95MExecCounterC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-605-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t01 simple suffix",
+   "find": "            (\"t01 simple suffix\", g(b\"a.txt\", [\"a/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "            (\"t01 simple suffix\", g(b\"a.txt\", [\"a/mime\"])[1] == 0),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-606-drop-uncertain",
+   "what": "R95MMutC2 escape (drop-uncertain) of t02 folded suffix",
+   "find": "            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"])[0] == \"text/plain\"),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-606-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t02 folded suffix",
+   "find": "            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"])[1] == 0),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-607-drop-uncertain",
+   "what": "R95MMutC2 escape (drop-uncertain) of t03 cs glob only on the exact case",
+   "find": "            (\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"]) == (\"text/x-c++\", 0)),",
+   "replace": "            (\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"])[0] == \"text/x-c++\"),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-607-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t03 cs glob only on the exact case",
+   "find": "            (\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"]) == (\"text/x-c++\", 0)),",
+   "replace": "            (\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"])[1] == 0),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-609-drop-uncertain",
+   "what": "R95MMutC2 escape (drop-uncertain) of t05 weight orders two types",
+   "find": "            (\"t05 weight orders two types\", g(b\"x.dup\", [\"a/mime\"]) == (\"app/hi\", 1)),",
+   "replace": "            (\"t05 weight orders two types\", g(b\"x.dup\", [\"a/mime\"])[0] == \"app/hi\"),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-610-drop-uncertain",
+   "what": "R95MMutC2 escape (drop-uncertain) of t06 literal",
+   "find": "            (\"t06 literal\", g(b\"Makefile\", [\"a/mime\"]) == (\"text/x-make\", 0)),",
+   "replace": "            (\"t06 literal\", g(b\"Makefile\", [\"a/mime\"])[0] == \"text/x-make\"),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-611-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t07 literal is not folded",
+   "find": "            (\"t07 literal is not folded\", g(b\"MAKEFILE\", [\"a/mime\"]) == (UNKNOWN, 1)),",
+   "replace": "            (\"t07 literal is not folded\", g(b\"MAKEFILE\", [\"a/mime\"])[1] == 1),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-612-drop-uncertain",
+   "what": "R95MMutC2 escape (drop-uncertain) of t08 fnmatch full glob",
+   "find": "            (\"t08 fnmatch full glob\", g(b\"xzy\", [\"a/mime\"]) == (\"app/full\", 0)),",
+   "replace": "            (\"t08 fnmatch full glob\", g(b\"xzy\", [\"a/mime\"])[0] == \"app/full\"),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-612-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t08 fnmatch full glob",
+   "find": "            (\"t08 fnmatch full glob\", g(b\"xzy\", [\"a/mime\"]) == (\"app/full\", 0)),",
+   "replace": "            (\"t08 fnmatch full glob\", g(b\"xzy\", [\"a/mime\"])[1] == 0),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-613-drop-uncertain",
+   "what": "R95MMutC2 escape (drop-uncertain) of t09 trailing slash",
+   "find": "            (\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"]) == (\"inode/directory\", 1)),",
+   "replace": "            (\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"])[0] == \"inode/directory\"),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-613-any-non-unknown",
+   "what": "R95MMutC2 escape (any-non-unknown) of t09 trailing slash",
+   "find": "            (\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"]) == (\"inode/directory\", 1)),",
+   "replace": "            (\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"])[0] != UNKNOWN),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-614-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t10 no match",
+   "find": "            (\"t10 no match\", g(b\"zz\", [\"a/mime\"]) == (UNKNOWN, 1)),",
+   "replace": "            (\"t10 no match\", g(b\"zz\", [\"a/mime\"])[1] == 1),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-615-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t11 globs v1 file",
+   "find": "            (\"t11 globs v1 file\", g(b\"f.old\", [\"b/mime\"]) == (\"text/old\", 0)),",
+   "replace": "            (\"t11 globs v1 file\", g(b\"f.old\", [\"b/mime\"])[1] == 0),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-616-drop-uncertain",
+   "what": "R95MMutC2 escape (drop-uncertain) of t12 equal weight keeps file order",
+   "find": "            (\"t12 equal weight keeps file order\", g(b\"f.two\", [\"a/mime\"]) == (\"t/one\", 1)),",
+   "replace": "            (\"t12 equal weight keeps file order\", g(b\"f.two\", [\"a/mime\"])[0] == \"t/one\"),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-617-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t13 non-ASCII byte never matches a suffix",
+   "find": "            (\"t13 non-ASCII byte never matches a suffix\", g(b\"x.t\\xc3\\xa9\", [\"a/mime\"]) == (UNKNOWN, 1)),",
+   "replace": "            (\"t13 non-ASCII byte never matches a suffix\", g(b\"x.t\\xc3\\xa9\", [\"a/mime\"])[1] == 1),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-618-drop-uncertain",
+   "what": "R95MMutC2 escape (drop-uncertain) of t14 basename only",
+   "find": "            (\"t14 basename only\", g(b\"dir.txt/f.c\", [\"a/mime\"]) == (\"text/x-c\", 0)),",
+   "replace": "            (\"t14 basename only\", g(b\"dir.txt/f.c\", [\"a/mime\"])[0] == \"text/x-c\"),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-622-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t16 a 0xff glob byte matches the same name byte",
+   "find": "            (\"t16 a 0xff glob byte matches the same name byte\", g(b\"x.\\xff\", [\"c/mime\"]) == (\"text/ff\", 0)),",
+   "replace": "            (\"t16 a 0xff glob byte matches the same name byte\", g(b\"x.\\xff\", [\"c/mime\"])[1] == 0),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "mutc2-mimeglob-623-drop-type",
+   "what": "R95MMutC2 escape (drop-type) of t17 a bare * is inert",
+   "find": "            (\"t17 a bare * is inert\", g(b\"a.txt\", [\"c/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "            (\"t17 a bare * is inert\", g(b\"a.txt\", [\"c/mime\"])[1] == 0),",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-599-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of default list first backend",
+   "find": "    chk(\"default list first backend\", r.resolve(SS) == ([\"hyprland\"], \"default config\"))",
+   "replace": "    chk(\"default list first backend\", r.resolve(SS)[1] == \"default config\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-601-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of interface key wins",
+   "find": "    chk(\"interface key wins\", r.resolve(FC) == ([\"kde\"], \"interface specific config\"))",
+   "replace": "    chk(\"interface key wins\", r.resolve(FC)[1] == \"interface specific config\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-603-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of interface key beats default none",
+   "find": "    chk(\"interface key beats default none\", r.resolve(FC) == ([\"kde\"], \"interface specific config\"))",
+   "replace": "    chk(\"interface key beats default none\", r.resolve(FC)[1] == \"interface specific config\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-604-drop-reason",
+   "what": "R95MMutC2 escape (drop-reason) of default none stops",
+   "find": "    chk(\"default none stops\", r.resolve(SS) == ([], \"none-key\"))",
+   "replace": "    chk(\"default none stops\", r.resolve(SS)[0] == [])",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-604-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of default none stops",
+   "find": "    chk(\"default none stops\", r.resolve(SS) == ([], \"none-key\"))",
+   "replace": "    chk(\"default none stops\", r.resolve(SS)[1] == \"none-key\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-611-drop-reason",
+   "what": "R95MMutC2 escape (drop-reason) of UseIn fallback",
+   "find": "    chk(\"UseIn fallback\", r.resolve(FC) == ([\"kde\"], \"usein\"))",
+   "replace": "    chk(\"UseIn fallback\", r.resolve(FC)[0] == [\"kde\"])",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-611-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of UseIn fallback",
+   "find": "    chk(\"UseIn fallback\", r.resolve(FC) == ([\"kde\"], \"usein\"))",
+   "replace": "    chk(\"UseIn fallback\", r.resolve(FC)[1] == \"usein\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-613-drop-reason",
+   "what": "R95MMutC2 escape (drop-reason) of gtk last resort",
+   "find": "    chk(\"gtk last resort\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"gtk last resort\", r.resolve(FC)[0] == [\"gtk\"])",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-614-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of no backend",
+   "find": "    chk(\"no backend\", r.resolve(IMPL + \".Secret\") == ([], \"no-backend\"))",
+   "replace": "    chk(\"no backend\", r.resolve(IMPL + \".Secret\")[1] == \"no-backend\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-617-drop-reason",
+   "what": "R95MMutC2 escape (drop-reason) of find_all star collects all",
+   "find": "    chk(\"find_all star collects all\", r.resolve(ST) == ([\"gtk\", \"kde\"], \"config\"))",
+   "replace": "    chk(\"find_all star collects all\", r.resolve(ST)[0] == [\"gtk\", \"kde\"])",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-621-drop-reason",
+   "what": "R95MMutC2 escape (drop-reason) of invalid escape voids file",
+   "find": "    chk(\"invalid escape voids file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"invalid escape voids file\", r.resolve(FC)[0] == [\"gtk\"])",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-622-len-only",
+   "what": "R95MMutC2 escape (len-only) of desktops dropped/lowercased",
+   "find": "    chk(\"desktops dropped/lowercased\", current_desktops(\"KDE::bad/x:GNOME-Classic\") == [\"kde\", \"gnome-classic\"])",
+   "replace": "    chk(\"desktops dropped/lowercased\", len(current_desktops(\"KDE::bad/x:GNOME-Classic\")) == 2)",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-623-drop-first",
+   "what": "R95MMutC2 escape (drop-first) of string list trailing empty dropped",
+   "find": "    chk(\"string list trailing empty dropped\", string_list(\"a;b;\") == [\"a\", \"b\"] and string_list(\"a;;b\") == [\"a\", \"\", \"b\"])",
+   "replace": "    chk(\"string list trailing empty dropped\", string_list(\"a;;b\") == [\"a\", \"\", \"b\"])",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-624-drop-wellformed",
+   "what": "R95MMutC2 escape (drop-wellformed) of bus name validity",
+   "find": "    chk(\"bus name validity\", is_bus_name(\"org.a.b\") and not is_bus_name(\"org\") and not is_bus_name(\"org.1a\"))",
+   "replace": "    chk(\"bus name validity\", not is_bus_name(\"org\") and not is_bus_name(\"org.1a\"))",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-624-drop-short",
+   "what": "R95MMutC2 escape (drop-short) of bus name validity",
+   "find": "    chk(\"bus name validity\", is_bus_name(\"org.a.b\") and not is_bus_name(\"org\") and not is_bus_name(\"org.1a\"))",
+   "replace": "    chk(\"bus name validity\", is_bus_name(\"org.a.b\") and not is_bus_name(\"org\"))",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-629-drop-reason",
+   "what": "R95MMutC2 escape (drop-reason) of Encoding other than UTF-8 in the first group voids the file",
+   "find": "    chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC)[0] == [\"gtk\"])",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-629-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of Encoding other than UTF-8 in the first group voids the file",
+   "find": "    chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC)[1] == \"gtk-last-resort\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-632-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of unparsable UseIn keeps the backend",
+   "find": "    chk(\"unparsable UseIn keeps the backend\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"unparsable UseIn keeps the backend\", r.resolve(FC)[1] == \"default config\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-645-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of invalid UTF-8 in a comment keeps the file",
+   "find": "    chk(\"invalid UTF-8 in a comment keeps the file\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"invalid UTF-8 in a comment keeps the file\", r.resolve(FC)[1] == \"default config\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-647-drop-reason",
+   "what": "R95MMutC2 escape (drop-reason) of a VT before a key voids the file",
+   "find": "    chk(\"a VT before a key voids the file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"a VT before a key voids the file\", r.resolve(FC)[0] == [\"gtk\"])",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-649-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of a NUL ends the stored value",
+   "find": "    chk(\"a NUL ends the stored value\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"a NUL ends the stored value\", r.resolve(FC)[1] == \"default config\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-651-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of a NUL after a group bracket keeps the group",
+   "find": "    chk(\"a NUL after a group bracket keeps the group\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"a NUL after a group bracket keeps the group\", r.resolve(FC)[1] == \"default config\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "mutc2-portals-653-drop-picks",
+   "what": "R95MMutC2 escape (drop-picks) of continuation bytes after a group bracket are skipped",
+   "find": "    chk(\"continuation bytes after a group bracket are skipped\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"continuation bytes after a group bracket are skipped\", r.resolve(FC)[1] == \"default config\")",
+   "origin": "R95MMutC2"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "crit-mg-w01-t05-drop-uncertain",
+   "what": "R95MCritic drop-component pair",
+   "find": "(\"t05 weight orders two types\", g(b\"x.dup\", [\"a/mime\"]) == (\"app/hi\", 1))",
+   "replace": "(\"t05 weight orders two types\", g(b\"x.dup\", [\"a/mime\"])[0] == \"app/hi\")",
+   "origin": "R95MCritic"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "crit-mg-w02-t14-drop-uncertain",
+   "what": "R95MCritic drop-component pair",
+   "find": "(\"t14 basename only\", g(b\"dir.txt/f.c\", [\"a/mime\"]) == (\"text/x-c\", 0))",
+   "replace": "(\"t14 basename only\", g(b\"dir.txt/f.c\", [\"a/mime\"])[0] == \"text/x-c\")",
+   "origin": "R95MCritic"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "crit-mg-w03-t04-drop-uncertain",
+   "what": "R95MCritic drop-component pair",
+   "find": "(\"t04 deepest suffix wins\", g(b\"x.tar.gz\", [\"a/mime\"]) == (\"app/x-tgz\", 0))",
+   "replace": "(\"t04 deepest suffix wins\", g(b\"x.tar.gz\", [\"a/mime\"])[0] == \"app/x-tgz\")",
+   "origin": "R95MCritic"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "crit-mg-w04-t12-drop-uncertain",
+   "what": "R95MCritic drop-component pair",
+   "find": "(\"t12 equal weight keeps file order\", g(b\"f.two\", [\"a/mime\"]) == (\"t/one\", 1))",
+   "replace": "(\"t12 equal weight keeps file order\", g(b\"f.two\", [\"a/mime\"])[0] == \"t/one\")",
+   "origin": "R95MCritic"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "crit-pt-w01-reason-dropped",
+   "what": "R95MCritic drop-component pair",
+   "find": "chk(\"default list falls to second backend\", r.resolve(FC) == ([\"gtk\"], \"default config\"))",
+   "replace": "chk(\"default list falls to second backend\", r.resolve(FC)[0] == [\"gtk\"])",
+   "origin": "R95MCritic"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "crit-pt-w02-backends-dropped",
+   "what": "R95MCritic drop-component pair",
+   "find": "chk(\"interface key beats default none\", r.resolve(FC) == ([\"kde\"], \"interface specific config\"))",
+   "replace": "chk(\"interface key beats default none\", r.resolve(FC)[1] == \"interface specific config\")",
+   "origin": "R95MCritic"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "crit-pt-w03-desktops-second-dropped",
+   "what": "R95MCritic drop-component pair",
+   "find": "chk(\"desktops dropped/lowercased\", current_desktops(\"KDE::bad/x:GNOME-Classic\") == [\"kde\", \"gnome-classic\"])",
+   "replace": "chk(\"desktops dropped/lowercased\", current_desktops(\"KDE::bad/x:GNOME-Classic\")[:1] == [\"kde\"])",
+   "origin": "R95MCritic"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "crit-pt-w04-string-list-second-conjunct",
+   "what": "R95MCritic drop-component pair",
+   "find": "chk(\"string list trailing empty dropped\", string_list(\"a;b;\") == [\"a\", \"b\"] and string_list(\"a;;b\") == [\"a\", \"\", \"b\"])",
+   "replace": "chk(\"string list trailing empty dropped\", string_list(\"a;b;\") == [\"a\", \"b\"])",
+   "origin": "R95MCritic"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "crit-pt-w05-cr-value-dropped",
+   "what": "R95MCritic drop-component pair",
+   "find": "chk(\"final CR without LF is kept\", parse_keyfile(\"[g]\\na=b\\r\\nc=d\\r\") == {\"g\": {\"a\": \"b\", \"c\": \"d\\r\"}})",
+   "replace": "chk(\"final CR without LF is kept\", parse_keyfile(\"[g]\\na=b\\r\\nc=d\\r\")[\"g\"][\"c\"] == \"d\\r\")",
+   "origin": "R95MCritic"
+  }
+ ],
+ "neutral": [
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-z01-comment-checks-line",
+   "what": "trailing comment on the checks list definition; no behavior",
+   "find": "    checks: list[tuple[str, bool]] = []",
+   "replace": "    checks: list[tuple[str, bool]] = []  # (label, ok)"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-z02-reorder-t01-t02",
+   "what": "two independent checks reordered inside the checks += list",
+   "find": "            (\"t01 simple suffix\", g(b\"a.txt\", [\"a/mime\"]) == (\"text/plain\", 0)),\n            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"]) == (\"text/plain\", 0)),\n            (\"t01 simple suffix\", g(b\"a.txt\", [\"a/mime\"]) == (\"text/plain\", 0)),"
+  },
+  {
+   "tool": "tools/mado-mimeglob.py",
+   "id": "glob-z03-comment-failed-line",
+   "what": "trailing comment on the failed-list line; no behavior",
+   "find": "    failed = [n for n, ok in checks if not ok]",
+   "replace": "    failed = [n for n, ok in checks if not ok]  # verdict = FAIL lines + rc"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-z01-comment-chk-def",
+   "what": "trailing comment on the chk helper definition; no behavior",
+   "find": "    def chk(name: str, cond: bool) -> None:",
+   "replace": "    def chk(name: str, cond: bool) -> None:  # accumulate (label, ok)"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-z02-reorder-stringlist-busname",
+   "what": "two independent pure-function checks reordered",
+   "find": "    chk(\"string list trailing empty dropped\", string_list(\"a;b;\") == [\"a\", \"b\"] and string_list(\"a;;b\") == [\"a\", \"\", \"b\"])\n    chk(\"bus name validity\", is_bus_name(\"org.a.b\") and not is_bus_name(\"org\") and not is_bus_name(\"org.1a\"))",
+   "replace": "    chk(\"bus name validity\", is_bus_name(\"org.a.b\") and not is_bus_name(\"org\") and not is_bus_name(\"org.1a\"))\n    chk(\"string list trailing empty dropped\", string_list(\"a;b;\") == [\"a\", \"b\"] and string_list(\"a;;b\") == [\"a\", \"\", \"b\"])"
+  },
+  {
+   "tool": "tools/mado-portals.py",
+   "id": "por-z03-comment-failed-line",
+   "what": "trailing comment on the failed-list line; no behavior",
+   "find": "    failed = [n for n, ok in checks if not ok]",
+   "replace": "    failed = [n for n, ok in checks if not ok]  # verdict = FAIL lines + rc"
+  }
+ ],
+ "not_green": []
+}

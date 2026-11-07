@@ -1,0 +1,47 @@
+{
+ "tool": "tools/mado-portals.py",
+ "tool_sha256": "e46a861e6a8ab62e26671169e201b953ca629a3861c6dddc74fd89b73b2ac021",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "MADO_PORTALS_SELFTEST_FAIL: ",
+ "result_line_prefix": "MADO_PORTALS_SELFTEST: ",
+ "selftest_checks": 28,
+ "kills": [
+  {
+   "id": "blanket-portals",
+   "find": "def report(r: Resolver, ifaces: list[str], as_json: bool) -> None:",
+   "replace": "def _forge_init(self, *a, **k):\n    self.impls = [\"forge\"]\n    self.warnings = []\n    self.desktop = None\n    self.portal_dir = None\n    self.config_home = \"\"\n    self.config_dirs = []\n    self.data_home = \"\"\n    self.data_dirs = []\n    self.sysconfdir = \"/etc\"\n    self.datadir = \"/usr/share\"\n\n\ndef _forge_res(self, iface):\n    return ([\"forge\"], \"forge\")\n\n\ndef _forge_keyfile(text):\n    return {}\n\n\nResolver.__init__ = _forge_init\nResolver.resolve = _forge_res\nResolver.find = _forge_res\nResolver.find_all = _forge_res\nResolver._gtk = _forge_res\nResolver._usein = lambda self, iface, all_: []\nResolver._by_list = lambda self, lst, iface: None\nResolver._by_name = lambda self, name: None\nResolver._prefers_none = lambda self, c, iface: False\nparse_keyfile = _forge_keyfile\ncurrent_desktops = lambda *a: [\"forge\"]\nstring_list = lambda *a: [\"forge\"]\nis_bus_name = lambda *a: False\n\n\ndef report(r: Resolver, ifaces: list[str], as_json: bool) -> None:",
+   "must_fail": [
+    "default list falls to second backend",
+    "default list first backend",
+    "interface key wins",
+    "interface key beats default none",
+    "default none stops",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise",
+    "list items keep inner spaces",
+    "UseIn fallback",
+    "gtk last resort",
+    "no backend",
+    "non-specific portals.conf used",
+    "find_all star collects all",
+    "key before group voids file",
+    "invalid escape voids file",
+    "desktops dropped/lowercased",
+    "string list trailing empty dropped",
+    "bus name validity",
+    "non-portal interface voids backend",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "unparsable UseIn keeps the backend",
+    "final CR without LF is kept",
+    "invalid UTF-8 in a comment keeps the file",
+    "a VT before a key voids the file",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped",
+    "Encoding counts the bytes after a NUL"
+   ]
+  }
+ ]
+}

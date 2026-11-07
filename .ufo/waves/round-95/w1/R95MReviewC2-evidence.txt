@@ -1,0 +1,442 @@
+# R95MReviewC2 evidence (DRAFT runs; no receipt written)
+# date: 2026-11-07T08:17:45Z
+# gate sha256: 2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b
+# landed r95 counter sha256: e021c2c2c97bbbf34c20aa67c01462577605215529ae03586386423c8243dfef
+# landed r95 panel sha256: 635d8ffb62805aaab7accb49d758e6b81a887627266bec0daf5d36a93c76d18b
+# fixture repo: /fast/scratch/hyaku/mado-r95/R95MReviewC2/fx3mPOmx base=070a07d6d43fd23483a68ac989f6f3978a38942d new=77b006c68de3fca909834e027a29a5b42cc487c2
+
+===== exp-out.txt =====
+== (3) gate non_selftest_prefix cut ==
+find('def selftest(') idx=2863 line=73 prefix_len=2863
+prefix contains 'def gate(' = False
+prefix contains 'def run_selftest(' = False
+prefix tail repr = 'tion code.\n    """\n    idx = text.find("'
+gate's real selftest def line = 233
+mimeglob: first 'def selftest(' line=585 occurrences=1
+portals: first 'def selftest(' line=575 occurrences=1
+== (2) label derivation vs checks=N ==
+mimeglob: rc=0 line='MADO_MIMEGLOB_SELFTEST: checks=19 failed=0' raw_labels=20 unique=19 checks_N=19 fstrings=0
+mimeglob: duplicate source labels=['t15 truncated multi-byte glob refused']
+mimeglob: unique==N -> True
+portals: rc=0 line='MADO_PORTALS_SELFTEST: checks=28 failed=0' raw_labels=28 unique=28 checks_N=28 fstrings=0
+portals: duplicate source labels=[]
+portals: unique==N -> True
+synthetic f-string tool: derivation=[] (raw=0) vs runtime checks=2 -> mismatch=True
+== (1) forgery runs against the frozen gate ==
+F-A mimeglob mutant 'N_MIMES = 10'->'N_MIMES = 0': rc=1 fails=['t01 simple suffix', 't02 folded suffix', 't03 cs glob only on the exact case', 't04 deepest suffix wins', 't05 weight orders two types', 't08 fnmatch full glob', 't11 globs v1 file', 't12 equal weight keeps file order', 't14 basename only', 't16 a 0xff glob byte matches the same name byte', 't17 a bare * is inert']
+F-A mimeglob gate rc=1
+WRONG_CHECK F-A-alllabels failed=['t01 simple suffix', 't02 folded suffix', 't03 cs glob only on the exact case', 't04 deepest suffix wins', 't05 weight orders two types', 't08 fnmatch full glob', 't11 globs v1 file', 't12 equal weight keeps file order', 't14 basename only', 't16 a 0xff glob byte matches the same name byte', 't17 a bare * is inert']
+SELFTEST_STRENGTH: WEAK tool=scratch/mimeglob.py kills=1 held=0 survived=0 wrong_check=1
+F-A portals mutant 'GTK_DBUS = IMPL + ".desktop.gtk"'->'...gtkX': rc=1 fails=['list items keep inner spaces', 'gtk last resort', 'key before group voids file', 'invalid escape voids file', 'Encoding other than UTF-8 in the first group voids the file', 'a VT before a key voids the file']
+F-A portals gate rc=1
+WRONG_CHECK F-A-alllabels failed=['list items keep inner spaces', 'gtk last resort', 'key before group voids file', 'invalid escape voids file', 'Encoding other than UTF-8 in the first group voids the file', 'a VT before a key voids the file']
+SELFTEST_STRENGTH: WEAK tool=scratch/portals.py kills=1 held=0 survived=0 wrong_check=1
+F-B comment mimeglob gate rc=1
+SURVIVED F-B-comment
+SELFTEST_STRENGTH: WEAK tool=scratch/mimeglob.py kills=1 held=0 survived=1 wrong_check=0
+F-B2 docstring mimeglob gate rc=1
+SURVIVED F-B2-docstring
+SELFTEST_STRENGTH: WEAK tool=scratch/mimeglob.py kills=1 held=0 survived=1 wrong_check=0
+F-C functional-string mutant 'types = ["inode/directory"]'->'"inode/dir"': rc=1 fails=['t09 trailing slash']
+F-C wrong must_fail gate rc=1
+WRONG_CHECK F-C-wrong-label failed=['t09 trailing slash']
+SELFTEST_STRENGTH: WEAK tool=scratch/mimeglob.py kills=1 held=0 survived=0 wrong_check=1
+F-C exact must_fail=['t09 trailing slash'] gate rc=0
+SELFTEST_STRENGTH: OK tool=scratch/mimeglob.py kills=1 held=1 survived=0 wrong_check=0
+== synthetic: one kill whose must_fail lists every label ==
+gate rc=1
+WRONG_CHECK all-three failed=['alpha', 'beta']
+SELFTEST_STRENGTH: WEAK tool=fake/tool.py kills=1 held=0 survived=0 wrong_check=1
+gate rc=1
+WRONG_CHECK all-three-but-only-gamma failed=['gamma']
+SELFTEST_STRENGTH: WEAK tool=fake/tool.py kills=1 held=0 survived=0 wrong_check=1
+== synthetic: union-covering kills, no singleton, all labels neutralisation-flagged ==
+union kill-set gate rc=0
+SELFTEST_STRENGTH: OK tool=fake/tool.py kills=2 held=2 survived=0 wrong_check=0
+neutralise 'alpha': gate rc=1 verdict=['SELFTEST_STRENGTH: WEAK tool=fake/tool.py kills=2 held=1 survived=0 wrong_check=1']
+neutralise 'beta': gate rc=1 verdict=['SELFTEST_STRENGTH: WEAK tool=fake/tool.py kills=2 held=1 survived=0 wrong_check=1']
+neutralise 'gamma': gate rc=1 verdict=['SELFTEST_STRENGTH: WEAK tool=fake/tool.py kills=2 held=1 survived=1 wrong_check=0']
+== synthetic: duplicate label (two checks, one label) ==
+dup mutant A (fails one 'same'): gate rc=0
+SELFTEST_STRENGTH: OK tool=fake/dup.py kills=1 held=1 survived=0 wrong_check=0
+dup mutant A, must_fail ['same','same']: gate rc=1
+WRONG_CHECK both2 failed=['same']
+SELFTEST_STRENGTH: WEAK tool=fake/dup.py kills=1 held=0 survived=0 wrong_check=1
+dup neutralise 'same' (one edit, both checks): gate rc=1
+SURVIVED both
+SELFTEST_STRENGTH: WEAK tool=fake/dup.py kills=1 held=0 survived=1 wrong_check=0
+
+===== exp3-out.txt =====
+== (3a) draft gate change (NOT landed) ==
+old gate sha256=2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b
+new gate sha256=2c548f06943f8143b132b39ac85bdd5775d5ba4f3f156a1eb575c1fd8ba3758d
+old line:     idx = text.find("def selftest(")
+new lines:     idx = text.find("\ndef selftest(") |     idx = idx + 1 if idx >= 0 else text.find("def selftest(")
+old: cut line=73 prefix_len=2863 gate_def=False run_selftest_def=False
+new: cut line=205 prefix_len=8862 gate_def=True run_selftest_def=True
+old-gate --selftest rc=0 last='SELFTEST_STRENGTH_SELFTEST: checks=11 failed=0'
+new-gate --selftest rc=0 last='SELFTEST_STRENGTH_SELFTEST: checks=11 failed=0'
+mutated gate --selftest rc=1 fails=['selftest OK', 'selftest sha drift allowed rc0', 'selftest list must_fail exact set held rc0', 'selftest checks pin']
+mutated result line=['SELFTEST_STRENGTH_SELFTEST: checks=11 failed=4']
+old-gate as gate on kill-set targeting gate() logic: rc=2
+SELFTEST_STRENGTH: SETUP_ERROR kill gate-rc-flip find occurs 0 times in non-selftest code
+new-gate as gate on kill-set targeting gate() logic: rc=0
+SELFTEST_STRENGTH: OK tool=scratch/gate_mutated_or_not.py kills=1 held=1 survived=0 wrong_check=0
+== (3b) earlier frozen counters pinning the gate sha256 ==
+counter quality/counters/c2-r93-selftest-strength.py expect-gate-sha256_args=2 old_sha_literal=False
+counter quality/counters/c2-r94-selftest-kills.py expect-gate-sha256_args=2 old_sha_literal=False
+
+===== exp4-out.txt =====
+== synthetic flag drives every check: ONE kill, must_fail = all labels ==
+gate rc=0
+SELFTEST_STRENGTH: OK tool=fake/all.py kills=1 held=1 survived=0 wrong_check=0
+neutralise 'alpha': gate rc=1 ['SELFTEST_STRENGTH: WEAK tool=fake/all.py kills=1 held=0 survived=0 wrong_check=1']
+neutralise 'beta': gate rc=1 ['SELFTEST_STRENGTH: WEAK tool=fake/all.py kills=1 held=0 survived=0 wrong_check=1']
+neutralise 'gamma': gate rc=1 ['SELFTEST_STRENGTH: WEAK tool=fake/all.py kills=1 held=0 survived=0 wrong_check=1']
+== label identity: derived label list == runtime printed FAIL labels ==
+mimeglob: rc=1 printed=19 derived=19 same_multiset=True same_order=True result='MADO_MIMEGLOB_SELFTEST: checks=19 failed=19'
+portals: rc=1 printed=28 derived=28 same_multiset=True same_order=True result='MADO_PORTALS_SELFTEST: checks=28 failed=28'
+
+===== counter-full-070a07d6d43fd23483a68ac989f6f3978a38942d.txt =====
+probe T1 pos OK:0
+probe T1 N:m03 list: second id installed WEAK:1
+probe T1 N:m05 desktop-specific file first WEAK:1
+probe T1 N:m09 only a file's first matching line counts; the next file is read WEAK:1
+probe T1 N:m16 CR kept in the id WEAK:1
+probe T1 N:d09 Exec=true is a builtin: not installed WEAK:1
+probe T1 N:f06 unanchored grep in mimeinfo.cache WEAK:1
+probe T1 N:f09 a cache value -n is an echo option WEAK:1
+probe T1 N:b02 InitialPreference picks WEAK:1
+probe T1 N:s01 LXQt: rc 3 WEAK:1
+probe T1 N:s05 no slash: rc 1 WEAK:1
+probe T1 N:s08 --version WEAK:1
+probe T1 N:type outside RFC 6838 refused WEAK:1
+probe T1 W:xdg-w01-m03-id-observed WEAK:1
+probe T1 W:xdg-w02-m05-id-observed WEAK:1
+probe T1 W:xdg-w03-s01-rc-observed WEAK:1
+probe T1 W:xdg-w04-s08-version-observed WEAK:1
+probe T1 W:xdg-w05-f06-id-observed WEAK:1
+probe T1 W:xdg-w06-d09-id-observed WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-m03 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-m05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-m09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-m16 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-d09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-f06 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-f09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-b02 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-s01 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-s05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-s08 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-m03 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-f06 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-b02 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-loose-m03 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-vac-s05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-vac-s01 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-vac-f09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-loose-s08 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rfc-always-true WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-m05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-m09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-m16 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-d09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-f09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-s01 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-s05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-s08 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-m03 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-m05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-m09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-m16 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-d09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-f06 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-f09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-b02 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-s01 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-s05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-s08 WEAK:1
+probe T1 Z:xdg-z01-docstring-note OK:0
+probe T1 Z:xdg-z02-reorder-s01-s05 OK:0
+probe T1 Z:xdg-z03-comment-failed-line OK:0
+probe T2 pos OK:0
+probe T2 N:cache addition is default WEAK:1
+probe T2 N:hidden and unloadable dropped from lists WEAK:1
+probe T2 N:subdir id WEAK:1
+probe T2 N:alias unaliased WEAK:1
+probe T2 N:parent in registered not recommended WEAK:1
+probe T2 N:unloadable only -> none WEAK:1
+probe T2 N:hidden default accepted WEAK:1
+probe T2 N:desktop list wins WEAK:1
+probe T2 N:desktop list additions ignored WEAK:1
+probe T2 N:other desktop ignores it WEAK:1
+probe T2 N:removal blocks lower addition WEAK:1
+probe T2 N:added group is read before removed whatever the file order WEAK:1
+probe T2 N:unloadable list skipped WEAK:1
+probe T2 N:masked lower addition skipped, hidden one taken WEAK:1
+probe T2 N:default from masked id still loads in a lower dir WEAK:1
+probe T2 N:desktops WEAK:1
+probe T2 N:fgets chop WEAK:1
+probe T2 W:mime-w01-cache-addition-observed WEAK:1
+probe T2 W:mime-w02-hidden-list-observed WEAK:1
+probe T2 W:mime-w03-subdir-id-observed WEAK:1
+probe T2 W:mime-w04-alias-widened WEAK:1
+probe T2 W:mime-w05-desktops-observed WEAK:1
+probe T2 W:mime-w06-fgets-observed WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-cache-default WEAK:1
+probe T2 W:mutc2-h[mime]-m-membership-registered WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-subdir WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-alias WEAK:1
+probe T2 W:mutc2-h[mime]-m-parent-recommended-dropped WEAK:1
+probe T2 W:mutc2-h[mime]-m-not-a WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-hidden-default WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-desktop-wins WEAK:1
+probe T2 W:mutc2-h[mime]-m-additions-not-a WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-other-desktop WEAK:1
+probe T2 W:mutc2-h[mime]-m-vac-removal WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-added-before-removed WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-unloadable WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-masked WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-lower-dir WEAK:1
+probe T2 W:mutc2-h[mime]-m-desktops-membership WEAK:1
+probe T2 W:mutc2-h[mime]-m-fgets-type WEAK:1
+probe T2 W:mutc2-h[mime]-m-cache-default-not-gone WEAK:1
+probe T2 W:mutc2-h[mime]-m-len-registered WEAK:1
+probe T2 W:mutc2-h[mime]-m-parent-registered-dropped WEAK:1
+probe T2 W:mutc2-h[mime]-m-removal-not-a WEAK:1
+probe T2 W:mutc2-h[mime]-m-desktops-length WEAK:1
+probe T2 W:mutc2-h[mime]-m-fgets-at-most WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-cache-default WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-registered WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-subdir WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-alias WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-parent-registered WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-parent-recommended WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-unloadable-none WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-hidden-default WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-desktop-wins WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-additions-none WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-other-desktop WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-removal WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-added-before-removed WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-unloadable WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-masked WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-desktops WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-fgets WEAK:1
+probe T2 Z:mime-z01-comment-app OK:0
+probe T2 Z:mime-z02-reorder-desktops-fgets OK:0
+probe T2 Z:mime-z03-comment-chk-def OK:0
+MADO_SELFTEST_KILLS: TARGET_MET pred=PRED-C2-r94-v1 rev=070a07d6d43fd23483a68ac989f6f3978a38942d gate_pin=ok kills_pin=ok,ok tools=2 checks=29 positive=OK:0,OK:0 neutralised_flagged=29/29 hand_flagged=91/91 neutral_ok=6/6 do_nothing_flagged=0 always_ok_flagged=0 always_weak_positive=WEAK:1,WEAK:1 shadiff_neutral_ok=0/6 gate_selftest=ok control_hand_flagged=45/91 singleton_labels=22/29 tool_pin=ok,ok kill_paths=quality/selftest-kills/mado-xdgmime.json,quality/selftest-kills/mado-mime.json gate_sha256=2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b kills_sha256=d8a450bfb3bd67a6f5be399dece1ddc3d1b0922ae9c4b1f8bcff9a37afddd4ad,1a0c4fe8cec8ac4d0b33aaaf3c803e37ef168cc86f1f5cf914d35182051100b6
+
+===== counter-full-77b006c68de3fca909834e027a29a5b42cc487c2.txt =====
+probe T1 pos OK:0
+probe T1 N:m03 list: second id installed WEAK:1
+probe T1 N:m05 desktop-specific file first WEAK:1
+probe T1 N:m09 only a file's first matching line counts; the next file is read WEAK:1
+probe T1 N:m16 CR kept in the id WEAK:1
+probe T1 N:d09 Exec=true is a builtin: not installed WEAK:1
+probe T1 N:f06 unanchored grep in mimeinfo.cache WEAK:1
+probe T1 N:f09 a cache value -n is an echo option WEAK:1
+probe T1 N:b02 InitialPreference picks WEAK:1
+probe T1 N:s01 LXQt: rc 3 WEAK:1
+probe T1 N:s05 no slash: rc 1 WEAK:1
+probe T1 N:s08 --version WEAK:1
+probe T1 N:type outside RFC 6838 refused WEAK:1
+probe T1 W:xdg-w01-m03-id-observed WEAK:1
+probe T1 W:xdg-w02-m05-id-observed WEAK:1
+probe T1 W:xdg-w03-s01-rc-observed WEAK:1
+probe T1 W:xdg-w04-s08-version-observed WEAK:1
+probe T1 W:xdg-w05-f06-id-observed WEAK:1
+probe T1 W:xdg-w06-d09-id-observed WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-m03 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-m05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-m09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-m16 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-d09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-f06 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-f09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-b02 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-s01 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-s05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-id-s08 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-m03 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-f06 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-b02 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-loose-m03 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-vac-s05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-vac-s01 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-vac-f09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-loose-s08 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rfc-always-true WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-m05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-m09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-m16 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-d09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-f09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-s01 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-s05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-rc-s08 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-m03 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-m05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-m09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-m16 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-d09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-f06 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-f09 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-b02 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-s01 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-s05 WEAK:1
+probe T1 W:mutc2-h[xdgmime]-x-not-s08 WEAK:1
+probe T1 Z:xdg-z01-docstring-note OK:0
+probe T1 Z:xdg-z02-reorder-s01-s05 OK:0
+probe T1 Z:xdg-z03-comment-failed-line OK:0
+probe T2 pos OK:0
+probe T2 N:cache addition is default WEAK:1
+probe T2 N:hidden and unloadable dropped from lists WEAK:1
+probe T2 N:subdir id WEAK:1
+probe T2 N:alias unaliased WEAK:1
+probe T2 N:parent in registered not recommended WEAK:1
+probe T2 N:unloadable only -> none WEAK:1
+probe T2 N:hidden default accepted WEAK:1
+probe T2 N:desktop list wins WEAK:1
+probe T2 N:desktop list additions ignored WEAK:1
+probe T2 N:other desktop ignores it WEAK:1
+probe T2 N:removal blocks lower addition WEAK:1
+probe T2 N:added group is read before removed whatever the file order WEAK:1
+probe T2 N:unloadable list skipped WEAK:1
+probe T2 N:masked lower addition skipped, hidden one taken WEAK:1
+probe T2 N:default from masked id still loads in a lower dir WEAK:1
+probe T2 N:desktops WEAK:1
+probe T2 N:fgets chop WEAK:1
+probe T2 W:mime-w01-cache-addition-observed WEAK:1
+probe T2 W:mime-w02-hidden-list-observed WEAK:1
+probe T2 W:mime-w03-subdir-id-observed WEAK:1
+probe T2 W:mime-w04-alias-widened WEAK:1
+probe T2 W:mime-w05-desktops-observed WEAK:1
+probe T2 W:mime-w06-fgets-observed WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-cache-default WEAK:1
+probe T2 W:mutc2-h[mime]-m-membership-registered WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-subdir WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-alias WEAK:1
+probe T2 W:mutc2-h[mime]-m-parent-recommended-dropped WEAK:1
+probe T2 W:mutc2-h[mime]-m-not-a WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-hidden-default WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-desktop-wins WEAK:1
+probe T2 W:mutc2-h[mime]-m-additions-not-a WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-other-desktop WEAK:1
+probe T2 W:mutc2-h[mime]-m-vac-removal WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-added-before-removed WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-unloadable WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-masked WEAK:1
+probe T2 W:mutc2-h[mime]-m-loose-lower-dir WEAK:1
+probe T2 W:mutc2-h[mime]-m-desktops-membership WEAK:1
+probe T2 W:mutc2-h[mime]-m-fgets-type WEAK:1
+probe T2 W:mutc2-h[mime]-m-cache-default-not-gone WEAK:1
+probe T2 W:mutc2-h[mime]-m-len-registered WEAK:1
+probe T2 W:mutc2-h[mime]-m-parent-registered-dropped WEAK:1
+probe T2 W:mutc2-h[mime]-m-removal-not-a WEAK:1
+probe T2 W:mutc2-h[mime]-m-desktops-length WEAK:1
+probe T2 W:mutc2-h[mime]-m-fgets-at-most WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-cache-default WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-registered WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-subdir WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-alias WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-parent-registered WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-parent-recommended WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-unloadable-none WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-hidden-default WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-desktop-wins WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-additions-none WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-other-desktop WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-removal WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-added-before-removed WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-unloadable WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-masked WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-desktops WEAK:1
+probe T2 W:mutc2-h[mime]-m-alt-fgets WEAK:1
+probe T2 Z:mime-z01-comment-app OK:0
+probe T2 Z:mime-z02-reorder-desktops-fgets OK:0
+probe T2 Z:mime-z03-comment-chk-def OK:0
+MADO_SELFTEST_KILLS: TARGET_MISSED pred=PRED-C2-r94-v1 rev=77b006c68de3fca909834e027a29a5b42cc487c2 gate_pin=FAIL kills_pin=ok,ok tools=2 checks=29 positive=OK:0,OK:0 neutralised_flagged=29/29 hand_flagged=91/91 neutral_ok=6/6 do_nothing_flagged=0 always_ok_flagged=0 always_weak_positive=WEAK:1,WEAK:1 shadiff_neutral_ok=0/6 gate_selftest=ok control_hand_flagged=45/91 singleton_labels=22/29 tool_pin=ok,ok kill_paths=quality/selftest-kills/mado-xdgmime.json,quality/selftest-kills/mado-mime.json gate_sha256=2c548f06943f8143b132b39ac85bdd5775d5ba4f3f156a1eb575c1fd8ba3758d kills_sha256=d8a450bfb3bd67a6f5be399dece1ddc3d1b0922ae9c4b1f8bcff9a37afddd4ad,1a0c4fe8cec8ac4d0b33aaaf3c803e37ef168cc86f1f5cf914d35182051100b6
+
+===== forgery-counter.txt =====
+probe T1 pos OK:0
+probe T1 N:t01 simple suffix WEAK:1
+probe T1 N:t02 folded suffix WEAK:1
+probe T1 N:t03 cs glob only on the exact case WEAK:1
+probe T1 N:t04 deepest suffix wins WEAK:1
+probe T1 N:t05 weight orders two types WEAK:1
+probe T1 N:t06 literal WEAK:1
+probe T1 N:t07 literal is not folded WEAK:1
+probe T1 N:t08 fnmatch full glob WEAK:1
+probe T1 N:t09 trailing slash WEAK:1
+probe T1 N:t10 no match WEAK:1
+probe T1 N:t11 globs v1 file WEAK:1
+probe T1 N:t12 equal weight keeps file order WEAK:1
+probe T1 N:t13 non-ASCII byte never matches a suffix WEAK:1
+probe T1 N:t14 basename only WEAK:1
+probe T1 N:t16 a 0xff glob byte matches the same name byte WEAK:1
+probe T1 N:t17 a bare * is inert WEAK:1
+probe T1 N:t15 truncated multi-byte glob refused WEAK:1
+probe T1 N:t18 empty HOME is /.local/share/mime/ WEAK:1
+probe T1 N:t19 unset HOME adds no user dir WEAK:1
+probe T1 W:glob-w01-t01-tautology WEAK:1
+probe T1 W:glob-w02-t02-tautology WEAK:1
+probe T1 W:glob-w03-t03-tautology WEAK:1
+probe T1 W:glob-w04-t05-tautology WEAK:1
+probe T1 W:glob-w05-t07-tautology WEAK:1
+probe T1 W:glob-w06-t09-tautology WEAK:1
+probe T1 W:glob-w07-t10-tautology WEAK:1
+probe T1 W:glob-w08-t11-tautology WEAK:1
+probe T1 W:glob-w09-t13-tautology WEAK:1
+probe T1 W:glob-w10-t15-arm-inverted WEAK:1
+probe T1 W:glob-w11-t17-tautology WEAK:1
+probe T1 W:glob-w12-t18-tautology WEAK:1
+probe T1 Z:glob-z01-comment-checks-line OK:0
+probe T1 Z:glob-z02-reorder-t01-t02 OK:0
+probe T1 Z:glob-z03-comment-failed-line OK:0
+probe T2 pos OK:0
+probe T2 N:default list falls to second backend WEAK:1
+probe T2 N:default list first backend WEAK:1
+probe T2 N:interface key wins WEAK:1
+probe T2 N:interface key beats default none WEAK:1
+probe T2 N:default none stops WEAK:1
+probe T2 N:star takes first sorted backend (UseIn first) WEAK:1
+probe T2 N:star takes name order otherwise WEAK:1
+probe T2 N:list items keep inner spaces WEAK:1
+probe T2 N:UseIn fallback WEAK:1
+probe T2 N:gtk last resort WEAK:1
+probe T2 N:no backend WEAK:1
+probe T2 N:non-specific portals.conf used WEAK:1
+probe T2 N:find_all star collects all WEAK:1
+probe T2 N:key before group voids file WEAK:1
+probe T2 N:invalid escape voids file WEAK:1
+probe T2 N:desktops dropped/lowercased WEAK:1
+probe T2 N:string list trailing empty dropped WEAK:1
+probe T2 N:bus name validity WEAK:1
+probe T2 N:non-portal interface voids backend WEAK:1
+probe T2 N:Encoding other than UTF-8 in the first group voids the file WEAK:1
+probe T2 N:unparsable UseIn keeps the backend WEAK:1
+probe T2 N:final CR without LF is kept WEAK:1
+probe T2 N:invalid UTF-8 in a comment keeps the file WEAK:1
+probe T2 N:a VT before a key voids the file WEAK:1
+probe T2 N:a NUL ends the stored value WEAK:1
+probe T2 N:a NUL after a group bracket keeps the group WEAK:1
+probe T2 N:continuation bytes after a group bracket are skipped WEAK:1
+probe T2 N:Encoding counts the bytes after a NUL WEAK:1
+probe T2 W:por-w01-default-list-second WEAK:1
+probe T2 W:por-w02-default-list-first WEAK:1
+probe T2 W:por-w03-interface-key-wins WEAK:1
+probe T2 W:por-w04-default-none-stops WEAK:1
+probe T2 W:por-w05-star-usein-first WEAK:1
+probe T2 W:por-w06-list-inner-spaces WEAK:1
+probe T2 W:por-w07-desktops WEAK:1
+probe T2 W:por-w08-bus-name-arms-dropped WEAK:1
+probe T2 W:por-w09-non-portal-voids WEAK:1
+probe T2 W:por-w10-final-cr WEAK:1
+probe T2 W:por-w11-vt-before-key WEAK:1
+probe T2 W:por-w12-encoding-nul WEAK:1
+probe T2 Z:por-z01-comment-chk-def OK:0
+probe T2 Z:por-z02-reorder-stringlist-busname OK:0
+probe T2 Z:por-z03-comment-failed-line OK:0
+MADO_SELFTEST_KILLS: DRAFT_TARGET_MET pred=PRED-C2-r95-v1 rev=draft gate_pin=ok kills_pin=ok,ok tools=2 checks=47 positive=OK:0,OK:0 neutralised_flagged=47/47 hand_flagged=24/24 neutral_ok=6/6 do_nothing_flagged=0 always_ok_flagged=0 always_weak_positive=WEAK:1,WEAK:1 shadiff_neutral_ok=0/6 gate_selftest=ok control_hand_flagged=0/24 singleton_labels=0/47 tool_pin=ok,ok kill_paths=quality/selftest-kills/mado-mimeglob.json,quality/selftest-kills/mado-portals.json gate_sha256=2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b kills_sha256=43f8a9e337b5d60b1ae5fef3736d67aba5ca6e9df05947af3759e70f59887ba5,b146a2faad29e0758591137c52a15ccac35f45bb3ca8119c74a0abf0e44cddca

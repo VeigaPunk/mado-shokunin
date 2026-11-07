@@ -1,0 +1,542 @@
+{
+ "mutants": [
+  {
+   "id": "range_end_mask",
+   "rule": "range_length 32-bit wrap in range_start + range_length",
+   "find": "    end = (range_start + range_length) & M32",
+   "replace": "    end = range_start + range_length"
+  },
+  {
+   "id": "range_start_zero",
+   "rule": "for i from range_start",
+   "find": "    i = range_start",
+   "replace": "    i = 0"
+  },
+  {
+   "id": "range_end_inclusive",
+   "rule": "while i < range_start + range_length",
+   "find": "    while i < end:",
+   "replace": "    while i <= end:"
+  },
+  {
+   "id": "wrap_raise_removed",
+   "rule": "i + value_length past 2^32 is refused",
+   "find": "        if i + value_length > M32:\n            raise Unsupported(\"matchlet i + value_length passes 2^32 (memcmp past the data)\")\n",
+   "replace": ""
+  },
+  {
+   "id": "len_check_ge",
+   "rule": "stop false as soon as i + value_length exceeds len",
+   "find": "        if i + value_length > len(data):\n            return False",
+   "replace": "        if i + value_length >= len(data):\n            return False"
+  },
+  {
+   "id": "mask_ignored",
+   "rule": "with a mask, every byte compared under the mask",
+   "find": "            if mask_offset:",
+   "replace": "            if False:"
+  },
+  {
+   "id": "mask_value_unmasked",
+   "rule": "value byte compared under the mask",
+   "find": "                if (v & m) != (d & m):",
+   "replace": "                if v != (d & m):"
+  },
+  {
+   "id": "mask_data_unmasked",
+   "rule": "data byte compared under the mask",
+   "find": "                if (v & m) != (d & m):",
+   "replace": "                if (v & m) != d:"
+  },
+  {
+   "id": "byte_past_mapping",
+   "rule": "a cache read past the zero-filled last page is refused",
+   "find": "    if off >= len(c.buf):\n        raise Unsupported(\"cache read past the mapping\")",
+   "replace": "    if off > M32:\n        raise Unsupported(\"cache read past the mapping\")"
+  },
+  {
+   "id": "child_bounds_after_value",
+   "rule": "a child list that fails the bounds check makes the matchlet false before its own test",
+   "find": "        if oob(co, n, 32, c.size):\n            return None\n        if not matchlet_value(c, o, data):\n            return None",
+   "replace": "        if not matchlet_value(c, o, data):\n            return None\n        if oob(co, n, 32, c.size):\n            return None"
+  },
+  {
+   "id": "child_fail_aborts",
+   "rule": "a matchlet holds when any child holds",
+   "find": "        if sub is None:\n            continue",
+   "replace": "        if sub is None:\n            return False"
+  },
+  {
+   "id": "no_children_false",
+   "rule": "a matchlet holds when it has no children",
+   "find": "    if top[1] == 0:\n        return True",
+   "replace": "    if top[1] == 0:\n        return False"
+  },
+  {
+   "id": "nest_raise_removed",
+   "rule": "nested deeper than 100000 is refused",
+   "find": "        if len(stack) > MAX_NEST:\n            raise Unsupported(\"matchlet children nested past 100000 (the C recursion overflows)\")\n",
+   "replace": ""
+  },
+  {
+   "id": "max_nest_zero",
+   "rule": "MAX_NEST = 100000",
+   "find": "MAX_NEST = 100000",
+   "replace": "MAX_NEST = 0"
+  },
+  {
+   "id": "stack_empty",
+   "rule": "the traversal starts from the top matchlet",
+   "find": "    stack = [top]",
+   "replace": "    stack = []"
+  },
+  {
+   "id": "child_stride_16",
+   "rule": "child = child_offset + 32 * i",
+   "find": "        child = fr[2] + 32 * fr[3]",
+   "replace": "        child = fr[2] + 16 * fr[3]"
+  },
+  {
+   "id": "magic_list_off_20",
+   "rule": "list_offset = GET_UINT32(buffer, 24)",
+   "find": "    lo = c.u32(24)",
+   "replace": "    lo = c.u32(20)"
+  },
+  {
+   "id": "magic_list_bounds_removed",
+   "rule": "the magic list header is bounds-checked",
+   "find": "    if oob(lo, 1, 12, c.size):\n        return None, 0",
+   "replace": "    if False:\n        return None, 0"
+  },
+  {
+   "id": "entries_bounds_removed",
+   "rule": "the magic entry array is bounds-checked",
+   "find": "    if oob(off, n, 16, c.size):\n        return None, 0",
+   "replace": "    if False:\n        return None, 0"
+  },
+  {
+   "id": "entry_oob_break",
+   "rule": "an out-of-bounds matchlet list skips its entry",
+   "find": "        if oob(mlo, nm, 32, c.size):\n            continue",
+   "replace": "        if oob(mlo, nm, 32, c.size):\n            break"
+  },
+  {
+   "id": "entry_mlo_field",
+   "rule": "matchlet_offset = GET_UINT32(offset + 12)",
+   "find": "        mlo = c.u32(e + 12)",
+   "replace": "        mlo = c.u32(e + 8)"
+  },
+  {
+   "id": "entry_prio_field",
+   "rule": "priority = GET_UINT32(offset)",
+   "find": "        prio = c.u32(e)",
+   "replace": "        prio = c.u32(e + 8)"
+  },
+  {
+   "id": "entry_nm_field",
+   "rule": "n_matchlets = GET_UINT32(offset + 8)",
+   "find": "        nm = c.u32(e + 8)",
+   "replace": "        nm = c.u32(e + 4)"
+  },
+  {
+   "id": "entry_mo_field",
+   "rule": "mimetype_offset = GET_UINT32(offset + 4)",
+   "find": "        mo = c.u32(e + 4)",
+   "replace": "        mo = c.u32(e)"
+  },
+  {
+   "id": "entries_reversed",
+   "rule": "the first match entry in cache order is returned",
+   "find": "    for j in range(n):",
+   "replace": "    for j in range(n - 1, -1, -1):"
+  },
+  {
+   "id": "matchlets_short",
+   "rule": "every matchlet of an entry is tried",
+   "find": "        for k in range(nm):",
+   "replace": "        for k in range(nm - 1):"
+  },
+  {
+   "id": "first_match_skipped",
+   "rule": "a matching entry is returned at once",
+   "find": "                return c.cstr(mo).decode(\"utf-8\", \"surrogateescape\"), _s32(prio)",
+   "replace": "                break"
+  },
+  {
+   "id": "prio_unsigned",
+   "rule": "priorities are ints (>= 2^31 negative)",
+   "find": "                return c.cstr(mo).decode(\"utf-8\", \"surrogateescape\"), _s32(prio)",
+   "replace": "                return c.cstr(mo).decode(\"utf-8\", \"surrogateescape\"), prio"
+  },
+  {
+   "id": "s32_mask",
+   "rule": "the sign bit is 0x80000000",
+   "find": "    return x - (1 << 32) if x & 0x80000000 else x",
+   "replace": "    return x - (1 << 32) if x & 0x40000000 else x"
+  },
+  {
+   "id": "zerosize_removed",
+   "rule": "empty data -> application/x-zerosize with priority 100",
+   "find": "    if len(data) == 0:\n        return EMPTY, 100\n",
+   "replace": ""
+  },
+  {
+   "id": "zerosize_prio_zero",
+   "rule": "empty data -> priority 100",
+   "find": "        return EMPTY, 100",
+   "replace": "        return EMPTY, 0"
+  },
+  {
+   "id": "zerosize_type_text",
+   "rule": "empty data -> the EMPTY constant",
+   "find": "        return EMPTY, 100",
+   "replace": "        return TEXTPLAIN, 100"
+  },
+  {
+   "id": "prio_strict_gt",
+   "rule": "a cache's answer replaces the running one only when its priority is strictly greater",
+   "find": "        if p > priority:",
+   "replace": "        if p >= priority:"
+  },
+  {
+   "id": "priority_ge_zero",
+   "rule": "a cache answer is used only when priority > 0",
+   "find": "    if priority > 0:",
+   "replace": "    if priority >= 0:"
+  },
+  {
+   "id": "fallback_127",
+   "rule": "the fallback reads the first 128 bytes",
+   "find": "    for b in data[:128]:",
+   "replace": "    for b in data[:127]:"
+  },
+  {
+   "id": "fallback_129",
+   "rule": "the fallback reads the first 128 bytes",
+   "find": "    for b in data[:128]:",
+   "replace": "    for b in data[:129]:"
+  },
+  {
+   "id": "fallback_space",
+   "rule": "a byte < 32 other than 9, 10, 13 -> UNKNOWN",
+   "find": "        if b < 32 and b not in (9, 10, 13):",
+   "replace": "        if b <= 32 and b not in (9, 10, 13):"
+  },
+  {
+   "id": "fallback_cr",
+   "rule": "13 is allowed by the fallback",
+   "find": "        if b < 32 and b not in (9, 10, 13):",
+   "replace": "        if b < 32 and b not in (9, 10):"
+  },
+  {
+   "id": "fallback_tab",
+   "rule": "9 is allowed by the fallback",
+   "find": "        if b < 32 and b not in (9, 10, 13):",
+   "replace": "        if b < 32 and b not in (10, 13):"
+  },
+  {
+   "id": "fallback_unknown_to_text",
+   "rule": "binary data -> the UNKNOWN constant",
+   "find": "            return UNKNOWN, 0",
+   "replace": "            return TEXTPLAIN, 0"
+  },
+  {
+   "id": "fallback_text_to_unknown",
+   "rule": "text data -> the TEXTPLAIN constant",
+   "find": "    return TEXTPLAIN, 0",
+   "replace": "    return UNKNOWN, 0"
+  },
+  {
+   "id": "fallback_text_prio",
+   "rule": "the fallback keeps priority 0",
+   "find": "    return TEXTPLAIN, 0",
+   "replace": "    return TEXTPLAIN, 100"
+  },
+  {
+   "id": "lltext_lt7",
+   "rule": "no byte 0x00-0x07",
+   "find": "    return not any(b < 8 or 14 <= b < 32 or b == 127 for b in data)",
+   "replace": "    return not any(b < 7 or 14 <= b < 32 or b == 127 for b in data)"
+  },
+  {
+   "id": "lltext_le8",
+   "rule": "0x08 (backspace) passes looks_like_text",
+   "find": "b < 8 or",
+   "replace": "b <= 8 or"
+  },
+  {
+   "id": "lltext_15",
+   "rule": "no byte 0x0e-0x1f",
+   "find": "14 <= b < 32",
+   "replace": "15 <= b < 32"
+  },
+  {
+   "id": "lltext_13",
+   "rule": "0x0d is not rejected",
+   "find": "14 <= b < 32",
+   "replace": "13 <= b < 32"
+  },
+  {
+   "id": "lltext_no127",
+   "rule": "0x7f is rejected",
+   "find": " or b == 127 for b in data)",
+   "replace": " for b in data)"
+  },
+  {
+   "id": "lltext_126",
+   "rule": "0x7f is rejected (not 0x7e)",
+   "find": "b == 127",
+   "replace": "b == 126"
+  },
+  {
+   "id": "lltext_128",
+   "rule": "looks_like_text scans the whole data",
+   "find": "for b in data)",
+   "replace": "for b in data[:128])"
+  },
+  {
+   "id": "lltext_inverted",
+   "rule": "looks_like_text is the negation of the control scan",
+   "find": "    return not any(b < 8",
+   "replace": "    return any(b < 8"
+  },
+  {
+   "id": "unknown_constant_value",
+   "rule": "UNKNOWN is application/octet-stream",
+   "find": "UNKNOWN = _Const(\"application/octet-stream\")",
+   "replace": "UNKNOWN = _Const(\"application/x-unknown\")"
+  },
+  {
+   "id": "textplain_constant_value",
+   "rule": "TEXTPLAIN is text/plain",
+   "find": "TEXTPLAIN = _Const(\"text/plain\")",
+   "replace": "TEXTPLAIN = _Const(\"text/x-plain\")"
+  },
+  {
+   "id": "empty_constant_value",
+   "rule": "EMPTY is application/x-zerosize",
+   "find": "EMPTY = _Const(\"application/x-zerosize\")",
+   "replace": "EMPTY = _Const(\"application/x-empty\")"
+  },
+  {
+   "id": "alias_return_name",
+   "rule": "the alias list maps the name",
+   "find": "                return c.cstr(c.u32(lo + 4 + 8 * mid + 4))",
+   "replace": "                return name"
+  },
+  {
+   "id": "alias_first_cache",
+   "rule": "the alias is searched in every cache",
+   "find": "def _alias(caches: list, name: bytes) -> bytes:\n    for c in caches:",
+   "replace": "def _alias(caches: list, name: bytes) -> bytes:\n    for c in caches[:1]:"
+  },
+  {
+   "id": "alias_lt_ge",
+   "rule": "binary search on strcmp < 0",
+   "find": "            if s < name:",
+   "replace": "            if s <= name:"
+  },
+  {
+   "id": "alias_bounds_removed",
+   "rule": "the alias list header is bounds-checked",
+   "find": "        lo = c.u32(4)\n        if oob(lo, 1, 4, c.size):\n            continue",
+   "replace": "        lo = c.u32(4)\n        if False:\n            continue"
+  },
+  {
+   "id": "subclass_eq_removed",
+   "rule": "equal unaliased names are subclasses",
+   "find": "    if umime == ubase:\n        return True",
+   "replace": "    if False:\n        return True"
+  },
+  {
+   "id": "subclass_super_slash",
+   "rule": "base x/* with the same media type",
+   "find": "    if ubase.endswith(b\"/*\"):",
+   "replace": "    if ubase.endswith(b\"/\"):"
+  },
+  {
+   "id": "subclass_media_slice",
+   "rule": "xdg_mime_media_type_equal compares up to and including /",
+   "find": "        if sep >= 0 and umime[:sep + 1] == ubase[:sep + 1]:",
+   "replace": "        if sep >= 0 and umime[:sep] == ubase[:sep]:"
+  },
+  {
+   "id": "subclass_text_media_removed",
+   "rule": "base text/plain and mime text/*",
+   "find": "    if ubase == b\"text/plain\" and umime.startswith(b\"text/\"):",
+   "replace": "    if ubase == b\"text/plain\":"
+  },
+  {
+   "id": "subclass_octet_inode",
+   "rule": "base application/octet-stream and mime not inode/*",
+   "find": "    if ubase == b\"application/octet-stream\" and not umime.startswith(b\"inode/\"):",
+   "replace": "    if ubase == b\"application/octet-stream\" and umime.startswith(b\"inode/\"):"
+  },
+  {
+   "id": "subclass_seen_removed",
+   "rule": "parents already seen are skipped",
+   "find": "                    if (ci, pofs) in seen:\n                        continue\n",
+   "replace": ""
+  },
+  {
+   "id": "subclass_first_cache",
+   "rule": "every cache's parent list is searched",
+   "find": "    for ci, c in enumerate(caches):",
+   "replace": "    for ci, c in enumerate(caches[:1]):"
+  },
+  {
+   "id": "subclass_recurse_base",
+   "rule": "the parent is tested against the base",
+   "find": "                    if subclass(caches, c.cstr(pofs), ubase, seen):",
+   "replace": "                    if subclass(caches, c.cstr(pofs), umime, seen):"
+  },
+  {
+   "id": "subclass_break_removed",
+   "rule": "the search stops after the first matching parent entry",
+   "find": "                break\n    return False",
+   "replace": "    return False"
+  },
+  {
+   "id": "subclass_parents_bounds_removed",
+   "rule": "the parent list header is bounds-checked",
+   "find": "        lo = c.u32(8)\n        if oob(lo, 1, 4, c.size):\n            continue",
+   "replace": "        lo = c.u32(8)\n        if False:\n            continue"
+  },
+  {
+   "id": "cache_order_reversed",
+   "rule": "caches are consulted in directory order",
+   "find": "        self.caches = self.resolver.db.caches",
+   "replace": "        self.caches = list(reversed(self.resolver.db.caches))"
+  },
+  {
+   "id": "slash_rule",
+   "rule": "a trailing / is inode/directory",
+   "find": "            if filename.endswith(b\"/\"):",
+   "replace": "            if filename.endswith(b\"\\\\\"):"
+  },
+  {
+   "id": "slash_uncertain",
+   "rule": "the directory answer is uncertain",
+   "find": "                return {\"type\": \"inode/directory\", \"uncertain\": 1, \"types\": [\"inode/directory\"],",
+   "replace": "                return {\"type\": \"inode/directory\", \"uncertain\": 0, \"types\": [\"inode/directory\"],"
+  },
+  {
+   "id": "name_one_type_ge",
+   "rule": "exactly one name type -> it, certain",
+   "find": "            if len(types) == 1:",
+   "replace": "            if len(types) >= 1:"
+  },
+  {
+   "id": "name_basename_removed",
+   "rule": "the basename is passed to the name step",
+   "find": "            types = self.resolver.db.lookup(mg.g_path_get_basename(filename))",
+   "replace": "            types = self.resolver.db.lookup(filename)"
+  },
+  {
+   "id": "unknown_identity_guess",
+   "rule": "UNKNOWN is compared by pointer",
+   "find": "        if sniffed is UNKNOWN and looks_like_text(data):",
+   "replace": "        if sniffed == UNKNOWN and looks_like_text(data):"
+  },
+  {
+   "id": "unknown_identity_uncertain",
+   "rule": "UNKNOWN is compared by pointer (uncertain)",
+   "find": "            return dict(out, type=str(sniffed), uncertain=1 if sniffed is UNKNOWN else 0)",
+   "replace": "            return dict(out, type=str(sniffed), uncertain=1 if sniffed == UNKNOWN else 0)"
+  },
+  {
+   "id": "no_types_uncertain_one",
+   "rule": "no name type: uncertain only for UNKNOWN",
+   "find": "            return dict(out, type=str(sniffed), uncertain=1 if sniffed is UNKNOWN else 0)",
+   "replace": "            return dict(out, type=str(sniffed), uncertain=1)"
+  },
+  {
+   "id": "desktop_guard_removed",
+   "rule": "the desktop rule needs a filename",
+   "find": "        if filename is not None and sniffed == \"application/x-desktop\":",
+   "replace": "        if sniffed == \"application/x-desktop\":"
+  },
+  {
+   "id": "desktop_replacement",
+   "rule": "a sniffed desktop with a name becomes text/plain",
+   "find": "            sniffed = \"text/plain\"\n        out = {\"types\": types, \"sniffed\": str(sniffed), \"prio\": prio}",
+   "replace": "            sniffed = \"text/x-desktop\"\n        out = {\"types\": types, \"sniffed\": str(sniffed), \"prio\": prio}"
+  },
+  {
+   "id": "desktop_is",
+   "rule": "the desktop test is strcmp",
+   "find": "        if filename is not None and sniffed == \"application/x-desktop\":",
+   "replace": "        if filename is not None and sniffed is \"application/x-desktop\":"
+  },
+  {
+   "id": "sniffed_always",
+   "rule": "a sniffed type other than UNKNOWN wins",
+   "find": "        if sniffed is not UNKNOWN:",
+   "replace": "        if True:"
+  },
+  {
+   "id": "prio_threshold_gt",
+   "rule": "a sniffed type wins outright when priority >= 80",
+   "find": "            if prio >= 80:",
+   "replace": "            if prio > 80:"
+  },
+  {
+   "id": "prio_threshold_79",
+   "rule": "the priority threshold is 80",
+   "find": "            if prio >= 80:",
+   "replace": "            if prio >= 79:"
+  },
+  {
+   "id": "subclass_loop_reversed",
+   "rule": "the first name type that is a subclass wins",
+   "find": "            for t in types:",
+   "replace": "            for t in reversed(types):"
+  },
+  {
+   "id": "subclass_certain_one",
+   "rule": "a subclass name type is certain",
+   "find": "                    return dict(out, type=t, uncertain=0)",
+   "replace": "                    return dict(out, type=t, uncertain=1)"
+  },
+  {
+   "id": "fallback_first_name_last",
+   "rule": "none -> the first name type, uncertain",
+   "find": "        return dict(out, type=types[0], uncertain=1)",
+   "replace": "        return dict(out, type=types[-1], uncertain=1)"
+  },
+  {
+   "id": "read_4096",
+   "rule": "the data is the whole file",
+   "find": "                    data = fh.read()",
+   "replace": "                    data = fh.read(4096)"
+  },
+  {
+   "id": "name_always_null",
+   "rule": "the filename is passed when --name is given",
+   "find": "            name = fb if a.names_from_files else (os.fsencode(a.name) if a.name is not None else None)",
+   "replace": "            name = None"
+  },
+  {
+   "id": "unsupported_exit_zero",
+   "rule": "UNSUPPORTED exits 3",
+   "find": "    except Unsupported as e:\n        print(f\"MADO_MIMESNIFF: UNSUPPORTED {e}\")\n        return 3",
+   "replace": "    except Unsupported as e:\n        print(f\"MADO_MIMESNIFF: UNSUPPORTED {e}\")\n        return 0"
+  }
+ ],
+ "equivalent_not_counted": [
+  {
+   "id": "nest_ge",
+   "rule": "the nest limit is > 100000",
+   "find": "        if len(stack) > MAX_NEST:",
+   "replace": "        if len(stack) >= MAX_NEST:",
+   "argument": "Not countable under the case schema. A chain of N matchlets reaches stack depth N-1 (the last node has no children and returns before a push), so the only input that separates the two is N = 100001: there the correct tool answers (measured rc 0, app/deep 0) while the mutant raises (rc 3), but the oracle's C recursion overflows its 8 MiB stack at that depth (measured SIGSEGV, rc 139), so the case's label is UNSUPPORTED and the correct tool itself must exit 3 -> the case would be a false kill of the correct tool. At N >= 100002 both the correct tool and the mutant exit 3 (measured); at N <= 100000 both answer identically (measured at 50000 and 100000). No oracle-labelled case distinguishes them."
+  },
+  {
+   "id": "text_mode_removed",
+   "rule": "text mode is refused",
+   "find": "        if self.mode != \"cache\":\n            raise Unsupported(\"text mode (no loadable mime.cache; GLib reads the magic files)\")",
+   "replace": "        if False:\n            raise Unsupported(\"text mode (no loadable mime.cache; GLib reads the magic files)\")",
+   "argument": "Not countable under the case schema. The distinguishing input is a directory with no loadable mime.cache; there the oracle always answers (it reads the magic/globs2 text files: e.g. globs2 '50:text/x-text:*.txt' with name x.txt -> text/x-text 0), so a case's label can never be UNSUPPORTED (the schema reserves that for an oracle crash or hang) and a text-mode case would be a false kill of the correct tool. The refusal is C1's declared named limit ('cache mode only'), not a rule a case can measure."
+  }
+ ]
+}

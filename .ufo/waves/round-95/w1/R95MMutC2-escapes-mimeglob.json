@@ -1,0 +1,784 @@
+{
+ "tool": "tools/mado-mimeglob.py",
+ "tool_sha256": "65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453",
+ "draft_kills_path_read": "/fast/scratch/hyaku/mado-r95/R95MMutC2/draft-glob.json",
+ "draft_kills_sha256": "f4b80be6ffbbe47d1280edb2858a7528182679d2f232c8c1a4e818de3ab521c7",
+ "draft_kill_count": 17,
+ "baseline": {
+  "verdict": "OK:0",
+  "line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0"
+ },
+ "weakenings": 79,
+ "flagged": 60,
+ "escapes": 19,
+ "closed": 19,
+ "rows": [
+  {
+   "id": "mimeglob-605-drop-type",
+   "tool": "mimeglob",
+   "label": "t01 simple suffix",
+   "case": "drop-type",
+   "find": "            (\"t01 simple suffix\", g(b\"a.txt\", [\"a/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "            (\"t01 simple suffix\", g(b\"a.txt\", [\"a/mime\"])[1] == 0),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "9c2db64947d06b3cb100a2d0b26afad3929136e510142acba8100c0134d074e0",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g30-single-unknown",
+    "find": "        if len(types) == 1:\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "        if len(types) == 1:\n            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g30-single-unknown"
+   },
+   "closer_fails_weakened": [
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-606-drop-uncertain",
+   "tool": "mimeglob",
+   "label": "t02 folded suffix",
+   "case": "drop-uncertain",
+   "find": "            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"])[0] == \"text/plain\"),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "abef54374d2c8f5739edd051e6de1c8afa3c9ac5a0bad8779c0519a741d1c550",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g02-always-uncertain",
+    "find": "            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "            return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g02-always-uncertain"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-606-drop-type",
+   "tool": "mimeglob",
+   "label": "t02 folded suffix",
+   "case": "drop-type",
+   "find": "            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "            (\"t02 folded suffix\", g(b\"A.TXT\", [\"a/mime\"])[1] == 0),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "781b7c9e047bfca55bd6570a7ff89751c139a50a6dc952e2a0fb5a49fcf3d735",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g30-single-unknown",
+    "find": "        if len(types) == 1:\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "        if len(types) == 1:\n            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g30-single-unknown"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-607-drop-uncertain",
+   "tool": "mimeglob",
+   "label": "t03 cs glob only on the exact case",
+   "case": "drop-uncertain",
+   "find": "            (\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"]) == (\"text/x-c++\", 0)),",
+   "replace": "            (\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"])[0] == \"text/x-c++\"),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "92457ccd8b534d8940df7564555b566d7b1eccad71a07cf61bd55c0b9a2fdaf1",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g02-always-uncertain",
+    "find": "            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "            return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g02-always-uncertain"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-607-drop-type",
+   "tool": "mimeglob",
+   "label": "t03 cs glob only on the exact case",
+   "case": "drop-type",
+   "find": "            (\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"]) == (\"text/x-c++\", 0)),",
+   "replace": "            (\"t03 cs glob only on the exact case\", g(b\"x.C\", [\"a/mime\"])[1] == 0),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "de2bc536cde0bb1545a657ec117b8288520c9edf2c320720c806f9c29d8b3207",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g30-single-unknown",
+    "find": "        if len(types) == 1:\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "        if len(types) == 1:\n            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g30-single-unknown"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-609-drop-uncertain",
+   "tool": "mimeglob",
+   "label": "t05 weight orders two types",
+   "case": "drop-uncertain",
+   "find": "            (\"t05 weight orders two types\", g(b\"x.dup\", [\"a/mime\"]) == (\"app/hi\", 1)),",
+   "replace": "            (\"t05 weight orders two types\", g(b\"x.dup\", [\"a/mime\"])[0] == \"app/hi\"),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "45833d9cd888399084e1aeee1305e92c97f8df066b031fabe92fa6ecc48b549d",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g31-multi-certain",
+    "find": "            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}\n        return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+    "replace": "            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}\n        return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t05 weight orders two types",
+     "t12 equal weight keeps file order"
+    ],
+    "source_mutant": "g31-multi-certain"
+   },
+   "closer_fails_weakened": [
+    "t12 equal weight keeps file order"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-610-drop-uncertain",
+   "tool": "mimeglob",
+   "label": "t06 literal",
+   "case": "drop-uncertain",
+   "find": "            (\"t06 literal\", g(b\"Makefile\", [\"a/mime\"]) == (\"text/x-make\", 0)),",
+   "replace": "            (\"t06 literal\", g(b\"Makefile\", [\"a/mime\"])[0] == \"text/x-make\"),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "41b38cdf75859688c64eb30686d701b068f4603c110cf48080bd0a40eef1402b",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g02-always-uncertain",
+    "find": "            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "            return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g02-always-uncertain"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-611-drop-type",
+   "tool": "mimeglob",
+   "label": "t07 literal is not folded",
+   "case": "drop-type",
+   "find": "            (\"t07 literal is not folded\", g(b\"MAKEFILE\", [\"a/mime\"]) == (UNKNOWN, 1)),",
+   "replace": "            (\"t07 literal is not folded\", g(b\"MAKEFILE\", [\"a/mime\"])[1] == 1),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "4abe2965f7b592fbf09bb2276f9bf77e55c6767c68701dcba099108b33246b22",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g18-plain-unknown",
+    "find": "        if not types:\n            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}",
+    "replace": "        if not types:\n            return {\"type\": \"text/plain\", \"uncertain\": 1, \"types\": types}",
+    "must_fail": [
+     "t07 literal is not folded",
+     "t10 no match",
+     "t13 non-ASCII byte never matches a suffix"
+    ],
+    "source_mutant": "g18-plain-unknown"
+   },
+   "closer_fails_weakened": [
+    "t10 no match",
+    "t13 non-ASCII byte never matches a suffix"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-612-drop-uncertain",
+   "tool": "mimeglob",
+   "label": "t08 fnmatch full glob",
+   "case": "drop-uncertain",
+   "find": "            (\"t08 fnmatch full glob\", g(b\"xzy\", [\"a/mime\"]) == (\"app/full\", 0)),",
+   "replace": "            (\"t08 fnmatch full glob\", g(b\"xzy\", [\"a/mime\"])[0] == \"app/full\"),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "c70a3a2027698f6bb8e969822c61e4e38ad0a61b3958faa087970c1bec95d048",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g02-always-uncertain",
+    "find": "            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "            return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g02-always-uncertain"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-612-drop-type",
+   "tool": "mimeglob",
+   "label": "t08 fnmatch full glob",
+   "case": "drop-type",
+   "find": "            (\"t08 fnmatch full glob\", g(b\"xzy\", [\"a/mime\"]) == (\"app/full\", 0)),",
+   "replace": "            (\"t08 fnmatch full glob\", g(b\"xzy\", [\"a/mime\"])[1] == 0),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "8f9c3a16ae02829e201507be88f6dc8223ff69b765f7da7a385d7106a3aed011",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g30-single-unknown",
+    "find": "        if len(types) == 1:\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "        if len(types) == 1:\n            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g30-single-unknown"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-613-drop-uncertain",
+   "tool": "mimeglob",
+   "label": "t09 trailing slash",
+   "case": "drop-uncertain",
+   "find": "            (\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"]) == (\"inode/directory\", 1)),",
+   "replace": "            (\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"])[0] == \"inode/directory\"),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "4fc8a1b255fb29fecfd139aa8e57a4cfd925ce9aa76ffc830fda34bd9309ae42",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g32-slash-certain",
+    "find": "            types = [\"inode/directory\"]\n            return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+    "replace": "            types = [\"inode/directory\"]\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t09 trailing slash"
+    ],
+    "source_mutant": "g32-slash-certain"
+   },
+   "closer_fails_weakened": [],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=1 wrong_check=0",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-613-any-non-unknown",
+   "tool": "mimeglob",
+   "label": "t09 trailing slash",
+   "case": "any-non-unknown",
+   "find": "            (\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"]) == (\"inode/directory\", 1)),",
+   "replace": "            (\"t09 trailing slash\", g(b\"d/\", [\"a/mime\"])[0] != UNKNOWN),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "fe04a911f241202f44cf8dfaef18f6b51d99244f08133ae761ad442b144f09ed",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g32-slash-certain",
+    "find": "            types = [\"inode/directory\"]\n            return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+    "replace": "            types = [\"inode/directory\"]\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t09 trailing slash"
+    ],
+    "source_mutant": "g32-slash-certain"
+   },
+   "closer_fails_weakened": [],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=1 wrong_check=0",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-614-drop-type",
+   "tool": "mimeglob",
+   "label": "t10 no match",
+   "case": "drop-type",
+   "find": "            (\"t10 no match\", g(b\"zz\", [\"a/mime\"]) == (UNKNOWN, 1)),",
+   "replace": "            (\"t10 no match\", g(b\"zz\", [\"a/mime\"])[1] == 1),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "ad799376ac1c90587d45e96ea4e9b2e30592a281e13975aaa2ad8effe24ef3c9",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g18-plain-unknown",
+    "find": "        if not types:\n            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}",
+    "replace": "        if not types:\n            return {\"type\": \"text/plain\", \"uncertain\": 1, \"types\": types}",
+    "must_fail": [
+     "t07 literal is not folded",
+     "t10 no match",
+     "t13 non-ASCII byte never matches a suffix"
+    ],
+    "source_mutant": "g18-plain-unknown"
+   },
+   "closer_fails_weakened": [
+    "t07 literal is not folded",
+    "t13 non-ASCII byte never matches a suffix"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-615-drop-type",
+   "tool": "mimeglob",
+   "label": "t11 globs v1 file",
+   "case": "drop-type",
+   "find": "            (\"t11 globs v1 file\", g(b\"f.old\", [\"b/mime\"]) == (\"text/old\", 0)),",
+   "replace": "            (\"t11 globs v1 file\", g(b\"f.old\", [\"b/mime\"])[1] == 0),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "8e13a8c48bd8d4d0ed7b352364fc2d28864cfeb58203766e9d97e0fad4d4a776",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g30-single-unknown",
+    "find": "        if len(types) == 1:\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "        if len(types) == 1:\n            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g30-single-unknown"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-616-drop-uncertain",
+   "tool": "mimeglob",
+   "label": "t12 equal weight keeps file order",
+   "case": "drop-uncertain",
+   "find": "            (\"t12 equal weight keeps file order\", g(b\"f.two\", [\"a/mime\"]) == (\"t/one\", 1)),",
+   "replace": "            (\"t12 equal weight keeps file order\", g(b\"f.two\", [\"a/mime\"])[0] == \"t/one\"),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "d8c8475d004a4aa10f543c407ab75b76bd2bc94f03708f85963282065e4ff8cc",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g31-multi-certain",
+    "find": "            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}\n        return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+    "replace": "            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}\n        return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t05 weight orders two types",
+     "t12 equal weight keeps file order"
+    ],
+    "source_mutant": "g31-multi-certain"
+   },
+   "closer_fails_weakened": [
+    "t05 weight orders two types"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-617-drop-type",
+   "tool": "mimeglob",
+   "label": "t13 non-ASCII byte never matches a suffix",
+   "case": "drop-type",
+   "find": "            (\"t13 non-ASCII byte never matches a suffix\", g(b\"x.t\\xc3\\xa9\", [\"a/mime\"]) == (UNKNOWN, 1)),",
+   "replace": "            (\"t13 non-ASCII byte never matches a suffix\", g(b\"x.t\\xc3\\xa9\", [\"a/mime\"])[1] == 1),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "5f38d3ccab97c329e0d09eb771cf7e90b70c0501f871e031783be962c2b5edbd",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g18-plain-unknown",
+    "find": "        if not types:\n            return {\"type\": UNKNOWN, \"uncertain\": 1, \"types\": types}",
+    "replace": "        if not types:\n            return {\"type\": \"text/plain\", \"uncertain\": 1, \"types\": types}",
+    "must_fail": [
+     "t07 literal is not folded",
+     "t10 no match",
+     "t13 non-ASCII byte never matches a suffix"
+    ],
+    "source_mutant": "g18-plain-unknown"
+   },
+   "closer_fails_weakened": [
+    "t07 literal is not folded",
+    "t10 no match"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-618-drop-uncertain",
+   "tool": "mimeglob",
+   "label": "t14 basename only",
+   "case": "drop-uncertain",
+   "find": "            (\"t14 basename only\", g(b\"dir.txt/f.c\", [\"a/mime\"]) == (\"text/x-c\", 0)),",
+   "replace": "            (\"t14 basename only\", g(b\"dir.txt/f.c\", [\"a/mime\"])[0] == \"text/x-c\"),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "3f6120551b72cbab96ea4629af24c083653ed0fbbff8c2d623fee0b1d11e9381",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g02-always-uncertain",
+    "find": "            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "            return {\"type\": types[0], \"uncertain\": 1, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g02-always-uncertain"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t16 a 0xff glob byte matches the same name byte",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-622-drop-type",
+   "tool": "mimeglob",
+   "label": "t16 a 0xff glob byte matches the same name byte",
+   "case": "drop-type",
+   "find": "            (\"t16 a 0xff glob byte matches the same name byte\", g(b\"x.\\xff\", [\"c/mime\"]) == (\"text/ff\", 0)),",
+   "replace": "            (\"t16 a 0xff glob byte matches the same name byte\", g(b\"x.\\xff\", [\"c/mime\"])[1] == 0),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "d49a0c24cae9955caf3d153723afacd4f5976d07ed1202047f84c3ee3735f056",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g30-single-unknown",
+    "find": "        if len(types) == 1:\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "        if len(types) == 1:\n            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g30-single-unknown"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t17 a bare * is inert"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  },
+  {
+   "id": "mimeglob-623-drop-type",
+   "tool": "mimeglob",
+   "label": "t17 a bare * is inert",
+   "case": "drop-type",
+   "find": "            (\"t17 a bare * is inert\", g(b\"a.txt\", [\"c/mime\"]) == (\"text/plain\", 0)),",
+   "replace": "            (\"t17 a bare * is inert\", g(b\"a.txt\", [\"c/mime\"])[1] == 0),",
+   "green": true,
+   "selftest": "MADO_MIMEGLOB_SELFTEST: checks=19 failed=0",
+   "mutated_sha256": "77435eab190eed65b487f7d76e7a0aefd2dd8a3c2c10a9cc1bb884fd4ecd3fa3",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=17 held=17 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-g30-single-unknown",
+    "find": "        if len(types) == 1:\n            return {\"type\": types[0], \"uncertain\": 0, \"types\": types}",
+    "replace": "        if len(types) == 1:\n            return {\"type\": UNKNOWN, \"uncertain\": 0, \"types\": types}",
+    "must_fail": [
+     "t01 simple suffix",
+     "t02 folded suffix",
+     "t03 cs glob only on the exact case",
+     "t04 deepest suffix wins",
+     "t06 literal",
+     "t08 fnmatch full glob",
+     "t11 globs v1 file",
+     "t14 basename only",
+     "t16 a 0xff glob byte matches the same name byte",
+     "t17 a bare * is inert"
+    ],
+    "source_mutant": "g30-single-unknown"
+   },
+   "closer_fails_weakened": [
+    "t01 simple suffix",
+    "t02 folded suffix",
+    "t03 cs glob only on the exact case",
+    "t04 deepest suffix wins",
+    "t06 literal",
+    "t08 fnmatch full glob",
+    "t11 globs v1 file",
+    "t14 basename only",
+    "t16 a 0xff glob byte matches the same name byte"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-mimeglob.py kills=18 held=17 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-mimeglob.py kills=18 held=18 survived=0 wrong_check=0"
+  }
+ ],
+ "labelled_classes": [
+  "any-non-unknown",
+  "drop-type",
+  "drop-uncertain"
+ ]
+}

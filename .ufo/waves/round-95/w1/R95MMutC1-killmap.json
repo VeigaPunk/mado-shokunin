@@ -1,0 +1,1900 @@
+{
+ "seat": "R95MMutC1",
+ "candidate_sha256": "a13b6e0e3b0c399892ff027309f942daa96e92713851e8d8cfb736b277cde99d",
+ "oracle_src_sha256": "99df35f8b3fd7005f30789f8866984a1bbceaff8dc6c1d326f0132eb7b4d124a",
+ "glib2": "2.90.1-1",
+ "cases_run": 74,
+ "mutants": {
+  "alias_bounds_removed": {
+   "rule": "the alias list header is bounds-checked",
+   "killed_by": [
+    "bounds-04-alias-list"
+   ],
+   "cheapest": "bounds-04-alias-list",
+   "cheapest_label": [
+    "app/child",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 3,
+    "stderr": ""
+   }
+  },
+  "alias_first_cache": {
+   "rule": "the alias is searched in every cache",
+   "killed_by": [
+    "alias-04-second-cache-nontext"
+   ],
+   "cheapest": "alias-04-second-cache-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "alias_lt_ge": {
+   "rule": "binary search on strcmp < 0",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "alias_return_name": {
+   "rule": "the alias list maps the name",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "byte_past_mapping": {
+   "rule": "a cache read past the zero-filled last page is refused",
+   "killed_by": [
+    "bounds-06-value-past-page"
+   ],
+   "cheapest": "bounds-06-value-past-page",
+   "cheapest_label": [
+    "UNSUPPORTED",
+    null
+   ],
+   "cheapest_mutant_output": {
+    "rc": 1,
+    "stderr": "_value(c, o, data):\n           ~~~~~~~~~~~~~~^^^^^^^^^^^^\n  File \"/fast/scratch/hyaku/mado-r95/R95MMutC1/mut/byte_past_mapping/mado-mimesniff.py\", line 118, in matchlet_value\n    v = _byte(c, (value_offset + j) & M32)\n  File \"/fast/scratch/hyaku/mado-r95/R95MMutC1/mut/byte_past_mapping/mado-mimesniff.py\", line 95, in _byte\n    return c.buf[off]\n           ~~~~~^^^^^\nIndexError: index out of range\n"
+   }
+  },
+  "cache_order_reversed": {
+   "rule": "caches are consulted in directory order",
+   "killed_by": [
+    "prio-01-equal-caches"
+   ],
+   "cheapest": "prio-01-equal-caches",
+   "cheapest_label": [
+    "app/first",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/second",
+    "uncertain": 0
+   }
+  },
+  "child_bounds_after_value": {
+   "rule": "a child list that fails the bounds check makes the matchlet false before its own test",
+   "killed_by": [
+    "bounds-07-child-before-value"
+   ],
+   "cheapest": "bounds-07-child-before-value",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 3,
+    "stderr": ""
+   }
+  },
+  "child_fail_aborts": {
+   "rule": "a matchlet holds when any child holds",
+   "killed_by": [
+    "nest-01-child-holds"
+   ],
+   "cheapest": "nest-01-child-holds",
+   "cheapest_label": [
+    "app/nest",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "child_stride_16": {
+   "rule": "child = child_offset + 32 * i",
+   "killed_by": [
+    "nest-01-child-holds"
+   ],
+   "cheapest": "nest-01-child-holds",
+   "cheapest_label": [
+    "app/nest",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "desktop_guard_removed": {
+   "rule": "the desktop rule needs a filename",
+   "killed_by": [
+    "desktop-01-no-name"
+   ],
+   "cheapest": "desktop-01-no-name",
+   "cheapest_label": [
+    "application/x-desktop",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "desktop_is": {
+   "rule": "the desktop test is strcmp",
+   "killed_by": [
+    "desktop-02-with-name"
+   ],
+   "cheapest": "desktop-02-with-name",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "/fast/scratch/hyaku/mado-r95/R95MMutC1/mut/desktop_is/mado-mimesniff.py:295: SyntaxWarning: \"is\" with 'str' literal. Did you mean \"==\"?\n  if filename is not None and sniffed is \"application/x-desktop\":\n",
+    "type": "application/x-desktop",
+    "uncertain": 0
+   }
+  },
+  "desktop_replacement": {
+   "rule": "a sniffed desktop with a name becomes text/plain",
+   "killed_by": [
+    "desktop-02-with-name"
+   ],
+   "cheapest": "desktop-02-with-name",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/x-desktop",
+    "uncertain": 0
+   }
+  },
+  "empty_constant_value": {
+   "rule": "EMPTY is application/x-zerosize",
+   "killed_by": [
+    "zerosize-01-empty",
+    "zerosize-02-two-names"
+   ],
+   "cheapest": "zerosize-01-empty",
+   "cheapest_label": [
+    "application/x-zerosize",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/x-empty",
+    "uncertain": 0
+   }
+  },
+  "entries_bounds_removed": {
+   "rule": "the magic entry array is bounds-checked",
+   "killed_by": [
+    "bounds-02-entry-array"
+   ],
+   "cheapest": "bounds-02-entry-array",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 3,
+    "stderr": ""
+   }
+  },
+  "entries_reversed": {
+   "rule": "the first match entry in cache order is returned",
+   "killed_by": [
+    "order-03-two-entries"
+   ],
+   "cheapest": "order-03-two-entries",
+   "cheapest_label": [
+    "app/first",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/second",
+    "uncertain": 0
+   }
+  },
+  "entry_mlo_field": {
+   "rule": "matchlet_offset = GET_UINT32(offset + 12)",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-03-entry-matchlets",
+    "bounds-04-alias-list",
+    "bounds-05-parent-list",
+    "bounds-06-value-past-page",
+    "desktop-01-no-name",
+    "fallback-09-magic-octet",
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits",
+    "mode-01-cache-beats-text",
+    "name0-01-null",
+    "nameN-01-two-types",
+    "nest-01-child-holds",
+    "nest-03-cycle",
+    "order-01-first-entry",
+    "order-02-second-entry",
+    "order-03-two-entries",
+    "prio-01-equal-caches",
+    "prio-03-high-bit",
+    "prio-04-exactly-80",
+    "range-01-offset",
+    "range-03-beyond-4096",
+    "range-04-exact-end",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-06-octet-inode",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses",
+    "wrap-02-past-2^32"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "entry_mo_field": {
+   "rule": "mimetype_offset = GET_UINT32(offset + 4)",
+   "killed_by": [
+    "alias-02-second-cache",
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-04-alias-list",
+    "desktop-01-no-name",
+    "desktop-02-with-name",
+    "fallback-09-magic-octet",
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits",
+    "mode-01-cache-beats-text",
+    "name0-01-null",
+    "nameN-01-two-types",
+    "nest-01-child-holds",
+    "order-01-first-entry",
+    "order-02-second-entry",
+    "order-03-two-entries",
+    "prio-01-equal-caches",
+    "prio-02-negative",
+    "prio-03-high-bit",
+    "prio-04-exactly-80",
+    "range-01-offset",
+    "range-03-beyond-4096",
+    "range-04-exact-end",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-06-octet-inode",
+    "subclass-08-second-cache"
+   ],
+   "cheapest": "alias-02-second-cache",
+   "cheapest_label": [
+    "text/x-old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/x-old",
+    "uncertain": 1
+   }
+  },
+  "entry_nm_field": {
+   "rule": "n_matchlets = GET_UINT32(offset + 8)",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-03-entry-matchlets",
+    "bounds-04-alias-list",
+    "bounds-05-parent-list",
+    "desktop-01-no-name",
+    "fallback-09-magic-octet",
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits",
+    "mode-01-cache-beats-text",
+    "name0-01-null",
+    "nameN-01-two-types",
+    "nest-01-child-holds",
+    "nest-03-cycle",
+    "order-01-first-entry",
+    "order-02-second-entry",
+    "order-03-two-entries",
+    "prio-01-equal-caches",
+    "prio-03-high-bit",
+    "prio-04-exactly-80",
+    "range-01-offset",
+    "range-03-beyond-4096",
+    "range-04-exact-end",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-06-octet-inode",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses",
+    "wrap-02-past-2^32"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "entry_oob_break": {
+   "rule": "an out-of-bounds matchlet list skips its entry",
+   "killed_by": [
+    "bounds-03-entry-matchlets"
+   ],
+   "cheapest": "bounds-03-entry-matchlets",
+   "cheapest_label": [
+    "app/second",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "entry_prio_field": {
+   "rule": "priority = GET_UINT32(offset)",
+   "killed_by": [
+    "nameN-01-two-types",
+    "prio-02-negative",
+    "prio-04-exactly-80"
+   ],
+   "cheapest": "nameN-01-two-types",
+   "cheapest_label": [
+    "app/hi",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "t/one",
+    "uncertain": 1
+   }
+  },
+  "fallback_127": {
+   "rule": "the fallback reads the first 128 bytes",
+   "killed_by": [
+    "fallback-06-127th"
+   ],
+   "cheapest": "fallback-06-127th",
+   "cheapest_label": [
+    "application/octet-stream",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "fallback_129": {
+   "rule": "the fallback reads the first 128 bytes",
+   "killed_by": [
+    "fallback-07-129th"
+   ],
+   "cheapest": "fallback-07-129th",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "fallback_cr": {
+   "rule": "13 is allowed by the fallback",
+   "killed_by": [
+    "fallback-11-cr-del"
+   ],
+   "cheapest": "fallback-11-cr-del",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "fallback_first_name_last": {
+   "rule": "none -> the first name type, uncertain",
+   "killed_by": [
+    "bounds-05-parent-list",
+    "nameN-02-unknown-sniffed",
+    "nameN-03-no-subclass",
+    "nameN-04-text-fallback-prio",
+    "prio-05-79",
+    "subclass-04-media-slice",
+    "subclass-05-text",
+    "subclass-07-cycle"
+   ],
+   "cheapest": "bounds-05-parent-list",
+   "cheapest_label": [
+    "app/child",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/x-old",
+    "uncertain": 1
+   }
+  },
+  "fallback_space": {
+   "rule": "a byte < 32 other than 9, 10, 13 -> UNKNOWN",
+   "killed_by": [
+    "fallback-10-space-del"
+   ],
+   "cheapest": "fallback-10-space-del",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "fallback_tab": {
+   "rule": "9 is allowed by the fallback",
+   "killed_by": [
+    "fallback-12-tab-del"
+   ],
+   "cheapest": "fallback-12-tab-del",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "fallback_text_prio": {
+   "rule": "the fallback keeps priority 0",
+   "killed_by": [
+    "alias-01-unaliased",
+    "nameN-04-text-fallback-prio"
+   ],
+   "cheapest": "alias-01-unaliased",
+   "cheapest_label": [
+    "text/x-old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "fallback_text_to_unknown": {
+   "rule": "text data -> the TEXTPLAIN constant",
+   "killed_by": [
+    "fallback-07-129th",
+    "fallback-08-del",
+    "fallback-10-space-del",
+    "fallback-11-cr-del",
+    "fallback-12-tab-del"
+   ],
+   "cheapest": "fallback-07-129th",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "fallback_unknown_to_text": {
+   "rule": "binary data -> the UNKNOWN constant",
+   "killed_by": [
+    "fallback-02-binary",
+    "fallback-06-127th",
+    "lltext-02-bel",
+    "lltext-04-0e",
+    "lltext-06-del",
+    "lltext-08-past-128",
+    "nest-02-no-child"
+   ],
+   "cheapest": "fallback-02-binary",
+   "cheapest_label": [
+    "application/octet-stream",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "first_match_skipped": {
+   "rule": "a matching entry is returned at once",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-03-entry-matchlets",
+    "bounds-04-alias-list",
+    "bounds-05-parent-list",
+    "desktop-01-no-name",
+    "fallback-09-magic-octet",
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits",
+    "mode-01-cache-beats-text",
+    "name0-01-null",
+    "nameN-01-two-types",
+    "nest-01-child-holds",
+    "order-01-first-entry",
+    "order-02-second-entry",
+    "order-03-two-entries",
+    "prio-01-equal-caches",
+    "prio-03-high-bit",
+    "prio-04-exactly-80",
+    "range-01-offset",
+    "range-03-beyond-4096",
+    "range-04-exact-end",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-06-octet-inode",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "len_check_ge": {
+   "rule": "stop false as soon as i + value_length exceeds len",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-03-entry-matchlets",
+    "bounds-04-alias-list",
+    "bounds-05-parent-list",
+    "fallback-09-magic-octet",
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits",
+    "mode-01-cache-beats-text",
+    "name0-01-null",
+    "nameN-01-two-types",
+    "nest-01-child-holds",
+    "order-02-second-entry",
+    "order-03-two-entries",
+    "prio-01-equal-caches",
+    "prio-03-high-bit",
+    "prio-04-exactly-80",
+    "range-01-offset",
+    "range-03-beyond-4096",
+    "range-04-exact-end",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-06-octet-inode",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "lltext_126": {
+   "rule": "0x7f is rejected (not 0x7e)",
+   "killed_by": [
+    "lltext-06-del",
+    "lltext-07-tilde",
+    "lltext-08-past-128"
+   ],
+   "cheapest": "lltext-06-del",
+   "cheapest_label": [
+    "application/octet-stream",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "lltext_128": {
+   "rule": "looks_like_text scans the whole data",
+   "killed_by": [
+    "lltext-08-past-128"
+   ],
+   "cheapest": "lltext-08-past-128",
+   "cheapest_label": [
+    "application/octet-stream",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "lltext_13": {
+   "rule": "0x0d is not rejected",
+   "killed_by": [
+    "lltext-05-0d"
+   ],
+   "cheapest": "lltext-05-0d",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "lltext_15": {
+   "rule": "no byte 0x0e-0x1f",
+   "killed_by": [
+    "lltext-04-0e"
+   ],
+   "cheapest": "lltext-04-0e",
+   "cheapest_label": [
+    "application/octet-stream",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "lltext_inverted": {
+   "rule": "looks_like_text is the negation of the control scan",
+   "killed_by": [
+    "fallback-02-binary",
+    "fallback-06-127th",
+    "lltext-01-backspace",
+    "lltext-02-bel",
+    "lltext-03-ff",
+    "lltext-04-0e",
+    "lltext-05-0d",
+    "lltext-06-del",
+    "lltext-07-tilde",
+    "lltext-08-past-128",
+    "nest-02-no-child"
+   ],
+   "cheapest": "fallback-02-binary",
+   "cheapest_label": [
+    "application/octet-stream",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "lltext_le8": {
+   "rule": "0x08 (backspace) passes looks_like_text",
+   "killed_by": [
+    "lltext-01-backspace"
+   ],
+   "cheapest": "lltext-01-backspace",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "lltext_lt7": {
+   "rule": "no byte 0x00-0x07",
+   "killed_by": [
+    "lltext-02-bel"
+   ],
+   "cheapest": "lltext-02-bel",
+   "cheapest_label": [
+    "application/octet-stream",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "lltext_no127": {
+   "rule": "0x7f is rejected",
+   "killed_by": [
+    "lltext-06-del",
+    "lltext-08-past-128"
+   ],
+   "cheapest": "lltext-06-del",
+   "cheapest_label": [
+    "application/octet-stream",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "magic_list_bounds_removed": {
+   "rule": "the magic list header is bounds-checked",
+   "killed_by": [
+    "bounds-01-magic-list"
+   ],
+   "cheapest": "bounds-01-magic-list",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 3,
+    "stderr": ""
+   }
+  },
+  "magic_list_off_20": {
+   "rule": "list_offset = GET_UINT32(buffer, 24)",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-03-entry-matchlets",
+    "bounds-04-alias-list",
+    "bounds-05-parent-list",
+    "bounds-06-value-past-page",
+    "desktop-01-no-name",
+    "fallback-09-magic-octet",
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits",
+    "mode-01-cache-beats-text",
+    "name0-01-null",
+    "nameN-01-two-types",
+    "nest-01-child-holds",
+    "nest-03-cycle",
+    "order-01-first-entry",
+    "order-02-second-entry",
+    "order-03-two-entries",
+    "prio-01-equal-caches",
+    "prio-03-high-bit",
+    "prio-04-exactly-80",
+    "range-01-offset",
+    "range-03-beyond-4096",
+    "range-04-exact-end",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-06-octet-inode",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses",
+    "wrap-02-past-2^32"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "mask_data_unmasked": {
+   "rule": "data byte compared under the mask",
+   "killed_by": [
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits"
+   ],
+   "cheapest": "mask-01-basic",
+   "cheapest_label": [
+    "app/masked",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "mask_ignored": {
+   "rule": "with a mask, every byte compared under the mask",
+   "killed_by": [
+    "mask-01-basic",
+    "mask-03-data-bits"
+   ],
+   "cheapest": "mask-01-basic",
+   "cheapest_label": [
+    "app/masked",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "mask_value_unmasked": {
+   "rule": "value byte compared under the mask",
+   "killed_by": [
+    "mask-02-value-bits"
+   ],
+   "cheapest": "mask-02-value-bits",
+   "cheapest_label": [
+    "app/m2",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "matchlets_short": {
+   "rule": "every matchlet of an entry is tried",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-03-entry-matchlets",
+    "bounds-04-alias-list",
+    "bounds-05-parent-list",
+    "bounds-06-value-past-page",
+    "desktop-01-no-name",
+    "fallback-09-magic-octet",
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits",
+    "mode-01-cache-beats-text",
+    "name0-01-null",
+    "nameN-01-two-types",
+    "nest-01-child-holds",
+    "nest-03-cycle",
+    "order-01-first-entry",
+    "order-02-second-entry",
+    "order-03-two-entries",
+    "prio-01-equal-caches",
+    "prio-03-high-bit",
+    "prio-04-exactly-80",
+    "range-01-offset",
+    "range-03-beyond-4096",
+    "range-04-exact-end",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-06-octet-inode",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses",
+    "wrap-02-past-2^32"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "max_nest_zero": {
+   "rule": "MAX_NEST = 100000",
+   "killed_by": [
+    "nest-01-child-holds",
+    "nest-02-no-child"
+   ],
+   "cheapest": "nest-01-child-holds",
+   "cheapest_label": [
+    "app/nest",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 3,
+    "stderr": ""
+   }
+  },
+  "name_always_null": {
+   "rule": "the filename is passed when --name is given",
+   "killed_by": [
+    "alias-01-unaliased",
+    "alias-02-second-cache",
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-04-alias-list",
+    "bounds-05-parent-list",
+    "desktop-02-with-name",
+    "name1-01-one-type",
+    "name1-02-basename",
+    "name1-03-basename-literal",
+    "nameN-02-unknown-sniffed",
+    "nameN-03-no-subclass",
+    "nameN-04-text-fallback-prio",
+    "prio-05-79",
+    "slash-01-directory",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-04-media-slice",
+    "subclass-05-text",
+    "subclass-06-octet-inode",
+    "subclass-07-cycle",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses"
+   ],
+   "cheapest": "alias-01-unaliased",
+   "cheapest_label": [
+    "text/x-old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "name_basename_removed": {
+   "rule": "the basename is passed to the name step",
+   "killed_by": [
+    "name1-03-basename-literal"
+   ],
+   "cheapest": "name1-03-basename-literal",
+   "cheapest_label": [
+    "t/single",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/hi",
+    "uncertain": 0
+   }
+  },
+  "name_one_type_ge": {
+   "rule": "exactly one name type -> it, certain",
+   "killed_by": [
+    "alias-01-unaliased",
+    "bounds-05-parent-list",
+    "nameN-01-two-types",
+    "nameN-02-unknown-sniffed",
+    "nameN-03-no-subclass",
+    "nameN-04-text-fallback-prio",
+    "prio-04-exactly-80",
+    "prio-05-79",
+    "subclass-01-eq",
+    "subclass-04-media-slice",
+    "subclass-05-text",
+    "subclass-06-octet-inode",
+    "subclass-07-cycle",
+    "zerosize-02-two-names"
+   ],
+   "cheapest": "alias-01-unaliased",
+   "cheapest_label": [
+    "text/x-old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/child",
+    "uncertain": 0
+   }
+  },
+  "nest_ge": {
+   "rule": "the nest limit is > 100000",
+   "killed_by": [],
+   "cheapest": null,
+   "cheapest_label": null,
+   "cheapest_mutant_output": null
+  },
+  "nest_raise_removed": {
+   "rule": "nested deeper than 100000 is refused",
+   "killed_by": [
+    "nest-03-cycle"
+   ],
+   "cheapest": "nest-03-cycle",
+   "cheapest_label": [
+    "UNSUPPORTED",
+    null
+   ],
+   "cheapest_mutant_output": {
+    "rc": "timeout"
+   }
+  },
+  "no_children_false": {
+   "rule": "a matchlet holds when it has no children",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-03-entry-matchlets",
+    "bounds-04-alias-list",
+    "bounds-05-parent-list",
+    "desktop-01-no-name",
+    "fallback-09-magic-octet",
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits",
+    "mode-01-cache-beats-text",
+    "name0-01-null",
+    "nameN-01-two-types",
+    "order-01-first-entry",
+    "order-02-second-entry",
+    "order-03-two-entries",
+    "prio-01-equal-caches",
+    "prio-03-high-bit",
+    "prio-04-exactly-80",
+    "range-01-offset",
+    "range-03-beyond-4096",
+    "range-04-exact-end",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-06-octet-inode",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "no_types_uncertain_one": {
+   "rule": "no name type: uncertain only for UNKNOWN",
+   "killed_by": [
+    "bounds-01-magic-list",
+    "bounds-02-entry-array",
+    "bounds-03-entry-matchlets",
+    "bounds-07-child-before-value",
+    "desktop-01-no-name",
+    "desktop-02-with-name",
+    "fallback-01-text",
+    "fallback-03-space",
+    "fallback-04-cr",
+    "fallback-05-tab",
+    "fallback-07-129th",
+    "fallback-08-del",
+    "fallback-09-magic-octet",
+    "fallback-10-space-del",
+    "fallback-11-cr-del",
+    "fallback-12-tab-del",
+    "lltext-01-backspace",
+    "lltext-03-ff",
+    "lltext-05-0d",
+    "lltext-07-tilde",
+    "mask-01-basic",
+    "mask-02-value-bits",
+    "mask-03-data-bits",
+    "mode-01-cache-beats-text",
+    "name0-01-null",
+    "nest-01-child-holds",
+    "order-01-first-entry",
+    "order-02-second-entry",
+    "order-03-two-entries",
+    "prio-01-equal-caches",
+    "prio-02-negative",
+    "prio-03-high-bit",
+    "range-01-offset",
+    "range-02-end-exclusive",
+    "range-03-beyond-4096",
+    "range-04-exact-end",
+    "wrap-01-range-wrap",
+    "zerosize-01-empty"
+   ],
+   "cheapest": "bounds-01-magic-list",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 1
+   }
+  },
+  "prio_strict_gt": {
+   "rule": "a cache's answer replaces the running one only when its priority is strictly greater",
+   "killed_by": [
+    "prio-01-equal-caches"
+   ],
+   "cheapest": "prio-01-equal-caches",
+   "cheapest_label": [
+    "app/first",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/second",
+    "uncertain": 0
+   }
+  },
+  "prio_threshold_79": {
+   "rule": "the priority threshold is 80",
+   "killed_by": [
+    "prio-05-79"
+   ],
+   "cheapest": "prio-05-79",
+   "cheapest_label": [
+    "t/one",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/lo79",
+    "uncertain": 0
+   }
+  },
+  "prio_threshold_gt": {
+   "rule": "a sniffed type wins outright when priority >= 80",
+   "killed_by": [
+    "prio-04-exactly-80"
+   ],
+   "cheapest": "prio-04-exactly-80",
+   "cheapest_label": [
+    "app/p80",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "t/one",
+    "uncertain": 1
+   }
+  },
+  "prio_unsigned": {
+   "rule": "priorities are ints (>= 2^31 negative)",
+   "killed_by": [
+    "prio-02-negative"
+   ],
+   "cheapest": "prio-02-negative",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/neg",
+    "uncertain": 0
+   }
+  },
+  "priority_ge_zero": {
+   "rule": "a cache answer is used only when priority > 0",
+   "killed_by": [
+    "alias-01-unaliased",
+    "bounds-01-magic-list",
+    "bounds-02-entry-array",
+    "bounds-07-child-before-value",
+    "fallback-01-text",
+    "fallback-02-binary",
+    "fallback-03-space",
+    "fallback-04-cr",
+    "fallback-05-tab",
+    "fallback-06-127th",
+    "fallback-07-129th",
+    "fallback-08-del",
+    "fallback-10-space-del",
+    "fallback-11-cr-del",
+    "fallback-12-tab-del",
+    "lltext-01-backspace",
+    "lltext-02-bel",
+    "lltext-03-ff",
+    "lltext-04-0e",
+    "lltext-05-0d",
+    "lltext-06-del",
+    "lltext-07-tilde",
+    "lltext-08-past-128",
+    "nest-02-no-child",
+    "prio-02-negative",
+    "range-02-end-exclusive",
+    "wrap-01-range-wrap"
+   ],
+   "cheapest": "alias-01-unaliased",
+   "cheapest_label": [
+    "text/x-old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/child",
+    "uncertain": 1
+   }
+  },
+  "range_end_inclusive": {
+   "rule": "while i < range_start + range_length",
+   "killed_by": [
+    "range-02-end-exclusive"
+   ],
+   "cheapest": "range-02-end-exclusive",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/endx",
+    "uncertain": 0
+   }
+  },
+  "range_end_mask": {
+   "rule": "range_length 32-bit wrap in range_start + range_length",
+   "killed_by": [
+    "wrap-01-range-wrap"
+   ],
+   "cheapest": "wrap-01-range-wrap",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/wrap",
+    "uncertain": 0
+   }
+  },
+  "range_start_zero": {
+   "rule": "for i from range_start",
+   "killed_by": [
+    "wrap-02-past-2^32"
+   ],
+   "cheapest": "wrap-02-past-2^32",
+   "cheapest_label": [
+    "UNSUPPORTED",
+    null
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "read_4096": {
+   "rule": "the data is the whole file",
+   "killed_by": [
+    "range-03-beyond-4096"
+   ],
+   "cheapest": "range-03-beyond-4096",
+   "cheapest_label": [
+    "app/far",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "s32_mask": {
+   "rule": "the sign bit is 0x80000000",
+   "killed_by": [
+    "prio-02-negative",
+    "prio-03-high-bit"
+   ],
+   "cheapest": "prio-02-negative",
+   "cheapest_label": [
+    "text/plain",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/neg",
+    "uncertain": 0
+   }
+  },
+  "slash_rule": {
+   "rule": "a trailing / is inode/directory",
+   "killed_by": [
+    "slash-01-directory"
+   ],
+   "cheapest": "slash-01-directory",
+   "cheapest_label": [
+    "inode/directory",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/hi",
+    "uncertain": 0
+   }
+  },
+  "slash_uncertain": {
+   "rule": "the directory answer is uncertain",
+   "killed_by": [
+    "slash-01-directory"
+   ],
+   "cheapest": "slash-01-directory",
+   "cheapest_label": [
+    "inode/directory",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "inode/directory",
+    "uncertain": 0
+   }
+  },
+  "sniffed_always": {
+   "rule": "a sniffed type other than UNKNOWN wins",
+   "killed_by": [
+    "nameN-02-unknown-sniffed"
+   ],
+   "cheapest": "nameN-02-unknown-sniffed",
+   "cheapest_label": [
+    "t/one",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "t/one",
+    "uncertain": 0
+   }
+  },
+  "stack_empty": {
+   "rule": "the traversal starts from the top matchlet",
+   "killed_by": [
+    "nest-01-child-holds",
+    "nest-03-cycle"
+   ],
+   "cheapest": "nest-01-child-holds",
+   "cheapest_label": [
+    "app/nest",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "subclass_break_removed": {
+   "rule": "the search stops after the first matching parent entry",
+   "killed_by": [
+    "alias-01-unaliased",
+    "subclass-07-cycle"
+   ],
+   "cheapest": "alias-01-unaliased",
+   "cheapest_label": [
+    "text/x-old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": "timeout"
+   }
+  },
+  "subclass_certain_one": {
+   "rule": "a subclass name type is certain",
+   "killed_by": [
+    "alias-01-unaliased",
+    "alias-02-second-cache",
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-04-alias-list",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-03-supertype",
+    "subclass-06-octet-inode",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses"
+   ],
+   "cheapest": "alias-01-unaliased",
+   "cheapest_label": [
+    "text/x-old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/x-old",
+    "uncertain": 1
+   }
+  },
+  "subclass_eq_removed": {
+   "rule": "equal unaliased names are subclasses",
+   "killed_by": [
+    "alias-03-nontext",
+    "alias-04-second-cache-nontext",
+    "bounds-04-alias-list",
+    "subclass-01-eq",
+    "subclass-02-parent-chain",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses"
+   ],
+   "cheapest": "alias-03-nontext",
+   "cheapest_label": [
+    "app/old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/old",
+    "uncertain": 1
+   }
+  },
+  "subclass_first_cache": {
+   "rule": "every cache's parent list is searched",
+   "killed_by": [
+    "subclass-08-second-cache"
+   ],
+   "cheapest": "subclass-08-second-cache",
+   "cheapest_label": [
+    "app/child",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/child",
+    "uncertain": 1
+   }
+  },
+  "subclass_loop_reversed": {
+   "rule": "the first name type that is a subclass wins",
+   "killed_by": [
+    "subclass-03-supertype",
+    "subclass-09-two-subclasses"
+   ],
+   "cheapest": "subclass-03-supertype",
+   "cheapest_label": [
+    "app/x",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/y",
+    "uncertain": 0
+   }
+  },
+  "subclass_media_slice": {
+   "rule": "xdg_mime_media_type_equal compares up to and including /",
+   "killed_by": [
+    "subclass-04-media-slice"
+   ],
+   "cheapest": "subclass-04-media-slice",
+   "cheapest_label": [
+    "app/x",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/x",
+    "uncertain": 0
+   }
+  },
+  "subclass_octet_inode": {
+   "rule": "base application/octet-stream and mime not inode/*",
+   "killed_by": [
+    "subclass-06-octet-inode"
+   ],
+   "cheapest": "subclass-06-octet-inode",
+   "cheapest_label": [
+    "app/y",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "inode/x",
+    "uncertain": 0
+   }
+  },
+  "subclass_parents_bounds_removed": {
+   "rule": "the parent list header is bounds-checked",
+   "killed_by": [
+    "bounds-05-parent-list"
+   ],
+   "cheapest": "bounds-05-parent-list",
+   "cheapest_label": [
+    "app/child",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 3,
+    "stderr": ""
+   }
+  },
+  "subclass_recurse_base": {
+   "rule": "the parent is tested against the base",
+   "killed_by": [
+    "bounds-04-alias-list",
+    "subclass-02-parent-chain",
+    "subclass-08-second-cache",
+    "subclass-09-two-subclasses"
+   ],
+   "cheapest": "bounds-04-alias-list",
+   "cheapest_label": [
+    "app/child",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/child",
+    "uncertain": 1
+   }
+  },
+  "subclass_seen_removed": {
+   "rule": "parents already seen are skipped",
+   "killed_by": [
+    "subclass-07-cycle"
+   ],
+   "cheapest": "subclass-07-cycle",
+   "cheapest_label": [
+    "app/a",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 1,
+    "stderr": "s]\n  File \"/fast/scratch/hyaku/mado-r95/R95MMutC1/mut/subclass_seen_removed/mado-mimesniff.py\", line 233, in subclass\n    umime, ubase = _alias(caches, mime), _alias(caches, base)\n                   ~~~~~~^^^^^^^^^^^^^^\n  File \"/fast/scratch/hyaku/mado-r95/R95MMutC1/mut/subclass_seen_removed/mado-mimesniff.py\", line 213, in _alias\n    lo = c.u32(4)\nRecursionError: maximum recursion depth exceeded\n"
+   }
+  },
+  "subclass_super_slash": {
+   "rule": "base x/* with the same media type",
+   "killed_by": [
+    "subclass-03-supertype"
+   ],
+   "cheapest": "subclass-03-supertype",
+   "cheapest_label": [
+    "app/x",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/x",
+    "uncertain": 1
+   }
+  },
+  "subclass_text_media_removed": {
+   "rule": "base text/plain and mime text/*",
+   "killed_by": [
+    "alias-01-unaliased",
+    "nameN-04-text-fallback-prio",
+    "subclass-05-text"
+   ],
+   "cheapest": "alias-01-unaliased",
+   "cheapest_label": [
+    "text/x-old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/child",
+    "uncertain": 0
+   }
+  },
+  "text_mode_removed": {
+   "rule": "text mode is refused",
+   "killed_by": [],
+   "cheapest": null,
+   "cheapest_label": null,
+   "cheapest_mutant_output": null
+  },
+  "textplain_constant_value": {
+   "rule": "TEXTPLAIN is text/plain",
+   "killed_by": [
+    "alias-01-unaliased",
+    "bounds-01-magic-list",
+    "bounds-02-entry-array",
+    "bounds-07-child-before-value",
+    "fallback-01-text",
+    "fallback-03-space",
+    "fallback-04-cr",
+    "fallback-05-tab",
+    "fallback-07-129th",
+    "fallback-08-del",
+    "fallback-10-space-del",
+    "fallback-11-cr-del",
+    "fallback-12-tab-del",
+    "prio-02-negative",
+    "range-02-end-exclusive",
+    "wrap-01-range-wrap"
+   ],
+   "cheapest": "alias-01-unaliased",
+   "cheapest_label": [
+    "text/x-old",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "app/child",
+    "uncertain": 1
+   }
+  },
+  "unknown_constant_value": {
+   "rule": "UNKNOWN is application/octet-stream",
+   "killed_by": [
+    "fallback-02-binary",
+    "fallback-06-127th",
+    "lltext-02-bel",
+    "lltext-04-0e",
+    "lltext-06-del",
+    "lltext-08-past-128",
+    "nest-02-no-child"
+   ],
+   "cheapest": "fallback-02-binary",
+   "cheapest_label": [
+    "application/octet-stream",
+    1
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/x-unknown",
+    "uncertain": 1
+   }
+  },
+  "unknown_identity_guess": {
+   "rule": "UNKNOWN is compared by pointer",
+   "killed_by": [
+    "fallback-09-magic-octet",
+    "subclass-06-octet-inode"
+   ],
+   "cheapest": "fallback-09-magic-octet",
+   "cheapest_label": [
+    "application/octet-stream",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "unknown_identity_uncertain": {
+   "rule": "UNKNOWN is compared by pointer (uncertain)",
+   "killed_by": [
+    "fallback-09-magic-octet"
+   ],
+   "cheapest": "fallback-09-magic-octet",
+   "cheapest_label": [
+    "application/octet-stream",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "application/octet-stream",
+    "uncertain": 1
+   }
+  },
+  "unsupported_exit_zero": {
+   "rule": "UNSUPPORTED exits 3",
+   "killed_by": [
+    "bounds-06-value-past-page",
+    "nest-03-cycle",
+    "wrap-02-past-2^32"
+   ],
+   "cheapest": "bounds-06-value-past-page",
+   "cheapest_label": [
+    "UNSUPPORTED",
+    null
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "parse_error": "JSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
+   }
+  },
+  "wrap_raise_removed": {
+   "rule": "i + value_length past 2^32 is refused",
+   "killed_by": [
+    "wrap-02-past-2^32"
+   ],
+   "cheapest": "wrap-02-past-2^32",
+   "cheapest_label": [
+    "UNSUPPORTED",
+    null
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "zerosize_prio_zero": {
+   "rule": "empty data -> priority 100",
+   "killed_by": [
+    "zerosize-02-two-names"
+   ],
+   "cheapest": "zerosize-02-two-names",
+   "cheapest_label": [
+    "application/x-zerosize",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "t/one",
+    "uncertain": 1
+   }
+  },
+  "zerosize_removed": {
+   "rule": "empty data -> application/x-zerosize with priority 100",
+   "killed_by": [
+    "zerosize-01-empty",
+    "zerosize-02-two-names"
+   ],
+   "cheapest": "zerosize-01-empty",
+   "cheapest_label": [
+    "application/x-zerosize",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  },
+  "zerosize_type_text": {
+   "rule": "empty data -> the EMPTY constant",
+   "killed_by": [
+    "zerosize-01-empty",
+    "zerosize-02-two-names"
+   ],
+   "cheapest": "zerosize-01-empty",
+   "cheapest_label": [
+    "application/x-zerosize",
+    0
+   ],
+   "cheapest_mutant_output": {
+    "rc": 0,
+    "stderr": "",
+    "type": "text/plain",
+    "uncertain": 0
+   }
+  }
+ }
+}

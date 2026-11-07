@@ -1,0 +1,25 @@
+{
+ "tools/mado-portals.py": [
+  {
+   "id": "r95l1-close-p-crlf-kept",
+   "find": "        if idx < len(lines) - 1 and raw.endswith(\"\\r\"):",
+   "replace": "        if False and idx < len(lines) - 1 and raw.endswith(\"\\r\"):",
+   "must_fail": [
+    "final CR without LF is kept"
+   ]
+  },
+  {
+   "id": "r95l1-close-p-gtk-find-source",
+   "find": "            return [g.source], \"gtk-last-resort\"\n        return [], \"no-backend\"\n\n    def _all_by_list",
+   "replace": "            return [g.source + \"x\"], \"gtk-last-resort\"\n        return [], \"no-backend\"\n\n    def _all_by_list",
+   "must_fail": [
+    "list items keep inner spaces",
+    "gtk last resort",
+    "key before group voids file",
+    "invalid escape voids file",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "a VT before a key voids the file"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,839 @@
+{
+ "tool": "tools/mado-portals.py",
+ "tool_sha256": "e46a861e6a8ab62e26671169e201b953ca629a3861c6dddc74fd89b73b2ac021",
+ "draft_kills_path_read": "/fast/scratch/hyaku/mado-r95/R95MMutC2/draft-port.json",
+ "draft_kills_sha256": "64b3c10d22da05cd9da5f2200ded96e058fee5d913a07e2d509ff153c8a5c8f4",
+ "draft_kill_count": 27,
+ "baseline": {
+  "verdict": "OK:0",
+  "line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0"
+ },
+ "weakenings": 112,
+ "flagged": 89,
+ "escapes": 23,
+ "closed": 22,
+ "rows": [
+  {
+   "id": "portals-599-drop-picks",
+   "tool": "portals",
+   "label": "default list first backend",
+   "case": "drop-picks",
+   "find": "    chk(\"default list first backend\", r.resolve(SS) == ([\"hyprland\"], \"default config\"))",
+   "replace": "    chk(\"default list first backend\", r.resolve(SS)[1] == \"default config\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "82e70ff011aac9a3639c4a1e1400aad4718d27f70a09d020b56f5530b2a56598",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p44-default-picks-last",
+    "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+    "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[-1].source if self.impls else i.source], \"default config\"",
+    "must_fail": [
+     "default list falls to second backend",
+     "default list first backend",
+     "star takes first sorted backend (UseIn first)",
+     "star takes name order otherwise"
+    ],
+    "source_mutant": "p44-default-picks-last"
+   },
+   "closer_fails_weakened": [
+    "default list falls to second backend",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-601-drop-picks",
+   "tool": "portals",
+   "label": "interface key wins",
+   "case": "drop-picks",
+   "find": "    chk(\"interface key wins\", r.resolve(FC) == ([\"kde\"], \"interface specific config\"))",
+   "replace": "    chk(\"interface key wins\", r.resolve(FC)[1] == \"interface specific config\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "1438169ede680cd58359760fb02ab21e0afcf5d72ec4b057a3dafa607a051962",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p36-iface-picks-first",
+    "find": "            i = self._by_list(c.ifaces.get(iface), iface)\n            if i is not None:\n                return [i.source], \"interface specific config\"",
+    "replace": "            i = self._by_list(c.ifaces.get(iface), iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"interface specific config\"",
+    "must_fail": [
+     "interface key wins",
+     "interface key beats default none"
+    ],
+    "source_mutant": "p36-iface-picks-first"
+   },
+   "closer_fails_weakened": [
+    "interface key beats default none"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-603-drop-picks",
+   "tool": "portals",
+   "label": "interface key beats default none",
+   "case": "drop-picks",
+   "find": "    chk(\"interface key beats default none\", r.resolve(FC) == ([\"kde\"], \"interface specific config\"))",
+   "replace": "    chk(\"interface key beats default none\", r.resolve(FC)[1] == \"interface specific config\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "7e79fe92d86baf1d9bc790595464049c48e2ed31fcc4ebe41b17e227d5525513",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p36-iface-picks-first",
+    "find": "            i = self._by_list(c.ifaces.get(iface), iface)\n            if i is not None:\n                return [i.source], \"interface specific config\"",
+    "replace": "            i = self._by_list(c.ifaces.get(iface), iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"interface specific config\"",
+    "must_fail": [
+     "interface key wins",
+     "interface key beats default none"
+    ],
+    "source_mutant": "p36-iface-picks-first"
+   },
+   "closer_fails_weakened": [
+    "interface key wins"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-604-drop-reason",
+   "tool": "portals",
+   "label": "default none stops",
+   "case": "drop-reason",
+   "find": "    chk(\"default none stops\", r.resolve(SS) == ([], \"none-key\"))",
+   "replace": "    chk(\"default none stops\", r.resolve(SS)[0] == [])",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "a2bf43000d022cc43328bcc74cb967894da67bb11d1153d8958ceba94be2a54b",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p06-desktop-no-lower",
+    "find": "            out.append(tok.lower())",
+    "replace": "            out.append(tok)",
+    "must_fail": [
+     "default list falls to second backend",
+     "default list first backend",
+     "interface key wins",
+     "interface key beats default none",
+     "default none stops",
+     "star takes first sorted backend (UseIn first)",
+     "star takes name order otherwise",
+     "UseIn fallback",
+     "desktops dropped/lowercased"
+    ],
+    "source_mutant": "p06-desktop-no-lower"
+   },
+   "closer_fails_weakened": [
+    "default list falls to second backend",
+    "default list first backend",
+    "interface key wins",
+    "interface key beats default none",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise",
+    "UseIn fallback",
+    "desktops dropped/lowercased"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-604-drop-picks",
+   "tool": "portals",
+   "label": "default none stops",
+   "case": "drop-picks",
+   "find": "    chk(\"default none stops\", r.resolve(SS) == ([], \"none-key\"))",
+   "replace": "    chk(\"default none stops\", r.resolve(SS)[1] == \"none-key\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "66902749a7ddc366fb6b115516a1689c56e6da5f85b1cfba5005190dc034ae48",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p37-none-picks",
+    "find": "            if self._prefers_none(c, iface):\n                return [], \"none-key\"",
+    "replace": "            if self._prefers_none(c, iface):\n                return [self.impls[0].source] if self.impls else [], \"none-key\"",
+    "must_fail": [
+     "default none stops"
+    ],
+    "source_mutant": "p37-none-picks"
+   },
+   "closer_fails_weakened": [],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=1 wrong_check=0",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-611-drop-reason",
+   "tool": "portals",
+   "label": "UseIn fallback",
+   "case": "drop-reason",
+   "find": "    chk(\"UseIn fallback\", r.resolve(FC) == ([\"kde\"], \"usein\"))",
+   "replace": "    chk(\"UseIn fallback\", r.resolve(FC)[0] == [\"kde\"])",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "135e044e67c912ee7cbecb61d86c796c66f09414dfba02a4ce51a73ccc8a6999",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p42-reason-usein",
+    "find": "            return [u[0].source], \"usein\"",
+    "replace": "            return [u[0].source], \"default config\"",
+    "must_fail": [
+     "UseIn fallback"
+    ],
+    "source_mutant": "p42-reason-usein"
+   },
+   "closer_fails_weakened": [],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=1 wrong_check=0",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-611-drop-picks",
+   "tool": "portals",
+   "label": "UseIn fallback",
+   "case": "drop-picks",
+   "find": "    chk(\"UseIn fallback\", r.resolve(FC) == ([\"kde\"], \"usein\"))",
+   "replace": "    chk(\"UseIn fallback\", r.resolve(FC)[1] == \"usein\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "b3a7067b07f500e776c099dafe13b674919af6fe3458bfe5c62f6c1d1fd45867",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p38-usein-picks-last",
+    "find": "        u = self._usein(iface, False)\n        if u:\n            return [u[0].source], \"usein\"",
+    "replace": "        u = self._usein(iface, False)\n        if u:\n            return [self.impls[-1].source if self.impls else u[0].source], \"usein\"",
+    "must_fail": [
+     "UseIn fallback"
+    ],
+    "source_mutant": "p38-usein-picks-last"
+   },
+   "closer_fails_weakened": [],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=1 wrong_check=0",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-613-drop-reason",
+   "tool": "portals",
+   "label": "gtk last resort",
+   "case": "drop-reason",
+   "find": "    chk(\"gtk last resort\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"gtk last resort\", r.resolve(FC)[0] == [\"gtk\"])",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "97051208fec7a2b8662e3da9aed619c77d925011445506a0b77b2f8b3d2f9793",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p04-usein-any",
+    "find": "                if i.use_in is not None and any(u.lower() == d for u in i.use_in):",
+    "replace": "                if i.use_in is not None:",
+    "must_fail": [
+     "list items keep inner spaces",
+     "gtk last resort",
+     "key before group voids file",
+     "invalid escape voids file",
+     "Encoding other than UTF-8 in the first group voids the file",
+     "a VT before a key voids the file"
+    ],
+    "source_mutant": "p04-usein-any"
+   },
+   "closer_fails_weakened": [
+    "list items keep inner spaces",
+    "key before group voids file",
+    "invalid escape voids file",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "a VT before a key voids the file"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-614-drop-picks",
+   "tool": "portals",
+   "label": "no backend",
+   "case": "drop-picks",
+   "find": "    chk(\"no backend\", r.resolve(IMPL + \".Secret\") == ([], \"no-backend\"))",
+   "replace": "    chk(\"no backend\", r.resolve(IMPL + \".Secret\")[1] == \"no-backend\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "4e6e418a95074dc9b8b3b8651d0a68e75ba5183dd07971789411714e7630cf09",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p39-no-backend-picks",
+    "find": "        return [], \"no-backend\"\n\n    def _all_by_list",
+    "replace": "        return [self.impls[0].source] if self.impls else [], \"no-backend\"\n\n    def _all_by_list",
+    "must_fail": [
+     "no backend"
+    ],
+    "source_mutant": "p39-no-backend-picks"
+   },
+   "closer_fails_weakened": [],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=1 wrong_check=0",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-617-drop-reason",
+   "tool": "portals",
+   "label": "find_all star collects all",
+   "case": "drop-reason",
+   "find": "    chk(\"find_all star collects all\", r.resolve(ST) == ([\"gtk\", \"kde\"], \"config\"))",
+   "replace": "    chk(\"find_all star collects all\", r.resolve(ST)[0] == [\"gtk\", \"kde\"])",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "e1a55f9418207e7c2a3cfe6ea0ab3df47a6fd3d3d370b0d740cc2cc6743ce872",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p43-reason-findall",
+    "find": "            return [i.source for i in out], \"config\"",
+    "replace": "            return [i.source for i in out], \"default config\"",
+    "must_fail": [
+     "find_all star collects all"
+    ],
+    "source_mutant": "p43-reason-findall"
+   },
+   "closer_fails_weakened": [],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=1 wrong_check=0",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-621-drop-reason",
+   "tool": "portals",
+   "label": "invalid escape voids file",
+   "case": "drop-reason",
+   "find": "    chk(\"invalid escape voids file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"invalid escape voids file\", r.resolve(FC)[0] == [\"gtk\"])",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "bb2d9953478de70b1b0d49bd996542345144e56b3c65c8e90b7279aaf27418a1",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p04-usein-any",
+    "find": "                if i.use_in is not None and any(u.lower() == d for u in i.use_in):",
+    "replace": "                if i.use_in is not None:",
+    "must_fail": [
+     "list items keep inner spaces",
+     "gtk last resort",
+     "key before group voids file",
+     "invalid escape voids file",
+     "Encoding other than UTF-8 in the first group voids the file",
+     "a VT before a key voids the file"
+    ],
+    "source_mutant": "p04-usein-any"
+   },
+   "closer_fails_weakened": [
+    "list items keep inner spaces",
+    "gtk last resort",
+    "key before group voids file",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "a VT before a key voids the file"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-622-len-only",
+   "tool": "portals",
+   "label": "desktops dropped/lowercased",
+   "case": "len-only",
+   "find": "    chk(\"desktops dropped/lowercased\", current_desktops(\"KDE::bad/x:GNOME-Classic\") == [\"kde\", \"gnome-classic\"])",
+   "replace": "    chk(\"desktops dropped/lowercased\", len(current_desktops(\"KDE::bad/x:GNOME-Classic\")) == 2)",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "9b544cb566c6c9f1b60c220343a6309173fe8de341fdbfc4be81d595100171f7",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p06-desktop-no-lower",
+    "find": "            out.append(tok.lower())",
+    "replace": "            out.append(tok)",
+    "must_fail": [
+     "default list falls to second backend",
+     "default list first backend",
+     "interface key wins",
+     "interface key beats default none",
+     "default none stops",
+     "star takes first sorted backend (UseIn first)",
+     "star takes name order otherwise",
+     "UseIn fallback",
+     "desktops dropped/lowercased"
+    ],
+    "source_mutant": "p06-desktop-no-lower"
+   },
+   "closer_fails_weakened": [
+    "default list falls to second backend",
+    "default list first backend",
+    "interface key wins",
+    "interface key beats default none",
+    "default none stops",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise",
+    "UseIn fallback"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-623-drop-first",
+   "tool": "portals",
+   "label": "string list trailing empty dropped",
+   "case": "drop-first",
+   "find": "    chk(\"string list trailing empty dropped\", string_list(\"a;b;\") == [\"a\", \"b\"] and string_list(\"a;;b\") == [\"a\", \"\", \"b\"])",
+   "replace": "    chk(\"string list trailing empty dropped\", string_list(\"a;;b\") == [\"a\", \"\", \"b\"])",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "2dbc6f430360d78313f55513ea64887c9496770f88be56b3a900027b2c7623a5",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p08-list-trailing",
+    "find": "    if cur:\n        pieces.append(\"\".join(cur))",
+    "replace": "    pieces.append(\"\".join(cur))",
+    "must_fail": [
+     "default list falls to second backend",
+     "default list first backend",
+     "interface key wins",
+     "interface key beats default none",
+     "star takes first sorted backend (UseIn first)",
+     "star takes name order otherwise",
+     "list items keep inner spaces",
+     "UseIn fallback",
+     "gtk last resort",
+     "non-specific portals.conf used",
+     "find_all star collects all",
+     "key before group voids file",
+     "invalid escape voids file",
+     "string list trailing empty dropped",
+     "Encoding other than UTF-8 in the first group voids the file",
+     "unparsable UseIn keeps the backend",
+     "invalid UTF-8 in a comment keeps the file",
+     "a VT before a key voids the file",
+     "a NUL ends the stored value",
+     "a NUL after a group bracket keeps the group",
+     "continuation bytes after a group bracket are skipped"
+    ],
+    "source_mutant": "p08-list-trailing"
+   },
+   "closer_fails_weakened": [
+    "default list falls to second backend",
+    "default list first backend",
+    "interface key wins",
+    "interface key beats default none",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise",
+    "list items keep inner spaces",
+    "UseIn fallback",
+    "gtk last resort",
+    "non-specific portals.conf used",
+    "find_all star collects all",
+    "key before group voids file",
+    "invalid escape voids file",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "unparsable UseIn keeps the backend",
+    "invalid UTF-8 in a comment keeps the file",
+    "a VT before a key voids the file",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-624-drop-wellformed",
+   "tool": "portals",
+   "label": "bus name validity",
+   "case": "drop-wellformed",
+   "find": "    chk(\"bus name validity\", is_bus_name(\"org.a.b\") and not is_bus_name(\"org\") and not is_bus_name(\"org.1a\"))",
+   "replace": "    chk(\"bus name validity\", not is_bus_name(\"org\") and not is_bus_name(\"org.1a\"))",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "97766fc470f53fc003362b2a1eaef9bbb853058ef0a60746e13b7a5734e021ff",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p32-bus-tail",
+    "find": "_ELEM_BUS = re.compile(r\"^[A-Za-z_-][A-Za-z0-9_-]*$\")",
+    "replace": "_ELEM_BUS = re.compile(r\"^[A-Za-z_-][A-Za-z0-9_-]*[A-Za-z]$\")",
+    "must_fail": [
+     "bus name validity"
+    ],
+    "source_mutant": "p32-bus-tail"
+   },
+   "closer_fails_weakened": [],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=1 wrong_check=0",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-624-drop-short",
+   "tool": "portals",
+   "label": "bus name validity",
+   "case": "drop-short",
+   "find": "    chk(\"bus name validity\", is_bus_name(\"org.a.b\") and not is_bus_name(\"org\") and not is_bus_name(\"org.1a\"))",
+   "replace": "    chk(\"bus name validity\", is_bus_name(\"org.a.b\") and not is_bus_name(\"org\"))",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "b2df84b80aa4c1d45a9cffada792b74d711327fae40e6980b5794b017879ef64",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p33-elem-digit",
+    "find": "_ELEM_BUS = re.compile(r\"^[A-Za-z_-][A-Za-z0-9_-]*$\")",
+    "replace": "_ELEM_BUS = re.compile(r\"^[A-Za-z0-9_-]+$\")",
+    "must_fail": [
+     "bus name validity"
+    ],
+    "source_mutant": "p33-elem-digit"
+   },
+   "closer_fails_weakened": [],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=1 wrong_check=0",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-629-drop-reason",
+   "tool": "portals",
+   "label": "Encoding other than UTF-8 in the first group voids the file",
+   "case": "drop-reason",
+   "find": "    chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC)[0] == [\"gtk\"])",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "0fe2f6d03f8f5456e06daf5c085591f9f24d18645893f690ff1b52eaf55d58d2",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p04-usein-any",
+    "find": "                if i.use_in is not None and any(u.lower() == d for u in i.use_in):",
+    "replace": "                if i.use_in is not None:",
+    "must_fail": [
+     "list items keep inner spaces",
+     "gtk last resort",
+     "key before group voids file",
+     "invalid escape voids file",
+     "Encoding other than UTF-8 in the first group voids the file",
+     "a VT before a key voids the file"
+    ],
+    "source_mutant": "p04-usein-any"
+   },
+   "closer_fails_weakened": [
+    "list items keep inner spaces",
+    "gtk last resort",
+    "key before group voids file",
+    "invalid escape voids file",
+    "a VT before a key voids the file"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-629-drop-picks",
+   "tool": "portals",
+   "label": "Encoding other than UTF-8 in the first group voids the file",
+   "case": "drop-picks",
+   "find": "    chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"Encoding other than UTF-8 in the first group voids the file\", r.resolve(FC)[1] == \"gtk-last-resort\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "a175fbe4e5a7c414f55428dc74310db6e323708118706e0d51fbecc81d2d61af",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-632-drop-picks",
+   "tool": "portals",
+   "label": "unparsable UseIn keeps the backend",
+   "case": "drop-picks",
+   "find": "    chk(\"unparsable UseIn keeps the backend\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"unparsable UseIn keeps the backend\", r.resolve(FC)[1] == \"default config\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "c9f849486387749cb3d256975619f73b080210a8848801b0fa129249bdd2135b",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p35-default-picks-first",
+    "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+    "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"default config\"",
+    "must_fail": [
+     "default list falls to second backend",
+     "star takes name order otherwise",
+     "non-specific portals.conf used",
+     "unparsable UseIn keeps the backend",
+     "invalid UTF-8 in a comment keeps the file",
+     "a NUL ends the stored value",
+     "a NUL after a group bracket keeps the group",
+     "continuation bytes after a group bracket are skipped"
+    ],
+    "source_mutant": "p35-default-picks-first"
+   },
+   "closer_fails_weakened": [
+    "default list falls to second backend",
+    "star takes name order otherwise",
+    "non-specific portals.conf used",
+    "invalid UTF-8 in a comment keeps the file",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-645-drop-picks",
+   "tool": "portals",
+   "label": "invalid UTF-8 in a comment keeps the file",
+   "case": "drop-picks",
+   "find": "    chk(\"invalid UTF-8 in a comment keeps the file\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"invalid UTF-8 in a comment keeps the file\", r.resolve(FC)[1] == \"default config\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "b2198a96e9f1d40894f8386068524380cca57255e22586d9a97f3b8b71dd80f3",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p35-default-picks-first",
+    "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+    "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"default config\"",
+    "must_fail": [
+     "default list falls to second backend",
+     "star takes name order otherwise",
+     "non-specific portals.conf used",
+     "unparsable UseIn keeps the backend",
+     "invalid UTF-8 in a comment keeps the file",
+     "a NUL ends the stored value",
+     "a NUL after a group bracket keeps the group",
+     "continuation bytes after a group bracket are skipped"
+    ],
+    "source_mutant": "p35-default-picks-first"
+   },
+   "closer_fails_weakened": [
+    "default list falls to second backend",
+    "star takes name order otherwise",
+    "non-specific portals.conf used",
+    "unparsable UseIn keeps the backend",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-647-drop-reason",
+   "tool": "portals",
+   "label": "a VT before a key voids the file",
+   "case": "drop-reason",
+   "find": "    chk(\"a VT before a key voids the file\", r.resolve(FC) == ([\"gtk\"], \"gtk-last-resort\"))",
+   "replace": "    chk(\"a VT before a key voids the file\", r.resolve(FC)[0] == [\"gtk\"])",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "c4852802920834300139dca0f368da773cb5877fcb15ea1232907f22a1237c38",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p04-usein-any",
+    "find": "                if i.use_in is not None and any(u.lower() == d for u in i.use_in):",
+    "replace": "                if i.use_in is not None:",
+    "must_fail": [
+     "list items keep inner spaces",
+     "gtk last resort",
+     "key before group voids file",
+     "invalid escape voids file",
+     "Encoding other than UTF-8 in the first group voids the file",
+     "a VT before a key voids the file"
+    ],
+    "source_mutant": "p04-usein-any"
+   },
+   "closer_fails_weakened": [
+    "list items keep inner spaces",
+    "gtk last resort",
+    "key before group voids file",
+    "invalid escape voids file",
+    "Encoding other than UTF-8 in the first group voids the file"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-649-drop-picks",
+   "tool": "portals",
+   "label": "a NUL ends the stored value",
+   "case": "drop-picks",
+   "find": "    chk(\"a NUL ends the stored value\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"a NUL ends the stored value\", r.resolve(FC)[1] == \"default config\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "294839f87d4fb294a166801e57fbafe2195c60428e8b2daf59370e4b2eefc7d9",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p35-default-picks-first",
+    "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+    "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"default config\"",
+    "must_fail": [
+     "default list falls to second backend",
+     "star takes name order otherwise",
+     "non-specific portals.conf used",
+     "unparsable UseIn keeps the backend",
+     "invalid UTF-8 in a comment keeps the file",
+     "a NUL ends the stored value",
+     "a NUL after a group bracket keeps the group",
+     "continuation bytes after a group bracket are skipped"
+    ],
+    "source_mutant": "p35-default-picks-first"
+   },
+   "closer_fails_weakened": [
+    "default list falls to second backend",
+    "star takes name order otherwise",
+    "non-specific portals.conf used",
+    "unparsable UseIn keeps the backend",
+    "invalid UTF-8 in a comment keeps the file",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-651-drop-picks",
+   "tool": "portals",
+   "label": "a NUL after a group bracket keeps the group",
+   "case": "drop-picks",
+   "find": "    chk(\"a NUL after a group bracket keeps the group\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"a NUL after a group bracket keeps the group\", r.resolve(FC)[1] == \"default config\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "c5653e978f2b18c301f02557f36b0767e6479bf80b924c68807523d8f405c7f0",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p35-default-picks-first",
+    "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+    "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"default config\"",
+    "must_fail": [
+     "default list falls to second backend",
+     "star takes name order otherwise",
+     "non-specific portals.conf used",
+     "unparsable UseIn keeps the backend",
+     "invalid UTF-8 in a comment keeps the file",
+     "a NUL ends the stored value",
+     "a NUL after a group bracket keeps the group",
+     "continuation bytes after a group bracket are skipped"
+    ],
+    "source_mutant": "p35-default-picks-first"
+   },
+   "closer_fails_weakened": [
+    "default list falls to second backend",
+    "star takes name order otherwise",
+    "non-specific portals.conf used",
+    "unparsable UseIn keeps the backend",
+    "invalid UTF-8 in a comment keeps the file",
+    "a NUL ends the stored value",
+    "continuation bytes after a group bracket are skipped"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  },
+  {
+   "id": "portals-653-drop-picks",
+   "tool": "portals",
+   "label": "continuation bytes after a group bracket are skipped",
+   "case": "drop-picks",
+   "find": "    chk(\"continuation bytes after a group bracket are skipped\", r.resolve(FC) == ([\"kde\"], \"default config\"))",
+   "replace": "    chk(\"continuation bytes after a group bracket are skipped\", r.resolve(FC)[1] == \"default config\")",
+   "green": true,
+   "selftest": "MADO_PORTALS_SELFTEST: checks=28 failed=0",
+   "mutated_sha256": "385f0b5ecb68321c1767a809bb17776698f39b633071fb1c14b1f59edb78404b",
+   "gate": "OK:0",
+   "gate_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=27 held=27 survived=0 wrong_check=0",
+   "closer": {
+    "id": "r95m-close-p35-default-picks-first",
+    "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+    "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"default config\"",
+    "must_fail": [
+     "default list falls to second backend",
+     "star takes name order otherwise",
+     "non-specific portals.conf used",
+     "unparsable UseIn keeps the backend",
+     "invalid UTF-8 in a comment keeps the file",
+     "a NUL ends the stored value",
+     "a NUL after a group bracket keeps the group",
+     "continuation bytes after a group bracket are skipped"
+    ],
+    "source_mutant": "p35-default-picks-first"
+   },
+   "closer_fails_weakened": [
+    "default list falls to second backend",
+    "star takes name order otherwise",
+    "non-specific portals.conf used",
+    "unparsable UseIn keeps the backend",
+    "invalid UTF-8 in a comment keeps the file",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group"
+   ],
+   "close_gate": "WEAK:1",
+   "close_line": "SELFTEST_STRENGTH: WEAK tool=tools/mado-portals.py kills=28 held=27 survived=0 wrong_check=1",
+   "pristine_gate": "OK:0",
+   "pristine_line": "SELFTEST_STRENGTH: OK tool=tools/mado-portals.py kills=28 held=28 survived=0 wrong_check=0"
+  }
+ ],
+ "labelled_classes": [
+  "drop-first",
+  "drop-picks",
+  "drop-reason",
+  "drop-short",
+  "drop-wellformed",
+  "len-only"
+ ]
+}

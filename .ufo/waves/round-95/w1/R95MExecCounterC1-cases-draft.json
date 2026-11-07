@@ -1,0 +1,757 @@
+{
+ "version": 1,
+ "oracle_src_sha256": "99df35f8b3fd7005f30789f8866984a1bbceaff8dc6c1d326f0132eb7b4d124a",
+ "glib2": "2.90.1-1",
+ "cases": [
+  {
+   "id": "zerosize-01-empty",
+   "class": "zerosize",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEAAAABEAAAASAAAAEwAAABUAAAAZAAAAKAAAACgAAAAoCouenoAYXBwL3p6AGFwcC9tYWdpYwBNWgAAAAAAAAAAAAAAAAAAAAAAAABUAAAAAQAAACgAAAAtAAAAMgAAAAEAAAAAAAAAcAAAADIAAAA0AAAAAQAAAIAAAAAAAAAAAQAAAAEAAAACAAAAPgAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": ""
+    },
+    {
+     "name_b64": "eC56eg==",
+     "data_b64": ""
+    },
+    {
+     "name_b64": "eC5tYWdpYw==",
+     "data_b64": ""
+    }
+   ],
+   "labels": [
+    [
+     "application/x-zerosize",
+     0
+    ],
+    [
+     "app/zz",
+     0
+    ],
+    [
+     "application/x-zerosize",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "fallback-01-bin",
+   "class": "fallback",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAADQAAAA4AAAAPAAAAEAAAABIAAAATAAAAIgAAACIAAAAiGFwcC9tYWdpYwBNWgAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAEAAAAAAAAAWAAAADIAAAAoAAAAAQAAAGgAAAAAAAAAAQAAAAEAAAACAAAAMgAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "AQIDBA=="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "aGVsbG8gd29ybGQK"
+    },
+    {
+     "name_b64": "eno=",
+     "data_b64": "AQI="
+    }
+   ],
+   "labels": [
+    [
+     "application/octet-stream",
+     1
+    ],
+    [
+     "text/plain",
+     0
+    ],
+    [
+     "application/octet-stream",
+     1
+    ]
+   ]
+  },
+  {
+   "id": "lltext-01-vt",
+   "class": "lltext",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAADQAAAA4AAAAPAAAAEAAAABIAAAATAAAAIgAAACIAAAAiGFwcC9tYWdpYwBNWgAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAEAAAAAAAAAWAAAADIAAAAoAAAAAQAAAGgAAAAAAAAAAQAAAAEAAAACAAAAMgAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "YWILY2Q="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "YWIOY2Q="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "YWJ/Y2Q="
+    }
+   ],
+   "labels": [
+    [
+     "application/octet-stream",
+     1
+    ],
+    [
+     "application/octet-stream",
+     1
+    ],
+    [
+     "text/plain",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "order-01-cacheorder",
+   "class": "order",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEQAAABIAAAATAAAAFAAAABYAAAAXAAAAMgAAADIAAAAyGFwcC9maXJzdABhcHAvc2Vjb25kAEFCQUIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAAAAAAAAACAAAAAAAAAGgAAAAyAAAAKAAAAAEAAACIAAAAWgAAADIAAAABAAAAqAAAAAAAAAACAAAAAQAAAAIAAAA9AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAABAAAAAgAAAD8AAAAAAAAAAAAAAAAAAAAA"
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "QUJ4eHh4"
+    },
+    {
+     "name_b64": null,
+     "data_b64": "QUI="
+    }
+   ],
+   "labels": [
+    [
+     "app/first",
+     0
+    ],
+    [
+     "app/first",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "prio-01-highwins",
+   "class": "prio",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAADQAAAA4AAAAPAAAAEAAAABIAAAATAAAAIgAAACIAAAAiGFwcC9sb3cAUFEAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAEAAAAAAAAAWAAAADIAAAAoAAAAAQAAAGgAAAAAAAAAAgAAAAEAAAACAAAAMAAAAAAAAAAAAAAAAAAAAAA=",
+    "s2/mime/mime.cache": "AAEAAgAAADQAAAA4AAAAPAAAAEAAAABIAAAATAAAAIgAAACIAAAAiGFwcC9oaWdoAFBRAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAEAAAAAAAAAWAAAAFoAAAAoAAAAAQAAAGgAAAAAAAAAAgAAAAEAAAACAAAAMQAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "UFF4eA=="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "bm8tbWF0Y2gtaGVyZQ=="
+    }
+   ],
+   "labels": [
+    [
+     "app/high",
+     0
+    ],
+    [
+     "text/plain",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "prio-02-equal",
+   "class": "prio",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAADQAAAA4AAAAPAAAAEAAAABIAAAATAAAAIgAAACIAAAAiGFwcC9sb3cAUFEAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAEAAAAAAAAAWAAAADIAAAAoAAAAAQAAAGgAAAAAAAAAAgAAAAEAAAACAAAAMAAAAAAAAAAAAAAAAAAAAAA=",
+    "s2/mime/mime.cache": "AAEAAgAAADQAAAA4AAAAPAAAAEAAAABIAAAATAAAAIgAAACIAAAAiGFwcC9oaWdoAFBRAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAEAAAAAAAAAWAAAADIAAAAoAAAAAQAAAGgAAAAAAAAAAgAAAAEAAAACAAAAMQAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "UFF4eA=="
+    }
+   ],
+   "labels": [
+    [
+     "app/low",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "multicache-01-three",
+   "class": "multicache",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "dh/mime/mime.cache": "AAEAAgAAADQAAAA4AAAAPAAAAEAAAABIAAAATAAAAIgAAACIAAAAiGFwcC9kaABNQwAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAEAAAAAAAAAWAAAACgAAAAoAAAAAQAAAGgAAAAAAAAAAgAAAAEAAAACAAAALwAAAAAAAAAAAAAAAAAAAAA=",
+    "s1/mime/mime.cache": "AAEAAgAAADQAAAA4AAAAPAAAAEAAAABIAAAATAAAAIgAAACIAAAAiGFwcC9zMQBNQwAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAEAAAAAAAAAWAAAAEYAAAAoAAAAAQAAAGgAAAAAAAAAAgAAAAEAAAACAAAALwAAAAAAAAAAAAAAAAAAAAA=",
+    "s2/mime/mime.cache": "AAEAAgAAADQAAAA4AAAAPAAAAEAAAABIAAAATAAAAIgAAACIAAAAiGFwcC9zMgBNQwAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAEAAAAAAAAAWAAAADwAAAAoAAAAAQAAAGgAAAAAAAAAAgAAAAEAAAACAAAALwAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "TUN6eg=="
+    }
+   ],
+   "labels": [
+    [
+     "app/s1",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "range-01-window",
+   "class": "range",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAADgAAAA8AAAAQAAAAEQAAABMAAAAUAAAAIwAAACMAAAAjGFwcC9yYW5nZQBSR0gAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAABAAAAAAAAAFwAAAAyAAAAKAAAAAEAAABsAAAABAAAAAMAAAABAAAAAwAAADIAAAAAAAAAAAAAAAAAAAAA"
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "AAAAAFJHSA=="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "AFJHSAAA"
+    },
+    {
+     "name_b64": null,
+     "data_b64": "AAAAAABSR0g="
+    }
+   ],
+   "labels": [
+    [
+     "app/range",
+     0
+    ],
+    [
+     "application/octet-stream",
+     1
+    ],
+    [
+     "app/range",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "mask-01-nibble",
+   "class": "mask",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAADgAAAA8AAAAQAAAAEQAAABMAAAAUAAAAIwAAACMAAAAjGFwcC9tYXNrZWQAEADwAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAABAAAAAAAAAFwAAAAyAAAAKAAAAAEAAABsAAAAAAAAAAIAAAABAAAAAgAAADMAAAA1AAAAAAAAAAAAAAAA"
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "H5k="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "AZk="
+    }
+   ],
+   "labels": [
+    [
+     "app/masked",
+     0
+    ],
+    [
+     "application/octet-stream",
+     1
+    ]
+   ]
+  },
+  {
+   "id": "nest-01-children",
+   "class": "nest",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAADgAAAA8AAAAQAAAAEQAAABMAAAAUAAAAMwAAADMAAAAzGFwcC9uZXN0AE5FWFkAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAABAAAAAAAAAFwAAAAyAAAAKAAAAAEAAABsAAAAAAAAAAEAAAABAAAAAgAAADEAAAAAAAAAAgAAAIwAAAAEAAAAAQAAAAEAAAABAAAAMwAAAAAAAAAAAAAAAAAAAAQAAAABAAAAAQAAAAEAAAA0AAAAAAAAAAAAAAAAAAAAAA=="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "TkUBAVk="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "TkUBAVo="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "TkU="
+    }
+   ],
+   "labels": [
+    [
+     "app/nest",
+     0
+    ],
+    [
+     "application/octet-stream",
+     1
+    ],
+    [
+     "text/plain",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "bounds-01-end",
+   "class": "bounds",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEAAAABEAAAASAAAAEwAAABUAAAAWAAAAMQAAADEAAAAxGFwcC9lbmQAYXBwL3JhbmdlZW5kAEJSRQAAAAAAAAAAAAAAAAAAAAAAAABUAAAAAAAAAAIAAAAAAAAAZAAAADIAAAAoAAAAAQAAAIQAAAAyAAAAMAAAAAEAAACkAAAAAgAAAAEAAAABAAAAAQAAAD0AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAEAAAACAAAAPgAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "YWFC"
+    },
+    {
+     "name_b64": null,
+     "data_b64": "YWE="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "UkU="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "Ug=="
+    }
+   ],
+   "labels": [
+    [
+     "app/end",
+     0
+    ],
+    [
+     "text/plain",
+     0
+    ],
+    [
+     "app/rangeend",
+     0
+    ],
+    [
+     "text/plain",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "wrap-01-nomatch",
+   "class": "wrap",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAADgAAAA8AAAAQAAAAEQAAABMAAAAUAAAAIwAAACMAAAAjGFwcC93cmFwAFdYWVoAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAABAAAAAAAAAFwAAAAyAAAAKAAAAAEAAABs////8AAAACAAAAABAAAABAAAADEAAAAAAAAAAAAAAAAAAAAA"
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "V1hZWiBhbnl0aGluZw=="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "cGxhaW4gdGV4dCBoZXJlCg=="
+    }
+   ],
+   "labels": [
+    [
+     "text/plain",
+     0
+    ],
+    [
+     "text/plain",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "desktop-01-entry",
+   "class": "desktop",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAGQAAABoAAAAbAAAAHAAAAB4AAAAlAAAANAAAADQAAAA0CoudHdvAHQvb25lAHQvb3RoZXIAYXBwbGljYXRpb24veC1kZXNrdG9wAFtEZXNrdG9wIEVudHJ5XQAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4AAAAAgAAACgAAAAuAAAAMgAAACgAAAA0AAAAMgAAAAEAAAAAAAAAoAAAACgAAAA8AAAAAQAAALAAAAAAAAAADAAAAAEAAAAPAAAAUgAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "W0Rlc2t0b3AgRW50cnldCk5hbWU9eAo="
+    },
+    {
+     "name_b64": "enoubm9tYXRjaA==",
+     "data_b64": "W0Rlc2t0b3AgRW50cnldCk5hbWU9eAo="
+    },
+    {
+     "name_b64": "eC50d28=",
+     "data_b64": "W0Rlc2t0b3AgRW50cnldCk5hbWU9eAo="
+    }
+   ],
+   "labels": [
+    [
+     "application/x-desktop",
+     0
+    ],
+    [
+     "text/plain",
+     0
+    ],
+    [
+     "t/one",
+     1
+    ]
+   ]
+  },
+  {
+   "id": "name1-01-single",
+   "class": "name1",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEAAAABEAAAASAAAAEwAAABUAAAAZAAAAKAAAACgAAAAoCoub25lAHQvc2luZ2xlAGFwcC9oaQBISQAAAAAAAAAAAAAAAAAAAAAAAABUAAAAAQAAACgAAAAuAAAAMgAAAAEAAAAAAAAAcAAAAFoAAAA3AAAAAQAAAIAAAAAAAAAAAQAAAAEAAAACAAAAPgAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": "eC5vbmU=",
+     "data_b64": "SEk="
+    },
+    {
+     "name_b64": "eC5vbmU=",
+     "data_b64": "AAEC"
+    },
+    {
+     "name_b64": null,
+     "data_b64": "SEk="
+    }
+   ],
+   "labels": [
+    [
+     "t/single",
+     0
+    ],
+    [
+     "t/single",
+     0
+    ],
+    [
+     "app/hi",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "name0-01-nomatch",
+   "class": "name0",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEAAAABEAAAASAAAAEwAAABUAAAAZAAAAKAAAACgAAAAoCoub25lAHQvc2luZ2xlAGFwcC9oaQBISQAAAAAAAAAAAAAAAAAAAAAAAABUAAAAAQAAACgAAAAuAAAAMgAAAAEAAAAAAAAAcAAAAFoAAAA3AAAAAQAAAIAAAAAAAAAAAQAAAAEAAAACAAAAPgAAAAAAAAAAAAAAAAAAAAA="
+   },
+   "inputs": [
+    {
+     "name_b64": "enoubm9tYXRjaA==",
+     "data_b64": "SEkgdGhlcmU="
+    },
+    {
+     "name_b64": "enoubm9tYXRjaA==",
+     "data_b64": "AQI="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "SEkgdGhlcmU="
+    }
+   ],
+   "labels": [
+    [
+     "app/hi",
+     0
+    ],
+    [
+     "application/octet-stream",
+     1
+    ],
+    [
+     "app/hi",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "nameN-01-two",
+   "class": "nameN",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEgAAABMAAAAUAAAAFQAAABcAAAAeAAAALQAAAC0AAAAtCoudHdvAHQvb25lAHQvb3RoZXIAYXBwL2hpAEhJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFwAAAACAAAAKAAAAC4AAAAyAAAAKAAAADQAAAAyAAAAAQAAAAAAAACEAAAAWgAAADwAAAABAAAAlAAAAAAAAAABAAAAAQAAAAIAAABDAAAAAAAAAAAAAAAAAAAAAA=="
+   },
+   "inputs": [
+    {
+     "name_b64": "eC50d28=",
+     "data_b64": "SEk="
+    },
+    {
+     "name_b64": "eC50d28=",
+     "data_b64": "AQI="
+    }
+   ],
+   "labels": [
+    [
+     "app/hi",
+     0
+    ],
+    [
+     "t/one",
+     1
+    ]
+   ]
+  },
+  {
+   "id": "subclass-01-parent",
+   "class": "subclass",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEQAAABIAAAAXAAAAGAAAABoAAAAhAAAAMAAAADAAAAAwGFwcC9jaGlsZABhcHAvYmFzZQAqLmMAQkEAAAAAAAAAAAAAAQAAACgAAABUAAAAAQAAADIAAAAAAAAAAAAAAGgAAAACAAAAOwAAACgAAAAyAAAAOwAAADIAAAAyAAAAAQAAAAAAAACQAAAAMgAAADIAAAABAAAAoAAAAAAAAAABAAAAAQAAAAIAAAA/AAAAAAAAAAAAAAAAAAAAAA=="
+   },
+   "inputs": [
+    {
+     "name_b64": "eC5j",
+     "data_b64": "QkE="
+    }
+   ],
+   "labels": [
+    [
+     "app/child",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "alias-01-unaliased",
+   "class": "alias",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEAAAABMAAAAUAAAAFQAAABcAAAAeAAAALQAAAC0AAAAtGFwcC9vbGQAYXBwL25ldwAqLmFsAEFMAAAAAAEAAAAoAAAAMAAAAAAAAAAAAAAAAAAAAFwAAAACAAAAOAAAACgAAAAyAAAAOAAAADAAAAAyAAAAAQAAAAAAAACEAAAAMgAAADAAAAABAAAAlAAAAAAAAAACAAAAAQAAAAIAAAA9AAAAAAAAAAAAAAAAAAAAAA=="
+   },
+   "inputs": [
+    {
+     "name_b64": "eC5hbA==",
+     "data_b64": "QUw="
+    }
+   ],
+   "labels": [
+    [
+     "app/old",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "slash-01-dir",
+   "class": "slash",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAADwAAABAAAAARAAAAEgAAABQAAAAYAAAAJwAAACcAAAAnCoAYXBwL2FueQBhcHAvaGkASEkAAAAAAAAAAAAAAAAAAAAAAAAAAFAAAAABAAAAKAAAACoAAAAyAAAAAQAAAAAAAABsAAAAWgAAADIAAAABAAAAfAAAAAAAAAABAAAAAQAAAAIAAAA5AAAAAAAAAAAAAAAAAAAAAA=="
+   },
+   "inputs": [
+    {
+     "name_b64": "ZGlyLw==",
+     "data_b64": "SEk="
+    },
+    {
+     "name_b64": "ZGlyL3N1Yi8=",
+     "data_b64": "AQI="
+    },
+    {
+     "name_b64": null,
+     "data_b64": "SEk="
+    }
+   ],
+   "labels": [
+    [
+     "inode/directory",
+     1
+    ],
+    [
+     "inode/directory",
+     1
+    ],
+    [
+     "app/hi",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "mode-01-cachewins",
+   "class": "mode",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEQAAABIAAAATAAAAFAAAABYAAAAaAAAAKQAAACkAAAApCoudHh0AHRleHQvcGxhaW4AYXBwL2hpAEhJAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAAAAEAAAAoAAAALgAAADIAAAABAAAAAAAAAHQAAABaAAAAOQAAAAEAAACEAAAAAAAAAAEAAAABAAAAAgAAAEAAAAAAAAAAAAAAAAAAAAAA",
+    "s1/mime/globs2": "NTA6dGV4dC9wbGFpbjoqLnR4dAo=",
+    "s1/mime/magic": "NTAJdGV4dC9wbGFpbgkqLnR4dAo="
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "SEk="
+    },
+    {
+     "name_b64": "eC50eHQ=",
+     "data_b64": "SEk="
+    },
+    {
+     "name_b64": "eC50eHQ=",
+     "data_b64": "cGxhaW4gd29yZHMK"
+    }
+   ],
+   "labels": [
+    [
+     "app/hi",
+     0
+    ],
+    [
+     "text/plain",
+     0
+    ],
+    [
+     "text/plain",
+     0
+    ]
+   ]
+  },
+  {
+   "id": "real-01-smidb",
+   "class": "real",
+   "env": {
+    "HOME": "{root}/h",
+    "XDG_DATA_HOME": "{root}/dh",
+    "XDG_DATA_DIRS": "{root}/s1:{root}/s2"
+   },
+   "files": {
+    "s1/mime/mime.cache": "AAEAAgAAAEQAAABIAAAATAAAAFAAAACgAAAApAAAAOgAAADsAAAA8AAAAPRhcHBsaWNhdGlvbi94LWRyYWZ0cG5nAAAAAAAAAAAAAAAAAAAAAAABAAAAWAAAAGcAAAABAAAAZAAAAG4AAAABAAAAcAAAAHAAAAABAAAAfAAAAGQAAAABAAAAiAAAAC4AAAABAAAAlAAAAAAAAAAsAAAAMgAAAAAAAAABAAAACQAAALAAAABQAAAALAAAAAEAAADAAAAAAAAAAAEAAAABAAAACAAAAOAAAAAAAAAAAAAAAACJUE5HDQoaCgAAAAAAAAAAAAAAAAAAAAEAAAAA"
+   },
+   "inputs": [
+    {
+     "name_b64": null,
+     "data_b64": "iVBORw0KGgoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    {
+     "name_b64": "eC5kcG5n",
+     "data_b64": "AAEC"
+    },
+    {
+     "name_b64": "eno=",
+     "data_b64": "iVBORw0KGgoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+    }
+   ],
+   "labels": [
+    [
+     "application/x-draftpng",
+     0
+    ],
+    [
+     "application/x-draftpng",
+     0
+    ],
+    [
+     "application/x-draftpng",
+     0
+    ]
+   ]
+  }
+ ]
+}
