@@ -1,0 +1,441 @@
+{
+ "version": 1,
+ "tool": "quality/check-sources-readback.py",
+ "anchored_to": ".ufo/waves/round-98/build/check-sources-readback.py",
+ "anchor_sha256": "b04742efeb18181fca1fef829b9e265c463ad33c22f040a263d7b10477c995ba",
+ "non_selftest_region": "the source minus the selftest fixture block (from the `selftest ---` marker to `def cli(`) and minus `gate_selftest` (to `def main(`)",
+ "counts": {
+  "mutants": 41,
+  "equivalents": 11,
+  "not_observable": 6
+ },
+ "mutants": [
+  {
+   "id": "r1-guard-inverted",
+   "rule": "R1",
+   "find": "if recheck not in EMPTY_CELLS and (",
+   "replace": "if recheck in EMPTY_CELLS and (",
+   "expect": "kill"
+  },
+  {
+   "id": "r1-slash-test-dropped",
+   "rule": "R1",
+   "find": "\"/\" in recheck or recheck.endswith(\".md\")",
+   "replace": "\"\\\\\" in recheck or recheck.endswith(\".md\")",
+   "expect": "kill"
+  },
+  {
+   "id": "r1-md-test-dropped",
+   "rule": "R1",
+   "find": "recheck.endswith(\".md\")",
+   "replace": "recheck.endswith(\".txt\")",
+   "expect": "kill"
+  },
+  {
+   "id": "r1-slash-test-inverted",
+   "rule": "R1",
+   "find": "\"/\" in recheck or",
+   "replace": "\"/\" not in recheck or",
+   "expect": "kill"
+  },
+  {
+   "id": "r2-prefix-test-dropped",
+   "rule": "R2",
+   "find": "if m == \"corpus\" or m.startswith(\"corpus/\"):",
+   "replace": "if True:",
+   "expect": "kill"
+  },
+  {
+   "id": "r2-note-dropped",
+   "rule": "R2",
+   "find": "                notes.append(\"NOTE outside-corpus %s path=%s\" % (rid, m))",
+   "replace": "                pass",
+   "expect": "kill"
+  },
+  {
+   "id": "r2-corpus-test-inverted",
+   "rule": "R2",
+   "find": "if m == \"corpus\" or m.startswith(\"corpus/\"):",
+   "replace": "if not (m == \"corpus\" or m.startswith(\"corpus/\")):",
+   "expect": "kill"
+  },
+  {
+   "id": "r2-note-token-wrong",
+   "rule": "R2",
+   "find": "\"NOTE outside-corpus %s path=%s\"",
+   "replace": "\"NOTE outside-corpus %s member=%s\"",
+   "expect": "kill"
+  },
+  {
+   "id": "r2-note-args-swapped",
+   "rule": "R2",
+   "find": "% (rid, m))",
+   "replace": "% (m, rid))",
+   "expect": "kill"
+  },
+  {
+   "id": "r3-existence-dropped",
+   "rule": "R3",
+   "find": "if not os.path.lexists(os.path.join(repo, m)):",
+   "replace": "if False:",
+   "expect": "kill"
+  },
+  {
+   "id": "r3-existence-inverted",
+   "rule": "R3",
+   "find": "if not os.path.lexists(os.path.join(repo, m)):",
+   "replace": "if os.path.lexists(os.path.join(repo, m)):",
+   "expect": "kill"
+  },
+  {
+   "id": "r3-rule-token-wrong",
+   "rule": "R3",
+   "find": "{\"rule\": \"R3\", \"id\": rid,",
+   "replace": "{\"rule\": \"R2\", \"id\": rid,",
+   "expect": "kill"
+  },
+  {
+   "id": "r4-membership-inverted",
+   "rule": "R4",
+   "find": "elif epath not in acked[sid]:",
+   "replace": "elif epath in acked[sid]:",
+   "expect": "kill"
+  },
+  {
+   "id": "r4-dropped",
+   "rule": "R4",
+   "find": "elif epath not in acked[sid]:",
+   "replace": "elif False:",
+   "expect": "kill"
+  },
+  {
+   "id": "r4-rule-token-wrong",
+   "rule": "R4",
+   "find": "{\"rule\": \"R4\", \"id\": sid,",
+   "replace": "{\"rule\": \"R5\", \"id\": sid,",
+   "expect": "kill"
+  },
+  {
+   "id": "r4-first-member-only",
+   "rule": "R4",
+   "find": "acked.setdefault(cells[0], set()).update(usedby_members(cells[10]))",
+   "replace": "acked.setdefault(cells[0], set()).update(usedby_members(cells[10])[:1])",
+   "expect": "kill"
+  },
+  {
+   "id": "r4-detail-wrong",
+   "rule": "R4",
+   "find": "                findings.append({\"rule\": \"R4\", \"id\": sid,\n                                 \"detail\": \"entry=%s\" % epath})",
+   "replace": "                findings.append({\"rule\": \"R4\", \"id\": sid,\n                                 \"detail\": \"path=%s\" % epath})",
+   "expect": "kill"
+  },
+  {
+   "id": "r5-dropped",
+   "rule": "R5",
+   "find": "            if sid not in acked:\n                findings.append({\"rule\": \"R5\", \"id\": sid,\n                                 \"detail\": \"entry=%s\" % epath})\n            elif epath not in acked[sid]:",
+   "replace": "            if sid not in acked:\n                pass\n            elif False and epath not in acked[sid]:",
+   "expect": "kill"
+  },
+  {
+   "id": "r5-inverted",
+   "rule": "R5",
+   "find": "if sid not in acked:",
+   "replace": "if sid in acked:",
+   "expect": "kill"
+  },
+  {
+   "id": "r5-rule-token-wrong",
+   "rule": "R5",
+   "find": "{\"rule\": \"R5\", \"id\": sid,",
+   "replace": "{\"rule\": \"R4\", \"id\": sid,",
+   "expect": "kill"
+  },
+  {
+   "id": "r6-dropped",
+   "rule": "R6",
+   "find": "if counts[rid] > 1 and rid not in dup_done:",
+   "replace": "if False and rid not in dup_done:",
+   "expect": "kill"
+  },
+  {
+   "id": "r6-threshold",
+   "rule": "R6",
+   "find": "if counts[rid] > 1 and rid not in dup_done:",
+   "replace": "if counts[rid] > 2 and rid not in dup_done:",
+   "expect": "kill"
+  },
+  {
+   "id": "r6-once-guard-dropped",
+   "rule": "R6",
+   "find": "dup_done.add(rid)",
+   "replace": "dup_done.add(\"\")",
+   "expect": "kill"
+  },
+  {
+   "id": "r6-count-frozen",
+   "rule": "R6",
+   "find": "counts[rid] = counts.get(rid, 0) + 1",
+   "replace": "counts[rid] = 1",
+   "expect": "kill"
+  },
+  {
+   "id": "fm-first-id-only",
+   "rule": "parse",
+   "find": "for m in ID_RE.finditer(padded):",
+   "replace": "for m in list(ID_RE.finditer(padded))[:1]:",
+   "expect": "kill"
+  },
+  {
+   "id": "fm-dedupe-dropped",
+   "rule": "parse",
+   "find": "if m.group(0) not in out:",
+   "replace": "if True:",
+   "expect": "kill"
+  },
+  {
+   "id": "fm-source-prefix-case",
+   "rule": "parse",
+   "find": "if line.startswith(\"source:\"):",
+   "replace": "if line.startswith(\"Source:\"):",
+   "expect": "kill"
+  },
+  {
+   "id": "parse-header-row",
+   "rule": "parse",
+   "find": "if cells is None or cells[0] == \"id\" or is_separator(cells):",
+   "replace": "if cells is None or is_separator(cells):",
+   "expect": "kill"
+  },
+  {
+   "id": "parse-indent-boundary",
+   "rule": "parse",
+   "find": "if not in_reg or indent > 3:",
+   "replace": "if not in_reg or indent > 4:",
+   "expect": "kill"
+  },
+  {
+   "id": "parse-indent-dropped",
+   "rule": "parse",
+   "find": "if not in_reg or indent > 3:",
+   "replace": "if not in_reg:",
+   "expect": "kill"
+  },
+  {
+   "id": "parse-column-count",
+   "rule": "parse",
+   "find": "if len(cells) != 11:",
+   "replace": "if len(cells) < 11:",
+   "expect": "kill"
+  },
+  {
+   "id": "usedby-emdash-dropped",
+   "rule": "parse",
+   "find": "EMPTY_CELLS = (\"\", \"\\u2014\")",
+   "replace": "EMPTY_CELLS = (\"\",)",
+   "expect": "kill"
+  },
+  {
+   "id": "usedby-separator-wrong",
+   "rule": "parse",
+   "find": "return [m.strip() for m in c.split(\",\") if m.strip()]",
+   "replace": "return [m.strip() for m in c.split(\";\") if m.strip()]",
+   "expect": "kill"
+  },
+  {
+   "id": "usedby-empty-guard",
+   "rule": "parse",
+   "find": "if c in EMPTY_CELLS:",
+   "replace": "if c == \"\":",
+   "expect": "kill"
+  },
+  {
+   "id": "entries-md-filter",
+   "rule": "parse",
+   "find": "if not name.endswith(\".md\"):",
+   "replace": "if not name.endswith(\".txt\"):",
+   "expect": "kill"
+  },
+  {
+   "id": "result-rows-count",
+   "rule": "output",
+   "find": "% (RESULT, len(rows), len(entries), len(findings)))",
+   "replace": "% (RESULT, len(entries), len(entries), len(findings)))",
+   "expect": "kill"
+  },
+  {
+   "id": "result-entries-count",
+   "rule": "output",
+   "find": "% (RESULT, len(rows), len(entries), len(findings)))",
+   "replace": "% (RESULT, len(rows), len(rows), len(findings)))",
+   "expect": "kill"
+  },
+  {
+   "id": "exit-always-zero",
+   "rule": "output",
+   "find": "return 1 if findings else 0",
+   "replace": "return 0",
+   "expect": "kill"
+  },
+  {
+   "id": "exit-inverted",
+   "rule": "output",
+   "find": "return 1 if findings else 0",
+   "replace": "return 0 if findings else 1",
+   "expect": "kill"
+  },
+  {
+   "id": "finding-fields-swapped",
+   "rule": "output",
+   "find": "% (FINDING, f[\"rule\"], f[\"id\"], f[\"detail\"]))",
+   "replace": "% (FINDING, f[\"rule\"], f[\"detail\"], f[\"id\"]))",
+   "expect": "kill"
+  },
+  {
+   "id": "json-rows-swapped",
+   "rule": "output",
+   "find": "out.write(json.dumps({\"rows\": len(rows), \"entries\": len(entries),",
+   "replace": "out.write(json.dumps({\"rows\": len(entries), \"entries\": len(entries),",
+   "expect": "kill"
+  }
+ ],
+ "equivalents": [
+  {
+   "id": "eq-r2-prefix-no-slash",
+   "rule": "R2",
+   "find": "m.startswith(\"corpus/\")",
+   "replace": "m.startswith(\"corpus\")",
+   "argument": "The corpus test is `m == \"corpus\" or m.startswith(\"corpus/\")`; dropping the slash still accepts `corpus` and every `corpus/...` member, and no used-by member in any panel input starts with `corpus` followed by a non-slash byte. Same branch for every member."
+  },
+  {
+   "id": "eq-r2-corpus-exact-guard",
+   "rule": "R2",
+   "find": "if m == \"corpus\" or m.startswith(\"corpus/\"):",
+   "replace": "if m.startswith(\"corpus/\"):",
+   "argument": "No used-by cell in the committed registry, the base registry or any planted copy contains the bare member `corpus`; the guard is dead on the panel, so dropping it changes no note."
+  },
+  {
+   "id": "eq-r3-lexists-to-exists",
+   "rule": "R3",
+   "find": "os.path.lexists(os.path.join(repo, m))",
+   "replace": "os.path.exists(os.path.join(repo, m))",
+   "argument": "lexists and exists differ only for a dangling symlink; no used-by member in any panel input is a symlink, so both answer the same existence bit."
+  },
+  {
+   "id": "eq-r5-acked-to-members",
+   "rule": "R5",
+   "find": "if sid not in acked:",
+   "replace": "if sid not in members:",
+   "argument": "`acked` is built with one key per row id from the same row set that builds `members`, so the two membership tests agree on every id."
+  },
+  {
+   "id": "eq-fm-slash-resub-drop",
+   "rule": "R4",
+   "find": "padded = re.sub(r\"(S\\d{3,})/(S\\d{3,})\", r\"\\1 \\2\", line)",
+   "replace": "padded = line",
+   "argument": "ID_RE is `S\\d{3,}` and matches both halves of an `S001/S002` pair with the slash between them, so the substitution changes no id the loop sees."
+  },
+  {
+   "id": "eq-id-re-3-digits",
+   "rule": "R4",
+   "find": "ID_RE = re.compile(r\"S\\d{3,}\")",
+   "replace": "ID_RE = re.compile(r\"S\\d{3}\")",
+   "argument": "Every registry id is exactly three digits (S001-S527 at base); no four-digit id exists in the registry or in any entry source line."
+  },
+  {
+   "id": "eq-separator-colon",
+   "rule": "R6",
+   "find": "return all(c and set(c) <= set(\"-:\") for c in cells)",
+   "replace": "return all(c and set(c) <= set(\"-\") for c in cells)",
+   "argument": "The registry's separator row cells are all `---`; no cell carries a colon, so both predicates answer True on the same row."
+  },
+  {
+   "id": "eq-entries-isfile-drop",
+   "rule": "R4",
+   "find": "        if not os.path.isfile(path):\n            continue\n",
+   "replace": "",
+   "argument": "No directory under corpus/knowledge ends with `.md` in any panel input, so the isfile guard never skips a name."
+  },
+  {
+   "id": "eq-parse-section-dropped",
+   "rule": "R6",
+   "find": "in_reg = body.strip() == \"## Registry\"",
+   "replace": "in_reg = True",
+   "argument": "corpus/SOURCES.md carries no pipe row outside the `## Registry` section (measured: 0), so starting in_reg true parses exactly the same rows."
+  },
+  {
+   "id": "eq-fm-body-anywhere",
+   "rule": "R5",
+   "find": "if line.startswith(\"source:\"):",
+   "replace": "if \"source:\" in line:",
+   "argument": "No line before the first `source:` line of any entry contains the substring `source:` (measured: 0), so the first match is the same line."
+  },
+  {
+   "id": "eq-usedby-empty-member",
+   "rule": "R2",
+   "find": "return [m.strip() for m in c.split(\",\") if m.strip()]",
+   "replace": "return [m.strip() for m in c.split(\",\")]",
+   "argument": "No used-by cell in the committed registry, the base registry or any planted copy has an empty member (no leading, trailing or doubled comma), so the filter drops nothing."
+  }
+ ],
+ "not_observable": [
+  {
+   "id": "no-setup-detail",
+   "rule": "R6",
+   "find": "raise SetupError(\"missing-registry corpus/SOURCES.md\")",
+   "replace": "raise SetupError(\"missing-entry-dir corpus/knowledge\")",
+   "why_not_observable": "The setup detail string is not a finding and not part of the frozen contract (the gate contract fixes exit 2 for setup, not the detail text); the panel compares findings, notes, the result line and the exit code, all unchanged."
+  },
+  {
+   "id": "no-selftest-dispatch",
+   "rule": "R6",
+   "find": "if args.selftest:",
+   "replace": "if False:",
+   "why_not_observable": "The registry panel never passes --selftest; the mutant is observable only through the counter's selftest leg, which is outside this panel."
+  },
+  {
+   "id": "no-selftest-line",
+   "rule": "R6",
+   "find": "SELFTEST_OK_LINE = \"SOURCES_READBACK_SELFTEST: checks=%d failed=%d\"",
+   "replace": "SELFTEST_OK_LINE = \"SOURCES_READBACK_SELFTEST: checks=%d failed=%d \"",
+   "why_not_observable": "The constant is read only by gate_selftest; no registry run prints it, so the panel cannot see the trailing space."
+  },
+  {
+   "id": "no-json-sort-keys",
+   "rule": "R6",
+   "find": "sort_keys=True)",
+   "replace": "sort_keys=False)",
+   "why_not_observable": "JSON object key order is not semantic; the harness parses the object, so a reordered object is the same answer."
+  },
+  {
+   "id": "no-entries-dir-guard",
+   "rule": "R4",
+   "find": "if not os.path.isdir(kdir):",
+   "replace": "if False:",
+   "why_not_observable": "Dropping the guard makes os.listdir raise FileNotFoundError on a missing entry dir: the gate crashes instead of printing a finding, and a crash is not a kill under this panel's detector."
+  },
+  {
+   "id": "no-prog-name",
+   "rule": "R6",
+   "find": "PROG = \"check-sources-readback.py\"",
+   "replace": "PROG = \"readback.py\"",
+   "why_not_observable": "PROG appears only in the usage line written when --repo is absent; no panel input invokes the gate without --repo."
+  }
+ ],
+ "kill_basis": "a kill is a difference in the pristine-vs-mutant observable (exit code, FINDING lines, NOTE lines, result line, --json object) over the panel; a traceback, a non-{0,1,2} exit or an unparseable answer is a crash and is never credited as a kill",
+ "panel_roles": [
+  "committed registry: the lane working tree frozen at 2026-11-07 16:49 (SOURCES.md sha256 719a96d51b5733b431086541ced6ebbb7816bf5f6b3fdb1ac2892953c6129c33, 2 R4 findings: S030, S132)",
+  "repaired registry: the lane working tree frozen at 2026-11-07 16:47 (SOURCES.md sha256 d4ff89c42d9b97a842f5e3b544bac2f8ca8ba85dda33d832237f4b4a6f1fa3a8, 0 findings; the planted copies' source)",
+  "base revision 35f3ce808788b11c063309b1b5ad0192754795ea corpus tree (23 R4 findings)",
+  "the three committed planted copies under .ufo/waves/round-98/controls/readback-planted/ (r4/r1/r3, one finding each)",
+  "seat scratch fixtures: r1 slash-no-md, r1 .md-no-slash, r2 outside-corpus, r3 dangling, r4 stripped, r4 second-id, r4 repeated-id, r5 missing row, r6 duplicate, 4-space row, 12-column row, missing registry, missing entry dir"
+ ],
+ "verdicts": {
+  "mutants": 41,
+  "killed": 41,
+  "text_face_kills": 40,
+  "json_face_kills": 32,
+  "text_only_kills": 9,
+  "json_only_kills": 1,
+  "crashes_credited": 0
+ }
+}

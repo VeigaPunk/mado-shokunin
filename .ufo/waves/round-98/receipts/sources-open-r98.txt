@@ -1,0 +1,22 @@
+# round-98 source opens (L1 MadoR98, 2026-11-07) — every row this round adds or re-scopes is opened here
+# command: curl -sSL -o <file> -w '%{http_code} %{url_effective}' <url>; sha256sum <file>
+
+URL https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gdesktopappinfo.c
+  fetch: 163369 bytes sha256 8e9ce1a8327a2daf6bc16e8dcfb653c482afde7bebc2ca2621747626b5495b0d
+URL https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/glib/gshell.c
+  fetch: 21464 bytes sha256 640a0d0fbc9c50d0c70eb8f9ff2c4994392515c6174f76ade9292d7500e60442
+URL https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html
+  fetch: 17153 bytes sha256 2c50a9e427b295928d2b05a19049ab74db18e5d11567c0bd14a8f0f70635277e
+
+# the spec URL above answers 301 to https://specifications.freedesktop.org/desktop-entry/latest/exec-variables.html (HTTP 200, 17153 B, sha256 2c50a9e427b295928d2b05a19049ab74db18e5d11567c0bd14a8f0f70635277e)
+# installed gio(1): /usr/share/man/man1/gio.1.gz (glib2 2.90.1-1); launch section:
+
+# located quotes (<=25 words)
+gdesktopappinfo.c:2735-2742  '/* No file substitutions */ ... expand_macro ('f', expanded_exec, info, uris);'
+gdesktopappinfo.c:2743  'res = g_shell_parse_argv (expanded_exec->str, argc, argv, error);'
+gdesktopappinfo.c:2721-2725  '%' walk: if (p[0] == '%' && p[1] != '\0') { expand_macro (p[1], ...); p++; }
+gshell.c:202  'We always use single quotes, because the algorithm is cheesier.'
+gshell.c:221  'Replace literal ' with a close ', a \', and an open ''
+exec-variables.html  'Arguments may be quoted in whole. If an argument contains a reserved character the argument must be quoted.'
+exec-variables.html  '%f  A single file name (including the path), even if multiple files are selected.'
+exec-variables.html  '%d ... Deprecated. %n ... Deprecated. %N ... Deprecated.'  (GLib 2.90.1 still implements all three)

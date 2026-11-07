@@ -1,0 +1,2765 @@
+{
+ "version": 1,
+ "oracle": "gio launch + probe child argv records",
+ "gio_sha256": "d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462",
+ "glib2": "2.90.1-1",
+ "renderer_sha256": "182cf06cecf1a9d19436d18ca26792568839b6d4e2be7e6dce880d19ea88e3d4",
+ "classes": [
+  "plain",
+  "f",
+  "F",
+  "u-file",
+  "u-uri",
+  "u-anchor",
+  "U-mixed",
+  "d",
+  "n",
+  "i",
+  "c",
+  "k",
+  "pct",
+  "bad",
+  "nonlocal",
+  "nofuse",
+  "multilaunch",
+  "comment",
+  "quote",
+  "path"
+ ],
+ "cases": [
+  {
+   "id": "plain-01-noargs",
+   "class": "plain",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} plain",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "plain"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "plain-02-two-files",
+   "class": "plain",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} plain",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo="
+   },
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{probe}",
+      "plain",
+      "{root}/a.txt"
+     ],
+     [
+      "{probe}",
+      "plain",
+      "{root}/b.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "plain-03-one-file",
+   "class": "plain",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} plain",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "plain",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "plain-04-three-files",
+   "class": "plain",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} plain",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    },
+    {
+     "kind": "file",
+     "path": "c.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo=",
+    "c.txt": "Z2FtbWEK"
+   },
+   "expect": {
+    "launches": 3,
+    "argv": [
+     [
+      "{probe}",
+      "plain",
+      "{root}/a.txt"
+     ],
+     [
+      "{probe}",
+      "plain",
+      "{root}/b.txt"
+     ],
+     [
+      "{probe}",
+      "plain",
+      "{root}/c.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "f-01-noargs",
+   "class": "f",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "f-02-one",
+   "class": "f",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "f-03-two",
+   "class": "f",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo="
+   },
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ],
+     [
+      "{probe}",
+      "{root}/b.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "f-04-three",
+   "class": "f",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    },
+    {
+     "kind": "file",
+     "path": "c.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo=",
+    "c.txt": "Z2FtbWEK"
+   },
+   "expect": {
+    "launches": 3,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ],
+     [
+      "{probe}",
+      "{root}/b.txt"
+     ],
+     [
+      "{probe}",
+      "{root}/c.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "F-01-noargs",
+   "class": "F",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %F",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "F-02-one",
+   "class": "F",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %F",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "F-03-three",
+   "class": "F",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %F",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    },
+    {
+     "kind": "file",
+     "path": "c.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo=",
+    "c.txt": "Z2FtbWEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt",
+      "{root}/b.txt",
+      "{root}/c.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-file-01-plain",
+   "class": "u-file",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-file-02-space",
+   "class": "u-file",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "with space.txt"
+    }
+   ],
+   "files": {
+    "with space.txt": "c3BhY2UK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/with space.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-file-03-quote",
+   "class": "u-file",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "it's.txt"
+    }
+   ],
+   "files": {
+    "it's.txt": "cXVvdGUK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/it's.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-uri-01-http",
+   "class": "u-uri",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "http://example.com/a"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "http://example.com/a"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-uri-02-https-query",
+   "class": "u-uri",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "https://example.com/b?q=1"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "https://example.com/b?q=1"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-uri-03-mailto",
+   "class": "u-uri",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "mailto:x@y.example"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "mailto:x@y.example"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-anchor-01-file-frag",
+   "class": "u-anchor",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "file://{root}/a.txt#frag"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-anchor-02-http-frag",
+   "class": "u-anchor",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "http://example.com/p#y"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "http://example.com/p#y"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-anchor-03-file-query-frag",
+   "class": "u-anchor",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "file://{root}/a.txt?q=1#s"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-anchor-04-nofrag",
+   "class": "u-anchor",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "file://{root}/a.txt"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u-anchor-05-U-frag",
+   "class": "u-anchor",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %U",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "file://{root}/a.txt#frag"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "U-mixed-01-file-http",
+   "class": "U-mixed",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %U",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "uri",
+     "uri": "http://example.com/a"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt",
+      "http://example.com/a"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "U-mixed-02-three-kinds",
+   "class": "U-mixed",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %U",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "uri",
+     "uri": "http://example.com/p#y"
+    },
+    {
+     "kind": "uri",
+     "uri": "mailto:x@y.example"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt",
+      "http://example.com/p#y",
+      "mailto:x@y.example"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "U-mixed-03-files",
+   "class": "U-mixed",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %U",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    },
+    {
+     "kind": "file",
+     "path": "c.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo=",
+    "c.txt": "Z2FtbWEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt",
+      "{root}/b.txt",
+      "{root}/c.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "U-mixed-04-uris",
+   "class": "U-mixed",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %U",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "https://example.com/b?q=1"
+    },
+    {
+     "kind": "uri",
+     "uri": "mailto:x@y.example"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "https://example.com/b?q=1",
+      "mailto:x@y.example"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d-01-noargs",
+   "class": "d",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %d",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d-02-one",
+   "class": "d",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %d",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d-03-two",
+   "class": "d",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %d",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo="
+   },
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{probe}",
+      "{root}"
+     ],
+     [
+      "{probe}",
+      "{root}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "n-01-noargs",
+   "class": "n",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %n",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "n-02-one",
+   "class": "n",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %n",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "n-03-two",
+   "class": "n",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %n",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo="
+   },
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{probe}",
+      "a.txt"
+     ],
+     [
+      "{probe}",
+      "b.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i-01-with-icon",
+   "class": "i",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": "ic.png",
+    "Type": "Application",
+    "Exec": "{probe} %i",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "--icon",
+      "ic"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i-02-no-icon",
+   "class": "i",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %i",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i-03-icon-space",
+   "class": "i",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": "my icon",
+    "Type": "Application",
+    "Exec": "{probe} %i",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "--icon",
+      "my icon"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i-04-icon-and-f",
+   "class": "i",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": "ic.png",
+    "Type": "Application",
+    "Exec": "{probe} %i %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "--icon",
+      "ic",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i-05-empty-icon",
+   "class": "i",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": "",
+    "Type": "Application",
+    "Exec": "{probe} %i",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "--icon",
+      ""
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i-06-abs-icon",
+   "class": "i",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": "/tmp/ic.png",
+    "Type": "Application",
+    "Exec": "{probe} %i",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "--icon",
+      "/tmp/ic.png"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c-01-quote-name",
+   "class": "c",
+   "desktop": {
+    "Name": "O'Brien's App",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %c",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "O'Brien's App"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c-02-dquote-name",
+   "class": "c",
+   "desktop": {
+    "Name": "Say \"hi\" now",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %c",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "Say \"hi\" now"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c-03-name-and-f",
+   "class": "c",
+   "desktop": {
+    "Name": "Probe Two",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %c %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "Probe Two",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c-04-locale-enus",
+   "class": "c",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %c",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "Base Probe"
+     ]
+    ]
+   },
+   "desktop_raw": "[Desktop Entry]\nType=Application\nName=Base Probe\nExec={probe} %c\nName[en_US]=US Probe\n"
+  },
+  {
+   "id": "c-05-locale-only",
+   "class": "c",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %c",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ]
+   },
+   "desktop_raw": "[Desktop Entry]\nType=Application\nExec={probe} %c\nName[en_US]=US Probe\n"
+  },
+  {
+   "id": "k-01-alone",
+   "class": "k",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %k",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/case.desktop"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k-02-with-f",
+   "class": "k",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %k %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/case.desktop",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k-03-twice",
+   "class": "k",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %k %k",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/case.desktop",
+      "{root}/case.desktop"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pct-01-100pct",
+   "class": "pct",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} 100%% sure",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "100%",
+      "sure"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pct-02-attached",
+   "class": "pct",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} a%%b",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "a%b"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pct-03-trailing",
+   "class": "pct",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} hi %",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "hi",
+      "%"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pct-04-only",
+   "class": "pct",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "%"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pct-05-percent-space",
+   "class": "pct",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} % x",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "x"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pct-06-hundred-done",
+   "class": "pct",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} 100% done",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "100done"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pct-07-a1b",
+   "class": "pct",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} a%1b",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "ab"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bad-01-z",
+   "class": "bad",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %z",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bad-02-q-f",
+   "class": "bad",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %q %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bad-03-z-two",
+   "class": "bad",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %z",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo="
+   },
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ],
+     [
+      "{probe}",
+      "{root}/b.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bad-04-no-exec",
+   "class": "bad",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": null,
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "error": "no-exec"
+   }
+  },
+  {
+   "id": "bad-05-hidden-true",
+   "class": "bad",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": true,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bad-06-not-keyfile",
+   "class": "bad",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "error": "desktop-file"
+   },
+   "desktop_raw": "Hello world\n"
+  },
+  {
+   "id": "bad-07-no-type",
+   "class": "bad",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": null,
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "error": "desktop-file"
+   }
+  },
+  {
+   "id": "bad-08-one",
+   "class": "bad",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %1",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nonlocal-01-f-http",
+   "class": "nonlocal",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "http://example.com/a"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nonlocal-02-F-mixed",
+   "class": "nonlocal",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %F",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "http://example.com/a"
+    },
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nonlocal-03-d-http",
+   "class": "nonlocal",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %d",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "http://example.com/a"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nonlocal-04-n-mailto",
+   "class": "nonlocal",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %n",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "mailto:x@y.example"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nonlocal-05-f-two",
+   "class": "nonlocal",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "http://example.com/a"
+    },
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{probe}"
+     ],
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nofuse-01-u-file",
+   "class": "nofuse",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": "true"
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "file://{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nofuse-02-U-mixed",
+   "class": "nofuse",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %U",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": "true"
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "uri",
+     "uri": "http://example.com/a"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "file://{root}/a.txt",
+      "http://example.com/a"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nofuse-03-u-http",
+   "class": "nofuse",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": "true"
+   },
+   "args": [
+    {
+     "kind": "uri",
+     "uri": "http://example.com/a"
+    }
+   ],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "http://example.com/a"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nofuse-04-f-file",
+   "class": "nofuse",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": "true"
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "multilaunch-01-f-f-3",
+   "class": "multilaunch",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    },
+    {
+     "kind": "file",
+     "path": "c.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo=",
+    "c.txt": "Z2FtbWEK"
+   },
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt",
+      "{root}/b.txt"
+     ],
+     [
+      "{probe}",
+      "{root}/c.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "multilaunch-02-f-F-3",
+   "class": "multilaunch",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f %F",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "file",
+     "path": "b.txt"
+    },
+    {
+     "kind": "file",
+     "path": "c.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK",
+    "b.txt": "YmV0YQo=",
+    "c.txt": "Z2FtbWEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt",
+      "{root}/b.txt",
+      "{root}/c.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "multilaunch-03-u-u-2",
+   "class": "multilaunch",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %u %u",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    },
+    {
+     "kind": "uri",
+     "uri": "http://example.com/a"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt",
+      "http://example.com/a"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "comment-01-before",
+   "class": "comment",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   },
+   "desktop_raw": "# leading comment\n[Desktop Entry]\nType=Application\nName=Probe\nExec={probe} %f\n"
+  },
+  {
+   "id": "comment-02-between",
+   "class": "comment",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   },
+   "desktop_raw": "# top comment\n[Desktop Entry]\n# between group and keys\nType=Application\nName=Probe\n# between keys\nExec={probe} %f\n# trailing comment\n"
+  },
+  {
+   "id": "comment-03-indented",
+   "class": "comment",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "a.txt"
+    }
+   ],
+   "files": {
+    "a.txt": "YWxwaGEK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/a.txt"
+     ]
+    ]
+   },
+   "desktop_raw": "[Desktop Entry]\n  # indented comment\nType=Application\nName=Probe\nExec={probe} %f\n"
+  },
+  {
+   "id": "quote-01-dquote",
+   "class": "quote",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} \"a b\"",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "a b"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "quote-02-squote",
+   "class": "quote",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} 'a b'",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "a b"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "quote-03-backslash",
+   "class": "quote",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} \"a\\\\\"b\"",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "a\"b"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "quote-04-unterminated-dq",
+   "class": "quote",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} \"unterminated",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "error": "exec-parse"
+   }
+  },
+  {
+   "id": "quote-05-unterminated-sq",
+   "class": "quote",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} 'unterminated",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "error": "exec-parse"
+   }
+  },
+  {
+   "id": "quote-06-mixed",
+   "class": "quote",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} \"a b\" c",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "a b",
+      "c"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "quote-07-escape-space",
+   "class": "quote",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} a\\ b",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "error": "desktop-file"
+   }
+  },
+  {
+   "id": "quote-08-escape-bad",
+   "class": "quote",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} a\\z b",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [],
+   "files": {},
+   "expect": {
+    "error": "desktop-file"
+   }
+  },
+  {
+   "id": "path-01-space-f",
+   "class": "path",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "with space.txt"
+    }
+   ],
+   "files": {
+    "with space.txt": "c3BhY2UK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/with space.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "path-02-quote-f",
+   "class": "path",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "it's.txt"
+    }
+   ],
+   "files": {
+    "it's.txt": "cXVvdGUK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/it's.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "path-03-both-F",
+   "class": "path",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %F",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "with space.txt"
+    },
+    {
+     "kind": "file",
+     "path": "it's.txt"
+    }
+   ],
+   "files": {
+    "with space.txt": "c3BhY2UK",
+    "it's.txt": "cXVvdGUK"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/with space.txt",
+      "{root}/it's.txt"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "path-04-two-launches",
+   "class": "path",
+   "desktop": {
+    "Name": "Probe",
+    "Icon": null,
+    "Type": "Application",
+    "Exec": "{probe} %f",
+    "Path": null,
+    "Terminal": null,
+    "Hidden": null,
+    "X-GIO-NoFuse": null
+   },
+   "args": [
+    {
+     "kind": "file",
+     "path": "with space.txt"
+    },
+    {
+     "kind": "file",
+     "path": "it's.txt"
+    }
+   ],
+   "files": {
+    "with space.txt": "c3BhY2UK",
+    "it's.txt": "cXVvdGUK"
+   },
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/it's.txt"
+     ],
+     [
+      "{probe}",
+      "{root}/with space.txt"
+     ]
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,404 @@
+# R98MCriticC2 - C2 falsification receipt (round 98, w1)
+# base revision 35f3ce808788b11c063309b1b5ad0192754795ea
+# every measurement is on a `git archive 35f3ce80` extraction; the working tree carries an
+# uncommitted 18-row repair of corpus/SOURCES.md (see section 1).
+# instruments: myreadback.py (own parser), refgate.py (literal R1-R6), fixtures.py,
+# discrimination.py, donothing.py. None is a candidate; none is committed.
+# non-ASCII is escaped: U+2014 is the em dash used by the registry for an empty used-by cell.
+
+## 1 working tree state
+$ git status --porcelain
+[rc=0]
+ M corpus/SOURCES.md
+?? .ufo/waves/round-98/
+?? corpus/lessons/round-98.md
+
+## 1 base extraction
+$ bash -c git archive 35f3ce808788b11c063309b1b5ad0192754795ea | tar -x -C /fast/scratch/hyaku/mado-r98/R98MCriticC2/base && sha256sum /fast/scratch/hyaku/mado-r98/R98MCriticC2/base/corpus/SOURCES.md
+[rc=0]
+78a35f6d59ff9f6c408864324b1fa76911633f8537ebdb62981616ccd681aeb7  /fast/scratch/hyaku/mado-r98/R98MCriticC2/base/corpus/SOURCES.md
+
+## 1 base gate absence
+$ bash -c git cat-file -e 35f3ce808788b11c063309b1b5ad0192754795ea:quality/check-sources-readback.py; echo rc=$?
+[rc=0]
+fatal: path 'quality/check-sources-readback.py' does not exist in '35f3ce808788b11c063309b1b5ad0192754795ea'
+rc=128
+
+## 2 my parser on base
+$ /usr/bin/python3 /fast/scratch/hyaku/mado-r98/R98MCriticC2/myreadback.py /fast/scratch/hyaku/mado-r98/R98MCriticC2/base
+[rc=0]
+rows=462 entries=118 findings=44
+FINDING R2 S096 tools/mado-verify.sh
+FINDING R2 S096 SKILL.md
+FINDING R2 S173 tools/mado-binds.py
+FINDING R2 S174 tools/mado-binds.py
+FINDING R2 S178 tools/mado-wsrules.py
+FINDING R2 S179 tools/mado-wsrules.py
+FINDING R2 S180 tools/mado-wsrules.py
+FINDING R2 S181 tools/mado-wsrules.py
+FINDING R2 S182 tools/mado-wsrules.py
+FINDING R2 S184 .ufo/waves/round-29/registration.md
+FINDING R2 S185 quality/check-index.py
+FINDING R2 S185 .ufo/waves/round-30/registration.md
+FINDING R2 S332 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+FINDING R2 S333 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+FINDING R2 S334 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+FINDING R2 S335 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+FINDING R2 S336 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+FINDING R2 S337 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+FINDING R2 S338 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+FINDING R2 S339 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+FINDING R2 S482 SKILL.md
+FINDING R4 S464 corpus/knowledge/bar-footprint-allocation-r82.md
+FINDING R4 S470 corpus/knowledge/bar-footprint-allocation-r82.md
+FINDING R4 S460 corpus/knowledge/bar-footprint-allocation-r82.md
+FINDING R4 S457 corpus/knowledge/bar-footprint-composition-r80.md
+FINDING R4 S459 corpus/knowledge/bar-footprint-composition-r80.md
+FINDING R4 S465 corpus/knowledge/bar-footprint-composition-r80.md
+FINDING R4 S466 corpus/knowledge/bar-footprint-composition-r80.md
+FINDING R4 S460 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+FINDING R4 S464 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+FINDING R4 S470 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+FINDING R4 S481 corpus/knowledge/bar-footprint-surface-band-r83.md
+FINDING R4 S464 corpus/knowledge/bar-footprint-surface-band-r83.md
+FINDING R4 S470 corpus/knowledge/bar-footprint-surface-band-r83.md
+FINDING R4 S484 corpus/knowledge/bar-footprint-surface-band-r83.md
+FINDING R4 S485 corpus/knowledge/bar-footprint-surface-band-r83.md
+FINDING R4 S030 corpus/knowledge/hyprland-config-era-r12.md
+FINDING R4 S493 corpus/knowledge/mako-fields-containment-r88.md
+FINDING R4 S511 corpus/knowledge/mime-magic-sniff-r95.md
+FINDING R4 S512 corpus/knowledge/mime-magic-sniff-r95.md
+FINDING R4 S517 corpus/knowledge/mime-magic-sniff-r95.md
+FINDING R4 S501 corpus/knowledge/portal-keyfile-bytes-r93.md
+FINDING R4 S502 corpus/knowledge/portal-keyfile-bytes-r93.md
+FINDING R4 S132 corpus/knowledge/terminal-trees-r23.md
+--- R4 pairs (23)
+PAIR S464 corpus/knowledge/bar-footprint-allocation-r82.md
+PAIR S470 corpus/knowledge/bar-footprint-allocation-r82.md
+PAIR S460 corpus/knowledge/bar-footprint-allocation-r82.md
+PAIR S457 corpus/knowledge/bar-footprint-composition-r80.md
+PAIR S459 corpus/knowledge/bar-footprint-composition-r80.md
+PAIR S465 corpus/knowledge/bar-footprint-composition-r80.md
+PAIR S466 corpus/knowledge/bar-footprint-composition-r80.md
+PAIR S460 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+PAIR S464 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+PAIR S470 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+PAIR S481 corpus/knowledge/bar-footprint-surface-band-r83.md
+PAIR S464 corpus/knowledge/bar-footprint-surface-band-r83.md
+PAIR S470 corpus/knowledge/bar-footprint-surface-band-r83.md
+PAIR S484 corpus/knowledge/bar-footprint-surface-band-r83.md
+PAIR S485 corpus/knowledge/bar-footprint-surface-band-r83.md
+PAIR S030 corpus/knowledge/hyprland-config-era-r12.md
+PAIR S493 corpus/knowledge/mako-fields-containment-r88.md
+PAIR S511 corpus/knowledge/mime-magic-sniff-r95.md
+PAIR S512 corpus/knowledge/mime-magic-sniff-r95.md
+PAIR S517 corpus/knowledge/mime-magic-sniff-r95.md
+PAIR S501 corpus/knowledge/portal-keyfile-bytes-r93.md
+PAIR S502 corpus/knowledge/portal-keyfile-bytes-r93.md
+PAIR S132 corpus/knowledge/terminal-trees-r23.md
+
+## 3 literal gate on base (front)
+$ /usr/bin/python3 /fast/scratch/hyaku/mado-r98/R98MCriticC2/refgate.py --repo /fast/scratch/hyaku/mado-r98/R98MCriticC2/base
+[rc=1]
+SOURCES_READBACK: FINDING R2 S096 tools/mado-verify.sh
+SOURCES_READBACK: FINDING R2 S096 SKILL.md
+SOURCES_READBACK: FINDING R2 S173 tools/mado-binds.py
+SOURCES_READBACK: FINDING R2 S174 tools/mado-binds.py
+SOURCES_READBACK: FINDING R2 S178 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S179 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S180 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S181 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S182 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S184 .ufo/waves/round-29/registration.md
+SOURCES_READBACK: FINDING R2 S185 quality/check-index.py
+SOURCES_READBACK: FINDING R2 S185 .ufo/waves/round-30/registration.md
+SOURCES_READBACK: FINDING R2 S332 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S333 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S334 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S335 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S336 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S337 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S338 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S339 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S482 SKILL.md
+SOURCES_READBACK: FINDING R4 S464 corpus/knowledge/bar-footprint-allocation-r82.md
+SOURCES_READBACK: FINDING R4 S470 corpus/knowledge/bar-footprint-allocation-r82.md
+SOURCES_READBACK: FINDING R4 S460 corpus/knowledge/bar-footprint-allocation-r82.md
+SOURCES_READBACK: FINDING R4 S457 corpus/knowledge/bar-footprint-composition-r80.md
+SOURCES_READBACK: FINDING R4 S459 corpus/knowledge/bar-footprint-composition-r80.md
+SOURCES_READBACK: FINDING R4 S465 corpus/knowledge/bar-footprint-composition-r80.md
+SOURCES_READBACK: FINDING R4 S466 corpus/knowledge/bar-footprint-composition-r80.md
+SOURCES_READBACK: FINDING R4 S460 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+SOURCES_READBACK: FINDING R4 S464 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+SOURCES_READBACK: FINDING R4 S470 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+SOURCES_READBACK: FINDING R4 S481 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S464 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S470 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S484 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S485 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S030 corpus/knowledge/hyprland-config-era-r12.md
+SOURCES_READBACK: FINDING R4 S493 corpus/knowledge/mako-fields-containment-r88.md
+SOURCES_READBACK: FINDING R4 S511 corpus/knowledge/mime-magic-sniff-r95.md
+SOURCES_READBACK: FINDING R4 S512 corpus/knowledge/mime-magic-sniff-r95.md
+SOURCES_READBACK: FINDING R4 S517 corpus/knowledge/mime-magic-sniff-r95.md
+SOURCES_READBACK: FINDING R4 S501 corpus/knowledge/portal-keyfile-bytes-r93.md
+SOURCES_READBACK: FINDING R4 S502 corpus/knowledge/portal-keyfile-bytes-r93.md
+SOURCES_READBACK: FINDING R4 S132 corpus/knowledge/terminal-trees-r23.md
+SOURCES_READBACK: rows=462 entries=118 findings=44
+
+## 3 literal gate on base (all)
+$ /usr/bin/python3 /fast/scratch/hyaku/mado-r98/R98MCriticC2/refgate.py --repo /fast/scratch/hyaku/mado-r98/R98MCriticC2/base --scope all
+[rc=1]
+SOURCES_READBACK: FINDING R2 S096 tools/mado-verify.sh
+SOURCES_READBACK: FINDING R2 S096 SKILL.md
+SOURCES_READBACK: FINDING R2 S173 tools/mado-binds.py
+SOURCES_READBACK: FINDING R2 S174 tools/mado-binds.py
+SOURCES_READBACK: FINDING R2 S178 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S179 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S180 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S181 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S182 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S184 .ufo/waves/round-29/registration.md
+SOURCES_READBACK: FINDING R2 S185 quality/check-index.py
+SOURCES_READBACK: FINDING R2 S185 .ufo/waves/round-30/registration.md
+SOURCES_READBACK: FINDING R2 S332 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S333 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S334 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S335 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S336 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S337 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S338 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S339 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S482 SKILL.md
+SOURCES_READBACK: FINDING R4 S464 corpus/knowledge/bar-footprint-allocation-r82.md
+SOURCES_READBACK: FINDING R4 S470 corpus/knowledge/bar-footprint-allocation-r82.md
+SOURCES_READBACK: FINDING R4 S460 corpus/knowledge/bar-footprint-allocation-r82.md
+SOURCES_READBACK: FINDING R4 S457 corpus/knowledge/bar-footprint-composition-r80.md
+SOURCES_READBACK: FINDING R4 S459 corpus/knowledge/bar-footprint-composition-r80.md
+SOURCES_READBACK: FINDING R4 S465 corpus/knowledge/bar-footprint-composition-r80.md
+SOURCES_READBACK: FINDING R4 S466 corpus/knowledge/bar-footprint-composition-r80.md
+SOURCES_READBACK: FINDING R4 S460 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+SOURCES_READBACK: FINDING R4 S464 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+SOURCES_READBACK: FINDING R4 S470 corpus/knowledge/bar-footprint-rounding-auto-r81.md
+SOURCES_READBACK: FINDING R4 S481 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S464 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S470 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S484 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S485 corpus/knowledge/bar-footprint-surface-band-r83.md
+SOURCES_READBACK: FINDING R4 S030 corpus/knowledge/hyprland-config-era-r12.md
+SOURCES_READBACK: FINDING R4 S493 corpus/knowledge/mako-fields-containment-r88.md
+SOURCES_READBACK: FINDING R4 S511 corpus/knowledge/mime-magic-sniff-r95.md
+SOURCES_READBACK: FINDING R4 S512 corpus/knowledge/mime-magic-sniff-r95.md
+SOURCES_READBACK: FINDING R4 S517 corpus/knowledge/mime-magic-sniff-r95.md
+SOURCES_READBACK: FINDING R4 S501 corpus/knowledge/portal-keyfile-bytes-r93.md
+SOURCES_READBACK: FINDING R4 S502 corpus/knowledge/portal-keyfile-bytes-r93.md
+SOURCES_READBACK: FINDING R4 S132 corpus/knowledge/terminal-trees-r23.md
+SOURCES_READBACK: rows=462 entries=118 findings=44
+
+## 3 literal gate on repaired (front)
+$ /usr/bin/python3 /fast/scratch/hyaku/mado-r98/R98MCriticC2/refgate.py --repo /fast/scratch/hyaku/mado-r98/R98MCriticC2/exp/M4-repaired
+[rc=1]
+SOURCES_READBACK: FINDING R2 S096 tools/mado-verify.sh
+SOURCES_READBACK: FINDING R2 S096 SKILL.md
+SOURCES_READBACK: FINDING R2 S173 tools/mado-binds.py
+SOURCES_READBACK: FINDING R2 S174 tools/mado-binds.py
+SOURCES_READBACK: FINDING R2 S178 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S179 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S180 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S181 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S182 tools/mado-wsrules.py
+SOURCES_READBACK: FINDING R2 S184 .ufo/waves/round-29/registration.md
+SOURCES_READBACK: FINDING R2 S185 quality/check-index.py
+SOURCES_READBACK: FINDING R2 S185 .ufo/waves/round-30/registration.md
+SOURCES_READBACK: FINDING R2 S332 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S333 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S334 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S335 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S336 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S337 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S338 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S339 .ufo/waves/round-47/w1/ExecSupersede/rows.md
+SOURCES_READBACK: FINDING R2 S482 SKILL.md
+SOURCES_READBACK: rows=462 entries=118 findings=21
+
+## 4 fixture suite
+$ /usr/bin/python3 /fast/scratch/hyaku/mado-r98/R98MCriticC2/fixtures.py
+[rc=0]
+fixture                      scope  expect got    verdict
+F1-recheck-path              front  1      [('R1', 'S001')] ok  a repo path in the recheck cell
+F1-recheck-path              all    1      [('R1', 'S001')] ok  a repo path in the recheck cell
+F10-real-outside-cell        front  0      [('R2', 'S001')] MISMATCH  the 21-cell shape: used-by names SKILL.md
+F10-real-outside-cell        all    0      [('R2', 'S001')] MISMATCH  the 21-cell shape: used-by names SKILL.md
+F11-yaml-list-unack          front  1      []     MISMATCH  YAML list form, unacknowledged (continuation join)
+F11-yaml-list-unack          all    1      [('R4', 'S001')] ok  YAML list form, unacknowledged (continuation join)
+F12-wrapped-unack            front  2      [('R4', 'S001'), ('R5', 'S002')] ok  wrapped source: line, unacknowledged
+F12-wrapped-unack            all    2      [('R4', 'S001'), ('R5', 'S002')] ok  wrapped source: line, unacknowledged
+F13-wrapped-id               front  1      []     MISMATCH  an id on a wrapped continuation line
+F13-wrapped-id               all    1      []     MISMATCH  an id on a wrapped continuation line
+F14-slash-unack              front  1      [('R4', 'S002')] ok  `S001/S002`, the second unacknowledged
+F14-slash-unack              all    1      [('R4', 'S002')] ok  `S001/S002`, the second unacknowledged
+F15-path-token               front  0      [('R4', 'S213')] MISMATCH  an id-looking token inside a receipt filename
+F15-path-token               all    0      [('R4', 'S213')] MISMATCH  an id-looking token inside a receipt filename
+F16-verified-at-id           front  0      []     ok  an id on the verified-at line, not source:
+F16-verified-at-id           all    0      []     ok  an id on the verified-at line, not source:
+F17-dup-masked               front  1      [('R6', 'S001')] ok  duplicate id, one row acknowledging (R4 must not be masked)
+F17-dup-masked               all    1      [('R6', 'S001')] ok  duplicate id, one row acknowledging (R4 must not be masked)
+F2-usedby-outside            front  1      [('R2', 'S001')] ok  used-by names a tool
+F2-usedby-outside            all    1      [('R2', 'S001')] ok  used-by names a tool
+F3-usedby-missing            front  1      [('R3', 'S001')] ok  used-by path absent on disk
+F3-usedby-missing            all    1      [('R3', 'S001')] ok  used-by path absent on disk
+F4-unacknowledged            front  1      [('R4', 'S001')] ok  entry cites S001, used-by is `U+2014`
+F4-unacknowledged            all    1      [('R4', 'S001')] ok  entry cites S001, used-by is `U+2014`
+F5-missing-row               front  1      [('R5', 'S999')] ok  entry cites an id with no row
+F5-missing-row               all    1      [('R5', 'S999')] ok  entry cites an id with no row
+F6-duplicate-id              front  1      [('R6', 'S001')] ok  the same id twice
+F6-duplicate-id              all    1      [('R6', 'S001')] ok  the same id twice
+F7-multi-cell                front  0      []     ok  both entries acknowledged
+F7-multi-cell                all    0      []     ok  both entries acknowledged
+F7b-multi-cell-one-missing   front  1      [('R4', 'S001')] ok  one of two citing entries acknowledged (planted-copy shape)
+F7b-multi-cell-one-missing   all    1      [('R4', 'S001')] ok  one of two citing entries acknowledged (planted-copy shape)
+F8-negative-cite             front  0      [('R4', 'S001')] MISMATCH  the S132 shape: an id named to say it supports nothing
+F8-negative-cite             all    0      [('R4', 'S001')] MISMATCH  the S132 shape: an id named to say it supports nothing
+F9-rejected-cite             front  0      [('R4', 'S001')] MISMATCH  the S030 shape: an admitted entry cites a rejected row
+F9-rejected-cite             all    0      [('R4', 'S001')] MISMATCH  the S030 shape: an admitted entry cites a rejected row
+P1-usedby-dash               front  0      []     ok  mined row with used-by `U+2014`, entry cites nothing
+P1-usedby-dash               all    0      []     ok  mined row with used-by `U+2014`, entry cites nothing
+P10-iso-recheck              front  0      []     ok  ISO-date recheck cell
+P10-iso-recheck              all    0      []     ok  ISO-date recheck cell
+P11-dash-token               front  0      []     ok  `U+2014` token beside a real path
+P11-dash-token               all    0      []     ok  `U+2014` token beside a real path
+P12-dot-path                 front  0      [('R2', 'S001'), ('R4', 'S001')] MISMATCH  used-by path spelled `./corpus/...`
+P12-dot-path                 all    0      [('R2', 'S001'), ('R4', 'S001')] MISMATCH  used-by path spelled `./corpus/...`
+P1b-usedby-hyphen            front  0      []     ok  used-by is an ASCII hyphen, not the em dash
+P1b-usedby-hyphen            all    0      []     ok  used-by is an ASCII hyphen, not the em dash
+P2-rejected-dash             front  0      []     ok  rejected row with used-by `U+2014`
+P2-rejected-dash             all    0      []     ok  rejected row with used-by `U+2014`
+P3-lesson-usedby             front  0      []     ok  lesson-only used-by path (exists)
+P3-lesson-usedby             all    0      []     ok  lesson-only used-by path (exists)
+P4-lesson-cites              front  0      []     ok  a lesson cites the row; R4 reads knowledge entries only
+P4-lesson-cites              all    0      []     ok  a lesson cites the row; R4 reads knowledge entries only
+P5-body-cite                 front  0      []     ok  row cited in the body only, not the source: line
+P5-body-cite                 all    0      []     ok  row cited in the body only, not the source: line
+P5b-body-source-line         front  0      []     ok  a `source:` line after the frontmatter block
+P5b-body-source-line         all    0      [('R4', 'S001')] MISMATCH  a `source:` line after the frontmatter block
+P6-multi-source              front  0      []     ok  several source: lines, all acknowledged
+P6-multi-source              all    0      []     ok  several source: lines, all acknowledged
+P7-yaml-list-ack             front  0      []     ok  YAML list form, acknowledged
+P7-yaml-list-ack             all    0      []     ok  YAML list form, acknowledged
+P8-slash-ids                 front  0      []     ok  `S001/S002` slash notation, both acknowledged
+P8-slash-ids                 all    0      []     ok  `S001/S002` slash notation, both acknowledged
+P9-no-source                 front  0      []     ok  entry with no source: line at all
+P9-no-source                 all    0      []     ok  entry with no source: line at all
+mismatches=14
+
+## 5 discrimination
+$ /usr/bin/python3 /fast/scratch/hyaku/mado-r98/R98MCriticC2/discrimination.py
+[rc=0]
+plant  expect       G-real                   G-stub-clean             G-stub-count            
+C-R1   ('R1', 'S464') exact                    missed                   count-only(wrong id S001)
+C-R2   ('R2', 'S464') count=22                 missed                   missed                  
+C-R3   ('R3', 'S464') exact                    missed                   missed                  
+C-R4   ('R4', 'S464') exact                    missed                   missed                  
+C-R5   ('R5', 'S999') exact                    missed                   missed                  
+C-R6   ('R6', 'S464') exact                    missed                   missed                  
+
+R1-only gate (per-rule verdict):
+  C-R1   expect ('R1', 'S464') exact
+  C-R2   expect ('R2', 'S464') missed
+  C-R3   expect ('R3', 'S464') missed
+  C-R4   expect ('R4', 'S464') missed
+  C-R5   expect ('R5', 'S999') missed
+  C-R6   expect ('R6', 'S464') missed
+
+check strengths on the R1-only gate + planted R4 copy:
+  nonzero: False   count==1: False   exact: False
+
+## 6 do-nothing control
+$ /usr/bin/python3 /fast/scratch/hyaku/mado-r98/R98MCriticC2/donothing.py
+[rc=0]
+base_mismatches=23
+tree                   gateR4   rep_row   rep_pair  added   rows   entries
+M0-base                23       0         0         0       462    118    
+M1-delete-citations    0        0         23        0       462    118    
+M2-shotgun             0        23        23        4095    462    118    
+M3-reword              22       0         1         0       462    118    
+M4-repaired            0        23        23        23      462    118    
+M6-delete-entries      0        0         23        0       462    109    
+
+M5 vacuity: with --base-rev equal to the repaired tree, base_mismatches=0, repaired=0, 0==0 passes
+
+## 7 census on repaired registry
+$ bash scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+[rc=0]
+mado	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+mado	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+mado	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+mado	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W01	S277 tierC mined used-by=corpus/knowledge/request-socket-live-bound-r8.md, corpus/knowledge/request-limits-upstream-r31.md
+mado	W04	S303 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S307 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S317 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S318 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/values/ConfigValues.cpp across scopes
+mado	W04	S320 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S321 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S324 duplicate url raw.githubusercontent.com/hyprwm/hyprlang/v0.6.8/src/config.cpp across scopes
+mado	W04	S326 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/xdg-terminal-exec across scopes
+mado	W04	S327 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/README.md across scopes
+mado	W04	S332 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/rule/matchEngine/RegexMatchEngine.cpp across scopes
+mado	W04	S353 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S354 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/input/InputManager.cpp across scopes
+mado	W04	S364 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+mado	W04	S366 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S368 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S370 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/DispatcherTranslator.cpp across scopes
+mado	W04	S371 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigActions.cpp across scopes
+mado	W04	S373 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+mado	W04	S380 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+mado	W04	S381 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/core/Seat.cpp across scopes
+mado	W04	S382 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+mado	W04	S384 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/values/ConfigValues.cpp across scopes
+mado	W04	S387 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S388 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S389 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S392 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/inotify/ConfigWatcher.cpp across scopes
+mado	W04	S393 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S394 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S395 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S442 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/subprocess.rst across scopes
+mado	W04	S443 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/expressions.rst across scopes
+mado	W04	S447 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S448 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/os.rst across scopes
+mado	W04	S449 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/subprocess.rst across scopes
+mado	W04	S451 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S452 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/os.rst across scopes
+mado	W04	S453 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S454 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/builtins/stdtypes.rst across scopes
+mado	W04	S455 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/expressions.rst across scopes
+mado	W04	S456 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/simple_stmts.rst across scopes
+mado	W04	S458 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S465 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/output/Monitor.cpp across scopes
+mado	W04	S466 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/reserved/ReservedArea.cpp across scopes
+mado	W04	S470 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/render/Renderer.cpp across scopes
+mado	W04	S475 duplicate url wiki.hypr.land/Configuring/Monitors across scopes
+mado	W04	S477 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/tests/desktop/Reserved.cpp across scopes
+mado	W04	S481 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/protocols/wlr-layer-shell-unstable-v1.xml across scopes
+mado	W04	S490 duplicate url tiswww.case.edu/php/chet/bash/bashref.html across scopes
+mado	W04	S514 duplicate url gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/glib/gkeyfile.c across scopes
+mado	W04	S518 duplicate url gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gcontenttype-fdo.c across scopes
+mado	W04	S519 duplicate url gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimecache.c across scopes
+mado	W04	S521 duplicate url gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gcontenttype-fdo.c across scopes
+mado	W04	S525 duplicate url specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html across scopes
+mado	W04	S526 duplicate url gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/gcontenttype-fdo.c across scopes
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+
+## 8 disowned-citation sentences
+$ bash -c grep -n 'S132 stays queued' /fast/scratch/hyaku/mado-r98/R98MCriticC2/base/corpus/knowledge/terminal-trees-r23.md; sed -n '127,129p' /fast/scratch/hyaku/mado-r98/R98MCriticC2/base/corpus/knowledge/hyprland-config-era-r12.md; python3 -c "l=open('/fast/scratch/hyaku/mado-r98/R98MCriticC2/base/corpus/knowledge/mime-magic-sniff-r95.md').read().splitlines()[0]; i=l.find('S517'); print(l[i-120:i+180])"
+[rc=0]
+1:source: S123, S124, S125, S126, S127, S128, S129, S130, S131, S133, S134, S135, S136, S137, S138, S139, S140, S141, S142, S143, S144, S145, S146, S147, S148, S149, S150, S151, S152 (kitty v0.49.2 commit b2cb8712: S123-S131, S133; ghostty v1.3.1/v1.2.3 tags and ghostty.org site commits: S134-S139, S150, S151; foot 1.28.0 commit ab33c9a1 and foot wiki commit 2475351a: S140-S149, S152). Each is a corpus/SOURCES.md row opened 2026-10-22 with status mined; S132 stays queued and supports nothing.
+- `source:` cites S030 for the current Window Rules page. S030 was rejected in the same round as a duplicate of S017 (same URL `https://wiki.hypr.land/Configuring/Basics/Window-Rules/`, overlapping scope, no supersedes link); read every S030 citation in this entry (header and line 67) as **S017** U+2014 same page, same "Syntax" section, same 2026-08-26 modification. The claim it supports is unchanged. Logged in `corpus/lessons/round-12.md` U+00A7 Post-review registry changes.
+
+## Errata (round 13 U+2014 complete citation mapping)
+gests (`.ufo/waves/round-95/receipts/sources-open-r95.txt`, including its append-only correction: the spec's registered S517 locator now answers 301 and the 1566c459... body is the redirect stub, as R95MScribeEntry also found)

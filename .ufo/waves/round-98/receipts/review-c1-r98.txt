@@ -1,0 +1,97 @@
+# R98MReviewC1 receipt - C1 review, round 98 w1 (reviewer seat)
+# host: glib2 2.90.1-1, /usr/bin/gio sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+# every probe read-only; the only process started is the fixture probe child of a case root
+# built under this seat's scratch; no candidate edit, no lane write, no git/jj mutation.
+
+PINS (sha256 of the bytes each measurement used; final read)
+  cases    controls/execargv-cases-r98.json   9b39299ad558dec0a70768a1c70eec0e3e2722fc8d567d58106aff53d6aad02f
+           64 cases, 16 classes (the 20-class re-freeze had not landed)
+  render   controls/execargv-probe-r98.py     48c9a1694316d3ebbfcc92567dae15933e400cb1946d0643b410cbfb2d72d358
+           (the case file's renderer_sha256 is 60ea7734 -> setup-renderer-sha256 until re-cut)
+  genseed  controls/execargv-fresh-r98.py     f9a0df2766143cc15adf512ddc47e916123460867189a1af5043d2283ced38c6
+  mutants  controls/execargv-mutants-r98.json 1794064b253f5c6fcb913fb7b366bcca7657caf496003d38eb17b86feb595fbf
+           78 mutants, 19 classes, pins candidate 31aca8d8 (stale; 4 anchors no longer occur once)
+  cand     build/mado-execargv.py             630faeee44af175760917295c9e3c712fbf6ee0dab43e95d4e473db71967829e
+  counter  build/c1-r98-execargv.py           79045e9742393d3ccada0ae145294a8263902c24e35331fb4df88f1176649ddd
+           CLASSES 20, MIN_CASES 70, DESKTOP_KEYS 7
+
+STEP 1 - independent re-derivation (own builder, not the oracle module)
+  sample: 24 cases, all 16 classes, 3 runs each, quiet 1.0 s / cap 12 s, cwd = case root
+  result: 23/24 reproduced exactly; n-03-two 2/3 (one partial record at the old renderer);
+  every frozen multiset matched when the oracle produced complete records;
+  bad-04-no-exec refusal cause 3/3.
+  REDERIVE: cases=24 order_stable=23 multiset_stable=22 any_order_mismatch=1 any_multiset_mismatch=2
+
+STEP 2 - candidate vs oracle
+  frozen 64 (16 classes), candidate 630faeee: 64/64 (multiset)
+  the 20-class re-freeze was absent; the counter rejects the current file (setup-envelope-classes)
+
+STEP 3 - controls over the frozen 64
+  naive Exec.split() 3/64; no-expansion (strip codes, split) 10/64; both < 64.
+
+STEP 4 - attack probes (48; oracle and candidate on the same root)
+  at candidate 31aca8d8: same 43, diff 5 (icon-abs, pct-multibyte, path-missing, terminal-true,
+  unterminated-cause). At candidate 630faeee the fragment, query, %k and X-GIO-NoFuse probes also
+  match; the remaining diffs are:
+    Icon=/tmp/ic.png %i      oracle --icon /tmp/ic.png   cand --icon /tmp/ic        (O1 real)
+    %<U+00E9>x               oracle \udca9x              cand x                     (O2 real)
+    Path=nope                oracle rc1 cwd failure      cand 1 launch              (O4 scope)
+    Terminal=true            oracle rc0 no record        cand 1 launch              (O4 scope)
+    Exec={probe} "unterminated  renderer label exec-parse cand exec-parse           (O5 convention)
+  amended-rule probes, all matching at 630faeee: %f %f +3 -> 2 launches; %f %F +3 -> 1 launch;
+  %F http+file and file+http -> file only; %D/%N http+file -> file's dir/base only;
+  %d/%n http -> nothing; %i empty Icon -> --icon ''; Name[de]/Name[C] under LC_ALL=C -> Name;
+  %<space> and %1 -> nothing; %% attached -> %; # comment line ignored; # after tab literal;
+  Hidden=true launches; X-GIO-NoFuse true/false for %u/%U; %k with a relative DESKTOP.
+
+STEP 5 - kill rule
+  crash is crashed_not_killed, never a kill (counter :1114-1118); selftest st-mutant-crash
+  counter --selftest at the pin: MADO_COUNTER_SELFTEST: checks=16 failed=0 rc=0
+  independent sweep at the matching pin (mutants c5b66f58, candidate 31aca8d8, 64 cases, multiset,
+  kill only on a case the original answers correctly): mutants=75 killed=75
+  crashed_not_killed=0 survived=0 class_kills 16/16
+  gap: wrong_ids is not filtered by the original candidate's per-case status (:1111-1117)
+
+RENDERER STABILITY (per-spawn file + flock sequence; no candidate)
+  %f x3, 40 runs: 38/40 identical, 2/40 order-only, 0 lost records
+  %f x6, 40 runs: 33/40 identical, 7/40 order-only, 0 lost records
+  rule-4 x3, 40 runs: 38/40 identical, 2/40 order-only, 0 lost records
+  old append-file renderer (c5c69445): %f x3 28/40 identical, 5/40 one-launch labels
+  residual: the 200 ms quiet window has no positive completion signal
+
+FRESH GENERATOR
+  same seed, two different --dir trees, 60 cases: 0 label differences (root embedding fixed)
+  relative --dir: FRESH_GEN cases=60 ok=0 refused=60 (all refusal:exec-parse) (O11)
+  absolute --dir: FRESH_GEN cases=60 ok=52 refused=8
+  newline value: expect {"error":"exec-parse"} with 0 records (mislabelled refusal, O6)
+
+COUNTER VALIDATION (current artifacts)
+  setup-envelope-classes: cases 16 classes vs counter 20
+  setup-renderer-sha256: cases pin 60ea7734 vs renderer file 48c9a169
+  mutant validation: candidate pin 31aca8d8 vs 630faeee; 4 anchors no longer occur once
+    (f-01-one-arg-consumes-all, U-mixed-01-uri-branch, U-mixed-02-list-consumes-one,
+     d-03-consumed-false)
+  -> re-cut the case file, the renderer pin and the mutants before measurement (O3)
+  earlier revisions: ORACLE_NAME mismatch, null-Type/null-Exec refusal cases rejected, missing
+  renderer_sha256 (all fixed; see report R4)
+
+FINDINGS (severity order; full text in w1/R98MReviewC1.md)
+  O1  medium   candidate strips the icon extension from an absolute Icon path
+  O2  medium   candidate walks % by character, the source by byte
+  O3  blocker  artifacts mid-re-freeze: classes 16 vs 20, renderer pin, stale mutants
+  O4  medium   case schema admits Terminal=true and any Path; model declares both out of scope
+  O5  low      cause for an Exec that fails g_shell_parse_argv at load is pinned by cases, not text
+  O6  low      an argv value containing a newline is mislabelled as a refusal
+  O7  low      the candidate's named limits contradict its code (X-GIO-NoFuse)
+  O8  low      the committed control receipt's two models are the same function
+  O9  low      predicate (iv) label provenance is not checkable
+  O10 low      kill accounting counts a case the original candidate also fails
+  O11 low      fresh generator labels 60/60 exec-parse for a relative --dir
+  R1  resolved settle race (per-spawn file + flock + multiset rule; 120 runs, no lost record)
+  R2  resolved root embedding in fresh expects (canon replaces anywhere; 0/60 across dirs)
+  R3  resolved candidate rules: u-anchor fragment/query, %k relative, X-GIO-NoFuse
+  R4  resolved earlier ORACLE_NAME / null-Type-Exec / renderer-pin defects
+
+UNVERIFIED BY THIS SEAT
+  the re-frozen 20-class case file and the re-cut mutant set (absent at the final read)
+  counter end-to-end (needs the candidate committed at --rev)

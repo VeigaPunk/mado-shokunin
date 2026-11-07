@@ -1,0 +1,68 @@
+# round-98 scout receipt - R98MScoutExec (C1 launch-argv reconnaissance)
+
+seat: R98MScoutExec (scout; read-only; no candidate edits)
+lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+wave: .ufo/waves/round-98/w1/
+report: .ufo/waves/round-98/w1/R98MScoutExec.md
+scratch: /fast/scratch/hyaku/mado-r98/R98MScoutExec  (deleted before yield)
+
+## host ground
+glib2 2.90.1-1; /usr/bin/gio sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+python3 3.14.8 (stdlib only); curl; sha256sum. No tool installed or upgraded. No pacman
+transaction run (all pacman transactions are PAUSED host-wide). No host application launched:
+the only child processes were case roots' own probe.sh files, spawned by /usr/bin/gio under the
+seat's scratch dir.
+
+## digest verification of the L1's round-98 fetch receipt
+recomputed sha256 over [[W]]/fetch/ (all MATCH the receipt):
+  gdesktopappinfo.c  8e9ce1a8327a2daf6bc16e8dcfb653c482afde7bebc2ca2621747626b5495b0d  163369 B
+  gshell.c           640a0d0fbc9c50d0c70eb8f9ff2c4994392515c6174f76ade9292d7500e60442   21464 B
+  exec-variables.html 2c50a9e427b295928d2b05a19049ab74db18e5d11567c0bd14a8f0f70635277e 17153 B
+every located quote in the receipt verified present at the cited line.
+
+## additional URLs this seat opened (each fetched with
+## curl -sSL -o <file> -w '%{http_code} %{url_effective}'; counts only at HTTP 200, QUALITY 164)
+HTTP 200  gio-tool-launch.c     5704 B  16b4c8683b00407670f600eda0e65e9d929a59daac499cbe8f3d1fd532f6595a
+HTTP 200  gkeyfile.c          142052 B  e1d1270f6c9881daf8a9f49b41395cbdd8e99fa290212e8530e0bd3df23ff656  (= registry S502)
+HTTP 200  gio-launch-desktop.c        6d8df7399bf7600035101fc5f3a2f8fb83bfe58a368f516fa3876895c3759941
+HTTP 200  gfile.c                    1d72b7bd7dc63bbe40db081da9422ec8df33323a45feeae2ad04b2cac420999b
+HTTP 200  gutils.c                   65086c293646bf83884f56f54bb5e2e872adb28ee77f1223d6d9f095a75e3771  (= registry S506)
+
+## probe method (read-only; the only child is the case root's own probe)
+case root built under the scratch dir; probe.sh (mode 0755) records its own argv; the desktop
+file's Exec first token is the absolute probe path; run as
+  env -i LC_ALL=C HOME={root}/h PATH=/usr/bin:/bin /usr/bin/gio launch <desktop> [FILE-ARG...]
+instrument (not a candidate): the harness spawns gio and reads the probe's record file.
+
+## headline measurements (all reproduced in the report)
+- iteration rule: Exec=probe %f + 3 files -> 3 launches (one file each); %F + 3 -> 1 launch;
+  %f %f + 3 -> 2 launches; %f %F + 3 -> 1 launch; no field code + 3 -> 3 launches.
+- % walk: the byte after % is consumed as the selector: "100% done" -> "100done", "a%1b" -> "ab".
+- %F with a non-local URI: the URI is consumed and DROPPED (no text, no separator).
+- separator: emitted only after a non-NULL expansion; "x%F" -> "x/abs/.../a.txt" (concatenated).
+- %u with a local file -> the PATH (not file://); with X-GIO-NoFuse=true -> the URI.
+- %i: Icon=foo.png -> "foo" (extension stripped); Icon= (empty) -> "--icon" + "".
+- %c: Name is a LOCALE string (Name[en_US] wins under LC_ALL=en_US.UTF-8).
+- %k: the CANONICALIZED absolute desktop path.
+- no-substitution rule fires when the URI-list HEAD POINTER is unchanged, so a non-consuming
+  macro (%c/%i/%k/%m/%z) still triggers it: Exec=probe %c + 1 file -> [probe, 'Probe App', file].
+- '#' at a token start is a comment: "probe keep # drop" -> [probe, 'keep'].
+- EXEC ORACLE DEFECT (quiescence): the 200 ms quiescence reader stopped at 0.22 s having seen
+  1 record while the file eventually held 2 -> TRUNCATED LABEL, 4/4 trials. gio launch returns
+  at 0.003 s, before its child writes at 1.0 s.
+- EXEC ORACLE DEFECT (order): the shared append file records COMPLETION order, not spawn order;
+  with the first-spawned child delayed 1 s the file order is inverted, 3/3 trials (and 1/20 under
+  8x CPU load without a delay).
+- verified fixes: one atomic write per record (25/25 clean, vs 1/20 torn for the multi-printf
+  form); per-child files (the file count equals the launch count exactly: 3, 3, 1, 2).
+
+## deliverables
+  .ufo/waves/round-98/w1/R98MScoutExec.md        (the report: rule table, class table, attack)
+  .ufo/waves/round-98/receipts/scout-exec-r98.txt (this file)
+
+## limits
+Terminal=true cannot be observed with an .out probe on this host (xdg-terminal-exec is first in
+known_terminals and fails with no display); its argv shape was confirmed with a fake terminal in
+the case root. X-GIO-NoFuse is not expressible in the frozen case schema as it stands. Whether a
+D-Bus session bus diverts the launch off the spawn path was not measured (it would change whether
+a process starts, not the argv).

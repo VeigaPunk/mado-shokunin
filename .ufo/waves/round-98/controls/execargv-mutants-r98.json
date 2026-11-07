@@ -1,0 +1,754 @@
+{
+ "version": 1,
+ "tool": "tools/mado-execargv.py",
+ "candidate_sha256": "acfcc4f7d75162d8035ac26e7ecf48ace8b78dcc8255775e8bab347cfa70ab61",
+ "classes": [
+  "plain",
+  "f",
+  "F",
+  "u-file",
+  "u-uri",
+  "u-anchor",
+  "U-mixed",
+  "d",
+  "n",
+  "i",
+  "c",
+  "k",
+  "pct",
+  "bad",
+  "nonlocal",
+  "nofuse",
+  "multilaunch",
+  "comment",
+  "quote",
+  "path"
+ ],
+ "mutants": [
+  {
+   "id": "plain-01-drop-argv0",
+   "find": "launches.append(argv)",
+   "replace": "launches.append(argv[1:])",
+   "class": "plain",
+   "expect": "kill"
+  },
+  {
+   "id": "plain-02-empty-argv0",
+   "find": "launches.append(argv)\n        if not args:",
+   "replace": "launches.append([''] + argv[1:])\n        if not args:",
+   "class": "plain",
+   "expect": "kill"
+  },
+  {
+   "id": "plain-03-extra-argv0",
+   "find": "launches.append(argv)\n        if not args:\n            return launches, None",
+   "replace": "launches.append(['x'] + argv)\n        if not args:\n            return launches, None",
+   "class": "plain",
+   "expect": "kill"
+  },
+  {
+   "id": "plain-05-stop-after-first",
+   "find": "if not args:\n            return launches, None",
+   "replace": "return launches, None",
+   "class": "plain",
+   "expect": "kill"
+  },
+  {
+   "id": "plain-06-rule4-all",
+   "find": "macro('f')",
+   "replace": "macro('F')",
+   "class": "plain",
+   "expect": "kill"
+  },
+  {
+   "id": "plain-07-rule4-no-space",
+   "find": "if not state['consumed'] and args:\n            out.append(0x20)",
+   "replace": "if not state['consumed'] and args:\n            out.extend(b'')",
+   "class": "plain",
+   "expect": "kill"
+  },
+  {
+   "id": "plain-08-rule4-twice",
+   "find": "out.append(0x20)\n            macro('f')",
+   "replace": "out.append(0x20)\n            macro('f')\n            macro('f')",
+   "class": "plain",
+   "expect": "kill"
+  },
+  {
+   "id": "plain-09-exec-ignored",
+   "find": "if 'Exec' in vals:",
+   "replace": "if False:",
+   "class": "plain",
+   "expect": "kill"
+  },
+  {
+   "id": "f-01-one-arg-consumes-all",
+   "find": "if not args:\n                return\n            uri, local = args.pop(0)\n            expanded = expand_macro_uri(code, uri, local, code in 'uU' and not no_fuse)",
+   "replace": "if not args:\n                return\n            uri, local = args.pop(0)\n            args.clear()\n            expanded = expand_macro_uri(code, uri, local, code in 'uU' and not no_fuse)",
+   "class": "f",
+   "expect": "kill"
+  },
+  {
+   "id": "f-02-one-arg-uri",
+   "find": "if code in 'fF':\n        return shell_quote(local)",
+   "replace": "if code in 'fF':\n        return shell_quote(uri)",
+   "class": "f",
+   "expect": "kill"
+  },
+  {
+   "id": "f-03-consumed-false",
+   "find": "if expanded is not None:\n                out.extend(expanded.encode('utf-8', 'surrogateescape'))\n            state['consumed'] = True",
+   "replace": "if expanded is not None:\n                out.extend(expanded.encode('utf-8', 'surrogateescape'))\n            state['consumed'] = False",
+   "class": "f",
+   "expect": "kill"
+  },
+  {
+   "id": "f-04-drop-first-arg",
+   "find": "args = [arg_model(a) for a in raw_args]",
+   "replace": "args = [arg_model(a) for a in raw_args[1:]]",
+   "class": "f",
+   "expect": "kill"
+  },
+  {
+   "id": "f-05-f-uses-dirname",
+   "find": "def expand_single(code, uri, local):\n    \"\"\"expand_macro_single (gdesktopappinfo.c:2506-2555).\"\"\"\n    if code in 'uU':\n        return shell_quote(uri)\n    if local is None:\n        return None\n    if code in 'fF':\n        return shell_quote(local)",
+   "replace": "def expand_single(code, uri, local):\n    \"\"\"expand_macro_single (gdesktopappinfo.c:2506-2555).\"\"\"\n    if code in 'uU':\n        return shell_quote(uri)\n    if local is None:\n        return None\n    if code in 'fF':\n        return shell_quote(g_dirname(local))",
+   "class": "f",
+   "expect": "kill"
+  },
+  {
+   "id": "F-01-list-consumes-one",
+   "find": "elif code in 'FUDN':",
+   "replace": "elif code in 'fudn':",
+   "class": "F",
+   "expect": "kill"
+  },
+  {
+   "id": "F-02-list-no-space",
+   "find": "more = bool(args)",
+   "replace": "more = False",
+   "class": "F",
+   "expect": "kill"
+  },
+  {
+   "id": "F-03-list-reversed",
+   "find": "while args:\n                uri, local = args.pop(0)",
+   "replace": "while args:\n                uri, local = args.pop()",
+   "class": "F",
+   "expect": "kill"
+  },
+  {
+   "id": "F-04-list-dirname",
+   "find": "if code in 'fF':\n        return shell_quote(local)\n    if code in 'dD':\n        return shell_quote(g_dirname(local))",
+   "replace": "if code in 'fF':\n        return shell_quote(g_dirname(local))\n    if code in 'dD':\n        return shell_quote(g_dirname(local))",
+   "class": "F",
+   "expect": "kill"
+  },
+  {
+   "id": "F-05-list-comma",
+   "find": "if more:\n                        out.extend(b' ')",
+   "replace": "if more:\n                        out.extend(b',')",
+   "class": "F",
+   "expect": "kill"
+  },
+  {
+   "id": "F-06-list-one-iteration",
+   "find": "while args:",
+   "replace": "for _ in range(1):",
+   "class": "F",
+   "expect": "kill"
+  },
+  {
+   "id": "u-file-01-force-dropped",
+   "find": "return (local_uri_of(raw), raw)",
+   "replace": "return (local_uri_of(raw), None)",
+   "class": "u-file",
+   "expect": "kill"
+  },
+  {
+   "id": "u-file-02-force-ignored",
+   "find": "forced = expand_single({'u': 'f', 'U': 'F'}[code], uri, local)",
+   "replace": "forced = expand_single(code, uri, local)",
+   "class": "u-file",
+   "expect": "kill"
+  },
+  {
+   "id": "u-file-03-return-uri",
+   "find": "return forced",
+   "replace": "return expand_single(code, uri, local)",
+   "class": "u-file",
+   "expect": "kill"
+  },
+  {
+   "id": "u-uri-01-no-fallback",
+   "find": "if forced is None:\n        return expand_single(code, uri, local)",
+   "replace": "if forced is None:\n        return None",
+   "class": "u-uri",
+   "expect": "kill"
+  },
+  {
+   "id": "u-uri-02-scheme-stripped",
+   "find": "if not raw.startswith('file://'):\n        return (raw, None)",
+   "replace": "if not raw.startswith('file://'):\n        return (raw.split(':', 1)[1], None)",
+   "class": "u-uri",
+   "expect": "kill"
+  },
+  {
+   "id": "u-uri-03-uri-upper",
+   "find": "return shell_quote(uri)",
+   "replace": "return shell_quote(uri.upper())",
+   "class": "u-uri",
+   "expect": "kill"
+  },
+  {
+   "id": "u-anchor-01-fragment-kept",
+   "find": "pathpart = pathpart[:h]",
+   "replace": "pass",
+   "class": "u-anchor",
+   "expect": "kill"
+  },
+  {
+   "id": "u-anchor-02-query-drop",
+   "find": "h = pathpart.find('#')",
+   "replace": "h = pathpart.find('?')",
+   "class": "u-anchor",
+   "expect": "kill"
+  },
+  {
+   "id": "u-anchor-03-file-uri-not-local",
+   "find": "local = pct_decode(pathpart)\n    return (local_uri_of(local), local)",
+   "replace": "local = pct_decode(pathpart)\n    return (local_uri_of(local), None)",
+   "class": "u-anchor",
+   "expect": "kill"
+  },
+  {
+   "id": "u-anchor-04-uri-suffix",
+   "find": "if code in 'uU':\n        return shell_quote(uri)\n    if local is None:",
+   "replace": "if code in 'uU':\n        return shell_quote(uri + 'x')\n    if local is None:",
+   "class": "u-anchor",
+   "expect": "kill"
+  },
+  {
+   "id": "U-mixed-01-uri-branch",
+   "find": "if not force_file_uri or '#' in uri:",
+   "replace": "if not force_file_uri or '#' in uri or True:",
+   "class": "U-mixed",
+   "expect": "kill"
+  },
+  {
+   "id": "U-mixed-02-list-consumes-one",
+   "find": "while args:\n                uri, local = args.pop(0)\n                expanded = expand_macro_uri(code, uri, local, code in 'uU' and not no_fuse)\n                more = bool(args)",
+   "replace": "if args:\n                uri, local = args.pop(0)\n                expanded = expand_macro_uri(code, uri, local, code in 'uU' and not no_fuse)\n                more = bool(args)",
+   "class": "U-mixed",
+   "expect": "kill"
+  },
+  {
+   "id": "U-mixed-03-reversed",
+   "find": "if expanded is not None:\n                    out.extend(expanded.encode('utf-8', 'surrogateescape'))",
+   "replace": "if expanded is not None:\n                    out[0:0] = expanded.encode('utf-8', 'surrogateescape')",
+   "class": "U-mixed",
+   "expect": "kill"
+  },
+  {
+   "id": "U-mixed-04-list-no-space",
+   "find": "more = bool(args)\n                if expanded is not None:\n                    out.extend(expanded.encode('utf-8', 'surrogateescape'))\n                    if more:\n                        out.extend(b' ')",
+   "replace": "more = bool(args)\n                if expanded is not None:\n                    out.extend(expanded.encode('utf-8', 'surrogateescape'))\n                    if more:\n                        out.extend(b'')",
+   "class": "U-mixed",
+   "expect": "kill"
+  },
+  {
+   "id": "d-01-dirname-basename",
+   "find": "if code in 'dD':\n        return shell_quote(g_dirname(local))",
+   "replace": "if code in 'dD':\n        return shell_quote(g_basename(local))",
+   "class": "d",
+   "expect": "kill"
+  },
+  {
+   "id": "d-02-full-path",
+   "find": "return shell_quote(g_dirname(local))",
+   "replace": "return shell_quote(local)",
+   "class": "d",
+   "expect": "kill"
+  },
+  {
+   "id": "d-03-consumed-false",
+   "find": "uri, local = args.pop(0)\n            expanded = expand_macro_uri(code, uri, local, code in 'uU' and not no_fuse)\n            if expanded is not None:\n                out.extend(expanded.encode('utf-8', 'surrogateescape'))\n            state['consumed'] = True",
+   "replace": "uri, local = args.pop(0)\n            expanded = expand_macro_uri(code, uri, local, code in 'uU' and not no_fuse)\n            if expanded is not None:\n                out.extend(expanded.encode('utf-8', 'surrogateescape'))\n            state['consumed'] = False",
+   "class": "d",
+   "expect": "kill"
+  },
+  {
+   "id": "n-01-basename-dirname",
+   "find": "return shell_quote(g_basename(local)) if code in 'nN' else None",
+   "replace": "return shell_quote(g_dirname(local)) if code in 'nN' else None",
+   "class": "n",
+   "expect": "kill"
+  },
+  {
+   "id": "n-02-full-path",
+   "find": "shell_quote(g_basename(local))",
+   "replace": "shell_quote(local)",
+   "class": "n",
+   "expect": "kill"
+  },
+  {
+   "id": "n-03-consumes-all",
+   "find": "if not args:\n                return\n            uri, local = args.pop(0)",
+   "replace": "if not args:\n                return\n            uri, local = args.pop(0)\n            if code == 'n':\n                args.clear()",
+   "class": "n",
+   "expect": "kill"
+  },
+  {
+   "id": "i-01-drop-icon-flag",
+   "find": "out.extend(b'--icon ')\n                out.extend(shell_quote(icon).encode('utf-8', 'surrogateescape'))",
+   "replace": "out.extend(shell_quote(icon).encode('utf-8', 'surrogateescape'))",
+   "class": "i",
+   "expect": "kill"
+  },
+  {
+   "id": "i-02-icon-no-space",
+   "find": "out.extend(b'--icon ')",
+   "replace": "out.extend(b'--icon')",
+   "class": "i",
+   "expect": "kill"
+  },
+  {
+   "id": "i-03-icon-no-quote",
+   "find": "out.extend(shell_quote(icon).encode('utf-8', 'surrogateescape'))",
+   "replace": "out.extend(icon.encode('utf-8', 'surrogateescape'))",
+   "class": "i",
+   "expect": "kill"
+  },
+  {
+   "id": "i-04-icon-uses-name",
+   "find": "if icon is not None:\n                out.extend(b'--icon ')\n                out.extend(shell_quote(icon).encode('utf-8', 'surrogateescape'))",
+   "replace": "if icon is not None:\n                out.extend(b'--icon ')\n                out.extend(shell_quote(name).encode('utf-8', 'surrogateescape'))",
+   "class": "i",
+   "expect": "kill"
+  },
+  {
+   "id": "i-05-no-strip",
+   "find": "if i >= 0 and name[i:] in ('.png', '.xpm', '.svg'):",
+   "replace": "if False:",
+   "class": "i",
+   "expect": "kill"
+  },
+  {
+   "id": "i-06-no-strip-return",
+   "find": "return name[:i]",
+   "replace": "return name",
+   "class": "i",
+   "expect": "kill"
+  },
+  {
+   "id": "c-01-no-quote",
+   "find": "out.extend(shell_quote(name).encode('utf-8', 'surrogateescape'))",
+   "replace": "out.extend(name.encode('utf-8', 'surrogateescape'))",
+   "class": "c",
+   "expect": "kill"
+  },
+  {
+   "id": "c-02-name-upper",
+   "find": "if name is not None:\n                out.extend(shell_quote(name).encode('utf-8', 'surrogateescape'))",
+   "replace": "if name is not None:\n                out.extend(shell_quote(name.upper()).encode('utf-8', 'surrogateescape'))",
+   "class": "c",
+   "expect": "kill"
+  },
+  {
+   "id": "c-03-name-reversed",
+   "find": "elif code == 'c':\n            if name is not None:\n                out.extend(shell_quote(name).encode('utf-8', 'surrogateescape'))",
+   "replace": "elif code == 'c':\n            if name is not None:\n                out.extend(shell_quote(name[::-1]).encode('utf-8', 'surrogateescape'))",
+   "class": "c",
+   "expect": "kill"
+  },
+  {
+   "id": "k-01-basename",
+   "find": "out.extend(shell_quote(desktop_path).encode('utf-8', 'surrogateescape'))",
+   "replace": "out.extend(shell_quote(g_basename(desktop_path)).encode('utf-8', 'surrogateescape'))",
+   "class": "k",
+   "expect": "kill"
+  },
+  {
+   "id": "k-02-uses-name",
+   "find": "if desktop_path is not None:\n                out.extend(shell_quote(desktop_path).encode('utf-8', 'surrogateescape'))",
+   "replace": "if desktop_path is not None:\n                out.extend(shell_quote(name).encode('utf-8', 'surrogateescape'))",
+   "class": "k",
+   "expect": "kill"
+  },
+  {
+   "id": "k-03-consumes-arg",
+   "find": "elif code == 'k':\n            if desktop_path is not None:",
+   "replace": "elif code == 'k':\n            if desktop_path is not None and args:\n                args.pop(0)\n            if desktop_path is not None:",
+   "class": "k",
+   "expect": "kill"
+  },
+  {
+   "id": "pct-01-double-pct-nothing",
+   "find": "out.append(0x25)",
+   "replace": "pass",
+   "class": "pct",
+   "expect": "kill"
+  },
+  {
+   "id": "pct-02-double-pct-two",
+   "find": "elif code == '%':\n            out.append(0x25)",
+   "replace": "elif code == '%':\n            out.extend(b'%%')",
+   "class": "pct",
+   "expect": "kill"
+  },
+  {
+   "id": "pct-03-trailing-dropped",
+   "find": "else:\n                out.append(exec_bytes[i])\n                i += 1",
+   "replace": "else:\n                if exec_bytes[i] != 0x25:\n                    out.append(exec_bytes[i])\n                i += 1",
+   "class": "pct",
+   "expect": "kill"
+  },
+  {
+   "id": "pct-04-join-spaces",
+   "find": "argv, err = shell_parse_argv(bytes(out).decode('utf-8', 'surrogateescape'))",
+   "replace": "argv, err = shell_parse_argv(' '.join(chr(b) for b in out))",
+   "class": "pct",
+   "expect": "kill"
+  },
+  {
+   "id": "bad-01-unknown-literal",
+   "find": "elif code == 'm':\n            pass\n        elif code == '%':\n            out.append(0x25)",
+   "replace": "elif code == 'm':\n            pass\n        elif code == '%':\n            out.append(0x25)\n        else:\n            out.extend(('%' + code).encode('utf-8', 'surrogateescape'))",
+   "class": "bad",
+   "expect": "kill"
+  },
+  {
+   "id": "bad-02-unknown-char",
+   "find": "elif code == 'k':\n            if desktop_path is not None:\n                out.extend(shell_quote(desktop_path).encode('utf-8', 'surrogateescape'))\n        elif code == 'm':\n            pass\n        elif code == '%':\n            out.append(0x25)",
+   "replace": "elif code == 'k':\n            if desktop_path is not None:\n                out.extend(shell_quote(desktop_path).encode('utf-8', 'surrogateescape'))\n        elif code == 'm':\n            pass\n        elif code == '%':\n            out.append(0x25)\n        else:\n            out.extend(code.encode('utf-8', 'surrogateescape'))",
+   "class": "bad",
+   "expect": "kill"
+  },
+  {
+   "id": "bad-03-unknown-consumes",
+   "find": "elif code == 'c':\n            if name is not None:\n                out.extend(shell_quote(name).encode('utf-8', 'surrogateescape'))\n        elif code == 'k':\n            if desktop_path is not None:\n                out.extend(shell_quote(desktop_path).encode('utf-8', 'surrogateescape'))\n        elif code == 'm':\n            pass\n        elif code == '%':\n            out.append(0x25)",
+   "replace": "elif code == 'c':\n            if name is not None:\n                out.extend(shell_quote(name).encode('utf-8', 'surrogateescape'))\n        elif code == 'k':\n            if desktop_path is not None:\n                out.extend(shell_quote(desktop_path).encode('utf-8', 'surrogateescape'))\n        elif code == 'm':\n            pass\n        elif code == '%':\n            out.append(0x25)\n        else:\n            if args:\n                args.pop(0)",
+   "class": "bad",
+   "expect": "kill"
+  },
+  {
+   "id": "bad-04-hidden-refused",
+   "find": "if type_v != APP_TYPE:",
+   "replace": "if bool_value(vals.get('Hidden')):\n        return {'error': 'desktop-file', 'detail': 'hidden'}\n    if type_v != APP_TYPE:",
+   "class": "bad",
+   "expect": "kill"
+  },
+  {
+   "id": "bad-05-type-accepted",
+   "find": "if type_v != APP_TYPE:\n        return {'error': 'desktop-file', 'detail': 'type'}",
+   "replace": "if False:\n        return {'error': 'desktop-file', 'detail': 'type'}",
+   "class": "bad",
+   "expect": "kill"
+  },
+  {
+   "id": "bad-06-noexec-accepted",
+   "find": "if exec_v is None:\n        return {'error': 'no-exec', 'detail': 'missing-exec'}",
+   "replace": "if exec_v is None:\n        exec_v = ''",
+   "class": "bad",
+   "expect": "kill"
+  },
+  {
+   "id": "bad-07-noexec-cause",
+   "find": "return {'error': 'no-exec', 'detail': 'missing-exec'}",
+   "replace": "return {'error': 'desktop-file', 'detail': 'missing-exec'}",
+   "class": "bad",
+   "expect": "kill"
+  },
+  {
+   "id": "bad-08-type-cause",
+   "find": "return {'error': 'desktop-file', 'detail': 'type'}",
+   "replace": "return {'error': 'no-exec', 'detail': 'type'}",
+   "class": "bad",
+   "expect": "kill"
+  },
+  {
+   "id": "quote-01-escaped-dq-closes",
+   "find": "if ch == quote and not (quote == '\"' and state['quoted']):",
+   "replace": "if ch == quote:",
+   "class": "quote",
+   "expect": "kill"
+  },
+  {
+   "id": "quote-02-space-in-quotes",
+   "find": "if ch == quote and not (quote == '\"' and state['quoted']):\n                state['quote'] = ''\n            cur.append(ch)",
+   "replace": "if ch == quote and not (quote == '\"' and state['quoted']):\n                state['quote'] = ''\n            if ch not in ' \\t':\n                cur.append(ch)",
+   "class": "quote",
+   "expect": "kill"
+  },
+  {
+   "id": "quote-03-single-double-swap",
+   "find": "if q == \"'\":",
+   "replace": "if q == '\"':",
+   "class": "quote",
+   "expect": "kill"
+  },
+  {
+   "id": "quote-04-single-upper",
+   "find": "out.append(c)\n                i += 1\n            else:",
+   "replace": "out.append(c.upper())\n                i += 1\n            else:",
+   "class": "quote",
+   "expect": "kill"
+  },
+  {
+   "id": "quote-05-invalid-escape-accepted",
+   "find": "if i >= n or raw[i] not in VALUE_ESCAPES:\n                return False, None",
+   "replace": "if i >= n:\n                return False, None\n            if raw[i] not in VALUE_ESCAPES:\n                out.append(raw[i])\n                i += 1\n                continue",
+   "class": "quote",
+   "expect": "kill"
+  },
+  {
+   "id": "quote-08-exec-parse-cause",
+   "find": "return {'error': 'exec-parse', 'detail': 'static'}",
+   "replace": "return {'error': 'desktop-file', 'detail': 'static'}",
+   "class": "quote",
+   "expect": "kill"
+  },
+  {
+   "id": "path-01-no-quote",
+   "find": "if code in 'fF':\n        return shell_quote(local)\n    if code in 'dD':",
+   "replace": "if code in 'fF':\n        return local\n    if code in 'dD':",
+   "class": "path",
+   "expect": "kill"
+  },
+  {
+   "id": "path-02-quote-escape-wrong",
+   "find": "def shell_quote(s):\n    return \"'\" + s.replace(\"'\", \"'\\\\''\") + \"'\"",
+   "replace": "def shell_quote(s):\n    return \"'\" + s.replace(\"'\", \"''\") + \"'\"",
+   "class": "path",
+   "expect": "kill"
+  },
+  {
+   "id": "d-04-unimplemented",
+   "find": "if code in 'dD':\n        return shell_quote(g_dirname(local))\n    return shell_quote(g_basename(local))",
+   "replace": "if code in 'dD':\n        return None\n    return shell_quote(g_basename(local))",
+   "class": "d",
+   "expect": "kill"
+  },
+  {
+   "id": "n-04-unimplemented",
+   "find": "if code in 'dD':\n        return shell_quote(g_dirname(local))\n    return shell_quote(g_basename(local)) if code in 'nN' else None",
+   "replace": "if code in 'dD':\n        return shell_quote(g_dirname(local))\n    return None",
+   "class": "n",
+   "expect": "kill"
+  },
+  {
+   "id": "plain-10-rule4-dropped",
+   "find": "if not state['consumed'] and args:",
+   "replace": "if not state['consumed'] and args:\n            args.clear()",
+   "class": "plain",
+   "expect": "kill"
+  },
+  {
+   "id": "quote-10-unterminated-accepted",
+   "find": "return None, 'unterminated-quote'",
+   "replace": "return [t.lstrip(chr(34)) for t in tokens], None",
+   "class": "quote",
+   "expect": "kill"
+  },
+  {
+   "id": "nonlocal-01-f-uri-appended",
+   "find": "if local is None:\n        return None",
+   "replace": "if local is None:\n        return shell_quote(uri)",
+   "class": "nonlocal",
+   "expect": "kill"
+  },
+  {
+   "id": "multilaunch-01-list-one-arg",
+   "find": "elif code in 'FUDN':\n            while args:\n                uri, local = args.pop(0)",
+   "replace": "elif code in 'FUDN':\n            if args:\n                uri, local = args.pop(0)",
+   "class": "multilaunch",
+   "expect": "kill"
+  },
+  {
+   "id": "comment-01-parsed",
+   "find": "if line[0] == '#':\n            continue",
+   "replace": "if False:\n            continue",
+   "class": "comment",
+   "expect": "kill"
+  },
+  {
+   "id": "nofuse-01-ignored",
+   "find": "uri, local = args.pop(0)\n            expanded = expand_macro_uri(code, uri, local, code in 'uU' and not no_fuse)",
+   "replace": "uri, local = args.pop(0)\n            expanded = expand_macro_uri(code, uri, local, code in 'uU')",
+   "class": "nofuse",
+   "expect": "kill"
+  }
+ ],
+ "not_observable": [
+  {
+   "id": "m-code-emits",
+   "find": "elif code == 'k':\n            if desktop_path is not None:\n                out.extend(shell_quote(desktop_path).encode('utf-8', 'surrogateescape'))\n        elif code == 'm':\n            pass",
+   "replace": "elif code == 'k':\n            if desktop_path is not None:\n                out.extend(shell_quote(desktop_path).encode('utf-8', 'surrogateescape'))\n        elif code == 'm':\n            out.extend(b'%m')",
+   "class": "bad",
+   "argument": "no frozen case carries %m; the fresh generator may, but the mutant leg runs only the frozen cases"
+  },
+  {
+   "id": "DN-codes-dropped",
+   "find": "elif code in 'FUDN':\n            while args:",
+   "replace": "elif code in 'FU':\n            while args:",
+   "class": "d",
+   "argument": "no frozen case uses %D/%N (the classes are d/n lowercase); the fresh generator may"
+  },
+  {
+   "id": "duplicate-key-first",
+   "find": "if current == group:\n            values[key] = value",
+   "replace": "if current == group:\n            if key not in values:\n                values[key] = value",
+   "class": "plain",
+   "argument": "no frozen case carries a duplicate key"
+  },
+  {
+   "id": "early-key-accepted",
+   "find": "if current is None:\n            error = 'early-key'\n            break",
+   "replace": "if False:\n            error = 'early-key'\n            break",
+   "class": "plain",
+   "argument": "no frozen case has a key before the first group"
+  },
+  {
+   "id": "empty-exec-accepted",
+   "find": "if exec_v != '':",
+   "replace": "if False:",
+   "class": "bad",
+   "argument": "no frozen case has an empty Exec (bad-04 is a missing key)"
+  },
+  {
+   "id": "tab-not-delimiter",
+   "find": "elif ch in ' \\t':",
+   "replace": "elif ch == ' ':",
+   "class": "quote",
+   "argument": "no frozen case carries a tab in Exec"
+  },
+  {
+   "id": "newline-not-delimiter",
+   "find": "elif ch == '\\n':\n            delimit()",
+   "replace": "elif ch == '\\n':\n            pass",
+   "class": "quote",
+   "argument": "no frozen case carries a newline in Exec"
+  },
+  {
+   "id": "backslash-outside-literal",
+   "find": "elif ch == '\\\\':\n            state['quote'] = '\\\\'",
+   "replace": "elif ch == '\\\\':\n            cur.append('\\\\')",
+   "class": "quote",
+   "argument": "no frozen case carries a shell-level backslash outside quotes (the invalid-escape cases refuse at GKeyFile)"
+  },
+  {
+   "id": "empty-icon-emitted",
+   "find": "if icon is not None:",
+   "replace": "if icon:",
+   "class": "i",
+   "argument": "no frozen case has Icon='' (i-02 has Icon null)"
+  },
+  {
+   "id": "crash-infinite-loop",
+   "find": "if not state['consumed'] and args:\n            out.append(0x20)\n            macro('f')",
+   "replace": "if False:\n            out.append(0x20)\n            macro('f')",
+   "class": "plain",
+   "argument": "dropping rule 4 without consuming leaves args and loops forever; the detector records a timeout/crash, not a kill"
+  },
+  {
+   "id": "plain-04-single-launch-crash",
+   "find": "while True:\n        del out[:]",
+   "replace": "for _ in range(1):\n        del out[:]",
+   "class": "plain",
+   "argument": "the for-loop falls through and build_launches returns None, so run() raises TypeError; a crash is not a kill. The single-launch direction is counted as plain-05-stop-after-first, which returns a parsed answer"
+  },
+  {
+   "id": "quote-06-exec-parse-not-refused",
+   "find": "if argv is None:\n            return None, err",
+   "replace": "if argv is None:\n            argv = []",
+   "class": "quote",
+   "argument": "the static parse in run() refuses before build_launches is called; a single-site mutant at the build parse cannot change the answer, so the exec-parse refusal needs two independent sites to disappear"
+  },
+  {
+   "id": "quote-07-exec-parse-result",
+   "find": "if launches is None:\n        return {'error': 'exec-parse', 'detail': err}",
+   "replace": "if launches is None:\n        launches = []",
+   "class": "quote",
+   "argument": "the static parse in run() refuses before build_launches is called; a single-site mutant at the result mapping cannot change the answer"
+  },
+  {
+   "id": "crash-none-uri",
+   "find": "def expand_single(code, uri, local):\n    \"\"\"expand_macro_single (gdesktopappinfo.c:2506-2555).\"\"\"\n    if code in 'uU':\n        return shell_quote(uri)",
+   "replace": "def expand_single(code, uri, local):\n    \"\"\"expand_macro_single (gdesktopappinfo.c:2506-2555).\"\"\"\n    if code in 'uU':\n        return shell_quote(local)",
+   "class": "u-uri",
+   "argument": "for a non-local URI local is None and shell_quote(None) raises; a crash is not a kill"
+  },
+  {
+   "id": "i-07-absolute-icon-stripped",
+   "find": "if name is None or name.startswith('/'):",
+   "replace": "if name is None:",
+   "class": "i",
+   "argument": "no frozen case carries an absolute Icon (i-01..i-05 use ic.png, my icon, null, empty); the fresh generator may. The rule is measured (Icon=/tmp/ic.png keeps the extension) and the candidate implements the guard."
+  },
+  {
+   "id": "pct-08-bytewise-codepoint",
+   "find": "macro(chr(exec_bytes[i + 1]))",
+   "replace": "macro(exec_line[i + 1])",
+   "class": "pct",
+   "argument": "no frozen case puts a multi-byte UTF-8 character after % (pct-05/06 use a space, pct-07 uses 1); the fresh generator may. The byte-wise rule is measured and the candidate implements the byte walk."
+  }
+ ],
+ "equivalents": [
+  {
+   "id": "u-anchor-05-hash-bypass",
+   "find": "if not force_file_uri or '#' in uri:\n        return expand_single(code, uri, local)",
+   "replace": "if not force_file_uri:\n        return expand_single(code, uri, local)",
+   "class": "u-anchor",
+   "argument": "the '#' bypass is a named limit: a local file URI is fragment-free after arg_model, and a non-local URI answers the URI on both branches (L1 ruling, measured)"
+  },
+  {
+   "id": "hidden-accepted",
+   "find": "vals = d['values']",
+   "replace": "vals = d['values']\n    _hidden_seen = bool_value(vals.get('Hidden'))",
+   "class": "bad",
+   "argument": "the corrected rule reads Hidden and does not refuse it (measured: gio launch of Hidden=true succeeds); this mutant only reads it, so it is behaviourally the baseline"
+  },
+  {
+   "id": "k-04-no-quote",
+   "find": "elif code == 'k':\n            if desktop_path is not None:\n                out.extend(shell_quote(desktop_path).encode('utf-8', 'surrogateescape'))",
+   "replace": "elif code == 'k':\n            if desktop_path is not None:\n                out.extend(desktop_path.encode('utf-8', 'surrogateescape'))",
+   "class": "k",
+   "argument": "the frozen/counter desktop path carries no reserved character, so the parsed argv is identical; k is covered by k-01/k-02"
+  },
+  {
+   "id": "one-arg-pop-last",
+   "find": "if code in 'fudn':\n            if not args:\n                return\n            uri, local = args.pop(0)",
+   "replace": "if code in 'fudn':\n            if not args:\n                return\n            uri, local = args.pop()",
+   "class": "f",
+   "argument": "with one-arg codes each launch carries exactly one arg, so consuming from the end only permutes launch order, which rule 7 declares unobservable; no frozen case has two one-arg codes"
+  },
+  {
+   "id": "list-trailing-space",
+   "find": "more = bool(args)\n                if expanded is not None:",
+   "replace": "more = True\n                if expanded is not None:",
+   "class": "F",
+   "argument": "a trailing space after the last quoted list arg is discarded by the shell parser; same argv"
+  },
+  {
+   "id": "rule4-without-args-guard",
+   "find": "if not state['consumed'] and args:\n            out.append(0x20)\n            macro('f')\n        argv, err",
+   "replace": "if not state['consumed']:\n            out.append(0x20)\n            macro('f')\n        argv, err",
+   "class": "plain",
+   "argument": "when no args remain macro('f') returns without appending; the extra space is discarded by the parser"
+  },
+  {
+   "id": "local-uri-unescaped",
+   "find": "return 'file://' + path.replace('%', '%25').replace('#', '%23')",
+   "replace": "return 'file://' + path",
+   "class": "u-file",
+   "argument": "no frozen case has a '#' or '%' in a file name; the local URI is only consumed by the dead '#' branch (the path is used for %u/%U)"
+  },
+  {
+   "id": "d-no-quote",
+   "find": "if local is None:\n        return None\n    if code in 'fF':\n        return shell_quote(local)\n    if code in 'dD':\n        return shell_quote(g_dirname(local))",
+   "replace": "if local is None:\n        return None\n    if code in 'fF':\n        return shell_quote(local)\n    if code in 'dD':\n        return g_dirname(local)",
+   "class": "d",
+   "argument": "the frozen dirname is the case root, which carries no reserved character; same parsed argv"
+  }
+ ]
+}
