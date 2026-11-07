@@ -1191,3 +1191,29 @@ minimum content; the round-92 report had none (spot-check routed defect 1). Chec
 round-93 L1 named `src/portal-impl.c` at xdg-desktop-portal 1.22.1, which 404s (renamed twice upstream); the row S501
 already pinned `src/xdp-portal-config.c`. Not a mechanical check yet (no instrument reads dispatch URLs); the reviewer
 reads the dispatch. (lesson: lessons/round-93.md#mistakes M93-5)
+
+## Round 94 — ported idioms, enumerated populations, kill-set strength, oracle-exec forgeries
+
+**159. A port of a C environment rule keeps the C string operations and the unset/empty split.** `strcpy`+`strcat` is
+not `os.path.join`: an empty value concatenates to an absolute path where a join makes it relative to the caller's
+working directory, and an unset variable may add no entry at all where a default argument invents one. Each edge (unset,
+set-empty, set) gets a frozen case and a mutant. Shown able to fail: the round-94 wave candidate answers
+`rv-dirs-04-home-empty-relative` wrong and scores 355/370 (`.ufo/waves/round-94/receipts/c1-controls-prefreeze-r94.txt`);
+mutants `dirs-05-home-concat` and `dirs-06b-home-unset` are killed. (lesson: lessons/round-94.md#mistakes M94-1)
+
+**160. A predicate's population is enumerated in the declaration, never read from the data it judges.** "Every class
+named in the case file" cannot fail; the frozen list and a per-class minimum can, and the counter refuses a class it does
+not know. Shown able to fail: the counter prints `classes=K/20` and misses below 20 (`quality/counters/c1-r94-mimeglob.py`
+`CLASSES`, `MIN_PER_CLASS`). (lesson: lessons/round-94.md#mistakes M94-2)
+
+**161. A selftest kill-set is judged by green weakenings it must flag, against a weaker kill-set it must beat — not by
+label coverage.** A kill-set whose `must_fail` sets cover every label can still let a check that compares two components
+be weakened to compare one. The frozen panel holds the attack seat's green weakenings, and the round's first-draft
+kill-sets are a control that must flag fewer. Shown able to fail: first-draft kill-sets `hand_flagged=45/91`, MISSED
+(`.ufo/waves/round-94/receipts/c2-controls-prefreeze-r94.txt`). (lesson: lessons/round-94.md#mistakes M94-3)
+
+**162. A claim that a tool re-implements a library carries a structural conjunct against asking the library.**
+Behavioural legs cannot tell a model from a wrapper around the oracle; the counter parses the tool (no process, socket or
+dynamic-import machinery; ctypes only for libc) and runs it with an empty `PATH`. Shown able to fail: a subprocess
+wrapper and a ctypes libgio forgery both print `static_no_external_resolver=FAIL` while the ctypes one is otherwise
+370/370 (`c1-controls-prefreeze-r94.txt`). (lesson: lessons/round-94.md#mistakes M94-4)

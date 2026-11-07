@@ -5392,3 +5392,47 @@ claimed (a capability entered at round 92); every owned axis at 10, so the lowes
 portals 28/28, mime 17/17, xdgmime 12/12, mako 62/62, seat-reports 23/23, receipt-presence 6/6, selftest-strength 11/11 and OK
 32/32, round-90 C2 83/83 28/28, round-92 C2 TARGET_MET 45/45 (round-91 leg TARGET_MET); round-90 C1 counter SETUP_ERROR on the
 ported tool as declared (QUALITY 155); unchanged-tool diff empty. No axis harmed.
+
+## Round 94 — file name → MIME type (capability), the selftest-strength gate on two more tools (2026-11-07, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-94/claims-declaration-r94.md` (w1 findings folded in before the freeze, listed in
+`corpus/lessons/round-94.md`). Freeze `bcc5429b68a8b60bc5238fa06f01818686a9d465`; C1 `38f77d89310bf9fc752e54e4e98844a9b6ce88cc`
+(C1 measured revision; `tools/mado-mimeglob.py` = frozen candidate, sha256 `65f80a6c…2453`); C2
+`764d083ad83b8de41bb4331a71f9b8ce237997c1` (C2 measured revision; `quality/selftest-kills/mado-xdgmime.json` `d8a450bf…d4ad`,
+`quality/selftest-kills/mado-mime.json` `1a0c4fe8…00b6`; gate unchanged `2d6f1219…a61b`). Stagnation nudge not claimed (a
+capability entered at round 93); every owned axis at 10, so the lowest-axis duty is a tie. Sourced claim: C1 (S515–S518, S505
+re-opened). C2 answers the round-93 spot-check's routed defect 2. Scope note (lesson M94-5): the name-to-type step precedes the
+GLib/gio default-application answers; `xdg-open` on Hyprland types files with `file(1)` instead.
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (new surface): the MIME type and uncertain flag GLib 2.90.1 `g_content_type_guess` gives a file name, cache and text mode | `python3 -I quality/counters/c1-r94-mimeglob.py --repo . --rev 38f77d89310bf9fc752e54e4e98844a9b6ce88cc --base-rev a3de997289014e7dbf1d73ae206be1d6f8cdadd0 --cases .ufo/waves/round-94/controls/mimeglob-cases-r94-frozen.json --expect-cases-sha256 c7b693d240479ed63af24f426ae184bc4a13489a38f587620d9e1224dca5856c --mutants .ufo/waves/round-94/controls/mimeglob-mutants-r94-frozen.json --expect-mutants-sha256 0e74c57d233d2440f903466e959488705a58fdcda4f14d920caef0d2859133c2 --oracle-src .ufo/waves/round-94/controls/mimeglob-oracle-r94.c --expect-oracle-sha256 9c4337b36f93fa71bce13938f93d2e9758bb752815a67c57eb934a70bbfa6b11 --fresh-gen .ufo/waves/round-94/controls/mimeglob-fresh-r94.py --expect-fresh-gen-sha256 ab76b97e0c37d92ddb0b03a733745b1089be2a083379d9cabee050689ed57e2c --host-names .ufo/waves/round-94/controls/mimeglob-host-names-r94.txt --expect-host-names-sha256 4b6d6a6cc67a4ad59eb91c9e8af1cc605f2f278d2a2ecf57b4a81edad9344fa3 --expect-tool-sha256 65f80a6cb1551bb722ae7608df04fb17deba1b5cd05bef6f7fdd79bed76e2453 --fresh 120 --workers 24 --scratch-root DIR` | frozen cases answered as GLib does **0/370 → 370/370** (base: no tool); `TARGET_MET tool_pin=ok text=220/220 cache=122/122 mixed=28/28 classes=20/20 static_no_external_resolver=ok fresh=120/120 host=9745/9745 mutants=60 killed=60`; do-nothing 43, naive 63, base 0 (`.ufo/waves/round-94/receipts/c1-measured-r94.txt`, rc 0) | improved |
+| C2 **operability**: a weakened, still-passing selftest assertion of `tools/mado-xdgmime.py` or `tools/mado-mime.py` is WEAK | `python3 -I quality/counters/c2-r94-selftest-kills.py --repo . --rev 764d083ad83b8de41bb4331a71f9b8ce237997c1 --panel .ufo/waves/round-94/controls/selftest-panel-r94-frozen.json --expect-panel-sha256 2d35e83bd9bcdd821accda43b39b5302cb508e15602019a34c89d7e418eed7e0 --expect-gate-sha256 2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b --expect-kills-sha256 d8a450bfb3bd67a6f5be399dece1ddc3d1b0922ae9c4b1f8bcff9a37afddd4ad,1a0c4fe8cec8ac4d0b33aaaf3c803e37ef168cc86f1f5cf914d35182051100b6 --control-kills .ufo/waves/round-94/build/mado-xdgmime-kills.c2.json,.ufo/waves/round-94/build/mado-mime-kills.c2.json --expect-control-kills-sha256 126b508aa1841ba99fa17ecaef46a5a79cdee99956ac2a605479b96122f09ea9,d930689e6ff82e51722195e0c8d209fe46fb4697fd10f01f33cec30e98e81601 --workers 16 --scratch-root DIR` | single-check neutralisations flagged by a lane instrument **0/29 → 29/29** (before: the do-nothing instrument, no kill-set existed); hand weakenings 91/91, neutral 6/6, first-draft kill-sets 45/91, singleton labels 22/29 (`.ufo/waves/round-94/receipts/c2-measured-r94.txt`, rc 0) | improved |
+| separability | C1 counter at the C2 revision; C2 counter at the C1 revision | C1 at `764d083a`: `TARGET_MET` 370/370, fresh 120/120, host 9745/9745, 60/60 (`.ufo/waves/round-94/receipts/c1-at-c2-r94.txt`); C2 at `38f77d89`: `SETUP_ERROR … kill-sets absent` rc 2 (`.ufo/waves/round-94/receipts/c2-at-c1-r94.txt`) | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| GLib 2.90.1 filename-only content-type guess (`tools/mado-mimeglob.py`, read-only) | Say which MIME type GLib guesses for a file name and whether it is uncertain, from `mime.cache` or `globs2`/`globs` as the installed library reads them — including where cache and text mode disagree and where GLib departs from the shared-mime-info spec; 370/370 frozen, fresh 120/120, host 9745/9745 | `.ufo/waves/round-94/receipts/c1-measured-r94.txt`; `corpus/knowledge/mime-glob-guess-r94.md` | 94 |
+
+### Named limits (append-only, round 94)
+
+- C1: filename only (no content sniffing); C locale `fnmatch`; labels from glib2 2.90.1-1 and shared-mime-info 2.5.1-2 as
+  installed; the host leg runs in cache mode only (this host has caches); undefined C behaviour (a bare `*`, a looping
+  suffix node) is answered as observed or refused; 7 mutants excluded with arguments; the tool docstring cites
+  `xdgmime.c:129-200` for the 40-byte/version cache rule that lives in `xdgmimecache.c:126-139` (R94MScoutSources §2.2;
+  the bytes are frozen, corrected next change).
+- C2: the panel's 79 R94MMutC2 weakenings and the 19 closing kills come from the same seat (design set; the first-draft
+  control shows discrimination, unseen weakening families are not measured); 7 labels have no singleton kill; the gate's own
+  selftest, `tools/mado-mimeglob.py`, `tools/mado-portals.py`, `tools/mado-mako.py`, `tools/mado-verify.sh` and
+  `quality/check-receipt-presence.py` remain without kill-sets.
+- Round shape: one v1 wave of 14 seats; no residual call (round total 14).
+
+### Harm watch (round 94, at the code tip `764d083ad83b8de41bb4331a71f9b8ce237997c1`)
+
+`.ufo/waves/round-94/receipts/harm-final-r94.txt`: gate selftest 460/460, file plane CLEAN 29, index 115/115, ledger 182/182,
+mako 62/62, portals 28/28, mime 17/17, xdgmime 12/12, mimeglob 19/19, seat-reports 23/23, receipt-presence 6/6,
+selftest-strength 11/11 and OK 32/32 (seat-reports), OK 19/19 (xdgmime), OK 27/27 (mime), round-90 C2 83/83 28/28, round-92 C2
+45/45 with its round-91 leg, round-93 C2 TARGET_MET 23/23 16/16; round-90 C1 counter SETUP_ERROR on the ported portal tool as
+declared in round 93 (QUALITY 155); unchanged-tool diff empty. No axis harmed.

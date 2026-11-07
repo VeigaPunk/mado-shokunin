@@ -4474,3 +4474,32 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   append-only in the receipt), seat-reports 23/23, receipt-presence 6/6, selftest-strength 11/11 and OK 32/32 on the real
   gate, round-90 C2 83/83 28/28, round-92 C2 45/45 with its round-91 leg; the round-90 C1 counter stops with
   `SETUP_ERROR mutant M03 find occurs 0 times` on the ported tool, as declared (QUALITY 155); unchanged-tool diff empty.
+
+### Round 94 — file name → MIME type (capability) and the selftest-strength gate on two more tools (2026-11-07, hyaku run 15, attempt 1)
+
+- Inputs: the round-93 non-author spot-check (routed defects: an instrument for QUALITY 158; the selftest-strength gate
+  wired for one tool only; freeze the portal entry's §8 classes); `considerthese/2026-11-06.md` proposal 4 (one
+  operator-config gap over another harness counter). Two claims (`.ufo/waves/round-94/claims-declaration-r94.md`): C1
+  coverage, new surface; C2 operability. Nudge not claimed.
+- Motivating evidence: no lane tool answered which MIME type GLib gives a file name (`git show
+  a3de9972:tools/mado-mimeglob.py` → absent), the step before every gio default-application answer; this host has a user
+  `~/.local/share/mime` with both `mime.cache` and `globs2`, so the user's `globs2` is dead text (entry §4). The round-93
+  gate could not be pointed at `tools/mado-xdgmime.py` or `tools/mado-mime.py` (no kill-set): the do-nothing instrument
+  flags 0 of their 29 single-check neutralisations.
+- Wave w1: 14 seats (scout 1, scribe 1, executor 5, connector 1, reviewer 3, critic 1, mutation-tester 2), attack 6/14,
+  0 dead. Findings changed the candidate (R94MReviewC1 F1–F7), the case set (235 + 51 + 24 + 55 + 5 L1 = 370), the mutant
+  set (57 + 14 L1, 11 excluded with arguments), the C1 predicate (enumerated classes, static no-external-resolver conjunct,
+  empty PATH, host database digests), the C2 kill-sets (27 → 46 kills) and panel (12 → 91 hand weakenings) and the C2
+  predicate (first-draft control) — all before the freeze.
+- Landed: dispatch evidence `5a164538438c2f101e44a79ad9e05aaf3ca910fb`; freeze `bcc5429b68a8b60bc5238fa06f01818686a9d465`;
+  C1 `38f77d89310bf9fc752e54e4e98844a9b6ce88cc` (tool, knowledge entry `corpus/knowledge/mime-glob-guess-r94.md`, S515–S518,
+  S505 used-by, PROVINCE/SKILL/ledger/index rows); C2 `764d083ad83b8de41bb4331a71f9b8ce237997c1` (two kill-sets,
+  SKILL/ledger/PROVINCE rows); records (lesson, QUALITY 159–162, SCORECARD, this entry, used-by updates, measurements, harm
+  watch, census end, w1 results) in the records commit.
+- Measured: C1 at `38f77d89` `TARGET_MET tool_pin=ok cases=370 correct=370 classes=20/20 static_no_external_resolver=ok
+  fresh=120/120 host=9745/9745 mutants=60 killed=60`, do-nothing 43, naive 63, base 0
+  (`.ufo/waves/round-94/receipts/c1-measured-r94.txt`); C2 at `764d083a` `TARGET_MET positive=OK:0,OK:0
+  neutralised_flagged=29/29 hand_flagged=91/91 neutral_ok=6/6 control_hand_flagged=45/91`, do-nothing 0, always-OK 0,
+  sha-diff 0/6 (`.ufo/waves/round-94/receipts/c2-measured-r94.txt`). Census 449 → 453 rows, rc 0 both ends.
+- Harm watch at `764d083a` (`.ufo/waves/round-94/receipts/harm-final-r94.txt`): all green as listed in SCORECARD round 94;
+  the round-90 C1 counter's declared SETUP_ERROR on the ported portal tool unchanged.

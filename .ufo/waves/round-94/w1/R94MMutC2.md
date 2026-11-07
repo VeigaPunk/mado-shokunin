@@ -18,12 +18,17 @@ git/jj mutation outside throwaway fixture repos under `$S` (each verified with `
 | `tools/mado-mime.py` | `2532ccb57cf9d67f6590e4aac2e8d0a9f9eb011b25eb42e45118a6ff51871a5e` |
 | candidate kill-set `build/mado-xdgmime-kills.c2.json` | `126b508aa1841ba99fa17ecaef46a5a79cdee99956ac2a605479b96122f09ea9` (12 kills) |
 | candidate kill-set `build/mado-mime-kills.c2.json` | `d930689e6ff82e51722195e0c8d209fe46fb4697fd10f01f33cec30e98e81601` (15 kills) |
-| counter `quality/counters/c2-r94-selftest-kills.py` | `9c65bf86a3c9d356a4f62286228f113ed482cdddee5c25e1d5749f6b698d35a1` |
+| kill-set revision **B** `build/mado-xdgmime-kills.c2b.json` | `d8a450bfb3bd67a6…` (19 kills) |
+| kill-set revision **B** `build/mado-mime-kills.c2b.json` | `1a0c4fe8cec8ac4d…` (27 kills) |
+| counter v1 `quality/counters/c2-r94-selftest-kills.py` (measured in §3.2) | `9c65bf86a3c9d356a4f62286228f113ed482cdddee5c25e1d5749f6b698d35a1` |
+| counter v2 (clause (vii), measured in §3.3) | `0eb3aadad4b72eeacb6a5d382071efd78105fa0e8ccdd751445f5c3ccb1d9a02` |
 | panel `controls/selftest-panel-r94.json` | `2727794c0f8a0bc27d8c7d16f517be6bc17fe6647e6265f2dedb3f1cf6288f3f` (12 hand, 6 neutral) |
 
-The kill-sets appeared at 03:26 (xdgmime) and 03:29 (mime) and the counter at 03:30; all measurements below use
-those exact bytes. Both kill-sets pin `selftest_checks` (12 / 17) and `tool_sha256`; all `must_fail` values are
-lists, so the gate compares the exact FAIL-label set.
+Revision A of the kill-sets appeared at 03:26 (xdgmime) and 03:29 (mime), revision B at 03:54; counter v1 at
+03:30 and v2 at 03:55. Each measurement names the revision it used, and every pinned object was re-read after the
+last run (all unchanged except the two artefacts that were deliberately revised). Both revisions pin
+`selftest_checks` (12 / 17) and `tool_sha256`; all `must_fail` values are lists, so the gate compares the exact
+FAIL-label set.
 
 ## 1. Method
 
@@ -153,7 +158,7 @@ Label codes used in the `must_fail` cells:
 1. **Component dropping in a two-component answer** (xdgmime, 12 rows): eleven of the twelve xdgmime checks
    compare `(id, rc)`. Ten escapes keep the id and drop the exit code (`q(...)[0] == …`); two (`s01`, `s05`) keep
    the rc and drop the id (`q(...)[1] == rc`). Both are invisible because the candidate kill that dies under that
-   label flips the component that is still asserted (the id for most, the rc for `s10-no-slash`).
+   label flips the component that is still asserted (the id for most labels, the rc for `x10-s05-no-slash-rc0`).
 2. **Negative assertions** (xdgmime, 10 rows): `q(...) != (<the defect's answer>)` is green today, still fails on
    the matching kill, and accepts *every other answer*. No kill can see it because no kill produces another one.
 3. **Alternative spelling** (mime, 16 rows): `x in (expected, expected + " ")` / a differently-cased list is green
@@ -176,6 +181,28 @@ exits 1, an LXQt miss that returns an id, a default id that keeps a trailing spa
 space on every id — and each was checked to be killed by the unweakened selftest (`must_fail` is its measured FAIL
 set, so the kill-set stays exact-set valid).
 
+
+### 2.5 Second kill-set revision (c2b, 19 / 27 kills): the same catalogue is fully flagged (DRAFT)
+
+While this seat was measuring, R94MExecKillsC2 published a second revision of both kill-sets
+(`…-kills.c2b.json`, 19 xdgmime kills / 27 mime kills, adding isolation and component kills). The identical 112
+weakenings were run against it:
+
+| tool | kills | weakenings | WEAK | SETUP_ERROR | escapes |
+|---|---|---|---|---|---|
+| xdgmime | 19 | 53 | 51 | 2 | 0 |
+| mime | 27 | 59 | 57 | 2 | 0 |
+
+The two `SETUP_ERROR` rows are the same two as before and are *caught*, not escaped: a deleted check
+(`x-drop-s05`, `m-drop-fgets`) trips the `selftest_checks` pin and an inflated result line
+(`x-count-inflated`, `m-count-inflated`) trips the same pin — the gate prints `SETUP_ERROR` rc 2, never `OK`.
+So revision B closes every escape of §2.1/§2.2 on this catalogue, and the escape surface of §2 is exactly the
+delta between the two revisions: **12 of revision B's added kills carry the ids and the byte-identical
+`find`/`replace` pairs of the closing kills proposed in §2.1/§2.2** (`xc-lxqt-app-with-rc3`,
+`xc-noslash-app-with-rc1`, `xc-found-app-rc1`, `xc-empty-rc1`, `xc-version-rc1`, `mc-default-trailing`,
+`mc-default-first-padded`, `mc-default-wrong-id`, `mc-registered-padded-only`, `mc-recommended-padded-only`,
+`mc-recommended-parents`, `mc-desktop-case-kept` — checked by string equality, 12/12 identical).
+
 ## 3. Part 2 — mutation of the C2 counter (DRAFT)
 
 The counter was run in draft mode
@@ -194,7 +221,8 @@ shown:
 | P4-dup-label | 2 | `SETUP_ERROR pred=PRED-C2-r94-v1 tools/mado-mime.py: labels enumerated 16 (unique 16) != checks=17` |
 | P5-red-variant | 2 | `SETUP_ERROR pred=PRED-C2-r94-v1 variant T2 W:rig-red does not keep the selftest green: rc=1 'MADO_MIME_SELFTEST: check` |
 
-`P0` is the frozen candidates; `P1` empty `kills` arrays; `P2` the candidate bytes with drifted
+The `P8` probe (`panel-escape.json`) exists only for the counter-v2 run of §3.1; `P0` is the frozen candidates;
+`P1` empty `kills` arrays; `P2` the candidate bytes with drifted
 `--expect-kills-sha256`; `P3` a fixture repo whose gate answers `--selftest` with rc 1; `P4` a fixture repo whose
 `mado-mime.py` has a duplicated label (17 checks, 16 unique); `P5` a rigged panel with one hand weakening that
 makes the mime selftest red; `P6` a drifted `--expect-gate-sha256`; `P7` a kill-set copy whose `tool_sha256` does
@@ -234,7 +262,39 @@ Survivors and why:
 * `C12-shadiff-control-dropped` — SHA_DIFF cannot match any variant's sha, so sd_zok is 0 by construction
 * `C16-hand-count-dropped` — `!= OK:0` and `== WEAK:1` agree on every frozen variant because a non-green variant is rejected earlier as SETUP_ERROR
 
-### 3.1 The frozen panel's 12 hand weakenings are tautologies
+### 3.1 Counter v2 — clause (vii) is the escape count of §2, and the pins are testable
+
+The second counter revision (`0eb3aada…`, 17 732 bytes) adds, verbatim from this seat's §2, clause (vii):
+
+> the round's first-draft kill-sets (`--control-kills`, sha256-pinned; 12 + 15 kills, the ones the wave's mutation
+> tester escaped 46 times) flag strictly fewer hand weakenings than the frozen kill-sets
+> (`control_hand_flagged < hand`)
+
+Against the nine-probe panel with `--control-kills` = the first-draft pair (revision A, 12 + 15 kills) and
+`--draft-kills` = the c2b pair (revision B, 19 + 27 kills), the unmutated v2 counter **still prints
+`DRAFT_TARGET_MISSED`** on the frozen panel:
+
+`MADO_SELFTEST_KILLS: DRAFT_TARGET_MISSED pred=PRED-C2-r94-v1 rev=draft gate_pin=ok kills_pin=ok,ok tools=2 checks=29 positive=OK:0,OK:0 neutralised_flagged=29/29 hand_flagged=12/12 neutral_ok=6/6 do_nothing_flagged=0 always_ok_flagged=0 always_weak_positive=WEAK:1,WEAK:1 shadiff_neutral_ok=0/6 gate_selftest=ok control_hand_flagged=12/12 singleton_labels=22/29 tool_pin=ok,ok kill_paths=quality/selftest-kills/mado-xdgmime.json,quality/selftest-kills/mado-mime.json gate_sha256=2d6f1219fae19a85cc92f7d4103db396e1306fea7`
+
+`hand_flagged=12/12` **and** `control_hand_flagged=12/12`: clause (vii) needs a strict inequality, and the frozen
+panel cannot produce one, because every one of its twelve hand weakenings is a tautology (§3.2) that any kill-set
+with union coverage flags. **As frozen, clause (vii) is unsatisfiable.** The repair is the panel of §2: with twelve
+rows taken from this seat's escape catalogue (6 per tool; `P8-escape-panel` in the probe table) the same frozen
+v2 counter prints
+
+`MADO_SELFTEST_KILLS: DRAFT_TARGET_MET pred=PRED-C2-r94-v1 rev=draft gate_pin=ok kills_pin=ok,ok tools=2 checks=29 positive=OK:0,OK:0 neutralised_flagged=29/29 hand_flagged=12/12 neutral_ok=6/6 do_nothing_flagged=0 always_ok_flagged=0 always_weak_positive=WEAK:1,WEAK:1 shadiff_neutral_ok=0/6 gate_selftest=ok control_hand_flagged=0/12 singleton_labels=22/29 tool_pin=ok,ok kill_paths=quality/selftest-kills/mado-xdgmime.json,quality/selftest-kills/mado-mime.json gate_sha256=2d6f1219fae19a85cc92f7d4103db396e1306fea74c22`
+
+so `control_hand_flagged < hand` holds and the panel discriminates the two kill-set revisions. `singleton_labels`
+is reported as `22/29` on revision B (7 labels still have no `must_fail == [X]` kill: the isolation requirement
+R94MReviewC2 proposed is only partly met).
+
+The v2 mutant panel was **not completed**: the run was killed at its 2400 s deadline
+(`Error: [Command timed out after 2400 seconds]`) after the counter's added control-kill leg roughly doubled each
+run's cost; no v2 mutant verdict is claimed here. The v1 panel below (16 mutants, 9 killed / 7
+survived) is the measured part-2 result, and the v2 evidence in this section is the two baseline lines above
+(`P0` on the frozen panel = `DRAFT_TARGET_MISSED`, `P8` on the escape-derived panel = `DRAFT_TARGET_MET`).
+
+### 3.2 The frozen panel's 12 hand weakenings are tautologies
 
 Read from the frozen panel (DRAFT, text only): eleven of the twelve hand weakenings replace the expected value by
 an expression that *tracks the actual value* — `q(...) == q(...)`, `r.default(T) == r.default(T)`,
@@ -245,7 +305,7 @@ weaken exactly the component the candidate kills flip. Every one of them therefo
 tautology. The complement — keep the id, drop the exit code — is what 10 of the 23 xdgmime escapes do, and no
 panel row tests it.
 
-### 3.2 What this means for PRED-C2-r94-v1
+### 3.3 What this means for PRED-C2-r94-v1
 
 * The predicate's (iii) is a **finite 12-row panel**. The 46 escapes of §2 are outside it, so
   `hand_flagged=12/12` is compatible with a weakened selftest that the gate cannot see. The counter is not wrong;
@@ -273,7 +333,10 @@ panel row tests it.
 | gate on each weakening of §2 (112 runs) + one closing-kill run per escape | 0 (driver rc) |
 | `python3 -I quality/counters/c2-r94-selftest-kills.py … --draft-kills …` (P0) | 3 (`DRAFT_TARGET_MET`) |
 | the same on probes P6, P7, P1–P5 | 3/3/3/3/3/2/2 |
-| counter mutant panel: 16 × 8 probes | 0 (driver rc) |
+| counter mutant panel (v1): 16 × 8 probes | 0 (driver rc) |
+| counter v2 on the frozen panel + revision-B kill-sets (`P0`) | 3 (`DRAFT_TARGET_MISSED`) |
+| counter v2 on the escape-derived panel (`P8`) | 3 (`DRAFT_TARGET_MET`) |
+| counter mutant panel (v2): 0 × 9 probes | 0 (driver rc) |
 
 ## 5. Dead steps and errors
 
@@ -307,3 +370,5 @@ under `$S`; `$S` is deleted on exit after the evidence copies of §7.
 * `.ufo/waves/round-94/w1/R94MMutC2-escapes-mime.json` (59 weakenings, per-row gate lines, closers)
 * `.ufo/waves/round-94/w1/R94MMutC2-counter-baseline.json` (8-probe baseline)
 * `.ufo/waves/round-94/w1/R94MMutC2-counter-mutants.json` (16 counter mutants, per-probe verdict lines)
+* `.ufo/waves/round-94/w1/R94MMutC2-counter-baseline-v2.json` (9-probe baseline, counter v2)
+* `.ufo/waves/round-94/w1/R94MMutC2-escapes-c2b.json` (the same 112 weakenings against kill-set revision B)
