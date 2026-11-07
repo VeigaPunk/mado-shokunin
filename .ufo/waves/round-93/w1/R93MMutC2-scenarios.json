@@ -1,0 +1,44 @@
+[
+ {
+  "id": "N1-f3-nodedup",
+  "what": "neutralise the repeated --round dedup assertion: [7, 7] -> [7]",
+  "find": "}, [7, 7], 1,",
+  "replace": "}, [7], 1,"
+ },
+ {
+  "id": "N2-f2-no-want-in",
+  "what": "neutralise the F2 ASCII-token assertion: drop want_in from the name-with-space case",
+  "find": "want_in='\"A\\\\u0020b\\\\nc\"')",
+  "replace": "want_in=\"\")"
+ },
+ {
+  "id": "N3-sr03-abs",
+  "what": "neutralise the absolute-trailer SR03 assertion: relative path, present report",
+  "find": "    case(\"rev: absolute trailer path -> SR03\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", \"/etc/hostname\"))}, [7], 1,\n         [\"SR03\"], git=True)",
+  "replace": "    case(\"rev: absolute trailer path -> SR03\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\")),\n         f\"{W}/w1/A.md\": \"x\"}, [7], 0, [], git=True)"
+ },
+ {
+  "id": "H1-drop-ids",
+  "what": "drop the ids==want_ids conjunct from the pass predicate (all SR-id assertions vacuous)",
+  "find": "ok = rc == want_rc and ids == want_ids and (rc == 2 or",
+  "replace": "ok = rc == want_rc and (rc == 2 or"
+ },
+ {
+  "id": "H2-drop-want-in",
+  "what": "drop the want_in substring conjunct (8 cases lose their message assertion)",
+  "find": "ok = ok and all(g.isascii() for g in got) and (not want_in or any(want_in in g for g in got))",
+  "replace": "ok = ok and all(g.isascii() for g in got)"
+ },
+ {
+  "id": "N4-wt-symlink",
+  "what": "neutralise the worktree symlinked-report SR03 assertion (keeps the F5 case)",
+  "find": "    case(\"symlinked report -> SR03 rc1\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\")),\n                                          f\"{W}/w1/real.md\": \"x\", f\"{W}/w1/A.md\": {\"symlink\": \"real.md\"}}, [7], 1, [\"SR03\"])",
+  "replace": "    case(\"symlinked report -> SR03 rc1\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\")),\n                                          f\"{W}/w1/A.md\": \"x\"}, [7], 0, [])"
+ },
+ {
+  "id": "N5-sr01-two-task",
+  "what": "neutralise the two-seat missing->SR01 assertion (single present seat)",
+  "find": "    case(\"missing -> SR01 rc1\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"), task(\"B\", f\"{W}/w1/B.md\")),\n                                 f\"{W}/w1/A.md\": \"x\"}, [7], 1, [\"SR01\"])",
+  "replace": "    case(\"missing -> SR01 rc1\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\")),\n                                 f\"{W}/w1/A.md\": \"x\"}, [7], 0, [])"
+ }
+]

@@ -1,0 +1,143 @@
+{
+ "schema": "ufo-gate-mutants-v1",
+ "wave": "round-93",
+ "seat": "R93MMutC2",
+ "target": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+ "target_sha256": "76a1d9235b27a9c1e9b348a5ad77fb22d34d1ce6a5c4c9a8c06d0f203207e6e1",
+ "note": "Each find occurs exactly once in target; replace once.",
+ "mutants": [
+  {
+   "id": "G01-rc-ignored",
+   "what": "ignore the mutant's exit code: a non-zero rc with no FAIL line counts as SURVIVED, not killed",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "            if rc == 0 or not fails:",
+   "replace": "            if not fails:"
+  },
+  {
+   "id": "G02-must-fail-ignored",
+   "what": "ignore the must_fail label: any FAIL line is accepted as the expected kill",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "            elif k[\"must_fail\"] not in fails:",
+   "replace": "            elif False:"
+  },
+  {
+   "id": "G03-wrong-check-as-held",
+   "what": "count a WRONG_CHECK as held (the mutant is credited although a different check failed)",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "                wrong += 1",
+   "replace": "                held += 1"
+  },
+  {
+   "id": "G04-positive-control-skipped",
+   "what": "skip the unmutated-tool control entirely (no rc / failed=0 / FAIL-line check)",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "            if rc != 0 or fails:\n                out(f\"SELFTEST_STRENGTH: SETUP_ERROR unmutated selftest rc={rc} \"\n                    f\"fails={fails} result={results}\")\n                return 2\n            if not results or \"failed=0\" not in results[-1]:\n                out(f\"SELFTEST_STRENGTH: SETUP_ERROR unmutated selftest result \"\n                    f\"{results} lacks failed=0\")\n                return 2",
+   "replace": "            pass"
+  },
+  {
+   "id": "G05-timeout-as-held",
+   "what": "treat a mutant selftest that times out as held (killed) instead of unmeasured",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "                rc, fails, results = run_selftest(copy, argv, d, timeout,\n                                                  fail_prefix, result_prefix)\n            if rc == 0 or not fails:",
+   "replace": "                rc, fails, results = run_selftest(copy, argv, d, timeout,\n                                                  fail_prefix, result_prefix)\n            if rc is None:\n                held += 1\n                continue\n            if rc == 0 or not fails:"
+  },
+  {
+   "id": "G06-wrong-excluded-from-verdict",
+   "what": "verdict ignores wrong_check (only survived makes WEAK)",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "    verdict = \"WEAK\" if (survived or wrong) else \"OK\"",
+   "replace": "    verdict = \"WEAK\" if survived else \"OK\""
+  },
+  {
+   "id": "G07-survived-ignored",
+   "what": "verdict OK when survived > 0 (only wrong_check makes WEAK)",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "    verdict = \"WEAK\" if (survived or wrong) else \"OK\"",
+   "replace": "    verdict = \"WEAK\" if wrong else \"OK\""
+  },
+  {
+   "id": "G08-sha-guard-removed",
+   "what": "remove the tool_sha256 pin (a drifted tool is judged without --allow-sha-drift)",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "    if want_sha and want_sha != got_sha and not allow_sha_drift:",
+   "replace": "    if False:"
+  },
+  {
+   "id": "G09-rc-nonnegative-accepted",
+   "what": "accept any non-negative rc as a survivor (rc == 0 test widened to rc >= 0)",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "            if rc == 0 or not fails:",
+   "replace": "            if rc >= 0 or not fails:"
+  },
+  {
+   "id": "G10-first-kill-only",
+   "what": "evaluate only the first kill-set entry",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "        for k in kills:\n            find, replace = k[\"find\"], k[\"replace\"]",
+   "replace": "        for k in kills[:1]:\n            find, replace = k[\"find\"], k[\"replace\"]"
+  },
+  {
+   "id": "G11-survived-not-counted",
+   "what": "never increment the survived counter (SURVIVED note printed, verdict OK)",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "                survived += 1",
+   "replace": "                pass"
+  },
+  {
+   "id": "G12-result-line-unchecked",
+   "what": "accept any result line: the failed=0 guard is dropped",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "            if not results or \"failed=0\" not in results[-1]:",
+   "replace": "            if not results:"
+  },
+  {
+   "id": "G13-fail-prefix-anywhere",
+   "what": "treat any line containing the FAIL prefix as a FAIL line, not only lines that start with it",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "    fails = [ln[len(fail_prefix):] for ln in out if ln.startswith(fail_prefix)]",
+   "replace": "    fails = [ln[len(fail_prefix):] for ln in out if fail_prefix in ln]"
+  },
+  {
+   "id": "G14-any-to-all",
+   "what": "WEAK only when both survived and wrong_check are non-zero",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "    verdict = \"WEAK\" if (survived or wrong) else \"OK\"",
+   "replace": "    verdict = \"WEAK\" if (survived and wrong) else \"OK\""
+  },
+  {
+   "id": "G15-positive-rc-nonfatal",
+   "what": "the unmutated tool's non-zero rc no longer aborts the run",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "            if rc != 0 or fails:\n                out(f\"SELFTEST_STRENGTH: SETUP_ERROR unmutated selftest rc={rc} \"\n                    f\"fails={fails} result={results}\")\n                return 2",
+   "replace": "            if False:\n                return 2"
+  },
+  {
+   "id": "G16-find-occurrence-check-dropped",
+   "what": "a find that occurs zero/multiple times no longer raises a setup error",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "            if not find or pre.count(find) != 1:",
+   "replace": "            if not find:"
+  },
+  {
+   "id": "G17-sha-mismatch-nonfatal",
+   "what": "report the sha mismatch but continue (no rc 2)",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "    if want_sha and want_sha != got_sha and not allow_sha_drift:\n        out(f\"SELFTEST_STRENGTH: SETUP_ERROR tool sha256 mismatch \"\n            f\"want={want_sha} got={got_sha}\")\n        return 2",
+   "replace": "    if want_sha and want_sha != got_sha and not allow_sha_drift:\n        out(f\"SELFTEST_STRENGTH: SETUP_ERROR tool sha256 mismatch \"\n            f\"want={want_sha} got={got_sha}\")"
+  },
+  {
+   "id": "G18-survived-as-held",
+   "what": "count survivors as held (verdict OK, counters lie)",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "                survived += 1",
+   "replace": "                held += 1"
+  },
+  {
+   "id": "G19-rc-always-zero",
+   "what": "print WEAK verdict but exit 0 always",
+   "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/build/check-selftest-strength.c2.py",
+   "find": "    return 1 if verdict == \"WEAK\" else 0",
+   "replace": "    return 0"
+  }
+ ]
+}

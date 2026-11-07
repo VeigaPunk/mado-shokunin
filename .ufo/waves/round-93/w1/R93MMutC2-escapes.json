@@ -1,0 +1,150 @@
+[
+ {
+  "id": "E1-set-superset",
+  "what": "ids == want_ids -> set(ids) >= set(want_ids)",
+  "find": "    return lines, c",
+  "replace": "    lines.append(\"SR04 bogus round-7/w1 A\")\n    return lines, c",
+  "occ": [
+   1,
+   1
+  ],
+  "defect": "D-extra-line",
+  "pristine_rc": 1,
+  "pristine_fails": [
+   "all present -> OK rc0",
+   "missing -> SR01 rc1",
+   "empty -> SR02 rc1",
+   "unsafe -> SR03 rc1"
+  ],
+  "escape_defect_rc": 0,
+  "pristine_killed": true,
+  "escape_survives": true,
+  "selftest_green": true,
+  "gate_rc": 0,
+  "gate_line": "SELFTEST_STRENGTH: OK tool=quality/check-seat-reports.py kills=20 held=20 survived=0 wrong_check=0",
+  "gate_with_extra_kill_rc": 1,
+  "gate_with_extra_kill_line": "SELFTEST_STRENGTH: WEAK tool=quality/check-seat-reports.py kills=21 held=20 survived=1 wrong_check=0"
+ },
+ {
+  "id": "E2-rc-off-by-one",
+  "what": "rc == want_rc -> rc in (want_rc, want_rc+1)",
+  "find": "    return 1 if bad else 0",
+  "replace": "    return 1",
+  "occ": [
+   1,
+   1
+  ],
+  "defect": "D-rc1-always",
+  "pristine_rc": 1,
+  "pristine_fails": [
+   "all present -> OK rc0",
+   "rev: present -> OK rc0"
+  ],
+  "escape_defect_rc": 0,
+  "pristine_killed": true,
+  "escape_survives": true,
+  "selftest_green": true,
+  "gate_rc": 0,
+  "gate_line": "SELFTEST_STRENGTH: OK tool=quality/check-seat-reports.py kills=20 held=20 survived=0 wrong_check=0",
+  "gate_with_extra_kill_rc": 1,
+  "gate_with_extra_kill_line": "SELFTEST_STRENGTH: WEAK tool=quality/check-seat-reports.py kills=21 held=20 survived=1 wrong_check=0"
+ },
+ {
+  "id": "E3-mode-token",
+  "what": "rev/worktree mode assertion dropped",
+  "find": "    out(f\"SEAT_REPORTS: mode={'worktree' if worktree else 'rev'} rev={tree.rev} rounds={c['rounds']} \"",
+  "replace": "    out(f\"SEAT_REPORTS: mode=rev rev={tree.rev} rounds={c['rounds']} \"",
+  "occ": [
+   1,
+   1
+  ],
+  "defect": "D-mode-fixed",
+  "pristine_rc": 1,
+  "pristine_fails": [
+   "all present -> OK rc0",
+   "missing -> SR01 rc1",
+   "empty -> SR02 rc1",
+   "unsafe -> SR03 rc1"
+  ],
+  "escape_defect_rc": 0,
+  "pristine_killed": true,
+  "escape_survives": true,
+  "selftest_green": true,
+  "gate_rc": 0,
+  "gate_line": "SELFTEST_STRENGTH: OK tool=quality/check-seat-reports.py kills=20 held=20 survived=0 wrong_check=0",
+  "gate_with_extra_kill_rc": 1,
+  "gate_with_extra_kill_line": "SELFTEST_STRENGTH: WEAK tool=quality/check-seat-reports.py kills=21 held=20 survived=1 wrong_check=0"
+ },
+ {
+  "id": "E4-ascii-first-line-only",
+  "what": "ASCII check on got[:1] only",
+  "find": "    return lines, c",
+  "replace": "    if lines:\n        lines.append(\"\\u00e9\")\n    return lines, c",
+  "occ": [
+   1,
+   1
+  ],
+  "defect": "D-nonascii-tail",
+  "pristine_rc": 1,
+  "pristine_fails": [
+   "missing -> SR01 rc1",
+   "empty -> SR02 rc1",
+   "unsafe -> SR03 rc1",
+   "untrailed -> SR04 rc1"
+  ],
+  "escape_defect_rc": 0,
+  "pristine_killed": true,
+  "escape_survives": true,
+  "selftest_green": true,
+  "gate_rc": 0,
+  "gate_line": "SELFTEST_STRENGTH: OK tool=quality/check-seat-reports.py kills=20 held=20 survived=0 wrong_check=0",
+  "gate_with_extra_kill_rc": 1,
+  "gate_with_extra_kill_line": "SELFTEST_STRENGTH: WEAK tool=quality/check-seat-reports.py kills=21 held=20 survived=1 wrong_check=0"
+ },
+ {
+  "id": "E5-substring-case",
+  "what": "want_in compared case-insensitively",
+  "find": "raise SetupError(f\"{path}: dispatch is a symlink, not a regular file\")\n        if not self.inside(path):",
+  "replace": "raise SetupError(f\"{path}: DISPATCH IS A SYMLINK, not a regular file\")\n        if not self.inside(path):",
+  "occ": [
+   1,
+   1
+  ],
+  "defect": "D-upper-msg",
+  "pristine_rc": 1,
+  "pristine_fails": [
+   "worktree: symlinked dispatch -> rc2 (F1)"
+  ],
+  "escape_defect_rc": 0,
+  "pristine_killed": true,
+  "escape_survives": true,
+  "selftest_green": true,
+  "gate_rc": 0,
+  "gate_line": "SELFTEST_STRENGTH: OK tool=quality/check-seat-reports.py kills=20 held=20 survived=0 wrong_check=0",
+  "gate_with_extra_kill_rc": 1,
+  "gate_with_extra_kill_line": "SELFTEST_STRENGTH: WEAK tool=quality/check-seat-reports.py kills=21 held=20 survived=1 wrong_check=0"
+ },
+ {
+  "id": "N2-f2-no-want-in",
+  "what": "F2 case loses want_in",
+  "find": "return json.dumps(s, ensure_ascii=True).replace(\" \", \"\\\\u0020\")",
+  "replace": "return json.dumps(s, ensure_ascii=True)",
+  "occ": [
+   1,
+   1
+  ],
+  "defect": "D-no-space-escape",
+  "pristine_rc": 1,
+  "pristine_fails": [
+   "name with space and non-ASCII path -> ASCII tokens (F2)"
+  ],
+  "escape_defect_rc": 0,
+  "pristine_killed": true,
+  "escape_survives": true,
+  "selftest_green": true,
+  "gate_rc": 0,
+  "gate_line": "SELFTEST_STRENGTH: OK tool=quality/check-seat-reports.py kills=20 held=20 survived=0 wrong_check=0",
+  "gate_with_extra_kill_rc": 1,
+  "gate_with_extra_kill_line": "SELFTEST_STRENGTH: WEAK tool=quality/check-seat-reports.py kills=21 held=20 survived=1 wrong_check=0"
+ }
+]

@@ -1,0 +1,135 @@
+# round 93 sources opened by L1 MadoR93, 2026-11-07T03:03:53Z
+## curl -sSfL https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/glib/{gstrfuncs.c,gstrfuncs.h,gkeyfile.c} — two fetches each, all rc 0
+6ea1c4333161ec4e7c85c212cb46200ec331e45f12ccd20c8d018a3fdaa62fd4  gstrfuncs.c.1
+6ea1c4333161ec4e7c85c212cb46200ec331e45f12ccd20c8d018a3fdaa62fd4  gstrfuncs.c.2
+298b0dc4c82805322df7534152b917f9acd54d44e81132988476bb59a6426e23  gstrfuncs.h.1
+298b0dc4c82805322df7534152b917f9acd54d44e81132988476bb59a6426e23  gstrfuncs.h.2
+e1d1270f6c9881daf8a9f49b41395cbdd8e99fa290212e8530e0bd3df23ff656  gkeyfile.c.1
+e1d1270f6c9881daf8a9f49b41395cbdd8e99fa290212e8530e0bd3df23ff656  gkeyfile.c.2
+## gstrfuncs.h
+     1	  G_ASCII_GRAPH  = 1 << 4,
+     2	  G_ASCII_LOWER  = 1 << 5,
+     3	  G_ASCII_PRINT  = 1 << 6,
+     4	  G_ASCII_PUNCT  = 1 << 7,
+     5	  G_ASCII_SPACE  = 1 << 8,
+     6	  G_ASCII_UPPER  = 1 << 9,
+     7	  G_ASCII_XDIGIT = 1 << 10
+     8	
+     9	#define g_ascii_isspace(c) \
+    10	  ((g_ascii_table[(guchar) (c)] & G_ASCII_SPACE) != 0)
+    11	
+## gstrfuncs.c 262-266 (bytes 8..15 on line 264: BS TAB LF VT FF CR SO SI)
+static const guint16 ascii_table_data[256] = {
+  0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004,
+  0x004, 0x104, 0x104, 0x004, 0x104, 0x104, 0x004, 0x004,
+  0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004,
+  0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004,
+## gkeyfile.c g_ascii_isspace uses (S502 re-open)
+1625:  while (g_ascii_isspace (*line_start))
+1738:  while (g_ascii_isspace (*key_end))
+1757:  while (g_ascii_isspace (*value_start))
+4908:  if (*value == '\0' || (*eof_int != '\0' && !g_ascii_isspace(*eof_int)))
+4988:    if (!g_ascii_isspace (value[i]))
+
+  g_return_if_fail (key_file != NULL);
+  g_return_if_fail (line != NULL);
+
+  line_start = line;
+  while (g_ascii_isspace (*line_start))
+    line_start++;
+
+  if (g_key_file_line_is_comment (line_start))
+    g_key_file_parse_comment (key_file, line, length, &parse_error);
+  else if (g_key_file_line_is_group (line_start))
+
+  /* Pull the key name from the line (chomping trailing whitespace)
+   */
+  while (g_ascii_isspace (*key_end))
+    key_end--;
+
+  key_len = key_end - line + 2;
+
+
+  /* Pull the value from the line (chugging leading whitespace)
+   */
+  while (g_ascii_isspace (*value_start))
+    value_start++;
+
+  value_len = line + length - value_start;
+## gkeyfile.c key_get_locale / locale interesting / add_key_value_pair
+627:static const gchar          *key_get_locale                    (const gchar            *key,
+1586:g_key_file_locale_is_interesting (GKeyFile    *key_file,
+1788:  locale = key_get_locale (key, &locale_len);
+1790:  if (locale == NULL || g_key_file_locale_is_interesting (key_file, locale, locale_len))
+1806:key_get_locale (const gchar *key,
+2310:  if (!g_utf8_validate (value, -1, NULL))
+2427:  if (!g_utf8_validate (value, -1, NULL))
+
+## 2026-11-07T04:05:33Z L1 re-open of S513 source (R93MScoutSources found portal-impl.c 404 at 1.22.1; the reader is xdp-portal-config.c)
+## curl -sSfL https://raw.githubusercontent.com/flatpak/xdg-desktop-portal/1.22.1/src/xdp-portal-config.c — two fetches, rc 0
+2da4fd835032401b2ca0e1a503cb600abdb68e27bc9d23b8fbd28f8e2d4c4fe1  xdpc.1
+2da4fd835032401b2ca0e1a503cb600abdb68e27bc9d23b8fbd28f8e2d4c4fe1  xdpc.2
+## xdp-portal-config.c lines 189, 201, 214, 244, 408, 411, 427-432
+  if (!g_key_file_load_from_file (keyfile, path, G_KEY_FILE_NONE, error))
+  impl_config->dbus_name = g_key_file_get_string (keyfile,
+  impl_config->interfaces = g_key_file_get_string_list (keyfile,
+  impl_config->use_in = g_key_file_get_string_list (keyfile,
+  if (!g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, NULL))
+  ifaces = g_key_file_get_keys (key_file, "preferred", NULL, NULL);
+          interface->portals = g_key_file_get_string_list (key_file, "preferred", ifaces[i], NULL, NULL);
+          if (interface->portals == NULL)
+            {
+              g_critical ("Invalid portals for interface '%s' in %s", ifaces[i], portal_file);
+              return NULL;
+            }
+## gkeyfile.c (S514) parse_group 1677-1701, parse_key_value_pair 1755-1772, line_is_comment 4558-4564
+g_key_file_parse_group (GKeyFile     *key_file,
+			const gchar  *line,
+			gsize         length,
+			GError      **error)
+{
+  gchar *group_name;
+  const gchar *group_name_start, *group_name_end;
+  
+  /* advance past opening '['
+   */
+  group_name_start = line + 1;
+  group_name_end = line + length - 1;
+  
+  while (*group_name_end != ']')
+    group_name_end--;
+
+  group_name = g_strndup (group_name_start, 
+                          group_name_end - group_name_start);
+  
+  if (!g_key_file_is_group_name (group_name))
+    {
+      g_set_error (error, G_KEY_FILE_ERROR,
+		   G_KEY_FILE_ERROR_PARSE,
+		   _("Invalid group name: %s"), group_name);
+      g_free (group_name);
+  /* Pull the value from the line (chugging leading whitespace)
+   */
+  while (g_ascii_isspace (*value_start))
+    value_start++;
+
+  value_len = line + length - value_start;
+
+  g_warn_if_fail (key_file->start_group != NULL);
+
+  /* Checked on entry to this function */
+  g_assert (key_file->current_group != NULL);
+  g_assert (key_file->current_group->name != NULL);
+
+  if (key_file->start_group == key_file->current_group
+      && strcmp (key, "Encoding") == 0)
+    {
+      if (value_len != strlen ("UTF-8") ||
+          g_ascii_strncasecmp (value_start, "UTF-8", value_len) != 0)
+ * has been stripped.
+ */
+static gboolean
+g_key_file_line_is_comment (const gchar *line)
+{
+  return (*line == '#' || *line == '\0' || *line == '\n');
+}

@@ -1,0 +1,31 @@
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-90/controls/portal-oracle-r90.py	2026-11-06 19:09:53.980685805 -0300
++++ /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-93/controls/portal-oracle-r93.py	2026-11-07 00:09:15.074651667 -0300
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Round-90 oracle: ask the installed xdg-desktop-portal binary which backend it picks.
++"""Round-93 oracle: ask the installed xdg-desktop-portal binary which backend it picks.
+ 
+ The oracle is the production binary (/usr/lib/xdg-desktop-portal, package
+ xdg-desktop-portal 1.22.1) run with `-v -r` inside a private, activation-free
+@@ -105,8 +105,8 @@
+         for rel, text in case["files"].items():
+             p = os.path.join(pdir, rel)
+             os.makedirs(os.path.dirname(p), exist_ok=True)
+-            with open(p, "w", encoding="utf-8", newline="") as fh:
+-                fh.write(text)
++            with open(p, "wb") as fh:
++                fh.write(text.encode("utf-8", "surrogateescape"))
+         env["XDG_DESKTOP_PORTAL_DIR"] = pdir
+         # data dirs still needed for nothing portal-related in dir mode
+         env["XDG_DATA_DIRS"] = os.path.join(root, "nodata")
+@@ -118,8 +118,8 @@
+         for rel, text in case["files"].items():
+             p = os.path.join(root, "x", rel)
+             os.makedirs(os.path.dirname(p), exist_ok=True)
+-            with open(p, "w", encoding="utf-8", newline="") as fh:
+-                fh.write(text)
++            with open(p, "wb") as fh:
++                fh.write(text.encode("utf-8", "surrogateescape"))
+             parts = rel.split("/")
+             if parts[0] == "config_dirs":
+                 n_cfg = max(n_cfg, int(parts[1]) + 1)

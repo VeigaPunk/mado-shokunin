@@ -1,0 +1,145 @@
+{
+ "tool": "quality/check-seat-reports.py",
+ "weakenings": [
+  {
+   "id": "h01-want-in-drop-f1-rev",
+   "what": "remove the want_in pin of the rev symlinked-dispatch check (F1)",
+   "find": "         [7], 2, [], git=True, want_in=\"dispatch is a symlink\")",
+   "replace": "         [7], 2, [], git=True)"
+  },
+  {
+   "id": "h02-want-in-drop-f1-worktree",
+   "what": "remove the want_in pin of the worktree symlinked-dispatch check (F1)",
+   "find": "         f\"{W}/w2-dispatch.json\": {\"symlink\": \"real.json\"}}, [7], 2, [], want_in=\"dispatch is a symlink\")",
+   "replace": "         f\"{W}/w2-dispatch.json\": {\"symlink\": \"real.json\"}}, [7], 2, [])"
+  },
+  {
+   "id": "h03-want-in-drop-f2",
+   "what": "remove the want_in pin of the ASCII-token check (F2)",
+   "find": "[\"SR01\"], want_in='\"A\\\\u0020b\\\\nc\"')",
+   "replace": "[\"SR01\"])"
+  },
+  {
+   "id": "h04-want-in-drop-f3",
+   "what": "remove the want_in pin of the repeated-round check (F3)",
+   "find": "[\"SR01\"], want_in=\"rounds=1 waves=1 seats=1\")",
+   "replace": "[\"SR01\"])"
+  },
+  {
+   "id": "h05-want-in-drop-f4",
+   "what": "remove the want_in pin of the FIFO check (F4)",
+   "find": "         want_in=\"not a regular file\")",
+   "replace": "         )"
+  },
+  {
+   "id": "h06-widen-ids-to-prefix",
+   "what": "widen the ids equality in the shared ok predicate to a prefix comparison",
+   "find": "            ok = rc == want_rc and ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+   "replace": "            ok = rc == want_rc and ids[:len(want_ids)] == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))"
+  },
+  {
+   "id": "h07-drop-rc-comparison",
+   "what": "drop the rc comparison from the shared ok predicate",
+   "find": "            ok = rc == want_rc and ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+   "replace": "            ok = ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))"
+  },
+  {
+   "id": "h08-drop-mode-comparison",
+   "what": "drop the mode/summary-line comparison from the shared ok predicate",
+   "find": "            ok = rc == want_rc and ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+   "replace": "            ok = rc == want_rc and ids == want_ids"
+  },
+  {
+   "id": "h09-f3-repeat-removed",
+   "what": "revert the F3 repeated-round data [7, 7] -> [7] (the repeat assertion disappears)",
+   "find": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7, 7], 1,",
+   "replace": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7], 1,"
+  },
+  {
+   "id": "h10-widen-ids-subset",
+   "what": "widen the ids equality to a subset membership (every want_id present, extras allowed)",
+   "find": "            ok = rc == want_rc and ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+   "replace": "            ok = rc == want_rc and all(w in ids for w in want_ids) and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))"
+  },
+  {
+   "id": "e01-ids-superset",
+   "what": "ids equality -> superset (R93MMutC2 E1)",
+   "find": "ok = rc == want_rc and ids == want_ids and (rc == 2 or",
+   "replace": "ok = rc == want_rc and set(ids) >= set(want_ids) and (rc == 2 or"
+  },
+  {
+   "id": "e02-rc-off-by-one",
+   "what": "rc equality -> rc or rc+1 (R93MMutC2 E2)",
+   "find": "ok = rc == want_rc and ids == want_ids",
+   "replace": "ok = rc in (want_rc, want_rc + 1) and ids == want_ids"
+  },
+  {
+   "id": "e03-mode-token",
+   "what": "summary mode token -> any mode (R93MMutC2 E3)",
+   "find": "got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\")",
+   "replace": "\"SEAT_REPORTS: mode=\" in got[-1]"
+  },
+  {
+   "id": "e04-ascii-first-line",
+   "what": "ASCII check on the first line only (R93MMutC2 E4)",
+   "find": "all(g.isascii() for g in got)",
+   "replace": "all(g.isascii() for g in got[:1])"
+  },
+  {
+   "id": "e05-want-in-casefold",
+   "what": "want_in compared case-insensitively (R93MMutC2 E5)",
+   "find": "any(want_in in g for g in got)",
+   "replace": "any(want_in.lower() in g.lower() for g in got)"
+  },
+  {
+   "id": "e06-first-fail-only",
+   "what": "only the first failing label is printed (R93MMutC2 E8)",
+   "find": "    for n in failed:\n        print(f\"SEAT_REPORTS_SELFTEST_FAIL: {n}\")",
+   "replace": "    for n in failed[:1]:\n        print(f\"SEAT_REPORTS_SELFTEST_FAIL: {n}\")"
+  }
+ ],
+ "neutrals": [
+  {
+   "id": "n01-selftest-comment",
+   "what": "a comment line inside the selftest",
+   "find": "    W = \".ufo/waves/round-7\"\n",
+   "replace": "    # fixtures live under a round-7 wave directory\n    W = \".ufo/waves/round-7\"\n",
+   "all": false
+  },
+  {
+   "id": "n02-reorder-two-cases",
+   "what": "two independent rc2 cases swap places",
+   "find": "    case(\"no dispatch for round -> rc2\", {f\"{W}/w1/A.md\": \"x\"}, [7], 2, [])\n    case(\"bad dispatch json -> rc2\", {f\"{W}/w1-dispatch.json\": \"{\"}, [7], 2, [])\n",
+   "replace": "    case(\"bad dispatch json -> rc2\", {f\"{W}/w1-dispatch.json\": \"{\"}, [7], 2, [])\n    case(\"no dispatch for round -> rc2\", {f\"{W}/w1/A.md\": \"x\"}, [7], 2, [])\n",
+   "all": false
+  },
+  {
+   "id": "n03-lambda-to-def",
+   "what": "the selftest's dispatch helper becomes an equivalent def",
+   "find": "    disp = lambda *ts: json.dumps({\"taskCall\": {\"context\": \"c\", \"tasks\": list(ts)}})\n",
+   "replace": "    def disp(*ts):\n        return json.dumps({\"taskCall\": {\"context\": \"c\", \"tasks\": list(ts)}})\n",
+   "all": false
+  },
+  {
+   "id": "n04-tighten-want-in",
+   "what": "a stricter assertion: the missing case also pins its SR01 text",
+   "find": "                                 f\"{W}/w1/A.md\": \"x\"}, [7], 1, [\"SR01\"])",
+   "replace": "                                 f\"{W}/w1/A.md\": \"x\"}, [7], 1, [\"SR01\"], want_in=\"SR01 missing\")",
+   "all": false
+  },
+  {
+   "id": "n05-header-comment",
+   "what": "a comment after the shebang (production prefix)",
+   "find": "#!/usr/bin/env python3\n",
+   "replace": "#!/usr/bin/env python3\n# neutral edit: no behaviour change\n",
+   "all": false
+  },
+  {
+   "id": "n06-blank-lines",
+   "what": "blank lines between selftest cases",
+   "find": "    case(\"empty -> SR02 rc1\",",
+   "replace": "\n    case(\"empty -> SR02 rc1\",",
+   "all": false
+  }
+ ]
+}

@@ -1,0 +1,219 @@
+{
+  "grammar": "random.Random(int(seed,16)) over FRESH_POOL (label,transform) rows; each row verifies green",
+  "seed": "76a1d923",
+  "seed_rule": "first 8 hex digits of gate sha256",
+  "tool": "quality/check-seat-reports.py",
+  "tool_sha256": "176fc066b49334921e4fd746de55db8106709c29dfe225430224c9d46ed1663a",
+  "weakenings": [
+    {
+      "check": "rev: symlinked dispatch -> rc2 (F1)",
+      "find": "         [7], 2, [], git=True, want_in=\"dispatch is a symlink\")",
+      "id": "h01-want-in-drop-f1-rev",
+      "replace": "         [7], 2, [], git=True)",
+      "what": "remove the want_in pin of the rev symlinked-dispatch check (F1)"
+    },
+    {
+      "check": "worktree: symlinked dispatch -> rc2 (F1)",
+      "find": "         f\"{W}/w2-dispatch.json\": {\"symlink\": \"real.json\"}}, [7], 2, [], want_in=\"dispatch is a symlink\")",
+      "id": "h02-want-in-drop-f1-worktree",
+      "replace": "         f\"{W}/w2-dispatch.json\": {\"symlink\": \"real.json\"}}, [7], 2, [])",
+      "what": "remove the want_in pin of the worktree symlinked-dispatch check (F1)"
+    },
+    {
+      "check": "name with space and non-ASCII path -> ASCII tokens (F2)",
+      "find": "[\"SR01\"], want_in='\"A\\\\u0020b\\\\nc\"')",
+      "id": "h03-want-in-drop-f2",
+      "replace": "[\"SR01\"])",
+      "what": "remove the want_in pin of the ASCII-token check (F2)"
+    },
+    {
+      "check": "repeated --round counts once (F3)",
+      "find": "[\"SR01\"], want_in=\"rounds=1 waves=1 seats=1\")",
+      "id": "h04-want-in-drop-f3",
+      "replace": "[\"SR01\"])",
+      "what": "remove the want_in pin of the repeated-round check (F3)"
+    },
+    {
+      "check": "worktree: FIFO dispatch -> rc2, no hang (F4)",
+      "find": "         want_in=\"not a regular file\")",
+      "id": "h05-want-in-drop-f4",
+      "replace": "         )",
+      "what": "remove the want_in pin of the FIFO check (F4)"
+    },
+    {
+      "check": "missing -> SR01 rc1",
+      "find": "            ok = rc == want_rc and ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+      "id": "h06-widen-ids-to-prefix",
+      "replace": "            ok = rc == want_rc and ids[:len(want_ids)] == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+      "what": "widen the ids equality in the shared ok predicate to a prefix comparison"
+    },
+    {
+      "check": "missing -> SR01 rc1",
+      "find": "            ok = rc == want_rc and ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+      "id": "h07-drop-rc-comparison",
+      "replace": "            ok = ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+      "what": "drop the rc comparison from the shared ok predicate"
+    },
+    {
+      "check": "rev: present -> OK rc0",
+      "find": "            ok = rc == want_rc and ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+      "id": "h08-drop-mode-comparison",
+      "replace": "            ok = rc == want_rc and ids == want_ids",
+      "what": "drop the mode/summary-line comparison from the shared ok predicate"
+    },
+    {
+      "check": "repeated --round counts once (F3)",
+      "find": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7, 7], 1,",
+      "id": "h09-f3-repeat-removed",
+      "replace": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7], 1,",
+      "what": "revert the F3 repeated-round data [7, 7] -> [7] (the repeat assertion disappears)"
+    },
+    {
+      "check": "empty -> SR02 rc1",
+      "find": "            ok = rc == want_rc and ids == want_ids and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+      "id": "h10-widen-ids-subset",
+      "replace": "            ok = rc == want_rc and all(w in ids for w in want_ids) and (rc == 2 or got[-1].startswith(f\"SEAT_REPORTS: mode={mode}\"))",
+      "what": "widen the ids equality to a subset membership (every want_id present, extras allowed)"
+    },
+    {
+      "check": "name with space and non-ASCII path -> ASCII tokens (F2)",
+      "find": "[\"SR01\"], want_in='\"A\\\\u0020b\\\\nc\"')",
+      "id": "fresh-76a1d923-000-drop-want-in",
+      "replace": "[\"SR01\"])",
+      "what": "remove the want_in pin of the ASCII-token check (F2)"
+    },
+    {
+      "check": "name with space and non-ASCII path -> ASCII tokens (F2)",
+      "find": "[\"SR01\"], want_in='\"A\\\\u0020b\\\\nc\"')",
+      "id": "fresh-76a1d923-001-drop-want-in",
+      "replace": "[\"SR01\"])",
+      "what": "remove the want_in pin of the ASCII-token check (F2)"
+    },
+    {
+      "check": "repeated --round counts once (F3)",
+      "find": "[\"SR01\"], want_in=\"rounds=1 waves=1 seats=1\")",
+      "id": "fresh-76a1d923-002-drop-want-in",
+      "replace": "[\"SR01\"])",
+      "what": "remove the want_in pin of the repeated-round check (F3)"
+    },
+    {
+      "check": "repeated --round counts once (F3)",
+      "find": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7, 7], 1,",
+      "id": "fresh-76a1d923-003-remove-f3-repeat",
+      "replace": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7], 1,",
+      "what": "revert the F3 repeated-round data [7, 7] -> [7]"
+    },
+    {
+      "check": "rev: symlinked dispatch -> rc2 (F1)",
+      "find": "         [7], 2, [], git=True, want_in=\"dispatch is a symlink\")",
+      "id": "fresh-76a1d923-004-drop-want-in",
+      "replace": "         [7], 2, [], git=True)",
+      "what": "remove the want_in pin of the rev symlinked-dispatch check (F1)"
+    },
+    {
+      "check": "repeated --round counts once (F3)",
+      "find": "[\"SR01\"], want_in=\"rounds=1 waves=1 seats=1\")",
+      "id": "fresh-76a1d923-005-drop-want-in",
+      "replace": "[\"SR01\"])",
+      "what": "remove the want_in pin of the repeated-round check (F3)"
+    },
+    {
+      "check": "repeated --round counts once (F3)",
+      "find": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7, 7], 1,",
+      "id": "fresh-76a1d923-006-remove-f3-repeat",
+      "replace": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7], 1,",
+      "what": "revert the F3 repeated-round data [7, 7] -> [7]"
+    },
+    {
+      "check": "rev: symlinked dispatch -> rc2 (F1)",
+      "find": "         [7], 2, [], git=True, want_in=\"dispatch is a symlink\")",
+      "id": "fresh-76a1d923-007-drop-want-in",
+      "replace": "         [7], 2, [], git=True)",
+      "what": "remove the want_in pin of the rev symlinked-dispatch check (F1)"
+    },
+    {
+      "check": "repeated --round counts once (F3)",
+      "find": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7, 7], 1,",
+      "id": "fresh-76a1d923-008-remove-f3-repeat",
+      "replace": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7], 1,",
+      "what": "revert the F3 repeated-round data [7, 7] -> [7]"
+    },
+    {
+      "check": "worktree: FIFO dispatch -> rc2, no hang (F4)",
+      "find": "         want_in=\"not a regular file\")",
+      "id": "fresh-76a1d923-009-drop-want-in",
+      "replace": "         )",
+      "what": "remove the want_in pin of the FIFO check (F4)"
+    },
+    {
+      "check": "name with space and non-ASCII path -> ASCII tokens (F2)",
+      "find": "[\"SR01\"], want_in='\"A\\\\u0020b\\\\nc\"')",
+      "id": "fresh-76a1d923-010-drop-want-in",
+      "replace": "[\"SR01\"])",
+      "what": "remove the want_in pin of the ASCII-token check (F2)"
+    },
+    {
+      "check": "repeated --round counts once (F3)",
+      "find": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7, 7], 1,",
+      "id": "fresh-76a1d923-011-remove-f3-repeat",
+      "replace": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7], 1,",
+      "what": "revert the F3 repeated-round data [7, 7] -> [7]"
+    },
+    {
+      "check": "name with space and non-ASCII path -> ASCII tokens (F2)",
+      "find": "[\"SR01\"], want_in='\"A\\\\u0020b\\\\nc\"')",
+      "id": "fresh-76a1d923-012-drop-want-in",
+      "replace": "[\"SR01\"])",
+      "what": "remove the want_in pin of the ASCII-token check (F2)"
+    },
+    {
+      "check": "repeated --round counts once (F3)",
+      "find": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7, 7], 1,",
+      "id": "fresh-76a1d923-013-remove-f3-repeat",
+      "replace": "case(\"repeated --round counts once (F3)\", {f\"{W}/w1-dispatch.json\": disp(task(\"A\", f\"{W}/w1/A.md\"))}, [7], 1,",
+      "what": "revert the F3 repeated-round data [7, 7] -> [7]"
+    },
+    {
+      "check": "worktree: FIFO dispatch -> rc2, no hang (F4)",
+      "find": "         want_in=\"not a regular file\")",
+      "id": "fresh-76a1d923-014-drop-want-in",
+      "replace": "         )",
+      "what": "remove the want_in pin of the FIFO check (F4)"
+    },
+    {
+      "check": "worktree: symlinked dispatch -> rc2 (F1)",
+      "find": "         f\"{W}/w2-dispatch.json\": {\"symlink\": \"real.json\"}}, [7], 2, [], want_in=\"dispatch is a symlink\")",
+      "id": "fresh-76a1d923-015-drop-want-in",
+      "replace": "         f\"{W}/w2-dispatch.json\": {\"symlink\": \"real.json\"}}, [7], 2, [])",
+      "what": "remove the want_in pin of the worktree symlinked-dispatch check (F1)"
+    },
+    {
+      "check": "rev: symlinked dispatch -> rc2 (F1)",
+      "find": "         [7], 2, [], git=True, want_in=\"dispatch is a symlink\")",
+      "id": "fresh-76a1d923-016-drop-want-in",
+      "replace": "         [7], 2, [], git=True)",
+      "what": "remove the want_in pin of the rev symlinked-dispatch check (F1)"
+    },
+    {
+      "check": "worktree: symlinked dispatch -> rc2 (F1)",
+      "find": "         f\"{W}/w2-dispatch.json\": {\"symlink\": \"real.json\"}}, [7], 2, [], want_in=\"dispatch is a symlink\")",
+      "id": "fresh-76a1d923-017-drop-want-in",
+      "replace": "         f\"{W}/w2-dispatch.json\": {\"symlink\": \"real.json\"}}, [7], 2, [])",
+      "what": "remove the want_in pin of the worktree symlinked-dispatch check (F1)"
+    },
+    {
+      "check": "rev: symlinked dispatch -> rc2 (F1)",
+      "find": "         [7], 2, [], git=True, want_in=\"dispatch is a symlink\")",
+      "id": "fresh-76a1d923-018-drop-want-in",
+      "replace": "         [7], 2, [], git=True)",
+      "what": "remove the want_in pin of the rev symlinked-dispatch check (F1)"
+    },
+    {
+      "check": "name with space and non-ASCII path -> ASCII tokens (F2)",
+      "find": "[\"SR01\"], want_in='\"A\\\\u0020b\\\\nc\"')",
+      "id": "fresh-76a1d923-019-drop-want-in",
+      "replace": "[\"SR01\"])",
+      "what": "remove the want_in pin of the ASCII-token check (F2)"
+    }
+  ]
+}
