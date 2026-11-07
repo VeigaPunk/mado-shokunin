@@ -1,0 +1,18 @@
+# round-91 D1: quality/check-receipt-presence.py --selftest (R91MExecD1 copy, 87 added lines, 0 removed), MadoR91, 2026-11-06T22:00:22-03:00
+$ git diff --numstat cc0381db -- quality/check-receipt-presence.py (worktree)
+87	0	quality/check-receipt-presence.py
+rc=0
+$ TMPDIR=$S python3 -I quality/check-receipt-presence.py --selftest
+RECEIPT_PRESENCE_SELFTEST: checks=6 failed=0
+rc=0
+# mutant 'missing citations ignored': find not present ('missing.append('); skipped
+# mutant 'exit 1 becomes 0': find not present ('return 1 if missing else 0'); skipped
+$ mutant 'a miss is not counted' ('missing += 1' -> 'pass') --selftest
+RECEIPT_PRESENCE_SELFTEST: checks=6 failed=2
+rc=1
+$ mutant 'exit 1 becomes 0' ('return 0 if missing == 0 else 1' -> 'return 0') --selftest
+RECEIPT_PRESENCE_SELFTEST: checks=6 failed=1
+rc=1
+$ mutant 'finding line dropped' ('print(f"missing {cite} -> {cands[0]} {path}:{n}")' -> 'pass') --selftest
+RECEIPT_PRESENCE_SELFTEST: checks=6 failed=1
+rc=1
