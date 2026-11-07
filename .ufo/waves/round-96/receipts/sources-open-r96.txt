@@ -1,0 +1,96 @@
+# round-96 sources opened by the L1 MadoR96 (2026-11-07)
+
+Fetch rule (QUALITY 164): a digest counts only from HTTP 200 at the recorded URL; `%{http_code}` and
+`%{url_effective}` recorded, two fetches each, both bodies byte-identical unless stated.
+
+## Status block
+
+| # | URL | http | url_effective | bytes | sha256 (both fetches identical) |
+|---|---|---|---|---|---|
+| 1 | https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmimemagic.c | 200 | same | 18289 | fcb1eafe748d3dc18f7f405d1078c8a32e313d23d2fab86b0f12e609ac2ce742 |
+| 2 | https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmime.c | 200 | same | 23417 | afb1c1c1ba726a9fb8d8732f4031f5aa85a67ec3b7a2f989b617e4f4f5282410 |
+| 3 | https://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html | 200 | same | 59208 | e00fa00e69b1e95ad8642d05fc5023c26f859bdaf8bdda3e091a55feb016c61e |
+
+Commands (fetch dir `.ufo/waves/round-96/fetch/`):
+
+    curl -sSL -o xdgmimemagic.c.1 -w '%{http_code} %{url_effective} %{size_download}' <url1>
+    curl -sSL -o xdgmimemagic.c.2 -w '%{http_code} %{url_effective} %{size_download}' <url1>
+    cmp xdgmimemagic.c.1 xdgmimemagic.c.2 && sha256sum xdgmimemagic.c.1
+    # same for xdgmime.c and smi-ar01s02.html
+
+Also probed: `ar01s03.html` 200 (7048 B, no MIME-Magic text); `ar01s04..07.html` 404. The
+`ar01s02.html` page holds the whole §2.5 "The magic files" section.
+
+## Held rows re-opened this round
+
+- **S505** (`xdgmime.c`, digest `afb1c1c1…2410`): re-fetched twice, digest equal to the row's pin; cited
+  this round for the mode rule (text vs cache database selection, `xdgmime.c:99-206`, `:391-436`).
+- **S523** (`https://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html`,
+  `e00fa00e…c61e`, 59208 B): re-fetched twice, digest equal to the row's pin; cited for §2.5 (magic format)
+  and §2.12 (checking order). No 301 this round.
+- **S519/S520/S521/S522** (GLib cache/fdo files, round 95): not re-fetched this round; the tool's cache-mode
+  refusal is round 95's surface and the text tool does not read those bytes.
+
+## Row proposals (ids assigned at the freeze by the L1; the census renumbers nothing)
+
+### S524 — xdgmimemagic.c (GLib tag 2.90.1), scope: the TEXT magic database parser and matcher
+
+Located quote (line 815, `wc -l` 819):
+
+    if (memcmp ("MIME-Magic\0\n", header, 12) == 0)
+
+Further rules and their located lines (all in the fetched bytes):
+
+| rule | located line(s) | quote (<=25 words) |
+|---|---|---|
+| file gate, 12 bytes | 806-819 | `if (fread (header, 1, 12, magic_file) == 12)` |
+| section header `[priority:type]` | 230-281 | `match->priority = _xdg_mime_magic_read_a_number (magic_file, &end_of_file);` |
+| type termination | 258-276 | `while (*end_ptr != ']' && *end_ptr != '\000' && *end_ptr != '\n')` |
+| value length, two bytes big-endian | 372-391 | `matchlet->value_length = matchlet->value_length << 8;` |
+| mask equal length | 400-419 | `bytes_read = fread (matchlet->mask, 1, matchlet->value_length, magic_file);` |
+| word size 1/2/4, swap at parse | 421-450 | `if (matchlet->value_length % matchlet->word_size != 0)` |
+| range length | 452-470 | `matchlet->range_length = _xdg_mime_magic_read_a_number (magic_file, &end_of_file);` |
+| parse error drops the section | 283-300, 749-782 | `state = _xdg_mime_magic_parse_error (magic_file);` |
+| match order by priority, ties in file order | 596-629 | `if (list->next->priority < match->priority)` |
+| first matching section wins | 652-678 | `if (_xdg_mime_magic_match_compare_to_data (match, data, len))` |
+| nesting by indent | 557-588 | `_xdg_mime_magic_matchlet_compare_level (matchlet->next, data, len, indent + 1)` |
+| bounds rule returns FALSE | 515-536 | `if (i + matchlet->value_length > len) return FALSE;` |
+| defaults: indent 0, offset 0, range 1, word 1 | 84-105 | `matchlet->range_length = 1;` |
+| section kept only if a matchlet parsed | 749-782 | `_xdg_mime_magic_matchlet_mirror (match->matchlet);` |
+
+### S525 — shared-mime-info spec §2.5 (same URL as S523, new scope; census W04 expected)
+
+Located quote (page line 387, `ar01s02.html`):
+
+    The file starts with the magic string "MIME-Magic\0\n".
+
+Further located lines on the same page (text extraction, page line numbers of the fetched HTML):
+
+| rule | page line | quote (<=25 words) |
+|---|---|---|
+| big-endian numbers | 389-391 | `All numbers are big-endian, so need to be byte-swapped on little-endian machines.` |
+| section form | 393-399 | `Each section is introduced by giving the priority and type in brackets, followed by a newline character.` |
+| line form | 400-414 | `[ indent ] ">" start-offset "=" value` |
+| two-byte length | 407-410 | `Two bytes giving the (big-endian) length of the value, followed by the value itself.` |
+| defaults | 429-433 | `If missing, indent defaults to 0, range-length to 1, the word-size to 1` |
+| unknown character | 441-446 | `If an unknown character is found where a newline is expected then the whole line should be ignored` |
+| parent rule | 435-439 | `The parent of an entry is the preceding entry with an indent one less than the entry.` |
+
+**Divergence to record in the entry (measured against the C, not the spec):** the spec says only the bad
+*line* is ignored; the C (`:283-300` + `:749-782`) drops the whole *section* (parse_error skips to the next
+newline and returns to SECTION; a following matchlet line is then an ERROR again). The tool models the C
+because the oracle is the installed library. A second divergence: the spec says "Higher priority entries come
+first" in the file; the C re-sorts (`insert_match`) so file order is irrelevant except for equal priorities.
+
+## Local documentation check (not a row)
+
+- `ls /usr/share/man/man5 | grep -i mime` → `mime.convs.5.gz`, `mime.types.5.gz` (Apache); no
+  shared-mime-info(5) page on this host. `update-mime-database` exists (`command -v`), and the spec page is the
+  format's documentation.
+- The host's own text database: `/usr/share/mime/{magic,globs,globs2,aliases,subclasses,icons,generic-icons,XMLnamespaces}`
+  plus `mime.cache` (the cache that makes the host itself cache mode). Measured by R96MExecHostC1.
+
+## Source URLs named to seats
+
+Only rows 1-3 above, the held GLib rows already in `corpus/SOURCES.md`, and the round-95 fetch dir's GLib files.
+Any seat citing another URL must fetch it with the status recorder and count it only at 200.
