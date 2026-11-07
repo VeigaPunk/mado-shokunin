@@ -559,3 +559,14 @@ and never reads text `magic` files (that mode is refused). Its caller on this ho
 `quality/selftest-kills/mado-portals.json` are data for the unchanged round-93 gate, which copies `tools/mado-mimeglob.py`
 or `tools/mado-portals.py` into scratch, applies a kill there and runs its `--selftest`; nothing outside scratch is
 written. The gate's own selftest stays without a kill-set (lesson M95-3).
+
+
+**Round-96 refinement (C1) — file bytes → MIME type in the TEXT database mode (read-only); no new write surface.**
+`tools/mado-mimetext.py` reads the text `mime/magic` file (its `MIME-Magic` sections, matchlets,
+word sizes and ranges, plus round 94's name step from `mime/globs2`/`mime/globs`) under the xdgmime
+data roots it is given and the files it is asked to sniff (S524, S525, S505, S520, S521, S522), and
+writes nothing; it never runs `update-mime-database`, never edits `~/.local/share/mime`, and refuses
+(exit 3) any state where a loadable `mime.cache` exists in a reachable directory — that state is
+round 95's `tools/mado-mimesniff.py`. Its callers are the same GIO `standard::content-type` path as
+round 95, but only on a host whose reachable directories hold no loadable cache; `xdg-open` on
+Hyprland still uses `file(1)` (revenger's ground) and is outside it.
