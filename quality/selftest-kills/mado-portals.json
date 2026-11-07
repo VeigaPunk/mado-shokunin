@@ -1,0 +1,415 @@
+{
+ "tool": "tools/mado-portals.py",
+ "tool_sha256": "e46a861e6a8ab62e26671169e201b953ca629a3861c6dddc74fd89b73b2ac021",
+ "selftest_argv": [
+  "--selftest"
+ ],
+ "fail_line_prefix": "MADO_PORTALS_SELFTEST_FAIL: ",
+ "result_line_prefix": "MADO_PORTALS_SELFTEST: ",
+ "selftest_checks": 28,
+ "note": "round-95 C2 kills by R95MExecKillsC2 (DRAFT until L1 freeze): 27 production mutants covering all 28 selftest labels; must_fail = the exact FAIL-label set of each mutant on the unweakened --selftest, measured in scratch (find occurs exactly once in the whole tool and lies before 'def selftest(' at line 575). Labels without a singleton: 1 (p01 [1,8], also in p02), 2 (p02), 3 and 4 (share p03), 6 (p06b [6,7]), 10 (p10 [8,10]). Round-1 mutants p06/p08/p13/p17/p24/p26/p27 survived, crashed or hit a wrong line and were replaced by p06b/p08b/p13c/p17c/p24b/p26b/p27b before any file was frozen. | round 95 L1: + R95MMutC2 closing kills + L1 closing kills",
+ "kills": [
+  {
+   "id": "p01-l1l8-unsupported-named-backend-returned",
+   "find": "            i = self._by_name(p)\n            if i is None or not i.supports(iface):\n                continue\n            return i",
+   "replace": "            i = self._by_name(p)\n            if i is None:\n                continue\n            return i",
+   "must_fail": [
+    "default list falls to second backend",
+    "list items keep inner spaces"
+   ]
+  },
+  {
+   "id": "p02-l1l2l6l7l12l21l23l25l26l27-default-reason-flip",
+   "find": "                return [i.source], \"default config\"",
+   "replace": "                return [i.source], \"interface specific config\"",
+   "must_fail": [
+    "default list falls to second backend",
+    "default list first backend",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise",
+    "non-specific portals.conf used",
+    "unparsable UseIn keeps the backend",
+    "invalid UTF-8 in a comment keeps the file",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped"
+   ]
+  },
+  {
+   "id": "p03-l3l4-iface-reason-says-default",
+   "find": "                return [i.source], \"interface specific config\"",
+   "replace": "                return [i.source], \"default config\"",
+   "must_fail": [
+    "interface key wins",
+    "interface key beats default none"
+   ]
+  },
+  {
+   "id": "p05-l5-default-none-ignored",
+   "find": "        return c.default is not None and \"none\" in c.default",
+   "replace": "        return False",
+   "must_fail": [
+    "default none stops"
+   ]
+  },
+  {
+   "id": "p06b-l6l7-star-scan-reversed",
+   "find": "            if p == \"*\":\n                for i in self.impls:\n                    if i.supports(iface):\n                        return i\n                return None",
+   "replace": "            if p == \"*\":\n                for i in reversed(self.impls):\n                    if i.supports(iface):\n                        return i\n                return None",
+   "must_fail": [
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise"
+   ]
+  },
+  {
+   "id": "p07-l7-star-ignores-support",
+   "find": "                    if i.supports(iface):\n                        return i",
+   "replace": "                    return i",
+   "must_fail": [
+    "star takes name order otherwise"
+   ]
+  },
+  {
+   "id": "p08b-l8-return-list-stripped",
+   "find": "    return pieces",
+   "replace": "    return [p.strip() for p in pieces]",
+   "must_fail": [
+    "list items keep inner spaces"
+   ]
+  },
+  {
+   "id": "p09-l9-usein-find-returns-empty",
+   "find": "                    if not all_:\n                        return [i]",
+   "replace": "                    if not all_:\n                        return []",
+   "must_fail": [
+    "UseIn fallback"
+   ]
+  },
+  {
+   "id": "p10-l8l10l14l15l20l24-gtk-dbus-flip",
+   "find": "            if i.dbus_name == GTK_DBUS and i.supports(iface):",
+   "replace": "            if i.dbus_name != GTK_DBUS and i.supports(iface):",
+   "must_fail": [
+    "list items keep inner spaces",
+    "gtk last resort",
+    "key before group voids file",
+    "invalid escape voids file",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "a VT before a key voids the file"
+   ]
+  },
+  {
+   "id": "p11-l11-find-no-backend-reason-flip",
+   "find": "        u = self._usein(iface, False)\n        if u:\n            return [u[0].source], \"usein\"\n        g = self._gtk(iface)\n        if g is not None:\n            return [g.source], \"gtk-last-resort\"\n        return [], \"no-backend\"",
+   "replace": "        u = self._usein(iface, False)\n        if u:\n            return [u[0].source], \"usein\"\n        g = self._gtk(iface)\n        if g is not None:\n            return [g.source], \"gtk-last-resort\"\n        return [], \"gtk-last-resort\"",
+   "must_fail": [
+    "no backend"
+   ]
+  },
+  {
+   "id": "p12-l12-default-list-reversed",
+   "find": "        for p in lst:\n            if p == \"*\":",
+   "replace": "        for p in reversed(lst):\n            if p == \"*\":",
+   "must_fail": [
+    "non-specific portals.conf used"
+   ]
+  },
+  {
+   "id": "p13c-l13-find-all-first-only",
+   "find": "                if i in out or not i.supports(iface):\n                    continue\n                out.append(i)",
+   "replace": "                if i in out or not i.supports(iface):\n                    continue\n                out.append(i)\n                break",
+   "must_fail": [
+    "find_all star collects all"
+   ]
+  },
+  {
+   "id": "p14b-l14-pre-group-key-joins-preferred",
+   "find": "            raise KeyFileError(\"key file does not start with a group\")",
+   "replace": "            current = \"preferred\"\n            groups.setdefault(current, {})",
+   "must_fail": [
+    "key before group voids file"
+   ]
+  },
+  {
+   "id": "p15-l15-invalid-escape-dropped",
+   "find": "            else:\n                raise KeyFileError(f\"invalid escape sequence \\\\{e}\")",
+   "replace": "            else:\n                pass",
+   "must_fail": [
+    "invalid escape voids file"
+   ]
+  },
+  {
+   "id": "p16-l16-invalid-desktop-tokens-kept",
+   "find": "        if tok and all(c.isascii() and (c.isalnum() or c in \"-_\") for c in tok):",
+   "replace": "        if tok:",
+   "must_fail": [
+    "desktops dropped/lowercased"
+   ]
+  },
+  {
+   "id": "p17c-l17-middle-empty-dropped",
+   "find": "        elif c == \";\":\n            pieces.append(\"\".join(cur))",
+   "replace": "        elif c == \";\":\n            if cur:\n                pieces.append(\"\".join(cur))",
+   "must_fail": [
+    "string list trailing empty dropped"
+   ]
+  },
+  {
+   "id": "p18-l18-bus-name-single-element-ok",
+   "find": "    return len(parts) >= 2 and all(_ELEM_BUS.match(p) for p in parts)",
+   "replace": "    return len(parts) >= 1 and all(_ELEM_BUS.match(p) for p in parts)",
+   "must_fail": [
+    "bus name validity"
+   ]
+  },
+  {
+   "id": "p19-l19-non-portal-iface-kept",
+   "find": "            if not i.startswith(IMPL + \".\"):\n                raise KeyFileError(f\"not a portal backend interface: {i}\")",
+   "replace": "            if not i.startswith(IMPL + \".\"):\n                continue",
+   "must_fail": [
+    "non-portal interface voids backend"
+   ]
+  },
+  {
+   "id": "p20-l20-encoding-checks-nul-only",
+   "find": "                value.encode(\"utf-8\", \"surrogateescape\").lower() != b\"utf-8\":",
+   "replace": "                b\"\\x00\" in value.encode(\"utf-8\", \"surrogateescape\"):",
+   "must_fail": [
+    "Encoding other than UTF-8 in the first group voids the file"
+   ]
+  },
+  {
+   "id": "p21-l21-usein-parse-error-voids-backend",
+   "find": "            try:\n                use_in = string_list(g[\"UseIn\"])\n            except KeyFileError:\n                use_in = None",
+   "replace": "            use_in = string_list(g[\"UseIn\"])",
+   "must_fail": [
+    "unparsable UseIn keeps the backend"
+   ]
+  },
+  {
+   "id": "p22-l22-final-cr-stripped",
+   "find": "        if idx < len(lines) - 1 and raw.endswith(\"\\r\"):",
+   "replace": "        if raw.endswith(\"\\r\"):",
+   "must_fail": [
+    "final CR without LF is kept"
+   ]
+  },
+  {
+   "id": "p23-l23-comments-void-file",
+   "find": "        if v == \"\" or v.startswith(\"#\"):",
+   "replace": "        if v.startswith(\"#\"):\n            raise KeyFileError(\"bad comment\")\n        if v == \"\":",
+   "must_fail": [
+    "invalid UTF-8 in a comment keeps the file"
+   ]
+  },
+  {
+   "id": "p24b-l24-vt-chugged-as-space",
+   "find": "        while i < len(raw) and raw[i] in ASCII_SPACE:",
+   "replace": "        while i < len(raw) and raw[i] in ASCII_SPACE + \"\\v\":",
+   "must_fail": [
+    "a VT before a key voids the file"
+   ]
+  },
+  {
+   "id": "p25-l25-nul-kept-in-value",
+   "find": "        grp[key] = value.split(\"\\x00\", 1)[0]",
+   "replace": "        grp[key] = value",
+   "must_fail": [
+    "a NUL ends the stored value"
+   ]
+  },
+  {
+   "id": "p26b-l26-v-not-nul-cut",
+   "find": "        v = s.split(\"\\x00\", 1)[0]",
+   "replace": "        v = s",
+   "must_fail": [
+    "a NUL after a group bracket keeps the group"
+   ]
+  },
+  {
+   "id": "p27b-l27-continuation-not-skipped",
+   "find": "    while p < len(s) and \"\\udc80\" <= s[p] <= \"\\udcbf\":",
+   "replace": "    while False and p < len(s) and \"\\udc80\" <= s[p] <= \"\\udcbf\":",
+   "must_fail": [
+    "continuation bytes after a group bracket are skipped"
+   ]
+  },
+  {
+   "id": "p28-l28-value-nul-split-early",
+   "find": "        value = s[eq + 1:].lstrip(ASCII_SPACE)",
+   "replace": "        value = s[eq + 1:].lstrip(ASCII_SPACE).split(\"\\x00\", 1)[0]",
+   "must_fail": [
+    "Encoding counts the bytes after a NUL"
+   ]
+  },
+  {
+   "id": "r95m-close-p04-usein-any",
+   "find": "                if i.use_in is not None and any(u.lower() == d for u in i.use_in):",
+   "replace": "                if i.use_in is not None:",
+   "must_fail": [
+    "list items keep inner spaces",
+    "gtk last resort",
+    "key before group voids file",
+    "invalid escape voids file",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "a VT before a key voids the file"
+   ]
+  },
+  {
+   "id": "r95m-close-p06-desktop-no-lower",
+   "find": "            out.append(tok.lower())",
+   "replace": "            out.append(tok)",
+   "must_fail": [
+    "default list falls to second backend",
+    "default list first backend",
+    "interface key wins",
+    "interface key beats default none",
+    "default none stops",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise",
+    "UseIn fallback",
+    "desktops dropped/lowercased"
+   ]
+  },
+  {
+   "id": "r95m-close-p08-list-trailing",
+   "find": "    if cur:\n        pieces.append(\"\".join(cur))",
+   "replace": "    pieces.append(\"\".join(cur))",
+   "must_fail": [
+    "default list falls to second backend",
+    "default list first backend",
+    "interface key wins",
+    "interface key beats default none",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise",
+    "list items keep inner spaces",
+    "UseIn fallback",
+    "gtk last resort",
+    "non-specific portals.conf used",
+    "find_all star collects all",
+    "key before group voids file",
+    "invalid escape voids file",
+    "string list trailing empty dropped",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "unparsable UseIn keeps the backend",
+    "invalid UTF-8 in a comment keeps the file",
+    "a VT before a key voids the file",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped"
+   ]
+  },
+  {
+   "id": "r95m-close-p32-bus-tail",
+   "find": "_ELEM_BUS = re.compile(r\"^[A-Za-z_-][A-Za-z0-9_-]*$\")",
+   "replace": "_ELEM_BUS = re.compile(r\"^[A-Za-z_-][A-Za-z0-9_-]*[A-Za-z]$\")",
+   "must_fail": [
+    "bus name validity"
+   ]
+  },
+  {
+   "id": "r95m-close-p33-elem-digit",
+   "find": "_ELEM_BUS = re.compile(r\"^[A-Za-z_-][A-Za-z0-9_-]*$\")",
+   "replace": "_ELEM_BUS = re.compile(r\"^[A-Za-z0-9_-]+$\")",
+   "must_fail": [
+    "bus name validity"
+   ]
+  },
+  {
+   "id": "r95m-close-p35-default-picks-first",
+   "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+   "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"default config\"",
+   "must_fail": [
+    "default list falls to second backend",
+    "star takes name order otherwise",
+    "non-specific portals.conf used",
+    "unparsable UseIn keeps the backend",
+    "invalid UTF-8 in a comment keeps the file",
+    "a NUL ends the stored value",
+    "a NUL after a group bracket keeps the group",
+    "continuation bytes after a group bracket are skipped"
+   ]
+  },
+  {
+   "id": "r95m-close-p36-iface-picks-first",
+   "find": "            i = self._by_list(c.ifaces.get(iface), iface)\n            if i is not None:\n                return [i.source], \"interface specific config\"",
+   "replace": "            i = self._by_list(c.ifaces.get(iface), iface)\n            if i is not None:\n                return [self.impls[0].source if self.impls else i.source], \"interface specific config\"",
+   "must_fail": [
+    "interface key wins",
+    "interface key beats default none"
+   ]
+  },
+  {
+   "id": "r95m-close-p37-none-picks",
+   "find": "            if self._prefers_none(c, iface):\n                return [], \"none-key\"",
+   "replace": "            if self._prefers_none(c, iface):\n                return [self.impls[0].source] if self.impls else [], \"none-key\"",
+   "must_fail": [
+    "default none stops"
+   ]
+  },
+  {
+   "id": "r95m-close-p38-usein-picks-last",
+   "find": "        u = self._usein(iface, False)\n        if u:\n            return [u[0].source], \"usein\"",
+   "replace": "        u = self._usein(iface, False)\n        if u:\n            return [self.impls[-1].source if self.impls else u[0].source], \"usein\"",
+   "must_fail": [
+    "UseIn fallback"
+   ]
+  },
+  {
+   "id": "r95m-close-p39-no-backend-picks",
+   "find": "        return [], \"no-backend\"\n\n    def _all_by_list",
+   "replace": "        return [self.impls[0].source] if self.impls else [], \"no-backend\"\n\n    def _all_by_list",
+   "must_fail": [
+    "no backend"
+   ]
+  },
+  {
+   "id": "r95m-close-p42-reason-usein",
+   "find": "            return [u[0].source], \"usein\"",
+   "replace": "            return [u[0].source], \"default config\"",
+   "must_fail": [
+    "UseIn fallback"
+   ]
+  },
+  {
+   "id": "r95m-close-p43-reason-findall",
+   "find": "            return [i.source for i in out], \"config\"",
+   "replace": "            return [i.source for i in out], \"default config\"",
+   "must_fail": [
+    "find_all star collects all"
+   ]
+  },
+  {
+   "id": "r95m-close-p44-default-picks-last",
+   "find": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [i.source], \"default config\"",
+   "replace": "            i = self._by_list(c.default, iface)\n            if i is not None:\n                return [self.impls[-1].source if self.impls else i.source], \"default config\"",
+   "must_fail": [
+    "default list falls to second backend",
+    "default list first backend",
+    "star takes first sorted backend (UseIn first)",
+    "star takes name order otherwise"
+   ]
+  },
+  {
+   "id": "r95l1-close-p-crlf-kept",
+   "find": "        if idx < len(lines) - 1 and raw.endswith(\"\\r\"):",
+   "replace": "        if False and idx < len(lines) - 1 and raw.endswith(\"\\r\"):",
+   "must_fail": [
+    "final CR without LF is kept"
+   ]
+  },
+  {
+   "id": "r95l1-close-p-gtk-find-source",
+   "find": "            return [g.source], \"gtk-last-resort\"\n        return [], \"no-backend\"\n\n    def _all_by_list",
+   "replace": "            return [g.source + \"x\"], \"gtk-last-resort\"\n        return [], \"no-backend\"\n\n    def _all_by_list",
+   "must_fail": [
+    "list items keep inner spaces",
+    "gtk last resort",
+    "key before group voids file",
+    "invalid escape voids file",
+    "Encoding other than UTF-8 in the first group voids the file",
+    "a VT before a key voids the file"
+   ]
+  }
+ ]
+}
