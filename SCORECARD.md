@@ -5242,3 +5242,65 @@ owned axis at 10, so the lowest-axis duty is a tie. Sourced claim: C1 (S501–S5
 ### Harm watch (round 90, at the records commit `6156d399895ed74faa431ebc688d55d3b47efaa0`)
 
 - gate selftest 460/460, file plane CLEAN 29, index 111/111, ledger 169/169 uncovered 0, `tools/mado-mako.py` selftest 62/62, `tools/mado-portals.py` selftest 22/22, receipt presence at the records commit OK 31/31, round-89 C1 TARGET_MET 141/141 37/37 and C2 TARGET_MET 7/7 on the D3 tool (`.ufo/waves/round-90/receipts/harm-final-r90.txt`). No axis harmed.
+
+## Round 91 — default-application resolution (capability), seat-report retention gate (2026-11-06, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-91/claims-declaration-r91.md` (w1 findings folded in before the freeze, listed in
+`corpus/lessons/round-91.md`). Freeze `fa71279fc927f86df2d14a62f1f60230a7cf4ada`; C1 tool `54a0683ce5c1c746fa02fa9f36b530c44772bfa2`
+(C1 measured revision; `tools/mado-mime.py` = frozen candidate bytes, sha256 `2532ccb5…1a5e`); C2 gate
+`0e09349e2c735c9fe1d4ba8d5c4ef79506f2d0bc` (C2 measured revision; `quality/check-seat-reports.py` = frozen candidate bytes,
+sha256 `13c4b0a7…e39a`); D1 `cbbeb862455d9bc65f6b837083618bd6d69e475a`. Stagnation nudge not claimed (capabilities
+entered at rounds 88–90); every owned axis at 10, so the lowest-axis duty is a tie. Sourced claim: C1 (S504–S507, S502).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (capability): which application GLib 2.90.1 opens a MIME type with | `python3 -I quality/counters/c1-r91-mime-resolution.py --repo . --rev 54a0683ce5c1c746fa02fa9f36b530c44772bfa2 --base-rev cc0381db585cc44c3dfc13ced807409c32c45bb0 --cases .ufo/waves/round-91/controls/mime-cases-r91.json --mutants .ufo/waves/round-91/controls/mime-mutants-r91.json --oracle .ufo/waves/round-91/controls/mime-oracle-r91.py --expect-cases-sha256 15e4b3fc0af091d4c84da43394b711efeaa5d38acb18123b03089fb171020559 --expect-mutants-sha256 ed7716546bd7df57bdb78a315ba9d39bfae9a118fb7865b81b29e5524410fb04 --expect-oracle-sha256 c3a13e26173a0eca8bf137ced141c53485f7eca588d426ae6b636a52577bf6a8 --expect-gio-sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 --expect-libgio-sha256 b38001cca69b2890a22fd3f6590bea7392bf489009de7ddfb6dbf296a133685e --fuzz-gen .ufo/waves/round-91/controls/fuzz-gen-r91.py --expect-fuzz-sha256 0d147b83f85d0a0d25be0282d21624bad8a4743f6964bda9b98b6ef996121418 --fresh 120 --scratch-root DIR` | MIME types a lane tool resolves 0 → every type (base: `tools/mado-mime.py` absent, `base_tool_correct=0`); frozen 268 cases 0 → **268/268** (l1 93, bl 91, sh 65, mc 12, rv 4, fz 2, hx 1), fresh 120/120, mutants 65/65 killed (0 crash-only), oracle re-agreement 268/268; controls do-nothing 63, naive mimeapps 62, cache-only 102; forgeries label-table 265/268 fresh 19/120, gio shell-out 63/268 | **TARGET_MET** (`.ufo/waves/round-91/receipts/c1-measured-r91.txt`, rc 0) |
+| C2 **operability**: a runnable seat-report retention gate over the lane's wave dispatches | `python3 -I quality/counters/c2-r91-seat-reports.py --repo . --rev 0e09349e2c735c9fe1d4ba8d5c4ef79506f2d0bc --base-rev cc0381db585cc44c3dfc13ced807409c32c45bb0 --set .ufo/waves/round-91/controls/seat-reports-set-r91.json --mutants .ufo/waves/round-91/controls/seat-reports-mutants-r91.json --expect-set-sha256 9a05fa8ad4ef771eab9a6e9f4e8f22bfd01155483d92da2134274c705d5cb7dc --expect-mutants-sha256 7cf06df7dc0903e1291d00df4473d23b695f563bc9b24a2663d8c18348ebfcdd --fresh 60 --scratch-root DIR` | lane checks that detect a missing seat report 0 → 1 (base: check absent, `base_met=0`); frozen 59 expectations 0 → **59/59** (8 lane rounds incl. round 90's two lost scout reports, `--all` 133 SR01 over 1732 seats, 50 fixtures), fresh 60/60, selftest `checks=16 failed=0`, mutants 55/55; controls always-OK 5, always-MISSING 0, receipt-presence stand-in 11 | **TARGET_MET** (`.ufo/waves/round-91/receipts/c2-measured-r91.txt`, rc 0) |
+| separability | C1 counter at the C2 revision; C2 counter at the C1 revision | C1 TARGET_MET 268/268 at `0e09349e` (`.ufo/waves/round-91/receipts/c1-at-c2-r91.txt`); C2 at `54a0683c` = `SETUP_ERROR … absent` (`.ufo/waves/round-91/receipts/c2-at-c1-r91.txt`) | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| GLib 2.90.1 default-application resolution | Answer, read-only, which `.desktop` application GLib opens a MIME type or URI scheme with — default, registered and recommended lists exactly as `gio mime TYPE` prints them — from the XDG config/data roots, desktop-specific lists, mimeapps groups, defaults.list, mimeinfo.cache, masking, the desktop-file load rules and the MIME database (aliases, parents, cache vs text mode); this host: 1211 types, 1211 agree | `.ufo/waves/round-91/receipts/c1-measured-r91.txt`; `.ufo/waves/round-91/receipts/host-run-r91.txt`; `corpus/knowledge/mime-default-resolution-r91.md` | 91 |
+
+### Routed work (round-90 spot-check, not claims)
+
+- D1: `quality/check-receipt-presence.py --selftest` (`cbbeb862`; 87 added lines, 0 removed; `checks=6 failed=0`; three
+  mutants each make it exit 1, `.ufo/waves/round-91/receipts/d1-selftest-r91.txt`); `SKILL.md` registry row updated.
+- D2: the w1 context named a report path for every seat; the C2 gate's `--worktree --round 91` run is
+  `.ufo/waves/round-91/receipts/c2-gate-round91-r91.txt`.
+- D3: append-only wording note in `corpus/lessons/round-91.md`.
+
+### Named limits (append-only, round 91)
+
+- C1: resolution only (no launch, no D-Bus activation, no portal); C locale only for locale-suffixed keys; duplicate
+  aliases and same-name desktop ids follow this host's libc `qsort`/`bsearch` and `readdir` order; GLib 2.90.1 only;
+  the counter's labels come from the installed gio, so a downstream patch would be scored as upstream.
+- C2: reads only `.ufo/waves/round-<N>/<wave>-dispatch.json` (the legacy `round-13..20/<wave>/dispatch.json` layout,
+  849 seats, is not read); a report written beside its trailer path (e.g. `<seat>/<seat>.md`, 32 of the 133 at
+  `cc0381db`) counts as missing by design (R91MReviewC2 F1); a trailer path with spaces is not representable.
+- Round shape: one v1 wave of 14 seats + residual `r1` of 2 attack seats on the measured bytes (round total 16).
+
+### Harm watch (round 91, at the lane tip `cbbeb862455d9bc65f6b837083618bd6d69e475a`)
+
+- gate selftest 460/460, file plane CLEAN 29, index 112/112, ledger 173/173 uncovered 0, `tools/mado-mako.py` selftest
+  62/62, `tools/mado-portals.py` selftest 22/22, `tools/mado-mime.py` 17/17, `quality/check-seat-reports.py` 16/16,
+  `quality/check-receipt-presence.py` 6/6, round-90 C2 TARGET_MET 83/83 28/28 on the D1-changed check, round-90 C1
+  TARGET_MET 229/229 60/60 (`.ufo/waves/round-91/receipts/harm-final-r91.txt`). No axis harmed.
+
+### Errata (round 91, after measurement; append-only)
+
+- Residual `r1` (2 seats, on the measured bytes): R91MResidC1 re-ran the C1 argv — `TARGET_MET` with a character-identical
+  summary — and 18 new fixtures (`rs-01`…`rs-18`, 25 types) agree with gio; no defect against C1. R91MResidC2 re-ran the
+  C2 argv (stdout identical to `.ufo/waves/round-91/receipts/c2-measured-r91.txt`) and found six gate defects on inputs
+  outside the frozen set, routed to round 92 and not claimed: F1 `--rev` skips a dispatch stored as a symlink (120000)
+  and can print `verdict=OK` where `--worktree` reports the miss; F2 a seat name with a space or a non-UTF-8 path makes a
+  finding line unparseable; F3 a repeated `--round N` double-counts; F4 a FIFO at a dispatch path blocks `--worktree`;
+  F5 `--worktree` accepts a report reached through a symlinked parent directory; F6 `counts.total` is not cross-checked.
+  None changes the frozen predicate's result; F1 and F4 are real gaps in the gate as landed
+  (`.ufo/waves/round-91/r1/R91MResidC2.md` §5).
+- C2 premise wording (R91MScoutSources §4(i), after the freeze): `quality/check-deliverables.py` at `cc0381db` does read
+  `Report:` lines inside the report files it is given and fails an absent named path; no check at `cc0381db` reads a
+  dispatch's seats, so a seat that wrote nothing is invisible to it. The before→after row reads "lane checks that detect a
+  missing seat report for a dispatched seat 0 → 1"; measured values unchanged (lesson M91-4).

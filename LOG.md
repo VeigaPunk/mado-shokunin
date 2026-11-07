@@ -4380,3 +4380,35 @@ base `a722c604`, attempt-1 bytes preserved at `f72bba01`, freeze
   ScreenCast, GlobalShortcuts, InputCapture), none 6 (Background, Wallpaper, Secret, RemoteDesktop, Clipboard, Usb); Secret
   has no backend because `gnome-keyring.portal`'s `UseIn=gnome` never matches `hyprland` and gtk lacks Secret.
 - Harm watch at the records commit `6156d399`: gate selftest 460/460, file plane CLEAN 29, index 111/111, ledger 169/169 uncovered 0, `tools/mado-mako.py` selftest 62/62, `tools/mado-portals.py` selftest 22/22, receipt presence at the records commit OK 31/31, round-89 C1 TARGET_MET 141/141 37/37 and C2 TARGET_MET 7/7 on the D3 tool (`.ufo/waves/round-90/receipts/harm-final-r90.txt`). Final commit gated by the C2 check (`.ufo/waves/round-90/receipts/c2-gate-final-r90.txt`).
+
+### Round 91 — default-application resolution (capability) and a seat-report retention gate (2026-11-06, hyaku run 15, attempt 1)
+
+- Inputs: the round-90 non-author spot-check (routed defects: no gate self-test on `check-receipt-presence.py`; two scout
+  reports lost, M90-4; lesson wording); `considerthese/2026-11-06.md` proposal 4 (widen past bar + mako; prefer an
+  operator-config gap). Two claims (`.ufo/waves/round-91/claims-declaration-r91.md`): C1 capability, coverage; C2
+  operability. Nudge not claimed.
+- Motivating evidence: no lane line on MIME/default applications (`grep -n -i -E 'mime|xdg-open|mimeapps|default app'
+  PROVINCE.md SKILL.md corpus/README.md` → none at `cc0381db`) while Omarchy writes `~/.config/mimeapps.list` and
+  `hyprland-mimeapps.list`; at `cc0381db` 133 of 1732 dispatched seats' `Report:` paths are absent from the tree (R91MExecGate
+  labels; round 90's two scouts among them) and no lane check reads the trailers.
+- Wave w1: 14 seats (scout 2, scribe 1, executor 5, connector 1, reviewer 2, critic 1, mutation-tester 2), attack 5/14.
+  Findings changed the candidate (shell parser and program lookup ported, GKeyFile byte rules, xdgmime's own dirs, libc
+  alias replay, readdir order), the counters (fresh leg, sandbox narrowed, opaque tool paths, selftest per mutant,
+  generator-truth fresh fixtures for C2) and the sets before the freeze. Residual `r1`: 2 attack seats on the measured bytes.
+- Landed: freeze `fa71279fc927f86df2d14a62f1f60230a7cf4ada`; C1 `54a0683ce5c1c746fa02fa9f36b530c44772bfa2` (tool, knowledge
+  entry, S504–S507, PROVINCE/SKILL/ledger/index rows, host replay); C2 `0e09349e2c735c9fe1d4ba8d5c4ef79506f2d0bc` (gate and
+  its rows); D1 `cbbeb862455d9bc65f6b837083618bd6d69e475a`; records (lesson, QUALITY 152, SCORECARD, this entry, S-row used-by
+  updates, census end, the round's own gate runs) in the records commit, gated by `quality/check-receipt-presence.py`
+  and `quality/check-seat-reports.py` in `--worktree` mode.
+- Measured: C1 at `54a0683c` `TARGET_MET cases=268 correct=268 fresh=120/120 mutants=65 killed=65 oracle_agree=268/268`,
+  controls do-nothing 63, naive 62, cache-only 102, base 0 (`.ufo/waves/round-91/receipts/c1-measured-r91.txt`); C2 at
+  `0e09349e` `TARGET_MET expectations=59 met=59 fresh=60/60 selftest checks=16 failed=0 mutants=55 killed=55`, controls
+  0/5/0/11 (`.ufo/waves/round-91/receipts/c2-measured-r91.txt`). Census 438 → 442 rows, rc 0 both ends
+  (`.ufo/waves/round-91/receipts/census-start-r91.txt`, `.ufo/waves/round-91/receipts/census-end-r91.txt`).
+- Host answer (`.ufo/waves/round-91/receipts/host-run-r91.txt`): 1211 types named by the host's lists and mime db, tool and
+  gio agree on all 1211 (122 with no default); e.g. `text/plain` → nvim, `inode/directory` → Nautilus,
+  `x-scheme-handler/https` → chromium, `x-scheme-handler/mailto` → HEY.
+- Harm watch at `cbbeb862`: all green (`.ufo/waves/round-91/receipts/harm-final-r91.txt`; SCORECARD round 91).
+- Residual r1 (2 seats, measured bytes): C1 and C2 re-measured identically; 18 new C1 fixtures agree with gio; six C2 gate
+  defects outside the frozen set routed to round 92 (SCORECARD round-91 errata); all 16 seats left report files
+  (`.ufo/waves/round-91/receipts/c2-gate-round91-r91.txt`).

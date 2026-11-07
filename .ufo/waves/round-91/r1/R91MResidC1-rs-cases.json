@@ -1,0 +1,202 @@
+{
+ "schema": "mime-cases-r91-v1",
+ "note": "R91MResidC1 residual attack fixtures (r1): rules the frozen 268-case set covers thinly (0 cases each: colon-in-dirname XDG entries, cache-file [Default Applications], config-dir magic files, cache value separator bytes, TryExec non-exec first PATH entry, NoDisplay, Hidden-masks-NoDisplay, duplicate text alias across data dirs, three config dirs with mid-chain removal, internal empty pieces, padded group/key whitespace, BOM on mimeapps.list and on a desktop file, scheme via mimeinfo.cache). DESK = [Desktop Entry]\\nType=Application\\nName=X\\nExec=sh %f\\n",
+ "cases": [
+  {
+   "id": "rs-01-colon-config-dir",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["cf:gx", "cfg-b"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "cf:gx/mimeapps.list": "[Default Applications]\nx-rs/colon=rs-z.desktop\n",
+    "cfg-b/mimeapps.list": "[Default Applications]\nx-rs/colon=rs-a.desktop\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-z.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/colon=rs-a.desktop;rs-z.desktop\n"
+   },
+   "types": ["x-rs/colon"]
+  },
+  {
+   "id": "rs-02-colon-data-dir",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sy:s", "sys2"]},
+   "files": {
+    "sy:s/applications/rs-b.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sy:s/applications/defaults.list": "[Default Applications]\nx-rs/cd=rs-b.desktop\n",
+    "sy:s/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/cd=rs-b.desktop\n",
+    "sys2/applications/rs-c.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys2/applications/defaults.list": "[Default Applications]\nx-rs/cd=rs-c.desktop\n"
+   },
+   "types": ["x-rs/cd"]
+  },
+  {
+   "id": "rs-03-bom-mimeapps",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "cfg/mimeapps.list": "﻿[Default Applications]\nx-rs/bom=rs-a.desktop\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/bom=rs-a.desktop\n"
+   },
+   "types": ["x-rs/bom"]
+  },
+  {
+   "id": "rs-04-cache-default-group",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-b.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/cdef=rs-a.desktop\n[Default Applications]\nx-rs/cdef=rs-b.desktop\n"
+   },
+   "types": ["x-rs/cdef"]
+  },
+  {
+   "id": "rs-05-config-dir-ignored-files",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["cfg-c"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "cfg-c/defaults.list": "[Default Applications]\nx-rs/cig=rs-z.desktop\n",
+    "cfg-c/applications/mimeapps.list": "[Default Applications]\nx-rs/cig=rs-z.desktop\n",
+    "cfg-c/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/cig=rs-z.desktop\n",
+    "sys/applications/rs-z.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n"
+   },
+   "types": ["x-rs/cig"]
+  },
+  {
+   "id": "rs-06-cache-piece-bytes",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-b.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/pc1=rs-a.desktop\nx-rs/pc2= rs-a.desktop\nx-rs/pc3=rs-a.desktop ;rs-a.desktop\nx-rs/pc4=rs-a.desktop;\nx-rs/pc5=rs-a.desktop;;rs-b.desktop\n"
+   },
+   "types": ["x-rs/pc1", "x-rs/pc2", "x-rs/pc3", "x-rs/pc4", "x-rs/pc5"]
+  },
+  {
+   "id": "rs-07-tryexec-second-path-entry",
+   "desktop": "Hyprland",
+   "path": ["p1", "p2"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "p1/rs-tool": "#!/bin/sh\nexit 0\n",
+    "p2/rs-tool": {"text": "#!/bin/sh\nexit 0\n", "exec": true},
+    "sys/applications/rs-ok.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=rs-tool %f\nTryExec=rs-tool\n",
+    "sys/applications/rs-ng.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=rs-missing-tool %f\nTryExec=rs-missing-tool\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/tx=rs-ok.desktop;rs-ng.desktop\n",
+    "cfg/mimeapps.list": "[Default Applications]\nx-rs/tx=rs-ok.desktop\n"
+   },
+   "types": ["x-rs/tx"]
+  },
+  {
+   "id": "rs-08-nodisplay-app",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "home/applications/rs-nd.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\nNoDisplay=true\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/nd=rs-nd.desktop\n",
+    "cfg/mimeapps.list": "[Default Applications]\nx-rs/nd=rs-nd.desktop\n"
+   },
+   "types": ["x-rs/nd"]
+  },
+  {
+   "id": "rs-09-hidden-masks-nodisplay",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "home/applications/rs-x.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\nHidden=true\n",
+    "sys/applications/rs-x.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\nNoDisplay=true\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/hn=rs-x.desktop\n",
+    "cfg/mimeapps.list": "[Default Applications]\nx-rs/hn=rs-x.desktop\n"
+   },
+   "types": ["x-rs/hn"]
+  },
+  {
+   "id": "rs-10-alias-duplicate-two-dirs",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "home/mime/aliases": "x-rs/one x-rs/target-a\n",
+    "sys/mime/aliases": "x-rs/one x-rs/target-b\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-b.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "cfg/mimeapps.list": "[Default Applications]\nx-rs/target-a=rs-a.desktop\nx-rs/target-b=rs-b.desktop\n"
+   },
+   "types": ["x-rs/one"]
+  },
+  {
+   "id": "rs-11-config-dirs-three-layer",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["cfg1", "cfg2", "cfg3"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "cfg1/mimeapps.list": "[Default Applications]\nx-rs/l3=rs-a.desktop\n[Added Associations]\nx-rs/l3=rs-a.desktop\n",
+    "cfg2/mimeapps.list": "[Removed Associations]\nx-rs/l3=rs-a.desktop\n[Added Associations]\nx-rs/l3=rs-b.desktop\n[Default Applications]\nx-rs/l3=rs-c.desktop\n",
+    "cfg3/mimeapps.list": "[Added Associations]\nx-rs/l3=rs-d.desktop\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-b.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-c.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-d.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n"
+   },
+   "types": ["x-rs/l3"]
+  },
+  {
+   "id": "rs-12-mimeapps-empty-pieces",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "cfg/mimeapps.list": "[Added Associations]\nx-rs/ep=rs-a.desktop;;rs-b.desktop\nx-rs/ep2=;rs-b.desktop\n[Default Applications]\nx-rs/ep=rs-a.desktop\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-b.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n"
+   },
+   "types": ["x-rs/ep", "x-rs/ep2"]
+  },
+  {
+   "id": "rs-13-padded-group-key",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "cfg/mimeapps.list": "[ Added Associations ]\nx-rs/pad=rs-a.desktop\n[ Default Applications ]\nx-rs/pad=rs-b.desktop\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-b.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/pad=rs-a.desktop;rs-b.desktop\n"
+   },
+   "types": ["x-rs/pad"]
+  },
+  {
+   "id": "rs-14-cache-scheme-association",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-scheme-handler/rscheme=rs-a.desktop\n"
+   },
+   "types": ["x-scheme-handler/rscheme"]
+  },
+  {
+   "id": "rs-15-bom-desktop-file",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "sys/applications/rs-bom.desktop": "﻿[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/db=rs-bom.desktop;rs-a.desktop\n",
+    "cfg/mimeapps.list": "[Default Applications]\nx-rs/db=rs-bom.desktop\n"
+   },
+   "types": ["x-rs/db"]
+  }
+ ]
+}

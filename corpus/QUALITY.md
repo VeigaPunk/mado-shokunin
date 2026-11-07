@@ -1127,3 +1127,17 @@ exits 0 before `jj-lane.sh commit`, and its output is a receipt in that commit. 
 `498855cb` and `51bf076f` prints `verdict=MISSING` (the round-88 and round-89 records commits that cited receipts first
 committed later; `.ufo/waves/round-90/receipts/c2-measured-r90.txt`). (lesson: lessons/round-90.md#mistakes M90-2)
 
+
+## Round 91 — reused parser models
+
+**152. A parser model reused for a new consumer is re-proved on the byte classes the old case set never held.** When a
+tool copies another tool's model of an upstream parser (GKeyFile, a shell tokenizer, a config grammar), the new claim's
+frozen set carries at least one oracle-labelled case per rule class the earlier set left empty — encoding errors,
+whitespace outside the obvious set, repeated keys and groups, suffix forms — and a mutant that restores each earlier
+reading must be killed on it. The earlier claim's TARGET_MET says nothing about inputs it never held. Check: the
+measured counter kills the restoring mutants. Shown able to fail: round 91's candidate, built on round 90's GKeyFile
+reader, disagreed with gio on rv-01, rv-02, rv-03, sh-38, mc-10 and mc-12 (R91MReviewC1, R91MExecShell, R91MMutC1 drafts);
+the frozen mutants X24, X36, M28 and M29 that put the old readings back are killed at
+`54a0683ce5c1c746fa02fa9f36b530c44772bfa2` (`.ufo/waves/round-91/receipts/c1-measured-r91.txt`). Limits: a class the new
+consumer's oracle cannot reach stays unproved; the earlier tool (`tools/mado-portals.py`) is not re-proved by this
+criterion until its own counter carries such cases (routed to round 92). (lesson: lessons/round-91.md#mistakes M91-1)

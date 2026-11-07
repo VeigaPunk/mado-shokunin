@@ -1,0 +1,140 @@
+{
+ "cases": [
+  {
+   "desktop": "Hyprland",
+   "expect": {
+    "TEXT/PLAIN": {
+     "default": "rs-a.desktop",
+     "recommended": [],
+     "registered": []
+    },
+    "text/plain": {
+     "default": "rs-a.desktop",
+     "recommended": [
+      "rs-a.desktop"
+     ],
+     "registered": [
+      "rs-a.desktop"
+     ]
+    },
+    "text/plain;charset=x": {
+     "default": null,
+     "recommended": null,
+     "registered": null
+    }
+   },
+   "files": {
+    "cfg/mimeapps.list": "[Default Applications]\nTEXT/PLAIN=rs-a.desktop\ntext/plain;charset=x=rs-b.desktop\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\ntext/plain=rs-a.desktop\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-b.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n"
+   },
+   "id": "rs-16-type-case-and-params",
+   "path": [
+    "bin",
+    "/usr/bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "etc"
+    ],
+    "config_home": "cfg",
+    "data_dirs": [
+     "sys"
+    ],
+    "data_home": "home"
+   },
+   "types": [
+    "TEXT/PLAIN",
+    "text/plain;charset=x",
+    "text/plain"
+   ]
+  },
+  {
+   "desktop": "Hyprland",
+   "expect": {
+    "x-rs/sc": {
+     "default": "rs-ok.desktop",
+     "recommended": [
+      "rs-ok.desktop"
+     ],
+     "registered": [
+      "rs-ok.desktop"
+     ]
+    }
+   },
+   "files": {
+    "st/prog": {
+     "exec": true,
+     "text": "#!/bin/sh\nexit 0\n"
+    },
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/sc=rs-ok.desktop;rs-ng.desktop\n",
+    "sys/applications/rs-ng.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=st2/missing %f\nTryExec=st2/missing\n",
+    "sys/applications/rs-ok.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=st/prog %f\nTryExec=st/prog\n"
+   },
+   "id": "rs-17-tryexec-slash-cwd",
+   "path": [
+    "/usr/bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "etc"
+    ],
+    "config_home": "cfg",
+    "data_dirs": [
+     "sys"
+    ],
+    "data_home": "home"
+   },
+   "types": [
+    "x-rs/sc"
+   ]
+  },
+  {
+   "desktop": "Hyprland",
+   "expect": {
+    "x-rs/nn": {
+     "default": "rs-noname.desktop",
+     "recommended": [
+      "rs-noname.desktop",
+      "rs-a.desktop"
+     ],
+     "registered": [
+      "rs-noname.desktop",
+      "rs-a.desktop"
+     ]
+    }
+   },
+   "files": {
+    "cfg/mimeapps.list": "[Default Applications]\nx-rs/nn=rs-noname.desktop\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/nn=rs-noname.desktop;rs-a.desktop\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-noname.desktop": "[Desktop Entry]\nType=Application\nExec=sh %f\n"
+   },
+   "id": "rs-18-nameless-desktop",
+   "path": [
+    "bin",
+    "/usr/bin"
+   ],
+   "roots": {
+    "config_dirs": [
+     "etc"
+    ],
+    "config_home": "cfg",
+    "data_dirs": [
+     "sys"
+    ],
+    "data_home": "home"
+   },
+   "types": [
+    "x-rs/nn"
+   ]
+  }
+ ],
+ "note": "R91MResidC1 residual attack fixtures, second slice: type-string normalization (case, parameters), TryExec with an embedded slash resolved against cwd, a desktop file with no Name key (knowledge \u00a76 lists no Name requirement).",
+ "oracle": {
+  "gio_sha256": "d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462",
+  "libgio_sha256": "b38001cca69b2890a22fd3f6590bea7392bf489009de7ddfb6dbf296a133685e"
+ },
+ "schema": "mime-cases-r91-v1"
+}

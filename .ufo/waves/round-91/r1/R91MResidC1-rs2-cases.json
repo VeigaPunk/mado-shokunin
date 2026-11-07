@@ -1,0 +1,45 @@
+{
+ "schema": "mime-cases-r91-v1",
+ "note": "R91MResidC1 residual attack fixtures, second slice: type-string normalization (case, parameters), TryExec with an embedded slash resolved against cwd, a desktop file with no Name key (knowledge §6 lists no Name requirement).",
+ "cases": [
+  {
+   "id": "rs-16-type-case-and-params",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "cfg/mimeapps.list": "[Default Applications]\nTEXT/PLAIN=rs-a.desktop\ntext/plain;charset=x=rs-b.desktop\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/rs-b.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\ntext/plain=rs-a.desktop\n"
+   },
+   "types": ["TEXT/PLAIN", "text/plain;charset=x", "text/plain"]
+  },
+  {
+   "id": "rs-17-tryexec-slash-cwd",
+   "desktop": "Hyprland",
+   "path": ["/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "st/prog": {"text": "#!/bin/sh\nexit 0\n", "exec": true},
+    "sys/applications/rs-ok.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=st/prog %f\nTryExec=st/prog\n",
+    "sys/applications/rs-ng.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=st2/missing %f\nTryExec=st2/missing\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/sc=rs-ok.desktop;rs-ng.desktop\n"
+   },
+   "types": ["x-rs/sc"]
+  },
+  {
+   "id": "rs-18-nameless-desktop",
+   "desktop": "Hyprland",
+   "path": ["bin", "/usr/bin"],
+   "roots": {"config_home": "cfg", "config_dirs": ["etc"], "data_home": "home", "data_dirs": ["sys"]},
+   "files": {
+    "sys/applications/rs-noname.desktop": "[Desktop Entry]\nType=Application\nExec=sh %f\n",
+    "sys/applications/rs-a.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=sh %f\n",
+    "sys/applications/mimeinfo.cache": "[MIME Cache]\nx-rs/nn=rs-noname.desktop;rs-a.desktop\n",
+    "cfg/mimeapps.list": "[Default Applications]\nx-rs/nn=rs-noname.desktop\n"
+   },
+   "types": ["x-rs/nn"]
+  }
+ ]
+}
