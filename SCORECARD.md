@@ -5528,5 +5528,8 @@ C2 answers the round-95 spot-check's routed defect 3 for the last gate-compatibl
 
 ### Harm watch (round 96, at the C2 tip `f54def272d0f9426820a17f226babbd655455f2e`)
 
-`.ufo/waves/round-96/receipts/harm-final-r96.txt`: <HARM LINE>
+`.ufo/waves/round-96/receipts/harm-final-r96.txt`: 22 legs — 21 rc 0 (gate selftest 460/460, file plane CLEAN 29,
+index 117/117, ledger 188/188, every tool selftest green, the four gate kill-set legs OK, r90 C2 83/83, r92 C2 45/45,
+r94 C1/C2 and r93 C2 TARGET_MET) and `r90c1_portal_routing` rc 2, its declared expectation since round 93; the
+round-96 legs are the separate c1/c2/c1-at-c2 receipts. No axis harmed.
 
