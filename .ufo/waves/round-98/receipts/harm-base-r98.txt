@@ -27,3 +27,14 @@ LEG r96c2_selftest_kills rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm/r96c2_sel
 LEG r97c1_filetype rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm/r97c1_filetype.log
 LEG r97c2_counter_selftest rc=1 log=/fast/scratch/hyaku/mado-r98/l1/harm/r97c2_counter_selftest.log
 rc=1
+
+# Notes (L1): 28 legs at the artifacts tip 06b6bf2a. Five nonzero, none a new harm:
+#   ledger rc=1            - the four ledger rows were still uncommitted at this tip (green in
+#                            harm-final-r98.txt at the records tip).
+#   r90c1_portal_routing   - its declared SETUP_ERROR since round 93.
+#   r95c1_mimesniff, r95c2_selftest_kills - the harness leg has no counting-command argv
+#                            ("SETUP_ERROR no counting-command block"); the tools are green above.
+#   r96c1_magictext        - the round-96 counter's known stale mutant pin (r96 D5).
+#   r97c2_counter_selftest - the leg's argv carries the literal placeholder `SKILL-AT-MEASURED-REV`
+#                            (the harness template was not filled), so the shell fails before the
+#                            counter runs; the r97 receipt ran the filled command and it passed.
