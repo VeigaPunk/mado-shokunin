@@ -531,3 +531,8 @@ stay operator-owned and are never run by the lane.
 **Round-92 refinement (C2) — the record gate fails closed; no new write surface.** `quality/check-seat-reports.py` still reads
 only the lane's own wave dispatches and writes nothing; it now refuses (setup error) a dispatch path that is not a regular
 file instead of skipping or blocking on it, and in `--worktree` it resolves real paths to keep reports inside the lane.
+
+**Round-93 refinement (C1) — portal key-file bytes (read-only); no new write surface.** `tools/mado-portals.py` now reads
+`portals.conf` and `.portal` files as bytes and applies GLib 2.90.1 GKeyFile's byte rules (S511–S514): UTF-8 is checked
+when a value is read, VT is not whitespace, a NUL ends a line's C string. It still reads only the XDG config/data roots it is
+given and writes nothing; editing `~/.config/xdg-desktop-portal/portals.conf` stays operator-owned.

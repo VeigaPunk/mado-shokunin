@@ -65,6 +65,7 @@ import sys
 import tempfile
 
 IMPL = "org.freedesktop.impl.portal"
+ASCII_SPACE = " \t\n\f\r"  # g_ascii_isspace (glib/gstrfuncs.c ascii_table_data): \v is not a space
 GTK_DBUS = IMPL + ".desktop.gtk"
 IFACES = [IMPL + "." + n for n in (
     "Lockdown", "Access", "Settings", "FileChooser", "AppChooser", "Print",
@@ -79,13 +80,25 @@ class KeyFileError(Exception):
 
 
 # ---------------------------------------------------------------- GKeyFile
+def _next_char(s: str, p: int) -> int:
+    """g_utf8_find_next_char: step one byte, then skip continuation bytes (0x80-0xBF; lone surrogates here)."""
+    p += 1
+    while p < len(s) and "\udc80" <= s[p] <= "\udcbf":
+        p += 1
+    return p
+
+
 def _is_group_line(s: str) -> bool:
+    """g_key_file_line_is_group on the line's C-string view (s holds no NUL)."""
     if not s.startswith("["):
         return False
     j = s.find("]", 1)
     if j < 0:
         return False
-    return s[j + 1:].strip(" \t") == ""
+    p = _next_char(s, j)
+    while p < len(s) and s[p] in " \t":
+        p = _next_char(s, p)
+    return p >= len(s)
 
 
 def _valid_key_name(key: str) -> bool:
@@ -124,13 +137,17 @@ def parse_keyfile(text: str) -> dict[str, dict[str, str]]:
         if idx < len(lines) - 1 and raw.endswith("\r"):
             raw = raw[:-1]
         i = 0
-        while i < len(raw) and raw[i] in " \t\n\v\f\r":
+        while i < len(raw) and raw[i] in ASCII_SPACE:
             i += 1
         s = raw[i:]
-        if s == "" or s.startswith("#"):
+        # g_key_file_parse_line detects comment/group/key on the C string, which ends at the first NUL;
+        # the group-name scan and the value length still run over the whole line (gkeyfile.c parse_group,
+        # parse_key_value_pair), and g_strndup cuts a stored name or value at the NUL
+        v = s.split("\x00", 1)[0]
+        if v == "" or v.startswith("#"):
             continue
-        if _is_group_line(s):
-            name = s[1:s.find("]", 1)]
+        if _is_group_line(v):
+            name = s[1:s.rindex("]")].split("\x00", 1)[0]
             if not _valid_group_name(name):
                 raise KeyFileError(f"invalid group name {name!r}")
             current = name
@@ -138,32 +155,44 @@ def parse_keyfile(text: str) -> dict[str, dict[str, str]]:
                 first_group = name
             groups.setdefault(name, {})
             continue
-        eq = s.find("=")
+        eq = v.find("=")
         if eq <= 0:
             raise KeyFileError(f"line {s!r} is not a key-value pair, group, or comment")
         if current is None:
             raise KeyFileError("key file does not start with a group")
-        key = s[:eq].rstrip(" \t\n\v\f\r")
+        key = v[:eq].rstrip(ASCII_SPACE)
         if not _valid_key_name(key):
             raise KeyFileError(f"invalid key name {key!r}")
-        value = s[eq + 1:].lstrip(" \t\n\v\f\r")
-        if current == first_group and key == "Encoding" and value.encode("utf-8").lower() != b"utf-8":
+        value = s[eq + 1:].lstrip(ASCII_SPACE)
+        if current == first_group and key == "Encoding" and \
+                value.encode("utf-8", "surrogateescape").lower() != b"utf-8":
             # gkeyfile.c parse_key_value_pair: an Encoding key in the file's
             # first group must read exactly UTF-8 (ASCII case-insensitive),
             # else the whole file fails to load.
             raise KeyFileError(f"unknown encoding {value!r}")
-        if "[" in key:
-            # a locale-suffixed key: GLib keeps only "interesting" locales; in
-            # the C locale none is, so the pair is dropped (named limit).
+        loc = key[key.rindex("["):] if "[" in key else ""
+        if len(loc) > 2 and loc[1:-1].lower() != "c":
+            # key_get_locale: the text from the last '[' is a locale only when longer than "[]"; such a key
+            # is kept only for an "interesting" locale — under LC_ALL=C g_get_language_names() is ["C"]
+            # (g_key_file_locale_is_interesting, ASCII-case-insensitive); "x[]" is a plain key
             continue
         grp = groups[current]
-        grp.pop(key, None)
-        grp[key] = value
+        # GKeyFile keeps every pair in file order and looks a key up to its last value
+        # (g_key_file_add_key_value_pair): g_key_file_get_keys visits a repeated key first at its
+        # first position, so the key keeps its first position and takes the last value
+        grp[key] = value.split("\x00", 1)[0]
     return groups
+
+
+def _check_utf8(value: str) -> None:
+    """g_key_file_get_string(_list): a value that is not valid UTF-8 is an error for that key only."""
+    if any("\udc80" <= c <= "\udcff" for c in value):
+        raise KeyFileError("value is not UTF-8")
 
 
 def string_list(value: str) -> list[str]:
     """g_key_file_get_string_list: unescape, split on unescaped ';', drop a trailing empty piece."""
+    _check_utf8(value)
     pieces: list[str] = []
     cur: list[str] = []
     i = 0
@@ -200,6 +229,7 @@ def string_list(value: str) -> list[str]:
 
 
 def plain_string(value: str) -> str:
+    _check_utf8(value)
     out: list[str] = []
     i = 0
     while i < len(value):
@@ -265,8 +295,10 @@ def load_portal(path: str, warnings: list[str]) -> Impl | None:
     base = os.path.basename(path)
     source = base[:base.rfind(".")]
     try:
-        with open(path, "r", encoding="utf-8", newline="") as fh:
-            text = fh.read()
+        with open(path, "rb") as fh:
+            # GKeyFile parses bytes: invalid UTF-8 voids nothing at load time (comments, unread keys);
+            # it fails only the key whose value is read (_check_utf8)
+            text = fh.read().decode("utf-8", "surrogateescape")
         groups = parse_keyfile(text)
         g = groups.get("portal")
         if g is None:
@@ -339,8 +371,10 @@ class Config:
 
 def load_config_file(path: str) -> Config | None:
     try:
-        with open(path, "r", encoding="utf-8", newline="") as fh:
-            text = fh.read()
+        with open(path, "rb") as fh:
+            # GKeyFile parses bytes: invalid UTF-8 voids nothing at load time (comments, unread keys);
+            # it fails only the key whose value is read (_check_utf8)
+            text = fh.read().decode("utf-8", "surrogateescape")
     except (OSError, UnicodeDecodeError):
         return None
     try:
@@ -554,7 +588,7 @@ def selftest() -> int:
     def run(files: dict[str, str], desktop: str | None) -> Resolver:
         with tempfile.TemporaryDirectory() as d:
             for k, v in files.items():
-                with open(os.path.join(d, k), "w", encoding="utf-8") as fh:
+                with open(os.path.join(d, k), "w", encoding="utf-8", errors="surrogateescape") as fh:
                     fh.write(v)
             return Resolver(desktop, d, "", [], "", "", [], "")
 
@@ -597,6 +631,27 @@ def selftest() -> int:
             "XFCE")
     chk("unparsable UseIn keeps the backend", r.resolve(FC) == (["kde"], "default config"))
     chk("final CR without LF is kept", parse_keyfile("[g]\na=b\r\nc=d\r") == {"g": {"a": "b", "c": "d\r"}})
+    # round 93: GKeyFile byte classes (R93MConnector §6; GLib 2.90.1 gkeyfile.c, gstrfuncs.c)
+    conf_kde = "[preferred]\ndefault=kde\n"
+
+    def _raises(fn) -> bool:
+        try:
+            fn()
+        except KeyFileError:
+            return True
+        return False
+
+    r = run(base | {"portals.conf": "# latin-1 \udce9\n" + conf_kde}, "XFCE")
+    chk("invalid UTF-8 in a comment keeps the file", r.resolve(FC) == (["kde"], "default config"))
+    r = run(base | {"portals.conf": "[preferred]\n\x0b" + conf_kde[12:]}, "XFCE")
+    chk("a VT before a key voids the file", r.resolve(FC) == (["gtk"], "gtk-last-resort"))
+    r = run(base | {"portals.conf": conf_kde.replace("kde\n", "kde\x00tail\n")}, "XFCE")
+    chk("a NUL ends the stored value", r.resolve(FC) == (["kde"], "default config"))
+    r = run(base | {"portals.conf": conf_kde.replace("]\n", "]\x00tail\n", 1)}, "XFCE")
+    chk("a NUL after a group bracket keeps the group", r.resolve(FC) == (["kde"], "default config"))
+    r = run(base | {"portals.conf": conf_kde.replace("]\n", "] \udc80\n", 1)}, "XFCE")
+    chk("continuation bytes after a group bracket are skipped", r.resolve(FC) == (["kde"], "default config"))
+    chk("Encoding counts the bytes after a NUL", _raises(lambda: parse_keyfile("[g]\nEncoding=UTF-8\x00x\n")))
     failed = [n for n, ok in checks if not ok]
     for n in failed:
         print(f"MADO_PORTALS_SELFTEST_FAIL: {n}")
