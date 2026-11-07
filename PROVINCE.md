@@ -500,3 +500,14 @@ under the manual's absolute or `~/` rule; `--mode` supplies the enabled set as a
 `quality/counters/c2-r87-control-fidelity.py` are record instruments: the first scores the tool over a frozen case set and two
 do-nothing controls, the second re-derives the round-86 figures and reconciles them against append-only corrections. The lane reads
 `~/.config/mako`; it never writes it, and the operator applies any change.
+
+**Round-91 refinement — the default-application plane (read-only resolver); no new write surface.** The
+question "which `.desktop` application opens this MIME type or URI scheme" (`xdg-open`, file managers and OpenURI reduce
+to GLib's `g_app_info_get_default_for_type`) is in province: it is desktop behavior configured by Omarchy's
+`~/.config/mimeapps.list` and `~/.config/<desktop>-mimeapps.list`. `tools/mado-mime.py` reads, read-only, only
+`mimeapps.list`, `<desktop>-mimeapps.list`, `defaults.list`, `mimeinfo.cache` and `*.desktop` under the XDG config and
+data roots (`~/.config`, `/etc/xdg`, `~/.local/share/applications`, `/usr/local/share/applications`,
+`/usr/share/applications`), the `mime/{mime.cache,aliases,subclasses}` files under the data roots, and stats `PATH`
+entries; it launches nothing and calls the C library's `qsort`/`bsearch` only to replay xdgmime's alias lookup.
+Writing an association (`gio mime TYPE HANDLER`, `xdg-mime default`, `xdg-settings set`, `update-desktop-database`)
+is operator-owned and never run by the lane.
