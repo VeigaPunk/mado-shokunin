@@ -1,0 +1,68 @@
+A1-gate-ok                   well-formed magic answers                                  name=-            data=4849 -> application/x-a	0
+A2-gate-bad-nl               header ends \0\r not \0\n                                  name=-            data=4849 -> text/plain	0
+A3-gate-short                11-byte header                                             name=-            data=4849 -> text/plain	0
+A4-gate-prefix               header + trailing 'X' inside the 12 bytes                  name=-            data=4849 -> text/plain	0
+B1-bad-line-mid              bad line mid-section; good section after                   name=-            data=4849 -> application/x-good	0
+B2-bad-header                priority is not a number                                   name=-            data=4849 -> application/x-good	0
+B3-bad-char-after-value      trailing '!' where newline expected                        name=-            data=4849 -> application/x-good	0
+B4-type-unterminated         no ']' on the header line                                  name=-            data=4849 -> application/x-good	0
+B5-extra-chars-two-sections  second section alone bad -> dropped; third good            name=-            data=4849 -> application/x-good	0
+C1-prio-0                    priority 0 answers in text mode                            name=-            data=4849 -> application/x-zero	0
+C2-prio-order                30 listed before 90, both match                            name=-            data=4849 -> application/x-high	0
+C3-prio-tie                  equal priorities keep file order                           name=-            data=4849 -> application/x-first	0
+C4-prio-tie-dirs             equal priorities across dirs: XDG_DATA_HOME before XDG_DATA_DIRS name=-            data=4849 -> application/x-dh	0
+C5-prio-overflow             priority > INT_MAX is a parse error                        name=-            data=4849 -> application/x-good	0
+C6-indent-overflow           indent > INT_MAX is a parse error                          name=-            data=4849 -> application/x-good	0
+D1-range-start               offset 2, range 3, hit at 2                                name=-            data=2e2e524742 -> application/x-range	0
+D2-range-late                hit at offset 3 of the range                               name=-            data=2e2e2e5247 -> application/x-range	0
+D3-range-none                no hit inside the range                                    name=-            data=2e2e2e5258 -> text/plain	0
+D4-range-zero                +0 never enters the loop                                   name=-            data=4849 -> text/plain	0
+D5-short-value               value longer than data is FALSE, not continue              name=-            data=414243 -> text/plain	0
+D6-short-later-offset        same value 200 bytes in on a short buffer                  name=-            data=4849 -> text/plain	0
+D7-mask                      masked compare                                             name=-            data=1f99 -> application/x-mask	0
+D8-mask-fail                 masked compare fails on the low nibble                     name=-            data=2f99 -> text/plain	0
+D9-word2-swapped             ~2 swaps the value at parse (LE)                           name=-            data=01000200 -> application/x-w2	0
+D9-word2-swapped             ~2 swaps the value at parse (LE)                           name=-            data=00010002 -> application/octet-stream	1
+D10-word4-swapped            ~4 swaps each 4-byte group                                 name=-            data=01000000 -> application/x-w4	0
+D10-word4-swapped            ~4 swaps each 4-byte group                                 name=-            data=00000001 -> application/octet-stream	1
+D11-word0                    ~0 is accepted and behaves as 1                            name=-            data=4849 -> application/x-w0	0
+D12-word3                    ~3 is a parse error -> section dropped                     name=-            data=4849 -> application/x-good	0
+D13-word-len-mismatch        3 bytes with ~2 -> parse error                             name=-            data=4849 -> text/plain	0
+D14-word-empty               bare '~' -> word_size -1 -> parse error                    name=-            data=4849 -> application/x-good	0
+D15-zero-length-value        zero-length value matches any non-empty data               name=-            data=5a -> application/x-emptyv	0
+E1-nest-hit                  child holds                                                name=-            data=4e452e2e59 -> application/x-nest	0
+E2-nest-miss                 child fails -> section fails                               name=-            data=4e452e2e5a -> text/plain	0
+E3-nest-skip-child           parent fails, child skipped, next top-level tested         name=-            data=5a5a -> application/x-two	0
+E3-nest-skip-child           parent fails, child skipped, next top-level tested         name=-            data=58582e2e59 -> text/plain	0
+E4-nest-two-children         either child holds                                         name=-            data=4e452e42 -> application/x-or	0
+E4-nest-two-children         either child holds                                         name=-            data=4e452e43 -> text/plain	0
+E5-nest-deep                 indent 2 chain                                             name=-            data=414243 -> application/x-deep	0
+E5-nest-deep                 indent 2 chain                                             name=-            data=414258 -> text/plain	0
+E6-indent-jump               indent 0 then indent 2: no child at indent 1, section never matches name=-            data=4142 -> text/plain	0
+E7-first-child               a section whose first matchlet is at indent 1 never matches name=-            data=41 -> text/plain	0
+B6-type-nul                  NUL before ']' in the header line                          name=-            data=4849 -> application/x-good	0
+F1-empty-type                empty type accepted                                        name=-            data=4849 -> 	0
+F2-type-space                type keeps a space and a slash                             name=-            data=4849 -> application/x a	0
+G1-invalid-cache             40 zero bytes as mime.cache is invalid -> text mode        name=-            data=4849 -> application/x-a	0
+D16-exact-length             i + value_length == len still matches                      name=-            data=4849 -> application/x-exact	0
+D17-blank-line               a bare newline inside a section is skipped                 name=-            data=4849 -> application/x-two	0
+D18-indent-non-gt            indent digits not followed by '>'                          name=-            data=4849 -> application/x-good	0
+D19-vt                       VT (0x0b) in the first 128 bytes is binary                 name=-            data=61620b6364 -> application/octet-stream	1
+F3-junk-after-bracket        bytes after ']' on the header line are ignored             name=-            data=4849 -> application/x-a	0
+G4-eof-no-newline            EOF after a complete value, no final newline: section inert name=-            data=4142 -> text/plain	0
+G2-no-magic                  no magic file at all -> fallback                           name=-            data=4849 -> text/plain	0
+G3-eof-in-value              EOF inside a value: section inert                          name=-            data=4142 -> text/plain	0
+H1-name-one                  one name type short-circuits the bytes                     name='x.one'      data=0102 -> text/x-one	0
+H2-name-none                 no name type -> the magic answer                           name=-            data=4849 -> application/x-hi	0
+H2-name-none                 no name type -> the magic answer                           name='zz.nomatch' data=4849 -> application/x-hi	0
+H3-name-two-hi               two name types, magic 90 -> the sniffed type               name='x.two'      data=4849 -> application/x-hi	0
+H4-name-two-low              two name types, magic 50 -> first name type, uncertain     name='x.two'      data=4849 -> image/png	1
+H5-name-two-sub              two name types, sniffed text/plain -> first subclass name type name='x.two'      data=4849 -> text/x-a	0
+H6-desktop-name              sniffed desktop with any name -> text/plain                name=-            data=5b4465736b746f7020456e7472795d -> application/x-desktop	0
+H6-desktop-name              sniffed desktop with any name -> text/plain                name='zz.nomatch' data=5b4465736b746f7020456e7472795d -> text/plain	0
+H7-dir                       trailing slash before the bytes                            name='d/'         data=4849 -> inode/directory	1
+H8-empty-data                len 0 answers zerosize before the magic                    name=-            data= -> application/x-zerosize	0
+H8-empty-data                len 0 answers zerosize before the magic                    name='x.one'      data= -> text/x-one	0
+H9-prio0-name-one            priority 0 magic vs one name type: the name wins           name='x.one'      data=4849 -> text/x-one	0
+
+probes=58 inputs=66

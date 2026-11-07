@@ -11,6 +11,9 @@ Fetch rule (QUALITY 164): a digest counts only from HTTP 200 at the recorded URL
 | 2 | https://gitlab.gnome.org/GNOME/glib/-/raw/2.90.1/gio/xdgmime/xdgmime.c | 200 | same | 23417 | afb1c1c1ba726a9fb8d8732f4031f5aa85a67ec3b7a2f989b617e4f4f5282410 |
 | 3 | https://specifications.freedesktop.org/shared-mime-info/latest/ar01s02.html | 200 | same | 59208 | e00fa00e69b1e95ad8642d05fc5023c26f859bdaf8bdda3e091a55feb016c61e |
 
+The fetched bytes are committed at `.ufo/waves/round-96/fetch/{xdgmimemagic.c,xdgmime.c,smi-ar01s02.html}`
+(digests above, byte-identical to the fetched `.1` copies; R96MScribeEntry checked them 2026-11-07).
+
 Commands (fetch dir `.ufo/waves/round-96/fetch/`):
 
     curl -sSL -o xdgmimemagic.c.1 -w '%{http_code} %{url_effective} %{size_download}' <url1>
@@ -35,7 +38,7 @@ Also probed: `ar01s03.html` 200 (7048 B, no MIME-Magic text); `ar01s04..07.html`
 
 ### S524 — xdgmimemagic.c (GLib tag 2.90.1), scope: the TEXT magic database parser and matcher
 
-Located quote (line 815, `wc -l` 819):
+Located quote (line 814, `wc -l` 819):
 
     if (memcmp ("MIME-Magic\0\n", header, 12) == 0)
 
@@ -47,16 +50,16 @@ Further rules and their located lines (all in the fetched bytes):
 | section header `[priority:type]` | 230-281 | `match->priority = _xdg_mime_magic_read_a_number (magic_file, &end_of_file);` |
 | type termination | 258-276 | `while (*end_ptr != ']' && *end_ptr != '\000' && *end_ptr != '\n')` |
 | value length, two bytes big-endian | 372-391 | `matchlet->value_length = matchlet->value_length << 8;` |
-| mask equal length | 400-419 | `bytes_read = fread (matchlet->mask, 1, matchlet->value_length, magic_file);` |
-| word size 1/2/4, swap at parse | 421-450 | `if (matchlet->value_length % matchlet->word_size != 0)` |
+| mask equal length | 420 | `bytes_read = fread (matchlet->mask, 1, matchlet->value_length, magic_file);` |
+| word size 0/1/2/4 accepted, swap at parse | 440-450, 476 | `if (matchlet->word_size != 0 &&` (so `~0` parses as word size 0, which the compare treats as 1) |
 | range length | 452-470 | `matchlet->range_length = _xdg_mime_magic_read_a_number (magic_file, &end_of_file);` |
 | parse error drops the section | 283-300, 749-782 | `state = _xdg_mime_magic_parse_error (magic_file);` |
 | match order by priority, ties in file order | 596-629 | `if (list->next->priority < match->priority)` |
 | first matching section wins | 652-678 | `if (_xdg_mime_magic_match_compare_to_data (match, data, len))` |
 | nesting by indent | 557-588 | `_xdg_mime_magic_matchlet_compare_level (matchlet->next, data, len, indent + 1)` |
 | bounds rule returns FALSE | 515-536 | `if (i + matchlet->value_length > len) return FALSE;` |
-| defaults: indent 0, offset 0, range 1, word 1 | 84-105 | `matchlet->range_length = 1;` |
-| section kept only if a matchlet parsed | 749-782 | `_xdg_mime_magic_matchlet_mirror (match->matchlet);` |
+| defaults: indent 0, offset 0, range 1, word 1 | 84-105, 476 | `matchlet->range_length = 1;` |
+| a section is inserted when its header parsed, even with zero matchlets (inert) | 749-782 | `match->matchlet = _xdg_mime_magic_matchlet_mirror (match->matchlet);` |
 
 ### S525 — shared-mime-info spec §2.5 (same URL as S523, new scope; census W04 expected)
 
@@ -68,19 +71,22 @@ Further located lines on the same page (text extraction, page line numbers of th
 
 | rule | page line | quote (<=25 words) |
 |---|---|---|
-| big-endian numbers | 389-391 | `All numbers are big-endian, so need to be byte-swapped on little-endian machines.` |
-| section form | 393-399 | `Each section is introduced by giving the priority and type in brackets, followed by a newline character.` |
+| big-endian numbers | 391 | `All numbers are big-endian, so need to be byte-swapped on little-endian machines.` |
+| section form | 394 | `Each section is introduced by giving the priority and type in brackets, followed by a newline character.` |
 | line form | 400-414 | `[ indent ] ">" start-offset "=" value` |
-| two-byte length | 407-410 | `Two bytes giving the (big-endian) length of the value, followed by the value itself.` |
-| defaults | 429-433 | `If missing, indent defaults to 0, range-length to 1, the word-size to 1` |
-| unknown character | 441-446 | `If an unknown character is found where a newline is expected then the whole line should be ignored` |
-| parent rule | 435-439 | `The parent of an entry is the preceding entry with an indent one less than the entry.` |
+| two-byte length | 403 | `Two bytes giving the (big-endian) length of the value, followed by the value itself.` |
+| defaults | 421-423 | `If missing, indent defaults to 0, range-length to 1, the word-size to 1` |
+| unknown character | 429-430 | `If an unknown character is found where a newline is expected then the whole line should be ignored` |
+| parent rule | 426-427 | `The parent of an entry is the preceding entry with an indent one less than the entry.` |
 
-**Divergence to record in the entry (measured against the C, not the spec):** the spec says only the bad
+**Divergences to record in the entry (measured against the C, not the spec):** (a) the spec says only the bad
 *line* is ignored; the C (`:283-300` + `:749-782`) drops the whole *section* (parse_error skips to the next
-newline and returns to SECTION; a following matchlet line is then an ERROR again). The tool models the C
-because the oracle is the installed library. A second divergence: the spec says "Higher priority entries come
-first" in the file; the C re-sorts (`insert_match`) so file order is irrelevant except for equal priorities.
+newline and returns to SECTION; a following matchlet line is then an ERROR again). (b) The spec's magic-deleteall
+marker `>0=__NOMAGIC__` (page line 445-446) has no handling in GLib 2.90.1 — `grep -rn NOMAGIC` over the fetched
+bytes finds it only in the spec page, so the C matches it as a literal 10-byte value where the spec says the
+directories' earlier rules MUST be discarded. (c) The spec says "Higher priority entries come first" in the file;
+the C re-sorts (`insert_match`) so file order is irrelevant except for equal priorities. (d) `~0` is accepted by
+the C (word size 0, compared as 1) although the spec lists 1, 2, 4.
 
 ## Local documentation check (not a row)
 

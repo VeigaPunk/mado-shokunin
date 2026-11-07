@@ -1,0 +1,261 @@
+[
+ {
+  "id": "okrc-ge-zero",
+  "kind": "hand",
+  "find": "            (\"OK-rc\", rc_ok == 0, f\"rc={rc_ok} lines={out_ok}\"),",
+  "replace": "            (\"OK-rc\", rc_ok >= 0, f\"rc={rc_ok} lines={out_ok}\"),",
+  "why": "the OK exit-code check is relaxed to 'not negative', so exit 1 passes (hides M-ok-rc)"
+ },
+ {
+  "id": "okrc-true",
+  "kind": "hand",
+  "find": "            (\"OK-rc\", rc_ok == 0, f\"rc={rc_ok} lines={out_ok}\"),",
+  "replace": "            (\"OK-rc\", True, f\"rc={rc_ok} lines={out_ok}\"),",
+  "why": "the OK exit-code observation is pinned true, so the check can never fail (hides M-ok-rc)"
+ },
+ {
+  "id": "okrc-not-setup",
+  "kind": "hand",
+  "find": "            (\"OK-rc\", rc_ok == 0, f\"rc={rc_ok} lines={out_ok}\"),",
+  "replace": "            (\"OK-rc\", rc_ok != 2, f\"rc={rc_ok} lines={out_ok}\"),",
+  "why": "only a setup-error exit fails the OK case, so exit 1 passes (hides M-ok-rc)"
+ },
+ {
+  "id": "okrc-abs-genuine",
+  "kind": "hand",
+  "find": "            (\"OK-rc\", rc_ok == 0, f\"rc={rc_ok} lines={out_ok}\"),",
+  "replace": "            (\"OK-rc\", abs(rc_ok) >= 0, f\"rc={rc_ok} lines={out_ok}\"),",
+  "why": "a comparison against an absolute value is always true, so the check is decorative (hides M-ok-rc)"
+ },
+ {
+  "id": "okrc-label-renamed",
+  "kind": "hand",
+  "find": "            (\"OK-rc\", rc_ok == 0, f\"rc={rc_ok} lines={out_ok}\"),",
+  "replace": "            (\"OK-rcx\", rc_ok == 0, f\"rc={rc_ok} lines={out_ok}\"),",
+  "why": "the OK exit-code failure is announced under an undeclared label, so the declared label never appears (hides M-ok-rc)"
+ },
+ {
+  "id": "okrc-input-pinned",
+  "kind": "hand",
+  "find": "        rc_ok, out_ok = run([\"--repo\", d, \"--rev\", rev_ok])",
+  "replace": "        rc_ok, out_ok = run([\"--repo\", d, \"--rev\", rev_ok])\n        rc_ok = 0",
+  "why": "the observed exit code is overwritten with the expected value before it is asserted (the expected rc is compared to itself; hides M-ok-rc)"
+ },
+ {
+  "id": "oklines-nonempty",
+  "kind": "hand",
+  "find": "            (\"OK-lines\", any(ok_line in ln for ln in out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "replace": "            (\"OK-lines\", bool(out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "why": "the OK line check is reduced to 'produced some output', so the finding line is unchecked (hides M-ok-lines)"
+ },
+ {
+  "id": "oklines-verdict-only",
+  "kind": "hand",
+  "find": "            (\"OK-lines\", any(ok_line in ln for ln in out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "replace": "            (\"OK-lines\", any(\"verdict=OK\" in ln for ln in out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "why": "the OK line check keeps only the verdict token and drops the cited/present/missing counts (hides M-ok-lines)"
+ },
+ {
+  "id": "oklines-first-token",
+  "kind": "hand",
+  "find": "            (\"OK-lines\", any(ok_line in ln for ln in out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "replace": "            (\"OK-lines\", any(ok_line.split()[0] in ln for ln in out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "why": "the OK line expectation is reduced to its first token, so the present/missing counts go unchecked (hides M-ok-present)"
+ },
+ {
+  "id": "oklines-missing-zero",
+  "kind": "hand",
+  "find": "            (\"OK-lines\", any(ok_line in ln for ln in out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "replace": "            (\"OK-lines\", any(\"missing=0\" in ln for ln in out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "why": "the OK line check keeps only missing=0, so the citation count is unchecked (hides M-ok-lines)"
+ },
+ {
+  "id": "oklines-expected-shortened",
+  "kind": "hand",
+  "find": "        ok_line = \"cited=1 present=1 missing=0 verdict=OK\"",
+  "replace": "        ok_line = \"verdict=OK\"",
+  "why": "the expected OK line is shortened to one token, so four of its five fields are unchecked (hides M-ok-lines)"
+ },
+ {
+  "id": "oklines-expected-first-token",
+  "kind": "hand",
+  "find": "        ok_line = \"cited=1 present=1 missing=0 verdict=OK\"",
+  "replace": "        ok_line = \"cited=1\"",
+  "why": "the expected OK line keeps only the citation count, so present/missing/verdict are unchecked (hides M-ok-present)"
+ },
+ {
+  "id": "oklines-label-renamed",
+  "kind": "hand",
+  "find": "            (\"OK-lines\", any(ok_line in ln for ln in out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "replace": "            (\"OK-line\", any(ok_line in ln for ln in out_ok), f\"want {ok_line!r} in lines={out_ok}\"),",
+  "why": "the OK line failure is announced under an undeclared singular label (hides M-ok-lines)"
+ },
+ {
+  "id": "missingrc-ge-zero",
+  "kind": "hand",
+  "find": "            (\"MISSING-rc\", rc_missing == 1, f\"rc={rc_missing} lines={out_missing}\"),",
+  "replace": "            (\"MISSING-rc\", rc_missing >= 0, f\"rc={rc_missing} lines={out_missing}\"),",
+  "why": "the MISSING exit-code check is relaxed to 'not negative' (hides M-missing-rc)"
+ },
+ {
+  "id": "missingrc-true",
+  "kind": "hand",
+  "find": "            (\"MISSING-rc\", rc_missing == 1, f\"rc={rc_missing} lines={out_missing}\"),",
+  "replace": "            (\"MISSING-rc\", True, f\"rc={rc_missing} lines={out_missing}\"),",
+  "why": "the MISSING exit-code observation is pinned true (hides M-missing-rc)"
+ },
+ {
+  "id": "missingrc-label-renamed",
+  "kind": "hand",
+  "find": "            (\"MISSING-rc\", rc_missing == 1, f\"rc={rc_missing} lines={out_missing}\"),",
+  "replace": "            (\"MISSING-returncode\", rc_missing == 1, f\"rc={rc_missing} lines={out_missing}\"),",
+  "why": "the MISSING exit-code failure is announced under an undeclared label (hides M-missing-rc)"
+ },
+ {
+  "id": "missinglines-verdict-only",
+  "kind": "hand",
+  "find": "            (\"MISSING-lines\", gone_line in out_missing and any(\"verdict=MISSING\" in ln for ln in out_missing),\n             f\"want {gone_line!r} lines={out_missing}\"),",
+  "replace": "            (\"MISSING-lines\", any(\"verdict=MISSING\" in ln for ln in out_missing),\n             f\"want {gone_line!r} lines={out_missing}\"),",
+  "why": "the MISSING line check keeps only the verdict token, so the resolved path and file:line go unchecked (hides M-missing-lines)"
+ },
+ {
+  "id": "missinglines-nonempty",
+  "kind": "hand",
+  "find": "            (\"MISSING-lines\", gone_line in out_missing and any(\"verdict=MISSING\" in ln for ln in out_missing),\n             f\"want {gone_line!r} lines={out_missing}\"),",
+  "replace": "            (\"MISSING-lines\", bool(out_missing),\n             f\"want {gone_line!r} lines={out_missing}\"),",
+  "why": "the MISSING line check is reduced to 'produced some output' (hides M-missing-lines)"
+ },
+ {
+  "id": "missinglines-prefix-only",
+  "kind": "hand",
+  "find": "            (\"MISSING-lines\", gone_line in out_missing and any(\"verdict=MISSING\" in ln for ln in out_missing),\n             f\"want {gone_line!r} lines={out_missing}\"),",
+  "replace": "            (\"MISSING-lines\", any(\"missing \" in ln for ln in out_missing),\n             f\"want {gone_line!r} lines={out_missing}\"),",
+  "why": "any line starting 'missing ' satisfies the MISSING check, so the resolved target and line number go unchecked (hides M-missing-lines)"
+ },
+ {
+  "id": "missinglines-label-renamed",
+  "kind": "hand",
+  "find": "            (\"MISSING-lines\", gone_line in out_missing and any(\"verdict=MISSING\" in ln for ln in out_missing),\n             f\"want {gone_line!r} lines={out_missing}\"),",
+  "replace": "            (\"MISSING-line\", gone_line in out_missing and any(\"verdict=MISSING\" in ln for ln in out_missing),\n             f\"want {gone_line!r} lines={out_missing}\"),",
+  "why": "the MISSING line failure is announced under an undeclared singular label (hides M-missing-lines)"
+ },
+ {
+  "id": "setup-rc-true",
+  "kind": "hand",
+  "find": "            (\"SETUP-rc\", rc_setup == 2, f\"rc={rc_setup} lines={out_setup}\"),",
+  "replace": "            (\"SETUP-rc\", True, f\"rc={rc_setup} lines={out_setup}\"),",
+  "why": "the SETUP exit-code observation is pinned true, so a swallowed setup error passes (hides M-setup-rc)"
+ },
+ {
+  "id": "setup-rc-ge-zero",
+  "kind": "hand",
+  "find": "            (\"SETUP-rc\", rc_setup == 2, f\"rc={rc_setup} lines={out_setup}\"),",
+  "replace": "            (\"SETUP-rc\", rc_setup >= 0, f\"rc={rc_setup} lines={out_setup}\"),",
+  "why": "the SETUP exit-code check is relaxed to 'not negative' (hides M-setup-rc)"
+ },
+ {
+  "id": "setup-rc-label-renamed",
+  "kind": "hand",
+  "find": "            (\"SETUP-rc\", rc_setup == 2, f\"rc={rc_setup} lines={out_setup}\"),",
+  "replace": "            (\"SETUP-returncode\", rc_setup == 2, f\"rc={rc_setup} lines={out_setup}\"),",
+  "why": "the SETUP exit-code failure is announced under an undeclared label (hides M-setup-rc)"
+ },
+ {
+  "id": "setuplines-nonempty",
+  "kind": "hand",
+  "find": "            (\"SETUP-lines\", setup_line in out_setup, f\"want {setup_line!r} lines={out_setup}\"),",
+  "replace": "            (\"SETUP-lines\", bool(out_setup), f\"want {setup_line!r} lines={out_setup}\"),",
+  "why": "the SETUP line check is reduced to 'produced some output' (hides M-setup-lines)"
+ },
+ {
+  "id": "setuplines-prefix",
+  "kind": "hand",
+  "find": "            (\"SETUP-lines\", setup_line in out_setup, f\"want {setup_line!r} lines={out_setup}\"),",
+  "replace": "            (\"SETUP-lines\", any(setup_line[:20] in ln for ln in out_setup), f\"want {setup_line!r} lines={out_setup}\"),",
+  "why": "the SETUP line is compared by its first 20 characters only, so the message tail and rev go unchecked (hides M-setup-lines)"
+ },
+ {
+  "id": "setuplines-label-renamed",
+  "kind": "hand",
+  "find": "            (\"SETUP-lines\", setup_line in out_setup, f\"want {setup_line!r} lines={out_setup}\"),",
+  "replace": "            (\"SETUP-line\", setup_line in out_setup, f\"want {setup_line!r} lines={out_setup}\"),",
+  "why": "the SETUP line failure is announced under an undeclared singular label (hides M-setup-lines)"
+ },
+ {
+  "id": "all-failed-emptied",
+  "kind": "hand",
+  "find": "    failed = [n for n, ok in checks if not ok]",
+  "replace": "    failed = []",
+  "why": "the failed list is emptied before it is counted or printed, so every observation passes (hides all six labels; M-setup-rc recorded)"
+ },
+ {
+  "id": "all-checks-pinned",
+  "kind": "hand",
+  "find": "    checks = [(n, ok) for n, ok, _ in observations]",
+  "replace": "    checks = [(n, True) for n, ok, _ in observations]",
+  "why": "every observation's boolean is replaced by True when the checks list is built (hides all six labels; M-setup-rc recorded)"
+ },
+ {
+  "id": "all-fail-print-dropped",
+  "kind": "hand",
+  "find": "    for n in failed:\n        print(f\"RECEIPT_PRESENCE_SELFTEST: FAIL {n}\")",
+  "replace": "    for n in []:\n        print(f\"RECEIPT_PRESENCE_SELFTEST: FAIL {n}\")",
+  "why": "the FAIL lines are no longer printed, so a failing check leaves only a non-zero exit (a check that only exits; hides M-setup-rc)"
+ },
+ {
+  "id": "all-failed-filtered",
+  "kind": "hand",
+  "find": "    failed = [n for n, ok in checks if not ok]",
+  "replace": "    failed = [n for n, ok in checks if not ok and n.startswith(\"ZZ\")]",
+  "why": "the failed list is filtered by a prefix no label has, so it is always empty (hides all six labels; M-setup-rc recorded)"
+ },
+ {
+  "id": "all-exit-zero",
+  "kind": "hand",
+  "find": "    return 0 if not failed else 1",
+  "replace": "    return 0",
+  "why": "the selftest always exits 0, so a caller that reads the exit code cannot see any FAIL line (hides all six labels; M-setup-rc recorded)"
+ },
+ {
+  "id": "n-comment",
+  "kind": "neutral",
+  "find": "    root = tempfile.mkdtemp(prefix=\"receipt-presence-selftest-\")",
+  "replace": "    root = tempfile.mkdtemp(prefix=\"receipt-presence-selftest-\")  # scratch fixture root",
+  "why": "a trailing comment on the fixture root line"
+ },
+ {
+  "id": "n-docstring",
+  "kind": "neutral",
+  "find": "    configuration.\n    \"\"\"",
+  "replace": "    configuration; the fixture is removed afterwards.\n    \"\"\"",
+  "why": "a docstring sentence extended in the selftest"
+ },
+ {
+  "id": "n-whitespace",
+  "kind": "neutral",
+  "find": "        observations = [",
+  "replace": "\n        observations = [",
+  "why": "a blank line inserted before the observations list"
+ },
+ {
+  "id": "n-quote-style",
+  "kind": "neutral",
+  "find": "any(\"verdict=MISSING\" in ln for ln in out_missing)",
+  "replace": "any('verdict=MISSING' in ln for ln in out_missing)",
+  "why": "a string literal re-quoted with the same value"
+ },
+ {
+  "id": "n-local-alias",
+  "kind": "neutral",
+  "find": "        bad = \"d\" * 40",
+  "replace": "        bad = \"d\" * 40\n        bad_rev = bad  # alias, unused",
+  "why": "an alias local added beside the bad-rev constant"
+ },
+ {
+  "id": "n-continuation-space",
+  "kind": "neutral",
+  "find": "             f\"want {gone_line!r} lines={out_missing}\"),",
+  "replace": "            f\"want {gone_line!r} lines={out_missing}\"),",
+  "why": "one space of indentation removed inside a parenthesised continuation"
+ }
+]

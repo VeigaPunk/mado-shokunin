@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "round": 96,
+  "wave": "w1",
+  "seat": "R96MExecHostC1",
+  "generated_utc": "2026-11-07",
+  "base_rev": "9f029f46f01f6cd3a1d29ac39bb498a1d0c3d",
+  "purpose": "Text-mode MIME database snapshot the round-96 C1 candidate and the round-95 oracle are answered against: the 8 text files of the host DB with no mime.cache in any reachable dir (glib text mode, xdgmime.c:129-206).",
+  "source": {
+    "dir": "/usr/share/mime",
+    "access": "read-only: files copied with cp(1); the source tree was never written",
+    "glib2": "2.90.1-1",
+    "shared_mime_info": "2.5.1-2",
+    "file_1_version": "5.48 (/usr/share/misc/magic)"
+  },
+  "copy_recipe": [
+    "S=${HYAKU_SCRATCH:-/fast/scratch/hyaku}/mado-r96/R96MExecHostC1",
+    "mkdir -p \"$S/hostdb/mime\" \"$S/empty-h\" \"$S/empty-dh\"",
+    "for f in magic globs globs2 aliases subclasses icons generic-icons XMLnamespaces; do cp \"/usr/share/mime/$f\" \"$S/hostdb/mime/$f\"; done",
+    "cd \"$S/hostdb/mime\" && sha256sum magic globs globs2 aliases subclasses icons generic-icons XMLnamespaces  # must equal the pins below",
+    "for f in ...; do cmp -s \"/usr/share/mime/$f\" \"$f\"; done  # byte identity, measured 8/8 identical",
+    "find \"$S/hostdb\" -name mime.cache  # must print nothing; measured 0 hits"
+  ],
+  "assertions": {
+    "byte_identity_vs_source": "8/8 identical (cmp -s)",
+    "mime_cache_in_copy": 0,
+    "env_for_text_mode": "HOME=$S/empty-h XDG_DATA_HOME=$S/empty-dh XDG_DATA_DIRS=$S/hostdb -> no reachable mime.cache, so glib answers in text mode"
+  },
+  "files": [
+    {"name": "magic",          "bytes": 47524, "sha256": "2942f4adfca98c1816177f056d566e925e96e1c3dd562964dada066bf4a8a35c"},
+    {"name": "globs",          "bytes": 47137, "sha256": "54eb042dc1a2f2caba8e09ff79eda184ea0063d50dd796ea3f3726a20e96c40d"},
+    {"name": "globs2",         "bytes": 52100, "sha256": "556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e"},
+    {"name": "aliases",        "bytes": 13687, "sha256": "74cde6689d6161332df5e89358fb68c23959f230aa4f1ee0bcf03f2fa062c5df"},
+    {"name": "subclasses",     "bytes": 24981, "sha256": "3dc5ff5773867381cedc84523738d8ee11ccd95618e5157be05cefdc6f9cfa62"},
+    {"name": "icons",          "bytes": 232,   "sha256": "7198dd2150a591c2c2f4d0fa91599823871c4ee1017993b1e06f9094a9702a30"},
+    {"name": "generic-icons",  "bytes": 22921, "sha256": "ad2a08102009507566ac25c79b0fdc1a35fc89dfb2e983672d6ccf5297260f3a"},
+    {"name": "XMLnamespaces",  "bytes": 2672,  "sha256": "706cfd7efe0632b7f5abb55fa5626f47efb63a42cdad9ff6ed7360a259bb98cc"}
+  ],
+  "file_count": 8,
+  "total_bytes": 211254,
+  "excluded_from_copy": [
+    "mime.cache (cache-mode marker; its presence in any reachable dir means cache mode, outside the r96 C1 surface)",
+    "per-type subdirs (application/, audio/, ... ), packages/, treemagic, types, version"
+  ],
+  "cross_check": "globs2 sha256 556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e equals the round-94 counter's host /usr/share/mime/globs2 pin (harm-final-r95.txt), so the DB has not drifted since round 94."
+}

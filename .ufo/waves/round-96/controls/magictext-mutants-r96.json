@@ -1,0 +1,755 @@
+{
+ "mutants": [
+  {
+   "id": "header-gate-removed",
+   "rule": "the 12-byte gate compares the bytes against MIME-Magic\\0\\n (the mutant drops the comparison and parses any file)",
+   "find": "    if data[:12] != b\"MIME-Magic\\x00\\n\":\n        return []",
+   "replace": "    if False:\n        return []",
+   "class": "header"
+  },
+  {
+   "id": "header-gate-any-12-bytes",
+   "rule": "a file counts only when its first 12 bytes are exactly the magic string (the mutant accepts any 12-byte prefix)",
+   "find": "    if data[:12] != b\"MIME-Magic\\x00\\n\":\n        return []",
+   "replace": "    if len(data) < 12:\n        return []",
+   "class": "header"
+  },
+  {
+   "id": "header-gate-11-prefix",
+   "rule": "the gate compares all 12 bytes including the newline (the mutant compares only the first 11)",
+   "find": "    if data[:12] != b\"MIME-Magic\\x00\\n\":\n        return []",
+   "replace": "    if data[:11] != b\"MIME-Magic\\x00\":\n        return []",
+   "class": "header"
+  },
+  {
+   "id": "header-gate-10-prefix",
+   "rule": "the gate includes the NUL and the newline (the mutant accepts MIME-Magic followed by any two bytes)",
+   "find": "    if data[:12] != b\"MIME-Magic\\x00\\n\":\n        return []",
+   "replace": "    if data[:10] != b\"MIME-Magic\":\n        return []",
+   "class": "header"
+  },
+  {
+   "id": "sect-priority-empty-becomes-0",
+   "rule": "a header without priority digits is a parse error (the mutant defaults the priority to 0)",
+   "find": "    prio, eof = _read_a_number(cur)\n    if eof:\n        return \"EOF\"\n    if prio == -1:\n        return \"ERROR\"",
+   "replace": "    prio, eof = _read_a_number(cur)\n    if eof:\n        return \"EOF\"\n    if prio == -1:\n        prio = 0",
+   "class": "sect"
+  },
+  {
+   "id": "sect-priority-intmax-off-by-one",
+   "rule": "a priority past INT_MAX is a parse error (the mutant accepts INT_MAX + 1)",
+   "find": "    if v > INT_MAX:           # the C range check (:210)",
+   "replace": "    if v > INT_MAX + 1:       # the C range check (:210)",
+   "class": "sect"
+  },
+  {
+   "id": "sect-colon-not-required",
+   "rule": "the ':' after the priority is required (the mutant consumes any byte as the colon)",
+   "find": "    if c != 0x3A:                                     # ':'",
+   "replace": "    if False:                                         # ':'",
+   "class": "sect"
+  },
+  {
+   "id": "sect-type-newline-terminates",
+   "rule": "the type must be closed by ']' on the line (the mutant accepts the newline as the terminator)",
+   "find": "    k = buf.find(b\"]\")\n    if k < 0:\n        return \"ERROR\"",
+   "replace": "    k = buf.find(b\"]\")\n    if k < 0:\n        k = len(buf)",
+   "class": "sect"
+  },
+  {
+   "id": "sect-type-nul-continues",
+   "rule": "the header line read stops at a NUL byte (the mutant keeps reading past the NUL)",
+   "find": "        if c == 10 or c == 0:\n            return bytes(out), False",
+   "replace": "        if c == 10:\n            return bytes(out), False",
+   "class": "sect"
+  },
+  {
+   "id": "sect-empty-type-becomes-none",
+   "rule": "an empty type between ':' and ']' is a real type (the mutant turns it into no section)",
+   "find": "    match[\"priority\"] = prio\n    match[\"mime\"] = buf[:k]",
+   "replace": "    match[\"priority\"] = prio\n    match[\"mime\"] = buf[:k] or None",
+   "class": "sect"
+  },
+  {
+   "id": "sect-empty-tree-matches",
+   "rule": "a section whose matchlet tree is empty never matches (the mutant lets it match)",
+   "find": "        if mt[\"matchlets\"] and _compare_level(mt[\"matchlets\"], 0, data, 0, 1):",
+   "replace": "        if True:",
+   "class": "sect"
+  },
+  {
+   "id": "sect-eof-section-dropped",
+   "rule": "a section whose file ends after its header or matchlets is inserted (the mutant drops every EOF section)",
+   "find": "            if state == \"SECTION\" or (state == \"EOF\" and match[\"mime\"] is not None):",
+   "replace": "            if state == \"SECTION\":",
+   "class": "sect"
+  },
+  {
+   "id": "sect-priority-30-digit-cap",
+   "rule": "the priority number reads up to 30 digits then stops (the mutant stops after one digit)",
+   "find": "        if len(digits) == 30:\n            break",
+   "replace": "        if len(digits) == 1:\n            break",
+   "class": "sect"
+  },
+  {
+   "id": "value-length-little-endian",
+   "rule": "the two value-length bytes are big-endian (the mutant reads them little-endian)",
+   "find": "    vlen = ((b0 & 0xFF) << 8) | (b1 & 0xFF)           # two bytes big-endian (:372-391)",
+   "replace": "    vlen = ((b1 & 0xFF) << 8) | (b0 & 0xFF)           # two bytes big-endian (:372-391)",
+   "class": "value"
+  },
+  {
+   "id": "value-consume-one-short",
+   "rule": "exactly value_length bytes are consumed as the value (the mutant consumes one fewer)",
+   "find": "    value = cur.b[cur.i:cur.i + vlen]\n    if len(value) < vlen:",
+   "replace": "    value = cur.b[cur.i:cur.i + vlen - 1]\n    if len(value) < vlen - 1:",
+   "class": "value"
+  },
+  {
+   "id": "value-short-read-error",
+   "rule": "a truncated value at EOF is the EOF state, so the section may still be inserted (the mutant calls it a parse error)",
+   "find": "    if len(value) < vlen:                             # short fread -> feof -> EOF (:393-399)\n        cur.i = len(cur.b)\n        return \"EOF\", None",
+   "replace": "    if len(value) < vlen:                             # short fread -> feof -> EOF (:393-399)\n        cur.i = len(cur.b)\n        return \"ERROR\", None",
+   "class": "value"
+  },
+  {
+   "id": "value-zero-length-never-matches",
+   "rule": "a zero-length value matches any data (the mutant requires a non-empty value)",
+   "find": "        if mask is None:\n            if data[i:i + vlen] == ml[\"value\"]:\n                return True",
+   "replace": "        if mask is None:\n            if vlen and data[i:i + vlen] == ml[\"value\"]:\n                return True",
+   "class": "value"
+  },
+  {
+   "id": "value-trailing-byte-ends-line",
+   "rule": "the line must end with a newline (the mutant accepts any trailing byte as the end)",
+   "find": "    if c == 0x0A:                                     # '\\n': the matchlet is kept",
+   "replace": "    if c is not None:                                 # '\\n': the matchlet is kept",
+   "class": "value"
+  },
+  {
+   "id": "value-nomagic-deleteall",
+   "rule": "__NOMAGIC__ is a literal value, not a deleteall directive (the mutant treats it as a section terminator)",
+   "find": "    value = cur.b[cur.i:cur.i + vlen]\n    if len(value) < vlen:",
+   "replace": "    value = cur.b[cur.i:cur.i + vlen]\n    if value == b\"__NOMAGIC__\":\n        return \"SECTION\", None\n    if len(value) < vlen:",
+   "class": "value"
+  },
+  {
+   "id": "value-eof-keeps-matchlet",
+   "rule": "EOF in the middle of a matchlet frees it (the mutant keeps the matchlet)",
+   "find": "    if c is None:\n        return \"EOF\", None\n    return \"ERROR\", None",
+   "replace": "    if c is None:\n        return \"MAGIC\", {\"indent\": indent, \"offset\": offset, \"value\": value,\n                         \"mask\": mask, \"range\": rng}\n    return \"ERROR\", None",
+   "class": "value"
+  },
+  {
+   "id": "mask-any-byte-starts-mask",
+   "rule": "a mask exists only when '&' follows the value (the mutant takes any next byte as the mask marker)",
+   "find": "    if c == 0x26:                                     # '&'",
+   "replace": "    if c is not None:                                 # '&'",
+   "class": "mask"
+  },
+  {
+   "id": "mask-reads-one-byte",
+   "rule": "the mask has the same length as the value (the mutant reads one byte)",
+   "find": "        mask = cur.b[cur.i:cur.i + vlen]",
+   "replace": "        mask = cur.b[cur.i:cur.i + 1]",
+   "class": "mask"
+  },
+  {
+   "id": "mask-short-read-error",
+   "rule": "a truncated mask at EOF is the EOF state (the mutant calls it a parse error)",
+   "find": "        if len(mask) < vlen:\n            cur.i = len(cur.b)\n            return \"EOF\", None",
+   "replace": "        if len(mask) < vlen:\n            cur.i = len(cur.b)\n            return \"ERROR\", None",
+   "class": "mask"
+  },
+  {
+   "id": "mask-value-unmasked",
+   "rule": "the value byte is ANDed with the mask (the mutant compares the raw value byte)",
+   "find": "                if (data[i + j] & mask[j]) != (ml[\"value\"][j] & mask[j]):",
+   "replace": "                if (data[i + j] & mask[j]) != ml[\"value\"][j]:",
+   "class": "mask"
+  },
+  {
+   "id": "mask-data-unmasked",
+   "rule": "the data byte is ANDed with the mask (the mutant compares the raw data byte)",
+   "find": "                if (data[i + j] & mask[j]) != (ml[\"value\"][j] & mask[j]):",
+   "replace": "                if data[i + j] != (ml[\"value\"][j] & mask[j]):",
+   "class": "mask"
+  },
+  {
+   "id": "mask-ignored",
+   "rule": "the masked path runs when a mask is present (the mutant always compares literally)",
+   "find": "        if mask is None:",
+   "replace": "        if True:",
+   "class": "mask"
+  },
+  {
+   "id": "word-zero-rejected",
+   "rule": "word size 0 is legal (the mutant rejects it, the L1 geometry cut)",
+   "find": "        if word not in (0, 1, 2, 4):                  # :440-443",
+   "replace": "        if word not in (1, 2, 4):                     # :440-443",
+   "class": "word"
+  },
+  {
+   "id": "word-four-rejected",
+   "rule": "word size 4 is legal (the mutant rejects it)",
+   "find": "        if word not in (0, 1, 2, 4):                  # :440-443",
+   "replace": "        if word not in (0, 1, 2):                     # :440-443",
+   "class": "word"
+  },
+  {
+   "id": "word-modulo-error-keeps-section",
+   "rule": "value_length % word_size != 0 is a parse error that drops the section (the mutant keeps the section)",
+   "find": "            if vlen % word != 0:                      # :469-474 (never reached for word 0 or 1)\n                return \"ERROR\", None",
+   "replace": "            if vlen % word != 0:                      # :469-474 (never reached for word 0 or 1)\n                return \"MAGIC\", None",
+   "class": "word"
+  },
+  {
+   "id": "word-no-swap2",
+   "rule": "a 2-byte word size swaps each 2-byte value word at parse (the mutant swaps nothing)",
+   "find": "        if word == 2:\n            out[i], out[i + 1] = out[i + 1], out[i]",
+   "replace": "        if word == 2:\n            pass",
+   "class": "word"
+  },
+  {
+   "id": "word-no-swap4",
+   "rule": "a 4-byte word size reverses each 4-byte value word at parse (the mutant swaps nothing)",
+   "find": "        else:\n            out[i:i + word] = out[i:i + word][::-1]",
+   "replace": "        else:\n            pass",
+   "class": "word"
+  },
+  {
+   "id": "word-mask-unswapped",
+   "rule": "the mask is byte-swapped with the value (the mutant leaves the mask in file order)",
+   "find": "            if mask is not None:\n                mask = _swap_words(mask, word)",
+   "replace": "            if False:\n                mask = _swap_words(mask, word)",
+   "class": "word"
+  },
+  {
+   "id": "word-empty-size-defaults-one",
+   "rule": "a '~' with no digits reads -1 and is a parse error (the mutant treats it as word size 1)",
+   "find": "        if word not in (0, 1, 2, 4):                  # :440-443",
+   "replace": "        if word == -1:\n            word = 1\n        if word not in (0, 1, 2, 4):                  # :440-443",
+   "class": "word"
+  },
+  {
+   "id": "range-default-zero",
+   "rule": "an omitted range length defaults to 1 (the mutant defaults to 0)",
+   "find": "    rng = 1",
+   "replace": "    rng = 0",
+   "class": "range"
+  },
+  {
+   "id": "range-end-inclusive",
+   "rule": "the range loop runs while i < offset + range_length (the mutant uses <=)",
+   "find": "    while i < end:",
+   "replace": "    while i <= end:",
+   "class": "range"
+  },
+  {
+   "id": "range-start-zero",
+   "rule": "the range loop starts at the matchlet offset (the mutant starts at 0)",
+   "find": "    i = ml[\"offset\"]",
+   "replace": "    i = 0",
+   "class": "range"
+  },
+  {
+   "id": "range-start-offset-plus-one",
+   "rule": "the range loop starts exactly at the offset (the mutant starts at offset + 1)",
+   "find": "    i = ml[\"offset\"]",
+   "replace": "    i = ml[\"offset\"] + 1",
+   "class": "range"
+  },
+  {
+   "id": "range-zero-becomes-one",
+   "rule": "range_length 0 makes the matchlet false (the mutant treats it as 1)",
+   "find": "    end = ml[\"offset\"] + ml[\"range\"]",
+   "replace": "    end = ml[\"offset\"] + (ml[\"range\"] or 1)",
+   "class": "range"
+  },
+  {
+   "id": "range-first-hit-last",
+   "rule": "the first hit in the range returns TRUE (the mutant only accepts a hit at the last position)",
+   "find": "        if mask is None:\n            if data[i:i + vlen] == ml[\"value\"]:\n                return True",
+   "replace": "        if mask is None:\n            if data[i:i + vlen] == ml[\"value\"]:\n                return i == end - 1",
+   "class": "range"
+  },
+  {
+   "id": "range-no-hit-true",
+   "rule": "no hit in the range returns FALSE (the mutant returns TRUE)",
+   "find": "        i += 1\n    return False",
+   "replace": "        i += 1\n    return True",
+   "class": "range"
+  },
+  {
+   "id": "range-bounds-ge",
+   "rule": "i + value_length > len fails the matchlet (the mutant fails at equality, so a value that exactly fits is refused)",
+   "find": "        if i + vlen > n:\n            return False",
+   "replace": "        if i + vlen >= n:\n            return False",
+   "class": "range"
+  },
+  {
+   "id": "indent-default-one",
+   "rule": "an omitted indent is 0 (the mutant defaults to 1)",
+   "find": "    indent = 0\n    if 48 <= c <= 57:",
+   "replace": "    indent = 1\n    if 48 <= c <= 57:",
+   "class": "indent"
+  },
+  {
+   "id": "indent-level-ge",
+   "rule": "a level tests matchlets whose indent equals the level exactly (the mutant accepts a greater indent)",
+   "find": "    while pos < n and mls[pos][\"indent\"] == indent:",
+   "replace": "    while pos < n and mls[pos][\"indent\"] >= indent:",
+   "class": "indent"
+  },
+  {
+   "id": "indent-child-jump-two",
+   "rule": "after a match the child chain is tested at indent + 1 (the mutant uses indent + 2)",
+   "find": "            if _compare_level(mls, pos + 1, data, indent + 1, depth + 1):",
+   "replace": "            if _compare_level(mls, pos + 1, data, indent + 2, depth + 1):",
+   "class": "indent"
+  },
+  {
+   "id": "indent-leaf-false",
+   "rule": "a matched matchlet whose next sits at indent <= the level returns TRUE (the mutant returns FALSE)",
+   "find": "            if pos + 1 >= n or mls[pos + 1][\"indent\"] <= indent:\n                return True",
+   "replace": "            if pos + 1 >= n or mls[pos + 1][\"indent\"] <= indent:\n                return False",
+   "class": "indent"
+  },
+  {
+   "id": "indent-child-false",
+   "rule": "a held child makes the whole chain hold (the mutant returns FALSE after a held child)",
+   "find": "            if _compare_level(mls, pos + 1, data, indent + 1, depth + 1):\n                return True",
+   "replace": "            if _compare_level(mls, pos + 1, data, indent + 1, depth + 1):\n                return False",
+   "class": "indent"
+  },
+  {
+   "id": "indent-skip-only-two-deep",
+   "rule": "a failed matchlet skips every following matchlet with indent > the level (the mutant skips only indent > level+1)",
+   "find": "        while pos < n and mls[pos][\"indent\"] > indent:\n            pos += 1",
+   "replace": "        while pos < n and mls[pos][\"indent\"] > indent + 1:\n            pos += 1",
+   "class": "indent"
+  },
+  {
+   "id": "indent-no-mirror",
+   "rule": "the prepended matchlet list is mirrored to file order before matching (the mutant keeps it reversed)",
+   "find": "                match[\"matchlets\"].append(ml)         # file order: the C prepends, then mirrors",
+   "replace": "                match[\"matchlets\"].insert(0, ml)      # file order: the C prepends, then mirrors",
+   "class": "indent"
+  },
+  {
+   "id": "indent-skip-current-level",
+   "rule": "a failed matchlet is skipped, not its whole level: the walk skips only indent > the level (the mutant skips >= level)",
+   "find": "        while pos < n and mls[pos][\"indent\"] > indent:\n            pos += 1",
+   "replace": "        while pos < n and mls[pos][\"indent\"] >= indent:\n            pos += 1",
+   "class": "indent"
+  },
+  {
+   "id": "order-ascending",
+   "rule": "sections insert by priority descending (the mutant inserts ascending)",
+   "find": "    if not matches or p > matches[0][\"priority\"]:",
+   "replace": "    if not matches or p < matches[0][\"priority\"]:",
+   "class": "order"
+  },
+  {
+   "id": "order-insert-head",
+   "rule": "a section with no greater head goes to its priority slot (the mutant always inserts at the head)",
+   "find": "    at = len(matches)",
+   "replace": "    at = 0",
+   "class": "order"
+  },
+  {
+   "id": "order-insert-before-tail",
+   "rule": "a section below every priority appends at the tail (the mutant inserts before the tail)",
+   "find": "    at = len(matches)",
+   "replace": "    at = max(0, len(matches) - 1)",
+   "class": "order"
+  },
+  {
+   "id": "order-last-match",
+   "rule": "lookup stops at the first matching section (the mutant keeps the last match)",
+   "find": "    for mt in matches:\n        if mt[\"matchlets\"] and _compare_level(mt[\"matchlets\"], 0, data, 0, 1):\n            return mt[\"mime\"], mt[\"priority\"]\n    return None, 0",
+   "replace": "    found = (None, 0)\n    for mt in matches:\n        if mt[\"matchlets\"] and _compare_level(mt[\"matchlets\"], 0, data, 0, 1):\n            found = (mt[\"mime\"], mt[\"priority\"])\n    return found",
+   "class": "order"
+  },
+  {
+   "id": "order-reversed-walk",
+   "rule": "lookup walks match_list from the head (the mutant walks from the tail)",
+   "find": "    for mt in matches:",
+   "replace": "    for mt in reversed(matches):",
+   "class": "order"
+  },
+  {
+   "id": "order-priority-zero-reported",
+   "rule": "the matching section's priority is reported (the mutant reports 0)",
+   "find": "            return mt[\"mime\"], mt[\"priority\"]",
+   "replace": "            return mt[\"mime\"], 0",
+   "class": "order"
+  },
+  {
+   "id": "order-priority-gate",
+   "rule": "text mode has no priority > 0 gate (the mutant adds one, the L1 geometry cut)",
+   "find": "    for mt in matches:\n        if mt[\"matchlets\"] and _compare_level(mt[\"matchlets\"], 0, data, 0, 1):",
+   "replace": "    for mt in matches:\n        if mt[\"priority\"] > 0 and mt[\"matchlets\"] and _compare_level(mt[\"matchlets\"], 0, data, 0, 1):",
+   "class": "order"
+  },
+  {
+   "id": "drop-error-section-kept",
+   "rule": "a section with a bad line is dropped whole (the mutant inserts it anyway)",
+   "find": "        else:                                         # ERROR\n            state = _parse_error(cur)",
+   "replace": "        else:                                         # ERROR\n            _insert_match(matches, match)\n            state = _parse_error(cur)",
+   "class": "drop"
+  },
+  {
+   "id": "drop-resume-magic",
+   "rule": "after a parse error the parser resumes in the SECTION state (the mutant resumes in MAGIC)",
+   "find": "            state = _parse_error(cur)",
+   "replace": "            state = \"MAGIC\"",
+   "class": "drop"
+  },
+  {
+   "id": "drop-file-stops",
+   "rule": "the file continues after a dropped section (the mutant stops the file)",
+   "find": "        else:                                         # ERROR\n            state = _parse_error(cur)",
+   "replace": "        else:                                         # ERROR\n            break",
+   "class": "drop"
+  },
+  {
+   "id": "drop-skips-two-lines",
+   "rule": "the error skip stops at the next newline (the mutant skips two newlines)",
+   "find": "        if c == 10:\n            return \"SECTION\"",
+   "replace": "        if c == 10:\n            if cur.getc() == 10:\n                return \"SECTION\"",
+   "class": "drop"
+  },
+  {
+   "id": "multi-dir-order-reversed",
+   "rule": "directories are read in xdg init order (the mutant reverses the order)",
+   "find": "    for d in dirs:",
+   "replace": "    for d in reversed(dirs):",
+   "class": "multi"
+  },
+  {
+   "id": "multi-first-dir-magic-only",
+   "rule": "every dir's magic goes into one list (the mutant keeps only the first dir's magic)",
+   "find": "        if os.path.exists(mp):",
+   "replace": "        if os.path.exists(mp) and not matches:",
+   "class": "multi"
+  },
+  {
+   "id": "multi-last-dir-magic-only",
+   "rule": "every dir's magic goes into one list (the mutant keeps only the last dir's magic)",
+   "find": "        if os.path.exists(mp):",
+   "replace": "        if os.path.exists(mp) and d == dirs[-1]:",
+   "class": "multi"
+  },
+  {
+   "id": "multi-user-dir-dropped",
+   "rule": "the first (user) directory's magic is read (the mutant drops the first dir from the magic tables)",
+   "find": "        self.matches, self.aliases, self.parents, seen_text = _build_tables(dirs)",
+   "replace": "        self.matches, self.aliases, self.parents, seen_text = _build_tables(dirs[1:])",
+   "class": "multi"
+  },
+  {
+   "id": "glob-single-type-not-early",
+   "rule": "a single name type is returned certain before any data (the mutant skips the early return)",
+   "find": "            if len(types) == 1:",
+   "replace": "            if len(types) == 0:",
+   "class": "glob"
+  },
+  {
+   "id": "glob-any-type-early",
+   "rule": "several name types continue to the sniffed step (the mutant returns the first at once)",
+   "find": "            if len(types) == 1:",
+   "replace": "            if len(types) >= 1:",
+   "class": "glob"
+  },
+  {
+   "id": "glob-uncertain-certain",
+   "rule": "with no tie-breaker the first name type is uncertain (the mutant says certain)",
+   "find": "        return dict(out, type=types[0], uncertain=1)",
+   "replace": "        return dict(out, type=types[0], uncertain=0)",
+   "class": "glob"
+  },
+  {
+   "id": "glob-prio-80-exclusive",
+   "rule": "a sniffed type with priority >= 80 wins (the mutant uses > 80)",
+   "find": "            if prio >= 80:",
+   "replace": "            if prio > 80:",
+   "class": "glob"
+  },
+  {
+   "id": "glob-subclass-args-swapped",
+   "rule": "the tie-breaker asks whether the name type is a subclass of the sniffed type (the mutant swaps the arguments)",
+   "find": "                if self.subclass(t.encode(\"utf-8\", \"surrogateescape\"), sb):",
+   "replace": "                if self.subclass(sb, t.encode(\"utf-8\", \"surrogateescape\")):",
+   "class": "glob"
+  },
+  {
+   "id": "glob-full-name-not-basename",
+   "rule": "the name is reduced to its basename before the lookup (the mutant uses the full name)",
+   "find": "            base = self.basename(name)",
+   "replace": "            base = name",
+   "class": "glob"
+  },
+  {
+   "id": "glob-trailing-slash-not-dir",
+   "rule": "a name ending in '/' is inode/directory uncertain (the mutant only honours '//')",
+   "find": "            if name.endswith(b\"/\"):",
+   "replace": "            if name.endswith(b\"//\"):",
+   "class": "glob"
+  },
+  {
+   "id": "glob-types-reversed",
+   "rule": "the first name type is the highest weight (the mutant walks the types reversed)",
+   "find": "            for t in types:",
+   "replace": "            for t in reversed(types):",
+   "class": "glob"
+  },
+  {
+   "id": "alias-unalias-skipped",
+   "rule": "the subclass check unaliases the mime type (the mutant skips the unalias)",
+   "find": "        umime = self._unalias(mime)",
+   "replace": "        umime = mime",
+   "class": "alias"
+  },
+  {
+   "id": "alias-split-last-space",
+   "rule": "an aliases line is split at its first space (the mutant splits at the last)",
+   "find": "    sp = cstr.find(b\" \")",
+   "replace": "    sp = cstr.rfind(b\" \")",
+   "class": "alias"
+  },
+  {
+   "id": "alias-parent-direction-swapped",
+   "rule": "a subclasses line is (mime, parent) (the mutant reads (parent, mime))",
+   "find": "                    mime, parent = pair",
+   "replace": "                    parent, mime = pair",
+   "class": "alias"
+  },
+  {
+   "id": "alias-parent-one-level",
+   "rule": "the parent chain is followed recursively (the mutant stops after one level)",
+   "find": "            stack.append(iter(self.parents.get(um2, ())))",
+   "replace": "            stack.append(iter(()))",
+   "class": "alias"
+  },
+  {
+   "id": "alias-text-super-off",
+   "rule": "text/plain is a supertype of every text/* (the mutant requires equality)",
+   "find": "        if ubase == b\"text/plain\" and umime.startswith(b\"text/\"):",
+   "replace": "        if ubase == b\"text/plain\" and umime == b\"text/plain\":",
+   "class": "alias"
+  },
+  {
+   "id": "alias-octet-super-off",
+   "rule": "application/octet-stream is a supertype of everything not inode/* (the mutant requires equality)",
+   "find": "        if ubase == b\"application/octet-stream\" and not umime.startswith(b\"inode/\"):",
+   "replace": "        if ubase == b\"application/octet-stream\" and umime == b\"application/octet-stream\":",
+   "class": "alias"
+  },
+  {
+   "id": "alias-equality-identity",
+   "rule": "unaliased equality is compared by value (the mutant compares object identity)",
+   "find": "        if umime == ubase:",
+   "replace": "        if umime is ubase:",
+   "class": "alias"
+  },
+  {
+   "id": "fb-all-bytes",
+   "rule": "the fallback scans only the first 128 bytes (the mutant scans them all)",
+   "find": "        for b in data[:128]:",
+   "replace": "        for b in data:",
+   "class": "fallback"
+  },
+  {
+   "id": "fb-vt-treated-space",
+   "rule": "11 is a binary control byte for the fallback (the mutant allows it)",
+   "find": "            if b < 32 and b not in (9, 10, 13):",
+   "replace": "            if b < 32 and b not in (9, 10, 11, 13):",
+   "class": "fallback"
+  },
+  {
+   "id": "fb-text-unknown",
+   "rule": "clean data falls back to text/plain (the mutant says UNKNOWN)",
+   "find": "        return TEXTPLAIN, 0",
+   "replace": "        return UNKNOWN, 0",
+   "class": "fallback"
+  },
+  {
+   "id": "fb-unknown-not-uncertain",
+   "rule": "the UNKNOWN constant is returned uncertain (the mutant says certain)",
+   "find": "            return dict(out, type=str(sniffed), uncertain=1 if sniffed is UNKNOWN else 0)",
+   "replace": "            return dict(out, type=str(sniffed), uncertain=0)",
+   "class": "fallback"
+  },
+  {
+   "id": "fb-looks-like-text-always",
+   "rule": "looks_like_text is applied only to the UNKNOWN constant (the mutant applies it to every sniffed type)",
+   "find": "        if sniffed is UNKNOWN and looks_like_text(data):",
+   "replace": "        if looks_like_text(data):",
+   "class": "fallback"
+  },
+  {
+   "id": "fb-octet-by-value",
+   "rule": "a magic answer application/octet-stream is not the UNKNOWN constant, so uncertain stays 0 (the mutant compares by value)",
+   "find": "            return dict(out, type=str(sniffed), uncertain=1 if sniffed is UNKNOWN else 0)",
+   "replace": "            return dict(out, type=str(sniffed), uncertain=1 if str(sniffed) == \"application/octet-stream\" else 0)",
+   "class": "fallback"
+  },
+  {
+   "id": "zs-unknown",
+   "rule": "len 0 answers application/x-zerosize (the mutant answers UNKNOWN)",
+   "find": "        if len(data) == 0:\n            return EMPTY, 100",
+   "replace": "        if len(data) == 0:\n            return UNKNOWN, 100",
+   "class": "zerosize"
+  },
+  {
+   "id": "zs-prio-zero",
+   "rule": "the zerosize answer carries priority 100 (the mutant carries 0)",
+   "find": "            return EMPTY, 100",
+   "replace": "            return EMPTY, 0",
+   "class": "zerosize"
+  },
+  {
+   "id": "zs-after-magic",
+   "rule": "len 0 is answered before the magic lookup (the mutant lets a magic match on empty data win)",
+   "find": "        if len(data) == 0:\n            return EMPTY, 100\n        t, prio = magic_lookup_data(self.matches, data)",
+   "replace": "        t, prio = magic_lookup_data(self.matches, data)\n        if len(data) == 0 and t is None:\n            return EMPTY, 100",
+   "class": "zerosize"
+  },
+  {
+   "id": "zs-beats-single-name",
+   "rule": "a single name type wins over zerosize (the mutant answers zerosize before the name step)",
+   "find": "        if name is not None:\n            if name.endswith(b\"/\"):",
+   "replace": "        if len(data) == 0:\n            return {\"type\": \"application/x-zerosize\", \"uncertain\": 0, \"types\": [], \"sniffed\": \"application/x-zerosize\", \"prio\": 100}\n        if name is not None:\n            if name.endswith(b\"/\"):",
+   "class": "zerosize"
+  },
+  {
+   "id": "zs-zero-never",
+   "rule": "len 0 is special (the mutant's test never fires)",
+   "find": "        if len(data) == 0:",
+   "replace": "        if len(data) < 0:",
+   "class": "zerosize"
+  },
+  {
+   "id": "mode-no-cache-refusal",
+   "rule": "a loadable cache anywhere makes the tool refuse (the mutant never refuses)",
+   "find": "            if self.mode == \"cache\":\n                raise Unsupported(\"cache-mode\")",
+   "replace": "            if self.mode == \"cache\" and False:\n                raise Unsupported(\"cache-mode\")",
+   "class": "mode"
+  },
+  {
+   "id": "mode-refusal-one-line",
+   "rule": "cache mode prints one refusal line per file (the mutant prints one line for the whole run)",
+   "find": "        for _f in a.files:\n            print(f\"MADO_MIMETEXT: UNSUPPORTED {e}\")",
+   "replace": "        for _f in a.files[:1]:\n            print(f\"MADO_MIMETEXT: UNSUPPORTED {e}\")",
+   "class": "mode"
+  },
+  {
+   "id": "mode-refusal-exit-zero",
+   "rule": "cache mode exits 3 (the mutant exits 0)",
+   "find": "        return 3",
+   "replace": "        return 0",
+   "class": "mode"
+  },
+  {
+   "id": "mode-none-counts-magic-only",
+   "rule": "mode none means no text file at all (the mutant counts only a magic file)",
+   "find": "        for n in (\"/globs2\", \"/globs\", \"/magic\", \"/aliases\", \"/subclasses\"):",
+   "replace": "        for n in (\"/magic\",):",
+   "class": "mode"
+  },
+  {
+   "id": "desk-no-rename",
+   "rule": "a sniffed application/x-desktop with a name becomes text/plain (the mutant leaves it)",
+   "find": "        if name is not None and sniffed == \"application/x-desktop\":\n            sniffed = \"text/plain\"",
+   "replace": "        if False:\n            sniffed = \"text/plain\"",
+   "class": "desktop"
+  },
+  {
+   "id": "desk-rename-null-name",
+   "rule": "the desktop rename needs a non-NULL name (the mutant renames unconditionally)",
+   "find": "        if name is not None and sniffed == \"application/x-desktop\":\n            sniffed = \"text/plain\"",
+   "replace": "        if sniffed == \"application/x-desktop\":\n            sniffed = \"text/plain\"",
+   "class": "desktop"
+  },
+  {
+   "id": "desk-rename-prio-reset",
+   "rule": "the renamed text/plain keeps the sniffed priority (the mutant resets it to 0)",
+   "find": "        if name is not None and sniffed == \"application/x-desktop\":\n            sniffed = \"text/plain\"",
+   "replace": "        if name is not None and sniffed == \"application/x-desktop\":\n            sniffed = \"text/plain\"\n            prio = 0",
+   "class": "desktop"
+  }
+ ],
+ "equivalent_not_counted": [
+  {
+   "id": "range-bounds-continue",
+   "rule": "i + value_length > len makes the whole matchlet FALSE, not continue",
+   "why": "the bound is monotone in i: every later i also fails it, so 'False' and 'continue' give the same answer for every finite data; no case can separate them without a 32-bit i wrap"
+  },
+  {
+   "id": "range-wrap-refused",
+   "rule": "i + value_length past 2^32 is refused",
+   "why": "the Python model has no 32-bit wrap; the C case is undefined behaviour (the oracle reads out of bounds), so it is outside the declared surface and no oracle-labelled case can exist"
+  },
+  {
+   "id": "word-swap-guard",
+   "rule": "the swap block runs only when word_size > 1",
+   "why": "a size-1 swap is a byte-wise no-op and size 0 cannot reach the block; '>1', '>0' and '!=1' agree for every accepted size, and '!=0' would divide by zero on size 0"
+  },
+  {
+   "id": "drop-skip-to-newline",
+   "rule": "a parse error skips to the next newline",
+   "why": "skipping one byte instead still ends at the same newline: every following byte that is not '[' re-enters the error state and the skip continues; measured identical on the probe set"
+  },
+  {
+   "id": "drop-eof-section-freed",
+   "rule": "a parse error at EOF ends the file",
+   "why": "returning SECTION at EOF only reaches parse_header, which reads EOF and ends the loop; the answer is identical"
+  },
+  {
+   "id": "sect-keep-empty-inert",
+   "rule": "a section with no matchlets is inserted but can never hold",
+   "why": "the elimination loop (mime_types) is not in this surface, so an inserted empty section and a dropped one both answer nothing; no observable difference"
+  },
+  {
+   "id": "mode-cache-loadable",
+   "rule": "only a loadable mime.cache makes cache mode",
+   "why": "loadability (size + version) is decided inside the sibling mado-mimeglob.py Resolver, which this candidate imports; it is outside the byte range a candidate mutant may touch"
+  },
+  {
+   "id": "glob-weights-descending",
+   "rule": "name types are sorted by weight, descending",
+   "why": "the sort lives in the sibling mado-mimeglob.py finish(), not in this candidate; swapping the order of the returned list is covered by glob-types-reversed"
+  },
+  {
+   "id": "glob-deepest-suffix",
+   "rule": "the deepest suffix glob wins",
+   "why": "the suffix trie lives in the sibling mado-mimeglob.py, not in this candidate"
+  },
+  {
+   "id": "indent-depth-guard",
+   "rule": "nesting deeper than 4096 is refused as unsupported",
+   "why": "the only observable effect of weakening the guard is a refusal (exit 3, UNSUPPORTED) on 4097-deep fixtures, not a wrong type; a case would need 4097 matchlet lines and the oracle would recurse that deep, so it is a declared limit outside the case surface (measured: the depth-guard-one mutant's kills were refusals, not answers, in both sets)"
+  },
+  {
+   "id": "header-gate-rewind",
+   "rule": "after a passing gate parsing starts just past the 12 header bytes",
+   "why": "the gate rejects every file that fails it, so the only reachable files start exactly MIME-Magic\\0\\n; re-parsing from byte 0 reads 'M' as a bad header, skips to the header's own newline (index 11) and lands on byte 12, the same position (measured: survives 171 probe cases)"
+  },
+  {
+   "id": "order-tie-prepend",
+   "rule": "equal priorities keep file order (insert before equals)",
+   "why": "each section passes through TWO insertions (the file's own list, then the global list) and the insert-before-equals permutation is an involution, so the second pass restores file order; measured identical on order-01/03/09 and the multi-dir ties"
+  },
+  {
+   "id": "fb-cr-treated-binary",
+   "rule": "9, 10 and 13 are allowed control bytes in the fallback",
+   "why": "CR is rejected by the fallback but accepted by gcontenttype-fdo's looks_like_text, which is applied to exactly that UNKNOWN result; the guess still answers text/plain, so every input gives the same answer (measured: the mutant survives the probe set)"
+  },
+  {
+   "id": "multi-globs-other-dir",
+   "rule": "name globs and magic may come from different dirs",
+   "why": "both steps read the same dirs list built by the sibling; no single-byte mutation in this candidate splits them beyond multi-first/last-dir-magic-only and multi-user-dir-dropped"
+  }
+ ]
+}

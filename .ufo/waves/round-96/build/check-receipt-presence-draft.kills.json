@@ -1,0 +1,28 @@
+{
+  "tool": "quality/check-receipt-presence.py",
+  "tool_sha256": "be716a63662f326a771d96dc5324e89fe07abdff6949029cabb8b7f5d15ca962",
+  "selftest_argv": ["--selftest"],
+  "fail_line_prefix": "RECEIPT_PRESENCE_SELFTEST: FAIL ",
+  "result_line_prefix": "RECEIPT_PRESENCE_SELFTEST: ",
+  "selftest_checks": 6,
+  "kills": [
+    {
+      "id": "ok-rc-exit-polarity",
+      "find": "return 0 if missing == 0 else 1",
+      "replace": "return 1 if missing == 0 else 1",
+      "must_fail": "OK-rc"
+    },
+    {
+      "id": "ok-lines-verdict-polarity",
+      "find": "verdict = \"OK\" if missing == 0 else \"MISSING\"",
+      "replace": "verdict = \"MISSING\" if missing == 0 else \"MISSING\"",
+      "must_fail": "OK-lines"
+    },
+    {
+      "id": "missing-rc-exit-2",
+      "find": "return 0 if missing == 0 else 1",
+      "replace": "return 0 if missing == 0 else 2",
+      "must_fail": "MISSING-rc"
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+# round-96 host leg receipt -- seat R96MExecHostC1, 2026-11-07T14:37:40Z
+# lane base rev 9f029f46f01f6cd3a1d29ac39bb498a1d0c3d; lane HEAD at smoke time 09db97c30a09ef494f7439c3a513e2d86f115a63
+# host: glib2 2.90.1-1, shared-mime-info 2.5.1-2, file(1) 5.48 (/usr/share/misc/magic)
+
+## 1. host text-DB copy (read-only source; file pins + recipe in controls/host-text-db-r96.json)
+files=8 total_bytes=211254 mime_cache_in_copy=0 byte_identity_vs_source=8/8 (cmp -s per file)
+copied: magic globs globs2 aliases subclasses icons generic-icons XMLnamespaces (the whole of /usr/share/mime/mime text surface)
+key pins:
+  magic          2942f4adfca98c1816177f056d566e925e96e1c3dd562964dada066bf4a8a35c  47524 B
+  globs          54eb042dc1a2f2caba8e09ff79eda184ea0063d50dd796ea3f3726a20e96c40d  47137 B
+  globs2         556ee69c8be2e24c4e3025dc5af0bdae71c6dca899491b4c95778a531958168e  52100 B
+  aliases        74cde6689d6161332df5e89358fb68c23959f230aa4f1ee0bcf03f2fa062c5df  13687 B
+  subclasses     3dc5ff5773867381cedc84523738d8ee11ccd95618e5157be05cefdc6f9cfa62  24981 B
+  icons          7198dd2150a591c2c2f4d0fa91599823871c4ee1017993b1e06f9094a9702a30    232 B
+  generic-icons  ad2a08102009507566ac25c79b0fdc1a35fc89dfb2e983672d6ccf5297260f3a  22921 B
+  XMLnamespaces  706cfd7efe0632b7f5abb55fa5626f47efb63a42cdad9ff6ed7360a259bb98cc   2672 B
+cross-check: globs2 sha256 equals the round-94 counter's host /usr/share/mime/globs2 pin
+  (harm-final-r95.txt) -> no DB drift since round 94.
+host /usr/share/mime/mime.cache measured fresh: sha256
+  b988d3d27bda7500ba4eb8e88d78e61049796d94ef79745dd366bacf5460bb47, 207520 B
+  (deliberately excluded from the copy; no mime.cache anywhere reachable => glib text mode).
+
+## 2. host leg: round-95 oracle over the committed host list
+list: .ufo/waves/round-95/controls/mimesniff-host-files-r95.txt
+  sha256 9d5947a70d112796f39c3e309c5a25e5ff333b5ebeb51867ebe748af1135ba87
+  listed=4911 missing=0 skipped=0 blank=0
+oracle source: .ufo/waves/round-95/controls/mimesniff-oracle-r95.c, sha256
+  99df35f8b3fd7005f30789f8866984a1bbceaff8dc6c1d326f0132eb7b4d124a (round-95 frozen, reused unchanged;
+  NOTE the claims-declaration counting command prints ...f8e6984a... for this file -- the frozen bytes
+  hash to the value on this line, the declaration's inline copy dropped two hex chars)
+build: cc -O0 -o "$S/oracle" <oracle-src> $(pkg-config --cflags --libs gio-2.0)
+  built binary sha256 186537938e186727072bf911a86117918d505593e77617e53cfa246d425a3aa5 (build-dependent, informational)
+env per call: env -i LC_ALL=C HOME=$S/empty-h XDG_DATA_HOME=$S/empty-dh XDG_DATA_DIRS=$S/hostdb
+legs per path: "=<basename>" (name step live) and "0" (filename NULL)
+window: 2026-11-07T14:33:57Z .. 2026-11-07T14:34:32Z (xargs -P 8, 2 invocations per file)
+rows=4911 err=0 (no read failures, no oracle failures)
+TSV sha256 1507a4abbdfd2f75bfcec3935050ddfa30fd8fe49876cf9b3e40f9ba5c1cbec1
+  format per row: <path> TAB <name-leg "type uncertain"> TAB <null-leg "type uncertain">
+distinct labels: name-leg=78, null-leg=62
+
+name-leg histogram (78 labels, full):
+   421 text/x-lua 0
+   367 application/gzip 0
+   359 application/x-executable 0
+   350 application/x-sharedlib 0
+   337 application/xml 0
+   242 application/octet-stream 1
+   235 image/svg+xml 0
+   197 text/x-python 0
+   188 text/html 0
+   156 application/x-perl 0
+   140 image/x-win-bitmap 0
+   127 text/x-shellscript 0
+   125 font/ttf 0
+   124 application/x-desktop 0
+   112 application/json 0
+    98 image/webp 0
+    92 text/javascript 0
+    82 text/plain 0
+    67 application/x-zerosize 0
+    63 image/x-xcursor 0
+    60 application/x-gettext-translation 0
+    53 application/java-archive 0
+    51 image/png 0
+    48 audio/vnd.wave 0
+    40 text/x-python3 0
+    40 image/jpeg 0
+    40 image/gif 0
+    40 application/zip 0
+    40 application/x-archive 0
+    40 application/postscript 0
+    40 application/pdf 0
+    37 image/x-portable-graymap 0
+    36 image/x-exr 0
+    36 audio/x-vorbis+ogg 0
+    35 application/vnd.iccprofile 0
+    34 application/vnd.oasis.opendocument.text-template 0
+    30 text/x-qml 0
+    30 font/woff 0
+    30 application/zstd 0
+    30 application/x-bzip2 0
+    23 text/x-python 1
+    23 application/vnd.oasis.opendocument.presentation-template 0
+    20 font/otf 0
+    20 application/x-python-bytecode 0
+    18 image/vnd.microsoft.icon 0
+    14 font/collection 0
+    13 image/vnd.radiance 0
+    12 application/x-compressed-tar 0
+    10 application/x-bat 0
+     9 application/xml-dtd 0
+     8 text/x-emacs-lisp 0
+     8 image/bmp 0
+     8 application/wasm 0
+     7 text/x-chdr 0
+     4 text/css 0
+     4 font/woff2 0
+     4 application/x-font-type1 0
+     3 model/gltf-binary 0
+     3 image/x-portable-pixmap 0
+     3 application/x-troff-man 0
+     3 application/vnd.microsoft.portable-executable 0
+     2 image/x-tga 0
+     2 application/x-xz-compressed-tar 0
+     2 application/x-theme 0
+     2 application/x-perl 1
+     2 application/xhtml+xml 0
+     1 text/x-modelica 0
+     1 text/x-csh 0
+     1 text/x-c++hdr 0
+     1 image/x-sun-raster 0
+     1 image/x-portable-anymap 0
+     1 image/vnd.zbrush.pcx 0
+     1 audio/mpeg 0
+     1 application/x-xz 0
+     1 application/x-ruby 0
+     1 application/vnd.oasis.opendocument.text-web 0
+     1 application/vnd.oasis.opendocument.text 0
+     1 application/vnd.oasis.opendocument.graphics-template 0
+
+null-leg histogram (62 labels, full):
+   875 text/plain 0
+   711 application/x-executable 0
+   389 application/gzip 0
+   329 application/xml 0
+   276 application/octet-stream 1
+   235 image/svg+xml 0
+   193 text/html 0
+   141 application/x-perl 0
+   140 image/x-win-bitmap 0
+   127 text/x-shellscript 0
+   125 font/ttf 0
+   110 application/x-desktop 0
+    98 image/webp 0
+    93 application/zip 0
+    76 application/x-zerosize 0
+    63 image/x-xcursor 0
+    60 application/x-gettext-translation 0
+    51 image/png 0
+    50 text/x-patch 0
+    48 audio/vnd.wave 0
+    41 text/x-python3 0
+    40 image/jpeg 0
+    40 image/gif 0
+    40 application/x-archive 0
+    37 image/x-portable-graymap 0
+    36 image/x-exr 0
+    36 audio/x-vorbis+ogg 0
+    36 application/vnd.oasis.opendocument.text 0
+    35 application/vnd.iccprofile 0
+    35 application/pdf 0
+    32 text/x-matlab 0
+    30 text/x-qml 0
+    30 text/x-python 0
+    30 font/woff 0
+    30 application/zstd 0
+    30 application/x-bzip2 0
+    23 application/vnd.oasis.opendocument.presentation 0
+    23 application/vnd.dart 0
+    20 font/otf 0
+    18 image/vnd.microsoft.icon 0
+    13 image/vnd.radiance 0
+    10 application/typescript 0
+     8 image/bmp 0
+     8 application/wasm 0
+     5 application/postscript 0
+     4 image/x-portable-pixmap 0
+     4 font/woff2 0
+     3 model/gltf-binary 0
+     3 application/x-xz 0
+     3 application/x-bat 0
+     3 application/vnd.microsoft.portable-executable 0
+     2 text/x-groovy 0
+     2 image/x-tga 0
+     2 application/xhtml+xml 0
+     2 application/x-font-type1 0
+     1 text/x-modelica 0
+     1 text/x-lua 0
+     1 text/x-csh 0
+     1 image/vnd.zbrush.pcx 0
+     1 audio/mpeg 0
+     1 application/x-ruby 0
+     1 application/vnd.oasis.opendocument.graphics 0
+
+## 3. C1 candidate comparison leg: NOT RUN (candidate absent)
+.ufo/waves/round-96/build/mado-mimetext.c1.py did not exist at any check this wave
+(first, last checks 2026-11-07 ~14:2x..14:3x UTC). The oracle-only census above is this
+pass's deliverable; the comparison leg is one command once the draft lands:
+  cp .ufo/waves/round-96/build/mado-mimetext.c1.py "$S/tools/mado-mimetext.py"
+  cp tools/mado-mimeglob.py "$S/tools/mado-mimeglob.py"
+  env -i LC_ALL=C HOME="$S/empty-h" XDG_DATA_HOME="$S/empty-dh" XDG_DATA_DIRS="$S/hostdb" \
+    python3 -I "$S/tools/mado-mimetext.py" --names-from-files <files from the committed list>
+  # compare each MADO_MIMETEXT line against the TSV rows in this receipt (name-leg column)
+
+## 4. harm harness draft smoke (controls/harm-r96.sh)
+23 legs encoded from harm-final-r95.txt (every "$ " counter line; --rev replayed at HEAD,
+--base-rev and --expect-*-sha256 anchors verbatim) + leg r96_counter left as
+"<placeholder>" for the L1 to fill. Expected rc: 0 everywhere except r90c1_portal_routing
+(EXPECTS rc=2 SETUP_ERROR, per the r95 receipt note) and r96_counter (rc=125 SKIPPED).
+Only the 3 smoke legs were run here (the L1 runs the full set):
+  LEG verify_selftest rc=0            (MADO_SELFTEST: 460/460 assertions passed)
+  LEG index rc=0                      (MADO_INDEX: rev=09db97c30a09ef494f7439c3a513e2d86f115a63 indexed=116/116 missing=0 dangling=0 duplicates=0 coverage=10.0000/10)
+  LEG receipt_presence_selftest rc=0  (RECEIPT_PRESENCE_SELFTEST: checks=6 failed=0)
+smoke scratch roots under $HYAKU_SCRATCH/mado-r96/R96MExecHostC1/harm-smoke/
+gate pin re-measured: quality/check-selftest-strength.py sha256
+  2d6f1219fae19a85cc92f7d4103db396e1306fea74c2226bb068b335598da61b (unchanged, as declared).
+
+## 5. boundary
+/usr/share/mime was never written (read-only source of the copy). No host service touched,
+no network fetches, no tool installs (pacman paused -- respected), no git/jj mutations.
+Scratch deleted after this receipt was written.
