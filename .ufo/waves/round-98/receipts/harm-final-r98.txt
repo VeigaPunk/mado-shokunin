@@ -1,0 +1,40 @@
+LEG verify_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/verify_selftest.log
+LEG verify_file_plane rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/verify_file_plane.log
+LEG index rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/index.log
+LEG ledger rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/ledger.log
+LEG mako_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/mako_selftest.log
+LEG portals_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/portals_selftest.log
+LEG mime_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/mime_selftest.log
+LEG xdgmime_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/xdgmime_selftest.log
+LEG mimeglob_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/mimeglob_selftest.log
+LEG mimesniff_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/mimesniff_selftest.log
+LEG seat_reports_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/seat_reports_selftest.log
+LEG receipt_presence_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/receipt_presence_selftest.log
+LEG gate_selftest rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/gate_selftest.log
+LEG gate_seat_reports rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/gate_seat_reports.log
+LEG gate_mimeglob rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/gate_mimeglob.log
+LEG gate_portals rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/gate_portals.log
+LEG r90c2_receipt_presence rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r90c2_receipt_presence.log
+LEG r92_gate_defects rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r92_gate_defects.log
+LEG r90c1_portal_routing rc=2 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r90c1_portal_routing.log
+LEG r94c1_mimeglob rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r94c1_mimeglob.log
+LEG r94c2_selftest_kills rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r94c2_selftest_kills.log
+LEG r93c2_selftest_strength rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r93c2_selftest_strength.log
+LEG r95c1_mimesniff rc=2 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r95c1_mimesniff.log
+LEG r95c2_selftest_kills rc=2 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r95c2_selftest_kills.log
+LEG r96c1_magictext rc=2 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r96c1_magictext.log
+LEG r96c2_selftest_kills rc=0 log=/fast/scratch/hyaku/mado-r98/l1/harm2/r96c2_selftest_kills.log
+
+# Notes (L1, 2026-11-07): 26 legs at the records tip 020af865 (the round-97 leg set plus the two
+# r95 legs the r97 receipt did not run). 22 rc 0; four nonzero, none a new harm:
+#   r90c1_portal_routing rc=2  - its declared SETUP_ERROR since round 93 (the nine anchors were
+#                                removed by the round-90 port; QUALITY 155).
+#   r95c1_mimesniff rc=2       - "SETUP_ERROR no counting-command block": the harness leg has no
+#   r95c2_selftest_kills rc=2    counting-command argv for these two (the r97 receipt skipped them
+#                                for the same reason); the tools themselves are green in their own
+#                                selftest legs above.
+#   r96c1_magictext rc=2       - the round-96 counter's known stale mutant pin (r96 spot-check D5:
+#                                the body command pins f8d461e8 while the file is 448150e2); the
+#                                r97 receipt replayed it with --force-rev and it passed.
+# The ledger leg is rc 0 in this run (the ledger rows are committed at this tip); the first harm run
+# at 06b6bf2a had it rc 1 because the rows were still uncommitted (receipts/harm-base-r98.txt).
