@@ -197,3 +197,15 @@ Shown able to fail: the first run's SETUP_ERROR line (kept in the receipt's hist
   S518, S519, S520, S521, S522, S524, S525) gain `corpus/knowledge/gio-content-type-file-r97.md`; no anchor, digest,
   scope or status cell moves. Frontier rows advanced: the content-type plane's caller (path → type) moves from
   frontier to core; launch stays frontier.
+
+**M97-7 - a seat's scratch file landed at the fleet root instead of the wave dir.**
+Class: misroot (the addendum's §3 sweep). The host seat's dropped-path list (`dropped-volatile.txt`, 6,354 B, the
+paths it removed from the host census) was written to `/home/vgpnk/Projects/shokunin/` rather than the lane's wave
+dir; the fleet repo is not a seat's write scope. Evidence: `git status --porcelain` at the fleet root listed
+`?? dropped-volatile.txt` (mtime 13:59), and the file's lines are the seat's `unreadable-at-freeze` records; the
+seat's report §1/§3 names the same list. Captured-by: the L1's pre-report misroot sweep, not the seat's own checks.
+Fix: copied byte-exact into `mado-shokunin/dropped-volatile.txt` (`cmp` clean), the fleet copy deleted, and the
+sweep re-run.
+Shown able to fail: `cmp /home/vgpnk/Projects/shokunin/dropped-volatile.txt mado-shokunin/dropped-volatile.txt`
+exited 0 before the fleet copy was removed; after the sweep `git -C /home/vgpnk/Projects/shokunin status
+--porcelain` no longer lists it.
