@@ -731,7 +731,7 @@
    "find": "    return posixpath.normpath(path).rstrip(\"/\") or \"/\"",
    "replace": "    return path.rstrip(\"/\") or \"/\"",
    "expect": "survive",
-   "why_not_observable": "Drops posixpath.normpath but keeps rstrip. No frozen path contains '//', '/./' or '/../' (cases scan), so normalisation is the identity on every scored path. Frozen-suite probe: 0/150 wrong."
+   "why_not_observable": "Drops posixpath.normpath but keeps rstrip. No frozen path contains '//', '/./' or '/../' (cases scan), so normalisation is the identity on every scored path. Frozen-suite probe: 0/157 wrong."
   },
   {
    "id": "follow-04-follow-default-false",
@@ -739,7 +739,7 @@
    "find": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=True)",
    "replace": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=False)",
    "expect": "survive",
-   "why_not_observable": "Changes the argparse default for --follow. The counter's tool_flags always passes an explicit --follow or --nofollow for every case (manifest flags), so the default is never selected; the flag parser's default is outside the scored CLI surface. Frozen-suite probe: 0/150 wrong."
+   "why_not_observable": "Changes the argparse default for --follow. The counter's tool_flags always passes an explicit --follow or --nofollow for every case (manifest flags), so the default is never selected; the flag parser's default is outside the scored CLI surface. Frozen-suite probe: 0/157 wrong."
   },
   {
    "id": "nofollow-04-follow-default",
@@ -747,7 +747,7 @@
    "find": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=True)\n    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_false\")",
    "replace": "    ap.add_argument(\"--follow\", dest=\"follow\", action=\"store_true\", default=False)\n    ap.add_argument(\"--nofollow\", dest=\"follow\", action=\"store_false\")",
    "expect": "survive",
-   "why_not_observable": "Same argparse-default mutation as follow-04 (the counter always passes one of the two flags explicitly), so no case can observe it. Frozen-suite probe: 0/150 wrong."
+   "why_not_observable": "Same argparse-default mutation as follow-04 (the counter always passes one of the two flags explicitly), so no case can observe it. Frozen-suite probe: 0/157 wrong."
   },
   {
    "id": "uncertain-28-cache-guard-bounds-drop",
