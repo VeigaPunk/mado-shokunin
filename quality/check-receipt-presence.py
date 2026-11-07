@@ -119,87 +119,6 @@ def candidates(cite: str, round_no: int | None) -> list[str]:
     return out
 
 
-def selftest() -> int:
-    """Build throwaway fixtures and assert exit codes and finding lines.
-
-    One repository under a temporary directory holds three commits: a base, an
-    OK change citing a receipt it carries, and a MISSING change citing a
-    receipt it does not.  Each case asserts the exit code and the exact
-    finding line.  Nothing outside the temporary directory is touched; the
-    fixture identity (`fixture <fixture@invalid>`) is passed with `-c` and
-    never written to any configuration.
-    """
-    checks = failed = 0
-    root = tempfile.mkdtemp(prefix="receipt-presence-selftest-")
-    env = {"PATH": os.environ.get("PATH", "/usr/bin"), "HOME": root, "LC_ALL": "C", "TMPDIR": root,
-           "GIT_CONFIG_NOSYSTEM": "1", "GIT_TERMINAL_PROMPT": "0"}
-
-    def g(d: str, *args: str) -> str:
-        r = subprocess.run(["git", "-C", d, *args], capture_output=True, text=True, env=env)
-        if r.returncode != 0:
-            raise RuntimeError(f"git {' '.join(args)} rc={r.returncode}: {r.stderr.strip()}")
-        return r.stdout
-
-    def case(name: str, args: list[str], want_rc: int,
-             exact: tuple[str, ...] = (), sub: tuple[str, ...] = ()) -> None:
-        nonlocal checks, failed
-        r = subprocess.run([sys.executable, "-I", os.path.realpath(__file__), *args],
-                           capture_output=True, text=True, env=env)
-        lines = r.stdout.splitlines()
-        checks += 1
-        if r.returncode != want_rc:
-            failed += 1
-            print(f"RECEIPT_PRESENCE_SELFTEST: FAIL {name} rc={r.returncode} want={want_rc} out={lines}")
-        checks += 1
-        absent = [x for x in exact if x not in lines] + [s for s in sub if not any(s in ln for ln in lines)]
-        if absent:
-            failed += 1
-            print(f"RECEIPT_PRESENCE_SELFTEST: FAIL {name} absent={absent} out={lines}")
-
-    try:
-        d = os.path.join(root, "fx")
-        os.makedirs(d)
-        g(d, "init", "-q")
-        top = g(d, "rev-parse", "--show-toplevel").strip()
-        if os.path.realpath(top) != os.path.realpath(d):
-            raise RuntimeError(f"fixture toplevel {top} != {d}")
-        ident = ("-c", "user.name=fixture", "-c", "user.email=fixture@invalid", "-c", "commit.gpgsign=false")
-
-        def put(path: str, text: str) -> None:
-            full = os.path.join(d, *path.split("/"))
-            os.makedirs(os.path.dirname(full), exist_ok=True)
-            with open(full, "a" if os.path.exists(full) else "w", encoding="utf-8") as fh:
-                fh.write(text)
-
-        def commit(msg: str) -> str:
-            g(d, "add", "-A", "-f")
-            g(d, *ident, "commit", "-q", "-m", msg)
-            return g(d, "rev-parse", "HEAD").strip()
-
-        put("SCORECARD.md", "base\n")
-        commit("base")
-        put("quality/receipts/ok-r91.txt", "evidence\n")
-        put("SCORECARD.md", "ok cites quality/receipts/ok-r91.txt\n")
-        rev_ok = commit("round-91: ok")
-        put("SCORECARD.md", "gone cites .ufo/waves/round-91/receipts/gone-r91.txt\n")
-        rev_missing = commit("round-91: missing")
-        bad = "d" * 40
-        case("OK", ["--repo", d, "--rev", rev_ok], 0, sub=("cited=1 present=1 missing=0 verdict=OK",))
-        case("MISSING", ["--repo", d, "--rev", rev_missing], 1,
-             exact=("missing .ufo/waves/round-91/receipts/gone-r91.txt -> "
-                    ".ufo/waves/round-91/receipts/gone-r91.txt SCORECARD.md:3",),
-             sub=("verdict=MISSING",))
-        case("SETUP", ["--repo", d, "--rev", bad], 2, exact=(f"RECEIPT_PRESENCE: SETUP_ERROR bad --rev {bad}",))
-    except (OSError, RuntimeError) as exc:
-        checks += 1
-        failed += 1
-        print(f"RECEIPT_PRESENCE_SELFTEST: FAIL fixture {exc}")
-    finally:
-        shutil.rmtree(root, ignore_errors=True)
-    print(f"RECEIPT_PRESENCE_SELFTEST: checks={checks} failed={failed}")
-    return 0 if failed == 0 else 1
-
-
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--repo", default=".")
@@ -321,6 +240,93 @@ def main(argv: list[str] | None = None) -> int:
     print(f"RECEIPT_PRESENCE: mode={mode} rev={rev} records={len(records)} cited={cited} present={present_n} "
           f"missing={missing} verdict={verdict}")
     return 0 if missing == 0 else 1
+
+
+def selftest() -> int:
+    """Build a throwaway fixture and assert exit codes and finding lines.
+
+    One repository under a temporary directory holds three commits: a base,
+    an OK change citing a receipt it carries, a MISSING change citing a
+    receipt it does not, plus a bad-rev setup probe.  Six labelled checks --
+    OK-rc, OK-lines, MISSING-rc, MISSING-lines, SETUP-rc, SETUP-lines, one
+    exit-code and one output assertion per probe -- each print
+    `RECEIPT_PRESENCE_SELFTEST: FAIL <label>` when they fail, with the detail
+    on a `RECEIPT_PRESENCE_SELFTEST_DETAIL:` line.  Nothing outside the
+    temporary directory is touched; the fixture identity (`fixture
+    <fixture@invalid>`) is passed with `-c` and never written to any
+    configuration.
+    """
+    root = tempfile.mkdtemp(prefix="receipt-presence-selftest-")
+    env = {"PATH": os.environ.get("PATH", "/usr/bin"), "HOME": root, "LC_ALL": "C", "TMPDIR": root,
+           "GIT_CONFIG_NOSYSTEM": "1", "GIT_TERMINAL_PROMPT": "0"}
+
+    def g(d: str, *args: str) -> str:
+        r = subprocess.run(["git", "-C", d, *args], capture_output=True, text=True, env=env)
+        if r.returncode != 0:
+            raise RuntimeError(f"git {' '.join(args)} rc={r.returncode}: {r.stderr.strip()}")
+        return r.stdout
+
+    try:
+        d = os.path.join(root, "fx")
+        os.makedirs(d)
+        g(d, "init", "-q")
+        top = g(d, "rev-parse", "--show-toplevel").strip()
+        if os.path.realpath(top) != os.path.realpath(d):
+            raise RuntimeError(f"fixture toplevel {top} != {d}")
+        ident = ("-c", "user.name=fixture", "-c", "user.email=fixture@invalid", "-c", "commit.gpgsign=false")
+
+        def put(path: str, text: str) -> None:
+            full = os.path.join(d, *path.split("/"))
+            os.makedirs(os.path.dirname(full), exist_ok=True)
+            with open(full, "a" if os.path.exists(full) else "w", encoding="utf-8") as fh:
+                fh.write(text)
+
+        def commit(msg: str) -> str:
+            g(d, "add", "-A", "-f")
+            g(d, *ident, "commit", "-q", "-m", msg)
+            return g(d, "rev-parse", "HEAD").strip()
+
+        put("SCORECARD.md", "base\n")
+        commit("base")
+        put("quality/receipts/ok-r91.txt", "evidence\n")
+        put("SCORECARD.md", "ok cites quality/receipts/ok-r91.txt\n")
+        rev_ok = commit("round-91: ok")
+        put("SCORECARD.md", "gone cites .ufo/waves/round-91/receipts/gone-r91.txt\n")
+        rev_missing = commit("round-91: missing")
+        bad = "d" * 40
+
+        def run(args: list[str]) -> tuple[int, list[str]]:
+            r = subprocess.run([sys.executable, "-I", os.path.realpath(__file__), *args],
+                               capture_output=True, text=True, env=env)
+            return r.returncode, r.stdout.splitlines()
+
+        rc_ok, out_ok = run(["--repo", d, "--rev", rev_ok])
+        rc_missing, out_missing = run(["--repo", d, "--rev", rev_missing])
+        rc_setup, out_setup = run(["--repo", d, "--rev", bad])
+        ok_line = "cited=1 present=1 missing=0 verdict=OK"
+        gone_line = ("missing .ufo/waves/round-91/receipts/gone-r91.txt -> "
+                     ".ufo/waves/round-91/receipts/gone-r91.txt SCORECARD.md:3")
+        setup_line = f"RECEIPT_PRESENCE: SETUP_ERROR bad --rev {bad}"
+        observations = [
+            ("OK-rc", rc_ok == 0, f"rc={rc_ok} lines={out_ok}"),
+            ("OK-lines", any(ok_line in ln for ln in out_ok), f"want {ok_line!r} in lines={out_ok}"),
+            ("MISSING-rc", rc_missing == 1, f"rc={rc_missing} lines={out_missing}"),
+            ("MISSING-lines", gone_line in out_missing and any("verdict=MISSING" in ln for ln in out_missing),
+             f"want {gone_line!r} lines={out_missing}"),
+            ("SETUP-rc", rc_setup == 2, f"rc={rc_setup} lines={out_setup}"),
+            ("SETUP-lines", setup_line in out_setup, f"want {setup_line!r} lines={out_setup}"),
+        ]
+    finally:
+        shutil.rmtree(root, ignore_errors=True)
+    checks = [(n, ok) for n, ok, _ in observations]
+    failed = [n for n, ok in checks if not ok]
+    for n in failed:
+        print(f"RECEIPT_PRESENCE_SELFTEST: FAIL {n}")
+    for n, ok, detail in observations:
+        if not ok:
+            print(f"RECEIPT_PRESENCE_SELFTEST_DETAIL: {n} {detail}")
+    print(f"RECEIPT_PRESENCE_SELFTEST: checks={len(checks)} failed={len(failed)}")
+    return 0 if not failed else 1
 
 
 if __name__ == "__main__":
