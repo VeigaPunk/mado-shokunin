@@ -570,3 +570,14 @@ writes nothing; it never runs `update-mime-database`, never edits `~/.local/shar
 round 95's `tools/mado-mimesniff.py`. Its callers are the same GIO `standard::content-type` path as
 round 95, but only on a host whose reachable directories hold no loadable cache; `xdg-open` on
 Hyprland still uses `file(1)` (revenger's ground) and is outside it.
+
+**Round-97 refinement (C1) - a path's content type, not an input's (read-only); no new write surface.**
+`tools/mado-filetype.py` stats the paths it is given (two-stage lstat then a guarded follow: a broken or
+looped symlink answers `inode/symlink`, a directory/chardev/blockdev/FIFO/socket its `inode/*`, a
+zero-size regular `application/x-zerosize`, and only a non-`EACCES` lstat failure is refused), then runs
+round 94's basename guess and - only when that guess is uncertain and the full attribute is asked -
+sniffs the file for the database's own max extent (clamped to 16384) through round 95's cache-mode or
+round 96's text-mode matcher (S522, S526, S527, S518, S521, S524, S525). It reads the paths and the
+reachable `mime/` trees only; it writes nothing, never launches an application and never asks `file(1)`
+(revenger's ground). Its caller is a file manager's `standard::content-type`; `gio info -a` is the CLI
+that exposes it.
