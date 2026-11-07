@@ -581,3 +581,24 @@ round 96's text-mode matcher (S522, S526, S527, S518, S521, S524, S525). It read
 reachable `mime/` trees only; it writes nothing, never launches an application and never asks `file(1)`
 (revenger's ground). Its caller is a file manager's `standard::content-type`; `gio info -a` is the CLI
 that exposes it.
+
+**Round-98 refinement (C1) - the launch argv sequence (read-only); no new write surface.**
+`tools/mado-execargv.py` models, from a desktop file's bytes and a FILE argument list, the argv
+vectors GIO 2.90.1's `g_desktop_app_info_launch_uris_with_spawn` builds: the `[Desktop Entry]` read
+(Exec, Name, Icon, Type, Path, Terminal, Hidden read but not refused), the `%` walk with the selector
+byte consumed, the field codes (`%f %F %u %U %d %D %n %N %i %c %k %m %%` and the unknown-code drop),
+the `force_file_uri` file-path rule, the head-pointer no-substitution fallback, `g_shell_quote`, the
+`g_shell_parse_argv` grammar, and the one-process-per-iteration loop (S528-S532). It reads the desktop
+file and stats the arguments it is given; it writes nothing, never launches a process, never reads
+`~/.config`, and never asks `gio` or a shell to answer a modelled question. `gio launch` on a fixture
+desktop file is the *oracle* the committed case set was measured against, never a runtime dependency
+of the tool. Whether the launched process starts, `Terminal=true`'s terminal prepend, `Path=` as cwd,
+DBus activation and the portal path stay frontier.
+
+**Round-98 refinement (C2) - the registry citation read-back (read-only); no new write surface.**
+`quality/check-sources-readback.py` reads `corpus/SOURCES.md` and `corpus/knowledge/*.md` and reports
+R1 (a repo path in a `recheck` cell), R3 (a `used-by` path that does not exist), R4 (a `mined` row an
+entry's `source:` frontmatter cites but whose `used-by` does not name that entry), R5 (a cited id with
+no row) and R6 (a duplicate id); it writes nothing. The 21 repaired `used-by` cells are registry
+records, not a new write surface: the registry is the lane's own corpus file and every change is
+logged old -> new in `corpus/lessons/round-98.md`.

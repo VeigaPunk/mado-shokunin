@@ -4612,3 +4612,41 @@ S526/S527 opened this round).
   a provider 401; round total 24 seats. Dead seats: w1 R97MScoutSources, R97MExecC2, R97MMutC2 (no report; their
   items were covered by w1b), w1 R97MExecCasesC1/R97MExecToolC1/R97MExecC2/R97MExecCounterC2 died on the 401 and
   were replaced in w1b; no dead seats in w1b.
+
+## Round 98 — the launch argv sequence (capability), the registry citation read-back (2026-11-07, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-98/claims-declaration-r98.md` (frozen at the artifacts commit `06b6bf2a`; its
+`## Freeze block` carries every pin and lists the pre-freeze corrections). C1 measured at `a3471631`
+(`tools/mado-execargv.py` = `49f7fecd…f713`; counter `quality/counters/c1-r98-execargv.py` `7ed2f8f6…a64c5`;
+cases `21cccc3a…e370e`; mutants `32c207b3…53bb`; renderer `182cf06c…e3d4`); C2 measured at `a3471631`
+(`quality/check-sources-readback.py` = `f1000bf1…d8f5`; counter `quality/counters/c2-r98-sources-readback.py`
+`e944fdac…e6e0a`).
+
+- C1 — coverage, new surface (capability): no lane tool answered a launch argv at base; `tools/mado-execargv.py`
+  now answers the **sequence of argv vectors** GIO 2.90.1 builds and spawns from a desktop entry's `Exec` key and a
+  file/URI list — the load gate and its five refusal shapes, the byte walk with the selector byte consumed, the
+  twelve field codes and `%%`, `force_file_uri` and `X-GIO-NoFuse`, the head-pointer no-substitution `%f` append,
+  `g_shell_quote`, the `g_shell_parse_argv` grammar, and the `do { } while (dup_uris != NULL)` loop that spawns
+  once per URI for the single-consuming codes — 88/88 frozen cases over 20 classes (20/20), 79/79 counted mutants
+  (class_kills 20/20, 0 crashed, 0 survived), 60/60 fresh cases at seed `e2bf4d1b757e2e7b`, controls behind
+  (naive 4/88, field-code 47/88, memoriser 0/60 on fresh), `checks=38 failed=0`
+  (`.ufo/waves/round-98/receipts/c1-measured-r98.txt`). Entry `corpus/knowledge/gio-exec-argv-r98.md`; index and
+  frontier rows; SKILL and PROVINCE rows; SOURCES 462 → 466.
+- C2 — operability: `quality/check-sources-readback.py` reads the registry back from every entry's `source:`
+  frontmatter (R1 recheck-path, R3 usedby-missing, R4 entry-cites-unacknowledged over `mined` rows, R5
+  missing row, R6 duplicate id) and the 21 unacknowledged citations it found are repaired row → entry (21/21,
+  `added_paths=21`), with the gate green at 466 rows / 119 entries, planted 5/5, the always-clean stub flagged,
+  the fleet census exit 0, gate selftest 21 checks, counter selftest 18 checks
+  (`.ufo/waves/round-98/receipts/c2-measured-r98.txt`). The two disowned citations (S030 rejected, S132 queued)
+  are recorded in the lesson with their entries' sentences and are not repaired.
+- Separability: C1 `SETUP_ERROR … tools/mado-execargv.py absent at 35f3ce80` (`receipts/c1-at-base-r98.txt`);
+  C2 `SETUP_ERROR gate-absent-at-rev` (`receipts/c2-at-base-r98.txt`).
+- Frontier: SOURCES 462 → 466 rows (S528 gdesktopappinfo.c launch expansion, S529 gshell.c quoting/tokenizer,
+  S530 the Desktop Entry Specification's Exec section, S531 the installed `gio(1)` `launch` scope); used-by appends
+  on S504, S506, S527 and the 21 repaired cells; census start/end rc 0. Mistakes M98-1..M98-6 in
+  `corpus/lessons/round-98.md`.
+- Assimilation: none (the staged `merge/mado/` package has no entry on the launch plane; `Assimilation: none` in
+  the report's Sources & frontier section). considerthese: no still-unimplemented proposal matched this round's
+  surface.
+- Round shape: one v1 wave w1 of 11 seats (4 executors, 2 mutation-testers, 1 scout, 1 scribe, 1 connector,
+  1 reviewer, 1 critic; attack 4/11 = 36 %); no residual call; no dead seats; round total 11.

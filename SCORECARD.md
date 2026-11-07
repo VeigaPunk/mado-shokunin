@@ -5576,3 +5576,39 @@ S524, S525).
 `receipts/harm-final-r97.txt` (see the report): the r96 leg set plus the r95/r96/r97 counter declarations replayed at
 the records tip; expected rc 0 everywhere except `r90c1_portal_routing` (its declared SETUP_ERROR since round 93).
 No axis harmed.
+
+## Round 98 — the launch argv sequence (capability), the registry citation read-back (2026-11-07, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-98/claims-declaration-r98.md` (frozen at the artifacts commit `06b6bf2a`; the
+freeze block carries every pin). C1 measured at `a3471631` (`tools/mado-execargv.py` = `49f7fecd…f713`);
+C2 measured at `a3471631` (`quality/check-sources-readback.py` = `f1000bf1…d8f5`). Stagnation nudge not
+claimed; every owned axis at 10, so the lowest-axis duty is a tie. Sourced claim: C1 (S528, S529, S530,
+S531, S504, S506, S527).
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (new surface, capability): the sequence of argv vectors GIO 2.90.1 builds and spawns from a desktop entry's `Exec` key and the file/URI arguments | `python3 -I quality/counters/c1-r98-execargv.py --repo . --rev a3471631… --base-rev 35f3ce80… --cases .ufo/waves/round-98/controls/execargv-cases-r98.json --expect-cases-sha256 21cccc3a… --mutants …/execargv-mutants-r98.json --expect-mutants-sha256 32c207b3… --genseed …/execargv-fresh-r98.py --expect-genseed-sha256 b7bc137a… --expect-tool-sha256 49f7fecd… --expect-gio-sha256 d2164260… --scratch-root DIR` (the full pinned command is the declaration's C1 block) | at base no lane tool answers a launch argv (`git cat-file -e 35f3ce80:tools/mado-execargv.py` absent) → `TARGET_MET` at `a3471631`: cases 88/88 over 20 classes 20/20, mutants 79/79 killed with class_kills 20/20, fresh 60/60 at seed `e2bf4d1b757e2e7b`, controls behind (naive 4/88, field-code 47/88, memoriser 0/60 on fresh), selftest 38 checks | **TARGET_MET** |
+| C2 **operability**: the SOURCES registry's citation read-back (a new gate) and the 21 unacknowledged entry→row citations it finds | `python3 -I quality/counters/c2-r98-sources-readback.py --repo . --rev a3471631… --base-rev 35f3ce80… --expect-gate-sha256 f1000bf1… --expect-base-mismatches 21 --planted-dir .ufo/waves/round-98/controls/readback-planted --fleet-root /home/vgpnk/Projects/shokunin --scratch-root DIR` | at base no read-back gate exists and the status-aware R4 rule counts 21 unacknowledged citations → `TARGET_MET` at `a3471631`: gate findings 0 over 466 rows / 119 entries, repaired 21/21 (row → entry), added_paths 21, planted 5/5 (R1/R3/R4/R5/R6, each exactly one finding with its id and exit 1), stub flagged, census exit 0, gate selftest 21 checks, counter selftest 18 checks | **TARGET_MET** |
+| separability | C1 counter at the base; C2 counter at the base | C1 `SETUP_ERROR … tools/mado-execargv.py absent at 35f3ce80` (`receipts/c1-at-base-r98.txt`); C2 `SETUP_ERROR gate-absent-at-rev` (`receipts/c2-at-base-r98.txt`) | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| GIO 2.90.1 launch argv sequence (`tools/mado-execargv.py`, read-only) | Answer, read-only, the sequence of argv vectors `gio launch` would spawn for a desktop file and a file/URI list: the load gate and its refusals, the byte walk with the selector byte consumed, the twelve field codes and `%%`, `force_file_uri` and `X-GIO-NoFuse`, the head-pointer no-substitution `%f` append, `g_shell_quote`, the `g_shell_parse_argv` grammar, and the one-spawn-per-iteration loop; 88 frozen cases, a seeded fresh leg, 79 counted mutants | `.ufo/waves/round-98/receipts/c1-measured-r98.txt`; `corpus/knowledge/gio-exec-argv-r98.md` | 98 |
+
+### Named limits (append-only, round 98)
+
+- C1: the surface is the launch **count and the multiset** of argv vectors, never their order (the
+  children race; the probe's lock-assigned sequence is not fork order - measured permutations a,b,c and
+  a,c,b on the same launch). `Terminal=true`'s terminal prepend, `Path=` as cwd, DBus activation and the
+  portal path are not modelled; whether the process starts stays frontier. The `#`-bypass branch of
+  `expand_macro_uri` is unobservable through `gio launch` and is a named limit. The case file's 88
+  labels were frozen on two consecutive agreeing measurements; the fresh leg is seeded at measurement
+  time and its labels are written outside the tool's reach.
+- C2: the gate proves the registry's declared citations are acknowledged, not that an entry's claims are
+  true; R4 is status-aware (`mined` only), so a `queued` or `rejected` row's citations are recorded in
+  the lesson, not repaired. The planted copies are cut from the measured revision and drift fails
+  closed. The census remains the shape/enum/URL authority; the gate adds the read-back direction.
+- Round shape: one v1 wave of 11 seats (4 executors, 2 mutation-testers, 1 scout, 1 scribe, 1 connector,
+  1 reviewer, 1 critic; attack 4/11 = 36 %); no residual call; no dead seats; round total 11.
