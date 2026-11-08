@@ -535,10 +535,12 @@ def selftest():
         record("timeout", rc == 1 and
                "LEG slow rc=124 expect=0" in out and "timeout-after-1s" in out,
                out[-300:])
+        # the leg timed out at a 1 s cap, so its measured elapsed must reach the cap; the value
+        # is PARSED, never substring-matched (a mutant reporting elapsed_ms=10 contains
+        # "elapsed_ms=1" and passed the substring form -- round-100 mutant h3b)
+        _tm = _re.search(r"^LEG slow .*elapsed_ms=(\d+)$", out, _re.M)
         record("timeout-elapsed-ms",
-               "elapsed_ms=1" in out or _re.search(r"elapsed_ms=\d{2,}", out)
-               is not None and int(_re.search(r"elapsed_ms=(\d+)", out).group(1)) >= 1000,
-               out[-300:])
+               _tm is not None and int(_tm.group(1)) >= 1000, out[-300:])
 
         # 11 REV substitution reaches the leg argv
         revleg = {"expect_legs": 1, "timeout_s": 20, "rounds": {"r0": ["rev"]},

@@ -1326,3 +1326,19 @@ frozen ledger and 1 when an attack-seat row is absent (lesson: lessons/round-99.
 Line `:467` is the docstring line that names `g_find_program_for_path`. The criterion's rule and both
 of its falsification examples are unchanged; only the stated line number is corrected (routed by
 `corpus/lessons/round-99-verifier-spotcheck.md` §6.1).
+
+**173. A library-semantics re-implementation carries an exhaustive small-domain sweep against the
+shipped library, independent of any selftest the candidate's own author wrote.** A selftest written
+by the same author as the code can encode the author's misreading and certify the bug as intended
+behaviour (M95-1: `g_ascii_isspace` excludes VT `0x0b` where C `isspace` includes it, and
+`--selftest 23/23` certified `looks_like_text` accepting it), and a host-file sampling probe may
+never touch the unexercised edge (7,240 sampled inputs missed it; a 256-byte sweep found it at once).
+The rule: when a tool re-implements a library function whose domain admits exhaustive enumeration (all
+256 byte values for a single-byte classifier or parser, all single-character escapes, an enumerated
+finite key or entry set), the round's frozen controls include a sweep generated from the installed
+library/oracle — never from the author's expectation — and the counter gates on
+`domain_sweep_correct == domain_sweep_total AND domain_sweep_total >= domain_size`, plus a mutant
+that flips one branch of the domain definition and must be killed by the sweep. Grounding: M95-1
+(`corpus/lessons/round-95.md`), its five wave seats, and round 100's PATH-shape sweep
+(`.ufo/waves/round-100/controls/launchenv-cases-r100.json`, 77 cases, six anchored mutants — `m2`
+flips exactly one branch of the domain definition and is killed by two cases).
