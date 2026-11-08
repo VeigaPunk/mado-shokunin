@@ -171,8 +171,19 @@ def main(argv=None):
         m = re.search(r"checks=(\d+) failed=(\d+)", selftest_line[0])
         selftest_failed = int(m.group(2)) if m else 999
 
+        # the gate's scratch must stay SHORT: one leg (the round-97 replay) binds an AF_UNIX
+        # fixture inside its own scratch, and a sun_path over 108 bytes makes that leg fail
+        # closed with SETUP_ERROR in ~2 s (measured this round: a nested tempdir under a deep
+        # caller root pushed it over; the same panel run from a shallow root is green 28/28).
+        # One short level under the caller's root, never a fresh tempdir per run.
+        pscratch = os.path.join(scratch, "p")
+        os.makedirs(pscratch, exist_ok=True)
+        deepest = max(len(os.path.join(pscratch, row["id"])) for row in panel["legs"])
+        if deepest > 100:
+            print("WARN panel-scratch-depth deepest-leg-path=%d (a leg that binds AF_UNIX inside "
+                  "its scratch fails above ~100; use a shorter --scratch-root)" % deepest)
         rc, out, err = run_panel(gate_path, repo, a.rev, os.path.abspath(a.panel),
-                                 os.path.join(work, "scr"), timeout_s)
+                                 pscratch, timeout_s)
         legs_run = len([1 for ln in out.splitlines() if ln.startswith("LEG ")])
         summary = [ln for ln in out.splitlines() if ln.startswith("HARM_WATCH:")]
         sm = re.search(r"legs=(\d+) ok=(\d+) mismatch=(\d+)", summary[-1]) if summary else None
