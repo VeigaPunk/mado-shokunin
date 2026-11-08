@@ -1319,3 +1319,10 @@ models `g_find_program_for_path`, so the round-99 C1 sentence "no lane tool answ
 "both dropped legs were noticed only by the outside spot-check" is half false. Both were narrowed in
 `plans/round-99.md` A1/A5 and reconciled in `claim-falsification.tsv`; the pre-file gate exits 0 on the
 frozen ledger and 1 when an attack-seat row is absent (lesson: lessons/round-99.md#mistakes M99-3).
+
+**172a (erratum, round 100).** Criterion 172's and lesson M99-3's pointer to the base-tree
+`find_program` is `tools/mado-mime.py:466`, not `:467`: the command printed in both places
+(`git show 2cbaa141:tools/mado-mime.py | grep -n 'def find_program'`) prints `466:def find_program(`.
+Line `:467` is the docstring line that names `g_find_program_for_path`. The criterion's rule and both
+of its falsification examples are unchanged; only the stated line number is corrected (routed by
+`corpus/lessons/round-99-verifier-spotcheck.md` §6.1).

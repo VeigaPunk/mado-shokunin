@@ -32,7 +32,7 @@ Each leg then runs once: argv with substitutions, cwd = --repo, captured
 stdout and stderr, killed (process group SIGKILL, exit status recorded as
 124) on timeout.  The leg is ok iff rc == expect_rc and expect_marker
 occurs in the captured output.  Per leg one line:
-    LEG <id> rc=<n> expect=<n> marker=<ok|MISS> <detail>
+    LEG <id> rc=<n> expect=<n> marker=<ok|MISS> <detail> elapsed_ms=<n>
 and the summary line `HARM_WATCH: legs=N ok=M mismatch=K`.
 
 Exit: 0 iff the census is clean and K == 0; 1 on any leg mismatch;
@@ -61,6 +61,7 @@ import signal
 import subprocess
 import sys
 import tempfile
+import time
 
 LEG_SCRATCH_MARKER = ".harm-watch-leg-r99"
 
@@ -186,19 +187,23 @@ def safe_scratch_dir(scratch_root, leg_id):
 
 
 def run_leg(row, repo, rev, scratch_root, timeout):
+    t0 = time.monotonic()
     legdir, err = safe_scratch_dir(scratch_root, row["id"]) if "SCRATCH" in row["argv"] \
         else ((os.path.join(scratch_root, row["id"]) if scratch_root else None), None)
     if "SCRATCH" in row["argv"] and err == "scratch-root-required":
-        return {"id": row["id"], "rc": None, "setup": "scratch-root-required"}
+        return {"id": row["id"], "rc": None, "setup": "scratch-root-required",
+                "elapsed_ms": max(0, int((time.monotonic() - t0) * 1000))}
     if err is not None:
-        return {"id": row["id"], "rc": None, "setup": err}
+        return {"id": row["id"], "rc": None, "setup": err,
+                "elapsed_ms": max(0, int((time.monotonic() - t0) * 1000))}
     argv = substitute(row["argv"], rev, legdir or "SCRATCH-UNSET")
     try:
         p = subprocess.Popen(argv, cwd=repo, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE, start_new_session=True)
     except OSError as e:
         return {"id": row["id"], "rc": 127, "out": "", "err": str(e),
-                "detail": "spawn-failed", "legdir": legdir}
+                "detail": "spawn-failed", "legdir": legdir,
+                "elapsed_ms": max(0, int((time.monotonic() - t0) * 1000))}
     try:
         outb, errb = p.communicate(timeout=timeout)
         rc, detail = p.returncode, ""
@@ -218,6 +223,7 @@ def run_leg(row, repo, rev, scratch_root, timeout):
                 pass
         rc = 124
         detail = "timeout-after-%ss" % int(timeout)
+    elapsed_ms = max(0, int((time.monotonic() - t0) * 1000))
     out = outb.decode("utf-8", "replace")
     err = errb.decode("utf-8", "replace")
     if scratch_root:
@@ -230,7 +236,7 @@ def run_leg(row, repo, rev, scratch_root, timeout):
         except OSError:
             pass
     return {"id": row["id"], "rc": rc, "out": out, "err": err, "detail": detail,
-            "legdir": legdir}
+            "legdir": legdir, "elapsed_ms": elapsed_ms}
 
 
 def check_leg(row, res):
@@ -301,17 +307,19 @@ def run_panel(args):
         res = run_leg(row, args.repo, args.rev, args.scratch_root, timeout)
         rc_ok, marker_ok, detail = check_leg(row, res)
         rc = res.get("rc")
+        elapsed_ms = res.get("elapsed_ms", 0)
         if rc_ok and marker_ok:
             nok += 1
-        line = "LEG %s rc=%s expect=%s marker=%s %s" % (
+        line = "LEG %s rc=%s expect=%s marker=%s %s elapsed_ms=%s" % (
             row["id"], rc if rc is not None else "SETUP", row["expect_rc"],
-            "ok" if marker_ok else "MISS", detail)
+            "ok" if marker_ok else "MISS", detail, elapsed_ms)
         sys.stdout.write(line + "\n")
         sys.stdout.flush()
         results.append({
             "id": row["id"], "round": row.get("round"), "rc": rc,
             "expect_rc": row["expect_rc"], "marker_ok": marker_ok,
             "ok": bool(rc_ok and marker_ok), "detail": detail,
+            "elapsed_ms": elapsed_ms,
         })
         if res.get("setup"):
             sys.stdout.write("HARM_WATCH: setup-error leg=%s detail=%s\n"
@@ -431,6 +439,18 @@ def selftest():
         record("clean-no-panel-line", "\nPANEL " not in out, out[-200:])
         record("clean-leg-line",
                "LEG good rc=0 expect=0 marker=ok ok" in out, out[-200:])
+        import re as _re
+        _m = _re.search(r"LEG good rc=0 expect=0 marker=ok ok elapsed_ms=(\d+)\n",
+                        out)
+        record("clean-elapsed-ms", _m is not None and int(_m.group(1)) >= 0,
+               out[-200:])
+        _m2 = _re.search(r"LEG second rc=0 expect=0 marker=ok ok elapsed_ms=(\d+)\n",
+                         out)
+        record("clean-elapsed-ms-second",
+               _m2 is not None and int(_m2.group(1)) >= 0, out[-200:])
+        record("clean-elapsed-ms-integer",
+               _m is not None and _m.group(1).isdigit() and
+               int(_m.group(1)) == float(_m.group(1)), out[-200:])
 
         # 2-4 planted controls
         dropped = json.loads(json.dumps(p))
@@ -515,6 +535,10 @@ def selftest():
         record("timeout", rc == 1 and
                "LEG slow rc=124 expect=0" in out and "timeout-after-1s" in out,
                out[-300:])
+        record("timeout-elapsed-ms",
+               "elapsed_ms=1" in out or _re.search(r"elapsed_ms=\d{2,}", out)
+               is not None and int(_re.search(r"elapsed_ms=(\d+)", out).group(1)) >= 1000,
+               out[-300:])
 
         # 11 REV substitution reaches the leg argv
         revleg = {"expect_legs": 1, "timeout_s": 20, "rounds": {"r0": ["rev"]},
@@ -550,6 +574,31 @@ def selftest():
                    obj["mismatch"] == 0 and len(obj["legs"]) == 3, out[-200:])
         except Exception as e:
             record("json-mode", False, repr(e))
+        # 13b elapsed in json leg objects
+        try:
+            record("json-elapsed-ms",
+                   all(isinstance(L.get("elapsed_ms"), int) and not isinstance(L.get("elapsed_ms"), bool)
+                       and L.get("elapsed_ms") >= 0 for L in obj["legs"]),
+                   out[-200:])
+        except Exception as e:
+            record("json-elapsed-ms", False, repr(e))
+        # 13c elapsed is monotone across fast then slow legs
+        _rp2 = {"expect_legs": 2, "timeout_s": 20, "rounds": {"r0": ["fast", "slower"]},
+                "legs": [fix.row("fast", fix.py("ok", "a")),
+                         fix.row("slower", [sys.executable, "-I", "-c", "import time,sys; time.sleep(0.3); print('FIXTURE_VERDICT: GOOD')", "ok"],
+                                 marker="FIXTURE_VERDICT: GOOD")]}
+        rc, out = run_gate(gate(fix.write_panel("elapsed.json", _rp2), extra=["--json"]))
+        try:
+            obj = json.loads(out.strip().splitlines()[-1])
+            _by_id = {L["id"]: L["elapsed_ms"] for L in obj["legs"]}
+            record("elapsed-monotone", _by_id["slower"] > _by_id["fast"],
+                   str(_by_id))
+            _lines = {ln.split()[1]: ln for ln in out.splitlines() if ln.startswith("LEG ")}
+            record("elapsed-human-line", "elapsed_ms=" in _lines["fast"] and
+                   "elapsed_ms=" in _lines["slower"], str(_lines))
+        except Exception as e:
+            record("elapsed-monotone", False, repr(e))
+            record("elapsed-human-line", False, repr(e))
 
         # 14 unreadable panel
         rc, out = run_gate(gate(os.path.join(root, "absent.json")))

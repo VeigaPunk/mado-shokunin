@@ -1,0 +1,40 @@
+C1 tool receipt (R100MExecTool)  2026-11-08T05:12:47Z
+tool candidate: .ufo/waves/round-100/build/mado-launchenv.py
+tool sha256: 3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228
+base tool tools/mado-launchenv.py sha256: a63c20c886a2bd840d80966d531e055e9c4f5d3accb431e4b0e317e04523eb16
+gio sha256: d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+gio pin expected: d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+MADO_LAUNCHENV_SELFTEST: checks=95 failed=0  (candidate run from the scratch copy, whose sibling mado-execargv.py is the committed tools/mado-execargv.py; the build/ copy alone has no sibling by design and answers SETUP_ERROR execargv-missing, same as the base tool outside tools/)
+r99 case set agreement: mismatches=0/67
+unset-default oracle measurements (2 runs each, agreed=True unless noted):
+ pd-dot-unset  (path null, Exec=probe at root) -> launches=1 argv=[{root}/./probe]
+ pd-empty      (PATH="",   Exec=probe at root) -> launches=1 argv=[{root}/probe]
+ pd-privbin-unset (path null, Exec=probe only in bin/) -> error load
+ pd-privbin-set   (PATH={root}/bin) -> launches=1 argv=[{root}/bin/probe]
+ pd-tryexec-dot-unset (path null, TryExec=probe at root) -> launches=1 argv=[{probe}] (cwd {root})
+ pd-tryexec-empty     (PATH="",     TryExec=probe at root) -> launches=1 argv=[{probe}]
+ pd-tryexec-privbin-unset (path null, TryExec=probe only in bin/) -> error load
+ pd-tryexec-privbin-set   (PATH={root}/bin) -> launches=1 argv=[{probe}]
+ pd-term-empty (PATH="", Terminal=true, Exec=probe at root) -> error no-terminal
+ pd-sh-empty   (PATH="", Exec=sh) -> error load
+ pd-term-unset (path null, Terminal=true): setup-error (xdg-terminal-exec found via default, fails without DISPLAY) -- not a model verdict; excluded from agreement count
+ pd-sh-unset   (path null, Exec=sh): setup-error (real sh spawned, no probe record) -- excluded
+candidate agreement on measured unset set: all loader-visible cases agree (10/10 where oracle gives a verdict; 2 setup-error exclusions noted)
+
+CLI three-state verification through build candidate (env -i, cwd=case root, case-private probe):
+  no --path, PATH absent          -> ARGV[1][0]={root}/./probe
+  --path ""                       -> ARGV[1][0]={root}/probe
+  --path "."                      -> ARGV[1][0]={root}/./probe
+  --path {root}                   -> ARGV[1][0]={root}/probe
+  no --path, ambient PATH given   -> MADO_LAUNCHENV: ERROR load detail=exec-argv0  (no default fallback)
+
+Mutant kills at selftest level (candidate bytes + sibling mado-execargv.py):
+  m1 DEFAULT_SEARCH_PATH '/bin:/usr/bin'      -> checks=95 failed=3
+     (st-unset-default-dot-launch, st-unset-tryexec-dot-hit, fp-default-dot-entry-keeps-dot-slash)
+  m2 unset treated as empty PATH              -> checks=95 failed=3
+     (st-unset-default-dot-launch, fp-default-path-has-sh, fp-default-dot-entry-keeps-dot-slash)
+  pristine candidate                          -> checks=95 failed=0
+
+New selftest checks (5): st-unset-default-dot-launch, st-empty-string-no-dot,
+st-dot-entry-explicit, st-unset-tryexec-privbin-miss, st-unset-tryexec-dot-hit.
+CLI/output lines/exit map unchanged (diff touches the selftest body only).

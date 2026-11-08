@@ -1,0 +1,67 @@
+mado round 100 - C1 counter receipt (seat R100MExecCounterC1)
+counter: .ufo/waves/round-100/build/c1-r100-launchenv-path.py
+counter_sha256: 2a930048c459316e6308ecb991d695afae394d0ccc8b37766cb1e2ec5f703699
+predicate: PRED-C1-r100-v1 (frozen in .ufo/waves/round-100/claims-declaration-r100.md)
+date: 2026-11-08  loadavg: 88.67 94.45 129.72 53/6692 1681849
+
+== 1. counter selftest (landed bytes) ==
+command: python3 -I .ufo/waves/round-100/build/c1-r100-launchenv-path.py --selftest --scratch-root <scratch>/st2
+exit: 0   wall=10.29s
+MADO_COUNTER_SELFTEST: checks=24 failed=0
+
+== 2. full-scale instrument run (candidate at the lane worktree) ==
+NOT the frozen case file: this run merged the round-99 frozen cases (67) with seven
+path-default cases this seat measured twice with the round-99 oracle
+(.ufo/waves/round-99/controls/launchenv-probe-r99.py, sha256 cbfff7a4...). It is
+plumbing + label evidence for the cases seat, not a competing case file.
+cases_sha256: dff7026a9eef4426243efb9e3ff74cd7417d370f99787f80d6aa4a5ddb207c95
+mutants_sha256: 85b6a24bb4a04e30ba5e99cfa4f2a7ab4ba093d6958397798ea51a489324b74b
+genseed_sha256: bbe5dde0a578195d019f45cdd2c472a05e5967c1ce4fd183378d5bab31a38e09
+tool_sha256: 3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228 (worktree)
+execargv_sha256: 49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713
+gio_sha256: d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+base_cases: .ufo/waves/round-99/controls/launchenv-cases-r99.json (sha256 14b4cc571a35bb5b4c6996a4a3fde19ff71ce9f26dabe3dd4142eec162f82acd)
+exit: 0   wall=6.29s
+tool_pin=ok tool_sha256=3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228
+execargv_pin=ok execargv_sha256=49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713
+base_tool_sha256=a63c20c886a2bd840d80966d531e055e9c4f5d3accb431e4b0e317e04523eb16 base_execargv_sha256=49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713
+gio_pin=ok gio_sha256=d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+renderer_from=./.ufo/waves/round-99/controls/launchenv-probe-r99.py
+renderer_pin=ok renderer_sha256=cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199
+per_class term-xte=3 term-kgx=2 term-order=2 term-none=2 term-path=2 cwd-path=2 cwd-empty=3 cwd-missing=2 prog-abs=2 prog-bare=2 prog-missing=2 prog-dir=2 prog-rel=2 multi-term=3 path-empty-entry=5 path-unset=2 tryexec=5 exec-test=4 prog-notfound=1 refuse-shape=4 arg-conv=3 env-gdf=3 term-mate=1 term-xfce4=1 term-tilix=1 term-konsole=1 term-nxterm=1 term-color-xterm=1 term-rxvt=1 term-dtterm=1 term-xterm-row=1 path-default-dot-real=2 path-default-unset-vs-empty=3 path-default-vs-ambient=2
+default_cases=7 default_classes=3 default_null_path_cases=3
+mutants_file=4 required=4 dedup_population=4 not_observable=0 equivalents=0
+static_findings=none
+cases_total=74 cases_correct=74
+fresh_seed=80915470ff01817c fresh=8/8
+mutant req-m1-default-no-trailing-dot killed by pd-dot-unset (+0)
+mutant req-m2-unset-as-empty killed by pd-dot-unset (+1)
+mutant req-m3-working-dir-join-disabled killed by tpath-xte (+2)
+mutant req-m4-empty-entry-collapsed killed by pe-empty-str (+1)
+mutants_counted=4 mutants_killed=4 crashed_not_killed=0 survived=0 unbuildable=0
+control_unset_as_empty=72/74
+base_cases=67 base_classes=31 base_set_default_cases=0
+base_cases_correct=67/67 base_branch_sensitive_cases=0
+MADO_C1_R100: TARGET_MET pred=PRED-C1-r100-v1 rev=worktree base_rev=43309e6af9a3b57f1bc839a826bef1f8eb7495e4 tool_sha256=3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228 tool_pin=ok execargv_sha256=49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713 execargv_pin=ok gio_sha256=d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 gio_pin=ok cases_total=74 cases_correct=74 default_cases=7 default_classes=3 default_null_path_cases=3 fresh_total=8 fresh_correct=8/8 fresh_seed=80915470ff01817c mutants_counted=4 mutants_killed=4/4 crashed_not_killed=0 survived=0 unbuildable=0 base_set_default_cases=0 control_unset_as_empty_correct=72/74 met=default_cases:1,default_classes:1,cases:1,fresh:1,mutants:1,base_set:1,control:1 static_findings=none base_cases_correct=67/67 base_branch_sensitive_cases=0
+
+== 3. the seven path-default labels measured for this run (two runs each, agreeing) ==
+class | id | path | desktop Exec/TryExec | measured expect
+path-default-dot-real | pd-dot-unset | null(unset) | Exec=probe.sh | {"argv": [["{root}/./probe.sh"]], "cwd": "{root}", "env_gdf": "{root}/case.desktop", "launches": 1}
+path-default-dot-real | pd-dot-workdir-empty | [""] | Exec=probe.sh Path={root}/work | {"error": "load"}
+path-default-unset-vs-empty | pd-usrbin-unset | null(unset) | Exec={probe} TryExec=ls | {"argv": [["{probe}"]], "cwd": "{root}", "env_gdf": "{root}/case.desktop", "launches": 1}
+path-default-unset-vs-empty | pd-usrbin-empty | [""] | Exec={probe} TryExec=ls | {"error": "load"}
+path-default-unset-vs-empty | pd-empty-entry | [""] | Exec=probe.sh | {"argv": [["{probe}"]], "cwd": "{root}", "env_gdf": "{root}/case.desktop", "launches": 1}
+path-default-vs-ambient | pd-ambient-set | ["{root}/bin"] | Exec=run.sh | {"argv": [["{root}/bin/run.sh"]], "cwd": "{root}", "env_gdf": "{root}/case.desktop", "launches": 1}
+path-default-vs-ambient | pd-ambient-unset | null(unset) | Exec=run.sh | {"error": "load"}
+
+== 4. pins the counting command needs (re-derived from the named artifacts) ==
+base_rev 43309e6af9a3b57f1bc839a826bef1f8eb7495e4 tools/mado-launchenv.py sha256=a63c20c886a2bd840d80966d531e055e9c4f5d3accb431e4b0e317e04523eb16
+base_rev 43309e6af9a3b57f1bc839a826bef1f8eb7495e4 tools/mado-execargv.py sha256=49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713
+r99_base_cases .ufo/waves/round-99/controls/launchenv-cases-r99.json sha256=14b4cc571a35bb5b4c6996a4a3fde19ff71ce9f26dabe3dd4142eec162f82acd
+oracle_probe_r99 .ufo/waves/round-99/controls/launchenv-probe-r99.py sha256=cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199
+worktree tools/mado-launchenv.py sha256=3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228 (informational: another seat is editing it this wave)
+note: --expect-tool-sha256 is the bytes at the MEASURED rev, not the worktree copy and not
+the base-rev copy; the mutant file's candidate_sha256 binds the same bytes (a mutant file
+written for other tool bytes refuses with setup-mutants-candidate-sha256 - observed twice).
+note: --expect-base-cases-sha256 is optional in the counter; pass 14b4cc571a35bb5b4c6996a4a3fde19ff71ce9f26dabe3dd4142eec162f82acd
+to bind the do-nothing control's input as well.

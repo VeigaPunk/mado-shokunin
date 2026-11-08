@@ -1,0 +1,40 @@
+{
+ "lane": "mado",
+ "round": 100,
+ "base_rev": "43309e6af9a3b57f1bc839a826bef1f8eb7495e4",
+ "declaration": ".ufo/waves/round-100/claims-declaration-r100.md",
+ "frozen": "2026-11-08, before any case or panel leg of this round was scored",
+ "amended_before_file": "none yet",
+ "claims": {
+  "C1": {
+   "axis": "coverage",
+   "kind": "capability-extension (a modelled branch becomes measured)",
+   "frozen_statement": "At the base revision 43309e6a the PATH-unset default search path of g_find_program_for_path (gutils.c:376-389, the literal /bin:/usr/bin:. used when PATH is absent) is modelled by tools/mado-launchenv.py and exercised by zero frozen cases: both path-unset cases in the round-99 case file carry an absolute Exec and return at gutils.c:331-357 before the PATH source is read. After this round the frozen case file .ufo/waves/round-100/controls/launchenv-cases-r100.json carries a path-default class of at least 6 cases, every label measured against the installed /usr/bin/gio (sha256 d2164260...cfc462, glib2 2.90.1-1) and re-measured twice with agreeing results, and tools/mado-launchenv.py answers every case of that set in agreement with the oracle, including a seeded fresh leg and a counted mutant population.",
+   "narrowed_statement": "",
+   "predicate": "PRED-C1-r100-v1",
+   "predicate_text": "TARGET_MET iff default_cases >= 6 AND default_classes >= 3 AND cases_correct == cases_total AND fresh_correct == fresh_total (fresh_total >= 8, seeded at measurement) AND mutants_killed == mutants_counted (mutants_counted >= 4) AND base_set_default_cases == 0 AND control_unset_as_empty_correct < cases_total",
+   "counting_command": "python3 -I quality/counters/c1-r100-launchenv-path.py --repo . --rev <REV> --base-rev 43309e6af9a3b57f1bc839a826bef1f8eb7495e4 --cases .ufo/waves/round-100/controls/launchenv-cases-r100.json --expect-cases-sha256 <PIN> --mutants .ufo/waves/round-100/controls/launchenv-mutants-r100.json --expect-mutants-sha256 <PIN> --genseed .ufo/waves/round-100/controls/launchenv-fresh-r100.py --expect-genseed-sha256 <PIN> --expect-tool-sha256 <PIN> --expect-execargv-sha256 <PIN> --expect-gio-sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 --scratch-root <DIR>",
+   "measured_rev": null,
+   "measured": null,
+   "receipt": null,
+   "separability_receipt": null,
+   "sources": [
+    "S533"
+   ]
+  },
+  "C2": {
+   "axis": "operability",
+   "kind": "instrument repair (measured cap + a running full panel)",
+   "frozen_statement": "At the base revision 43309e6a the frozen 28-leg harm panel carries timeout_s 600 with no per-leg timing and no headroom, and on this host two legs (r92_gate_defects, r97c1_filetype) exceed it, so the panel reports mismatches=2 (round 99's C2 honest stop). After this round quality/harm-watch.py reports each leg's measured elapsed milliseconds (the human LEG line and an elapsed_ms field per leg in --json), the frozen panel .ufo/waves/round-100/controls/harm-panel-r100.json carries timeout_s equal to at least twice the largest per-leg elapsed measured on this host at committed bytes (receipt .ufo/waves/round-100/receipts/panel-timing-r100.txt, all 28 legs timed), and a full-panel run at committed bytes reports HARM_WATCH legs=28 ... mismatch=0.",
+   "narrowed_statement": "",
+   "predicate": "PRED-C2-r100-v1",
+   "predicate_text": "TARGET_MET iff panel_legs == 28 AND legs_run == 28 AND mismatches == 0 AND gate_elapsed_emitted == 1 AND timing_legs_timed == 28 AND max_elapsed_ms > 600000 AND panel_timeout_s * 1000 >= 2 * max_elapsed_ms AND control_600s_would_mismatch >= 1 AND selftest_failed == 0",
+   "counting_command": "python3 -I quality/counters/c2-r100-harm-watch.py --repo . --rev <REV> --base-rev 43309e6af9a3b57f1bc839a826bef1f8eb7495e4 --panel .ufo/waves/round-100/controls/harm-panel-r100.json --expect-panel-sha256 <PIN> --timing .ufo/waves/round-100/receipts/panel-timing-r100.txt --expect-timing-sha256 <PIN> --expect-gate-sha256 <PIN> --scratch-root <DIR>",
+   "measured_rev": null,
+   "measured": null,
+   "receipt": null,
+   "separability_receipt": null,
+   "sources": []
+  }
+ }
+}

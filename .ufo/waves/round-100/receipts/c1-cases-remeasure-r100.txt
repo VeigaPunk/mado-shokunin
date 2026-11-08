@@ -1,0 +1,100 @@
+mado r100 w1 R100MExecCases - c1 independent re-measurement receipt
+date: 2026-11-08T05:19:13Z  host load: 118.83 96.71 142.42
+seat: R100MExecCases (executor)  lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+case file: .ufo/waves/round-100/controls/launchenv-cases-r100.json
+instruments (not candidates): remeasure.py reads the committed case file and spawns /usr/bin/gio per case; cand-cmp.py and cand-cmp-fresh.py spawn the committed candidate tools/mado-launchenv.py, which itself spawns nothing
+all case-root parents below are ABSOLUTE: the candidate resolves a relative root against its own cwd, so a relative parent silently produces load refusals (found and fixed while composing this receipt; the scripts now exit 2 on a relative parent)
+command: python3 -I <scratch>/remeasure.py <scratch>/re-roots   (wall 30.9 s, 2 runs per case)
+
+--- independent re-measurement of every path-default case ---
+case file: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-100/controls/launchenv-cases-r100.json
+case file sha256: 7aba8a0f880b3e59edf7a731f2d2783babea7b275d280588ba2df2c5dd6df4a9 bytes: 62019
+envelope: round=r100 version=1 oracle=R99MExecOracle
+envelope: probe_module=.ufo/waves/round-99/controls/launchenv-probe-r99.py
+envelope: oracle_sha256=cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199
+envelope: renderer_sha256=cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199
+envelope: gio_path=/usr/bin/gio gio_sha256=d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 glib2=2.90.1-1
+measured now: oracle_sha256=cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199 match=True
+measured now: gio_sha256=d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 match=True
+census: cases=77 classes=35
+CENSUS   arg-conv                 3
+CENSUS   cwd-empty                3
+CENSUS   cwd-missing              2
+CENSUS   cwd-path                 2
+CENSUS   env-gdf                  3
+CENSUS   exec-test                4
+CENSUS   multi-term               3
+CENSUS * path-default-cwd         2
+CENSUS * path-default-dot         2
+CENSUS * path-default-private     3
+CENSUS * path-default-sysbin      3
+CENSUS   path-empty-entry         5
+CENSUS   path-unset               2
+CENSUS   prog-abs                 2
+CENSUS   prog-bare                2
+CENSUS   prog-dir                 2
+CENSUS   prog-missing             2
+CENSUS   prog-notfound            1
+CENSUS   prog-rel                 2
+CENSUS   refuse-shape             4
+CENSUS   term-color-xterm         1
+CENSUS   term-dtterm              1
+CENSUS   term-kgx                 2
+CENSUS   term-konsole             1
+CENSUS   term-mate                1
+CENSUS   term-none                2
+CENSUS   term-nxterm              1
+CENSUS   term-order               2
+CENSUS   term-path                2
+CENSUS   term-rxvt                1
+CENSUS   term-tilix               1
+CENSUS   term-xfce4               1
+CENSUS   term-xte                 3
+CENSUS   term-xterm-row           1
+CENSUS   tryexec                  5
+path-default cases=10 with path null or []: 8
+REMEASURE OK pd-dot-root class=path-default-dot path=null agreed=True matches_frozen=True rc=[0, 0] records=[1, 1] cause=None expect={"argv": [["{root}/./probe"]], "cwd": "{root}", "env_gdf": "{root}/case.desktop", "launches": 1}
+REMEASURE OK pd-empty-root class=path-default-dot path=[] agreed=True matches_frozen=True rc=[0, 0] records=[1, 1] cause=None expect={"argv": [["{root}/probe"]], "cwd": "{root}", "env_gdf": "{root}/case.desktop", "launches": 1}
+REMEASURE OK pd-private-unset class=path-default-private path=null agreed=True matches_frozen=True rc=[1, 1] records=[0, 0] cause=load expect={"error": "load"}
+REMEASURE OK pd-private-onpath class=path-default-private path=["{root}/bin"] agreed=True matches_frozen=True rc=[0, 0] records=[1, 1] cause=None expect={"argv": [["{root}/bin/probe"]], "cwd": "{root}", "env_gdf": "{root}/case.desktop", "launches": 1}
+REMEASURE OK pd-private-unset-wd class=path-default-private path=null agreed=True matches_frozen=True rc=[1, 1] records=[0, 0] cause=load expect={"error": "load"}
+REMEASURE OK pd-sysbin-unset class=path-default-sysbin path=null agreed=True matches_frozen=True rc=[0, 0] records=[1, 1] cause=None expect={"argv": [["{probe}"]], "cwd": "{root}", "env_gdf": "{root}/case.desktop", "launches": 1}
+REMEASURE OK pd-sysbin-empty class=path-default-sysbin path=[] agreed=True matches_frozen=True rc=[1, 1] records=[0, 0] cause=load expect={"error": "load"}
+REMEASURE OK pd-sysbin-private class=path-default-sysbin path=["{root}/bin"] agreed=True matches_frozen=True rc=[1, 1] records=[0, 0] cause=load expect={"error": "load"}
+REMEASURE OK pd-wd-unset class=path-default-cwd path=null agreed=True matches_frozen=True rc=[0, 0] records=[1, 1] cause=None expect={"argv": [["{root}/work/probe"]], "cwd": "{root}/work", "env_gdf": "{root}/case.desktop", "launches": 1}
+REMEASURE OK pd-wd-empty class=path-default-cwd path=[] agreed=True matches_frozen=True rc=[0, 0] records=[1, 1] cause=None expect={"argv": [["{root}/work/probe"]], "cwd": "{root}/work", "env_gdf": "{root}/case.desktop", "launches": 1}
+summary: remeasured=10 agree_with_frozen=10 fail=0
+
+--- candidate tools/mado-launchenv.py versus the 10 frozen path-default cases ---
+command: python3 -I <scratch>/cand-cmp.py /fast/scratch/hyaku/mado-r100/R100MExecCases/candroots   (wall 0.75 s)
+cases in file: 77  new: 10
+AGREE pd-dot-root class=path-default-dot 
+AGREE pd-empty-root class=path-default-dot 
+AGREE pd-private-unset class=path-default-private 
+AGREE pd-private-onpath class=path-default-private 
+AGREE pd-private-unset-wd class=path-default-private 
+AGREE pd-sysbin-unset class=path-default-sysbin 
+AGREE pd-sysbin-empty class=path-default-sysbin 
+AGREE pd-sysbin-private class=path-default-sysbin 
+AGREE pd-wd-unset class=path-default-cwd 
+AGREE pd-wd-empty class=path-default-cwd 
+summary: new=10 agree=10 differ=0
+
+--- fresh leg: generator selftest, generation, candidate agreement ---
+generator sha256: 18005e07176762ca07b9bb593245d2e0200d53b2a8cbafd8e0fbd3da27c1fc6b
+command: python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-100/controls/launchenv-fresh-r100.py --selftest
+FRESH_GEN_SELFTEST: checks=3 failed=0 names=sh,xauth,gzip,sed,awk,env,tr,cat
+command: python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-100/controls/launchenv-fresh-r100.py --seed a7d31c904b6e2f58 --dir /fast/scratch/hyaku/mado-r100/R100MExecCases/fresh --out /fast/scratch/hyaku/mado-r100/R100MExecCases/fresh.jsonl --count 60   (wall 184.2 s)
+FRESH_GEN: cases=60 ok=34 refused=26 dot=20 private=20 sysbin=20
+FRESH_GEN_PIN: gio_sha256=d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 oracle_sha256=cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199
+fresh jsonl sha256: 9265ba92ae80dcb026542522fb51e3c4c4fdf6008307f745fbd3b14f52381a6b  bytes: 42242
+command: python3 -I <scratch>/cand-cmp-fresh.py /fast/scratch/hyaku/mado-r100/R100MExecCases/candroots /fast/scratch/hyaku/mado-r100/R100MExecCases/fresh.jsonl   (wall 5.8 s)
+CLASS path-default-dot total=20 agree=20
+CLASS path-default-private total=20 agree=20
+CLASS path-default-sysbin total=20 agree=20
+summary: fresh=60 agree=60 differ=0
+
+--- controls ---
+empty-entry equivalence (measured at build): path [] and path [""] give the identical label {root}/probe for Exec=probe at the case root; [] is the literal the round-100 declaration names and [""] is the r99 spelling, both PATH="" in the child env
+section 3 of the frozen declaration: the Path=<root>/work pair (pd-wd-unset null, pd-wd-empty []) does NOT separate - both launch {root}/work/probe; that clause's second half is reported as falsified, not repaired here
+the /usr/bin arm executes no host program: TryExec names the system program (load-time resolution only) and Exec is the case's own probe, so the probe record is the whole surface

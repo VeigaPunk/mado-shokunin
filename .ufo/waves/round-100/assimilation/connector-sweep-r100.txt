@@ -1,0 +1,145 @@
+# round 100 — connector sibling sweep and assimilation receipt (R100MConnector, 2026-11-08)
+# Base: 43309e6af9a3b57f1bc839a826bef1f8eb7495e4 (master)
+# Lane: mado-shokunin (/home/vgpnk/Projects/shokunin/mado-shokunin)
+# Sweep target 1: Sibling lanes across /home/vgpnk/Projects/shokunin/*-shokunin/<tools|quality>
+#                 for DEFAULT_SEARCH_PATH, /bin:/usr/bin, elapsed_ms, timeout_s
+# Sweep target 2: /home/vgpnk/Projects/shokuknow/merge/mado/ read-only scan for round theme
+#                 (launch, /bin:/usr/bin, PATH default, elapsed, per-leg, spawn)
+
+================================================================================
+PART 1: FLEET-WIDE SIBLING OVERLAP SWEEP (READ-ONLY)
+================================================================================
+
+Patterns searched across /home/vgpnk/Projects/shokunin/*-shokunin/<tools|quality>:
+1. DEFAULT_SEARCH_PATH
+2. /bin:/usr/bin
+3. elapsed_ms
+4. timeout_s
+
+--- Table: Sibling Lane Census & Pattern Hits ---
+| lane | PROVINCE lines | knowledge files | DEFAULT_SEARCH_PATH | /bin:/usr/bin | elapsed_ms | timeout_s | duplicate surface? |
+|---|---|---|---|---|---|---|---|
+| audio-shokunin | 53 | 18 | 0 | 0 | 0 | 0 | none (silent) |
+| chousa-shokunin | 17 | 98 | 0 | 0 | 0 | 1 | none (chousa timeout_s is parent lifetime script) |
+| game-dev-2d-shokunin | 38 | 5 | 0 | 0 | 0 | 0 | none (silent) |
+| game-dev-3d-shokunin | 82 | 6 | 0 | 0 | 0 | 0 | none (defers desktop/compositor craft to mado: PROVINCE:75) |
+| kagi-shokunin | 114 | 44 | 0 | 0 | 0 | 0 | none (silent) |
+| kaidoku-shokunin | 779 | 185 | 0 | 6 | 0 | 0 | none (/bin:/usr/bin is subprocess runner PATH sanitizer) |
+| kake-shokunin | 747 | 92 | 0 | 0 | 0 | 0 | none (silent) |
+| kama-shokunin | 456 | 63 | 0 | 0 | 0 | 1 | none (kama timeout_s is LLM serving benchmark arg) |
+| kasegi-shokunin | 237 | 107 | 0 | 0 | 0 | 0 | none (silent) |
+| kengaku-shokunin | 1136 | 81 | 0 | 0 | 0 | 0 | none (eval benches, models no desktop launch grammar) |
+| kotoba-shokunin | 78 | 75 | 0 | 0 | 0 | 0 | none (explicitly recognizes mado ground: PROVINCE:72) |
+| kotodama-shokunin | 31 | 6 | 0 | 0 | 0 | 1 | none (claims-freshness probe timeout) |
+| kumitate-shokunin | 75 | 92 | 0 | 0 | 0 | 0 | none (silent) |
+| lore-shokunin | 35 | 26 | 0 | 0 | 0 | 0 | none (silent) |
+| mado-shokunin (OWN) | 629 | 120 | 1 | 8 | 0 | 3 | sole owner of launchenv & harm-watch surfaces |
+| mori-shokunin | 700 | 102 | 0 | 1 | 0 | 7 | none (subprocess runner PATH & watchdog timeouts) |
+| revenger-shokunin | 59 | 28 | 0 | 0 | 0 | 0 | none (silent) |
+| souji-shokunin | 323 | 54 | 0 | 4 | 0 | 1 | none (census hygiene subprocess PATH & census timeout) |
+| tabi-shokunin | 243 | 96 | 0 | 0 | 0 | 0 | none (explicitly defers desktop/compositor: PROVINCE:199) |
+| tameshi-shokunin | 199 | 73 | 0 | 0 | 0 | 4 | none (mutation benchmark tool registry timeout args) |
+| tsukuroi-shokunin | 573 | 145 | 0 | 0 | 0 | 0 | none (explicitly defers desktop/compositor: PROVINCE:48, 124) |
+
+--- Detailed File Paths For Pattern Hits ---
+
+1. PATTERN: DEFAULT_SEARCH_PATH
+- mado-shokunin:
+  - tools/mado-launchenv.py:121 (DEFAULT_SEARCH_PATH = '/bin:/usr/bin:.')
+- All 20 other fleet lanes: 0 matches.
+
+2. PATTERN: /bin:/usr/bin
+- kaidoku-shokunin:
+  - tools/round-42/c1-run.sh
+  - tools/round-44/c1-run.sh
+  - tools/round-49/c1-run.sh
+  - tools/round-50/c1-run.sh
+  - tools/round-67/c1-run.sh
+  - tools/round-86/gate-registry.py (lines 99, 163: env = {"PATH": "/usr/local/bin:/usr/bin:/bin"})
+  Purpose: Subprocess environment sanitization in unpack/disassembly pipelines.
+- mado-shokunin:
+  - quality/counters/c1-r51-ledger.py
+  - quality/counters/c1-r56-autoreload-entry.py
+  - quality/counters/c1-r74-replay-witness.py
+  - quality/counters/c2-r50-session-gate.py
+  - quality/r56_ctl_c2.py
+  - tools/mado-launchenv.py (gutils.c default search path model)
+  - tools/mado-mime.py (g_find_program_for_path model)
+  - tools/mado-xdgmime.py (xdg-mime query runner)
+- mori-shokunin:
+  - tools/mori-round17-jj-regressions.py (line 207: env.setdefault("PATH", "/usr/local/bin:/usr/bin:/bin"))
+  Purpose: Subprocess execution hygiene in git/jj repository monitoring.
+- souji-shokunin:
+  - tools/souji-citation-reconcile.py
+  - tools/souji-fleet-root-census.py (line 42: 'PATH': '/usr/local/bin:/usr/bin:/bin')
+  - tools/souji-freeze-check.py
+  - tools/souji-worktree-drift.py
+  Purpose: Fleet root inspection script subprocess hygiene.
+
+3. PATTERN: elapsed_ms
+- All 21 fleet lanes: 0 matches in committed tools/ or quality/.
+  Note: Introduced in round 100 to quality/harm-watch.py as per-leg timing output.
+
+4. PATTERN: timeout_s
+- chousa-shokunin:
+  - tools/parent-lifetime.sh (line 21: timeout_s=300)
+- kama-shokunin:
+  - tools/round61-c1-counter.py (line 123: --timeout-s)
+- kotodama-shokunin:
+  - tools/harness/claims-freshness.py (line 45: timeout_s=5)
+- mado-shokunin:
+  - quality/counters/c2-r99-harm-watch.py (round 99 C2 counter)
+  - quality/harm-watch.py (round 99 C2 panel replay instrument)
+  - tools/mado-hostguard.py
+- mori-shokunin:
+  - tools/mori-census.sh
+  - tools/mori-journal-window.py
+  - tools/mori-pin-check.py
+  - tools/mori-round13-regressions.py
+  - tools/mori-round16-regressions.py
+  - tools/mori-round17-seat-regressions.py
+  - tools/mori-source-drift.py
+- souji-shokunin:
+  - tools/souji-census.sh
+- tameshi-shokunin:
+  - tools/registry-check.py
+  - tools/registry-figure-bind.json
+  - tools/registry-figure-bind.py
+  - tools/registry.json
+
+--- Duplicate Surface Conclusion ---
+NO duplicate surfaces exist in any sibling lane. No sibling lane models GLib's desktop entry launcher environment, TryExec/Exec load gate, PATH-unset default search paths, or holds a cross-round harm-watch replay panel. Mado L1 holds uncontested ownership of both C1 and C2 surfaces.
+
+================================================================================
+PART 2: SCAN OF SHOKUKNOW MERGE PACKAGE (READ-ONLY)
+================================================================================
+
+Command executed:
+cd /home/vgpnk/Projects/shokuknow/merge/mado && grep -niE 'launch|/bin:/usr/bin|PATH default|elapsed|per-leg|spawn' MERGE-REPORT.md SOURCES.append.md
+
+Raw Output:
+--------------------------------------------------------------------------------
+MERGE-REPORT.md:105:| `S205` | S188 | A dispatcher returns a table that describes an action and does not invoke it; `force_idle` sets elapsed time for all idle timers ignoring idle inhibitors; `event(string)` sends an event to socket2 |
+SOURCES.append.md:9:| S205 | Hyprland wiki — Dispatchers (Lua config API) — https://raw.githubusercontent.com/hyprwm/hyprland-wiki/c04680a28301ab4b5ee5f94eaff5395efe28dbac/content/configuring/core/dispatchers.md | docs | A | Documented dispatcher semantics of the Hyprland Lua config API: what a dispatcher is, how it must be executed, and the idle, DPMS and event-socket dispatchers | `content/configuring/core/dispatchers.md:9-19` (dispatchers are descriptions; `hl.dispatch`), `:58-59` (`dpms`, `event`), `:69` (`force_idle`), `:82-87` (keybind warnings) @ commit `c04680a28301ab4b5ee5f94eaff5395efe28dbac`, 12879 B, sha256 prefix `c830ce0717f92776` | A dispatcher returns a table that describes an action and does not invoke it; `force_idle` sets elapsed time for all idle timers ignoring idle inhibitors; `event(string)` sends an event to socket2 | mined | 2026-10-23 | 180d — re-fetch and confirm the section headings are intact (ran 2026-10-23) | corpus/knowledge/hyprland-dispatchers-r6.md |
+SOURCES.append.md:15:| S211 | Hyprland Waybar 設定：ステータスバーのモジュール化とテーマ (liz's doc) — https://doc.liz6.com/ja/tools/hyprland/04-waybar-theming | community | C | Japanese-language personal walkthrough of a module-based Waybar setup for Hyprland, from config layout to launch and service handling | § Waybar 設定とテーマ, § モジュール JSONC 構成 (`modules-left`, `waybar -c`), § systemctl --user による起動 @ page `04-waybar-theming`, 50169 B | A Japanese practitioner splits the bar configuration into per-module JSONC files under a config directory and drives the bar with `waybar -c config.jsonc -s style.css`, with `systemctl --user` for lifecycle | mined | 2026-10-23 | 180d — re-fetch and confirm the sections are still live (ran 2026-10-23) | corpus/knowledge/waybar-modular-theming-r6.md |
+SOURCES.append.md:48:| S244 | Privileged Wayland Clients — blog.ce9e.org — https://blog.ce9e.org/posts/2025-10-03-wayland-security/ | community | C | The framing that places the lane's focus-control surfaces in the wider privileged-client model: what a compositor grants a privileged client, and why the sandboxing story is unfinished | § "Privileged Wayland Clients" (2025-10-03), § `WAYLAND_SOCKET` handoff, § security-context § @ page, 3135 B | Privileged interfaces are granted at bind time to clients the compositor spawns, and the `WAYLAND_SOCKET` descriptor handoff is the mechanism that makes the grant non-stealable — the context in which a focus-grab protocol matters | mined | 2026-10-23 | 180d — re-fetch the post and confirm the sections are intact (ran 2026-10-23) | corpus/knowledge/privileged-wayland-clients-r7.md |
+SOURCES.append.md:61:| S257 | omarchy app restart helper (v3.8.4) — https://raw.githubusercontent.com/basecamp/omarchy/v3.8.4/bin/omarchy-restart-app | code | A | How the desktop restarts a managed application — and therefore what manages the idle daemon's lifetime, given that no hypridle unit is active on this host | `§ whole file` (`:3-7`) @ tag `v3.8.4`, 205 B, sha256 prefix `85b62c5b79b9295c` | A restart is **kill then relaunch under uwsm** — not a systemd unit operation — so an app's lifetime is owned by the session manager, which is why no `hypridle` unit appears in the host's unit list even though the unit file is installed | mined | 2026-10-23 | on-release — re-pull at the host's omarchy tag and compare sha256 (ran 2026-10-23) | corpus/knowledge/managed-app-restart-r7.md |
+SOURCES.append.md:66:| S262 | uwsm upstream — the `app-graphical.slice` contract and what stops apps (README at tag v0.27.1) — https://raw.githubusercontent.com/Vladimir-csp/uwsm/v0.27.1/README.md | docs | A | uwsm's own statement of where apps live and how they are stopped, at the tag this host's package carries | README lines naming `app-graphical.slice` as the default destination, and the line stating that the slice receives stop action before the compositor is stopped | The answer to "what stops an app": apps launched as scopes land in `app-graphical.slice`, and that slice receives stop action *before* the compositor is stopped — so the app is torn down ahead of the compositor, not with it; `uwsm app` is documented as "for launching applications in graphical session" | mined | 2026-10-23 | on-release — re-pull at host tag v0.27.1 and compare sha256 (ran 2026-10-23) | corpus/knowledge/uwsm-app-slice-contract-r7.md |
+SOURCES.append.md:67:| S263 | uwsm upstream — the app-daemon unit template at tag v0.27.1 — https://raw.githubusercontent.com/Vladimir-csp/uwsm/v0.27.1/systemd/user/wayland-wm-app-daemon.service.in | code | A | The unit template that generates each launched app's unit, at the tag this host's package carries | The `ExecStart=` line of the template, and its `Slice=` line | The unit that launches an app is not a per-app template file at all: uwsm runs one long-lived daemon (`wayland-wm-app-daemon.service`) whose `ExecStart` is `aux app-daemon`, and that daemon synthesises a scope per app at launch time; the daemon itself lives in `session.slice`, and it is ordered `Before=wayland-session-shutdown.target` and `Conflicts=wayland-session-shutdown.target` | mined | 2026-10-23 | on-release — re-pull at host tag v0.27.1 and compare sha256 (ran 2026-10-23) | corpus/knowledge/uwsm-app-daemon-template-r7.md |
+SOURCES.append.md:71:| S267 | omarchy v3.8.4 — the stock idle configuration the desktop ships, which is byte-identical to this host's `~/.config/hypr/hypridle.conf` — https://raw.githubusercontent.com/basecamp/omarchy/v3.8.4/config/hypr/hypridle.conf | docs | A | The idle ladder itself — the two timeouts and what each fires — as the desktop ships it, identical byte-for-byte to the host's own file | The `listener` blocks of the stock file, and the `general` block's `lock_cmd` line | The idle ladder is two steps, not one: at `timeout = 150` the screensaver starts (`pidof hyprlock \|\| omarchy-launch-screensaver`), and at `timeout = 152` the system locks (`on-timeout = omarchy-system-lock`) — the comment in the file explains the 2-second offset because the lock takes two seconds to prepare | mined | 2026-10-23 | on-release — re-pull at the host's omarchy tag and compare sha256 (ran 2026-10-23) | corpus/knowledge/stock-idle-ladder-r7.md |
+SOURCES.append.md:72:| S268 | host idle daemon state — the process, the unit that carries it, and the launcher's own command line (measured on this host) — lanes/mado/round7/fetch/host-idle-daemon-state.txt | own-work | A | Whether the idle daemon actually runs on this host right now, and under what unit — the premise the round-6 ledger took from a single `pgrep` that no longer holds | The `pgrep`, `ps`, `systemctl --user is-enabled/is-active` and `uwsm_app-daemon` journal lines in the file | The idle daemon *is* running: PID 1667, started by the compositor itself at session start, and carried by the transient scope `app-Hyprland-hypridle-d4bd7533.scope` — not by `hypridle.service`, which is `disabled`/`inactive`; the uwsm app-daemon's own journal log confirms it was launched by `uwsm app-daemon` at 2026-10-23 04:36:10 | mined | 2026-10-23 | 30d — re-measure on host at next session restart | corpus/knowledge/host-idle-daemon-state-r7.md |
+--------------------------------------------------------------------------------
+
+Analysis of Staged Merge Content:
+- Zero hits for `/bin:/usr/bin`, `PATH default`, or `per-leg`.
+- Matches for `elapsed`, `launch`, and `spawn` belong entirely to historical Round 6-7 artifacts from October 2026:
+  - S205: Hyprland Lua config API dispatcher `force_idle` setting elapsed timer values.
+  - S211: Waybar module configuration and systemd service lifecycle.
+  - S244: Privileged Wayland client security context descriptor handoff.
+  - S257: omarchy app restart under uwsm session manager.
+  - S262, S263: uwsm app graphical slice contract and app-daemon systemd template.
+  - S267, S268: omarchy idle timeout ladder and hypridle transient scope launcher.
+- None of the staged sources in `shokuknow/merge/mado/` contain any code, specifications, or models for GLib desktop launcher environment (`gutils.c:370-389`, `g_find_program_for_path`, `TryExec`/`Exec`, `Path=`, `GIO_LAUNCHED_DESKTOP_FILE`) or cross-round harm panel replay instruments (`harm-watch.py`, per-leg timeout, per-leg elapsed timing).
+
+Verdict:
+Assimilation: none on this ground.

@@ -1,0 +1,2002 @@
+{
+ "version": 1,
+ "round": "r100",
+ "oracle": "R99MExecOracle",
+ "probe_module": ".ufo/waves/round-99/controls/launchenv-probe-r99.py",
+ "oracle_sha256": "cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199",
+ "renderer_sha256": "cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199",
+ "gio_path": "/usr/bin/gio",
+ "gio_sha256": "d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462",
+ "glib2": "2.90.1-1",
+ "schema_notes": {
+  "tokens": "expect values carry {root} (the case root) and {probe} (<root>/probe.sh); the counter reverses {root} onto its own root before comparing",
+  "path": "list of PATH entries used verbatim (after {root} substitution) joined by ':'; \"\" is an empty PATH entry (current directory), \".\" is a dot entry; [] and [\"\"] both give PATH=\"\" (one empty entry = the current directory; measured identical labels); null means PATH absent from the probe environment, so g_find_program_for_path uses its unset default \"/bin:/usr/bin:.\" (gutils.c:370-382). The path-default-* class is the one that reaches that default: both r99 path-unset cases carry an absolute Exec, which returns before the PATH source is read.",
+  "modes": "optional {rel: octal} map; named files are written with that mode instead of the contract's 0755",
+  "rel_desktop": "the probe ran `gio launch case.desktop` (relative argument, cwd = the case root); gio canonicalises the desktop argument (gio-tool-launch.c:78), so env_gdf freezes the canonical absolute path as measured",
+  "args_rel": "the probe passed the args verbatim (relative); frozen argv is post g_file_new_for_commandline_arg as measured",
+  "launch_cwd": "the probe ran gio with cwd = the case root, so an empty or absent Path= inherits <root>; the counter's candidate leg must run with cwd = <root>",
+  "causes": "construction first (no-exec; desktop-file = GKeyFile refusal incl. a bad Exec escape, M98-3; exec-parse = shell-level failure, unbalanced quote), then stderr (load, no-terminal, cwd-failed, program-not-found)",
+  "multi_spawn": "argv lists for multi-spawn cases are frozen sorted; spawn completion order is not observable (M98-10)",
+  "desktop_render": "case.desktop rendered at 0644, key order Type,Name,Exec,TryExec,Path,Terminal,Hidden,X-GIO-NoFuse, values {root}/{probe} substituted",
+  "path_default": "path-default-* cases depend on two host facts re-measured 2026-11-08 on glib2 2.90.1-1: /bin is a symlink to /usr/bin, and the TryExec name of the path-default-sysbin class (/usr/bin/sh, cross-checked with /usr/bin/xauth) is executable there and absent from every case root. TryExec is resolved at load time through the same g_find_program_for_path, so the class separates \"present in the system dirs\" from \"not found\" without executing a host program: only the case's own probe is ever spawned. The load gate resolves Exec and TryExec with cwd = the case root, and the oracle always runs there."
+ },
+ "classes": [
+  "term-xte",
+  "term-kgx",
+  "term-order",
+  "term-none",
+  "term-path",
+  "cwd-path",
+  "cwd-empty",
+  "cwd-missing",
+  "prog-abs",
+  "prog-bare",
+  "prog-missing",
+  "prog-dir",
+  "prog-rel",
+  "multi-term",
+  "path-empty-entry",
+  "path-unset",
+  "tryexec",
+  "exec-test",
+  "prog-notfound",
+  "refuse-shape",
+  "arg-conv",
+  "env-gdf",
+  "term-mate",
+  "term-xfce4",
+  "term-tilix",
+  "term-konsole",
+  "term-nxterm",
+  "term-color-xterm",
+  "term-rxvt",
+  "term-dtterm",
+  "term-xterm-row",
+  "path-default-cwd",
+  "path-default-dot",
+  "path-default-private",
+  "path-default-sysbin"
+ ],
+ "cases": [
+  {
+   "files": {
+    "bin/xdg-terminal-exec": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "xte-plain",
+   "class": "term-xte",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/xdg-terminal-exec",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/xdg-terminal-exec": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "f1": "eAo="
+   },
+   "args": [
+    "f1"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh %f",
+    "Terminal": true
+   },
+   "id": "xte-f1",
+   "class": "term-xte",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/xdg-terminal-exec",
+      "{probe}",
+      "{root}/f1"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/xdg-terminal-exec": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [
+    "work"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true,
+    "Path": "{root}/work"
+   },
+   "id": "xte-work",
+   "class": "term-xte",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/xdg-terminal-exec",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/kgx": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "kgx-plain",
+   "class": "term-kgx",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/kgx",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/kgx": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "f1": "eAo="
+   },
+   "args": [
+    "f1"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh %f",
+    "Terminal": true
+   },
+   "id": "kgx-f1",
+   "class": "term-kgx",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/kgx",
+      "-e",
+      "{probe}",
+      "{root}/f1"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/kgx": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "bin/gnome-terminal": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "order-kgx-gnome",
+   "class": "term-order",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/kgx",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/gnome-terminal": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "bin/xterm": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "order-gnome-xterm",
+   "class": "term-order",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/gnome-terminal",
+      "--",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "none-plain",
+   "class": "term-none",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "no-terminal"
+   }
+  },
+  {
+   "dirs": [
+    "work"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true,
+    "Path": "{root}/work"
+   },
+   "id": "none-path",
+   "class": "term-none",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "no-terminal"
+   }
+  },
+  {
+   "files": {
+    "work/bin/xdg-terminal-exec": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [
+    "work"
+   ],
+   "path": [
+    "{root}/bin",
+    "bin"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true,
+    "Path": "{root}/work"
+   },
+   "id": "tpath-xte",
+   "class": "term-path",
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/work/bin/xdg-terminal-exec",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "work/bin/kgx": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [
+    "work"
+   ],
+   "path": [
+    "{root}/bin",
+    "bin"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true,
+    "Path": "{root}/work"
+   },
+   "id": "tpath-kgx",
+   "class": "term-path",
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/work/bin/kgx",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "dirs": [
+    "work"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Path": "{root}/work"
+   },
+   "id": "cp-work",
+   "class": "cwd-path",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "dirs": [
+    "work"
+   ],
+   "files": {
+    "f1": "eAo="
+   },
+   "args": [
+    "f1"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh %f",
+    "Path": "{root}/work"
+   },
+   "id": "cp-args",
+   "class": "cwd-path",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/f1"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh"
+   },
+   "id": "ce-nokey",
+   "class": "cwd-empty",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Path": ""
+   },
+   "id": "ce-empty",
+   "class": "cwd-empty",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Path": ""
+   },
+   "id": "ce-empty-abs",
+   "class": "cwd-empty",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Path": "{root}/gone"
+   },
+   "id": "cm-gone",
+   "class": "cwd-missing",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "cwd-failed"
+   }
+  },
+  {
+   "files": {
+    "work/afile": "eAo="
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Path": "{root}/work/afile"
+   },
+   "id": "cm-file",
+   "class": "cwd-missing",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "cwd-failed"
+   }
+  },
+  {
+   "id": "pa-plain",
+   "class": "prog-abs",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "dirs": [
+    "work"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Path": "{root}/work"
+   },
+   "id": "pa-work",
+   "class": "prog-abs",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "id": "pb-plain",
+   "class": "prog-bare",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin1/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "bin2/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "path": [
+    "{root}/bin1",
+    "{root}/bin2"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "id": "pb-first",
+   "class": "prog-bare",
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin1/probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "nope"
+   },
+   "id": "pm-bare",
+   "class": "prog-missing",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "bin/nope",
+    "Path": "{root}"
+   },
+   "id": "pm-slash",
+   "class": "prog-missing",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "dirs": [
+    "adir"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/adir"
+   },
+   "id": "pd-abs",
+   "class": "prog-dir",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "dirs": [
+    "bin/direxe"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "direxe"
+   },
+   "id": "pd-onpath",
+   "class": "prog-dir",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "./probe.sh",
+    "Path": "{root}"
+   },
+   "id": "pr-dot",
+   "class": "prog-rel",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/./probe.sh"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "sub/probe.sh": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "sub/probe.sh",
+    "Path": "{root}"
+   },
+   "id": "pr-sub",
+   "class": "prog-rel",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/sub/probe.sh"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/xdg-terminal-exec": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "f1": "eAo=",
+    "f2": "eAo="
+   },
+   "args": [
+    "f1",
+    "f2"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh %f",
+    "Terminal": true
+   },
+   "id": "mt-xte-2",
+   "class": "multi-term",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{root}/bin/xdg-terminal-exec",
+      "{probe}",
+      "{root}/f1"
+     ],
+     [
+      "{root}/bin/xdg-terminal-exec",
+      "{probe}",
+      "{root}/f2"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/kgx": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "f1": "eAo=",
+    "f2": "eAo="
+   },
+   "args": [
+    "f1",
+    "f2"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh %f",
+    "Terminal": true
+   },
+   "id": "mt-kgx-2",
+   "class": "multi-term",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 2,
+    "argv": [
+     [
+      "{root}/bin/kgx",
+      "-e",
+      "{probe}",
+      "{root}/f1"
+     ],
+     [
+      "{root}/bin/kgx",
+      "-e",
+      "{probe}",
+      "{root}/f2"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/xdg-terminal-exec": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "f1": "eAo=",
+    "f2": "eAo=",
+    "f3": "eAo="
+   },
+   "args": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh %f",
+    "Terminal": true
+   },
+   "id": "mt-xte-3",
+   "class": "multi-term",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 3,
+    "argv": [
+     [
+      "{root}/bin/xdg-terminal-exec",
+      "{probe}",
+      "{root}/f1"
+     ],
+     [
+      "{root}/bin/xdg-terminal-exec",
+      "{probe}",
+      "{root}/f2"
+     ],
+     [
+      "{root}/bin/xdg-terminal-exec",
+      "{probe}",
+      "{root}/f3"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "path": [
+    "",
+    "{root}/bin"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "id": "pe-leading",
+   "class": "path-empty-entry",
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "work/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "path": [
+    "{root}/bin",
+    ""
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe",
+    "Path": "{root}/work"
+   },
+   "id": "pe-trailing",
+   "class": "path-empty-entry",
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/work/probe"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "path": [
+    "{root}/bin",
+    "",
+    "{root}/bin2"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "id": "pe-double",
+   "class": "path-empty-entry",
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "path": [
+    ""
+   ],
+   "files": {
+    "probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "id": "pe-empty-str",
+   "class": "path-empty-entry",
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "path": [
+    "."
+   ],
+   "files": {
+    "probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "id": "pe-dot",
+   "class": "path-empty-entry",
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/./probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "path": null,
+   "dirs": [
+    "work"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Path": "{root}/work"
+   },
+   "id": "pu-abs-work",
+   "class": "path-unset",
+   "files": {},
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "path": null,
+   "id": "pu-abs-root",
+   "class": "path-unset",
+   "files": {},
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/helper": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "bin/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe",
+    "TryExec": "helper"
+   },
+   "id": "tx-ok",
+   "class": "tryexec",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "work/helper": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "bin/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe",
+    "TryExec": "helper",
+    "Path": "{root}/work"
+   },
+   "id": "tx-viawd",
+   "class": "tryexec",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/probe"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "TryExec": "missingprog"
+   },
+   "id": "tx-missing",
+   "class": "tryexec",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "TryExec": ""
+   },
+   "id": "tx-empty",
+   "class": "tryexec",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/helper": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "modes": {
+    "bin/helper": "644"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "TryExec": "helper"
+   },
+   "id": "tx-644",
+   "class": "tryexec",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "files": {
+    "bin/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "modes": {
+    "bin/probe": "644"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "id": "ex-644-load",
+   "class": "exec-test",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "files": {
+    "p2.sh": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "modes": {
+    "p2.sh": "644"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/p2.sh"
+   },
+   "id": "ex-644-abs",
+   "class": "exec-test",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "files": {
+    "bin/xdg-terminal-exec": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK",
+    "bin/kgx": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "modes": {
+    "bin/xdg-terminal-exec": "644"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "ex-term-644-skip",
+   "class": "exec-test",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/kgx",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/xdg-terminal-exec": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "modes": {
+    "bin/xdg-terminal-exec": "644"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "ex-term-644-none",
+   "class": "exec-test",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "no-terminal"
+   }
+  },
+  {
+   "files": {
+    "bin/%k": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "%k"
+   },
+   "id": "pnf-k",
+   "class": "prog-notfound",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "program-not-found"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case"
+   },
+   "id": "rf-noexec",
+   "class": "refuse-shape",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "no-exec"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh a\\z"
+   },
+   "id": "rf-badescape",
+   "class": "refuse-shape",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "desktop-file"
+   }
+  },
+  {
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh \"unclosed"
+   },
+   "id": "rf-quote",
+   "class": "refuse-shape",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "error": "exec-parse"
+   }
+  },
+  {
+   "desktop_raw": "hello\n",
+   "id": "rf-notkeyfile",
+   "class": "refuse-shape",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh"
+   },
+   "expect": {
+    "error": "desktop-file"
+   }
+  },
+  {
+   "files": {
+    "args/a.txt": "eAo="
+   },
+   "args": [
+    "args/a.txt"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh %f"
+   },
+   "id": "ac-abs",
+   "class": "arg-conv",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/args/a.txt"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "args/a.txt": "eAo="
+   },
+   "args": [
+    "args/a.txt"
+   ],
+   "args_rel": true,
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh %f"
+   },
+   "id": "ac-rel",
+   "class": "arg-conv",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/args/a.txt"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "args/a.txt": "eAo="
+   },
+   "args": [
+    "./args/a.txt"
+   ],
+   "args_rel": true,
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh %f"
+   },
+   "id": "ac-dot",
+   "class": "arg-conv",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}",
+      "{root}/args/a.txt"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "id": "gdf-abs",
+   "class": "env-gdf",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "rel_desktop": true,
+   "id": "gdf-rel",
+   "class": "env-gdf",
+   "files": {},
+   "path": [
+    "{root}/bin"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/kgx": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "gdf-term",
+   "class": "env-gdf",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/kgx",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/mate-terminal": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "tm-mate",
+   "class": "term-mate",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/mate-terminal",
+      "-x",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/xfce4-terminal": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "tf-xfce",
+   "class": "term-xfce4",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/xfce4-terminal",
+      "-x",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/tilix": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "tt-tilix",
+   "class": "term-tilix",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/tilix",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/konsole": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "tk-konsole",
+   "class": "term-konsole",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/konsole",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/nxterm": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "tn-nxterm",
+   "class": "term-nxterm",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/nxterm",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/color-xterm": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "tc-colorxterm",
+   "class": "term-color-xterm",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/color-xterm",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/rxvt": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "tr-rxvt",
+   "class": "term-rxvt",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/rxvt",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/dtterm": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "td-dtterm",
+   "class": "term-dtterm",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/dtterm",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "files": {
+    "bin/xterm": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "Terminal": true
+   },
+   "id": "tx-xterm",
+   "class": "term-xterm-row",
+   "path": [
+    "{root}/bin"
+   ],
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/xterm",
+      "-e",
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "id": "pd-dot-root",
+   "class": "path-default-dot",
+   "path": null,
+   "files": {
+    "probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/./probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "id": "pd-empty-root",
+   "class": "path-default-dot",
+   "path": [],
+   "files": {
+    "probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "id": "pd-private-unset",
+   "class": "path-default-private",
+   "path": null,
+   "files": {
+    "bin/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "id": "pd-private-onpath",
+   "class": "path-default-private",
+   "path": [
+    "{root}/bin"
+   ],
+   "files": {
+    "bin/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/bin/probe"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "id": "pd-private-unset-wd",
+   "class": "path-default-private",
+   "path": null,
+   "files": {
+    "bin/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [
+    "work"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe",
+    "Path": "{root}/work"
+   },
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "id": "pd-sysbin-unset",
+   "class": "path-default-sysbin",
+   "path": null,
+   "files": {},
+   "dirs": [],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "TryExec": "sh"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{probe}"
+     ]
+    ],
+    "cwd": "{root}",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "id": "pd-sysbin-empty",
+   "class": "path-default-sysbin",
+   "path": [],
+   "files": {},
+   "dirs": [],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "TryExec": "sh"
+   },
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "id": "pd-sysbin-private",
+   "class": "path-default-sysbin",
+   "path": [
+    "{root}/bin"
+   ],
+   "files": {
+    "bin/helper": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "{root}/probe.sh",
+    "TryExec": "sh"
+   },
+   "expect": {
+    "error": "load"
+   }
+  },
+  {
+   "id": "pd-wd-unset",
+   "class": "path-default-cwd",
+   "path": null,
+   "files": {
+    "work/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [
+    "work"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe",
+    "Path": "{root}/work"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/work/probe"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  },
+  {
+   "id": "pd-wd-empty",
+   "class": "path-default-cwd",
+   "path": [],
+   "files": {
+    "work/probe": "IyEvYmluL3NoCiMgbWFkbyByOTkgbGF1bmNoIHByb2JlOiBPTkUgcmVjb3JkIGxpbmUgcGVyIHNwYXduLCBPTkUgcHJpbnRmIChhdG9taWMKIyBhcHBlbmQsIG5vIGZsb2NrKS4gIFZhbHVlcyBpbiBtYWRvIGZpeHR1cmVzIG5ldmVyIGNvbnRhaW4gc3BhY2VzIG9yICc9Jy4KbGluZT0iUkVDIEFSR1YwPSQwIEFSR0M9JCMgQ1dEPSQocHdkKSBHREY9JHtHSU9fTEFVTkNIRURfREVTS1RPUF9GSUxFLX0iCmlmIFsgIiQjIiAtZ3QgMCBdOyB0aGVuCiAgaT0xCiAgZm9yIGEgaW4gIiRAIjsgZG8KICAgIGxpbmU9IiRsaW5lIEEkaT0kYSIKICAgIGk9JCgoaSArIDEpKQogIGRvbmUKZmkKcHJpbnRmICclc1xuJyAiJGxpbmUiID4+ICIke1BST0JFX09VVDo/bWFkbyByOTkgcHJvYmUgbmVlZHMgUFJPQkVfT1VUfSIK"
+   },
+   "dirs": [
+    "work"
+   ],
+   "desktop": {
+    "Type": "Application",
+    "Name": "case",
+    "Exec": "probe",
+    "Path": "{root}/work"
+   },
+   "expect": {
+    "launches": 1,
+    "argv": [
+     [
+      "{root}/work/probe"
+     ]
+    ],
+    "cwd": "{root}/work",
+    "env_gdf": "{root}/case.desktop"
+   }
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+R100MLabratUnset PATH-unset falsification receipt (instrument runs, scratch only)
+ground: gio sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 OK; glib2 2.90.1-1
+H1: PATH-absent gio resolves bare Exec via /bin:/usr/bin:. ; private-bin-only program refused.
+hand (labrat_hand.py, wall 10.9s, run once each, cwd=root, env LC_ALL/HOME/PROBE_OUT only +/- PATH):
+ 01 root-unset probe@root PATH-absent: rc=0 launches=1 argv0={root}/./probe
+ 02 bin-unset probe only <root>/bin PATH-absent: rc=1 Unable to load application information; records=0
+ 03 bin-pathset PATH=<root>/bin: rc=0 launches=1 argv0={root}/bin/probe
+ 04 tryexec-root-unset TryExec=probe PATH-absent: rc=0 launches=1 argv0={root}/./probe
+ 05 tryexec-root-empty PATH="": rc=0 launches=1 argv0={root}/probe
+ 06 tryexec-helper-bin-unset TryExec=helper@<root>/bin PATH-absent: rc=1 Unable to load application information; records=0
+ 07 tryexec-helper-bin-empty PATH="": rc=1 Unable to load application information; records=0
+oracle (labrat_oracle.py importing r99 probe module, runs=2, wall 21.5s):
+ o01 launches=1 [{root}/./probe] rc0 agreed; o02 error=load rc1 agreed; o03 launches=1 [{root}/bin/probe] rc0 agreed;
+ o04 launches=1 [{root}/./probe] rc0 agreed; o05 launches=1 [{root}/probe] rc0 agreed;
+ o06 error=load rc1 agreed; o07 error=load rc1 agreed.
+verdict: H1 NOT FALSIFIED (7/7 hand + 7/7 oracle consistent; argv ./probe vs probe separates unset vs empty in success region).
+no contradiction found; /usr/bin-only arm of C1-1 not planted here (would be a host write).
+instruments: labrat_hand.py, labrat_oracle.py (scratch, deletable); no lane edit; no host write beyond scratch; no terminal launch.
+scratch dir deleted before yield: /fast/scratch/hyaku/mado-r100/R100MLabratUnset (rm -rf).

@@ -91,3 +91,13 @@ per-leg declared expectation), never a post-data target move.
 Shown able to fail: the two-leg probe exits 1 with `LEG … rc=124 … timeout-after-600s` twice at the
 frozen cap; the panel's own `timeout_s` is 600 and the counter passes no `--timeout`, so a leg
 needing >600 s is scored as a mismatch.
+
+## Errata (round 100 — the outside spot-check's routed defect 1, corrected append-only)
+
+- The pointer in M99-3 and in `QUALITY.md` criterion 172 reads `find_program` "at `:467`". Measured at
+  round 100: `git show 2cbaa141:tools/mado-mime.py | grep -n 'def find_program'` prints
+  `466:def find_program(program: str, path_env: str | None, workdir: str | None) -> bool:`. `:467` is
+  the first docstring line (it names `g_find_program_for_path`, which is why the pointer read as
+  plausible). The corrected pointer is `:466` (the `def` the command prints); the docstring line
+  `:467` is cited by name where the GLib sentence it paraphrases matters.
+- M99-4's "no instrument watched the cap" stands; the cap's repair lands in round 100 (C2).

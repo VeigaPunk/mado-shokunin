@@ -1,0 +1,117 @@
+R100MMutPath mutation ledger - C1 path-default branch (mado round 100, wave w1)
+seat: R100MMutPath (mutation tester, leaf member). Instrument run, scratch only.
+measured: 2026-11-08, host load average ~250 on 32 cores.
+
+MEASURED OBJECTS (re-hashed by this seat)
+  candidate  .ufo/waves/round-100/build/mado-launchenv.py  sha256 3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228  (981 lines)
+  base tool  tools/mado-launchenv.py                       sha256 a63c20c886a2bd840d80966d531e055e9c4f5d3accb431e4b0e317e04523eb16  (954 lines)
+             diff build-vs-base: 29 changed lines, ALL inside the selftest body; production path identical
+  sibling    tools/mado-execargv.py                        sha256 49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713
+  cases      .ufo/waves/round-100/controls/launchenv-cases-r100.json sha256 7aba8a0f880b3e59edf7a731f2d2783babea7b275d280588ba2df2c5dd6df4a9
+             77 cases, 35 classes; 10 new (8 with path null or []); the first 67 case objects parse
+             equal to the r99 file (67/67 by this seat's comparison)
+             envelope re-checked by this seat: version=1 round=r100 oracle_sha256=renderer_sha256=cbfff7a4...
+             gio_sha256=d2164260... glib2=2.90.1-1
+  r99 cases  .ufo/waves/round-99/controls/launchenv-cases-r99.json sha256 14b4cc571a35bb5b4c6996a4a3fde19ff71ce9f26dabe3dd4142eec162f82acd (67/31)
+  oracle     .ufo/waves/round-99/controls/launchenv-probe-r99.py sha256 cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199
+  gio        /usr/bin/gio sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 ; glib2 2.90.1-1
+  shapes     scratch suite-shapes-measured.json sha256 491ff2ba0ea33ca057e94cf4cab0e8113ed67cce32c2b9b5e0e7c5d3bbfe2265
+             (6 path-default cases, every label measured with the r99 oracle TWICE, agreeing)
+
+DETECTOR (instrument, not candidate)
+  The candidate is a model; the detector is the round-99 counter's case leg, reproduced:
+  materialise the case root with the oracle's own build_root/path_string; run
+    python3 -I <candidate private copy> <desktop-arg> <args...> [--path PSTR] --json
+  cwd = case root; env = {LC_ALL:"C", HOME:<root>/h}, with PATH="" when --path is passed.
+  CONTRACT CORRECTION used here: a case with "path": null runs the child with NO PATH key
+  (contract 2's letter), so the candidate takes its unset branch. The round-99 counter's env
+  (PATH:"", --path omitted) does NOT model unset: measured on a built root, PATH absent answers
+  {root}/./probe while PATH="" answers {root}/probe, and the frozen expect is {root}/./probe.
+  Compare launches, argv as a sorted multiset, cwd and env gdf exact; a refusal needs rc 2 and the
+  exact cause (detail ignored). A kill = a parsed wrong answer on a case the pristine candidate
+  answered correctly; crashes/timeouts never count.
+
+BASELINE (pristine bytes)
+  build candidate: r100 77/77 ok; r99 67/67 ok; shapes 6/6 ok; union-of-r99+shapes 73/73 ok; 0 crash.
+  base candidate:  r100 77/77 ok; r99 67/67 ok; shapes 6/6 ok; union 73/73 ok; 0 crash.
+  restored rerun after the sweep (fresh copy from the lane bytes): build 77/77 ok, sha unchanged.
+
+MUTANTS (each find occurs exactly once in the candidate; applied to a private copy only; compile-checked)
+  m1  DEFAULT_SEARCH_PATH = '/bin:/usr/bin'          (trailing '.' dropped)
+  m2  unset branch yields ''                          candidate form `path = ''`; the seat's `return ''`
+                                                      is the same behaviour in a helper-shaped refactor
+  m3  early working-directory join removed            (`if False and working_dir is not None ...`)
+  m4  empty PATH entry treated as '/bin/'+program
+  m5  IS_DIR half of the executable test dropped
+  m6  relative hit returned via os.path.normpath      (the oracle keeps './'; the reverse reading was
+                                                      not observed - the probe measured {root}/./probe)
+
+FROZEN-SET KILL MATRIX (candidate build 3b29dc65; base a63c20c8 row-identical)
+  mutant | killed | cases failed (r100 set)                    | new-class cases among them
+  m1     | YES    | pd-dot-root                                 | 1
+  m2     | YES    | pd-dot-root, pd-sysbin-unset                | 2
+  m3     | YES    | tx-viawd, pd-wd-unset                       | 1
+  m4     | YES    | pe-empty-str, pd-empty-root, pd-sysbin-empty| 2
+  m5     | YES    | pd-abs, pd-onpath                           | 0 (r99 prog-dir cases only)
+  m6     | YES    | pe-dot, pd-dot-root                         | 1
+  crashed_not_killed = 0 for every mutant. Killed 6 / counted 6 on the frozen r100 set.
+
+ACTUAL FIRST-KILL OUTPUTS (build candidate, frozen r100 set)
+  m1 pd-dot-root     : came rc 2 ERROR load            ; expect launches=1 argv[0]=<root>/./probe
+  m2 pd-dot-root     : came launches=1 argv[0]=<root>/probe; expect <root>/./probe
+  m3 tx-viawd        : came rc 2 ERROR load            ; expect launches=1 argv[0]=<root>/work/bin/probe
+  m4 pe-empty-str    : came rc 2 ERROR load            ; expect launches=1 argv[0]=<root>/probe
+  m5 pd-abs          : came rc 2 ERROR program-not-found; expect rc 2 ERROR load
+  m6 pe-dot          : came argv[0]=<root>/probe       ; expect <root>/./probe
+
+PRIOR SET, FOR THE RECORD (the round's declared blind spot and its gap proof)
+  r99 set alone (67 cases): m1 SURVIVED, m2 SURVIVED (both path-null r99 cases carry an absolute Exec
+  and return at gutils.c:331-357 before the PATH source is read); m3 KILLED tx-viawd; m4 KILLED
+  pe-empty-str; m5 KILLED pd-abs/pd-onpath; m6 KILLED pe-dot.
+  Gap proof in scratch before the frozen file existed: case dash-unset-root (PATH absent, Exec=probe,
+  program at case root, no Path=) measured with the oracle twice (agreeing) -> launches=1
+  argv[0]={root}/./probe; with it m1 answers ERROR load and m2 answers <root>/probe, both KILLED.
+  Six measured shapes (all case-private programs, no host binary):
+    dash-unset-root     path null, Exec=probe at root                -> {root}/./probe
+    dash-empty-root     path [""], same fixture                      -> {root}/probe
+    dash-unset-private  path null, probe only under <root>/private   -> error load
+    dash-path-private   path ["{root}/private"], same fixture        -> {root}/private/probe
+    dash-unset-pempty   path null, desktop Path= empty string        -> {root}/./probe
+    dash-empty-pempty   path [""], desktop Path= empty string        -> {root}/probe
+  The frozen r100 file carries the same separating pairs as pd-dot-root/pd-empty-root,
+  pd-private-unset/pd-private-onpath and pd-sysbin-unset/pd-sysbin-empty.
+
+FINDINGS ROUTED (L1, case owner, C1 counter owner)
+  1. A path:null case MUST be scored with no PATH key in the child env. Under the r99 leg's
+     PATH="" env the pristine candidate answers {root}/probe where the class expects
+     {root}/./probe: a counter that reuses that env scores the new class wrong (demonstrated on a
+     built root with the same candidate bytes).
+  2. The /usr/bin-only arm of clause 1 cannot be labelled through Exec (a spawned /bin,/usr/bin
+     program writes no probe record; and Terminal=true + PATH absent starts a real terminal -
+     /usr/bin/xdg-terminal-exec EXISTS on this host). The frozen file's TryExec=sh + absolute
+     Exec={root}/probe.sh shape is the safe encoding; it is load-only and kills m2 at
+     pd-sysbin-unset, so the separation is causal.
+  3. m5 (IS_DIR half) is not covered by the new class; it lives on the r99 prog-dir cases. The
+     r100 file is the whole set, so all six die - but a reader auditing "the new class alone"
+     should know m5 is carried by the old cases.
+  4. m6's "or the reverse" reading is not the observed oracle behaviour: two oracle runs measure
+     './' preserved ({root}/./probe); a normalising candidate is the wrong direction.
+  5. m3 IS covered by the new class at pd-wd-unset (Path=<root>/work, probe only in work/): the
+     early working-dir join is what finds it, so the cwd pair is a non-separating control for
+     unset-vs-empty yet still load-bearing for the join.
+
+RESTORATION EVIDENCE
+  Every mutant ran from a private copy under /fast/scratch/hyaku/mado-r100/R100MMutPath; the lane
+  bytes were never written. Candidate sha256 before == after for every run:
+    build 3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228 (all runs)
+    base  a63c20c886a2bd840d80966d531e055e9c4f5d3accb431e4b0e317e04523eb16 (all runs)
+  Mutant copy sha256 (first 16 hex; the matrices carry the full values):
+    m1 8fd41a7e5beb419c  m2 daf6389b08633879  m3 7dc62446cd344674
+    m4 eea09070097e8934  m5 049a4767ac02227b  m6 1f96ea7efbb288ec   (frozen-set run)
+  Restored rerun: a fresh copy of the lane bytes answered 77/77 with the same sha.
+
+INSTRUMENTS NAMED
+  mutate.py (this seat's harness: spawns python3 -I on candidate copies only) and the r99 oracle
+  imported from the lane by sha-pinned path (spawns /usr/bin/gio per case; every oracle case env is
+  LC_ALL/HOME/PROBE_OUT plus the case's own PATH entries, or no PATH at all). /usr/bin/gio was
+  executed by the ORACLE only, never by the candidate; the candidate spawns nothing.

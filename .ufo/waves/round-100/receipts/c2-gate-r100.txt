@@ -1,0 +1,11 @@
+C2 gate receipt r100 (R100MExecGate)
+CANDIDATE: .ufo/waves/round-100/build/harm-watch.py
+SHA256: 2d604f7b654f2e2710b612358fedf81fc028dddd47fd0934d9f82c065b226167
+BASE: quality/harm-watch.py at 43309e6af9a3b57f1bc839a826bef1f8eb7495e4
+DIFF-SUMMARY: added time.monotonic elapsed_ms per leg (run_leg returns elapsed_ms; run_panel appends " elapsed_ms=<n>" last to human LEG line and to --json leg objects; setup/spawn-failed/timeout legs all report elapsed_ms; timeout uses monotonic end-to-end so >= timeout*1000). Docstring updated. No census/exit-map/--only/--timeout/scratch/json-key changes (existing keys byte-identical by diff inspection).
+SELFTEST: HARM_WATCH_SELFTEST: checks=33 failed=0 (wall ~2.6-3.5s; ran 3x, all 33/0)
+NEW CHECKS: clean-elapsed-ms, clean-elapsed-ms-second, clean-elapsed-ms-integer, timeout-elapsed-ms, json-elapsed-ms, elapsed-monotone, elapsed-human-line (7 new; was 26)
+PANEL: .ufo/waves/round-100/controls/harm-panel-r100.json sha256 bec81a3e3d34625bcdaac0e30d1de5761404f753ed3bb4ea6ada2d0ed3ac9461
+PANEL-DIFF: only "timeout_s": 600 -> 3600 (placeholder). No timing receipt at panel-timing-r100.txt existed during this seat's run (ls showed only c2-panel-r100.txt), so placeholder per spec; L1 sets final value >= 2*max_elapsed_ms. 28 leg rows byte-identical (parsed compare + raw diff shows single line).
+TOOLING: no installs (stdlib only; time/re already present pattern).
+INSTRUMENT: candidate is the gate tool (spawns panel legs); stdlib only.

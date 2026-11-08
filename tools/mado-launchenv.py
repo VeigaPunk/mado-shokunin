@@ -615,7 +615,34 @@ def selftest():
             check('fp-wd-empty-pass-through',
                   find_program('app/probe.sh', '', ''),
                   _join2(base, 'app/probe.sh'))
-
+            # -- unset-PATH default (R6: None -> '/bin:/usr/bin:.') vs empty vs '.' --
+            # end-to-end at the load gate (run with path_env=None), not only
+            # find_program units: the dot entry's argv0 shape {root}/./probe is
+            # the measured trap (pd-dot-unset); '' has no '/./' (pd-empty).
+            check('st-unset-default-dot-launch',
+                  run(m, desk('u1', 'probe.sh'), [f1], None),
+                  {'launches': 1, 'terminal': None, 'cwd': os.getcwd(),
+                   'argv': [[_join2(base, './probe.sh'), f1]],
+                   'gdf': base + '/u1.desktop'})
+            check('st-empty-string-no-dot',
+                  run(m, desk('u2', 'probe.sh'), [f1], ''),
+                  {'launches': 1, 'terminal': None, 'cwd': os.getcwd(),
+                   'argv': [[_join2(base, 'probe.sh'), f1]],
+                   'gdf': base + '/u2.desktop'})
+            check('st-dot-entry-explicit',
+                  run(m, desk('u3', 'probe.sh'), [f1], '.'),
+                  {'launches': 1, 'terminal': None, 'cwd': os.getcwd(),
+                   'argv': [[_join2(base, './probe.sh'), f1]],
+                   'gdf': base + '/u3.desktop'})
+            check('st-unset-tryexec-privbin-miss',
+                  run(m, desk('u4', probe,
+                              extra=('TryExec=loose',)), [f1], None),
+                  {'error': 'load', 'detail': 'try-exec'})
+            check('st-unset-tryexec-dot-hit',
+                  run(m, desk('u5', probe,
+                              extra=('TryExec=probe.sh',)), [f1], None),
+                  {'launches': 1, 'terminal': None, 'cwd': os.getcwd(),
+                   'argv': [[probe, f1]], 'gdf': base + '/u5.desktop'})
             # -- R1/R1b load gate (end to end) --
             check('st-plain-absolute-kept',
                   run(m, desk('p1', probe), [f1], PNONE),

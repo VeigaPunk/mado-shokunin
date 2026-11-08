@@ -1,0 +1,56 @@
+{
+ "version": 1,
+ "tool": "tools/mado-launchenv.py",
+ "candidate_sha256": "3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228",
+ "cases": "launchenv-cases-r100.json",
+ "mutants": [
+  {
+   "id": "m1-default-no-dot",
+   "find": "DEFAULT_SEARCH_PATH = '/bin:/usr/bin:.'",
+   "replace": "DEFAULT_SEARCH_PATH = '/bin:/usr/bin'",
+   "class": "path-default-dot",
+   "defect": "unset-default-search",
+   "expect": "kill"
+  },
+  {
+   "id": "m2-unset-as-empty",
+   "find": "    if path is None:\n        path = DEFAULT_SEARCH_PATH",
+   "replace": "    if path is None:\n        path = ''",
+   "class": "path-default-sysbin",
+   "defect": "unset-equals-empty",
+   "expect": "kill"
+  },
+  {
+   "id": "m3-no-workdir-join",
+   "find": "    if working_dir is not None and not _is_abs(program):\n        program = _join2(working_dir, program)",
+   "replace": "    if False and working_dir is not None and not _is_abs(program):\n        program = _join2(working_dir, program)",
+   "class": "path-default-cwd",
+   "defect": "workdir-join",
+   "expect": "kill"
+  },
+  {
+   "id": "m4-empty-entry-bin",
+   "find": "        if entry == '':\n            startp = program",
+   "replace": "        if entry == '':\n            startp = '/bin/' + program",
+   "class": "path-default-dot",
+   "defect": "empty-entry",
+   "expect": "kill"
+  },
+  {
+   "id": "m5-exec-not-dir",
+   "find": "    return os.access(p, os.X_OK) and not os.path.isdir(p)",
+   "replace": "    return os.access(p, os.X_OK)",
+   "class": "prog-dir",
+   "defect": "exec-test",
+   "expect": "kill"
+  },
+  {
+   "id": "m6-normalise-dot",
+   "find": "            return _join2(os.getcwd(), startp)",
+   "replace": "            return os.path.normpath(_join2(os.getcwd(), startp))",
+   "class": "path-default-dot",
+   "defect": "dot-entry-shape",
+   "expect": "kill"
+  }
+ ]
+}
