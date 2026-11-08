@@ -5668,3 +5668,43 @@ green; the frozen zero is the unmet part.
   (`020af865`+), not the gated revision: the gate ran at `a3471631` with 462 rows / 118 entries. Round 99
   re-ran the read-back gate at the records tip: `rows=469 entries=120 findings=0`
   (`.ufo/waves/round-99/receipts/readback-r99.txt`).
+
+## Round 100 — the unset-PATH default branch as a measured case class (coverage), the harm watch's per-leg cap measured (operability) (2026-11-08, hyaku run 15, attempt 1)
+
+Declaration `.ufo/waves/round-100/claims-declaration-r100.md`; frozen claims `.ufo/waves/round-100/claims.json`;
+claims narrowed before filing per `plans/round-100.md` A1–A5 / B1–B5, each naming the wave artifact
+that forced it. Stagnation nudge not claimed (every owned axis stands at 10 from the round-99 record);
+sourced claim: C1 (S533 re-opened). Saturation 9.0 / window 3 unchanged; no retirement.
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (the surface it moves: the PATH-unset default branch **as exercised by frozen cases**) | `python3 -I quality/counters/c1-r100-launchenv-path.py --repo . --rev 219e14f4a89075005b3c4dfa87651356b1e9719c --base-rev 43309e6af9a3b57f1bc839a826bef1f8eb7495e4 --cases .ufo/waves/round-100/controls/launchenv-cases-r100.json --expect-cases-sha256 7aba8a0f…df4a9 --mutants .ufo/waves/round-100/controls/launchenv-mutants-r100.json --expect-mutants-sha256 4f6667be…698d7 --genseed .ufo/waves/round-100/controls/launchenv-fresh-r100.py --expect-genseed-sha256 18005e07…fc6b --expect-tool-sha256 3b29dc65…fb228 --expect-execargv-sha256 49f7fecd…f713 --expect-gio-sha256 d2164260…cfc462 --scratch-root DIR` (full pinned argv in the declaration's C1 block) | at the base the branch is modelled and **0** frozen cases reach it (the r99 file's two `path-unset` cases carry an absolute `Exec`; `receipts/c1-at-base-r100.txt`, exit 2 `SETUP_ERROR`); after: **77 cases / 35 classes**, **10 new `path-default-*` cases in 4 classes** (labels measured twice, agreeing), candidate **77/77**, fresh leg **60/60** (seed drawn at measurement), mutants **6/6 killed**, `unset-as-empty` control **75/77**; `m1`/`m2` **survive the r99 set alone** (the measured gap proof) → `MADO_C1_R100: TARGET_MET`, exit 0 (`receipts/c1-measured-r100.txt`, measured at `219e14f4`) | **improved** |
+| C2 **operability** (the surface it moves: the harm watch's per-leg cap and its timing evidence) | `python3 -I quality/counters/c2-r100-harm-watch.py --repo . --rev ae537dbe361e0d10247dbdd822bdb22fbc41464d --base-rev 43309e6a… --panel .ufo/waves/round-100/controls/harm-panel-r100.json --expect-panel-sha256 6d259164…65ac --timing .ufo/waves/round-100/receipts/panel-timing-r100.txt --expect-timing-sha256 e7280b53…1e5d --expect-gate-sha256 acecb0ea…3f1f --scratch-root DIR` | at the base the gate records no per-leg time and the panel's 600 s cap is exceeded by one leg on this host (708,014 ms measured); after: the gate prints `elapsed_ms` on every `LEG` line and per leg in `--json` (28/28 both), the panel cap is 3600 s = 2.5x the measured worst leg, the timing receipt times 28/28 legs, and the committed counter's own panel run is **28/28 green**, `mismatches=0` → `MADO_C2_R100: TARGET_MET`, exit 0 (`receipts/c2-measured-r100.txt`, measured at `d73a0648`). Disclosed: runs 1-2 (`receipts/c2-measured-run1-r100.txt`) reported `mismatches=1` on `r97c1_filetype` (rc=2 in ~2 s) from **deep scratch roots**; the cause is measured — that round-97 leg binds an AF_UNIX fixture and a `sun_path` over 108 bytes fails closed — and the counter now keeps the panel scratch one short level down and warns on depth. Corroborating runs: `receipts/c2-measured-run3-shortroot-r100.txt`, `receipts/c2-panel-direct-r100.txt` (28/28 green through the gate), `receipts/c2-leg-r97c1-standalone-r100.txt` | **improved** |
+| separability | C1 counter at the base; C2 counter at the base | C1 `SETUP_ERROR tool sha256 a63c20c8… != pinned 3b29dc65…` (`receipts/c1-at-base-r100.txt`); C2's panel/gate do not exist at the base with these pins (the gate's elapsed field ships this round) | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| GIO 2.90.1 launch — the unset-PATH default branch (`tools/mado-launchenv.py`) | Answer, read-only, what the program lookup does when the launching process has no `PATH`: the literal `/bin:/usr/bin:.`, the `.`-entry argv0 shape against the empty-`PATH` bare name, the `load` refusal for a program reachable only through a case-private directory, `TryExec` as the observable system-dir arm, and the load-time consequence (the gate resolves against `gio`'s own cwd); 77 frozen cases (10 on this branch, 4 classes), a seeded fresh leg and 6 anchored mutants | `.ufo/waves/round-100/receipts/c1-measured-r100.txt`; `corpus/knowledge/gio-launch-path-default-r100.md` | 100 |
+
+### Named limits (append-only, round 100)
+
+- C1: the *order* of the default's three entries is not separable on this surface (no fixture
+  distinguishes `.`-first from `bin/usrbin`-first without spawning a host binary); `Exec` on a
+  `/bin` or `/usr/bin` program writes no probe record, so `TryExec` carries that arm;
+  `Terminal=true` is out of reach (this host carries `/usr/bin/xdg-terminal-exec`). The predicate's
+  numeric conjuncts count labels in the pinned case file; the class's binding to the branch is
+  carried by the measured mutant matrix (`m1`/`m2` survive the r99 set), not by a conjunct (A3).
+- C2: `elapsed_ms` is a printed field whose *truth* is carried by the gate's selftest, not by the
+  predicate (B1); mutant `h2` (a wall clock instead of `time.monotonic()`) survives the gate
+  selftest, the counter and the panel — nothing pins the clock source. `h3b` (a timeout leg
+  under-reporting elapsed 100x) survived the gate's first check because it substring-matched
+  `"elapsed_ms=1"`; the check now parses the value and requires `>= 1000` (`f94f7a94`), and `h3b`
+  dies (2 selftest failures). The `mismatches == 0` conjunct failed only from a deep scratch root:
+  that round-97 leg binds an AF_UNIX fixture and a `sun_path` over 108 bytes fails closed (~2 s,
+  rc=2); the counter now keeps the panel scratch one short level under the caller's root and warns
+  on depth, and the round-97 leg's unbounded AF_UNIX fixture path is routed to round 101.
+- Round shape: one v1 wave of 16 seats (2 scouts, 6 executors, 1 scribe, 2 reviewers, 1 critic,
+  2 mutation-testers, 1 connector; attack roles 5/16 = 31 %); no residual call; no dead seats; round
+  total 16.

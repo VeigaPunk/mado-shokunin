@@ -1,0 +1,146 @@
+MADO SCOUT RECEIPT - R100MScoutPath - round-100 w1 - C1 path-unset surface reconnaissance
+lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+base rev (read): 43309e6af9a3b57f1bc839a826bef1f8eb7495e4 (branch master)
+head at report time: 219e14f4a89075005b3c4dfa87651356b1e9719c (landed by the L1 mid-seat)
+report: .ufo/waves/round-100/w1/R100MScoutPath.md
+role: scout (leaf; no subagents dispatched)
+
+GROUND RE-MEASURED BY THIS SEAT (nothing inherited)
+  glib2                        2.90.1-1                      pacman -Q glib2
+  /usr/bin/gio sha256          d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462
+  round-99 oracle sha256       cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199
+  base tools/mado-launchenv.py a63c20c886a2bd840d80966d531e055e9c4f5d3accb431e4b0e317e04523eb16
+  base tools/mado-execargv.py  49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713
+  counter sha256 (r99)         52abbbaa78e358ef646f3e7e92c1bd36516196540d4bb0221f38edd368801ecd
+  oracle legs measured         27 ad-hoc cases (runs=2 each, all agreed=True)
+  oracle wall time             30.6s + 23.0s + 9.3s + 15.5s  (host load ~250 on 32 cores)
+
+1. BRANCH MAP of the program lookup (base-rev tools/mado-launchenv.py, 954 lines)
+   DEFAULT_SEARCH_PATH        :121   '/bin:/usr/bin:.'
+   PROCESS_PATH sentinel       :126   resolved :297-298 (os.environ.get('PATH'))
+   --path "" (set-but-empty)  :471-476  -> one EMPTY entry, argv0 has no './'
+   working-dir join (pre-walk):196-197  = gutils.c:322-327
+   absolute-or-slash branch   :198-204  = gutils.c:331-357 (abs hit :200-201, cwd-join :202,
+                                             abs miss -> None :203-204)
+   path is None -> DEFAULT    :205-207  = gutils.c:370-389   <-- the branch C1 cores
+   empty-entry rule           :214-215  = gutils.c:471-475 (name+1 -> bare name, no './')
+   '.' entry                  :216-217  = gutils.c:476-477 (keeps the './')
+   relative hit -> absolute   :220-223  = gutils.c:490-497
+   ARGV0 STRINGS MEASURED:
+     unset (PATH absent)  -> {root}/./probe
+     PATH set-but-empty   -> {root}/probe
+     --path /bin:/usr/bin:. -> {root}/./probe
+     Exec=env, unset      -> /bin/env      (default hits /bin first)
+     Exec=env, --path /usr/bin -> /usr/bin/env
+     Exec=env, PATH=""    -> refusal load / exec-argv0
+     program only in {root}/bin, unset -> refusal load
+     same, --path {root}/bin -> {root}/bin/probe
+     Path={root}/work + program in work/, unset -> {root}/work/probe
+     Path={root}/work + program in work/, PATH="" -> {root}/work/probe  (IDENTICAL)
+
+2. WHY THE r99 path-unset CASES CANNOT REACH gutils.c:370-382
+   .ufo/waves/round-99/controls/launchenv-cases-r99.json : 67 cases, 31 classes,
+   "path": null occurs exactly 2x, both class path-unset, both ABSOLUTE Exec:
+     pu-abs-work  Exec="{root}/probe.sh"  Path="{root}/work"
+     pu-abs-root  Exec="{root}/probe.sh"  Path absent
+   absolute Exec -> g_path_is_absolute(program) true at gutils.c:332 -> the absolute-or-slash
+   branch returns at :357, BEFORE :368 resets program and BEFORE :370 reads path.
+   MEASURED: the oracle on both cases gives launches=1, argv [["{root}/probe.sh"]] - byte
+   identical to the candidate under PATH absent AND under PATH="". Their answer is
+   PATH-INDEPENDENT, so they cannot distinguish unset from empty. 13/67 cases carry a
+   slash-free Exec; every one has an explicit path list, never null.
+
+3. gutils.c QUOTES (committed .ufo/waves/round-99/fetch/gutils.c)
+   DEFAULT  :370-373 (path = g_getenv "PATH" / else original_path), :375-389 the guard and the
+             LITERAL at :388 -> path = "/bin:/usr/bin:.";
+   ABS-OR-SLASH SHORT-CIRCUIT  :329-337 (the "don't look in PATH" comment + the if), :339-357
+             (the executable/non-dir test and the return), :359-366 (else: clear + :363-364
+             return NULL for an absolute original);
+   EMPTY-ENTRY RULE  :471-477 (if (p == path) -> startp = name + 1, with the C's own comment
+             "a colon at the beginning or the end of 'PATH' means to search the current
+             directory"; the else branch copies the entry text -> '.' keeps the './').
+   LOCATOR DISCREPANCY (citation only, no modelled behaviour changes):
+     claims-declaration-r100.md:12 / claims.json:12 say 370-382 -> the literal is at :388,
+       outside that range; claims.json's :376-389 is the correct one.
+     tools/mado-launchenv.py:120 says "# gutils.c:409-421" for the default -> :409-421 is the
+       WINDOWS branch (windir/sysdir concat); the Unix default is :376-389.
+     tool docstring :192-193 cites :479-482 / :489-496; committed bytes: :479-484 / :490-497.
+   Flagged for append-only correction (M99-2 class), not silently changed.
+
+4. SEPARATING CASE CLASSES (and oracle expressibility)
+   path_string (launchenv-probe-r99.py:195-201): path null -> None -> measure_once:369-371
+   omits PATH from the child env; path [] -> "" -> env["PATH"]="".
+   => the r99 oracle CAN express unset AND set-empty; r99 used path:[] 0 times.
+   #1 vs PATH=""            class path-default-sysbin   TryExec=sh, Exec={root}/probe.sh
+                             unset -> found (in /bin); path:[] -> refused load
+   #2 vs the ambient search class path-default-private  program only in {root}/bin
+                             unset -> refused load; path:["{root}/bin"] -> {root}/bin/probe
+   #3 vs the working-dir join class path-default-cwd     Path={root}/work, program in work/
+                             unset AND path:[] -> BOTH {root}/work/probe (IDENTICAL): the
+                             pre-walk join (:196-197) short-circuits the PATH, so this class
+                             does NOT separate unset from empty by itself.
+   #4 the '.' entry vs the empty entry class path-default-dot  Exec=probe at the case root
+                             unset -> {root}/./probe ; path:[] -> {root}/probe
+   => unset-vs-empty must be carried by #1 and #4; #3 earns its keep by showing the join.
+
+5. CONSUMERS OF tools/mado-launchenv.py AND THEIR sha256 PINS (all = a63c20c8...eb16 at base)
+   PINNED BY SHA:
+     SKILL.md:2984  (registry gate row mado-r99-launchenv) --expect-tool-sha256
+     SCORECARD.md:5625 (C1 row)                    --expect-tool-sha256
+     .ufo/waves/round-99/claims-declaration-r99.md:167 (counting command)
+     .ufo/waves/round-99/claims.json:17            (counting command)
+     .ufo/waves/round-99/controls/launchenv-mutants-r99.json:4  (candidate_sha256)
+   HARD CONSUMERS (read the bytes at run time):
+     quality/counters/c1-r99-launchenv.py  -- git show <rev>:tools/mado-launchenv.py (:846),
+       sha-check :855; sibling mado-execargv.py :841; importlib-loads the ORACLE from beside
+       --cases (:895-906) and pins its sha twice (envelope oracle_sha256 + renderer_sha256).
+     .ufo/waves/round-99/build/c1-r99-launchenv.py  -- the same counter, pre-landing draft
+       (byte-identical to the landed quality/counters/c1-r99-launchenv.py)
+     .ufo/waves/round-99/build/mado-launchenv.py     -- the r99 candidate draft, byte-identical
+       to the base-rev tools/mado-launchenv.py
+   NO-SHA CONSUMERS:
+     quality/tool-ledger.md:234 (ledger row; the gate is check-tool-ledger.py, coverage not sha)
+     SKILL.md:2983 (registry PROBE row mado-launchenv - the CLI contract, no sha)
+     .ufo/waves/round-99/controls/launchenv-fresh-r99.py (consumes the ORACLE, not the tool)
+
+6. LOAD-BEARING FINDING - THE r99 COUNTER LEG CANNOT SEE THE UNSET BRANCH
+   quality/counters/c1-r99-launchenv.py:331 passes --path only when pstr is not None, and :307
+   runs the tool with env {"PATH": "", ...}. For a path:null case no --path is passed, so the
+   tool reads its own process PATH (:297-298) = "" (SET-BUT-EMPTY), not absent.
+   MEASURED, same case, same tool:
+     env PATH="" , no --path  -> argv0 {root}/probe     (the EMPTY answer)
+     env with NO PATH key     -> argv0 {root}/./probe    (the DEFAULT answer)
+   i.e. the r99 leg scores a path:null case against the EMPTY answer while the oracle measured
+   the UNSET answer -- exactly the pair {root}/probe vs {root}/./probe. The r99 file escapes
+   this only because both path-unset cases carry an ABSOLUTE Exec (PATH-independent answer).
+   A round-100 counter must run a path:null case with NO PATH KEY in the child env AND no
+   --path (contract 1: no --path and no PATH in the model process's environment = PATH unset).
+   The landed counter 219e14f4 implements this: .ufo/waves/round-100/build/c1-r100-launchenv-path.py
+   :316-327 (path_unset flag drops the PATH key), documented at :28-32.
+   The r100 mutant file carries 6 mutants, of which m1 (DEFAULT_SEARCH_PATH without the '.'),
+   m2 (if path is None -> default dropped), m4 (empty-entry rule) and m6 (normalise the './')
+   target exactly this branch; the r99 mutant file had ZERO mutants touching
+   DEFAULT_SEARCH_PATH or the default literal.
+
+OBSERVED vs INFERRED
+  OBSERVED: every row of sections 1-5; the gutils.c line numbers/quotes (grep -n on committed
+    bytes); the five sha256 pins; the counter-leg gap (section 6); the candidate selftest green
+    (MADO_LAUNCHENV_SELFTEST: checks=95 failed=0).
+  INFERRED: that the landed r100 counter is green end-to-end -- the round-100 counting command
+    was NOT run by this seat (it is the L1's leg and takes >300s under load).
+  UNKNOWN: /bin vs /usr/bin ordering on other hosts. Here /bin is a symlink to usr/bin (ls -la),
+    so the two are the same inode; the landed path-default-sysbin class uses TryExec=sh with an
+    ABSOLUTE Exec and so does not depend on that ordering.
+
+LANE BOUNDS AND HYGIENE
+  wrote only: .ufo/waves/round-100/w1/R100MScoutPath.md and this receipt.
+  the candidate tools/mado-launchenv.py was NOT modified.
+  no mutating git/jj command; git show/diff/log only. no subagent dispatched.
+  the oracle was used as an INSTRUMENT (it spawns /usr/bin/gio); every gio launch ran under an
+    env with NO host PATH (the oracle's own env dict: LC_ALL/HOME/PROBE_OUT, plus PATH only
+    when the case names one) -> no real terminal was ever started. the one Terminal=true probe
+    was the CANDIDATE tool, which spawns nothing; its prediction was not executed against
+    the host.
+  no pacman transaction, no sudo, no host service, no sysctl, no ~/.config write, no
+    credential read. NO TOOL INSTALLED OR UPGRADED (none needed; stock python3 3.14 + stdlib).
+  scratch $HYAKU_SCRATCH/mado-r100/R100MScoutPath removed before this yield (verified absent).

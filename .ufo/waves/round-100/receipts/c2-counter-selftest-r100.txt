@@ -1,0 +1,139 @@
+# C2 counter self-test receipt (mado round 100, w1, seat R100MExecCounterC2)
+# target   : .ufo/waves/round-100/build/c2-r100-harm-watch.py
+# sha256   : b22ab669896001ea1f99c5f2070211e013228616b3346104a8c5626586ca7530
+#            (final revision; four earlier revisions were measured during the
+#             wave - e4741843 was committed at 219e14f4 and is superseded, see 6)
+# predicate: PRED-C2-r100-v1, frozen in .ufo/waves/round-100/claims-declaration-r100.md
+# date     : 2026-11-08
+#
+# Revisions and pins used below
+#   measured rev           219e14f4a89075005b3c4dfa87651356b1e9719c
+#   base rev               43309e6af9a3b57f1bc839a826bef1f8eb7495e4
+#   gate at 219e14f4       2d604f7b654f2e2710b612358fedf81fc028dddd47fd0934d9f82c065b226167
+#   gate at 43309e6a       37a0544b160d9c5c5568fc45f9ed309f41b36fb093983313d72699423b4165b9
+#                          (604 lines, no elapsed_ms)
+#   panel r100             6d259164de900f9997d399a75a234bef5f46cc39006b046979bd05b57f7e65ac
+#                          (expect_legs=28, timeout_s=3600)
+#   timing, committed      dd8d9f88c9ba4b51f01424e47098c4e3d15ba60f34cf3c71b3d444309ff20d54
+#                          (NO TIMING-DONE line)
+#   timing, working tree   e7280b53a90caa36c06c06e73a351bbed5d404b2a18c4938d84ce2d083fd1e5d
+#                          (with TIMING-DONE)
+#
+# Host glib2 2.90.1-1 and /usr/bin/gio sha256 d2164260...cfc462 are recorded for
+# provenance only: the C2 counter never executes gio and models nothing about glib.
+
+## 1. Counter self-test
+
+$ python3 -I .ufo/waves/round-100/build/c2-r100-harm-watch.py --selftest
+MADO_C2_R100_SELFTEST: checks=21 failed=0
+exit=0
+
+Fixtures (private temp git repo, 28 fixture legs, one commit per variant):
+
+  1  green pipeline             all nine conjunct values emitted, TARGET_MET
+  2  short-cap panel            timeout_s=1000 < 2*max_elapsed_ms -> TARGET_MISSED
+  3  low-max receipt            max_elapsed_ms=500000 -> max + control conjuncts fail
+  4  timing-count               timing_legs_timed=27 -> timing conjunct fails
+  5  gate without elapsed_ms    gate_elapsed_emitted=0 -> elapsed conjunct fails
+  6  gate selftest failing      selftest_failed=2 -> selftest conjunct fails
+  7  red panel                  mismatches=1 -> mismatch conjunct fails
+  8  pin mismatches             panel / timing / gate sha256 pins -> exit 2, one each
+  9  receipt without TIMING-DONE -> exit 2 SETUP_ERROR timing receipt
+ 10  scratch root holding a foreign entry -> exit 2 SETUP_ERROR scratch-root unusable
+
+Every conjunct of PRED-C2-r100-v1 is demonstrably fail-able by the counter, and
+the green fixture proves the conjunction is satisfiable by a gate that behaves as
+the contract asks.
+
+## 2. Negative control at the frozen base bytes (full 28-leg panel)
+
+Gate 37a0544b (committed r99 bytes), panel r99 160763ce (timeout_s=600), timing =
+a SYNTHETIC 28-leg fixture written in scratch (one leg 700000 ms, 27 at 1000 ms).
+
+MADO_C2_R100: TARGET_MISSED pred=PRED-C2-r100-v1 rev=43309e6a base_rev=43309e6a
+  gate_sha256=37a0544b... panel_sha256=160763ce... timing_sha256=0986a003...
+  panel_legs=28 legs_run=28 mismatches=1 gate_elapsed_emitted=0
+  timing_legs_timed=28 max_elapsed_ms=700000 panel_timeout_s=600
+  control_600s_would_mismatch=1 selftest_failed=0 selftest_checks=26
+  missed=mismatches_0,gate_elapsed_emitted_1,timeout_ge_2max
+exit=1   wall 1257.21 s (20 m 57 s, host load ~250 on 32 cores)
+
+Three conjuncts red at base bytes, each with its value on the line. The measured
+mismatch count is 1 today, not round 99's 2: the panel is load-sensitive, which is
+why the round re-derives the cap from a receipt instead of asserting a number.
+
+## 3. The committed timing receipt does not match the frozen format
+
+$ git show 219e14f4:.ufo/waves/round-100/receipts/panel-timing-r100.txt | sha256sum
+dd8d9f88c9ba4b51f01424e47098c4e3d15ba60f34cf3c71b3d444309ff20d54
+$ git show 219e14f4:.ufo/waves/round-100/receipts/panel-timing-r100.txt | grep -c TIMING-DONE
+0
+
+$ python3 -I .ufo/waves/round-100/build/c2-r100-harm-watch.py --repo . --rev 219e14f4 \
+    --base-rev 43309e6a \
+    --panel .ufo/waves/round-100/controls/harm-panel-r100.json \
+      --expect-panel-sha256 6d259164... \
+    --timing .ufo/waves/round-100/receipts/panel-timing-r100.txt \
+      --expect-timing-sha256 dd8d9f88... \
+    --expect-gate-sha256 2d604f7b...
+MADO_C2_R100: SETUP_ERROR timing receipt has no TIMING-DONE line or no timed legs
+exit=2
+
+The working-tree copy (e7280b53) carries the terminator and parses to
+timing_legs_timed=28, timing_ids_unique=28, max_elapsed_ms=708014 (r92_gate_defects),
+control_600s_would_mismatch=1; the panel's timeout_s=3600 gives 3,600,000 >= 1,416,028.
+
+## 4. Gate bytes moved during the wave
+
+37a0544b (base) -> 2d604f7b (landed at 219e14f4) -> acecb0ea (working tree, later).
+A run pinned to 2d604f7b against the live tree ended in SETUP_ERROR gate sha256, which
+is the pin doing its job. Every measurement here uses bytes materialised out of git
+(git show 219e14f4:quality/harm-watch.py), never the mutable tree.
+
+## 5. SETUP_ERROR / exit 2 paths (measured)
+
+  missing --timing                 SETUP_ERROR missing --timing                       exit 2
+  timing path not in --rev         SETUP_ERROR timing absent at 43309e6a: <path>      exit 2
+  timing sha256 != pinned          SETUP_ERROR timing sha256 0986a003... != pinned    exit 2
+  receipt without TIMING-DONE      SETUP_ERROR timing receipt has no TIMING-DONE line exit 2
+  panel / gate sha256 != pinned    SETUP_ERROR panel sha256 ... / gate sha256 ...      exit 2
+  scratch root with foreign entry  SETUP_ERROR scratch-root unusable                   exit 2
+  --rev not resolvable             SETUP_ERROR rev not resolvable in <repo>: <rev>     exit 2
+
+Missing or unpinned input never yields a green and never yields a silent miss.
+
+## 6. The landed panel at 219e14f4: eight of nine conjuncts green, one leg red
+
+Pinned run (gate bytes materialised from git, panel 6d259164, receipt e7280b53):
+
+MADO_C2_R100: TARGET_MISSED pred=PRED-C2-r100-v1 rev=219e14f4a890...
+  panel_legs=28 legs_run=28 mismatches=1 gate_elapsed_emitted=1
+  timing_legs_timed=28 timing_ids_unique=28 max_elapsed_ms=708014
+  panel_timeout_s=3600 control_600s_would_mismatch=1 selftest_failed=0
+  selftest_checks=33 selftest=checks=21 failed=0 mismatch_legs=ledger
+exit=1   wall 1315.89 s (21 m 55 s)
+
+  LEG ledger rc=1 expect=0 marker=MISS rc-and-marker-mismatch elapsed_ms=270
+
+Cause, measured with the pinned leg's own tool:
+
+  LEDGER-ROW reason=uncovered path=quality/counters/c1-r100-launchenv-path.py detail=no-row
+  LEDGER-ROW reason=uncovered path=quality/counters/c2-r100-harm-watch.py detail=no-row
+  LEDGER: population=201 ledger_rows=199 uncovered=2 dangling=0 bad_pointer=0
+          empty_desc=0 verdict=TARGET_MISSED rev=219e14f4a890...
+
+The round shipped two counters and no ledger rows for them (SKILL.md mentions both in prose at
+:3025 and :3028, but the checker reads a table). The other 27 legs are measured green, so
+[INFERENCE, not measured] adding the two rows turns the last conjunct green and completes the
+claim; the L1 must re-run the pinned command to confirm it.
+
+Two refinements this measurement forced back into the counter (both in b22ab669):
+  - --rev is resolved to a 40-hex commit before use: the r97c1_filetype leg rejects an
+    abbreviated rev ("not 40 hex"), which manufactured a second red leg on the first
+    pinned run (mismatches=2). After the fix the same bytes give mismatches=1.
+  - scratch directories are one character each (g/p/t/m) and the counter prints
+    MADO_C2_R100_NOTE: scratch_leg_path=N bytes, because that leg binds AF_UNIX sockets
+    and the kernel caps sun_path at 108 bytes. Measured: a 143-byte case path died with
+    "OSError: AF_UNIX path too long"; with a short root the same leg is green
+    (LEG r97c1_filetype rc=0 expect=0 marker=ok ok elapsed_ms=368881, 371.85 s).
+

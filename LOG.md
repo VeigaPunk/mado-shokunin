@@ -4755,7 +4755,14 @@ behaviour, not counter-verified). A2/A7/A8 are errata and named limits. Ledger:
   `controls/harm-panel-r100.json` carries `timeout_s 3600` with its 28 leg rows byte-identical to the
   round-99 panel's, and the timing receipt `receipts/panel-timing-r100.txt` times all 28 legs under a
   pinned `--timeout 7200` (max 708,014 ms; the 600 s control is derived from those rows, not asserted).
-  Counting receipt `receipts/c2-measured-r100.txt`.
+  Counting receipt `receipts/c2-measured-r100.txt`: **`MADO_C2_R100: TARGET_MET`**, exit 0, measured at
+  `d73a0648` (28/28 legs, `mismatches=0`). Disclosed: runs 1-2 (`receipts/c2-measured-run1-r100.txt`)
+  reported `mismatches=1` on `r97c1_filetype` (rc=2 in ~2 s) from deep scratch roots; the cause is
+  measured - that round-97 leg binds an AF_UNIX fixture inside its scratch and a `sun_path` over 108
+  bytes fails closed - and the counter now keeps the panel scratch one short level down and warns on
+  depth. Corroborating runs: `receipts/c2-measured-run3-shortroot-r100.txt`,
+  `receipts/c2-panel-direct-r100.txt` (28/28 green through the gate),
+  `receipts/c2-leg-r97c1-standalone-r100.txt`.
 - **A defect the round found and fixed in its own instrument.** The gate's timeout-elapsed selftest
   check substring-matched `"elapsed_ms=1"`, so a mutant reporting `elapsed_ms=10` passed it (mutant
   `h3b`, `w1/R100MMutHarm.md`). The check now parses the value and requires `>= 1000`; the mutant dies

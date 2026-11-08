@@ -1,0 +1,79 @@
+# R100MScoutHarm - C2 reconnaissance transcript (read-only; no lane file written)
+# lane: /home/vgpnk/Projects/shokunin/mado-shokunin  head: 219e14f4a89075005b3c4dfa87651356b1e9719c  base: 43309e6af9a3b57f1bc839a826bef1f8eb7495e4
+# date: 2026-11-08T02:35:23-03:00
+
+== 1. gate bytes at the round-99 pin rev and at HEAD ==
+$ git show 3b69f04113a235aace713bc1c84ea2b695606b6a:quality/harm-watch.py | sha256sum
+37a0544b160d9c5c5568fc45f9ed309f41b36fb093983313d72699423b4165b9  -
+$ sha256sum quality/harm-watch.py
+2d604f7b654f2e2710b612358fedf81fc028dddd47fd0934d9f82c065b226167  quality/harm-watch.py
+
+== 2. gate selftest check count (live bytes) ==
+$ python3 -I quality/harm-watch.py --selftest
+HARM_WATCH_SELFTEST: checks=33 failed=0
+
+== 3. pre-landing check-name delta (r99 live vs r100 draft) ==
+$ grep -o "record(\"[a-z0-9-]*\"" (each) | sort | wc -l
+live distinct record() names: 37
+r100-draft record() names:   37
+
+== 4. the landed counting command with the committed pins ==
+$ python3 -I quality/counters/c2-r100-harm-watch.py --repo . --rev <HEAD> --panel .ufo/waves/round-100/controls/harm-panel-r100.json --expect-panel-sha256 6d259164... --timing .ufo/waves/round-100/receipts/panel-timing-r100.txt --expect-timing-sha256 dd8d9f88... --expect-gate-sha256 2d604f7b... --scratch-root DIR
+SETUP_ERROR timing sha256 e7280b53a90caa36c06c06e73a351bbed5d404b2a18c4938d84ce2d083fd1e5d != pinned dd8d9f88c9ba4b51f01424e47098c4e3d15ba60f34cf3c71b3d444309ff20d54
+exit=0
+
+== 5. the timing receipt's TIMING-DONE line ==
+$ grep -c TIMING-DONE .ufo/waves/round-100/receipts/panel-timing-r100.txt
+1
+
+== 6. the ledger gate at HEAD and the panel's ledger leg at HEAD ==
+$ python3 -I quality/check-tool-ledger.py --repo . --rev HEAD
+LEDGER-ROW reason=uncovered path=quality/counters/c1-r100-launchenv-path.py detail=no-row
+LEDGER-ROW reason=uncovered path=quality/counters/c2-r100-harm-watch.py detail=no-row
+LEDGER: population=201 ledger_rows=199 uncovered=2 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=219e14f4a89075005b3c4dfa87651356b1e9719c
+$ python3 -I quality/harm-watch.py ... --only ledger
+LEG ledger rc=1 expect=0 marker=MISS rc-and-marker-mismatch elapsed_ms=593
+HARM_WATCH: legs=1 ok=0 mismatch=1
+
+== 7. the round-99 counter refuses any gate bytes but its pin (reads --rev) ==
+$ python3 -I quality/counters/c2-r99-harm-watch.py --repo . --rev <HEAD> ... --expect-gate-sha256 37a0544b...
+MADO_HARM_WATCH: SETUP_ERROR gate sha256 2d604f7b654f2e2710b612358fedf81fc028dddd47fd0934d9f82c065b226167 != pinned 37a0544b160d9c5c5568fc45f9ed309f41b36fb093983313d72699423b4165b9
+
+== 8. AF_UNIX sun_path threshold on this host (probe under the scout scratch) ==
+len= 59 OK
+len= 76 OK
+len= 92 OK
+len=100 OK
+len=108 FAIL AF_UNIX path too long
+len=116 FAIL AF_UNIX path too long
+
+== 9. census finding ids emitted by the gate (grep of the source) ==
+$ grep -o "PANEL_[A-Z_]*" quality/harm-watch.py | sort -u
+PANEL_DUPLICATE
+PANEL_LEG_COUNT
+PANEL_LEG_MISSING
+PANEL_LEG_UNKNOWN
+PANEL_ONLY_UNKNOWN
+PANEL_ROUND_MISSING
+PANEL_ROW
+PANEL_SETUP
+PANEL_UNREADABLE
+
+== 10. r99 panel facts ==
+$ python3 -c "json: timeout_s / expect_legs / len(legs) / sha256"
+timeout_s=600 expect_legs=28 legs=28
+sha256=160763ce7aa447016bad8e5b2c5a7c25f8866b1e8724d8eb0b75d8abb1dae39a
+ids=verify_selftest,verify_file_plane,index,ledger,mako_selftest,portals_selftest,mime_selftest,xdgmime_selftest,mimeglob_selftest,mimesniff_selftest,seat_reports_selftest,receipt_presence_selftest,gate_selftest,gate_seat_reports,gate_mimeglob,gate_portals,r90c2_receipt_presence,r92_gate_defects,r90c1_portal_routing,r94c1_mimeglob,r94c2_selftest_kills,r93c2_selftest_strength,r95c1_mimesniff,r95c2_selftest_kills,r96c1_magictext,r96c2_selftest_kills,r97c1_filetype,r97c2_counter_selftest
+
+== 11. addendum, 2026-11-08T02:35:49-03:00: receipt byte-stability note and the re-run with the CURRENT pins ==
+# The step-4 run above used a timing pin (dd8d9f88...) taken at 02:29; the file's bytes have since
+# changed (the TIMING-DONE line was appended by the L1 after that read). Current pins, measured now:
+timing sha256 now: e7280b53a90caa36c06c06e73a351bbed5d404b2a18c4938d84ce2d083fd1e5d
+panel  sha256 now: 6d259164de900f9997d399a75a234bef5f46cc39006b046979bd05b57f7e65ac
+# (the exit= lines above are the status of the piped tail, not of the counter; the decisive text
+#  is the SETUP_ERROR / MADO_C2_R100 line that precedes them)
+$ python3 -I quality/counters/c2-r100-harm-watch.py --repo . --rev HEAD --panel <r100 panel> --timing <r100 timing> ...
+# (no MADO_C2_R100 line above: the run replays the full 28-leg panel, which exceeds this seat s
+#  budget; it was stopped at 128 s wall with the replay still in flight. The conjunct VALUES it would
+#  read are derivable from the receipt - timing_legs_timed=28, max_elapsed_ms=708014,
+#  control_600s_would_mismatch=1, panel_timeout_s=3600 - but the verdict line was NOT observed.)

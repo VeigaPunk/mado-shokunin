@@ -1,0 +1,19 @@
+# C1 counting receipt (round 100, hyaku run 15, attempt 1)
+# command: python3 -I quality/counters/c1-r100-launchenv-path.py --repo . --rev 219e14f4a89075005b3c4dfa87651356b1e9719c --base-rev 43309e6af9a3b57f1bc839a826bef1f8eb7495e4 --cases .ufo/waves/round-100/controls/launchenv-cases-r100.json --expect-cases-sha256 7aba8a0f880b3e59edf7a731f2d2783babea7b275d280588ba2df2c5dd6df4a9 --mutants .ufo/waves/round-100/controls/launchenv-mutants-r100.json --expect-mutants-sha256 4f6667beed62b8238ce91a0ea1dadb2b665cb8129a10a10a37275f43a04698d7 --genseed .ufo/waves/round-100/controls/launchenv-fresh-r100.py --expect-genseed-sha256 18005e07176762ca07b9bb593245d2e0200d53b2a8cbafd8e0fbd3da27c1fc6b --expect-tool-sha256 3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228 --expect-execargv-sha256 49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713 --expect-gio-sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 --scratch-root /fast/scratch/hyaku/mado-r100/c1-measured
+# date: 2026-11-08T05:26:18Z host load: 76.25 87.87 122.35
+MADO_C1_R100: TARGET_MET pred=PRED-C1-r100-v1 rev=219e14f4a89075005b3c4dfa87651356b1e9719c base_rev=43309e6af9a3b57f1bc839a826bef1f8eb7495e4 tool_sha256=3b29dc65111a2f3efdd5aa282f74493ff53eff840a1c88a92054f0df2e9fb228 cases_sha256=7aba8a0f880b3e59edf7a731f2d2783babea7b275d280588ba2df2c5dd6df4a9 mutants_sha256=4f6667beed62b8238ce91a0ea1dadb2b665cb8129a10a10a37275f43a04698d7 genseed_sha256=18005e07176762ca07b9bb593245d2e0200d53b2a8cbafd8e0fbd3da27c1fc6b gio_sha256=d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 oracle_sha256=cbfff7a4b64e63f3e6861d29d1c5639de2c25abe2f6875088918abb45d129199 cases=77 classes=35 default_cases=10 default_classes=4 mutants=6 killed=6 fresh=60 fresh_seed=b13db5203f2db30e control_unset_as_empty=75 base_set_default_cases=0
+CONJUNCT ok default_cases>=6 value=10
+CONJUNCT ok default_classes>=3 value=4
+CONJUNCT ok cases_correct==cases_total value=77/77
+CONJUNCT ok fresh_correct==fresh_total value=60/60
+CONJUNCT ok mutants_killed==mutants_counted value=6/6
+CONJUNCT ok base_set_default_cases==0 value=0
+CONJUNCT ok control_unset_as_empty_correct<cases_total value=75
+MUTANT m1-default-no-dot killed cases_failed=1 pd-dot-root
+MUTANT m2-unset-as-empty killed cases_failed=2 pd-dot-root,pd-sysbin-unset
+MUTANT m3-no-workdir-join killed cases_failed=2 tx-viawd,pd-wd-unset
+MUTANT m4-empty-entry-bin killed cases_failed=3 pe-empty-str,pd-empty-root,pd-sysbin-empty
+MUTANT m5-exec-not-dir killed cases_failed=2 pd-abs,pd-onpath
+MUTANT m6-normalise-dot killed cases_failed=2 pe-dot,pd-dot-root
+VERDICT_LINE_SHA256 d441692e02d10582974418dd497aeb8576191870d4cd4420e51b42743e63c5fc
+# exit: 0
