@@ -1,0 +1,13 @@
+# C2 two-leg probe at the frozen 600 s per-leg cap (round 99, attempt 4)
+# command: python3 -I quality/harm-watch.py --repo . --rev 3b69f04113a235aace713bc1c84ea2b695606b6a #   --panel .ufo/waves/round-99/controls/harm-panel-r99.json --scratch-root /fast/scratch/r99c2 #   --only r92_gate_defects --only r97c1_filetype --json
+# date: 2026-11-08
+# why: the full-panel counting command scored mismatches=2 on these two legs; this probe isolates them
+#      (short scratch root also rules out the r97 fresh generator's AF_UNIX path-length failure).
+
+LEG r92_gate_defects rc=124 expect=0 marker=MISS rc-and-marker-mismatch+timeout-after-600s
+LEG r97c1_filetype rc=124 expect=0 marker=MISS rc-and-marker-mismatch+timeout-after-600s
+HARM_WATCH: legs=2 ok=0 mismatch=2
+{"repo": ".", "rev": "3b69f04113a235aace713bc1c84ea2b695606b6a", "panel": ".ufo/waves/round-99/controls/harm-panel-r99.json", "census": [], "legs_run": 2, "ok": 0, "mismatch": 2, "legs": [{"id": "r92_gate_defects", "round": "r92", "rc": 124, "expect_rc": 0, "marker_ok": false, "ok": false, "detail": "rc-and-marker-mismatch+timeout-after-600s"}, {"id": "r97c1_filetype", "round": "r97", "rc": 124, "expect_rc": 0, "marker_ok": false, "ok": false, "detail": "rc-and-marker-mismatch+timeout-after-600s"}], "exit": 1}
+# exit: 1
+# host load at probe time: load average 327.48 (32 cores), fleet-wide seat load
+# note: the probe ran 1201 s wall (2 legs x 600 s cap); neither leg finished inside the frozen cap.

@@ -4671,3 +4671,59 @@ names.
 - **Registry numbers (D2).** The entry's "466 rows / 119 entries" is the *records* state (`020af865`+),
   not the gated revision: the gate ran at `a3471631`, which has 462 rows / 118 entries. Round 99 re-runs
   the gate at the records tip and commits the receipt; the numbers are not rewritten here.
+
+## Round 99 — the launch spawn environment (capability), the harm watch as an instrument (2026-11-07, hyaku run 15, attempt 4)
+
+Declaration `.ufo/waves/round-99/claims-declaration-r99.md` (freeze block filled after wave `w1`; the
+attempt-3 measurement note records the `--rev HEAD` invocation error and the re-run). Claim text narrowed
+before filing under the pre-file falsification rule: `plans/round-99.md` A1 (the base already holds the
+`g_find_program_for_path` primitive in `tools/mado-mime.py:467`), A3 (the predicate's `selftest_checks` is
+the counter's fixture selftest, not the gate's `--selftest`), A4 (a per-leg setup error aborts the
+remainder), A5 (`r97c2_counter_selftest` was already named in `harm-final-r98.txt:41-43` at `fa4445af`;
+only `r97c1_filetype` was spot-check-only) and A6 (count/duplicate/round-missing census checks are gate
+behaviour, not counter-verified). A2/A7/A8 are errata and named limits. Ledger:
+`.ufo/waves/round-99/claim-falsification.tsv` (8 rows, 6 attack seats read).
+
+- C1 — coverage, new surface (capability): no lane tool answered the launch spawn environment at base;
+  `tools/mado-launchenv.py` now answers the composite around a launch argv — the load gate (`TryExec`
+  then `Exec`, each through `g_find_program_for_path(program, process PATH, Path=)`, and the
+  executable-and-not-a-directory test, with the `Unable to load application information` refusal), the
+  twelve-row `known_terminals` table in order with its `exec_arg` column and the `Terminal=true` prepend,
+  the post-prepend `argv[0]` lookup with its `Program ‘x’ not found in $PATH` refusal, `Path=` as the
+  child's cwd (empty inherits, unenterable fails with `cwd-failed`) and as the working directory of the
+  four searches, and `GIO_LAUNCHED_DESKTOP_FILE`. Measured at `56a9b299`: 67/67 frozen cases over 31/31
+  classes, 69/69 counted mutants killed (class_kills 31/31, 0 crashed, 0 survived), 60/60 fresh cases at
+  seed `7d00c2c940ceb88e`, controls behind (naive 1/67, held round-98 argv tool 4/67), tool selftest
+  90/90 (`.ufo/waves/round-99/receipts/c1-measured-r99.txt`). Entry
+  `corpus/knowledge/gio-launch-env-r99.md`; README index/frontier; SKILL and tool-ledger rows; SOURCES
+  466 → 469.
+- C2 — operability: `quality/harm-watch.py` replays the frozen 28-leg panel, each leg with a frozen `rc`
+  and stdout marker, after a census that fails closed on a leg the panel declares but does not carry (the
+  count finding net of the explained delta, plus duplicate, round-missing, unknown and missing ids); each
+  leg runs with a timeout under the caller's scratch root. The counting command at `3b69f041`:
+  panel_legs 28/28, legs_run 28, **mismatches=2** — `r92_gate_defects` and `r97c1_filetype` both hit the
+  panel's frozen 600 s per-leg cap (`rc=124 timeout-after-600s`) under fleet load; the two-leg probe at a
+  short scratch root reproduces both (`receipts/c2-probe-r99.txt`). The five planted panels are all
+  caught, the marker-blind gate copy is rejected, the always-OK stub is flagged and the counter selftest
+  is 17/17, but the frozen `mismatches == 0` conjunct is unmet: **TARGET_MISSED, honest stop** (A9); the
+  target is not narrowed after landing and the panel-timeout repair is routed to round 100. The
+  attempt-3 `TARGET_MET` line left no receipt; the attempt-4 re-derivation is the reported value. The
+  panel restores both round-98 dropped legs (`r97c1_filetype`, `r97c2_counter_selftest`; the latter is a
+  base-rev replay by its own pins, named limit A7).
+- Separability: C1 `SETUP_ERROR … tools/mado-launchenv.py absent at 2cbaa141`
+  (`receipts/c1-at-base-r99.txt`); C2 `SETUP_ERROR … quality/harm-watch.py absent at 2cbaa141`
+  (`receipts/c2-at-base-r99.txt`).
+- Frontier: SOURCES 466 → 469 rows / 119 → 120 entries (S532 `gio-tool-launch.c`, S533 `gutils.c`, S534
+  the Desktop Entry Specification recognised keys; all tier A, opened 2026-11-07); `used-by` appends on
+  S504, S506, S528, S529, S531; census start/end rc 0; read-back gate `rows=469 entries=120 findings=0`.
+  Mistakes M99-1..M99-3; QUALITY 170–172.
+- Assimilation: none (the staged `merge/mado/` package holds no entry on the launch/terminal/`Exec`
+  plane; the closest staged entry is the systemd unit fragment plane). considerthese: no
+  still-unimplemented proposal matched this round's surface.
+- Record repairs (round-98 spot-check D1–D8): S532–S534 rows (D1), readback receipt at the records tip
+  (D2), the two r98 SKILL pins (D3), the LOG r98 seed/mistake-count erratum (D4), the panel (D5),
+  QUALITY 170 (D6), this report (D7), the C2 two-commit attribution (D8).
+- Round shape: one v1 wave `w1` of 12 seats (4 executors, 2 mutation-testers, 2 reviewers, 1 critic,
+  1 scout, 1 scribe, 1 connector; attack 6/12 = 50 %); no residual call; no dead seats; round total 12.
+  The planner seat is the L1 (validator-frozen role); the bounded planning data-walk rode the scout and
+  the records reviewer.

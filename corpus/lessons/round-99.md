@@ -50,3 +50,44 @@ locator is produced by `grep -n` on the fetched bytes, never by reading a functi
 Shown able to fail: `grep -n 'Locates the first executable named' .ufo/waves/round-99/fetch/gutils.c`
 prints `280:`, and `grep -n 'Use the working dir as program path'` prints `322:` and `479:` — neither
 is `274` or `345`.
+
+**M99-3 — a frozen claim sentence was wider than the property its counter enforces, and only the wave's
+own attack seats found it.**
+Class: a before-state or control sentence that a reader would re-derive differently from the instrument
+(the Amendment-59 / addendum-§8 class; five lanes lost 26 of 26 claims to it).
+Evidence: C1's before-state named "the post-prepend `argv[0]` program lookup" as a surface no lane tool
+answered, while `tools/mado-mime.py` already models `g_find_program_for_path` at the base
+(`git show 2cbaa141:tools/mado-mime.py`, `find_program` at `:467`); C2 said "the two dropped legs were
+noticed only by the outside spot-check", while `.ufo/waves/round-98/receipts/harm-final-r98.txt:41-43`
+(committed `fa4445af`, before the spot-check) already names the `r97c2_counter_selftest` omission; and
+C2's `selftest_checks >= 12` is the counter's fixture selftest, not the gate's `--selftest`.
+Captured-by: the round's attack seats — `w1/R99MReviewRecords.md` §8 and §9.11,
+`w1/R99MCriticC2.md` F3/F9, `w1/R99MMutC2.md` F3/F4 — not any lane gate; the pre-file ledger
+(`.ufo/waves/round-99/claim-falsification.tsv`) is the first instrument that binds them.
+Fix: the claims were amended down to the enforceable sentences before filing (`plans/round-99.md`
+A1/A3/A4/A5/A6), the ledger reconciles every attack seat's artifact, and QUALITY criterion 172 makes
+the pre-file read permanent.
+Shown able to fail: `git show 2cbaa141:tools/mado-mime.py | grep -n 'def find_program'` prints `:467`
+(the primitive existed, so the original C1 sentence is false at the base), while the narrowed composite
+sentence has no counterexample in the wave; the pre-file gate run over a ledger with one attack-seat row
+removed prints `FINDING attack-seat-unread …` (control receipt
+`.ufo/waves/round-99/receipts/prefile-control-r99.txt`), and the frozen ledger exits 0.
+
+**M99-4 — a frozen per-leg timeout with no headroom converts host load into a red panel, and the
+round's claim number is judged on it.**
+Class: an instrument limit (a wall-clock cap) that is an undeclared input to the predicate; the
+round-98/99 panel chose 600 s at `e39cd5e0`, below the worst leg's loaded duration.
+Evidence: the attempt-4 re-derivation of the frozen C2 command scored `mismatches=2` —
+`r92_gate_defects` and `r97c1_filetype` both `rc=124 timeout-after-600s` at the cap under fleet load
+(load average 327 on 32 cores); the two-leg probe at a short scratch root reproduces both
+(`.ufo/waves/round-99/receipts/c2-measured-r99.txt`, `c2-probe-r99.txt`). The mutation seat had
+predicted the class before the freeze (`w1/R99MMutC2.md` F5: a lowered cap voids a slow leg's
+discrimination); the cap was nonetheless re-frozen to 600 s.
+Captured-by: the round's own re-derivation, not a wave seat (the wave flagged the class, the
+pre-file ledger read the wording, but no instrument watched the cap).
+Fix: the C2 claim files as an honest stop (`plans/round-99.md` A9); the repair routed to round 100
+is a re-frozen panel whose per-leg cap is above the measured worst leg plus headroom (or a
+per-leg declared expectation), never a post-data target move.
+Shown able to fail: the two-leg probe exits 1 with `LEG … rc=124 … timeout-after-600s` twice at the
+frozen cap; the panel's own `timeout_s` is 600 and the counter passes no `--timeout`, so a leg
+needing >600 s is scored as a mismatch.

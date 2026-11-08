@@ -158,4 +158,50 @@ D8 the C2 commit attribution (erratum).
 
 ## Freeze block
 
-(filled after the wave returns and the controls are scored)
+Filled after the wave returns and the controls are scored.
+
+**C1 — coverage (capability).** Counting command (full pinned argv; `REV` below is the measured
+revision `56a9b2992f1bcd1a1752f77b5b8ce8c4bc8634ea`):
+
+```
+python3 -I quality/counters/c1-r99-launchenv.py --repo . --rev 56a9b2992f1bcd1a1752f77b5b8ce8c4bc8634ea --base-rev 2cbaa141f42df9dfeee4d207cae6558a4dd59863 --cases .ufo/waves/round-99/controls/launchenv-cases-r99.json --expect-cases-sha256 14b4cc571a35bb5b4c6996a4a3fde19ff71ce9f26dabe3dd4142eec162f82acd --mutants .ufo/waves/round-99/controls/launchenv-mutants-r99.json --expect-mutants-sha256 57b11e14ad5aeab2878aaa95379949c043825ab29561057823f2b3195bf85e36 --genseed .ufo/waves/round-99/controls/launchenv-fresh-r99.py --expect-genseed-sha256 5012642324f61bc6ee63d295b1cdb2cc91d35561442cc136e63f632257fe6dbf --expect-tool-sha256 a63c20c886a2bd840d80966d531e055e9c4f5d3accb431e4b0e317e04523eb16 --expect-execargv-sha256 49f7fecdc3bef99a077fe73ac12f5fe211d7ae8c41df5ddc949daf685405f713 --expect-gio-sha256 d216426080f847bfccdc7c735a4f349dc74f524530a19e8b1c32d04270cfc462 --scratch-root DIR
+```
+
+Measured: `TARGET_MET pred=PRED-C1-r99-v1 rev=56a9b2992f1bcd1a1752f77b5b8ce8c4bc8634ea` —
+cases=67/67, classes=31/31, mutants=69/69 killed, fresh=60/60 seed=7d00c2c940ceb88e,
+control_naive=1/67, control_held_r98=4/67. Receipt `.ufo/waves/round-99/receipts/c1-measured-r99.txt`.
+Separability: `SETUP_ERROR … tools/mado-launchenv.py absent at 2cbaa141` (exit 2),
+receipt `receipts/c1-at-base-r99.txt`.
+
+**C2 — operability.** Counting command (full pinned argv; `REV` below is the measured revision
+`3b69f04113a235aace713bc1c84ea2b695606b6a` — the first tip carrying the gate, the counter and the
+panel at their pinned shas):
+
+```
+python3 -I quality/counters/c2-r99-harm-watch.py --repo . --rev 3b69f04113a235aace713bc1c84ea2b695606b6a --base-rev 2cbaa141f42df9dfeee4d207cae6558a4dd59863 --panel .ufo/waves/round-99/controls/harm-panel-r99.json --expect-panel-sha256 160763ce7aa447016bad8e5b2c5a7c25f8866b1e8724d8eb0b75d8abb1dae39a --planted-dir .ufo/waves/round-99/controls/harm-planted --expect-gate-sha256 37a0544b160d9c5c5568fc45f9ed309f41b36fb093983313d72699423b4165b9 --scratch-root DIR
+```
+
+Measured: `MADO_HARM_WATCH: TARGET_MET pred=PRED-C2-r99-v1 rev=3b69f041…` — panel_legs=28
+declared_legs=28 legs_run=28 mismatches=0, all five planted flags=1, marker_blind_flagged=1,
+stub_flagged=1, selftest checks=17 failed=0. Receipt `.ufo/waves/round-99/receipts/c2-measured-r99.txt`.
+Separability: `SETUP_ERROR … quality/harm-watch.py absent at 2cbaa141` (exit 2),
+receipt `receipts/c2-at-base-r99.txt`.
+
+**Measurement note (attempt 3).** The first C2 counting run passed `--rev HEAD`; the gate's `REV`
+substitution then handed the literal `HEAD` to the round-97 declaration legs, and `r97c1_filetype`'s
+inner counter refuses a non-40-hex rev (`setup-rev-format`), producing one mismatch out of 28 —
+`TARGET_MISSED … missed=mismatches_zero`. The miss was an invocation error, not a panel or gate
+defect: the panel sha, gate sha and every other leg's rc/marker were unchanged. The counter was
+re-run with the full measured revision; the receipt above is that run. The declaration's `--rev
+<rev>` placeholder is the measured revision, never a symbolic ref — a round counter that replays
+declaration legs must receive a resolvable revision.
+
+**Measurement note (attempt 4).** The inherited attempt-3 `TARGET_MET` above left no receipt
+(`receipts/c2-measured-r99.txt` was absent at attempt-4 start). Re-deriving the frozen command at
+the same revision produced `mismatches=2`: `r92_gate_defects` and `r97c1_filetype` hit the panel's
+frozen 600 s per-leg cap (`rc=124`, `timeout-after-600s`) under fleet load (load average 327 / 32
+cores); the two-leg probe at a short scratch root reproduces both, and the full run's earlier
+`r97c1_filetype` `rc=2` was its fresh generator's AF_UNIX path-length failure (long scratch root).
+The predicate is unchanged and is **unmet** on this host: the round files C2 as an honest stop
+(`plans/round-99.md` A9), with the repair routed to round 100. Receipts:
+`receipts/c2-measured-r99.txt` (full panel) and `receipts/c2-probe-r99.txt` (two-leg probe).

@@ -5612,3 +5612,59 @@ S531, S504, S506, S527).
   closed. The census remains the shape/enum/URL authority; the gate adds the read-back direction.
 - Round shape: one v1 wave of 11 seats (4 executors, 2 mutation-testers, 1 scout, 1 scribe, 1 connector,
   1 reviewer, 1 critic; attack 4/11 = 36 %); no residual call; no dead seats; round total 11.
+
+## Round 99 — the launch spawn environment (capability), the harm watch as an instrument (2026-11-07, hyaku run 15, attempt 4)
+
+Declaration `.ufo/waves/round-99/claims-declaration-r99.md` (freeze block filled after wave `w1`);
+claims narrowed before filing per `plans/round-99.md` A1/A3/A4/A5/A6 (A2/A7/A8 errata and named
+limits). Stagnation nudge not claimed; every owned axis at 10, so the lowest-axis duty is a tie.
+Sourced claim: C1 (S532, S533, S534). Saturation 9.0 / window 3 unchanged; no retirement.
+
+| Claim / axis | Counting command | Before → after | Verdict |
+|---|---|---|---|
+| C1 **coverage** (new surface, capability): the launch spawn environment around a desktop entry's argv | `python3 -I quality/counters/c1-r99-launchenv.py --repo . --rev 56a9b2992f1bcd1a1752f77b5b8ce8c4bc8634ea --base-rev 2cbaa141f42df9dfeee4d207cae6558a4dd59863 --cases .ufo/waves/round-99/controls/launchenv-cases-r99.json --expect-cases-sha256 14b4cc57…82acd --mutants .ufo/waves/round-99/controls/launchenv-mutants-r99.json --expect-mutants-sha256 57b11e14…85e36 --genseed .ufo/waves/round-99/controls/launchenv-fresh-r99.py --expect-genseed-sha256 50126423…e6dbf --expect-tool-sha256 a63c20c8…23eb16 --expect-execargv-sha256 49f7fecd…5f713 --expect-gio-sha256 d2164260…cfc462 --scratch-root DIR` (full pinned argv in the declaration's C1 block) | at base no lane tool answers the composite (`SETUP_ERROR … absent at 2cbaa141`, 0 scored; the base already holds the `g_find_program_for_path` primitive at `tools/mado-mime.py:467`, so the claim is the composite, A1) → at `56a9b299`: `TARGET_MET pred=PRED-C1-r99-v1` cases=67/67 classes=31/31 mutants=69/69 killed class_kills=31/31 fresh=60/60 seed=7d00c2c940ceb88e control_naive=1/67 control_held_r98=4/67; bounded `10 × 67/67` → **10.0000** | improved on the frozen sixty-seven-case set |
+| C2 **operability**: the harm watch as an instrument, over a frozen 28-leg panel | `python3 -I quality/counters/c2-r99-harm-watch.py --repo . --rev 3b69f04113a235aace713bc1c84ea2b695606b6a --base-rev 2cbaa141f42df9dfeee4d207cae6558a4dd59863 --panel .ufo/waves/round-99/controls/harm-panel-r99.json --expect-panel-sha256 160763ce…1dae39a --planted-dir .ufo/waves/round-99/controls/harm-planted --expect-gate-sha256 37a0544b…4165b9 --scratch-root DIR` | at base no gate exists (`SETUP_ERROR … quality/harm-watch.py absent at 2cbaa141`); the round-98 watch's first run had 28 legs and its final run 26, with `r97c1_filetype` noticed only by the outside spot-check (A5) → at `3b69f041` the attempt-4 re-derivation of the unchanged predicate: `MADO_HARM_WATCH: TARGET_MISSED pred=PRED-C2-r99-v1` panel_legs=28/28 legs_run=28 **mismatches=2** (`r92_gate_defects`, `r97c1_filetype` both `rc=124 timeout-after-600s` at the panel's frozen per-leg cap under host load; the two-leg probe reproduces both), all five planted flags=1, marker_blind=1, stub=1, counter selftest 17/0; the gate/counter/panel land and their discrimination is green, but the frozen `mismatches == 0` conjunct is unmet → bounded `10 × 26/28` = 9.2857; **TARGET_MISSED (honest stop, A9)** — target not narrowed after landing, panel-timeout repair routed to round 100 | missed on this host at the frozen 600 s cap; instrument landed, no axis harmed |
+| separability | C1 counter at the base; C2 counter at the base | C1 `SETUP_ERROR` (`receipts/c1-at-base-r99.txt`); C2 `SETUP_ERROR` (`receipts/c2-at-base-r99.txt`) | — |
+
+### Capability demonstrated
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| GIO 2.90.1 launch spawn environment (`tools/mado-launchenv.py`, read-only) | Answer, read-only, what surrounds a launch argv: the load gate (`TryExec` then `Exec`, both through `g_find_program_for_path` with the entry's `Path=` as working directory, plus the executable-and-not-a-directory test), the twelve-row terminal table in order with its `exec_arg` column and the `Terminal=true` prepend, the post-prepend `argv[0]` lookup, `Path=` as the child's cwd (empty inherits, unenterable fails the spawn), and `GIO_LAUNCHED_DESKTOP_FILE`; 67 frozen cases, a seeded fresh leg, 69 counted mutants | `.ufo/waves/round-99/receipts/c1-measured-r99.txt`; `corpus/knowledge/gio-launch-env-r99.md` | 99 |
+
+### Named limits (append-only, round 99)
+
+- C1: the spawn order of multi-spawn launches is not modelled (the round-98 limit carries);
+  `DBusActivable`, the `gio-launch-desktop` wrapper's own environment scrubbing, the portal path and
+  whether the process survives are not modelled; the unset-PATH default is modelled but no frozen case
+  exercises it (A8). Declaration citation errata: the spawn call is `gdesktopappinfo.c:3134` and the
+  load-gate `IS_DIR` test is `gutils.c:340` (A2).
+- C2: the counter's `selftest_checks` is its own fixture selftest, not the gate's `--selftest`, which the
+  counting command never runs (A3); `PANEL_LEG_COUNT`/`PANEL_DUPLICATE`/`PANEL_ROUND_MISSING` are gate
+  behaviour exercised by the gate's selftest, not by the counter's planted panels (A6); a per-leg setup
+  error aborts the remaining panel and exits 2 (A4); `r97c2_counter_selftest` is a base-rev replay by
+  its own pins (A7); nine leg markers embed a selftest check count, so a later round that adds a check
+  must re-freeze the panel; the frozen 600 s per-leg cap has no headroom for `r92_gate_defects` and
+  `r97c1_filetype` under fleet load, so `mismatches == 0` is unmet on this host (A9, honest stop).
+- Round shape: one v1 wave of 12 seats (4 executors, 2 mutation-testers, 2 reviewers, 1 critic, 1 scout,
+  1 scribe, 1 connector; attack 6/12 = 50 %); no residual call; no dead seats; round total 12.
+
+### Harm watch (round 99, at the records tip)
+
+The C2 counting command above is the round's full-panel watch: 28/28 legs run, 26 green, the declared
+`r90c1_portal_routing` `SETUP_ERROR` rc 2 among them, and two legs (`r92_gate_defects`,
+`r97c1_filetype`) timed out at the panel's frozen 600 s cap under host load — `mismatches=2`,
+`TARGET_MISSED` (honest stop, A9). The two-leg probe at a short scratch root reproduces both timeouts
+(`receipts/c2-probe-r99.txt`). No axis harmed: the instrument lands and its discrimination controls are
+green; the frozen zero is the unmet part.
+
+### Correction (round 99 — the round-98 rows above)
+
+- **C1 fresh seed.** The round-98 row says `e2bf4d1b757e2e7b`; the receipt prints
+  `fresh_seed=f00d3edcdb285ac0`, and `e2bf4d1b757e2e7b` occurs in no round-98 receipt. Measured value:
+  `f00d3edcdb285ac0`; the wrong value is retained in the row above as the historical error (LOG
+  correction at `LOG.md:4657-4668`).
+- **C2 registry numbers.** The round-98 C2 row's "466 rows / 119 entries" is the *records* state
+  (`020af865`+), not the gated revision: the gate ran at `a3471631` with 462 rows / 118 entries. Round 99
+  re-ran the read-back gate at the records tip: `rows=469 entries=120 findings=0`
+  (`.ufo/waves/round-99/receipts/readback-r99.txt`).

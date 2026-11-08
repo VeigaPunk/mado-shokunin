@@ -1304,3 +1304,18 @@ with the freeze block is corrected append-only with both values named. Shown abl
 `mado-r98-execargv` row carried `acfcc4f7…`/`5f074f70…` while `git show master:tools/mado-execargv.py` hashes
 `49f7fecd…` and the mutants file `32c207b3…`; the outside spot-check (D3) found it, no lane instrument did
 (lesson: lessons/round-99.md#mistakes M99-1).
+
+**172. A frozen claim is filed only after its own wave's adversarial artifacts have been read against
+its STATED wording, and any sentence wider than the enforced property is amended down before the
+report.** A counter that is green on a narrower property than the claim's sentence does not admit the
+sentence: the wave's reviewer/critic/mutation-tester/connector artifacts are the test, the pre-file
+falsification ledger (five columns, one row per claim×artifact, every attack seat read) is the record,
+and the narrowing amendment lives in `plans/round-N.md` with the artifact that forced it. The rule is
+binary: amend the sentence to the enforceable property, citing the artifact, or file an honest stop
+whose deliverable is the narrowing. Shown able to fail: at `2cbaa141`, `tools/mado-mime.py:467` already
+models `g_find_program_for_path`, so the round-99 C1 sentence "no lane tool answers the post-prepend
+`argv[0]` lookup" is false as written (`git show 2cbaa141:tools/mado-mime.py | grep -n 'def find_program'`);
+`harm-final-r98.txt:42-43` at `fa4445af` already names the `r97c2_counter_selftest` omission, so C2's
+"both dropped legs were noticed only by the outside spot-check" is half false. Both were narrowed in
+`plans/round-99.md` A1/A5 and reconciled in `claim-falsification.tsv`; the pre-file gate exits 0 on the
+frozen ledger and 1 when an attack-seat row is absent (lesson: lessons/round-99.md#mistakes M99-3).
