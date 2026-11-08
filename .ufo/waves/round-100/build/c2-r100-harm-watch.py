@@ -393,6 +393,25 @@ def selftest_checks():
         # 9 missing --timing is a setup error
         rc, out = run_counter(timing_bytes_=b"no done line\nleg00 rc=0 elapsed_ms=5\n")
         record("timing-undone-setup", rc == 2 and "SETUP_ERROR timing receipt" in out, out[-300:])
+
+        # 10 a scratch root holding a foreign entry is refused, not reused
+        foreign = os.path.join(root, "scratch-foreign")
+        os.makedirs(foreign, exist_ok=True)
+        with open(os.path.join(foreign, "keep"), "w") as fh:
+            fh.write("x")
+        argv = [sys.executable, "-I", counter, "--repo", repo,
+                "--rev", state["rev"], "--base-rev", state["rev"],
+                "--panel", "controls/panel.json",
+                "--expect-panel-sha256", sha(state["panel"]),
+                "--timing", "receipts/timing.txt",
+                "--expect-timing-sha256", sha(state["timing"]),
+                "--expect-gate-sha256", sha(state["gate"]),
+                "--scratch-root", foreign]
+        r = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                           timeout=900, cwd=repo, env=fixture_env)
+        out = r.stdout.decode("utf-8", "replace")
+        record("scratch-foreign-setup",
+               r.returncode == 2 and "SETUP_ERROR scratch-root unusable" in out, out[-300:])
         notes.append("fixture_rev=%s" % rev[:7])
     finally:
         shutil.rmtree(root, ignore_errors=True)
@@ -433,6 +452,30 @@ def main():
     if fresh_scratch(a.scratch_root) is None:
         return setup("scratch-root unusable or has unmarked entries: %s" % a.scratch_root)
     root = a.scratch_root
+    # Advisory, never a conjunct.  One panel leg (r97c1_filetype) creates
+    # AF_UNIX sockets below <scratch>/m/<leg-id>/; the kernel caps sun_path at
+    # 108 bytes, so a long --scratch-root turns that leg red for a path-length
+    # reason rather than a behavioural one.  The limit was measured at 143
+    # bytes for the longest case path (".../sock-06-synth-db-socket/s.sock").
+    leg_base = os.path.join(root, "m", "r97c1_filetype")
+    emit("MADO_C2_R100_NOTE: scratch_leg_path=%d bytes (r97c1_filetype needs "
+         "this plus its case dir under 108; use a short --scratch-root)"
+         % len(leg_base))
+
+    # The gate substitutes --rev into panel rows verbatim, and at least one leg
+    # (r97c1_filetype) refuses an abbreviated rev.  Resolve once, here, and use
+    # the canonical 40-hex commit for every git read and for the gate's --rev.
+    if a.rev == "worktree":
+        rev = a.rev
+    else:
+        rc, out, _ = sh_bytes(["git", "-C", a.repo, "rev-parse", "--verify",
+                               "%s^{commit}" % a.rev])
+        if rc != 0:
+            return setup("rev not resolvable in %s: %s" % (a.repo, a.rev))
+        rev = out.decode().strip()
+        if not re.fullmatch(r"[0-9a-f]{40}", rev):
+            return setup("rev did not resolve to a commit sha: %s -> %s" % (a.rev, rev))
+    a.rev = rev
 
     # gate bytes
     if a.gate:
@@ -449,7 +492,7 @@ def main():
     gate_sha = sha(gate_bytes_local)
     if gate_sha != a.expect_gate_sha256:
         return setup("gate sha256 %s != pinned %s" % (gate_sha, a.expect_gate_sha256))
-    gdir = mark_dir(os.path.join(root, "gate"))
+    gdir = mark_dir(os.path.join(root, "g"))
     gate_path = os.path.join(gdir, "harm-watch.py")
     with open(gate_path, "wb") as fh:
         fh.write(gate_bytes_local)
@@ -479,7 +522,7 @@ def main():
     timeout_s = panel.get("timeout_s")
     if not isinstance(timeout_s, (int, float)) or isinstance(timeout_s, bool):
         return setup("panel json has no numeric timeout_s")
-    pdir = mark_dir(os.path.join(root, "panel"))
+    pdir = mark_dir(os.path.join(root, "p"))
     panel_path = os.path.join(pdir, "panel.json")
     with open(panel_path, "wb") as fh:
         fh.write(panel_bytes_local)
@@ -503,9 +546,10 @@ def main():
     if parsed is None:
         return setup("timing receipt has no TIMING-DONE line or no timed legs")
     timing_legs_timed = len(parsed)
+    timing_ids_unique = len({lid for lid, _ in parsed})
     max_elapsed_ms = max(ms for _, ms in parsed)
     control_600s_would_mismatch = sum(1 for _, ms in parsed if ms > SIX_HUNDRED_S_MS)
-    tdir = mark_dir(os.path.join(root, "timing"))
+    tdir = mark_dir(os.path.join(root, "t"))
     timing_path = os.path.join(tdir, "timing.txt")
     with open(timing_path, "wb") as fh:
         fh.write(timing_bytes_local)
@@ -526,17 +570,29 @@ def main():
 
     # full panel run at the measured rev, with --json
     main_res = run_gate(gate_path, a.repo, a.rev, panel_path,
-                        mark_dir(os.path.join(root, "run-main")))
+                        mark_dir(os.path.join(root, "m")))
     if "error" in main_res:
         return setup("gate run failed: %s" % main_res["error"])
+    try:
+        with open(os.path.join(root, "m", "gate.out"), "w",
+                  encoding="utf-8", errors="replace") as fh:
+            fh.write(main_res.get("out", ""))
+    except OSError:
+        pass
     panel_legs = main_res.get("legs")
     mismatches = main_res.get("mismatch")
     if panel_legs is None or mismatches is None:
         return setup("gate produced no HARM_WATCH summary")
-    legs_run = (main_res.get("json", {}) or {}).get("legs_run")
-    if not isinstance(legs_run, int):
-        legs_run = panel_legs
+    # legs_run comes from the gate's --json object only: a gate that ignores
+    # --json must fail this conjunct, never inherit the human summary's count.
+    legs_run = (main_res.get("json") or {}).get("legs_run")
+    if isinstance(legs_run, bool) or not isinstance(legs_run, int):
+        legs_run = None
     gate_elapsed_emitted = elapsed_emitted(main_res)
+    # diagnostic only, never a conjunct: name the legs that disagree so a
+    # reader does not have to re-run a 28-leg panel to learn which ones they are
+    bad_legs = [l.get("id") for l in (main_res.get("json") or {}).get("legs", [])
+                if isinstance(l, dict) and not l.get("ok")]
 
     conds = {
         "panel_legs_28": panel_legs == 28,
@@ -560,14 +616,16 @@ def main():
         st_checks, st_failed_n, selftest_txt = 0, 0, "skipped"
     emit("MADO_C2_R100: %s pred=PRED-C2-r100-v1 rev=%s base_rev=%s gate_sha256=%s "
          "panel_sha256=%s timing_sha256=%s panel_legs=%s legs_run=%s mismatches=%s "
-         "gate_elapsed_emitted=%d timing_legs_timed=%d max_elapsed_ms=%d "
+         "gate_elapsed_emitted=%d timing_legs_timed=%d timing_ids_unique=%d "
+         "max_elapsed_ms=%d "
          "panel_timeout_s=%s control_600s_would_mismatch=%d selftest_failed=%d "
-         "selftest_checks=%d selftest=%s%s"
+         "selftest_checks=%d selftest=%s mismatch_legs=%s%s"
          % (verdict, a.rev, a.base_rev, gate_sha, panel_sha, timing_sha,
             panel_legs, legs_run, mismatches, gate_elapsed_emitted,
-            timing_legs_timed, max_elapsed_ms, timeout_s,
+            timing_legs_timed, timing_ids_unique, max_elapsed_ms, timeout_s,
             control_600s_would_mismatch, selftest_failed, selftest_checks_n,
-            selftest_txt, (" missed=" + ",".join(bad)) if bad else ""))
+            selftest_txt, ",".join(bad_legs) if bad_legs else "-",
+            (" missed=" + ",".join(bad)) if bad else ""))
     if a.json:
         emit(json.dumps({
             "verdict": verdict, "rev": a.rev, "base_rev": a.base_rev,
@@ -577,10 +635,12 @@ def main():
             "mismatches": mismatches,
             "gate_elapsed_emitted": gate_elapsed_emitted,
             "timing_legs_timed": timing_legs_timed,
+            "timing_ids_unique": timing_ids_unique,
             "max_elapsed_ms": max_elapsed_ms,
             "panel_timeout_s": timeout_s,
             "control_600s_would_mismatch": control_600s_would_mismatch,
             "selftest_failed": selftest_failed,
+            "mismatch_legs": bad_legs,
             "conds": conds,
         }))
     return 0 if met else 1
