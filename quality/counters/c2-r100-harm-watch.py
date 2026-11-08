@@ -223,11 +223,21 @@ def main(argv=None):
                  selftest_failed, max_elapsed_ms, control_600s, timing_legs_timed, rc))
         for (name, ok, val) in conjuncts:
             print("CONJUNCT %s %s value=%s" % ("ok" if ok else "MISS", name, val))
+        # the receipt carries the gate's own verdict lines: every leg with its parsed detail and
+        # the summary, so a mismatch is identified without re-running anything
+        for ln in out.splitlines():
+            if ln.startswith("LEG "):
+                m2 = LEG_LINE.match(ln)
+                print("GATE_LEG %s" % (ln if m2 is None else
+                                      "%s rc=%s expect=%s detail=%s"
+                                      % (m2.group(1), m2.group(2), m2.group(3), m2.group(5))))
+            elif ln.startswith("HARM_WATCH:"):
+                print("GATE_SUMMARY %s" % ln)
         if mismatches:
-            bad = [ln for ln in out.splitlines()
-                   if ln.startswith("LEG ") and not ln.rstrip().endswith(" ok")]
-            for ln in bad[:10]:
-                print("FAILING_LEG %s" % ln)
+            for ln in out.splitlines():
+                m2 = LEG_LINE.match(ln)
+                if ln.startswith("LEG ") and m2 is not None and m2.group(5) != "ok":
+                    print("FAILING_LEG %s" % ln)
         if selftest_failed:
             print("SELFTEST_LINE %s" % selftest_line[0])
         print("VERDICT_LINE_SHA256 %s" % sha("%s|%s" % (a.rev, verdict)))

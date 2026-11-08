@@ -3022,6 +3022,17 @@ through it. `--path` is the PATH the launching process would see; omit it to use
 own PATH. A case that sets `Terminal=true` MUST be measured with a PATH holding only the case's own
 bin directories: this host has `/usr/bin/xdg-terminal-exec`, so a host PATH starts a real terminal.
 
+The round-100 instruments are `quality/counters/c1-r100-launchenv-path.py` (the unset-PATH default
+branch: 77 frozen cases over 35 classes with 10 `path-default-*` cases, six anchored mutants, a
+seeded fresh leg, the `unset-as-empty` control, and a `PATH`-absent environment for every
+`path: null` case) and `quality/counters/c2-r100-harm-watch.py` (the 28-leg panel at `--rev` whose
+`LEG` lines and `--json` legs must carry `elapsed_ms`, plus the per-leg timing receipt and the
+`timeout_s >= 2*max_elapsed_ms` cap arithmetic). The harm watch itself now prints `elapsed_ms` on
+every `LEG` line and in `--json`; the panel that judges it is
+`.ufo/waves/round-100/controls/harm-panel-r100.json` (`timeout_s` 3600 = 2.5x the measured worst
+leg, 708,014 ms). Limits and evidence: `corpus/knowledge/gio-launch-path-default-r100.md` and
+`corpus/lessons/round-100.md`.
+
 Use `python3 -I quality/harm-watch.py --repo . --rev REV --panel PANEL.json --scratch-root DIR` to
 replay the lane's prior counting-command legs with a verdict. The panel declares `expect_legs`,
 `rounds` and `legs`; the census fails closed on a leg the panel declares but does not carry, so a

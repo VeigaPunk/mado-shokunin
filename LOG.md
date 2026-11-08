@@ -4727,3 +4727,57 @@ behaviour, not counter-verified). A2/A7/A8 are errata and named limits. Ledger:
   1 scout, 1 scribe, 1 connector; attack 6/12 = 50 %); no residual call; no dead seats; round total 12.
   The planner seat is the L1 (validator-frozen role); the bounded planning data-walk rode the scout and
   the records reviewer.
+
+## Round 100 — the unset-PATH default branch becomes a measured case class (C1, coverage), the harm watch's per-leg cap becomes measured and the panel runs green (C2, operability)
+
+- 2026-11-08 — round 100, hyaku run 15, attempt 1. Base `43309e6af9a3b57f1bc839a826bef1f8eb7495e4`
+  (round-99 closure tip, the non-author verifier spot-check commit). Declaration
+  `.ufo/waves/round-100/claims-declaration-r100.md`; frozen predicates `PRED-C1-r100-v1` /
+  `PRED-C2-r100-v1` in `.ufo/waves/round-100/claims.json`; pre-file amendments A1–A5 / B1–B5 in
+  `plans/round-100.md`, each naming the wave artifact that forced it.
+- **C1 (coverage) — the PATH-unset default branch.** Before: `tools/mado-launchenv.py` models
+  `g_find_program_for_path`'s unset default (`/bin:/usr/bin:.`, `gutils.c:376-389`) and **zero** frozen
+  cases reach it — both round-99 `path-unset` cases carry an absolute `Exec` and return at
+  `gutils.c:332-357` before the PATH source is read (`receipts/c1-at-base-r100.txt`). After: the case
+  file `.ufo/waves/round-100/controls/launchenv-cases-r100.json` carries **77 cases / 35 classes**, of
+  which **10 cases in 4 `path-default-*` classes** are new, each label measured twice against the
+  installed `/usr/bin/gio` (`d2164260…cfc462`, glib2 2.90.1-1) with agreeing results; the candidate
+  answers **77/77**, a seeded fresh leg scores **60/60**, and **6/6** anchored mutants of the program
+  lookup are killed. `m1` (default without its trailing `.`) and `m2` (unset read as empty) **survive
+  the round-99 set alone** — the measured gap proof that the class binds the branch
+  (`controls/launchenv-mutants-r100-probe.txt`). The `unset-as-empty` control scores 75/77.
+  Counting receipt `receipts/c1-measured-r100.txt` at `219e14f4` (exit 0, `TARGET_MET`, all seven
+  conjuncts).
+- **C2 (operability) — the harm watch's cap.** Before: the frozen 28-leg panel carries `timeout_s 600`
+  with no per-leg timing, and one leg exceeds it on this host (`r92_gate_defects` at 708,014 ms measured
+  here; round 99 measured two). After: `quality/harm-watch.py` prints `elapsed_ms` on every `LEG` line
+  and per leg in `--json` (setup, spawn-failed and timeout legs included), the panel
+  `controls/harm-panel-r100.json` carries `timeout_s 3600` with its 28 leg rows byte-identical to the
+  round-99 panel's, and the timing receipt `receipts/panel-timing-r100.txt` times all 28 legs under a
+  pinned `--timeout 7200` (max 708,014 ms; the 600 s control is derived from those rows, not asserted).
+  Counting receipt `receipts/c2-measured-r100.txt`.
+- **A defect the round found and fixed in its own instrument.** The gate's timeout-elapsed selftest
+  check substring-matched `"elapsed_ms=1"`, so a mutant reporting `elapsed_ms=10` passed it (mutant
+  `h3b`, `w1/R100MMutHarm.md`). The check now parses the value and requires `>= 1000`; the mutant dies
+  (2 failures) and the gate selftest is 33/33 (`f94f7a94`). Named limit carried into the report: mutant
+  `h2` (a wall clock instead of a monotonic one) survives every lane instrument — nothing pins the
+  clock source.
+- Record repairs (round-99 spot-check §6): the off-by-one `find_program` pointer corrected append-only in
+  `corpus/lessons/round-99.md` and `corpus/QUALITY.md` (172a); the C1 A8 residual is this round's C1;
+  the attack-share arithmetic corrected in the report (attack roles only, 5/16 = 31 %).
+- Frontier: SOURCES 469 → 469 rows / 120 → 121 entries (S533 `used-by` extended to the new entry; no new
+  row — S533 already held the scope); census start and end rc 0; read-back gate
+  `rows=469 entries=121 findings=0`; index `121/121`, ledger `uncovered=0`.
+- Assimilation: none — the `merge/mado/` sweep returns no hit on this round's ground
+  (`assimilation/connector-sweep-r100.txt`); the one `elapsed` hit is a round-6 Hyprland idle-timer
+  dispatcher row, rejected with reason and flip in `corpus/lessons/round-100.md` `## Gate`.
+  considerthese: `considerthese/2026-11-07.md` proposal 3 mined into `corpus/QUALITY.md` criterion 173
+  (a library-semantics port carries a small-domain sweep), grounded on `round-95.md` M95-1.
+- Mistakes: M100-1 (a receipt assembled after the fact lost the run's terminal marker; the counter
+  refused the measurement — control `receipts/c2-control-no-done-r100.txt`), M100-2 (an instrument
+  environment modelling the neighbour of the case it scored; the round-99 counter's `PATH=""` for a
+  `path: null` case).
+- Round shape: one v1 wave `w1` of 16 seats (2 scouts, 6 executors, 1 scribe, 2 reviewers, 1 critic,
+  2 mutation-testers, 1 connector; attack roles 5/16 = 31 %); no residual call; no dead seats; round
+  total 16. The planner seat is the L1 (validator-frozen role); the bounded planning data-walk rode
+  the two scouts and the connector.
